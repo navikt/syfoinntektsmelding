@@ -1,0 +1,4 @@
+.idea
+*.iml
+application-local.properties
+transaction-logs

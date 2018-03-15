@@ -1,0 +1,10 @@
+<configuration>
+    <springProfile name="remote">
+        <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+        <include resource="logback-remote.xml"/>
+    </springProfile>
+    <springProfile name="local">
+        <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+        <include resource="logback-local.xml"/>
+    </springProfile>
+</configuration>

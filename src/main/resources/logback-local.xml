@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<included>
+	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>[%t, %d, %-5p, %C:%L, %X{callId}] - %.-100000m%n</pattern>
+		</encoder>
+	</appender>
+
+	<logger name="org.apache.cxf.common.logging" level="WARN" additivity="false"/>
+
+	<root level="WARN">
+		<appender-ref ref="CONSOLE"/>
+	</root>
+
+	<logger name="no.nav.syfo" level="INFO"/>
+	<logger name="org.springframework" level="INFO"/>
+</included>
