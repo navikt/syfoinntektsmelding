@@ -27,7 +27,7 @@ public class JmsConfig {
 
     @Value("${DOKMOT_DISTRIBUER_TIL_DIGISYFO_QUEUENAME}")
     private String inntektsmeldingQueuename;
-    @Value("${SYFOMOTTAK_CHANNEL}")
+    @Value("${SYFOMOTTAK_CHANNEL_NAME}")
     private String channelName;
     @Value("${MQGATEWAY03_HOSTNAME}")
     private String gatewayHostname;
