@@ -4,10 +4,11 @@ import com.ibm.mq.jms.MQQueue;
 import com.ibm.mq.jms.MQXAConnectionFactory;
 import no.nav.syfo.jms.UserCredentialsXaConnectionFactoryAdapter;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.jta.XAConnectionFactoryWrapper;
+import org.springframework.boot.jms.XAConnectionFactoryWrapper;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.jms.annotation.EnableJms;
 import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
 import org.springframework.jms.support.destination.DestinationResolver;
@@ -22,22 +23,23 @@ import static com.ibm.msg.client.wmq.WMQConstants.*;
 
 @Configuration
 @EnableJms
+@Profile({"remote", "local"})
 public class JmsConfig {
     private static final int UTF_8_WITH_PUA = 1208;
 
-    @Value("${DOKMOT_DISTRIBUER_TIL_DIGISYFO_QUEUENAME}")
+    @Value("${dokmot.distribuer.til.digisyfo.queuename}")
     private String inntektsmeldingQueuename;
-    @Value("${SYFOMOTTAK_CHANNEL_NAME}")
+    @Value("${syfomottak.channel.name}")
     private String channelName;
-    @Value("${MQGATEWAY03_HOSTNAME}")
+    @Value("${mqgateway03.hostname}")
     private String gatewayHostname;
-    @Value("${MQGATEWAY03_NAME}")
+    @Value("${mqgateway03.name}")
     private String gatewayName;
-    @Value("${MQGATEWAY03_PORT}")
+    @Value("${mqgateway03.port}")
     private int gatewayPort;
-    @Value("${SRVAPPSERVER_USERNAME}")
+    @Value("${srvappserver.username}")
     private String srvAppserverUsername;
-    @Value("${SRVAPPSERVER_PASSWORD}")
+    @Value("${srvappserver.password}")
     private String srvAppserverPassword;
 
     @Bean
