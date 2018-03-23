@@ -1,16 +1,17 @@
 package no.nav.syfo.consumer.mq;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.melding.virksomhet.dokumentnotifikasjon.v1.XMLForsendelsesinformasjon;
 import no.nav.syfo.exception.MeldingInboundException;
+import no.nav.syfo.util.JAXB;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.inject.Inject;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
+import javax.xml.bind.JAXBElement;
 
-import static java.util.Optional.ofNullable;
 import static no.nav.syfo.util.MDCOperations.*;
 
 @Component
@@ -23,9 +24,16 @@ public class InntektsmeldingConsumer {
         putToMDC(MDC_CALL_ID, generateCallId());
         TextMessage textMessage = (TextMessage) message;
         try {
-            log.info("Fikk en melding: {}", textMessage.getText());
+
+            JAXBElement<XMLForsendelsesinformasjon> xmlForsendelsesinformasjon = JAXB.unmarshalForsendelsesinformasjon(textMessage.getText());
+            final XMLForsendelsesinformasjon info = xmlForsendelsesinformasjon.getValue();
+            log.info("Fikk melding om inntektskjema - arkivid: {}, arkivsystem: {}, tema: {}, behandingstema: {}",
+                    info.getArkivId(),
+                    info.getArkivsystem(),
+                    info.getTema().getValue(),
+                    info.getBehandlingstema().getValue());
         } catch (JMSException e) {
-            log.error("Feil ved lesing av melding", e);
+            log.error("Feil med parsing av inntektsmelding fra kø", e);
             throw new MeldingInboundException("Feil ved lesing av melding", e);
         }
     }
