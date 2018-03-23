@@ -4,12 +4,12 @@ import no.nav.syfo.domain.Sykepengesoknad;
 import no.nav.syfo.repository.SykepengesoknadDAO;
 import org.springframework.http.MediaType;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.core.MessageCreator;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.inject.Inject;
-import javax.inject.Named;
 import java.util.List;
 
 @RestController()
@@ -17,9 +17,20 @@ import java.util.List;
 public class Internal {
 
     private SykepengesoknadDAO sykepengesoknadDAO;
+    private JmsTemplate jmsTemplate;
 
-    public Internal(SykepengesoknadDAO sykepengesoknadDAO) {
+    public Internal(SykepengesoknadDAO sykepengesoknadDAO, JmsTemplate jmsTemplate) {
         this.sykepengesoknadDAO = sykepengesoknadDAO;
+        this.jmsTemplate = jmsTemplate;
+    }
+
+    @RequestMapping(value = "/innko/nyMelding/{journalpostId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Transactional
+    public String leggMeldingPaaKoe(@PathVariable String journalpostId) {
+        MessageCreator messageCreator = session -> session.createTextMessage(journalpostId);
+        jmsTemplate.send(messageCreator);
+
+        return "Lagt " + journalpostId + " på kø!";
     }
 
     @RequestMapping(value = "/sykepengesoknader/{aktoerId}/{orgnummer}", produces = MediaType.APPLICATION_JSON_VALUE)
