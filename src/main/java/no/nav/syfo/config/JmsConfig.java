@@ -27,7 +27,7 @@ import static com.ibm.msg.client.wmq.WMQConstants.*;
 public class JmsConfig {
     private static final int UTF_8_WITH_PUA = 1208;
 
-    @Value("${syfo_mottak_inntektsmelding}")
+    @Value("${syfo.mottak.inntektsmelding}")
     private String inntektsmeldingQueuename;
     @Value("${syfomottak.channel.name}")
     private String channelName;
