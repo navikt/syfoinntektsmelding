@@ -12,6 +12,7 @@ import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import javax.xml.bind.JAXBElement;
 
+import static java.util.Optional.ofNullable;
 import static no.nav.syfo.util.MDCOperations.*;
 
 @Component
@@ -21,10 +22,10 @@ public class InntektsmeldingConsumer {
     @Transactional
     @JmsListener(id = "inntektsmelding_listener", containerFactory = "jmsListenerContainerFactory", destination = "inntektsmeldingQueue")
     public void listen(Object message) {
-        putToMDC(MDC_CALL_ID, generateCallId());
+
         TextMessage textMessage = (TextMessage) message;
         try {
-
+            putToMDC(MDC_CALL_ID, ofNullable(textMessage.getStringProperty("callId")).orElse(generateCallId()));
             JAXBElement<XMLForsendelsesinformasjon> xmlForsendelsesinformasjon = JAXB.unmarshalForsendelsesinformasjon(textMessage.getText());
             final XMLForsendelsesinformasjon info = xmlForsendelsesinformasjon.getValue();
             log.info("Fikk melding om inntektskjema - arkivid: {}, arkivsystem: {}, tema: {}, behandingstema: {}",
