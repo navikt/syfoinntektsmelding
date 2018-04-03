@@ -36,10 +36,6 @@ node {
       releaseVersion = "${env.major_version}.${env.BUILD_NUMBER}-${commitHashShort}"
    }
 
-   stage("OWASP CVE check") {
-      sh "${mvn} -Powasp dependency-check:check"
-   }
-
    stage("Build & publish") {
       try {
          sh "${mvn} versions:set -B -DnewVersion=${releaseVersion}"

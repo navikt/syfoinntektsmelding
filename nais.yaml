@@ -49,7 +49,7 @@ fasitResources:
     resourceType: queueManager
   - alias: syfomottak_channel
     resourceType: channel
-  - alias: "SYFO.MOTTAK_INNTEKTSMELDING"
+  - alias: syfo_mottak_inntektsmelding
     resourceType: queue
   - alias: syfoserviceDB
     resourceType: datasource
