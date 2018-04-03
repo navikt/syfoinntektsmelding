@@ -29,15 +29,14 @@ public class LocalJmsConfig {
     }
 
     @Bean
-    public Destination minDestination() throws NamingException {
-        log.info("Oppretter koeoe");
-        return new ActiveMQQueue("min");
+    public Destination inntektsmeldingDestination() throws NamingException {
+        return new ActiveMQQueue("inntektsmelding");
     }
 
-    @Bean(name = "minqueue")
-    public JmsTemplate minqueue(ConnectionFactory xaJmsConnectionFactory) throws NamingException {
+    @Bean(name = "inntektsmeldingQueue")
+    public JmsTemplate inntektsmeldingQueue(ConnectionFactory xaJmsConnectionFactory) throws NamingException {
         JmsTemplate jmsTemplate = new JmsTemplate(xaJmsConnectionFactory);
-        jmsTemplate.setDefaultDestination(minDestination());
+        jmsTemplate.setDefaultDestination(inntektsmeldingDestination());
         return jmsTemplate;
     }
 }
