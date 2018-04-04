@@ -32,6 +32,8 @@ fasitResources:
     resourceType: restservice
     path: /api
   used:
+  - alias: inngaaendejournal_v1
+    resourceType: webserviceendpoint
   - alias: srvSyfomottak
     resourceType: credential
     propertyMap:
@@ -49,7 +51,7 @@ fasitResources:
     resourceType: queueManager
   - alias: syfomottak_channel
     resourceType: channel
-  - alias: "syfo_mottak_inntektsmelding"
+  - alias: syfo_mottak_inntektsmelding
     resourceType: queue
   - alias: syfoserviceDB
     resourceType: datasource
