@@ -53,10 +53,10 @@ fasitResources:
     resourceType: channel
   - alias: syfo_mottak_inntektsmelding
     resourceType: queue
-  - alias: syfoserviceDB
-    resourceType: datasource
   - alias: securityTokenService
     resourceType: baseurl
+  - alias: syfoserviceDB
+    resourceType: datasource
     propertyMap:
       url: SPRING_DATASOURCE_URL
       username: SPRING_DATASOURCE_USERNAME
