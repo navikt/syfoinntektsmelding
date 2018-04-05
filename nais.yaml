@@ -36,9 +36,6 @@ fasitResources:
     resourceType: webserviceendpoint
   - alias: srvSyfomottak
     resourceType: credential
-    propertyMap:
-      username: SERVICEUSER_USERNAME
-      password: SERVICEUSER_PASSWORD
   - alias: abac.pdp.endpoint
     resourceType: restservice
     propertyMap:
