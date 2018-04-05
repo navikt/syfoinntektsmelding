@@ -13,9 +13,9 @@ node {
    def appConfig = "nais.yaml"
    def dockerRepo = "repo.adeo.no:5443"
    def groupId = "nais"
-   def environment = 't1'
+   def environment = 'q7'
    def zone = 'fss'
-   def namespace = 't1'
+   def namespace = 'q7'
 
    stage("Checkout") {
       cleanWs()
