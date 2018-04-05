@@ -55,6 +55,8 @@ fasitResources:
     resourceType: queue
   - alias: syfoserviceDB
     resourceType: datasource
+  - alias : securityTokenService
+        resourceType: baseurl
     propertyMap:
       url: SPRING_DATASOURCE_URL
       username: SPRING_DATASOURCE_USERNAME
