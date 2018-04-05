@@ -12,7 +12,7 @@ public class InngaaendeJournalV1Config {
     @SuppressWarnings("unchecked")
     @Bean
     public InngaaendeJournalV1 inngaaendeJournalV1(
-            @Value("${inngaaendejournalv1.endpointurl}") String serviceUrl) {
+            @Value("${inngaaendejournal.v1.endpointurl}") String serviceUrl) {
         return new WsClient<InngaaendeJournalV1>().createPort(serviceUrl, InngaaendeJournalV1.class);
     }
 }
