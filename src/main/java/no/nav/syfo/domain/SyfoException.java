@@ -2,5 +2,7 @@ package no.nav.syfo.domain;
 
 public class SyfoException extends RuntimeException {
 
-    public String message;
+    public SyfoException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

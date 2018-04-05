@@ -2,7 +2,7 @@ package no.nav.syfo.consumer.ws;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.syfo.domain.InngaaendeJournalpost;
-import no.nav.syfo.util.MapUtil;
+import no.nav.syfo.domain.SyfoException;
 import no.nav.tjeneste.virksomhet.inngaaende.journal.v1.*;
 import org.springframework.stereotype.Component;
 
@@ -26,16 +26,16 @@ public class InngaaendeJournalConsumer {
 
         } catch (HentJournalpostSikkerhetsbegrensning e) {
             log.error("Feil ved henting av journalpost: Sikkerhetsbegrensning!");
-            throw new RuntimeException("Feil ved henting av journalpost: Sikkerhetsbegrensning!", e);
+            throw new SyfoException("Feil ved henting av journalpost: Sikkerhetsbegrensning!", e);
         } catch (HentJournalpostJournalpostIkkeInngaaende e) {
             log.error("Feil ved henting av journalpost: Journalpost er ikke inngaaende!");
-            throw new RuntimeException("Feil ved henting av journalpost: Journalpost er ikke inngaaende!", e);
+            throw new SyfoException("Feil ved henting av journalpost: Journalpost er ikke inngaaende!", e);
         } catch (HentJournalpostJournalpostIkkeFunnet e) {
             log.error("Feil ved henting av journalpost: Journalpost ikke funnet!");
-            throw new RuntimeException("Feil ved henting av journalpost: Journalpost ikke funnet!", e);
+            throw new SyfoException("Feil ved henting av journalpost: Journalpost ikke funnet!", e);
         } catch (no.nav.tjeneste.virksomhet.inngaaende.journal.v1.HentJournalpostUgyldigInput e) {
             log.error("Feil ved henting av journalpost: Journalpostid ikke gyldig!");
-            throw new RuntimeException("Feil ved henting av journalpost: Journalpostid ikke gyldig!", e);
+            throw new SyfoException("Feil ved henting av journalpost: Journalpostid ikke gyldig!", e);
         }
     }
 }
