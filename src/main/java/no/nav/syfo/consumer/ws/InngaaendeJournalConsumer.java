@@ -33,7 +33,7 @@ public class InngaaendeJournalConsumer {
         } catch (HentJournalpostJournalpostIkkeFunnet e) {
             log.error("Feil ved henting av journalpost: Journalpost ikke funnet!");
             throw new SyfoException("Feil ved henting av journalpost: Journalpost ikke funnet!", e);
-        } catch (no.nav.tjeneste.virksomhet.inngaaende.journal.v1.HentJournalpostUgyldigInput e) {
+        } catch (HentJournalpostUgyldigInput e) {
             log.error("Feil ved henting av journalpost: Journalpostid ikke gyldig!");
             throw new SyfoException("Feil ved henting av journalpost: Journalpostid ikke gyldig!", e);
         }
