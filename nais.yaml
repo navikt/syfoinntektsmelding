@@ -34,6 +34,10 @@ fasitResources:
   used:
   - alias: inngaaendejournal_v1
     resourceType: webserviceendpoint
+  - alias: behandleinngaaendejournal_v1
+    resourceType: webserviceendpoint
+  - alias: journal_v3
+    resourceType: webserviceendpoint
   - alias: srvSyfomottak
     resourceType: credential
   - alias: abac.pdp.endpoint

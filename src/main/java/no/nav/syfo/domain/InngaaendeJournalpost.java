@@ -8,5 +8,5 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class InngaaendeJournalpost {
-    String avsenderId;
+    String dokumentId;
 }

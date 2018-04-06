@@ -2,6 +2,7 @@ package no.nav.syfo.consumer.mq;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.melding.virksomhet.dokumentnotifikasjon.v1.XMLForsendelsesinformasjon;
+import no.nav.syfo.consumer.ws.BehandleInngaaendeJournalConsumer;
 import no.nav.syfo.consumer.ws.InngaaendeJournalConsumer;
 import no.nav.syfo.domain.InngaaendeJournalpost;
 import no.nav.syfo.exception.MeldingInboundException;
@@ -22,6 +23,7 @@ import static no.nav.syfo.util.MDCOperations.*;
 public class InntektsmeldingConsumer {
 
     private InngaaendeJournalConsumer inngaaendeJournalConsumer;
+    private BehandleInngaaendeJournalConsumer behandleInngaaendeJournalConsumer;
 
     public InntektsmeldingConsumer(InngaaendeJournalConsumer inngaaendeJournalConsumer) {
         this.inngaaendeJournalConsumer = inngaaendeJournalConsumer;
@@ -45,12 +47,10 @@ public class InntektsmeldingConsumer {
             //Hent opp journalpost
             try {
                 final InngaaendeJournalpost inngaaendeJournalpost = inngaaendeJournalConsumer.hentJournalpost(info.getArkivId());
-                log.info("Hentet journalpost med avsenderId: {}", inngaaendeJournalpost.getAvsenderId());
+                log.info("Hentet journalpost med dokumentId: {}", inngaaendeJournalpost.getDokumentId());
             } catch (Exception e) {
                 log.error("Feil ved henting av journalpost", e);
             }
-
-            //Oppdater ferdigstill
 
             //Ferdigstill
 

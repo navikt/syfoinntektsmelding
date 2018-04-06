@@ -9,6 +9,6 @@ public abstract class WS2InngaaendeJournalpostMapper {
 
     public static final Function<WSInngaaendeJournalpost, InngaaendeJournalpost> ws2InngaaendeJouralpost =
             wsInngaaendeJournalpost ->
-                    new InngaaendeJournalpost(wsInngaaendeJournalpost.getAvsenderId());
+                    new InngaaendeJournalpost(wsInngaaendeJournalpost.getHoveddokument().getDokumentId());
 
 }
