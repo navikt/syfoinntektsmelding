@@ -36,6 +36,8 @@ fasitResources:
     resourceType: webserviceendpoint
   - alias: behandleinngaaendejournal_v1
     resourceType: webserviceendpoint
+  - alias: behandlesak_v1
+    resourceType: webserviceendpoint
   - alias: journal_v3
     resourceType: webserviceendpoint
   - alias: srvSyfomottak

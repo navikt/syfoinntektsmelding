@@ -144,6 +144,12 @@
         </dependency>
 
         <dependency>
+            <groupId>no.nav.syfo.tjenester</groupId>
+            <artifactId>behandleSak-v1</artifactId>
+            <version>1.0.2</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.bitbucket.b_c</groupId>
             <artifactId>jose4j</artifactId>
             <version>${jose4j.version}</version>

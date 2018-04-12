@@ -1,6 +1,7 @@
 package no.nav.syfo.web.selftest;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.syfo.consumer.ws.BehandleSak;
 import no.nav.syfo.consumer.ws.InngaaendeJournalConsumer;
 import no.nav.syfo.consumer.ws.JournalConsumer;
 import no.nav.syfo.domain.InngaaendeJournalpost;
@@ -20,10 +21,12 @@ public class SelftestController {
 
     private InngaaendeJournalConsumer inngaaendeJournalConsumer;
     private JournalConsumer journalConsumer;
+    private BehandleSak behandleSak;
 
-    public SelftestController(InngaaendeJournalConsumer inngaaendeJournalConsumer, JournalConsumer journalConsumer) {
+    public SelftestController(InngaaendeJournalConsumer inngaaendeJournalConsumer, JournalConsumer journalConsumer, BehandleSak behandleSak) {
         this.inngaaendeJournalConsumer = inngaaendeJournalConsumer;
         this.journalConsumer = journalConsumer;
+        this.behandleSak = behandleSak;
     }
 
     @ResponseBody
@@ -48,6 +51,12 @@ public class SelftestController {
     @RequestMapping(value = "/hentInntektsmelding/{journalpost}/{dokumentid}", produces = MediaType.APPLICATION_JSON_VALUE)
     public InntektsmeldingM hentInntektsmelding(@PathVariable String journalpost, @PathVariable String dokumentid) {
         return journalConsumer.hentXmlDokument(journalpost, dokumentid);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/gsakTest", produces = MediaType.TEXT_PLAIN_VALUE)
+    public String gsakTest() {
+        return behandleSak.opprettSak("12345678910");
     }
 
 }
