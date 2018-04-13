@@ -1,12 +1,11 @@
 package no.nav.syfo.repository;
 
-import no.nav.syfo.Application;
+import no.nav.syfo.TestApplication;
 import no.nav.syfo.domain.Sykepengesoknad;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
@@ -19,7 +18,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(classes = TestApplication.class)
 @TestPropertySource(locations = "classpath:application-test.properties")
 @DirtiesContext
 public class SykepengesoknadDAOTest {
