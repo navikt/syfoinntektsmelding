@@ -11,7 +11,7 @@ public class BehandleSakConfig {
 
     @Bean
     @SuppressWarnings("unchecked")
-    public BehandleSakV1 behandleSakV1(@Value("${behandlesak.v1.endpoint.url}") String serviceUrl) {
+    public BehandleSakV1 behandleSakV1(@Value("${virksomhet.behandlesak.v1.endpoint.url}") String serviceUrl) {
         return new WsClient<BehandleSakV1>().createPort(serviceUrl, BehandleSakV1.class);
     }
 }
