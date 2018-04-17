@@ -1,9 +1,9 @@
 package no.nav.syfo.web.selftest;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.syfo.consumer.ws.BehandleSak;
 import no.nav.syfo.consumer.ws.InngaaendeJournalConsumer;
 import no.nav.syfo.consumer.ws.JournalConsumer;
+import no.nav.syfo.consumer.ws.SaksbehandlingService;
 import no.nav.syfo.domain.InngaaendeJournalpost;
 import no.seres.xsd.nav.inntektsmelding_m._20171205.InntektsmeldingM;
 import org.springframework.http.MediaType;
@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.time.LocalDate;
 
 @Slf4j
 @RestController
@@ -21,12 +23,12 @@ public class SelftestController {
 
     private InngaaendeJournalConsumer inngaaendeJournalConsumer;
     private JournalConsumer journalConsumer;
-    private BehandleSak behandleSak;
+    private SaksbehandlingService saksbehandlingService;
 
-    public SelftestController(InngaaendeJournalConsumer inngaaendeJournalConsumer, JournalConsumer journalConsumer, BehandleSak behandleSak) {
+    public SelftestController(InngaaendeJournalConsumer inngaaendeJournalConsumer, JournalConsumer journalConsumer, SaksbehandlingService behandleSak) {
         this.inngaaendeJournalConsumer = inngaaendeJournalConsumer;
         this.journalConsumer = journalConsumer;
-        this.behandleSak = behandleSak;
+        this.saksbehandlingService = behandleSak;
     }
 
     @ResponseBody
@@ -56,7 +58,17 @@ public class SelftestController {
     @ResponseBody
     @RequestMapping(value = "/gsakTest", produces = MediaType.TEXT_PLAIN_VALUE)
     public String gsakTest() {
-        return behandleSak.opprettSak("12345678910");
+        LocalDate aktivTilDato = LocalDate.now().plusDays(7);
+        String gsakSaksid = saksbehandlingService.opprettSak("12345678910");
+        String oppgave = saksbehandlingService.opprettOppgave(
+                "12345678910",
+                "Beskriveøse",
+                gsakSaksid,
+                "journalpostId",
+                aktivTilDato
+        );
+
+        return "gsak saksid: " + gsakSaksid + "\noppgave id: " + oppgave;
     }
 
 }

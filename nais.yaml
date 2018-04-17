@@ -40,6 +40,14 @@ fasitResources:
     resourceType: webserviceendpoint
   - alias: journal_v3
     resourceType: webserviceendpoint
+  - alias: virksomhet:Arbeidsfordeling_v1
+  resourceTyoe: webserviceendpoint
+  - alias: virksomhet:Person_v3
+  resourceTyoe: webserviceendpoint
+  - alias: virksomhet:Oppgave_v3
+    resourceTyoe: webserviceendpoint
+  - alias: virksomhet:Oppgavebehandling_v3
+    resourceTyoe: webserviceendpoint
   - alias: srvSyfomottak
     resourceType: credential
   - alias: abac.pdp.endpoint

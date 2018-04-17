@@ -150,6 +150,30 @@
         </dependency>
 
         <dependency>
+            <groupId>no.nav.syfo.tjenester</groupId>
+            <artifactId>oppgavebehandling-v3-tjenestespesifikasjon</artifactId>
+            <version>3.1.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>no.nav.syfo.tjenester</groupId>
+            <artifactId>oppgave-v3-tjenestespesifikasjon</artifactId>
+            <version>3.0.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>no.nav.tjenester</groupId>
+            <artifactId>nav-person-v3-tjenestespesifikasjon</artifactId>
+            <version>3.2.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>no.nav.syfo.tjenester</groupId>
+            <artifactId>arbeidsfordeling-v1-tjenestespesifikasjon</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.bitbucket.b_c</groupId>
             <artifactId>jose4j</artifactId>
             <version>${jose4j.version}</version>
