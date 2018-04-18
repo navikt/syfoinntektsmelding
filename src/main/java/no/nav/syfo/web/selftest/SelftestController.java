@@ -1,9 +1,11 @@
 package no.nav.syfo.web.selftest;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.syfo.consumer.ws.BehandleSakConsumer;
 import no.nav.syfo.consumer.ws.InngaaendeJournalConsumer;
 import no.nav.syfo.consumer.ws.JournalConsumer;
 import no.nav.syfo.domain.InngaaendeJournalpost;
+import no.nav.syfo.domain.Oppgave;
 import no.nav.syfo.service.SaksbehandlingService;
 import no.seres.xsd.nav.inntektsmelding_m._20171205.InntektsmeldingM;
 import org.springframework.http.MediaType;
@@ -24,11 +26,13 @@ public class SelftestController {
     private InngaaendeJournalConsumer inngaaendeJournalConsumer;
     private JournalConsumer journalConsumer;
     private SaksbehandlingService saksbehandlingService;
+    private BehandleSakConsumer behandleSakConsumer;
 
-    public SelftestController(InngaaendeJournalConsumer inngaaendeJournalConsumer, JournalConsumer journalConsumer, SaksbehandlingService behandleSak) {
+    public SelftestController(InngaaendeJournalConsumer inngaaendeJournalConsumer, JournalConsumer journalConsumer, SaksbehandlingService behandleSak, BehandleSakConsumer behandleSakConsumer) {
         this.inngaaendeJournalConsumer = inngaaendeJournalConsumer;
         this.journalConsumer = journalConsumer;
         this.saksbehandlingService = behandleSak;
+        this.behandleSakConsumer = behandleSakConsumer;
     }
 
     @ResponseBody
@@ -58,17 +62,19 @@ public class SelftestController {
     @ResponseBody
     @RequestMapping(value = "/gsakTest", produces = MediaType.TEXT_PLAIN_VALUE)
     public String gsakTest() {
-        LocalDate aktivTilDato = LocalDate.now().plusDays(7);
-        String gsakSaksid = saksbehandlingService.opprettSak("12345678910");
-        String oppgave = saksbehandlingService.opprettOppgave(
+        String gsakSaksid = behandleSakConsumer.opprettSak("12345678910");
+        Oppgave oppgave = Oppgave.builder()
+                .beskrivelse("Beskrivelse")
+                .gsakSaksid(gsakSaksid)
+                .journalpostId("journalpostId")
+                .aktivTil(LocalDate.now().plusDays(7))
+                .build();
+        String oppgaveId = saksbehandlingService.opprettOppgave(
                 "12345678910",
-                "Beskriveøse",
-                gsakSaksid,
-                "journalpostId",
-                aktivTilDato
+                oppgave
         );
 
-        return "gsak saksid: " + gsakSaksid + "\noppgave id: " + oppgave;
+        return "gsak saksid: " + gsakSaksid + "\noppgave id: " + oppgaveId;
     }
 
 }
