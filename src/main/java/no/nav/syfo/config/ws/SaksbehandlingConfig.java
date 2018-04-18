@@ -1,6 +1,6 @@
-package no.nav.syfo.config;
+package no.nav.syfo.config.ws;
 
-import no.nav.syfo.ws.WsClient;
+import no.nav.syfo.consumer.util.ws.WsClient;
 import no.nav.tjeneste.virksomhet.behandlesak.v1.BehandleSakV1;
 import no.nav.tjeneste.virksomhet.oppgave.v3.OppgaveV3;
 import no.nav.tjeneste.virksomhet.oppgavebehandling.v3.OppgavebehandlingV3;

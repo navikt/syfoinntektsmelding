@@ -5,7 +5,7 @@ import no.nav.melding.virksomhet.dokumentnotifikasjon.v1.XMLForsendelsesinformas
 import no.nav.syfo.consumer.ws.BehandleInngaaendeJournalConsumer;
 import no.nav.syfo.consumer.ws.InngaaendeJournalConsumer;
 import no.nav.syfo.domain.InngaaendeJournalpost;
-import no.nav.syfo.exception.MeldingInboundException;
+import no.nav.syfo.domain.SyfoException;
 import no.nav.syfo.util.JAXB;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
@@ -56,7 +56,7 @@ public class InntektsmeldingConsumer {
 
         } catch (JMSException e) {
             log.error("Feil med parsing av inntektsmelding fra kø", e);
-            throw new MeldingInboundException("Feil ved lesing av melding", e);
+            throw new SyfoException("Feil ved lesing av melding", e);
         }
     }
 }

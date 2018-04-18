@@ -1,5 +1,6 @@
 package no.nav.syfo.consumer.ws;
 
+import no.nav.syfo.service.SaksbehandlingService;
 import no.nav.tjeneste.virksomhet.behandlesak.v1.BehandleSakV1;
 import no.nav.tjeneste.virksomhet.behandlesak.v1.informasjon.WSPerson;
 import no.nav.tjeneste.virksomhet.behandlesak.v1.informasjon.WSSak;

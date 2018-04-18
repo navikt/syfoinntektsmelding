@@ -1,4 +1,4 @@
-package no.nav.syfo.jms;
+package no.nav.syfo.consumer.util.jms;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.NamedThreadLocal;

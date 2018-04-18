@@ -1,4 +1,4 @@
-package no.nav.syfo.ws;
+package no.nav.syfo.consumer.util.ws;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;

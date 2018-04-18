@@ -1,4 +1,4 @@
-package no.nav.syfo.repository;
+package no.nav.syfo.consumer.repository;
 
 import no.nav.syfo.TestApplication;
 import no.nav.syfo.domain.Sykepengesoknad;

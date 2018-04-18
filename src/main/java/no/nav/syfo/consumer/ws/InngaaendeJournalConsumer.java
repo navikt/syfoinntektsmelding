@@ -6,7 +6,7 @@ import no.nav.syfo.domain.SyfoException;
 import no.nav.tjeneste.virksomhet.inngaaende.journal.v1.*;
 import org.springframework.stereotype.Component;
 
-import static no.nav.syfo.mappers.WS2InngaaendeJournalpostMapper.ws2InngaaendeJouralpost;
+import static no.nav.syfo.consumer.mapper.WS2InngaaendeJournalpostMapper.ws2InngaaendeJouralpost;
 import static no.nav.syfo.util.MapUtil.map;
 
 @Component

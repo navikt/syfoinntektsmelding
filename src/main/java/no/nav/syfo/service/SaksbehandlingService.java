@@ -1,6 +1,8 @@
-package no.nav.syfo.consumer.ws;
+package no.nav.syfo.service;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.syfo.consumer.ws.ArbeidsfordelingConsumer;
+import no.nav.syfo.consumer.ws.PersonConsumer;
 import no.nav.tjeneste.virksomhet.behandlesak.v1.BehandleSakV1;
 import no.nav.tjeneste.virksomhet.behandlesak.v1.OpprettSakSakEksistererAllerede;
 import no.nav.tjeneste.virksomhet.behandlesak.v1.OpprettSakUgyldigInput;

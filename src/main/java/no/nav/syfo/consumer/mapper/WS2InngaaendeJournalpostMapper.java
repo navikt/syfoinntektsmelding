@@ -1,4 +1,4 @@
-package no.nav.syfo.mappers;
+package no.nav.syfo.consumer.mapper;
 
 import no.nav.syfo.domain.InngaaendeJournalpost;
 import no.nav.tjeneste.virksomhet.inngaaende.journal.v1.WSInngaaendeJournalpost;

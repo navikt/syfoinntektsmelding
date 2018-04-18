@@ -1,8 +1,8 @@
-package no.nav.syfo.config;
+package no.nav.syfo.config.mq;
 
 import com.ibm.mq.jms.MQQueue;
 import com.ibm.mq.jms.MQXAConnectionFactory;
-import no.nav.syfo.jms.UserCredentialsXaConnectionFactoryAdapter;
+import no.nav.syfo.consumer.util.jms.UserCredentialsXaConnectionFactoryAdapter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.jms.XAConnectionFactoryWrapper;
 import org.springframework.context.ApplicationContext;

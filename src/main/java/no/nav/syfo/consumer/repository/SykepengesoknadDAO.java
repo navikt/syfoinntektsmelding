@@ -1,4 +1,4 @@
-package no.nav.syfo.repository;
+package no.nav.syfo.consumer.repository;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.syfo.domain.Sykepengesoknad;

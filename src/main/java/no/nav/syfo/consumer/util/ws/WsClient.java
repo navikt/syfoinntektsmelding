@@ -1,4 +1,4 @@
-package no.nav.syfo.ws;
+package no.nav.syfo.consumer.util.ws;
 
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
