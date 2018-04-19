@@ -1,7 +1,6 @@
 package no.nav.syfo.util;
 
-
-import no.seres.xsd.nav.inntektsmelding_m._20171205.ObjectFactory;
+import no.nav.melding.virksomhet.dokumentnotifikasjon.v1.ObjectFactory;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;

@@ -7,6 +7,8 @@ import no.nav.tjeneste.virksomhet.journal.v3.*;
 import no.seres.xsd.nav.inntektsmelding_m._20171205.InntektsmeldingM;
 import org.springframework.stereotype.Component;
 
+import javax.xml.bind.JAXBElement;
+
 @Component
 @Slf4j
 public class JournalConsumer {
@@ -27,10 +29,10 @@ public class JournalConsumer {
             final byte[] inntektsmeldingRAW = journalV3.hentDokument(request).getDokument();
             String inntektsmelding = new String(inntektsmeldingRAW);
 
-            InntektsmeldingM inntektsmeldingM = JAXB.unmarshalInntektsmelding(inntektsmelding);
+            JAXBElement<InntektsmeldingM> inntektsmeldingM = JAXB.unmarshalInntektsmelding(inntektsmelding);
 
-            log.info("Inntektsmelding med arbeidsgiver: {}", inntektsmeldingM.getSkjemainnhold().getArbeidsgiver().getJuridiskEnhet());
-            return inntektsmeldingM;
+            log.info("Inntektsmelding med arbeidsgiver: {}", inntektsmeldingM.getValue().getSkjemainnhold().getArbeidsgiver().getJuridiskEnhet());
+            return inntektsmeldingM.getValue();
 
         } catch (HentDokumentSikkerhetsbegrensning e) {
             log.error("Feil ved henting av dokument: Sikkerhetsbegrensning!");
