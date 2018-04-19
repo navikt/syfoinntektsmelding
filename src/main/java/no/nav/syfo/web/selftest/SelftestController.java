@@ -54,9 +54,9 @@ public class SelftestController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/hentInntektsmelding/{journalpost}/{dokumentid}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public InntektsmeldingM hentInntektsmelding(@PathVariable String journalpost, @PathVariable String dokumentid) {
-        return journalConsumer.hentXmlDokument(journalpost, dokumentid);
+    @RequestMapping(value = "/hentInntektsmelding/{journalpost}/{dokumentid}/{variantFormat}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public InntektsmeldingM hentInntektsmelding(@PathVariable String journalpost, @PathVariable String dokumentid, @PathVariable String variantFormat) {
+        return journalConsumer.hentXmlDokument(journalpost, dokumentid, variantFormat);
     }
 
     @ResponseBody

@@ -1,7 +1,6 @@
 package no.nav.syfo.consumer.ws;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.syfo.domain.InngaaendeJournalpost;
 import no.nav.syfo.domain.SyfoException;
 import no.nav.syfo.util.JAXB;
 import no.nav.tjeneste.virksomhet.journal.v3.*;
@@ -20,11 +19,11 @@ public class JournalConsumer {
         this.journalV3 = journalV3;
     }
 
-    public InntektsmeldingM hentXmlDokument(String journalpostId, String dokumentId) {
+    public InntektsmeldingM hentXmlDokument(String journalpostId, String dokumentId, String variantFormat) {
         WSHentDokumentRequest request = new WSHentDokumentRequest()
                 .withJournalpostId(journalpostId)
                 .withDokumentId(dokumentId)
-                .withVariantformat(new WSVariantformater().withValue("ARKIV"));
+                .withVariantformat(new WSVariantformater().withValue(variantFormat));
 
         try {
             final byte[] inntektsmeldingRAW = journalV3.hentDokument(request).getDokument();
