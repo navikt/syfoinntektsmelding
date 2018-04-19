@@ -25,12 +25,7 @@ public class JournalConsumer {
 
         try {
             final byte[] inntektsmeldingRAW = journalV3.hentDokument(request).getDokument();
-
-            log.info("InntektsmeldingRAW: {}", inntektsmeldingRAW);
-
             String inntektsmelding = new String(inntektsmeldingRAW);
-
-            log.info("Inntektsmelding decoded: {}", inntektsmelding);
 
             InntektsmeldingM inntektsmeldingM = JAXB.unmarshalInntektsmelding(inntektsmelding);
 
