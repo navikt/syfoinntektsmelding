@@ -7,8 +7,6 @@ import no.nav.tjeneste.virksomhet.journal.v3.*;
 import no.seres.xsd.nav.inntektsmelding_m._20171205.InntektsmeldingM;
 import org.springframework.stereotype.Component;
 
-import java.util.Base64;
-
 @Component
 @Slf4j
 public class JournalConsumer {
@@ -19,19 +17,21 @@ public class JournalConsumer {
         this.journalV3 = journalV3;
     }
 
-    public InntektsmeldingM hentXmlDokument(String journalpostId, String dokumentId, String variantFormat) {
+    public InntektsmeldingM hentXmlDokument(String journalpostId, String dokumentId) {
         WSHentDokumentRequest request = new WSHentDokumentRequest()
                 .withJournalpostId(journalpostId)
                 .withDokumentId(dokumentId)
-                .withVariantformat(new WSVariantformater().withValue(variantFormat));
+                .withVariantformat(new WSVariantformater().withValue("ORIGINAL"));
 
         try {
             final byte[] inntektsmeldingRAW = journalV3.hentDokument(request).getDokument();
 
             log.info("InntektsmeldingRAW: {}", inntektsmeldingRAW);
 
-            final Base64.Decoder decoder = Base64.getDecoder();
-            final String inntektsmelding = new String(decoder.decode(inntektsmeldingRAW));
+            String inntektsmelding = new String(inntektsmeldingRAW);
+
+            log.info("Inntektsmelding decoded: {}", inntektsmelding);
+
             InntektsmeldingM inntektsmeldingM = JAXB.unmarshalInntektsmelding(inntektsmelding);
 
             log.info("Inntektsmelding med arbeidsgiver: {}", inntektsmeldingM.getSkjemainnhold().getArbeidsgiver().getJuridiskEnhet());
