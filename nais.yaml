@@ -46,4 +46,3 @@ fasitResources:
     resourceType: queue
   - alias: securityTokenService
     resourceType: baseurl
-  - alias: syfoserviceDB
