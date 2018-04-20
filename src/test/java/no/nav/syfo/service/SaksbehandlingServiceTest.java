@@ -34,7 +34,7 @@ public class SaksbehandlingServiceTest {
     public void opprettOppgave() throws Exception {
         when(personConsumer.hentGeografiskTilknytning(anyString())).thenReturn("Geografisktilknytning");
         when(arbeidsfordelingConsumer.finnBehandlendeEnhet(anyString())).thenReturn("behandlendeenhet1234");
-        when(oppgavebehandlingConsumer.opprettOppgave(anyString(), anyString(), any())).thenReturn("1234");
+        when(oppgavebehandlingConsumer.opprettOppgave(anyString(), any())).thenReturn("1234");
 
         LocalDate aktivTil = LocalDate.of(2018, 1, 1);
         Oppgave oppgave = Oppgave.builder()
@@ -43,9 +43,8 @@ public class SaksbehandlingServiceTest {
                 .journalpostId("journalpost1234")
                 .aktivTil(aktivTil)
                 .build();
-        String oppgaveId = saksbehandlingService.opprettOppgave("12345678910", oppgave);
 
-        assertThat(oppgaveId).isEqualTo("1234");
+        assertThat(saksbehandlingService.opprettOppgave("12345678910", oppgave).getOppgaveId()).isEqualTo("1234");
     }
 
 }

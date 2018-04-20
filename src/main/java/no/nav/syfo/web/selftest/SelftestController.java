@@ -4,10 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.syfo.consumer.ws.BehandleSakConsumer;
 import no.nav.syfo.consumer.ws.InngaaendeJournalConsumer;
 import no.nav.syfo.consumer.ws.JournalConsumer;
-import no.nav.syfo.domain.InngaaendeJournalpost;
+import no.nav.syfo.domain.Inntektsmelding;
 import no.nav.syfo.domain.Oppgave;
+import no.nav.syfo.service.PeriodeService;
 import no.nav.syfo.service.SaksbehandlingService;
-import no.seres.xsd.nav.inntektsmelding_m._20171205.InntektsmeldingM;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,14 +49,14 @@ public class SelftestController {
 
     @ResponseBody
     @RequestMapping(value = "/hentJournalpost/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public InngaaendeJournalpost hentJournalpost(@PathVariable String id) {
-        return inngaaendeJournalConsumer.hentJournalpost(id);
+    public String hentJournalpost(@PathVariable String id) {
+        return inngaaendeJournalConsumer.hentDokumentId(id);
     }
 
     @ResponseBody
     @RequestMapping(value = "/hentInntektsmelding/{journalpost}/{dokumentid}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public InntektsmeldingM hentInntektsmelding(@PathVariable String journalpost, @PathVariable String dokumentid) {
-        return journalConsumer.hentXmlDokument(journalpost, dokumentid);
+    public Inntektsmelding hentInntektsmelding(@PathVariable String journalpost, @PathVariable String dokumentid) {
+        return journalConsumer.hentInntektsmelding(journalpost, dokumentid);
     }
 
     @ResponseBody
@@ -69,12 +69,20 @@ public class SelftestController {
                 .journalpostId("journalpostId")
                 .aktivTil(LocalDate.now().plusDays(7))
                 .build();
-        String oppgaveId = saksbehandlingService.opprettOppgave(
+        Oppgave oppgaveId = saksbehandlingService.opprettOppgave(
                 "12345678910",
                 oppgave
         );
 
         return "gsak saksid: " + gsakSaksid + "\noppgave id: " + oppgaveId;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/settSendtSoknad/{erSendt}", produces = MediaType.TEXT_PLAIN_VALUE)
+    public boolean settSendtSoknad(@PathVariable String erSendt) {
+        PeriodeService.erSendtInnsoknad = Boolean.valueOf(erSendt);
+
+        return Boolean.valueOf(erSendt);
     }
 
 }

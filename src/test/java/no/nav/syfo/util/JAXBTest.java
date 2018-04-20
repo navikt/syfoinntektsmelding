@@ -8,7 +8,7 @@ import javax.xml.bind.JAXBElement;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class JAXBTest {
-    private String getInntektsmelding() {
+    public static String getInntektsmelding() {
         return "<ns2:melding xmlns:ns2=\"http://seres.no/xsd/NAV/Inntektsmelding_M/20171205\">\n" +
                 "    <ns2:Skjemainnhold>\n" +
                 "        <ns2:ytelse>Sykepenger</ns2:ytelse>\n" +

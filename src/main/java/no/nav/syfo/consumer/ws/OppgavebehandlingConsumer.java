@@ -2,7 +2,6 @@ package no.nav.syfo.consumer.ws;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.syfo.domain.Oppgave;
-import no.nav.tjeneste.virksomhet.oppgave.v3.informasjon.oppgave.WSOppgave;
 import no.nav.tjeneste.virksomhet.oppgavebehandling.v3.LagreOppgaveOppgaveIkkeFunnet;
 import no.nav.tjeneste.virksomhet.oppgavebehandling.v3.LagreOppgaveOptimistiskLasing;
 import no.nav.tjeneste.virksomhet.oppgavebehandling.v3.OppgavebehandlingV3;
@@ -26,14 +25,16 @@ public class OppgavebehandlingConsumer {
         this.oppgavebehandlingV3 = oppgavebehandlingV3;
     }
 
-    public void oppdaterOppgavebeskrivelse(WSOppgave oppgave, String beskrivelse) {
+    public void oppdaterOppgavebeskrivelse(Oppgave oppgave, String beskrivelse) {
         try {
             oppgavebehandlingV3.lagreOppgave(new WSLagreOppgaveRequest()
-                    .withEndreOppgave(new WSEndreOppgave().withBeskrivelse(beskrivelse))
+                    .withEndreOppgave(new WSEndreOppgave()
+                            .withOppgaveId(oppgave.getOppgaveId())
+                            .withSaksnummer(oppgave.getGsakSaksid())
+                            .withBeskrivelse(beskrivelse))
                     .withEndretAvEnhetId(9999)
             );
-            log.info("Oppdatert oppgave: {} på sak: {}", oppgave.getOppgaveId(), oppgave.getSaksnummer());
-            oppgave.getOppgaveId();
+            log.info("Oppdatert oppgave: {} på sak: {}", oppgave.getOppgaveId(), oppgave.getGsakSaksid());
         } catch (LagreOppgaveOppgaveIkkeFunnet e) {
             log.error("Feil i oppgavebehandling. Oppgave ikke funnet.", e);
             throw new RuntimeException("Feil i oppgavebehandling. Oppgave ikke funnet.", e);
@@ -43,7 +44,7 @@ public class OppgavebehandlingConsumer {
         }
     }
 
-    public String opprettOppgave(String fnr, String ansvarligEnhetId, Oppgave oppgave) {
+    public String opprettOppgave(String fnr, Oppgave oppgave) {
         String oppgaveId = oppgavebehandlingV3.opprettOppgave(new WSOpprettOppgaveRequest()
                 .withOpprettetAvEnhetId(9999)
                 .withOpprettOppgave(new WSOpprettOppgave()
@@ -56,7 +57,7 @@ public class OppgavebehandlingConsumer {
                         .withBeskrivelse(oppgave.getBeskrivelse())
                         .withAktivFra(now())
                         .withAktivTil(oppgave.getAktivTil())
-                        .withAnsvarligEnhetId(ansvarligEnhetId)
+                        .withAnsvarligEnhetId(oppgave.getBehandlendeEnhetId())
                         .withDokumentId(oppgave.getJournalpostId())
                         .withMottattDato(now())
                         .withSaksnummer(oppgave.getGsakSaksid())

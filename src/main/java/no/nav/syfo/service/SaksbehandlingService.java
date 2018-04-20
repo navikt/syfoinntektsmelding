@@ -27,9 +27,28 @@ public class SaksbehandlingService {
         this.arbeidsfordelingConsumer = arbeidsfordelingConsumer;
     }
 
-    public String opprettOppgave(String fnr, Oppgave oppgave) {
+    public Oppgave opprettOppgave(String fnr, Oppgave oppgave) {
         String geografiskTilknytning = personConsumer.hentGeografiskTilknytning(fnr);
         String behandlendeEnhetId = arbeidsfordelingConsumer.finnBehandlendeEnhet(geografiskTilknytning);
-        return oppgavebehandlingConsumer.opprettOppgave(fnr, behandlendeEnhetId, oppgave);
+
+        Oppgave nyOppgave = Oppgave.builder()
+                .aktivTil(oppgave.getAktivTil())
+                .beskrivelse(oppgave.getBeskrivelse())
+                .gsakSaksid(oppgave.getGsakSaksid())
+                .journalpostId(oppgave.getJournalpostId())
+                .geografiskTilknytning(geografiskTilknytning)
+                .behandlendeEnhetId(behandlendeEnhetId)
+                .build();
+
+        String oppgaveId = oppgavebehandlingConsumer.opprettOppgave(fnr, nyOppgave);
+        return Oppgave.builder()
+                .aktivTil(oppgave.getAktivTil())
+                .beskrivelse(oppgave.getBeskrivelse())
+                .gsakSaksid(oppgave.getGsakSaksid())
+                .journalpostId(oppgave.getJournalpostId())
+                .geografiskTilknytning(geografiskTilknytning)
+                .behandlendeEnhetId(behandlendeEnhetId)
+                .oppgaveId(oppgaveId)
+                .build();
     }
 }

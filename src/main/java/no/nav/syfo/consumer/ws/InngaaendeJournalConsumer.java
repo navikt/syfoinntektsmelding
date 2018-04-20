@@ -1,13 +1,9 @@
 package no.nav.syfo.consumer.ws;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.syfo.domain.InngaaendeJournalpost;
 import no.nav.syfo.domain.SyfoException;
 import no.nav.tjeneste.virksomhet.inngaaende.journal.v1.*;
 import org.springframework.stereotype.Component;
-
-import static no.nav.syfo.consumer.mapper.WS2InngaaendeJournalpostMapper.ws2InngaaendeJouralpost;
-import static no.nav.syfo.util.MapUtil.map;
 
 @Component
 @Slf4j
@@ -19,10 +15,11 @@ public class InngaaendeJournalConsumer {
         this.inngaaendeJournalV1 = inngaaendeJournalV1;
     }
 
-    public InngaaendeJournalpost hentJournalpost(String journalpostId) {
+    public String hentDokumentId(String journalpostId) {
         try {
-            final WSInngaaendeJournalpost inngaaendeJournalpost = inngaaendeJournalV1.hentJournalpost(new WSHentJournalpostRequest().withJournalpostId(journalpostId)).getInngaaendeJournalpost();
-            return map(inngaaendeJournalpost, ws2InngaaendeJouralpost);
+            final WSInngaaendeJournalpost inngaendeJournalpost = inngaaendeJournalV1.hentJournalpost(new WSHentJournalpostRequest().withJournalpostId(journalpostId)).getInngaaendeJournalpost();
+            log.info("Hentet dokumentid: {}", inngaendeJournalpost.getHoveddokument().getDokumentId());
+            return inngaendeJournalpost.getHoveddokument().getDokumentId();
 
         } catch (HentJournalpostSikkerhetsbegrensning e) {
             log.error("Feil ved henting av journalpost: Sikkerhetsbegrensning!");

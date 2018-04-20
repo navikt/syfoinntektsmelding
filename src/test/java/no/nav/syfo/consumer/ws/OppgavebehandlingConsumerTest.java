@@ -1,7 +1,6 @@
 package no.nav.syfo.consumer.ws;
 
 import no.nav.syfo.domain.Oppgave;
-import no.nav.tjeneste.virksomhet.oppgave.v3.informasjon.oppgave.WSOppgave;
 import no.nav.tjeneste.virksomhet.oppgavebehandling.v3.OppgavebehandlingV3;
 import no.nav.tjeneste.virksomhet.oppgavebehandling.v3.meldinger.WSLagreOppgaveRequest;
 import no.nav.tjeneste.virksomhet.oppgavebehandling.v3.meldinger.WSOpprettOppgave;
@@ -36,7 +35,14 @@ public class OppgavebehandlingConsumerTest {
         ArgumentCaptor<WSLagreOppgaveRequest> captor = ArgumentCaptor.forClass(WSLagreOppgaveRequest.class);
 
         String beskrivelse = "Beskriv beskriv";
-        oppgavebehandlingConsumer.oppdaterOppgavebeskrivelse(new WSOppgave().withOppgaveId("1234"), beskrivelse);
+        oppgavebehandlingConsumer.oppdaterOppgavebeskrivelse(Oppgave.builder()
+                        .oppgaveId("1234")
+                        .gsakSaksid("gsakid")
+                        .beskrivelse("Beskrivelse")
+                        .journalpostId("journalpostid")
+                        .aktivTil(LocalDate.of(2018, 1, 1))
+                        .build(),
+                beskrivelse);
 
         verify(oppgavebehandlingV3).lagreOppgave(captor.capture());
 
@@ -54,9 +60,10 @@ public class OppgavebehandlingConsumerTest {
                 .beskrivelse("Beskriv beskriv")
                 .gsakSaksid("gsak1234")
                 .journalpostId("journalpost1234")
+                .behandlendeEnhetId(ansvarligEnhetId)
                 .aktivTil(LocalDate.of(2018, 1, 1))
                 .build();
-        String oppgaveId = oppgavebehandlingConsumer.opprettOppgave("12345678910", ansvarligEnhetId, oppgave);
+        String oppgaveId = oppgavebehandlingConsumer.opprettOppgave("12345678910", oppgave);
 
         verify(oppgavebehandlingV3).opprettOppgave(captor.capture());
         WSOpprettOppgave opprettOppgave = captor.getValue().getOpprettOppgave();

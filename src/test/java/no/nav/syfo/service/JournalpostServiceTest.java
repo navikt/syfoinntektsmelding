@@ -1,0 +1,50 @@
+package no.nav.syfo.service;
+
+import no.nav.syfo.consumer.ws.ArbeidsfordelingConsumer;
+import no.nav.syfo.consumer.ws.InngaaendeJournalConsumer;
+import no.nav.syfo.consumer.ws.JournalConsumer;
+import no.nav.syfo.consumer.ws.PersonConsumer;
+import no.nav.syfo.domain.InngaendeJournalpost;
+import no.nav.syfo.domain.Inntektsmelding;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.Mockito.when;
+
+@RunWith(MockitoJUnitRunner.class)
+public class JournalpostServiceTest {
+
+    @Mock
+    private InngaaendeJournalConsumer inngaaendeJournalConsumer;
+    @Mock
+    private JournalConsumer journalConsumer;
+    @Mock
+    private PersonConsumer personConsumer;
+    @Mock
+    private ArbeidsfordelingConsumer arbeidsfordelingConsumer;
+
+    @InjectMocks
+    private JournalpostService journalpostService;
+
+    @Test
+    public void hentInngaendeJournalpost() throws Exception {
+        final String journalpostId = "journalpostId";
+        final String behandlendeEnhetId = "behandlendeEnhetId";
+        final String dokumentId = "dokumentId";
+        final String geografiskTilknytningId = "geografiskTilknytningId";
+        final String fnr = "fnr";
+        when(inngaaendeJournalConsumer.hentDokumentId(journalpostId)).thenReturn(dokumentId);
+        when(journalConsumer.hentInntektsmelding(journalpostId, dokumentId)).thenReturn(Inntektsmelding.builder().fnr(fnr).build());
+        when(personConsumer.hentGeografiskTilknytning(fnr)).thenReturn(geografiskTilknytningId);
+        when(arbeidsfordelingConsumer.finnBehandlendeEnhet(geografiskTilknytningId)).thenReturn(behandlendeEnhetId);
+
+        InngaendeJournalpost inngaendeJournalpost = journalpostService.hentInngaendeJournalpost(journalpostId);
+
+        assertThat(inngaendeJournalpost).isEqualTo(InngaendeJournalpost.builder().journalpostId(journalpostId).behandlendeEnhetId(behandlendeEnhetId).dokumentId(dokumentId).build());
+    }
+
+}

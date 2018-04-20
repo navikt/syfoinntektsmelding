@@ -1,6 +1,7 @@
 package no.nav.syfo.consumer.ws;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.syfo.domain.Inntektsmelding;
 import no.nav.syfo.domain.SyfoException;
 import no.nav.syfo.util.JAXB;
 import no.nav.tjeneste.virksomhet.journal.v3.*;
@@ -19,7 +20,7 @@ public class JournalConsumer {
         this.journalV3 = journalV3;
     }
 
-    public InntektsmeldingM hentXmlDokument(String journalpostId, String dokumentId) {
+    public Inntektsmelding hentInntektsmelding(String journalpostId, String dokumentId) {
         WSHentDokumentRequest request = new WSHentDokumentRequest()
                 .withJournalpostId(journalpostId)
                 .withDokumentId(dokumentId)
@@ -32,8 +33,9 @@ public class JournalConsumer {
             JAXBElement<InntektsmeldingM> inntektsmeldingM = JAXB.unmarshalInntektsmelding(inntektsmelding);
 
             log.info("Inntektsmelding med arbeidsgiver: {}", inntektsmeldingM.getValue().getSkjemainnhold().getArbeidsgiver().getJuridiskEnhet());
-            return inntektsmeldingM.getValue();
-
+            return Inntektsmelding.builder()
+                    .fnr(inntektsmeldingM.getValue().getSkjemainnhold().getArbeidstakerFnr())
+                    .build();
         } catch (HentDokumentSikkerhetsbegrensning e) {
             log.error("Feil ved henting av dokument: Sikkerhetsbegrensning!");
             throw new SyfoException("Feil ved henting av dokument: Sikkerhetsbegrensning!", e);
