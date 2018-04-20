@@ -32,16 +32,14 @@ public class InntektsmeldingConsumer {
     private BehandleSakConsumer behandleSakConsumer;
     private SaksbehandlingService saksbehandlingService;
     private BehandleInngaaendeJournalConsumer behandleInngaaendeJournalConsumer;
-    private OppgavebehandlingConsumer oppgavebehandlingConsumer;
 
-    public InntektsmeldingConsumer(InngaaendeJournalConsumer inngaaendeJournalConsumer, JournalConsumer journalConsumer, BehandleSakConsumer behandleSakConsumer, SaksbehandlingService saksbehandlingService, BehandleInngaaendeJournalConsumer behandleInngaaendeJournalConsumer, ArbeidsfordelingConsumer arbeidsfordelingConsumer, OppgavebehandlingConsumer oppgavebehandlingConsumer) {
+    public InntektsmeldingConsumer(InngaaendeJournalConsumer inngaaendeJournalConsumer, JournalConsumer journalConsumer, BehandleSakConsumer behandleSakConsumer, SaksbehandlingService saksbehandlingService, BehandleInngaaendeJournalConsumer behandleInngaaendeJournalConsumer, ArbeidsfordelingConsumer arbeidsfordelingConsumer, OppgavebehandlingConsumer oppgavebehandlingConsumer, PeriodeService periodeService) {
         this.inngaaendeJournalConsumer = inngaaendeJournalConsumer;
         this.journalConsumer = journalConsumer;
-        this.oppgavebehandlingConsumer = oppgavebehandlingConsumer;
-        this.periodeService = periodeService;
         this.behandleSakConsumer = behandleSakConsumer;
         this.saksbehandlingService = saksbehandlingService;
         this.behandleInngaaendeJournalConsumer = behandleInngaaendeJournalConsumer;
+        this.periodeService = periodeService;
     }
 
     @Transactional

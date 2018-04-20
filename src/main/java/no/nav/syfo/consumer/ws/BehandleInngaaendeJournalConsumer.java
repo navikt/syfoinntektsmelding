@@ -23,6 +23,7 @@ public class BehandleInngaaendeJournalConsumer {
                     .withEnhetId(inngaendeJournalpost.getBehandlendeEnhetId())
                     .withJournalpostId(journalpostId)
             );
+            log.info("Ferdigstiller journalpost med id: {}", journalpostId);
         } catch (FerdigstillJournalfoeringUgyldigInput e) {
             log.error("Feil ved ferdigstilling av journalpost: {} - Ugyldig input!", journalpostId, e);
             throw new SyfoException("Feil ved ferdigstilling av journalpost: " + journalpostId + " - Ugyldig innput!", e);
