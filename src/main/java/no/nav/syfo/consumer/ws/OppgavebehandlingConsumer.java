@@ -45,26 +45,31 @@ public class OppgavebehandlingConsumer {
     }
 
     public String opprettOppgave(String fnr, Oppgave oppgave) {
-        String oppgaveId = oppgavebehandlingV3.opprettOppgave(new WSOpprettOppgaveRequest()
-                .withOpprettetAvEnhetId(9999)
-                .withOpprettOppgave(new WSOpprettOppgave()
-                        .withBrukerId(fnr)
-                        .withBrukertypeKode("PERSON")
-                        .withOppgavetypeKode("INNT_SYK")
-                        .withFagomradeKode("SYK")
-                        .withUnderkategoriKode("SYK_SYK")
-                        .withPrioritetKode("NORM_SYK")
-                        .withBeskrivelse(oppgave.getBeskrivelse())
-                        .withAktivFra(now())
-                        .withAktivTil(oppgave.getAktivTil())
-                        .withAnsvarligEnhetId(oppgave.getBehandlendeEnhetId())
-                        .withDokumentId(oppgave.getJournalpostId())
-                        .withMottattDato(now())
-                        .withSaksnummer(oppgave.getGsakSaksid())
-                        .withOppfolging("\nDu kan gi oss tilbakemelding på søknaden om sykepenger.\n" +
-                                "Gå til internettadresse: nav.no/digitalsykmelding/tilbakemelding")
-                )).getOppgaveId();
-        log.info("Opprettet oppgave: {} på sak: {}", oppgaveId, oppgave.getGsakSaksid());
-        return oppgaveId;
+        try {
+            String oppgaveId = oppgavebehandlingV3.opprettOppgave(new WSOpprettOppgaveRequest()
+                    .withOpprettetAvEnhetId(9999)
+                    .withOpprettOppgave(new WSOpprettOppgave()
+                            .withBrukerId(fnr)
+                            .withBrukertypeKode("PERSON")
+                            .withOppgavetypeKode("INNT_SYK")
+                            .withFagomradeKode("SYK")
+                            .withUnderkategoriKode("SYK_SYK")
+                            .withPrioritetKode("NORM_SYK")
+                            .withBeskrivelse(oppgave.getBeskrivelse())
+                            .withAktivFra(now())
+                            .withAktivTil(oppgave.getAktivTil())
+                            .withAnsvarligEnhetId(oppgave.getBehandlendeEnhetId())
+                            .withDokumentId(oppgave.getJournalpostId())
+                            .withMottattDato(now())
+                            .withSaksnummer(oppgave.getGsakSaksid())
+                            .withOppfolging("\nDu kan gi oss tilbakemelding på søknaden om sykepenger.\n" +
+                                    "Gå til internettadresse: nav.no/digitalsykmelding/tilbakemelding")
+                    )).getOppgaveId();
+            log.info("Opprettet oppgave: {} på sak: {}", oppgaveId, oppgave.getGsakSaksid());
+            return oppgaveId;
+        } catch (RuntimeException e) {
+            log.error("Klarte ikke å opprette oppgave. ", e);
+            throw new RuntimeException(e);
+        }
     }
 }
