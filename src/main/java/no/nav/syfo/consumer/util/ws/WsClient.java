@@ -14,8 +14,6 @@ import java.util.Objects;
 
 public class WsClient<T> {
 
-
-
     @SuppressWarnings("unchecked")
     public T createPort(String serviceUrl, Class<?> portType, List<Handler> handlers, PhaseInterceptor<? extends Message>... interceptors) {
         JaxWsProxyFactoryBean jaxWsProxyFactoryBean = new JaxWsProxyFactoryBean();
