@@ -48,6 +48,10 @@ fasitResources:
     resourceType: webserviceendpoint
   - alias: virksomhet:Oppgavebehandling_v3
     resourceType: webserviceendpoint
+  - alias: servicegateway
+    resourceType: webservicegateway
+    propertyMap:
+      url: SERVICEGATEWAY_URL
   - alias: srvSyfomottak
     resourceType: credential
   - alias: abac.pdp.endpoint
