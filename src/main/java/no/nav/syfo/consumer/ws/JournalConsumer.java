@@ -45,7 +45,9 @@ public class JournalConsumer {
         } catch (HentDokumentJournalpostIkkeFunnet e) {
             log.error("Feil ved henting av dokument: Journalpost ikke funnet!");
             throw new SyfoException("Feil ved henting av dokument: Journalpost ikke funnet!", e);
+        } catch (RuntimeException e) {
+            log.error("Klarte ikke å hente inntekrsmelding med journalpostId: {} og dokumentId: {}", journalpostId, dokumentId, e);
+            throw new RuntimeException(e);
         }
-
     }
 }

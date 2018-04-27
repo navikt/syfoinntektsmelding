@@ -14,7 +14,7 @@ public class PersonConfig {
 
     @Bean
     @SuppressWarnings("unchecked")
-    public PersonV3 personV3(@Value("${virksomhet.person.v3.endpointurl}") String serviceUrl) {
+    public PersonV3 personV3(@Value("${servicegateway.url}") String serviceUrl) {
         return new WsClient<PersonV3>().createPort(serviceUrl, PersonV3.class, Collections.singletonList(new LogErrorHandler()));
     }
 

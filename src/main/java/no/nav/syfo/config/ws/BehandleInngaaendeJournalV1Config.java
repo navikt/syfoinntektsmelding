@@ -14,8 +14,7 @@ public class BehandleInngaaendeJournalV1Config {
 
     @SuppressWarnings("unchecked")
     @Bean
-    public BehandleInngaaendeJournalV1 behandleInngaaendeJournalV1(
-            @Value("${behandleinngaaendejournal.v1.endpointurl}") String serviceUrl) {
+    public BehandleInngaaendeJournalV1 behandleInngaaendeJournalV1(@Value("${servicegateway.url}") String serviceUrl) {
         return new WsClient<BehandleInngaaendeJournalV1>().createPort(serviceUrl, BehandleInngaaendeJournalV1.class, Collections.singletonList(new LogErrorHandler()));
     }
 }
