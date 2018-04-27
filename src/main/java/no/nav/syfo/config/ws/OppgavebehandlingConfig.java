@@ -15,6 +15,6 @@ public class OppgavebehandlingConfig {
     @Bean
     @SuppressWarnings("unchecked")
     public OppgavebehandlingV3 oppgavebehandlingV3(@Value("${servicegateway.url}") String serviceUrl) {
-        return new WsClient<OppgavebehandlingV3>().createPort(serviceUrl + "/nav-gsak-ws/OppgavebehandlingV3", OppgavebehandlingV3.class, Collections.singletonList(new LogErrorHandler()));
+        return new WsClient<OppgavebehandlingV3>().createPort(serviceUrl, OppgavebehandlingV3.class, Collections.singletonList(new LogErrorHandler()));
     }
 }
