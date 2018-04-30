@@ -2,8 +2,8 @@ package no.nav.syfo.consumer.ws;
 
 import no.nav.syfo.domain.Inntektsmelding;
 import no.nav.tjeneste.virksomhet.journal.v3.JournalV3;
-import no.nav.tjeneste.virksomhet.journal.v3.WSHentDokumentRequest;
-import no.nav.tjeneste.virksomhet.journal.v3.WSHentDokumentResponse;
+import no.nav.tjeneste.virksomhet.journal.v3.meldinger.HentDokumentRequest;
+import no.nav.tjeneste.virksomhet.journal.v3.meldinger.HentDokumentResponse;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -29,8 +29,8 @@ public class JournalConsumerTest {
 
     @Test
     public void hentInntektsmelding() throws Exception {
-        when(journalV3.hentDokument(any())).thenReturn(new WSHentDokumentResponse().withDokument(getInntektsmelding().getBytes()));
-        ArgumentCaptor<WSHentDokumentRequest> captor = ArgumentCaptor.forClass(WSHentDokumentRequest.class);
+        when(journalV3.hentDokument(any())).thenReturn(new HentDokumentResponse().withDokument(getInntektsmelding().getBytes()));
+        ArgumentCaptor<HentDokumentRequest> captor = ArgumentCaptor.forClass(HentDokumentRequest.class);
 
         Inntektsmelding inntektsmelding = journalConsumer.hentInntektsmelding("journalpostId", "dokumentId");
 

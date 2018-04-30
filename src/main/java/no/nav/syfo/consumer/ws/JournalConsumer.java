@@ -4,7 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.syfo.domain.Inntektsmelding;
 import no.nav.syfo.domain.SyfoException;
 import no.nav.syfo.util.JAXB;
-import no.nav.tjeneste.virksomhet.journal.v3.*;
+import no.nav.tjeneste.virksomhet.journal.v3.HentDokumentDokumentIkkeFunnet;
+import no.nav.tjeneste.virksomhet.journal.v3.HentDokumentJournalpostIkkeFunnet;
+import no.nav.tjeneste.virksomhet.journal.v3.HentDokumentSikkerhetsbegrensning;
+import no.nav.tjeneste.virksomhet.journal.v3.JournalV3;
+import no.nav.tjeneste.virksomhet.journal.v3.informasjon.Variantformater;
+import no.nav.tjeneste.virksomhet.journal.v3.meldinger.HentDokumentRequest;
 import no.seres.xsd.nav.inntektsmelding_m._20171205.InntektsmeldingM;
 import org.springframework.stereotype.Component;
 
@@ -21,10 +26,10 @@ public class JournalConsumer {
     }
 
     public Inntektsmelding hentInntektsmelding(String journalpostId, String dokumentId) {
-        WSHentDokumentRequest request = new WSHentDokumentRequest()
+        HentDokumentRequest request = new HentDokumentRequest()
                 .withJournalpostId(journalpostId)
                 .withDokumentId(dokumentId)
-                .withVariantformat(new WSVariantformater().withValue("ORIGINAL"));
+                .withVariantformat(new Variantformater().withValue("ORIGINAL"));
 
         try {
             final byte[] inntektsmeldingRAW = journalV3.hentDokument(request).getDokument();
