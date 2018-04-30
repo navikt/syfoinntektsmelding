@@ -4,12 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.syfo.domain.Inntektsmelding;
 import no.nav.syfo.domain.SyfoException;
 import no.nav.syfo.util.JAXB;
-import no.nav.tjeneste.virksomhet.journal.v3.HentDokumentDokumentIkkeFunnet;
-import no.nav.tjeneste.virksomhet.journal.v3.HentDokumentJournalpostIkkeFunnet;
-import no.nav.tjeneste.virksomhet.journal.v3.HentDokumentSikkerhetsbegrensning;
-import no.nav.tjeneste.virksomhet.journal.v3.JournalV3;
-import no.nav.tjeneste.virksomhet.journal.v3.informasjon.Variantformater;
-import no.nav.tjeneste.virksomhet.journal.v3.meldinger.HentDokumentRequest;
+import no.nav.tjeneste.virksomhet.journal.v2.*;
 import no.seres.xsd.nav.inntektsmelding_m._20171205.InntektsmeldingM;
 import org.springframework.stereotype.Component;
 
@@ -19,17 +14,17 @@ import javax.xml.bind.JAXBElement;
 @Slf4j
 public class JournalConsumer {
 
-    private JournalV3 journalV3;
+    private JournalV2 journalV3;
 
-    public JournalConsumer(JournalV3 journalV3) {
+    public JournalConsumer(JournalV2 journalV3) {
         this.journalV3 = journalV3;
     }
 
     public Inntektsmelding hentInntektsmelding(String journalpostId, String dokumentId) {
-        HentDokumentRequest request = new HentDokumentRequest()
+        WSHentDokumentRequest request = new WSHentDokumentRequest()
                 .withJournalpostId(journalpostId)
                 .withDokumentId(dokumentId)
-                .withVariantformat(new Variantformater().withValue("ORIGINAL"));
+                .withVariantformat(new WSVariantformater().withValue("ORIGINAL"));
 
         try {
             final byte[] inntektsmeldingRAW = journalV3.hentDokument(request).getDokument();
@@ -47,9 +42,6 @@ public class JournalConsumer {
         } catch (HentDokumentDokumentIkkeFunnet e) {
             log.error("Feil ved henting av dokument: Dokument ikke funnet!");
             throw new SyfoException("Feil ved henting av journalpost: Dokument ikke funnet!", e);
-        } catch (HentDokumentJournalpostIkkeFunnet e) {
-            log.error("Feil ved henting av dokument: Journalpost ikke funnet!");
-            throw new SyfoException("Feil ved henting av dokument: Journalpost ikke funnet!", e);
         } catch (RuntimeException e) {
             log.error("Klarte ikke å hente inntekrsmelding med journalpostId: {} og dokumentId: {}", journalpostId, dokumentId, e);
             throw new RuntimeException(e);

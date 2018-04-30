@@ -156,10 +156,9 @@
         </dependency>
 
         <dependency>
-            <groupId>no.nav.tjenester</groupId>
-            <artifactId>nav-journal-v3-tjenestespesifikasjon</artifactId>
-            <version>3.1.4</version>
-            <classifier>jaxws</classifier>
+            <groupId>no.nav.syfo.tjenester</groupId>
+            <artifactId>journal-v2</artifactId>
+            <version>1.0</version>
         </dependency>
 
         <dependency>

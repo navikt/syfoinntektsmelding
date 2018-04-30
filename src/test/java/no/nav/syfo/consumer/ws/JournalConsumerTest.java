@@ -1,9 +1,9 @@
 package no.nav.syfo.consumer.ws;
 
 import no.nav.syfo.domain.Inntektsmelding;
-import no.nav.tjeneste.virksomhet.journal.v3.JournalV3;
-import no.nav.tjeneste.virksomhet.journal.v3.meldinger.HentDokumentRequest;
-import no.nav.tjeneste.virksomhet.journal.v3.meldinger.HentDokumentResponse;
+import no.nav.tjeneste.virksomhet.journal.v2.JournalV2;
+import no.nav.tjeneste.virksomhet.journal.v2.WSHentDokumentRequest;
+import no.nav.tjeneste.virksomhet.journal.v2.WSHentDokumentResponse;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -22,15 +22,15 @@ import static org.mockito.Mockito.when;
 public class JournalConsumerTest {
 
     @Mock
-    private JournalV3 journalV3;
+    private JournalV2 journalV3;
 
     @InjectMocks
     private JournalConsumer journalConsumer;
 
     @Test
     public void hentInntektsmelding() throws Exception {
-        when(journalV3.hentDokument(any())).thenReturn(new HentDokumentResponse().withDokument(getInntektsmelding().getBytes()));
-        ArgumentCaptor<HentDokumentRequest> captor = ArgumentCaptor.forClass(HentDokumentRequest.class);
+        when(journalV3.hentDokument(any())).thenReturn(new WSHentDokumentResponse().withDokument(getInntektsmelding().getBytes()));
+        ArgumentCaptor<WSHentDokumentRequest> captor = ArgumentCaptor.forClass(WSHentDokumentRequest.class);
 
         Inntektsmelding inntektsmelding = journalConsumer.hentInntektsmelding("journalpostId", "dokumentId");
 
