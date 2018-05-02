@@ -75,8 +75,7 @@ public class InntektsmeldingConsumer {
                                 .journalpostId(journalpostId)
                                 .gsakSaksid(saksId)
                                 .beskrivelse("Det har kommet en inntektsmelding på sykepenger.")
-                                // TODO: Hva skal aktivTil være?
-                                .aktivTil(LocalDate.of(2018, 5, 1))
+                                .aktivTil(LocalDate.now().plusDays(7))
                                 .build());
 
                 InngaendeJournalpost journalpost = journalpostService.hentInngaendeJournalpost(journalpostId, saksId, inntektsmelding.getArbeidsgiverOrgnummer());
