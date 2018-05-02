@@ -1,6 +1,6 @@
 package no.nav.syfo.consumer.repository;
 
-import no.nav.syfo.TestApplication;
+import no.nav.syfo.LocalApplication;
 import no.nav.syfo.domain.Sykepengesoknad;
 import org.junit.After;
 import org.junit.Before;
@@ -18,7 +18,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = TestApplication.class)
+@SpringBootTest(classes = LocalApplication.class)
 @TestPropertySource(locations = "classpath:application-test.properties")
 @DirtiesContext
 public class SykepengesoknadDAOTest {
