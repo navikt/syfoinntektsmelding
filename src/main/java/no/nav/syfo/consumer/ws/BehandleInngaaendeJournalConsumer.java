@@ -22,6 +22,8 @@ public class BehandleInngaaendeJournalConsumer {
         WSInngaaendeJournalpost inngaaendeJournalpost = new WSInngaaendeJournalpost()
                 .withJournalpostId(journalpostId)
                 .withBruker(new WSPerson().withIdent(inngaendeJournalpost.getFnr()))
+                // TODO: Bruk skikkelig avssender
+                .withAvsender(new WSAvsender().withAvsenderNavn("Mordi").withAvsenderId("1337"))
                 .withArkivSak(new WSArkivSak().withArkivSakId(inngaendeJournalpost.getGsakId()).withArkivSakSystem("FS22"));
 
         try {
