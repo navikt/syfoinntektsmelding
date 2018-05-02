@@ -14,10 +14,10 @@ import javax.xml.bind.JAXBElement;
 @Slf4j
 public class JournalConsumer {
 
-    private JournalV2 journalV3;
+    private JournalV2 journalV2;
 
-    public JournalConsumer(JournalV2 journalV3) {
-        this.journalV3 = journalV3;
+    public JournalConsumer(JournalV2 journalV2) {
+        this.journalV2 = journalV2;
     }
 
     public Inntektsmelding hentInntektsmelding(String journalpostId, String dokumentId) {
@@ -27,7 +27,7 @@ public class JournalConsumer {
                 .withVariantformat(new WSVariantformater().withValue("ORIGINAL"));
 
         try {
-            final byte[] inntektsmeldingRAW = journalV3.hentDokument(request).getDokument();
+            final byte[] inntektsmeldingRAW = journalV2.hentDokument(request).getDokument();
             String inntektsmelding = new String(inntektsmeldingRAW);
 
             JAXBElement<InntektsmeldingM> inntektsmeldingM = JAXB.unmarshalInntektsmelding(inntektsmelding);
@@ -35,6 +35,7 @@ public class JournalConsumer {
             log.info("Inntektsmelding med arbeidsgiver: {}", inntektsmeldingM.getValue().getSkjemainnhold().getArbeidsgiver().getJuridiskEnhet());
             return Inntektsmelding.builder()
                     .fnr(inntektsmeldingM.getValue().getSkjemainnhold().getArbeidstakerFnr())
+                    .arbeidsgiverOrgnummer(inntektsmeldingM.getValue().getSkjemainnhold().getArbeidsgiver().getVirksomhetsnummer())
                     .build();
         } catch (HentDokumentSikkerhetsbegrensning e) {
             log.error("Feil ved henting av dokument: Sikkerhetsbegrensning!");

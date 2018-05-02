@@ -79,7 +79,7 @@ public class InntektsmeldingConsumer {
                                 .aktivTil(LocalDate.of(2018, 5, 1))
                                 .build());
 
-                InngaendeJournalpost journalpost = journalpostService.hentInngaendeJournalpost(journalpostId, saksId);
+                InngaendeJournalpost journalpost = journalpostService.hentInngaendeJournalpost(journalpostId, saksId, inntektsmelding.getArbeidsgiverOrgnummer());
 
                 behandleInngaaendeJournalConsumer.oppdaterJournalpost(journalpost);
                 behandleInngaaendeJournalConsumer.ferdigstillJournalpost(journalpost);

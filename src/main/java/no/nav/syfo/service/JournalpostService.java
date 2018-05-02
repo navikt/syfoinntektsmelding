@@ -24,7 +24,7 @@ public class JournalpostService {
         this.arbeidsfordelingConsumer = arbeidsfordelingConsumer;
     }
 
-    public InngaendeJournalpost hentInngaendeJournalpost(String journalpostId, String gsakId) {
+    public InngaendeJournalpost hentInngaendeJournalpost(String journalpostId, String gsakId, String orgnummer) {
         String dokumentId = inngaaendeJournalConsumer.hentDokumentId(journalpostId);
         String fnr = journalConsumer.hentInntektsmelding(journalpostId, dokumentId).getFnr();
         String geografiskTilknytning = personConsumer.hentGeografiskTilknytning(fnr);
@@ -38,6 +38,7 @@ public class JournalpostService {
                 .journalpostId(journalpostId)
                 .dokumentId(dokumentId)
                 .behandlendeEnhetId(behandlendeEnhetId)
+                .arbeidsgiverOrgnummer(orgnummer)
                 .build();
     }
 }

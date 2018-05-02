@@ -13,4 +13,5 @@ public class InngaendeJournalpost {
     String dokumentId;
     String behandlendeEnhetId;
     String gsakId;
+    String arbeidsgiverOrgnummer;
 }

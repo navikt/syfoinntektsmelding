@@ -9,4 +9,5 @@ import lombok.Value;
 @Getter
 public class Inntektsmelding {
     String fnr;
+    String arbeidsgiverOrgnummer;
 }
