@@ -27,7 +27,7 @@ public class ArbeidsfordelingConsumer {
 
     public String finnBehandlendeEnhet(String geografiskTilknytning) {
         try {
-            return arbeidsfordelingV1.finnBehandlendeEnhetListe(new WSFinnBehandlendeEnhetListeRequest()
+            String behandlendeEnhet = arbeidsfordelingV1.finnBehandlendeEnhetListe(new WSFinnBehandlendeEnhetListeRequest()
                     .withArbeidsfordelingKriterier(new WSArbeidsfordelingKriterier()
                             .withGeografiskTilknytning(new WSGeografi().withValue(geografiskTilknytning))
                             .withTema(new WSTema().withValue("SYK"))))
@@ -37,6 +37,8 @@ public class ArbeidsfordelingConsumer {
                     .map(WSOrganisasjonsenhet::getEnhetId)
                     .findFirst()
                     .orElseThrow(() -> new RuntimeException("Fant ingen aktiv enhet for " + geografiskTilknytning));
+            log.info("Fannt behandlende enhet: {} for geografisk tilknytning: {}", behandlendeEnhet, geografiskTilknytning);
+            return behandlendeEnhet;
         } catch (FinnBehandlendeEnhetListeUgyldigInput e) {
             log.error("Feil ved henting av brukers forvaltningsenhet", e);
             throw new RuntimeException("Feil ved henting av brukers forvaltningsenhet", e);

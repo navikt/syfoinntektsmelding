@@ -85,6 +85,12 @@ public class InntektsmeldingConsumer {
                 behandleInngaaendeJournalConsumer.ferdigstillJournalpost(journalpost);
             }
 
+            log.info("behandlet melding om inntektskjema - arkivid: {}, arkivsystem: {}, tema: {}, behandingstema: {}",
+                    info.getArkivId(),
+                    info.getArkivsystem(),
+                    info.getTema().getValue(),
+                    info.getBehandlingstema().getValue());
+
         } catch (JMSException e) {
             log.error("Feil med parsing av inntektsmelding fra kø", e);
             throw new SyfoException("Feil ved lesing av melding", e);

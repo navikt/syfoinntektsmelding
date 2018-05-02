@@ -28,7 +28,9 @@ public class OppgaveConsumer {
         }
 
         try {
-            return oppgaveV3.hentOppgave(new WSHentOppgaveRequest().withOppgaveId(oppgaveId)).getOppgave();
+            WSOppgave oppgave = oppgaveV3.hentOppgave(new WSHentOppgaveRequest().withOppgaveId(oppgaveId)).getOppgave();
+            log.info("Hentet oppgave: {}", oppgaveId);
+            return oppgave;
         } catch (HentOppgaveOppgaveIkkeFunnet e) {
             log.warn("Fant ikke oppgave med id " + oppgaveId);
             return null;

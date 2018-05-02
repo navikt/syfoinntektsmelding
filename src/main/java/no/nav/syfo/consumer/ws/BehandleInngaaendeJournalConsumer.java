@@ -28,6 +28,7 @@ public class BehandleInngaaendeJournalConsumer {
             behandleInngaaendeJournalV1.oppdaterJournalpost(new WSOppdaterJournalpostRequest()
                     .withInngaaendeJournalpost(inngaaendeJournalpost)
             );
+            log.info("Oppdaterte journalpost: {}", journalpostId);
         } catch (OppdaterJournalpostUgyldigInput e) {
             log.error("Feil ved oppdatering av journalpost: {} - Ugyldig input!", journalpostId, e);
             throw new SyfoException("Feil ved oppdatering av journalpost: " + journalpostId + " - Ugyldig input!", e);

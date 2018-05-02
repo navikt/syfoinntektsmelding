@@ -27,12 +27,14 @@ public class PersonConsumer {
 
     public String hentGeografiskTilknytning(String fnr) {
         try {
-            return of(personV3.hentGeografiskTilknytning(
+            String geografiskTilknytning = of(personV3.hentGeografiskTilknytning(
                     new HentGeografiskTilknytningRequest()
                             .withAktoer(new PersonIdent().withIdent(new NorskIdent().withIdent(fnr)))))
                     .map(HentGeografiskTilknytningResponse::getGeografiskTilknytning)
                     .map(GeografiskTilknytning::getGeografiskTilknytning)
                     .orElse(null);
+            log.info("Hentet geografisk tilknytning: {}", geografiskTilknytning);
+            return geografiskTilknytning;
         } catch (HentGeografiskTilknytningSikkerhetsbegrensing | HentGeografiskTilknytningPersonIkkeFunnet e) {
             log.error("Feil ved henting av geografisk tilknytning", e);
             throw new RuntimeException("Feil ved henting av geografisk tilknytning", e);

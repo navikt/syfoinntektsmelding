@@ -41,6 +41,7 @@ public class SaksbehandlingService {
                 .build();
 
         String oppgaveId = oppgavebehandlingConsumer.opprettOppgave(fnr, nyOppgave);
+        log.info("Opprettet oppgave: {}", oppgaveId);
         return Oppgave.builder()
                 .aktivTil(oppgave.getAktivTil())
                 .beskrivelse(oppgave.getBeskrivelse())
