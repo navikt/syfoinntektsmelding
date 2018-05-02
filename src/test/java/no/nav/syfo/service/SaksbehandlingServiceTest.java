@@ -41,6 +41,7 @@ public class SaksbehandlingServiceTest {
                 .beskrivelse("Beskriv beskriv")
                 .gsakSaksid("gsak1234")
                 .journalpostId("journalpost1234")
+                .behandlendeEnhetId("behandlendeEnhet1234")
                 .aktivTil(aktivTil)
                 .build();
 

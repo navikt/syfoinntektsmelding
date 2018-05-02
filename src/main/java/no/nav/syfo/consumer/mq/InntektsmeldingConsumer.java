@@ -2,11 +2,15 @@ package no.nav.syfo.consumer.mq;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.melding.virksomhet.dokumentnotifikasjon.v1.XMLForsendelsesinformasjon;
-import no.nav.syfo.consumer.ws.*;
+import no.nav.syfo.consumer.ws.BehandleInngaaendeJournalConsumer;
+import no.nav.syfo.consumer.ws.BehandleSakConsumer;
+import no.nav.syfo.consumer.ws.InngaaendeJournalConsumer;
+import no.nav.syfo.consumer.ws.JournalConsumer;
 import no.nav.syfo.domain.InngaendeJournalpost;
 import no.nav.syfo.domain.Inntektsmelding;
 import no.nav.syfo.domain.Oppgave;
 import no.nav.syfo.domain.SyfoException;
+import no.nav.syfo.service.JournalpostService;
 import no.nav.syfo.service.PeriodeService;
 import no.nav.syfo.service.SaksbehandlingService;
 import no.nav.syfo.util.JAXB;
@@ -32,14 +36,16 @@ public class InntektsmeldingConsumer {
     private BehandleSakConsumer behandleSakConsumer;
     private SaksbehandlingService saksbehandlingService;
     private BehandleInngaaendeJournalConsumer behandleInngaaendeJournalConsumer;
+    private JournalpostService journalpostService;
 
-    public InntektsmeldingConsumer(InngaaendeJournalConsumer inngaaendeJournalConsumer, JournalConsumer journalConsumer, BehandleSakConsumer behandleSakConsumer, SaksbehandlingService saksbehandlingService, BehandleInngaaendeJournalConsumer behandleInngaaendeJournalConsumer, ArbeidsfordelingConsumer arbeidsfordelingConsumer, OppgavebehandlingConsumer oppgavebehandlingConsumer, PeriodeService periodeService) {
+    public InntektsmeldingConsumer(InngaaendeJournalConsumer inngaaendeJournalConsumer, JournalConsumer journalConsumer, BehandleSakConsumer behandleSakConsumer, SaksbehandlingService saksbehandlingService, BehandleInngaaendeJournalConsumer behandleInngaaendeJournalConsumer, PeriodeService periodeService, JournalpostService journalpostService) {
         this.inngaaendeJournalConsumer = inngaaendeJournalConsumer;
         this.journalConsumer = journalConsumer;
         this.behandleSakConsumer = behandleSakConsumer;
         this.saksbehandlingService = saksbehandlingService;
         this.behandleInngaaendeJournalConsumer = behandleInngaaendeJournalConsumer;
         this.periodeService = periodeService;
+        this.journalpostService = journalpostService;
     }
 
     @Transactional
@@ -63,20 +69,20 @@ public class InntektsmeldingConsumer {
 
             if (!periodeService.erSendtInnSoknadForPeriode()) {
                 String saksId = behandleSakConsumer.opprettSak(inntektsmelding.getFnr());
-                Oppgave oppgave = saksbehandlingService.opprettOppgave(
+                saksbehandlingService.opprettOppgave(
                         inntektsmelding.getFnr(),
                         Oppgave.builder()
                                 .journalpostId(journalpostId)
                                 .gsakSaksid(saksId)
                                 .beskrivelse("Det har kommet en inntektsmelding på sykepenger.")
+                                // TODO: Hva skal aktivTil være?
                                 .aktivTil(LocalDate.of(2018, 5, 1))
                                 .build());
-                behandleInngaaendeJournalConsumer.ferdigstillJournalpost(InngaendeJournalpost.builder()
-                        .journalpostId(journalpostId)
-                        .dokumentId(dokumentId)
-                        .behandlendeEnhetId(oppgave.getBehandlendeEnhetId())
-                        .build()
-                );
+
+                InngaendeJournalpost journalpost = journalpostService.hentInngaendeJournalpost(journalpostId, saksId);
+
+                behandleInngaaendeJournalConsumer.oppdaterJournalpost(journalpost);
+                behandleInngaaendeJournalConsumer.ferdigstillJournalpost(journalpost);
             }
 
         } catch (JMSException e) {

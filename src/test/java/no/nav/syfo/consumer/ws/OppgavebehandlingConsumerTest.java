@@ -40,6 +40,7 @@ public class OppgavebehandlingConsumerTest {
                         .gsakSaksid("gsakid")
                         .beskrivelse("Beskrivelse")
                         .journalpostId("journalpostid")
+                        .behandlendeEnhetId("behandlendeenhet1234")
                         .aktivTil(LocalDate.of(2018, 1, 1))
                         .build(),
                 beskrivelse);

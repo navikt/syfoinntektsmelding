@@ -51,6 +51,7 @@ public class OppgavebehandlingConsumer {
                     .withOpprettOppgave(new WSOpprettOppgave()
                             .withBrukerId(fnr)
                             .withBrukertypeKode("PERSON")
+                            // TODO: I diagrammet står det at typen skal være "Eletronisk inntektsmelding", hva skal den være?
                             .withOppgavetypeKode("INNT_SYK")
                             .withFagomradeKode("SYK")
                             .withUnderkategoriKode("SYK_SYK")

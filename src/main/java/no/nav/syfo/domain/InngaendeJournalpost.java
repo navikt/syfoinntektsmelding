@@ -8,7 +8,9 @@ import lombok.Value;
 @Builder
 @Getter
 public class InngaendeJournalpost {
+    String fnr;
     String journalpostId;
     String dokumentId;
     String behandlendeEnhetId;
+    String gsakId;
 }

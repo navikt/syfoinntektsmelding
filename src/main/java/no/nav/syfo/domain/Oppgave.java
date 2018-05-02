@@ -19,8 +19,9 @@ public class Oppgave {
     String journalpostId;
     @NonNull
     LocalDate aktivTil;
+    @NonNull
+    String behandlendeEnhetId;
 
     String oppgaveId;
     String geografiskTilknytning;
-    String behandlendeEnhetId;
 }

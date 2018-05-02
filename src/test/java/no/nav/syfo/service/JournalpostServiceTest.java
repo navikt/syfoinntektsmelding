@@ -37,14 +37,15 @@ public class JournalpostServiceTest {
         final String dokumentId = "dokumentId";
         final String geografiskTilknytningId = "geografiskTilknytningId";
         final String fnr = "fnr";
+        final String gsakId = "gsakId";
         when(inngaaendeJournalConsumer.hentDokumentId(journalpostId)).thenReturn(dokumentId);
         when(journalConsumer.hentInntektsmelding(journalpostId, dokumentId)).thenReturn(Inntektsmelding.builder().fnr(fnr).build());
         when(personConsumer.hentGeografiskTilknytning(fnr)).thenReturn(geografiskTilknytningId);
         when(arbeidsfordelingConsumer.finnBehandlendeEnhet(geografiskTilknytningId)).thenReturn(behandlendeEnhetId);
 
-        InngaendeJournalpost inngaendeJournalpost = journalpostService.hentInngaendeJournalpost(journalpostId);
+        InngaendeJournalpost inngaendeJournalpost = journalpostService.hentInngaendeJournalpost(journalpostId, gsakId);
 
-        assertThat(inngaendeJournalpost).isEqualTo(InngaendeJournalpost.builder().journalpostId(journalpostId).behandlendeEnhetId(behandlendeEnhetId).dokumentId(dokumentId).build());
+        assertThat(inngaendeJournalpost).isEqualTo(InngaendeJournalpost.builder().fnr(fnr).journalpostId(journalpostId).behandlendeEnhetId(behandlendeEnhetId).dokumentId(dokumentId).gsakId(gsakId).build());
     }
 
 }

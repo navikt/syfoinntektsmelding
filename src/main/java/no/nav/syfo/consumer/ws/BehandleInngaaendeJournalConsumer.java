@@ -16,6 +16,36 @@ public class BehandleInngaaendeJournalConsumer {
         this.behandleInngaaendeJournalV1 = behandleInngaaendeJournalV1;
     }
 
+    public void oppdaterJournalpost(InngaendeJournalpost inngaendeJournalpost) {
+        String journalpostId = inngaendeJournalpost.getJournalpostId();
+
+        WSInngaaendeJournalpost inngaaendeJournalpost = new WSInngaaendeJournalpost()
+                .withJournalpostId(journalpostId)
+                .withBruker(new WSPerson().withIdent(inngaendeJournalpost.getFnr()))
+                .withArkivSak(new WSArkivSak().withArkivSakId(inngaendeJournalpost.getGsakId()).withArkivSakSystem("FS22"));
+
+        try {
+            behandleInngaaendeJournalV1.oppdaterJournalpost(new WSOppdaterJournalpostRequest()
+                    .withInngaaendeJournalpost(inngaaendeJournalpost)
+            );
+        } catch (OppdaterJournalpostUgyldigInput e) {
+            log.error("Feil ved oppdatering av journalpost: {} - Ugyldig input!", journalpostId, e);
+            throw new SyfoException("Feil ved oppdatering av journalpost: " + journalpostId + " - Ugyldig input!", e);
+        } catch (OppdaterJournalpostObjektIkkeFunnet e) {
+            log.error("Feil ved oppdatering av journalpost: {} - Journalpost ikke funnet!", journalpostId, e);
+            throw new SyfoException("Feil ved oppdatering av journalpost: " + journalpostId + " Journalpost ikke funnet!", e);
+        } catch (OppdaterJournalpostOppdateringIkkeMulig e) {
+            log.error("Feil ved oppdatering av journalpost: {} - Oppdatering ikke mulig!", journalpostId, e);
+            throw new SyfoException("Feil ved oppdatering av journalpost: " + journalpostId + " - Oppdatering ikke mulig!", e);
+        } catch (OppdaterJournalpostJournalpostIkkeInngaaende e) {
+            log.error("Feil ved oppdatering av journalpost: {} - Journalpost er ikke inngående!", journalpostId, e);
+            throw new SyfoException("Feil ved oppdatering av journalpost: " + journalpostId + " - Journalpost er ikke inngående!", e);
+        } catch (OppdaterJournalpostSikkerhetsbegrensning e) {
+            log.error("Feil ved oppdatering av journalpost: {} - Sikkerhetsbegrensning!", journalpostId, e);
+            throw new SyfoException("Feil ved oppdatering av journalpost: " + journalpostId + " - Sikkerhetsbegrensning!", e);
+        }
+    }
+
     public void ferdigstillJournalpost(InngaendeJournalpost inngaendeJournalpost) {
         String journalpostId = inngaendeJournalpost.getJournalpostId();
         try {
