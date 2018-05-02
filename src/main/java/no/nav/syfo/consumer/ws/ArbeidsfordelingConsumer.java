@@ -42,6 +42,9 @@ public class ArbeidsfordelingConsumer {
         } catch (FinnBehandlendeEnhetListeUgyldigInput e) {
             log.error("Feil ved henting av brukers forvaltningsenhet", e);
             throw new RuntimeException("Feil ved henting av brukers forvaltningsenhet", e);
+        } catch (RuntimeException e) {
+            log.error("Klarte ikke å hente behandlende enghet!", e);
+            throw new RuntimeException(e);
         }
     }
 }
