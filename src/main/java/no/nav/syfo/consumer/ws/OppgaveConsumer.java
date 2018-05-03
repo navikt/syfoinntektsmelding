@@ -24,7 +24,8 @@ public class OppgaveConsumer {
 
     public WSOppgave finnOppgave(String oppgaveId) {
         if (isEmpty(oppgaveId)) {
-            return null;
+            log.error("Prøvde å finne oppgave med tom oppgave id");
+            throw new RuntimeException("Prøvde å finne oppgave med tom oppgave id");
         }
 
         try {
@@ -32,8 +33,8 @@ public class OppgaveConsumer {
             log.info("Hentet oppgave: {}", oppgaveId);
             return oppgave;
         } catch (HentOppgaveOppgaveIkkeFunnet e) {
-            log.warn("Fant ikke oppgave med id " + oppgaveId);
-            return null;
+            log.warn("Fant ikke oppgave med id {}", oppgaveId);
+            throw new RuntimeException("Fant ikke oppgave med id " + oppgaveId);
         }
     }
 }
