@@ -1,4 +1,4 @@
-package no.nav.syfo.ws;
+package no.nav.syfo.consumer.util.ws;
 
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.message.Message;

@@ -1,4 +1,4 @@
-package no.nav.syfo.ws;
+package no.nav.syfo.consumer.util.ws;
 
 import org.apache.cxf.binding.soap.SoapHeader;
 import org.apache.cxf.binding.soap.SoapMessage;

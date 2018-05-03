@@ -32,6 +32,26 @@ fasitResources:
     resourceType: restservice
     path: /api
   used:
+  - alias: inngaaendejournal_v1
+    resourceType: webserviceendpoint
+  - alias: behandleinngaaendejournal_v1
+    resourceType: webserviceendpoint
+  - alias: virksomhet:BehandleSak_v1
+    resourceType: webserviceendpoint
+  - alias: journal_v3
+    resourceType: webserviceendpoint
+  - alias: virksomhet:Arbeidsfordeling_v1
+    resourceType: webserviceendpoint
+  - alias: virksomhet:Person_v3
+    resourceType: webserviceendpoint
+  - alias: virksomhet:Oppgave_v3
+    resourceType: webserviceendpoint
+  - alias: virksomhet:Oppgavebehandling_v3
+    resourceType: webserviceendpoint
+  - alias: servicegateway
+    resourceType: webservicegateway
+    propertyMap:
+      url: SERVICEGATEWAY_URL
   - alias: srvSyfomottak
     resourceType: credential
   - alias: isso-jwks

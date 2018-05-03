@@ -16,11 +16,15 @@ import static javax.xml.bind.Marshaller.*;
 public final class JAXB {
 
     private static final JAXBContext FORSENDELSESINFORMASJON;
+    private static final JAXBContext INNTEKTSMELDING;
 
     static {
         try {
             FORSENDELSESINFORMASJON = newInstance(
                     ObjectFactory.class
+            );
+            INNTEKTSMELDING = newInstance(
+                    no.seres.xsd.nav.inntektsmelding_m._20171205.ObjectFactory.class
             );
         } catch (JAXBException e) {
             throw new RuntimeException(e);
@@ -49,4 +53,14 @@ public final class JAXB {
             throw new RuntimeException(e);
         }
     }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T unmarshalInntektsmelding(String melding) {
+        try {
+            return (T) INNTEKTSMELDING.createUnmarshaller().unmarshal(new StringReader(melding));
+        } catch (JAXBException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }
