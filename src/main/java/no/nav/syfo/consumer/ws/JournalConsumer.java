@@ -2,7 +2,6 @@ package no.nav.syfo.consumer.ws;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.syfo.domain.Inntektsmelding;
-import no.nav.syfo.domain.SyfoException;
 import no.nav.syfo.util.JAXB;
 import no.nav.tjeneste.virksomhet.journal.v2.*;
 import no.seres.xsd.nav.inntektsmelding_m._20171205.InntektsmeldingM;
@@ -38,10 +37,10 @@ public class JournalConsumer {
                     .build();
         } catch (HentDokumentSikkerhetsbegrensning e) {
             log.error("Feil ved henting av dokument: Sikkerhetsbegrensning!");
-            throw new SyfoException("Feil ved henting av dokument: Sikkerhetsbegrensning!", e);
+            throw new RuntimeException("Feil ved henting av dokument: Sikkerhetsbegrensning!", e);
         } catch (HentDokumentDokumentIkkeFunnet e) {
             log.error("Feil ved henting av dokument: Dokument ikke funnet!");
-            throw new SyfoException("Feil ved henting av journalpost: Dokument ikke funnet!", e);
+            throw new RuntimeException("Feil ved henting av journalpost: Dokument ikke funnet!", e);
         } catch (RuntimeException e) {
             log.error("Klarte ikke å hente inntektsmelding med journalpostId: {} og dokumentId: {}", journalpostId, dokumentId, e);
             throw new RuntimeException(e);
