@@ -9,7 +9,6 @@ import no.nav.syfo.consumer.ws.JournalConsumer;
 import no.nav.syfo.domain.InngaendeJournalpost;
 import no.nav.syfo.domain.Inntektsmelding;
 import no.nav.syfo.domain.Oppgave;
-import no.nav.syfo.domain.SyfoException;
 import no.nav.syfo.service.JournalpostService;
 import no.nav.syfo.service.PeriodeService;
 import no.nav.syfo.service.SaksbehandlingService;
@@ -80,7 +79,7 @@ public class InntektsmeldingConsumer {
 
         } catch (JMSException e) {
             log.error("Feil med parsing av inntektsmelding fra kø", e);
-            throw new SyfoException("Feil ved lesing av melding", e);
+            throw new RuntimeException("Feil ved lesing av melding", e);
         }
     }
 
