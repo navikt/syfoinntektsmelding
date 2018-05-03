@@ -37,13 +37,13 @@ public class ArbeidsfordelingConsumer {
                     .map(WSOrganisasjonsenhet::getEnhetId)
                     .findFirst()
                     .orElseThrow(() -> new RuntimeException("Fant ingen aktiv enhet for " + geografiskTilknytning));
-            log.info("Fannt behandlende enhet: {} for geografisk tilknytning: {}", behandlendeEnhet, geografiskTilknytning);
+            log.info("Fant behandlende enhet: {} for geografisk tilknytning: {}", behandlendeEnhet, geografiskTilknytning);
             return behandlendeEnhet;
         } catch (FinnBehandlendeEnhetListeUgyldigInput e) {
             log.error("Feil ved henting av brukers forvaltningsenhet", e);
             throw new RuntimeException("Feil ved henting av brukers forvaltningsenhet", e);
         } catch (RuntimeException e) {
-            log.error("Klarte ikke å hente behandlende enghet!", e);
+            log.error("Klarte ikke å hente behandlende enhet!", e);
             throw new RuntimeException(e);
         }
     }
