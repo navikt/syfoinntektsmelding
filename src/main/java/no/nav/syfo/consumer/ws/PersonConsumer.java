@@ -32,7 +32,7 @@ public class PersonConsumer {
                             .withAktoer(new PersonIdent().withIdent(new NorskIdent().withIdent(fnr)))))
                     .map(HentGeografiskTilknytningResponse::getGeografiskTilknytning)
                     .map(GeografiskTilknytning::getGeografiskTilknytning)
-                    .orElse(null);
+                    .orElseThrow(() -> new RuntimeException("Kunne ikke hente geografisk tilknytning"));
             log.info("Hentet geografisk tilknytning: {}", geografiskTilknytning);
             return geografiskTilknytning;
         } catch (HentGeografiskTilknytningSikkerhetsbegrensing | HentGeografiskTilknytningPersonIkkeFunnet e) {
