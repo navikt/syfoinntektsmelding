@@ -54,10 +54,6 @@ fasitResources:
       url: SERVICEGATEWAY_URL
   - alias: srvSyfomottak
     resourceType: credential
-  - alias: abac.pdp.endpoint
-    resourceType: restservice
-    propertyMap:
-      url: ABAC_URL
   - alias: isso-jwks
     resourceType: baseurl
   - alias: isso-issuer
@@ -70,9 +66,3 @@ fasitResources:
     resourceType: queue
   - alias: securityTokenService
     resourceType: baseurl
-  - alias: syfoserviceDB
-    resourceType: datasource
-    propertyMap:
-      url: SPRING_DATASOURCE_URL
-      username: SPRING_DATASOURCE_USERNAME
-      password: SPRING_DATASOURCE_PASSWORD

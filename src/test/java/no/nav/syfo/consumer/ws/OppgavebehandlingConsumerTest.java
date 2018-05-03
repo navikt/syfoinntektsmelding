@@ -52,7 +52,7 @@ public class OppgavebehandlingConsumerTest {
     }
 
     @Test
-    public void opprettOppgave() throws Exception {
+    public void opprettOppgave() {
         when(oppgavebehandlingV3.opprettOppgave(any())).thenReturn(new WSOpprettOppgaveResponse().withOppgaveId("1234"));
         ArgumentCaptor<WSOpprettOppgaveRequest> captor = ArgumentCaptor.forClass(WSOpprettOppgaveRequest.class);
 

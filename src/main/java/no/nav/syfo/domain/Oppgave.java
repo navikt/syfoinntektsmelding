@@ -15,7 +15,6 @@ public class Oppgave {
     String journalpostId;
     LocalDate aktivTil;
     String behandlendeEnhetId;
-
     String oppgaveId;
     String geografiskTilknytning;
 }

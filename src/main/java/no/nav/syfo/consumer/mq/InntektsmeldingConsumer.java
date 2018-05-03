@@ -14,7 +14,6 @@ import no.nav.syfo.service.JournalpostService;
 import no.nav.syfo.service.PeriodeService;
 import no.nav.syfo.service.SaksbehandlingService;
 import no.nav.syfo.util.JAXB;
-import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,7 +48,7 @@ public class InntektsmeldingConsumer {
     }
 
     @Transactional
-    @JmsListener(id = "inntektsmelding_listener", containerFactory = "jmsListenerContainerFactory", destination = "inntektsmeldingQueue")
+    // @JmsListener(id = "inntektsmelding_listener", containerFactory = "jmsListenerContainerFactory", destination = "inntektsmeldingQueue")
     public void listen(Object message) {
 
         TextMessage textMessage = (TextMessage) message;
@@ -69,30 +68,28 @@ public class InntektsmeldingConsumer {
 
             if (!periodeService.erSendtInnSoknadForPeriode()) {
                 String saksId = behandleSakConsumer.opprettSak(inntektsmelding.getFnr());
-                saksbehandlingService.opprettOppgave(
-                        inntektsmelding.getFnr(),
-                        Oppgave.builder()
-                                .journalpostId(journalpostId)
-                                .gsakSaksid(saksId)
-                                .beskrivelse("Det har kommet en inntektsmelding på sykepenger.")
-                                .aktivTil(LocalDate.now().plusDays(7))
-                                .build());
 
-                InngaendeJournalpost journalpost = journalpostService.hentInngaendeJournalpost(journalpostId, saksId, inntektsmelding.getArbeidsgiverOrgnummer());
+                saksbehandlingService.opprettOppgave(inntektsmelding.getFnr(), byggOppgave(journalpostId, saksId));
 
+                InngaendeJournalpost journalpost = journalpostService.hentInngaendeJournalpost(journalpostId, saksId, inntektsmelding);
                 behandleInngaaendeJournalConsumer.oppdaterJournalpost(journalpost);
                 behandleInngaaendeJournalConsumer.ferdigstillJournalpost(journalpost);
             }
 
-            log.info("behandlet melding om inntektskjema - arkivid: {}, arkivsystem: {}, tema: {}, behandingstema: {}",
-                    info.getArkivId(),
-                    info.getArkivsystem(),
-                    info.getTema().getValue(),
-                    info.getBehandlingstema().getValue());
+            log.info("Behandlet melding om inntektskjema - journalpost: {}", journalpostId);
 
         } catch (JMSException e) {
             log.error("Feil med parsing av inntektsmelding fra kø", e);
             throw new SyfoException("Feil ved lesing av melding", e);
         }
+    }
+
+    private Oppgave byggOppgave(String journalpostId, String saksId) {
+        return Oppgave.builder()
+                .journalpostId(journalpostId)
+                .gsakSaksid(saksId)
+                .beskrivelse("Det har kommet en inntektsmelding på sykepenger.")
+                .aktivTil(LocalDate.now().plusDays(7))
+                .build();
     }
 }

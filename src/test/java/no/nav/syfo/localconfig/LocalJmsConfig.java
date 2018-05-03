@@ -19,7 +19,7 @@ import javax.naming.NamingException;
 public class LocalJmsConfig {
 
     @Bean(name = "jmsListenerContainerFactory")
-    public DefaultJmsListenerContainerFactory jmsListenerContainerFactory(ConnectionFactory xaJmsConnectionFactory, Destination destination, PlatformTransactionManager platformTransactionManager) throws NamingException {
+    public DefaultJmsListenerContainerFactory jmsListenerContainerFactory(ConnectionFactory xaJmsConnectionFactory, Destination destination, PlatformTransactionManager platformTransactionManager) {
         DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
         factory.setConnectionFactory(xaJmsConnectionFactory);
         factory.setDestinationResolver((session, s, b) -> destination);
@@ -29,7 +29,7 @@ public class LocalJmsConfig {
     }
 
     @Bean
-    public Destination inntektsmeldingDestination() throws NamingException {
+    public Destination inntektsmeldingDestination() {
         return new ActiveMQQueue("inntektsmelding");
     }
 

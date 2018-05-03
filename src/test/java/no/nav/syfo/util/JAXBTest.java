@@ -54,7 +54,7 @@ public class JAXBTest {
     }
 
     @Test
-    public void unmarshalInntektsmelding() throws Exception {
+    public void unmarshalInntektsmelding() {
         JAXBElement<InntektsmeldingM> inntektsmeldingM = JAXB.unmarshalInntektsmelding(getInntektsmelding());
         assertThat(inntektsmeldingM.getValue().getSkjemainnhold().getArbeidsgiver().getVirksomhetsnummer()).isEqualTo("910969900");
     }

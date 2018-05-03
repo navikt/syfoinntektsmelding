@@ -29,7 +29,6 @@ public class JournalConsumer {
         try {
             final byte[] inntektsmeldingRAW = journalV2.hentDokument(request).getDokument();
             String inntektsmelding = new String(inntektsmeldingRAW);
-
             JAXBElement<InntektsmeldingM> inntektsmeldingM = JAXB.unmarshalInntektsmelding(inntektsmelding);
 
             log.info("Inntektsmelding med arbeidsgiver: {}", inntektsmeldingM.getValue().getSkjemainnhold().getArbeidsgiver().getJuridiskEnhet());

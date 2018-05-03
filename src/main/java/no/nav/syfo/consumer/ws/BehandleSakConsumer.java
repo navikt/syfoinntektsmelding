@@ -36,7 +36,6 @@ public class BehandleSakConsumer {
         } catch (OpprettSakSakEksistererAllerede e) {
             log.error("Sak finnes allerede", e);
             throw new RuntimeException("Sak finnes allerede", e);
-
         } catch (OpprettSakUgyldigInput e) {
             log.error("Ugyldig input", e);
             throw new RuntimeException("Ugyldid input i sak", e);

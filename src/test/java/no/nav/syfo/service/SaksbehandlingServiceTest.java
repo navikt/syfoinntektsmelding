@@ -31,7 +31,7 @@ public class SaksbehandlingServiceTest {
     private SaksbehandlingService saksbehandlingService;
 
     @Test
-    public void opprettOppgave() throws Exception {
+    public void opprettOppgave() {
         when(personConsumer.hentGeografiskTilknytning(anyString())).thenReturn("Geografisktilknytning");
         when(arbeidsfordelingConsumer.finnBehandlendeEnhet(anyString())).thenReturn("behandlendeenhet1234");
         when(oppgavebehandlingConsumer.opprettOppgave(anyString(), any())).thenReturn("1234");

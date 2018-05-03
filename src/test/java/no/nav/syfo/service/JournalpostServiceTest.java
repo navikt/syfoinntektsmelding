@@ -2,7 +2,6 @@ package no.nav.syfo.service;
 
 import no.nav.syfo.consumer.ws.ArbeidsfordelingConsumer;
 import no.nav.syfo.consumer.ws.InngaaendeJournalConsumer;
-import no.nav.syfo.consumer.ws.JournalConsumer;
 import no.nav.syfo.consumer.ws.PersonConsumer;
 import no.nav.syfo.domain.InngaendeJournalpost;
 import no.nav.syfo.domain.Inntektsmelding;
@@ -21,8 +20,6 @@ public class JournalpostServiceTest {
     @Mock
     private InngaaendeJournalConsumer inngaaendeJournalConsumer;
     @Mock
-    private JournalConsumer journalConsumer;
-    @Mock
     private PersonConsumer personConsumer;
     @Mock
     private ArbeidsfordelingConsumer arbeidsfordelingConsumer;
@@ -31,7 +28,7 @@ public class JournalpostServiceTest {
     private JournalpostService journalpostService;
 
     @Test
-    public void hentInngaendeJournalpost() throws Exception {
+    public void hentInngaendeJournalpost() {
         final String journalpostId = "journalpostId";
         final String behandlendeEnhetId = "behandlendeEnhetId";
         final String dokumentId = "dokumentId";
@@ -41,11 +38,10 @@ public class JournalpostServiceTest {
         final String orgnummer = "orgnummer";
 
         when(inngaaendeJournalConsumer.hentDokumentId(journalpostId)).thenReturn(dokumentId);
-        when(journalConsumer.hentInntektsmelding(journalpostId, dokumentId)).thenReturn(Inntektsmelding.builder().fnr(fnr).build());
         when(personConsumer.hentGeografiskTilknytning(fnr)).thenReturn(geografiskTilknytningId);
         when(arbeidsfordelingConsumer.finnBehandlendeEnhet(geografiskTilknytningId)).thenReturn(behandlendeEnhetId);
 
-        InngaendeJournalpost inngaendeJournalpost = journalpostService.hentInngaendeJournalpost(journalpostId, gsakId, orgnummer);
+        InngaendeJournalpost inngaendeJournalpost = journalpostService.hentInngaendeJournalpost(journalpostId, gsakId, Inntektsmelding.builder().fnr(fnr).arbeidsgiverOrgnummer(orgnummer).build());
 
         assertThat(inngaendeJournalpost).isEqualTo(InngaendeJournalpost.builder().fnr(fnr).journalpostId(journalpostId).behandlendeEnhetId(behandlendeEnhetId).dokumentId(dokumentId).gsakId(gsakId).arbeidsgiverOrgnummer(orgnummer).build());
     }

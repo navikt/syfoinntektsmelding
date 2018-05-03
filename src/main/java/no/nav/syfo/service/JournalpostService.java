@@ -3,9 +3,9 @@ package no.nav.syfo.service;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.syfo.consumer.ws.ArbeidsfordelingConsumer;
 import no.nav.syfo.consumer.ws.InngaaendeJournalConsumer;
-import no.nav.syfo.consumer.ws.JournalConsumer;
 import no.nav.syfo.consumer.ws.PersonConsumer;
 import no.nav.syfo.domain.InngaendeJournalpost;
+import no.nav.syfo.domain.Inntektsmelding;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -13,32 +13,29 @@ import org.springframework.stereotype.Component;
 public class JournalpostService {
 
     private InngaaendeJournalConsumer inngaaendeJournalConsumer;
-    private JournalConsumer journalConsumer;
     private PersonConsumer personConsumer;
     private ArbeidsfordelingConsumer arbeidsfordelingConsumer;
 
-    public JournalpostService(InngaaendeJournalConsumer inngaaendeJournalConsumer, JournalConsumer journalConsumer, ArbeidsfordelingConsumer arbeidsfordelingConsumer, PersonConsumer personConsumer) {
+    public JournalpostService(InngaaendeJournalConsumer inngaaendeJournalConsumer, ArbeidsfordelingConsumer arbeidsfordelingConsumer, PersonConsumer personConsumer) {
         this.inngaaendeJournalConsumer = inngaaendeJournalConsumer;
-        this.journalConsumer = journalConsumer;
         this.personConsumer = personConsumer;
         this.arbeidsfordelingConsumer = arbeidsfordelingConsumer;
     }
 
-    public InngaendeJournalpost hentInngaendeJournalpost(String journalpostId, String gsakId, String orgnummer) {
+    public InngaendeJournalpost hentInngaendeJournalpost(String journalpostId, String gsakId, Inntektsmelding inntektsmelding) {
         String dokumentId = inngaaendeJournalConsumer.hentDokumentId(journalpostId);
-        String fnr = journalConsumer.hentInntektsmelding(journalpostId, dokumentId).getFnr();
-        String geografiskTilknytning = personConsumer.hentGeografiskTilknytning(fnr);
+        String geografiskTilknytning = personConsumer.hentGeografiskTilknytning(inntektsmelding.getFnr());
         String behandlendeEnhetId = arbeidsfordelingConsumer.finnBehandlendeEnhet(geografiskTilknytning);
 
         log.info("Hentet journalpost: ", journalpostId);
 
         return InngaendeJournalpost.builder()
-                .fnr(fnr)
+                .fnr(inntektsmelding.getFnr())
                 .gsakId(gsakId)
                 .journalpostId(journalpostId)
                 .dokumentId(dokumentId)
                 .behandlendeEnhetId(behandlendeEnhetId)
-                .arbeidsgiverOrgnummer(orgnummer)
+                .arbeidsgiverOrgnummer(inntektsmelding.getArbeidsgiverOrgnummer())
                 .build();
     }
 }
