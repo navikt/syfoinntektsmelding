@@ -44,6 +44,7 @@
         <javax.inject.version>1</javax.inject.version>
         <spring-boot.version>2.0.0.RELEASE</spring-boot.version>
         <spring.version>5.0.4.RELEASE</spring.version>
+        <ojdbc8.version>12.2.0.1</ojdbc8.version>
         <jose4j.version>0.5.0</jose4j.version>
         <abac-spring.version>1.4.1</abac-spring.version>
         <logstash-logback-encoder.version>4.10</logstash-logback-encoder.version>
@@ -55,6 +56,8 @@
         <mockito-all.version>2.15.0</mockito-all.version>
         <powermock.version>1.6.3</powermock.version>
         <assertj-core.version>3.6.2</assertj-core.version>
+        <h2.version>1.4.196</h2.version>
+        <flyway-core.version>5.0.7</flyway-core.version>
         <cxf.version>3.2.0</cxf.version>
         <inngaaendeJournal.version>1.3</inngaaendeJournal.version>
         <behandleInngaaendeJournal.version>1.1</behandleInngaaendeJournal.version>
@@ -75,6 +78,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
+            <version>${spring-boot.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
             <version>${spring-boot.version}</version>
         </dependency>
 
@@ -103,6 +111,24 @@
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-ws-policy</artifactId>
             <version>${cxf.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>ojdbc8</artifactId>
+            <version>${ojdbc8.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${h2.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+            <version>${flyway-core.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
