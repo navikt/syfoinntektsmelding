@@ -69,11 +69,15 @@ public class InntektsmeldingConsumer {
             Inntektsmelding inntektsmelding = journalConsumer.hentInntektsmelding(journalpostId, dokumentId);
 
             Optional<Sykepengesoknad> sykepengesoknad = sykepengesoknadDAO.finnSykepengesoknad(journalpostId);
+
+            Optional<Oppgave> oppgave = sykepengesoknad.isPresent()
+                    ? oppgaveConsumer.finnOppgave(sykepengesoknad.get().getOppgaveId())
+                    : Optional.empty();
+
             String saksId = sykepengesoknad.isPresent() && sykepengesoknad.get().getStatus().equals("APEN")
                     ? behandleSakConsumer.opprettSak(inntektsmelding.getFnr())
                     : sykepengesoknad.get().getSaksId();
 
-            Optional<Oppgave> oppgave = oppgaveConsumer.finnOppgave(sykepengesoknad.get().getOppgaveId());
             if (oppgave.isPresent() && oppgave.get().getStatus().equals("APEN")) {
                 oppgavebehandlingConsumer.oppdaterOppgavebeskrivelse(oppgave.get(), "Det har kommet en inntektsmelding på sykepenger.");
                 log.info("Fant eksisterende åpen oppgave. Oppdaterete beskrivelsen.");
@@ -82,9 +86,7 @@ public class InntektsmeldingConsumer {
                 log.info("Fant ikke eksisterende åpen oppgave. Opprettet ny oppgave.");
             }
 
-            InngaendeJournalpost journalpost = journalpostService.hentInngaendeJournalpost(journalpostId, saksId, inntektsmelding);
-            behandleInngaaendeJournalConsumer.oppdaterJournalpost(journalpost);
-            behandleInngaaendeJournalConsumer.ferdigstillJournalpost(journalpost);
+            ferdigstillJournalpost(journalpostId, inntektsmelding, saksId);
 
             log.info("Behandlet melding om inntektskjema - journalpost: {}", journalpostId);
 
@@ -92,6 +94,12 @@ public class InntektsmeldingConsumer {
             log.error("Feil med parsing av inntektsmelding fra kø", e);
             throw new RuntimeException("Feil ved lesing av melding", e);
         }
+    }
+
+    private void ferdigstillJournalpost(String journalpostId, Inntektsmelding inntektsmelding, String saksId) {
+        InngaendeJournalpost journalpost = journalpostService.hentInngaendeJournalpost(journalpostId, saksId, inntektsmelding);
+        behandleInngaaendeJournalConsumer.oppdaterJournalpost(journalpost);
+        behandleInngaaendeJournalConsumer.ferdigstillJournalpost(journalpost);
     }
 
     private Oppgave byggOppgave(String journalpostId, String saksId) {
