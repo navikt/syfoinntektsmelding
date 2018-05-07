@@ -10,4 +10,5 @@ import lombok.Value;
 public class Inntektsmelding {
     String fnr;
     String arbeidsgiverOrgnummer;
+    String journalpostId;
 }

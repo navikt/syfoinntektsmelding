@@ -34,6 +34,7 @@ public class JournalConsumer {
             return Inntektsmelding.builder()
                     .fnr(inntektsmeldingM.getValue().getSkjemainnhold().getArbeidstakerFnr())
                     .arbeidsgiverOrgnummer(inntektsmeldingM.getValue().getSkjemainnhold().getArbeidsgiver().getVirksomhetsnummer())
+                    .journalpostId(journalpostId)
                     .build();
         } catch (HentDokumentSikkerhetsbegrensning e) {
             log.error("Feil ved henting av dokument: Sikkerhetsbegrensning!");

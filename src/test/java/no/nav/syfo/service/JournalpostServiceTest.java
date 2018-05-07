@@ -41,7 +41,7 @@ public class JournalpostServiceTest {
         when(personConsumer.hentGeografiskTilknytning(fnr)).thenReturn(geografiskTilknytningId);
         when(arbeidsfordelingConsumer.finnBehandlendeEnhet(geografiskTilknytningId)).thenReturn(behandlendeEnhetId);
 
-        InngaendeJournalpost inngaendeJournalpost = journalpostService.hentInngaendeJournalpost(journalpostId, gsakId, Inntektsmelding.builder().fnr(fnr).arbeidsgiverOrgnummer(orgnummer).build());
+        InngaendeJournalpost inngaendeJournalpost = journalpostService.hentInngaendeJournalpost(gsakId, Inntektsmelding.builder().fnr(fnr).arbeidsgiverOrgnummer(orgnummer).journalpostId(journalpostId).build());
 
         assertThat(inngaendeJournalpost).isEqualTo(InngaendeJournalpost.builder().fnr(fnr).journalpostId(journalpostId).behandlendeEnhetId(behandlendeEnhetId).dokumentId(dokumentId).gsakId(gsakId).arbeidsgiverOrgnummer(orgnummer).build());
     }
