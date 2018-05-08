@@ -2,7 +2,9 @@ package no.nav.syfo.consumer.mq;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.melding.virksomhet.dokumentnotifikasjon.v1.XMLForsendelsesinformasjon;
+import no.nav.syfo.domain.Inntektsmelding;
 import no.nav.syfo.service.JournalpostService;
+import no.nav.syfo.service.SaksbehandlingService;
 import no.nav.syfo.util.JAXB;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,9 +21,11 @@ import static no.nav.syfo.util.MDCOperations.*;
 public class InntektsmeldingConsumer {
 
     private JournalpostService journalpostService;
+    private SaksbehandlingService saksbehandlingService;
 
-    public InntektsmeldingConsumer(JournalpostService journalpostService) {
+    public InntektsmeldingConsumer(JournalpostService journalpostService, SaksbehandlingService saksbehandlingService) {
         this.journalpostService = journalpostService;
+        this.saksbehandlingService = saksbehandlingService;
     }
 
     @Transactional
@@ -39,10 +43,14 @@ public class InntektsmeldingConsumer {
                     info.getTema().getValue(),
                     info.getBehandlingstema().getValue());
 
-            journalpostService.behandleJournalpost(info.getArkivId());
+
+            Inntektsmelding inntektsmelding = journalpostService.hentInntektsmelding(info.getArkivId());
+
+            String saksId = saksbehandlingService.behandleInntektsmelding(inntektsmelding);
+
+            journalpostService.ferdigstillJournalpost(saksId, inntektsmelding);
 
             log.info("Behandlet melding om inntektskjema - journalpost: {}", info.getArkivId());
-
         } catch (JMSException e) {
             log.error("Feil med parsing av inntektsmelding fra kø", e);
             throw new RuntimeException("Feil ved lesing av melding", e);

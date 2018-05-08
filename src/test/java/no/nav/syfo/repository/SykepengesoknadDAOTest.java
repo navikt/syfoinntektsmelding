@@ -45,7 +45,7 @@ public class SykepengesoknadDAOTest {
 
     @Test
     public void henterUtSykepengesoknad() {
-        final Sykepengesoknad sykepengesoknad = sykepengesoknadDAO.finnSykepengesoknad("journalpostid-1").get();
+        final Sykepengesoknad sykepengesoknad = sykepengesoknadDAO.hentSykepengesoknad("journalpostid-1").get();
 
         assertThat(sykepengesoknad.getUuid()).isEqualTo("uuid-1");
         assertThat(sykepengesoknad.getJournalpostId()).isEqualTo("journalpostid-1");

@@ -21,7 +21,7 @@ public class SykepengesoknadDAO {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
-    public Optional<Sykepengesoknad> finnSykepengesoknad(String journalpostId) {
+    public Optional<Sykepengesoknad> hentSykepengesoknad(String journalpostId) {
         Optional<Sykepengesoknad> resultat = Optional.ofNullable(namedParameterJdbcTemplate.queryForObject(
                 "SELECT * FROM SYKEPENGESOEKNAD WHERE JOURNALPOST_ID = :journalpostId",
                 new MapSqlParameterSource().addValue("journalpostId", journalpostId),

@@ -11,33 +11,31 @@ import org.springframework.stereotype.Component;
 public class JournalpostService {
 
     private InngaaendeJournalConsumer inngaaendeJournalConsumer;
-    private PersonConsumer personConsumer;
-    private ArbeidsfordelingConsumer arbeidsfordelingConsumer;
     private BehandleInngaaendeJournalConsumer behandleInngaaendeJournalConsumer;
     private JournalConsumer journalConsumer;
-    private PeriodeService periodeService;
+    private BehandlendeEnhetConsumer behandlendeEnhetConsumer;
 
-    public JournalpostService(InngaaendeJournalConsumer inngaaendeJournalConsumer, ArbeidsfordelingConsumer arbeidsfordelingConsumer, PersonConsumer personConsumer, BehandleInngaaendeJournalConsumer behandleInngaaendeJournalConsumer, JournalConsumer journalConsumer, PeriodeService periodeService) {
+    public JournalpostService(InngaaendeJournalConsumer inngaaendeJournalConsumer, BehandleInngaaendeJournalConsumer behandleInngaaendeJournalConsumer, JournalConsumer journalConsumer, BehandlendeEnhetConsumer behandlendeEnhetConsumer) {
         this.inngaaendeJournalConsumer = inngaaendeJournalConsumer;
-        this.personConsumer = personConsumer;
-        this.arbeidsfordelingConsumer = arbeidsfordelingConsumer;
         this.behandleInngaaendeJournalConsumer = behandleInngaaendeJournalConsumer;
         this.journalConsumer = journalConsumer;
-        this.periodeService = periodeService;
+        this.behandlendeEnhetConsumer = behandlendeEnhetConsumer;
     }
 
-    public void behandleJournalpost(String journalpostId) {
-        Inntektsmelding inntektsmelding = getInntektsmelding(journalpostId);
-        String saksId = periodeService.samleSaksinformasjon(inntektsmelding);
+    public Inntektsmelding hentInntektsmelding(String journalpostId) {
+        String dokumentId = inngaaendeJournalConsumer.hentDokumentId(journalpostId);
+        return journalConsumer.hentInntektsmelding(journalpostId, dokumentId);
+    }
+
+    public void ferdigstillJournalpost(String saksId, Inntektsmelding inntektsmelding) {
         InngaendeJournalpost journalpost = hentInngaendeJournalpost(saksId, inntektsmelding);
         behandleInngaaendeJournalConsumer.oppdaterJournalpost(journalpost);
         behandleInngaaendeJournalConsumer.ferdigstillJournalpost(journalpost);
     }
 
-    public InngaendeJournalpost hentInngaendeJournalpost(String gsakId, Inntektsmelding inntektsmelding) {
+    private InngaendeJournalpost hentInngaendeJournalpost(String gsakId, Inntektsmelding inntektsmelding) {
         String dokumentId = inngaaendeJournalConsumer.hentDokumentId(inntektsmelding.getJournalpostId());
-        String geografiskTilknytning = personConsumer.hentGeografiskTilknytning(inntektsmelding.getFnr());
-        String behandlendeEnhetId = arbeidsfordelingConsumer.finnBehandlendeEnhet(geografiskTilknytning);
+        String behandlendeEnhet = behandlendeEnhetConsumer.hentBehandlendeEnhet(inntektsmelding.getFnr());
 
         log.info("Hentet journalpost: ", inntektsmelding.getJournalpostId());
 
@@ -46,13 +44,8 @@ public class JournalpostService {
                 .gsakId(gsakId)
                 .journalpostId(inntektsmelding.getJournalpostId())
                 .dokumentId(dokumentId)
-                .behandlendeEnhetId(behandlendeEnhetId)
+                .behandlendeEnhetId(behandlendeEnhet)
                 .arbeidsgiverOrgnummer(inntektsmelding.getArbeidsgiverOrgnummer())
                 .build();
-    }
-
-    private Inntektsmelding getInntektsmelding(String journalpostId) {
-        String dokumentId = inngaaendeJournalConsumer.hentDokumentId(journalpostId);
-        return journalConsumer.hentInntektsmelding(journalpostId, dokumentId);
     }
 }
