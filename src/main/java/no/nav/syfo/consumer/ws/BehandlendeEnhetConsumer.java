@@ -3,10 +3,7 @@ package no.nav.syfo.consumer.ws;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.ArbeidsfordelingV1;
 import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.FinnBehandlendeEnhetListeUgyldigInput;
-import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.informasjon.WSArbeidsfordelingKriterier;
-import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.informasjon.WSGeografi;
-import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.informasjon.WSOrganisasjonsenhet;
-import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.informasjon.WSTema;
+import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.informasjon.*;
 import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.meldinger.WSFinnBehandlendeEnhetListeRequest;
 import no.nav.tjeneste.virksomhet.person.v3.binding.HentGeografiskTilknytningPersonIkkeFunnet;
 import no.nav.tjeneste.virksomhet.person.v3.binding.HentGeografiskTilknytningSikkerhetsbegrensing;
@@ -19,6 +16,8 @@ import no.nav.tjeneste.virksomhet.person.v3.meldinger.HentGeografiskTilknytningR
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.Optional.of;
 import static no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.informasjon.WSEnhetsstatus.AKTIV;
@@ -71,6 +70,30 @@ public class BehandlendeEnhetConsumer {
                     .findFirst()
                     .orElseThrow(() -> new RuntimeException("Fant ingen aktiv enhet for " + geografiskTilknytning));
             log.info("Fant behandlende enhet: {} for geografisk tilknytning: {}", behandlendeEnhet, geografiskTilknytning);
+            return behandlendeEnhet;
+        } catch (FinnBehandlendeEnhetListeUgyldigInput e) {
+            log.error("Feil ved henting av brukers forvaltningsenhet", e);
+            throw new RuntimeException("Feil ved henting av brukers forvaltningsenhet", e);
+        } catch (RuntimeException e) {
+            log.error("Klarte ikke å hente behandlende enhet!", e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<String> finnBehandlendeEnhetListe() {
+        try {
+            List<String> behandlendeEnhet = arbeidsfordelingV1.finnBehandlendeEnhetListe(new WSFinnBehandlendeEnhetListeRequest()
+                    .withArbeidsfordelingKriterier(new WSArbeidsfordelingKriterier()
+                            .withGeografiskTilknytning(new WSGeografi().withValue("0220"))
+                            .withTema(new WSTema().withValue("SYK"))
+                            .withBehandlingstema(new WSBehandlingstema().withKodeverksRef("ab0314"))
+                    ))
+                    .getBehandlendeEnhetListe()
+                    .stream()
+                    .filter(wsOrganisasjonsenhet -> AKTIV.equals(wsOrganisasjonsenhet.getStatus()))
+                    .map(WSOrganisasjonsenhet::getEnhetId)
+                    .collect(Collectors.toList());
+            log.info("Fant behandlende enhetliste!");
             return behandlendeEnhet;
         } catch (FinnBehandlendeEnhetListeUgyldigInput e) {
             log.error("Feil ved henting av brukers forvaltningsenhet", e);
