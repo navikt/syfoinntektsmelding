@@ -80,4 +80,28 @@ public class BehandlendeEnhetConsumer {
             throw new RuntimeException(e);
         }
     }
+
+    public String finnBehandlendeEnhetListe() {
+        try {
+            String behandlendeEnhet = arbeidsfordelingV1.finnBehandlendeEnhetListe(new WSFinnBehandlendeEnhetListeRequest()
+                    .withArbeidsfordelingKriterier(new WSArbeidsfordelingKriterier()
+                            .withGeografiskTilknytning(new WSGeografi().withValue("0220"))
+                            .withTema(new WSTema().withValue("SYK"))
+                    ))
+                    .getBehandlendeEnhetListe()
+                    .stream()
+                    .filter(wsOrganisasjonsenhet -> AKTIV.equals(wsOrganisasjonsenhet.getStatus()))
+                    .map(WSOrganisasjonsenhet::getEnhetId)
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("Fant ingen aktiv enhet"));
+            log.info("Fant behandlende enhetliste!");
+            return behandlendeEnhet;
+        } catch (FinnBehandlendeEnhetListeUgyldigInput e) {
+            log.error("Feil ved henting av brukers forvaltningsenhet", e);
+            throw new RuntimeException("Feil ved henting av brukers forvaltningsenhet", e);
+        } catch (RuntimeException e) {
+            log.error("Klarte ikke å hente behandlende enhet!", e);
+            throw new RuntimeException(e);
+        }
+    }
 }

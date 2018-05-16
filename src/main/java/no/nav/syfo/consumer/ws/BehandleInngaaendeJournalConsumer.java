@@ -21,7 +21,9 @@ public class BehandleInngaaendeJournalConsumer {
         WSInngaaendeJournalpost inngaaendeJournalpost = new WSInngaaendeJournalpost()
                 .withJournalpostId(journalpostId)
                 .withBruker(new WSPerson().withIdent(inngaendeJournalpost.getFnr()))
-                .withAvsender(new WSAvsender().withAvsenderNavn("Arbeidsgiver").withAvsenderId(inngaendeJournalpost.getArbeidsgiverOrgnummer()))
+                .withAvsender(new WSAvsender()
+                        .withAvsenderNavn("Arbeidsgiver")
+                        .withAvsenderId(inngaendeJournalpost.getArbeidsgiverOrgnummer()))
                 .withArkivSak(new WSArkivSak().withArkivSakId(inngaendeJournalpost.getGsakId()).withArkivSakSystem("FS22"));
 
         try {
