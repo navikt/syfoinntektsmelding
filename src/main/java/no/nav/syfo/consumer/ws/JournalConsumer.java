@@ -5,6 +5,7 @@ import no.nav.syfo.domain.Inntektsmelding;
 import no.nav.syfo.util.JAXB;
 import no.nav.tjeneste.virksomhet.journal.v2.*;
 import no.seres.xsd.nav.inntektsmelding_m._20171205.InntektsmeldingM;
+import no.seres.xsd.nav.inntektsmelding_m._20171205.Skjemainnhold;
 import org.springframework.stereotype.Component;
 
 import javax.xml.bind.JAXBElement;
@@ -29,11 +30,12 @@ public class JournalConsumer {
             final byte[] inntektsmeldingRAW = journalV2.hentDokument(request).getDokument();
             String inntektsmelding = new String(inntektsmeldingRAW);
             JAXBElement<InntektsmeldingM> inntektsmeldingM = JAXB.unmarshalInntektsmelding(inntektsmelding);
+            final Skjemainnhold skjemainnhold = inntektsmeldingM.getValue().getSkjemainnhold();
 
-            log.info("Inntektsmelding med arbeidsgiver: {}", inntektsmeldingM.getValue().getSkjemainnhold().getArbeidsgiver().getJuridiskEnhet());
+            log.info("Inntektsmelding med arbeidsgiver: {}", skjemainnhold.getArbeidsgiver().getJuridiskEnhet());
             return Inntektsmelding.builder()
-                    .fnr(inntektsmeldingM.getValue().getSkjemainnhold().getArbeidstakerFnr())
-                    .arbeidsgiverOrgnummer(inntektsmeldingM.getValue().getSkjemainnhold().getArbeidsgiver().getVirksomhetsnummer())
+                    .fnr(skjemainnhold.getArbeidstakerFnr())
+                    .arbeidsgiverOrgnummer(skjemainnhold.getArbeidsgiver().getVirksomhetsnummer())
                     .journalpostId(journalpostId)
                     .build();
         } catch (HentDokumentSikkerhetsbegrensning e) {

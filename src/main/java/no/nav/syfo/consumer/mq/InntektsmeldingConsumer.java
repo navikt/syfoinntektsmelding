@@ -44,7 +44,6 @@ public class InntektsmeldingConsumer {
                     info.getTema().getValue(),
                     info.getBehandlingstema().getValue());
 
-
             Inntektsmelding inntektsmelding = journalpostService.hentInntektsmelding(info.getArkivId());
 
             String saksId = saksbehandlingService.behandleInntektsmelding(inntektsmelding);

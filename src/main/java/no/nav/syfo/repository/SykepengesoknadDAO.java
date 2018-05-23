@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -21,25 +21,22 @@ public class SykepengesoknadDAO {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
-    public Optional<Sykepengesoknad> hentSykepengesoknad(String journalpostId) {
-        Optional<Sykepengesoknad> resultat = Optional.ofNullable(namedParameterJdbcTemplate.queryForObject(
-                "SELECT * FROM SYKEPENGESOEKNAD WHERE JOURNALPOST_ID = :journalpostId",
-                new MapSqlParameterSource().addValue("journalpostId", journalpostId),
+    public List<Sykepengesoknad> hentSykepengesoknaderForPerson(String aktorid, int sykemeldingid) {
+        return namedParameterJdbcTemplate.query(
+                "SELECT * FROM SYKEPENGESOEKNAD WHERE SAKS_ID IS NOT NULL AND AKTOR_ID = :aktorid AND SYKMELDING_DOK_ID = :sykmeldingid",
+
+                new MapSqlParameterSource()
+                        .addValue("aktorid", aktorid)
+                        .addValue("sykmeldingid", sykemeldingid),
+
                 (rs, i) -> Sykepengesoknad.builder()
                         .uuid(rs.getString("SYKEPENGESOEKNAD_UUID"))
                         .status(rs.getString("STATUS"))
                         .oppgaveId(rs.getString("OPPGAVE_ID"))
                         .saksId(rs.getString("SAKS_ID"))
-                        .journalpostId(journalpostId)
+                        .fom(rs.getDate("FOM").toLocalDate())
+                        .tom(rs.getDate("TOM").toLocalDate())
                         .build()
-        ));
-
-        if (resultat.isPresent()) {
-            log.info("Fant ingen sykepengesøknad med journalpost: {}", journalpostId);
-        } else {
-            log.info("Fant sykepengesøknad med journalpost: {}", journalpostId);
-        }
-
-        return resultat;
+        );
     }
 }

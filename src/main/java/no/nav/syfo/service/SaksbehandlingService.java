@@ -1,19 +1,23 @@
 package no.nav.syfo.service;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.syfo.consumer.ws.BehandleSakConsumer;
-import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer;
-import no.nav.syfo.consumer.ws.OppgaveConsumer;
-import no.nav.syfo.consumer.ws.OppgavebehandlingConsumer;
+import no.nav.syfo.consumer.ws.*;
 import no.nav.syfo.domain.Inntektsmelding;
 import no.nav.syfo.domain.Oppgave;
 import no.nav.syfo.domain.Sykepengesoknad;
+import no.nav.syfo.domain.Sykmelding;
 import no.nav.syfo.repository.SykepengesoknadDAO;
+import no.nav.syfo.repository.SykmeldingDAO;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
+
+import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.toList;
 
 @Component
 @Slf4j
@@ -23,28 +27,33 @@ public class SaksbehandlingService {
     private final BehandleSakConsumer behandleSakConsumer;
     private final OppgaveConsumer oppgaveConsumer;
     private final SykepengesoknadDAO sykepengesoknadDAO;
+    private final AktoridConsumer aktoridConsumer;
+    private final SykmeldingDAO sykmeldingDAO;
 
     @Inject
-    public SaksbehandlingService(OppgavebehandlingConsumer oppgavebehandlingConsumer, BehandlendeEnhetConsumer behandlendeEnhetConsumer, BehandleSakConsumer behandleSakConsumer, OppgaveConsumer oppgaveConsumer, SykepengesoknadDAO sykepengesoknadDAO) {
+    public SaksbehandlingService(OppgavebehandlingConsumer oppgavebehandlingConsumer, BehandlendeEnhetConsumer behandlendeEnhetConsumer, BehandleSakConsumer behandleSakConsumer, OppgaveConsumer oppgaveConsumer, SykepengesoknadDAO sykepengesoknadDAO, AktoridConsumer aktoridConsumer, SykmeldingDAO sykmeldingDAO) {
         this.oppgavebehandlingConsumer = oppgavebehandlingConsumer;
         this.behandlendeEnhetConsumer = behandlendeEnhetConsumer;
         this.behandleSakConsumer = behandleSakConsumer;
         this.oppgaveConsumer = oppgaveConsumer;
         this.sykepengesoknadDAO = sykepengesoknadDAO;
+        this.aktoridConsumer = aktoridConsumer;
+        this.sykmeldingDAO = sykmeldingDAO;
     }
 
     public String behandleInntektsmelding(Inntektsmelding inntektsmelding) {
-        Optional<Sykepengesoknad> sykepengesoknad = sykepengesoknadDAO.hentSykepengesoknad(inntektsmelding.getJournalpostId());
+        String aktorid = aktoridConsumer.hentFnrForAktorid(inntektsmelding.getFnr());
 
-        String saksId = sykepengesoknad
-                .filter(soknad -> soknad.getStatus().equals("SENDT") || soknad.getStatus().equals("TIL_SENDING"))
-                .map(Sykepengesoknad::getSaksId)
-                .orElse(behandleSakConsumer.opprettSak(inntektsmelding.getFnr()));
+        List<Sykepengesoknad> sykepengesoknader = hentSykepengesoknader(aktorid, inntektsmelding.getArbeidsgiverOrgnummer());
 
-        if (sykepengesoknad.isPresent() && sykepengesoknad.get().getStatus().equals("SENDT") || sykepengesoknad.get().getStatus().equals("TIL_SENDING")) {
-            Sykepengesoknad soknad = sykepengesoknad.get();
+        Optional<Sykepengesoknad> sisteSykepengesoknad = finnSisteSoknad(sykepengesoknader);
 
-            Optional<Oppgave> oppgave = oppgaveConsumer.finnOppgave(soknad.getOppgaveId());
+        String saksId = sisteSykepengesoknad.isPresent()
+                ? sisteSykepengesoknad.get().getSaksId()
+                : behandleSakConsumer.opprettSak(inntektsmelding.getFnr());
+
+        if (sisteSykepengesoknad.isPresent()) {
+            Optional<Oppgave> oppgave = oppgaveConsumer.finnOppgave(sisteSykepengesoknad.get().getOppgaveId());
 
             if (oppgave.isPresent() && oppgave.get().getStatus().equals("APEN")) {
                 log.info("Fant eksisterende åpen oppgave. Oppdaterete beskrivelsen.");
@@ -59,6 +68,29 @@ public class SaksbehandlingService {
         }
 
         return saksId;
+    }
+
+    private Optional<Sykepengesoknad> finnSisteSoknad(List<Sykepengesoknad> sykepengesoknader) {
+        return sykepengesoknader.isEmpty()
+                ? Optional.empty()
+                : sykepengesoknader.stream()
+                .max(comparing(Sykepengesoknad::getTom));
+    }
+
+    private List<Integer> hentSykmeldingIder(String aktorid, String orgnummer) {
+        return sykmeldingDAO.hentSykmeldingerForOrgnummer(orgnummer, aktorid).stream()
+                .map(Sykmelding::getId)
+                .collect(toList());
+    }
+
+    private List<Sykepengesoknad> hentSykepengesoknader(String aktorid, String orgnummer) {
+        List<Integer> sykmeldinger = hentSykmeldingIder(aktorid, orgnummer);
+        return sykmeldinger.isEmpty() ?
+                Collections.emptyList()
+                : sykmeldinger.stream()
+                .map(sykmeldingid -> sykepengesoknadDAO.hentSykepengesoknaderForPerson(aktorid, sykmeldingid))
+                .flatMap(List::stream)
+                .collect(toList());
     }
 
     private void opprettOppgave(String fnr, Oppgave oppgave) {

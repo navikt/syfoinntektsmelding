@@ -33,8 +33,8 @@ public class SykepengesoknadDAOTest {
         cleanup();
 
         jdbcTemplate.update(
-                "INSERT INTO SYKEPENGESOEKNAD (SYKEPENGESOEKNAD_ID, SYKEPENGESOEKNAD_UUID, OPPRETTET_DATO , STATUS, BEKREFTET_OPPLYSNINGSPLIKT, BEKREFTET_KORREKT_INFO, SAKS_ID, JOURNALPOST_ID, OPPGAVE_ID, DEL) " +
-                        "VALUES (1, 'uuid-1', DATE '2018-02-01', 'status', 1, 1, 'saksid-1', 'journalpostid-1', 'oppgaveid-1', 1)");
+                "INSERT INTO SYKEPENGESOEKNAD (SYKEPENGESOEKNAD_ID, SYKEPENGESOEKNAD_UUID, OPPRETTET_DATO , STATUS, BEKREFTET_OPPLYSNINGSPLIKT, BEKREFTET_KORREKT_INFO, SAKS_ID, JOURNALPOST_ID, OPPGAVE_ID, DEL, SYKMELDING_DOK_ID, AKTOR_ID, FOM, TOM) " +
+                        "VALUES (1, 'uuid-1', DATE '2018-02-01', 'status', 1, 1, 'saksid-1', 'journalpostid-1', 'oppgaveid-1', 1, 123, 'aktorid', DATE '2018-02-01', DATE '2018-03-01')");
 
     }
 
@@ -45,10 +45,9 @@ public class SykepengesoknadDAOTest {
 
     @Test
     public void henterUtSykepengesoknad() {
-        final Sykepengesoknad sykepengesoknad = sykepengesoknadDAO.hentSykepengesoknad("journalpostid-1").get();
+        final Sykepengesoknad sykepengesoknad = sykepengesoknadDAO.hentSykepengesoknaderForPerson("aktorid", 123).get(0);
 
         assertThat(sykepengesoknad.getUuid()).isEqualTo("uuid-1");
-        assertThat(sykepengesoknad.getJournalpostId()).isEqualTo("journalpostid-1");
         assertThat(sykepengesoknad.getOppgaveId()).isEqualTo("oppgaveid-1");
         assertThat(sykepengesoknad.getSaksId()).isEqualTo("saksid-1");
     }
