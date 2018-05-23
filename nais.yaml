@@ -48,7 +48,7 @@ fasitResources:
     resourceType: webserviceendpoint
   - alias: virksomhet:Oppgavebehandling_v3
     resourceType: webserviceendpoint
-  - alias: virksomhet:Aktoerid_v2
+  - alias: Aktoer_v2
     resourceType: webserviceendpoint
   - alias: servicegateway
     resourceType: webservicegateway
