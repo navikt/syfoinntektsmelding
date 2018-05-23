@@ -2,8 +2,8 @@ package no.nav.syfo.consumer.ws;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.tjeneste.virksomhet.aktoer.v2.AktoerV2;
-import no.nav.tjeneste.virksomhet.aktoer.v2.HentIdentForAktoerIdPersonIkkeFunnet;
-import no.nav.tjeneste.virksomhet.aktoer.v2.meldinger.WSHentIdentForAktoerIdRequest;
+import no.nav.tjeneste.virksomhet.aktoer.v2.HentAktoerIdForIdentPersonIkkeFunnet;
+import no.nav.tjeneste.virksomhet.aktoer.v2.meldinger.WSHentAktoerIdForIdentRequest;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -19,11 +19,14 @@ public class AktoridConsumer {
         this.aktoerV2 = aktoerV2;
     }
 
-    public String hentFnrForAktorid(String aktorid) {
+    public String hentAktoerIdForFnr(String fnr) {
+        log.info("Henter aktoerid for fnr");
         try {
-            return aktoerV2.hentIdentForAktoerId(new WSHentIdentForAktoerIdRequest().withAktoerId(aktorid)).getIdent();
-        } catch (HentIdentForAktoerIdPersonIkkeFunnet e) {
-            log.error("Fant ikke person med aktorid: {}", aktorid);
+            String aktoerid = aktoerV2.hentAktoerIdForIdent(new WSHentAktoerIdForIdentRequest().withIdent(fnr)).getAktoerId();
+            log.info("Fant aktoerid for fnr: {}", aktoerid);
+            return aktoerid;
+        } catch (HentAktoerIdForIdentPersonIkkeFunnet e) {
+            log.error("Fant ikke person med gitt fnr");
             throw new RuntimeException(e);
         }
     }

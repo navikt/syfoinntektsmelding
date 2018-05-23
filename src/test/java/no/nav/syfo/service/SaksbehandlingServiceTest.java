@@ -54,7 +54,7 @@ public class SaksbehandlingServiceTest {
 
     @Before
     public void setup() {
-        when(aktoridConsumer.hentFnrForAktorid(anyString())).thenReturn("aktorid");
+        when(aktoridConsumer.hentAktoerIdForFnr(anyString())).thenReturn("aktorid");
         when(sykmeldingDAO.hentSykmeldingerForOrgnummer(anyString(), anyString()))
                 .thenReturn(singletonList(Sykmelding.builder().orgnummer("orgnummer").id(123).build()));
         when(behandlendeEnhetConsumer.hentGeografiskTilknytning(anyString())).thenReturn("Geografisktilknytning");

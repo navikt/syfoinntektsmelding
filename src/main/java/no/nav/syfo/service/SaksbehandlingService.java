@@ -42,7 +42,7 @@ public class SaksbehandlingService {
     }
 
     public String behandleInntektsmelding(Inntektsmelding inntektsmelding) {
-        String aktorid = aktoridConsumer.hentFnrForAktorid(inntektsmelding.getFnr());
+        String aktorid = aktoridConsumer.hentAktoerIdForFnr(inntektsmelding.getFnr());
 
         List<Sykepengesoknad> sykepengesoknader = hentSykepengesoknader(aktorid, inntektsmelding.getArbeidsgiverOrgnummer());
 
