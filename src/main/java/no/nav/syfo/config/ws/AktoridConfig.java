@@ -13,7 +13,7 @@ import java.util.Collections;
 public class AktoridConfig {
     @SuppressWarnings("unchecked")
     @Bean
-    public AktoerV2 aktoerV2(@Value("${servicegateway.url}") String serviceUrl) {
+    public AktoerV2 aktoerV2(@Value("${aktoer.v2.endpointurl}") String serviceUrl) {
         return new WsClient<AktoerV2>().createPort(serviceUrl, AktoerV2.class, Collections.singletonList(new LogErrorHandler()));
     }
 }

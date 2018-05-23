@@ -36,6 +36,7 @@ public class SelftestController {
         return APPLICATION_READY;
     }
 
+    // TODO: fjern denne før deploy
     @ResponseBody
     @RequestMapping(value = "/behandleFakeInntektsmelding/", produces = MediaType.APPLICATION_JSON_VALUE)
     public String behandleFakeInntektsmelding() {
@@ -44,7 +45,7 @@ public class SelftestController {
         Inntektsmelding inntektsmelding = Inntektsmelding.builder()
                 .arbeidsgiverOrgnummer("orgnummer")
                 .journalpostId("journalpostid")
-                .fnr("2202690062").build();
+                .fnr("22026900623").build();
 
         return saksbehandlingService.behandleInntektsmelding(inntektsmelding);
     }
