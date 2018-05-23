@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.syfo.domain.Inntektsmelding;
 import no.nav.syfo.service.SaksbehandlingService;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,14 +39,14 @@ public class SelftestController {
 
     // TODO: fjern denne før deploy
     @ResponseBody
-    @RequestMapping(value = "/behandleFakeInntektsmelding/", produces = MediaType.APPLICATION_JSON_VALUE)
-    public String behandleFakeInntektsmelding() {
+    @RequestMapping(value = "/behandleFakeInntektsmelding/{orgnr}/{journalpostnr}/{fnr}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public String behandleFakeInntektsmelding(@PathVariable String orgnr, @PathVariable String journalpostnr, @PathVariable String fnr) {
         log.info("Behandler fake inntektsmelding!");
 
         Inntektsmelding inntektsmelding = Inntektsmelding.builder()
-                .arbeidsgiverOrgnummer("orgnummer")
-                .journalpostId("journalpostid")
-                .fnr("22026900623").build();
+                .arbeidsgiverOrgnummer(orgnr)
+                .journalpostId(journalpostnr)
+                .fnr(fnr).build();
 
         return saksbehandlingService.behandleInntektsmelding(inntektsmelding);
     }
