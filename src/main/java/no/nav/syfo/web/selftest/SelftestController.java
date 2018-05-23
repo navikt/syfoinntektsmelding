@@ -36,6 +36,7 @@ public class SelftestController {
         return APPLICATION_READY;
     }
 
+    // TODO: fjern denne før deploy
     @ResponseBody
     @RequestMapping(value = "/behandleFakeInntektsmelding/", produces = MediaType.APPLICATION_JSON_VALUE)
     public String behandleFakeInntektsmelding() {
