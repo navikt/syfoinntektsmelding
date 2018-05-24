@@ -23,7 +23,7 @@ public class SykmeldingDAO {
 
     public List<Sykmelding> hentSykmeldingerForOrgnummer(String orgnummer, String aktorid) {
         return namedParameterJdbcTemplate.query(
-                "SELECT * FROM SYKEPENGESOEKNAD WHERE ORGNUMMER = :orgnummer AND AKTOER_ID = :aktorid",
+                "SELECT SYKMELDING_DOK_ID, ORGNUMMER FROM SYKEPENGESOEKNAD WHERE ORGNUMMER = :orgnummer AND AKTOR_ID = :aktorid",
 
                 new MapSqlParameterSource()
                         .addValue("orgnummer", orgnummer)
