@@ -6,6 +6,7 @@ import no.nav.syfo.domain.Inntektsmelding;
 import no.nav.syfo.service.JournalpostService;
 import no.nav.syfo.service.SaksbehandlingService;
 import no.nav.syfo.util.JAXB;
+import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,7 +31,8 @@ public class InntektsmeldingConsumer {
 
     @Transactional
     // Køen er foreløpig skrudd av frem til inntektsmelding behandling er ferdigstillt.
-    // @JmsListener(id = "inntektsmelding_listener", containerFactory = "jmsListenerContainerFactory", destination = "inntektsmeldingQueue")
+    // TODO: Skru av kø før prodsetting
+    @JmsListener(id = "inntektsmelding_listener", containerFactory = "jmsListenerContainerFactory", destination = "inntektsmeldingQueue")
     public void listen(Object message) {
 
         TextMessage textMessage = (TextMessage) message;
