@@ -55,7 +55,7 @@ public class SaksbehandlingService {
         if (sisteSykepengesoknad.isPresent()) {
             Optional<Oppgave> oppgave = oppgaveConsumer.finnOppgave(sisteSykepengesoknad.get().getOppgaveId());
 
-            if (oppgave.isPresent() && oppgave.get().getStatus().equals("APEN")) {
+            if (oppgave.isPresent() && oppgave.get().getStatus().equals("A")) {
                 log.info("Fant eksisterende åpen oppgave. Oppdaterete beskrivelsen.");
                 oppgavebehandlingConsumer.oppdaterOppgavebeskrivelse(oppgave.get(), "Det har kommet en inntektsmelding på sykepenger.");
             } else {

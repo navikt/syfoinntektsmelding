@@ -63,7 +63,7 @@ public class SaksbehandlingServiceTest {
         when(behandleSakConsumer.opprettSak("fnr")).thenReturn("opprettetSaksId");
         when(oppgaveConsumer.finnOppgave("oppgaveId"))
                 .thenReturn(Optional.of(Oppgave.builder()
-                        .status("APEN")
+                        .status("A")
                         .beskrivelse("Beskriv beskriv")
                         .gsakSaksid("gsak1234")
                         .journalpostId("journalpost1234")
