@@ -39,26 +39,6 @@ public class BehandlendeEnhetConsumer {
     public String hentBehandlendeEnhet(String fnr) {
         String geografiskTilknytning = hentGeografiskTilknytning(fnr);
 
-        return finnBehandlendeEnhet(geografiskTilknytning);
-    }
-
-    public String hentGeografiskTilknytning(String fnr) {
-        try {
-            String geografiskTilknytning = of(personV3.hentGeografiskTilknytning(
-                    new HentGeografiskTilknytningRequest()
-                            .withAktoer(new PersonIdent().withIdent(new NorskIdent().withIdent(fnr)))))
-                    .map(HentGeografiskTilknytningResponse::getGeografiskTilknytning)
-                    .map(GeografiskTilknytning::getGeografiskTilknytning)
-                    .orElseThrow(() -> new RuntimeException("Kunne ikke hente geografisk tilknytning"));
-            log.info("Hentet geografisk tilknytning: {}", geografiskTilknytning);
-            return geografiskTilknytning;
-        } catch (HentGeografiskTilknytningSikkerhetsbegrensing | HentGeografiskTilknytningPersonIkkeFunnet e) {
-            log.error("Feil ved henting av geografisk tilknytning", e);
-            throw new RuntimeException("Feil ved henting av geografisk tilknytning", e);
-        }
-    }
-
-    private String finnBehandlendeEnhet(String geografiskTilknytning) {
         try {
             String behandlendeEnhet = arbeidsfordelingV1.finnBehandlendeEnhetListe(new WSFinnBehandlendeEnhetListeRequest()
                     .withArbeidsfordelingKriterier(new WSArbeidsfordelingKriterier()
@@ -80,4 +60,21 @@ public class BehandlendeEnhetConsumer {
             throw new RuntimeException(e);
         }
     }
+
+    public String hentGeografiskTilknytning(String fnr) {
+        try {
+            String geografiskTilknytning = of(personV3.hentGeografiskTilknytning(
+                    new HentGeografiskTilknytningRequest()
+                            .withAktoer(new PersonIdent().withIdent(new NorskIdent().withIdent(fnr)))))
+                    .map(HentGeografiskTilknytningResponse::getGeografiskTilknytning)
+                    .map(GeografiskTilknytning::getGeografiskTilknytning)
+                    .orElseThrow(() -> new RuntimeException("Kunne ikke hente geografisk tilknytning"));
+            log.info("Hentet geografisk tilknytning: {}", geografiskTilknytning);
+            return geografiskTilknytning;
+        } catch (HentGeografiskTilknytningSikkerhetsbegrensing | HentGeografiskTilknytningPersonIkkeFunnet e) {
+            log.error("Feil ved henting av geografisk tilknytning", e);
+            throw new RuntimeException("Feil ved henting av geografisk tilknytning", e);
+        }
+    }
+
 }

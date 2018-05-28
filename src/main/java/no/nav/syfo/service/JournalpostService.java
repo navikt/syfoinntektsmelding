@@ -1,7 +1,10 @@
 package no.nav.syfo.service;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.syfo.consumer.ws.*;
+import no.nav.syfo.consumer.ws.BehandleInngaaendeJournalConsumer;
+import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer;
+import no.nav.syfo.consumer.ws.InngaaendeJournalConsumer;
+import no.nav.syfo.consumer.ws.JournalConsumer;
 import no.nav.syfo.domain.InngaendeJournalpost;
 import no.nav.syfo.domain.Inntektsmelding;
 import org.springframework.stereotype.Component;
