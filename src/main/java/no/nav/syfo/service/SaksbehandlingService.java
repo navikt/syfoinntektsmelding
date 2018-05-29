@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,9 +43,9 @@ public class SaksbehandlingService {
     public String behandleInntektsmelding(Inntektsmelding inntektsmelding) {
         String aktorid = aktoridConsumer.hentAktoerIdForFnr(inntektsmelding.getFnr());
 
-        List<Sykepengesoknad> sykepengesoknader = hentSykepengesoknader(aktorid, inntektsmelding.getArbeidsgiverOrgnummer());
-
-        Optional<Sykepengesoknad> sisteSykepengesoknad = finnSisteSoknad(sykepengesoknader);
+        Optional<Sykepengesoknad> sisteSykepengesoknad = hentSykepengesoknader(aktorid, inntektsmelding.getArbeidsgiverOrgnummer())
+                .stream()
+                .max(comparing(Sykepengesoknad::getTom));
 
         String saksId = sisteSykepengesoknad.isPresent()
                 ? sisteSykepengesoknad.get().getSaksId()
@@ -70,26 +69,19 @@ public class SaksbehandlingService {
         return saksId;
     }
 
-    private Optional<Sykepengesoknad> finnSisteSoknad(List<Sykepengesoknad> sykepengesoknader) {
-        return sykepengesoknader.isEmpty()
-                ? Optional.empty()
-                : sykepengesoknader.stream()
-                .max(comparing(Sykepengesoknad::getTom));
-    }
-
-    private List<Integer> hentSykmeldingIder(String aktorid, String orgnummer) {
-        return sykmeldingDAO.hentSykmeldingerForOrgnummer(orgnummer, aktorid).stream()
-                .map(Sykmelding::getId)
+    private List<Sykepengesoknad> hentSykepengesoknader(String aktorid, String orgnummer) {
+        List<Integer> sykmeldinger = hentSykmeldingIder(aktorid, orgnummer);
+        return sykmeldinger
+                .stream()
+                .map(sykmeldingid -> sykepengesoknadDAO.hentSykepengesoknaderForPerson(aktorid, sykmeldingid))
+                .flatMap(List::stream)
                 .collect(toList());
     }
 
-    private List<Sykepengesoknad> hentSykepengesoknader(String aktorid, String orgnummer) {
-        List<Integer> sykmeldinger = hentSykmeldingIder(aktorid, orgnummer);
-        return sykmeldinger.isEmpty() ?
-                Collections.emptyList()
-                : sykmeldinger.stream()
-                .map(sykmeldingid -> sykepengesoknadDAO.hentSykepengesoknaderForPerson(aktorid, sykmeldingid))
-                .flatMap(List::stream)
+    private List<Integer> hentSykmeldingIder(String aktorid, String orgnummer) {
+        return sykmeldingDAO.hentSykmeldingerForOrgnummer(orgnummer, aktorid)
+                .stream()
+                .map(Sykmelding::getId)
                 .collect(toList());
     }
 

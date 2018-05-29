@@ -23,7 +23,9 @@ public class SykepengesoknadDAO {
 
     public List<Sykepengesoknad> hentSykepengesoknaderForPerson(String aktorid, int sykemeldingid) {
         return namedParameterJdbcTemplate.query(
-                "SELECT * FROM SYKEPENGESOEKNAD WHERE SAKS_ID IS NOT NULL AND AKTOR_ID = :aktorid AND SYKMELDING_DOK_ID = :sykmeldingid",
+                "SELECT SYKEPENGESOEKNAD_UUID, STATUS, OPPGAVE_ID, SAKS_ID, FOM, TOM " +
+                        "FROM SYKEPENGESOEKNAD " +
+                        "WHERE SAKS_ID IS NOT NULL AND AKTOR_ID = :aktorid AND SYKMELDING_DOK_ID = :sykmeldingid",
 
                 new MapSqlParameterSource()
                         .addValue("aktorid", aktorid)
