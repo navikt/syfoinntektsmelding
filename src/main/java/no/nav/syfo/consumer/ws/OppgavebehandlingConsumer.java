@@ -41,6 +41,9 @@ public class OppgavebehandlingConsumer {
         } catch (LagreOppgaveOptimistiskLasing e) {
             log.error("Feil i oppgavebehandling. Optimistisk låsing.", e);
             throw new RuntimeException("Feil i oppgavebehandling. Optimistisk låsing.", e);
+        } catch (Exception e) {
+            log.error("Klarte ikke å oppdatere oppgavebeskrivelse for oppgave: {}", oppgave.getOppgaveId(), e);
+            throw new RuntimeException(e);
         }
     }
 
