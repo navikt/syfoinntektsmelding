@@ -34,9 +34,16 @@ public class OppgaveConsumer {
             WSOppgave wsOppgave = oppgaveV3.hentOppgave(new WSHentOppgaveRequest().withOppgaveId(oppgaveId)).getOppgave();
             Oppgave oppgave = Oppgave.builder()
                     .oppgaveId(wsOppgave.getOppgaveId())
+                    .versjon(wsOppgave.getVersjon())
                     .beskrivelse(wsOppgave.getBeskrivelse())
-                    .gsakSaksid(wsOppgave.getSaksnummer())
+                    .aktivFra(wsOppgave.getAktivFra())
                     .aktivTil(wsOppgave.getAktivTil())
+                    .oppgavetype(wsOppgave.getOppgavetype().getKode())
+                    .fagomrade(wsOppgave.getFagomrade().getKode())
+                    .prioritet(wsOppgave.getPrioritet().getKode())
+                    .ansvarligEnhetId(wsOppgave.getAnsvarligEnhetId())
+                    .saksnummer(wsOppgave.getSaksnummer())
+                    .dokumentId(wsOppgave.getDokumentId())
                     .status(wsOppgave.getStatus().getKode())
                     .build();
             log.info("Hentet oppgave: {}", oppgaveId);

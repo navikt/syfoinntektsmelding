@@ -65,9 +65,9 @@ public class SaksbehandlingServiceTest {
                 .thenReturn(Optional.of(Oppgave.builder()
                         .status("A")
                         .beskrivelse("Beskriv beskriv")
-                        .gsakSaksid("gsak1234")
-                        .journalpostId("journalpost1234")
-                        .behandlendeEnhetId("behandlendeEnhet1234")
+                        .saksnummer("gsak1234")
+                        .dokumentId("journalpost1234")
+                        .ansvarligEnhetId("behandlendeEnhet1234")
                         .aktivTil(LocalDate.of(2018, 1, 1))
                         .build()));
         when(sykepengesoknadDAO.hentSykepengesoknaderForPerson(anyString(), anyInt()))
@@ -130,26 +130,5 @@ public class SaksbehandlingServiceTest {
 
         verify(oppgavebehandlingConsumer).opprettOppgave(anyString(), any(Oppgave.class));
         verify(oppgavebehandlingConsumer, never()).oppdaterOppgavebeskrivelse(any(Oppgave.class), anyString());
-    }
-
-    @Test
-    public void behandleInntektsmelding_detFinnesTidligereSoknadForSammeSykefravar() {
-        String saksId = saksbehandlingService.behandleInntektsmelding(lagInntektsmelding());
-
-        System.out.println(saksId);
-    }
-
-    @Test
-    public void behandleInntektsmelding_detFinnesPlanlagtSoknad() {
-        String saksId = saksbehandlingService.behandleInntektsmelding(lagInntektsmelding());
-
-        System.out.println(saksId);
-    }
-
-    @Test
-    public void behandleInntektsmelding_detFinnesIkkeTidligereSoknad() {
-        String saksId = saksbehandlingService.behandleInntektsmelding(lagInntektsmelding());
-
-        System.out.println(saksId);
     }
 }

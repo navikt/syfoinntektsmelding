@@ -92,20 +92,20 @@ public class SaksbehandlingService {
         Oppgave nyOppgave = Oppgave.builder()
                 .aktivTil(oppgave.getAktivTil())
                 .beskrivelse(oppgave.getBeskrivelse())
-                .gsakSaksid(oppgave.getGsakSaksid())
-                .journalpostId(oppgave.getJournalpostId())
+                .saksnummer(oppgave.getSaksnummer())
+                .dokumentId(oppgave.getDokumentId())
                 .geografiskTilknytning(geografiskTilknytning)
-                .behandlendeEnhetId(behandlendeEnhet)
+                .ansvarligEnhetId(behandlendeEnhet)
                 .build();
 
         String oppgaveId = oppgavebehandlingConsumer.opprettOppgave(fnr, nyOppgave);
         log.info("Opprettet oppgave: {}", oppgaveId);
     }
 
-    private Oppgave byggOppgave(String journalpostId, String saksId) {
+    private Oppgave byggOppgave(String dokumentId, String saksnummer) {
         return Oppgave.builder()
-                .journalpostId(journalpostId)
-                .gsakSaksid(saksId)
+                .dokumentId(dokumentId)
+                .saksnummer(saksnummer)
                 .beskrivelse("Det har kommet en inntektsmelding på sykepenger.")
                 .aktivTil(LocalDate.now().plusDays(7))
                 .build();
