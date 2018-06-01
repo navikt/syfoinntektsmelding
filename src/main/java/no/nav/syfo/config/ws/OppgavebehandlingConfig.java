@@ -14,7 +14,7 @@ public class OppgavebehandlingConfig {
 
     @Bean
     @SuppressWarnings("unchecked")
-    public OppgavebehandlingV3 oppgavebehandlingV3(@Value("${servicegateway.url}") String serviceUrl) {
+    public OppgavebehandlingV3 oppgavebehandlingV3(@Value("${virksomhet.oppgavebehandling.v3.endpointurl}") String serviceUrl) {
         return new WsClient<OppgavebehandlingV3>().createPort(serviceUrl, OppgavebehandlingV3.class, Collections.singletonList(new LogErrorHandler()));
     }
 }
