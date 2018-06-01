@@ -13,7 +13,7 @@ import java.util.Collections;
 public class OppgaveConfig {
     @Bean
     @SuppressWarnings("unchecked")
-    public OppgaveV3 oppgaveV3(@Value("${virksomhet.oppgave.v3.endpointurl}") String serviceUrl) {
+    public OppgaveV3 oppgaveV3(@Value("${servicegateway.url}") String serviceUrl) {
         return new WsClient<OppgaveV3>().createPort(serviceUrl, OppgaveV3.class, Collections.singletonList(new LogErrorHandler()));
     }
 }
