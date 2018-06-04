@@ -7,8 +7,7 @@ import lombok.Value;
 @Value
 @Builder
 @Getter
-public class Inntektsmelding {
-    String fnr;
-    String arbeidsgiverOrgnummer;
-    String journalpostId;
+public class Sykmelding {
+    int id;
+    String orgnummer;
 }

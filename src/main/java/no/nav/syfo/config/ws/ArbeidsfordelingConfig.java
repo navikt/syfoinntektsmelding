@@ -14,7 +14,7 @@ public class ArbeidsfordelingConfig {
 
     @Bean
     @SuppressWarnings("unchecked")
-    public ArbeidsfordelingV1 arbeidsfordelingV1(@Value("${servicegateway.url}") String serviceUrl) {
+    public ArbeidsfordelingV1 arbeidsfordelingV1(@Value("${virksomhet.arbeidsfordeling.v1.endpointurl}") String serviceUrl) {
         return new WsClient<ArbeidsfordelingV1>().createPort(serviceUrl, ArbeidsfordelingV1.class, Collections.singletonList(new LogErrorHandler()));
     }
 }

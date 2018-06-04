@@ -14,7 +14,7 @@ public class JournalV2Config {
 
     @SuppressWarnings("unchecked")
     @Bean
-    public JournalV2 journalV2(@Value("${servicegateway.url}") String serviceUrl) {
+    public JournalV2 journalV2(@Value("${journal.v2.endpointurl}") String serviceUrl) {
         return new WsClient<JournalV2>().createPort(serviceUrl, JournalV2.class, Collections.singletonList(new LogErrorHandler()));
     }
 }

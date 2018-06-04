@@ -1,9 +1,10 @@
 package no.nav.syfo.service;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.syfo.consumer.ws.ArbeidsfordelingConsumer;
+import no.nav.syfo.consumer.ws.BehandleInngaaendeJournalConsumer;
+import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer;
 import no.nav.syfo.consumer.ws.InngaaendeJournalConsumer;
-import no.nav.syfo.consumer.ws.PersonConsumer;
+import no.nav.syfo.consumer.ws.JournalConsumer;
 import no.nav.syfo.domain.InngaendeJournalpost;
 import no.nav.syfo.domain.Inntektsmelding;
 import org.springframework.stereotype.Component;
@@ -13,28 +14,40 @@ import org.springframework.stereotype.Component;
 public class JournalpostService {
 
     private InngaaendeJournalConsumer inngaaendeJournalConsumer;
-    private PersonConsumer personConsumer;
-    private ArbeidsfordelingConsumer arbeidsfordelingConsumer;
+    private BehandleInngaaendeJournalConsumer behandleInngaaendeJournalConsumer;
+    private JournalConsumer journalConsumer;
+    private BehandlendeEnhetConsumer behandlendeEnhetConsumer;
 
-    public JournalpostService(InngaaendeJournalConsumer inngaaendeJournalConsumer, ArbeidsfordelingConsumer arbeidsfordelingConsumer, PersonConsumer personConsumer) {
+    public JournalpostService(InngaaendeJournalConsumer inngaaendeJournalConsumer, BehandleInngaaendeJournalConsumer behandleInngaaendeJournalConsumer, JournalConsumer journalConsumer, BehandlendeEnhetConsumer behandlendeEnhetConsumer) {
         this.inngaaendeJournalConsumer = inngaaendeJournalConsumer;
-        this.personConsumer = personConsumer;
-        this.arbeidsfordelingConsumer = arbeidsfordelingConsumer;
+        this.behandleInngaaendeJournalConsumer = behandleInngaaendeJournalConsumer;
+        this.journalConsumer = journalConsumer;
+        this.behandlendeEnhetConsumer = behandlendeEnhetConsumer;
     }
 
-    public InngaendeJournalpost hentInngaendeJournalpost(String journalpostId, String gsakId, Inntektsmelding inntektsmelding) {
+    public Inntektsmelding hentInntektsmelding(String journalpostId) {
         String dokumentId = inngaaendeJournalConsumer.hentDokumentId(journalpostId);
-        String geografiskTilknytning = personConsumer.hentGeografiskTilknytning(inntektsmelding.getFnr());
-        String behandlendeEnhetId = arbeidsfordelingConsumer.finnBehandlendeEnhet(geografiskTilknytning);
+        return journalConsumer.hentInntektsmelding(journalpostId, dokumentId);
+    }
 
-        log.info("Hentet journalpost: ", journalpostId);
+    public void ferdigstillJournalpost(String saksId, Inntektsmelding inntektsmelding) {
+        InngaendeJournalpost journalpost = hentInngaendeJournalpost(saksId, inntektsmelding);
+        behandleInngaaendeJournalConsumer.oppdaterJournalpost(journalpost);
+        behandleInngaaendeJournalConsumer.ferdigstillJournalpost(journalpost);
+    }
+
+    private InngaendeJournalpost hentInngaendeJournalpost(String gsakId, Inntektsmelding inntektsmelding) {
+        String dokumentId = inngaaendeJournalConsumer.hentDokumentId(inntektsmelding.getJournalpostId());
+        String behandlendeEnhet = behandlendeEnhetConsumer.hentBehandlendeEnhet(inntektsmelding.getFnr());
+
+        log.info("Hentet journalpost: ", inntektsmelding.getJournalpostId());
 
         return InngaendeJournalpost.builder()
                 .fnr(inntektsmelding.getFnr())
                 .gsakId(gsakId)
-                .journalpostId(journalpostId)
+                .journalpostId(inntektsmelding.getJournalpostId())
                 .dokumentId(dokumentId)
-                .behandlendeEnhetId(behandlendeEnhetId)
+                .behandlendeEnhetId(behandlendeEnhet)
                 .arbeidsgiverOrgnummer(inntektsmelding.getArbeidsgiverOrgnummer())
                 .build();
     }

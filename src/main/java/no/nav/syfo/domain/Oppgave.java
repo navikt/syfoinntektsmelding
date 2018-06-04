@@ -10,11 +10,17 @@ import java.time.LocalDate;
 @Getter
 @Builder
 public class Oppgave {
-    String beskrivelse;
-    String gsakSaksid;
-    String journalpostId;
-    LocalDate aktivTil;
-    String behandlendeEnhetId;
     String oppgaveId;
+    int versjon;
+    String beskrivelse;
+    LocalDate aktivFra;
+    LocalDate aktivTil;
+    String oppgavetype;
+    String fagomrade;
+    String prioritet;
+    String ansvarligEnhetId;
+    String saksnummer;
+    String dokumentId;
+    String status;
     String geografiskTilknytning;
 }

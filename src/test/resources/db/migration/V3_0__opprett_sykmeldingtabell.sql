@@ -1,0 +1,5 @@
+create table SYKMELDING_DOK (
+  SYKMELDING_DOK_ID NUMBER(19) not null primary key,
+  ORGNUMMER VARCHAR2(20),
+  AKTOR_ID VARCHAR2(20),
+)

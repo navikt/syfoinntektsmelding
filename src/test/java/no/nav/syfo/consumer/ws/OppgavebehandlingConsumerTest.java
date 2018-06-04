@@ -37,17 +37,17 @@ public class OppgavebehandlingConsumerTest {
         String beskrivelse = "Beskriv beskriv";
         oppgavebehandlingConsumer.oppdaterOppgavebeskrivelse(Oppgave.builder()
                         .oppgaveId("1234")
-                        .gsakSaksid("gsakid")
+                        .saksnummer("gsakid")
                         .beskrivelse("Beskrivelse")
-                        .journalpostId("journalpostid")
-                        .behandlendeEnhetId("behandlendeenhet1234")
+                        .dokumentId("journalpostid")
+                        .ansvarligEnhetId("behandlendeenhet1234")
                         .aktivTil(LocalDate.of(2018, 1, 1))
                         .build(),
                 beskrivelse);
 
         verify(oppgavebehandlingV3).lagreOppgave(captor.capture());
 
-        assertThat(captor.getValue().getEndreOppgave().getBeskrivelse()).isEqualTo(beskrivelse);
+        assertThat(captor.getValue().getEndreOppgave().getBeskrivelse()).isEqualTo("Beskriv beskriv\n\nBeskrivelse");
         assertThat(captor.getValue().getEndretAvEnhetId()).isEqualTo(9999);
     }
 
@@ -59,9 +59,9 @@ public class OppgavebehandlingConsumerTest {
         String ansvarligEnhetId = "behandlendeenhet1234";
         Oppgave oppgave = Oppgave.builder()
                 .beskrivelse("Beskriv beskriv")
-                .gsakSaksid("gsak1234")
-                .journalpostId("journalpost1234")
-                .behandlendeEnhetId(ansvarligEnhetId)
+                .saksnummer("gsak1234")
+                .dokumentId("journalpost1234")
+                .ansvarligEnhetId(ansvarligEnhetId)
                 .aktivTil(LocalDate.of(2018, 1, 1))
                 .build();
         String oppgaveId = oppgavebehandlingConsumer.opprettOppgave("12345678910", oppgave);
@@ -78,8 +78,8 @@ public class OppgavebehandlingConsumerTest {
         assertThat(opprettOppgave.getBeskrivelse()).isEqualTo(oppgave.getBeskrivelse());
         assertThat(opprettOppgave.getAktivTil()).isEqualTo(oppgave.getAktivTil());
         assertThat(opprettOppgave.getAnsvarligEnhetId()).isEqualTo(ansvarligEnhetId);
-        assertThat(opprettOppgave.getDokumentId()).isEqualTo(oppgave.getJournalpostId());
-        assertThat(opprettOppgave.getSaksnummer()).isEqualTo(oppgave.getGsakSaksid());
+        assertThat(opprettOppgave.getDokumentId()).isEqualTo(oppgave.getDokumentId());
+        assertThat(opprettOppgave.getSaksnummer()).isEqualTo(oppgave.getSaksnummer());
         assertThat(opprettOppgave.getOppfolging()).isEqualTo("\nDu kan gi oss tilbakemelding på søknaden om sykepenger.\n" +
                 "Gå til internettadresse: nav.no/digitalsykmelding/tilbakemelding");
     }

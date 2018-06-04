@@ -1,6 +1,7 @@
 package no.nav.syfo.consumer.ws;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.syfo.domain.Oppgave;
 import no.nav.tjeneste.virksomhet.oppgave.v3.HentOppgaveOppgaveIkkeFunnet;
 import no.nav.tjeneste.virksomhet.oppgave.v3.OppgaveV3;
 import no.nav.tjeneste.virksomhet.oppgave.v3.informasjon.oppgave.WSOppgave;
@@ -8,6 +9,7 @@ import no.nav.tjeneste.virksomhet.oppgave.v3.meldinger.WSHentOppgaveRequest;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
+import java.util.Optional;
 
 import static org.jvnet.jaxb2_commons.lang.StringUtils.isEmpty;
 
@@ -22,19 +24,36 @@ public class OppgaveConsumer {
         this.oppgaveV3 = oppgaveV3;
     }
 
-    public WSOppgave finnOppgave(String oppgaveId) {
+    public Optional<Oppgave> finnOppgave(String oppgaveId) {
         if (isEmpty(oppgaveId)) {
             log.error("Prøvde å finne oppgave med tom oppgave id");
             throw new RuntimeException("Prøvde å finne oppgave med tom oppgave id");
         }
 
         try {
-            WSOppgave oppgave = oppgaveV3.hentOppgave(new WSHentOppgaveRequest().withOppgaveId(oppgaveId)).getOppgave();
+            WSOppgave wsOppgave = oppgaveV3.hentOppgave(new WSHentOppgaveRequest().withOppgaveId(oppgaveId)).getOppgave();
+            Oppgave oppgave = Oppgave.builder()
+                    .oppgaveId(wsOppgave.getOppgaveId())
+                    .versjon(wsOppgave.getVersjon())
+                    .beskrivelse(wsOppgave.getBeskrivelse())
+                    .aktivFra(wsOppgave.getAktivFra())
+                    .aktivTil(wsOppgave.getAktivTil())
+                    .oppgavetype(wsOppgave.getOppgavetype().getKode())
+                    .fagomrade(wsOppgave.getFagomrade().getKode())
+                    .prioritet(wsOppgave.getPrioritet().getKode())
+                    .ansvarligEnhetId(wsOppgave.getAnsvarligEnhetId())
+                    .saksnummer(wsOppgave.getSaksnummer())
+                    .dokumentId(wsOppgave.getDokumentId())
+                    .status(wsOppgave.getStatus().getKode())
+                    .build();
             log.info("Hentet oppgave: {}", oppgaveId);
-            return oppgave;
+            return Optional.of(oppgave);
         } catch (HentOppgaveOppgaveIkkeFunnet e) {
-            log.warn("Fant ikke oppgave med id {}", oppgaveId);
-            throw new RuntimeException("Fant ikke oppgave med id " + oppgaveId);
+            log.warn("Fant ikke oppgave med id {}", oppgaveId, e);
+            return Optional.empty();
+        } catch (Exception e) {
+            log.error("Klarte ikke å hente oppgave med id {}", oppgaveId, e);
+            throw new RuntimeException(e);
         }
     }
 }

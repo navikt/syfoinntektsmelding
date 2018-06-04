@@ -13,7 +13,7 @@ import java.util.Collections;
 public class BehandleSakConfig {
     @Bean
     @SuppressWarnings("unchecked")
-    public BehandleSakV1 behandleSakV1(@Value("${servicegateway.url}") String serviceUrl) {
+    public BehandleSakV1 behandleSakV1(@Value("${virksomhet.behandlesak.v1.endpointurl}") String serviceUrl) {
         return new WsClient<BehandleSakV1>().createPort(serviceUrl, BehandleSakV1.class, Collections.singletonList(new LogErrorHandler()));
     }
 }

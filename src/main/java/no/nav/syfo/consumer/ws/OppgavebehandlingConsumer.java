@@ -27,22 +27,35 @@ public class OppgavebehandlingConsumer {
 
     public void oppdaterOppgavebeskrivelse(Oppgave oppgave, String beskrivelse) {
         try {
-            oppgavebehandlingV3.lagreOppgave(new WSLagreOppgaveRequest()
-                    .withEndreOppgave(new WSEndreOppgave()
-                            .withOppgaveId(oppgave.getOppgaveId())
-                            .withSaksnummer(oppgave.getGsakSaksid())
-                            .withBeskrivelse(beskrivelse))
-                    .withEndretAvEnhetId(9999)
-            );
-            log.info("Oppdatert oppgave: {} på sak: {}", oppgave.getOppgaveId(), oppgave.getGsakSaksid());
+            String oppgavetekst = beskrivelse + "\n\n" + oppgave.getBeskrivelse();
+            oppgavebehandlingV3.lagreOppgave(new WSLagreOppgaveRequest().withEndreOppgave(endre(oppgave, oppgavetekst)).withEndretAvEnhetId(9999));
+            log.info("Oppdatert oppgave: {} på sak: {}", oppgave.getOppgaveId(), oppgave.getSaksnummer());
         } catch (LagreOppgaveOppgaveIkkeFunnet e) {
             log.error("Feil i oppgavebehandling. Oppgave ikke funnet.", e);
             throw new RuntimeException("Feil i oppgavebehandling. Oppgave ikke funnet.", e);
         } catch (LagreOppgaveOptimistiskLasing e) {
             log.error("Feil i oppgavebehandling. Optimistisk låsing.", e);
             throw new RuntimeException("Feil i oppgavebehandling. Optimistisk låsing.", e);
+        } catch (Exception e) {
+            log.error("Klarte ikke å oppdatere oppgavebeskrivelse for oppgave: {}", oppgave.getOppgaveId(), e);
+            throw new RuntimeException(e);
         }
     }
+
+    private WSEndreOppgave endre(Oppgave oppgave, String beskrivelse) {
+        WSEndreOppgave endreOppgave = new WSEndreOppgave();
+        endreOppgave.setOppgaveId(oppgave.getOppgaveId());
+        endreOppgave.setVersjon(oppgave.getVersjon());
+        endreOppgave.setBeskrivelse(beskrivelse);
+        endreOppgave.setAktivFra(oppgave.getAktivFra());
+        endreOppgave.setOppgavetypeKode(oppgave.getOppgavetype());
+        endreOppgave.setFagomradeKode(oppgave.getFagomrade());
+        endreOppgave.setPrioritetKode(oppgave.getPrioritet());
+        endreOppgave.setAnsvarligEnhetId(oppgave.getAnsvarligEnhetId());
+
+        return endreOppgave;
+    }
+
 
     public String opprettOppgave(String fnr, Oppgave oppgave) {
         try {
@@ -58,14 +71,14 @@ public class OppgavebehandlingConsumer {
                             .withBeskrivelse(oppgave.getBeskrivelse())
                             .withAktivFra(now())
                             .withAktivTil(oppgave.getAktivTil())
-                            .withAnsvarligEnhetId(oppgave.getBehandlendeEnhetId())
-                            .withDokumentId(oppgave.getJournalpostId())
+                            .withAnsvarligEnhetId(oppgave.getAnsvarligEnhetId())
+                            .withDokumentId(oppgave.getDokumentId())
                             .withMottattDato(now())
-                            .withSaksnummer(oppgave.getGsakSaksid())
+                            .withSaksnummer(oppgave.getSaksnummer())
                             .withOppfolging("\nDu kan gi oss tilbakemelding på søknaden om sykepenger.\n" +
                                     "Gå til internettadresse: nav.no/digitalsykmelding/tilbakemelding")
                     )).getOppgaveId();
-            log.info("Opprettet oppgave: {} på sak: {}", oppgaveId, oppgave.getGsakSaksid());
+            log.info("Opprettet oppgave: {} på sak: {}", oppgaveId, oppgave.getSaksnummer());
             return oppgaveId;
         } catch (RuntimeException e) {
             log.error("Klarte ikke å opprette oppgave. ", e);

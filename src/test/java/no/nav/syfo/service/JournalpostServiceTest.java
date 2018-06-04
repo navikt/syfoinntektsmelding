@@ -1,9 +1,9 @@
 package no.nav.syfo.service;
 
-import no.nav.syfo.consumer.ws.ArbeidsfordelingConsumer;
+import no.nav.syfo.consumer.ws.BehandleInngaaendeJournalConsumer;
+import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer;
 import no.nav.syfo.consumer.ws.InngaaendeJournalConsumer;
-import no.nav.syfo.consumer.ws.PersonConsumer;
-import no.nav.syfo.domain.InngaendeJournalpost;
+import no.nav.syfo.consumer.ws.JournalConsumer;
 import no.nav.syfo.domain.Inntektsmelding;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,6 +12,8 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -20,30 +22,45 @@ public class JournalpostServiceTest {
     @Mock
     private InngaaendeJournalConsumer inngaaendeJournalConsumer;
     @Mock
-    private PersonConsumer personConsumer;
+    private BehandlendeEnhetConsumer behandlendeEnhetConsumer;
     @Mock
-    private ArbeidsfordelingConsumer arbeidsfordelingConsumer;
+    private JournalConsumer journalConsumer;
+    @Mock
+    private BehandleInngaaendeJournalConsumer behandleInngaaendeJournalConsumer;
 
     @InjectMocks
     private JournalpostService journalpostService;
 
     @Test
-    public void hentInngaendeJournalpost() {
-        final String journalpostId = "journalpostId";
-        final String behandlendeEnhetId = "behandlendeEnhetId";
-        final String dokumentId = "dokumentId";
-        final String geografiskTilknytningId = "geografiskTilknytningId";
-        final String fnr = "fnr";
-        final String gsakId = "gsakId";
-        final String orgnummer = "orgnummer";
+    public void ferdigstillJournalpost() {
+        journalpostService.ferdigstillJournalpost(
+                "saksId",
+                Inntektsmelding.builder()
+                        .fnr("fnr")
+                        .arbeidsgiverOrgnummer("orgnummer")
+                        .journalpostId("journalpostId")
+                        .build());
 
-        when(inngaaendeJournalConsumer.hentDokumentId(journalpostId)).thenReturn(dokumentId);
-        when(personConsumer.hentGeografiskTilknytning(fnr)).thenReturn(geografiskTilknytningId);
-        when(arbeidsfordelingConsumer.finnBehandlendeEnhet(geografiskTilknytningId)).thenReturn(behandlendeEnhetId);
+        verify(behandlendeEnhetConsumer).hentBehandlendeEnhet("fnr");
+        verify(inngaaendeJournalConsumer).hentDokumentId("journalpostId");
+        verify(behandleInngaaendeJournalConsumer).oppdaterJournalpost(any());
+        verify(behandleInngaaendeJournalConsumer).ferdigstillJournalpost(any());
+    }
 
-        InngaendeJournalpost inngaendeJournalpost = journalpostService.hentInngaendeJournalpost(journalpostId, gsakId, Inntektsmelding.builder().fnr(fnr).arbeidsgiverOrgnummer(orgnummer).build());
+    @Test
+    public void hentInntektsmelding() {
+        when(inngaaendeJournalConsumer.hentDokumentId("journalpostId")).thenReturn("dokumentId");
+        when(journalConsumer.hentInntektsmelding("journalpostId", "dokumentId"))
+                .thenReturn(Inntektsmelding
+                        .builder()
+                        .arbeidsgiverOrgnummer("arbeidsgiverOrgNr")
+                        .fnr("fnr")
+                        .journalpostId("journalpostId")
+                        .build());
 
-        assertThat(inngaendeJournalpost).isEqualTo(InngaendeJournalpost.builder().fnr(fnr).journalpostId(journalpostId).behandlendeEnhetId(behandlendeEnhetId).dokumentId(dokumentId).gsakId(gsakId).arbeidsgiverOrgnummer(orgnummer).build());
+        Inntektsmelding inntektsmelding = journalpostService.hentInntektsmelding("journalpostId");
+
+        assertThat(inntektsmelding.getFnr()).isEqualTo("fnr");
     }
 
 }
