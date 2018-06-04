@@ -49,8 +49,11 @@ public class OppgaveConsumer {
             log.info("Hentet oppgave: {}", oppgaveId);
             return Optional.of(oppgave);
         } catch (HentOppgaveOppgaveIkkeFunnet e) {
-            log.warn("Fant ikke oppgave med id {}", oppgaveId);
+            log.warn("Fant ikke oppgave med id {}", oppgaveId, e);
             return Optional.empty();
+        } catch (Exception e) {
+            log.error("Klarte ikke å hente oppgave med id {}", oppgaveId, e);
+            throw new RuntimeException(e);
         }
     }
 }
