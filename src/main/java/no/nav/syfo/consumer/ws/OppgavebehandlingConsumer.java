@@ -27,7 +27,8 @@ public class OppgavebehandlingConsumer {
 
     public void oppdaterOppgavebeskrivelse(Oppgave oppgave, String beskrivelse) {
         try {
-            oppgavebehandlingV3.lagreOppgave(new WSLagreOppgaveRequest().withEndreOppgave(endre(oppgave, beskrivelse)).withEndretAvEnhetId(9999));
+            String oppgavetekst = beskrivelse + "\n\n" + oppgave.getBeskrivelse();
+            oppgavebehandlingV3.lagreOppgave(new WSLagreOppgaveRequest().withEndreOppgave(endre(oppgave, oppgavetekst)).withEndretAvEnhetId(9999));
             log.info("Oppdatert oppgave: {} på sak: {}", oppgave.getOppgaveId(), oppgave.getSaksnummer());
         } catch (LagreOppgaveOppgaveIkkeFunnet e) {
             log.error("Feil i oppgavebehandling. Oppgave ikke funnet.", e);

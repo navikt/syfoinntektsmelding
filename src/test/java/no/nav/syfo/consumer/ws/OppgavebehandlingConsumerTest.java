@@ -47,7 +47,7 @@ public class OppgavebehandlingConsumerTest {
 
         verify(oppgavebehandlingV3).lagreOppgave(captor.capture());
 
-        assertThat(captor.getValue().getEndreOppgave().getBeskrivelse()).isEqualTo(beskrivelse);
+        assertThat(captor.getValue().getEndreOppgave().getBeskrivelse()).isEqualTo("Beskriv beskriv\n\nBeskrivelse");
         assertThat(captor.getValue().getEndretAvEnhetId()).isEqualTo(9999);
     }
 
