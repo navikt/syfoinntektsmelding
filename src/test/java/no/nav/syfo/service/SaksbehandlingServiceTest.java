@@ -1,6 +1,9 @@
 package no.nav.syfo.service;
 
-import no.nav.syfo.consumer.ws.*;
+import no.nav.syfo.consumer.ws.AktoridConsumer;
+import no.nav.syfo.consumer.ws.BehandleSakConsumer;
+import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer;
+import no.nav.syfo.consumer.ws.OppgavebehandlingConsumer;
 import no.nav.syfo.domain.Inntektsmelding;
 import no.nav.syfo.domain.Oppgave;
 import no.nav.syfo.domain.Sykepengesoknad;
@@ -16,7 +19,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Optional;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -36,9 +38,6 @@ public class SaksbehandlingServiceTest {
 
     @Mock
     private BehandleSakConsumer behandleSakConsumer;
-
-    @Mock
-    private OppgaveConsumer oppgaveConsumer;
 
     @Mock
     private SykepengesoknadDAO sykepengesoknadDAO;
@@ -61,15 +60,6 @@ public class SaksbehandlingServiceTest {
         when(behandlendeEnhetConsumer.hentBehandlendeEnhet(anyString())).thenReturn("behandlendeenhet1234");
         when(oppgavebehandlingConsumer.opprettOppgave(anyString(), any())).thenReturn("1234");
         when(behandleSakConsumer.opprettSak("fnr")).thenReturn("opprettetSaksId");
-        when(oppgaveConsumer.finnOppgave("oppgaveId"))
-                .thenReturn(Optional.of(Oppgave.builder()
-                        .status("A")
-                        .beskrivelse("Beskriv beskriv")
-                        .saksnummer("gsak1234")
-                        .dokumentId("journalpost1234")
-                        .ansvarligEnhetId("behandlendeEnhet1234")
-                        .aktivTil(LocalDate.of(2018, 1, 1))
-                        .build()));
         when(sykepengesoknadDAO.hentSykepengesoknaderForPerson(anyString(), anyInt()))
                 .thenReturn(new ArrayList<Sykepengesoknad>() {{
                                 add(Sykepengesoknad.builder()
@@ -109,26 +99,12 @@ public class SaksbehandlingServiceTest {
     }
 
     @Test
-    public void oppdatererOppgaveVedEksisterendeOppgave() {
-        saksbehandlingService.behandleInntektsmelding(Inntektsmelding.builder()
-                .fnr("fnr")
-                .arbeidsgiverOrgnummer("orgnummer")
-                .journalpostId("journalpostId").build());
-
-        verify(oppgavebehandlingConsumer, never()).opprettOppgave(anyString(), any(Oppgave.class));
-        verify(oppgavebehandlingConsumer).oppdaterOppgavebeskrivelse(any(Oppgave.class), anyString());
-    }
-
-    @Test
-    public void oppretterOppgaveVedFravaerendeOppgave() {
-        when(oppgaveConsumer.finnOppgave("oppgaveId")).thenReturn(Optional.empty());
-
+    public void oppretterOppgaveForSak() {
         saksbehandlingService.behandleInntektsmelding(Inntektsmelding.builder()
                 .fnr("fnr")
                 .arbeidsgiverOrgnummer("orgnummer")
                 .journalpostId("journalpostId").build());
 
         verify(oppgavebehandlingConsumer).opprettOppgave(anyString(), any(Oppgave.class));
-        verify(oppgavebehandlingConsumer, never()).oppdaterOppgavebeskrivelse(any(Oppgave.class), anyString());
     }
 }
