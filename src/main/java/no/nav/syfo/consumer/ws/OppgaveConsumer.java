@@ -51,6 +51,9 @@ public class OppgaveConsumer {
         } catch (HentOppgaveOppgaveIkkeFunnet e) {
             log.warn("Fant ikke oppgave med id {}", oppgaveId);
             return Optional.empty();
+        } catch (Exception e) {
+            log.error("Klarte ikke å hente oppgave med id {}", oppgaveId, e);
+            throw new RuntimeException(e);
         }
     }
 }
