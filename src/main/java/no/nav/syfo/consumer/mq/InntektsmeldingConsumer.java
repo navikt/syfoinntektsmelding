@@ -31,8 +31,7 @@ public class InntektsmeldingConsumer {
 
     @Transactional
     // Køen er foreløpig skrudd av frem til inntektsmelding behandling er ferdigstillt.
-    // TODO: Skru av kø før prodsetting
-    @JmsListener(id = "inntektsmelding_listener", containerFactory = "jmsListenerContainerFactory", destination = "inntektsmeldingQueue")
+    // @JmsListener(id = "inntektsmelding_listener", containerFactory = "jmsListenerContainerFactory", destination = "inntektsmeldingQueue")
     public void listen(Object message) {
 
         TextMessage textMessage = (TextMessage) message;

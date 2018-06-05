@@ -18,13 +18,6 @@ public class SelftestController {
     private static final String APPLICATION_LIVENESS = "Application is alive!";
     private static final String APPLICATION_READY = "Application is ready!";
 
-    private SaksbehandlingService saksbehandlingService;
-
-    @Inject
-    public SelftestController(SaksbehandlingService saksbehandlingService) {
-        this.saksbehandlingService = saksbehandlingService;
-    }
-
     @ResponseBody
     @RequestMapping(value = "/isAlive", produces = MediaType.TEXT_PLAIN_VALUE)
     public String isAlive() {
@@ -35,20 +28,6 @@ public class SelftestController {
     @RequestMapping(value = "/isReady", produces = MediaType.TEXT_PLAIN_VALUE)
     public String isReady() {
         return APPLICATION_READY;
-    }
-
-    // TODO: fjern denne før deploy
-    @ResponseBody
-    @RequestMapping(value = "/behandleFakeInntektsmelding/{orgnr}/{journalpostnr}/{fnr}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public String behandleFakeInntektsmelding(@PathVariable String orgnr, @PathVariable String journalpostnr, @PathVariable String fnr) {
-        log.info("Behandler fake inntektsmelding!");
-
-        Inntektsmelding inntektsmelding = Inntektsmelding.builder()
-                .arbeidsgiverOrgnummer(orgnr)
-                .journalpostId(journalpostnr)
-                .fnr(fnr).build();
-
-        return saksbehandlingService.behandleInntektsmelding(inntektsmelding);
     }
 
 }

@@ -2,7 +2,6 @@ package no.nav.syfo.consumer.ws;
 
 import no.nav.syfo.domain.Oppgave;
 import no.nav.tjeneste.virksomhet.oppgavebehandling.v3.OppgavebehandlingV3;
-import no.nav.tjeneste.virksomhet.oppgavebehandling.v3.meldinger.WSLagreOppgaveRequest;
 import no.nav.tjeneste.virksomhet.oppgavebehandling.v3.meldinger.WSOpprettOppgave;
 import no.nav.tjeneste.virksomhet.oppgavebehandling.v3.meldinger.WSOpprettOppgaveRequest;
 import no.nav.tjeneste.virksomhet.oppgavebehandling.v3.meldinger.WSOpprettOppgaveResponse;
@@ -29,27 +28,6 @@ public class OppgavebehandlingConsumerTest {
 
     @InjectMocks
     private OppgavebehandlingConsumer oppgavebehandlingConsumer;
-
-    @Test
-    public void oppdaterOppgavebeskrivelse() throws Exception {
-        ArgumentCaptor<WSLagreOppgaveRequest> captor = ArgumentCaptor.forClass(WSLagreOppgaveRequest.class);
-
-        String beskrivelse = "Beskriv beskriv";
-        oppgavebehandlingConsumer.oppdaterOppgavebeskrivelse(Oppgave.builder()
-                        .oppgaveId("1234")
-                        .saksnummer("gsakid")
-                        .beskrivelse("Beskrivelse")
-                        .dokumentId("journalpostid")
-                        .ansvarligEnhetId("behandlendeenhet1234")
-                        .aktivTil(LocalDate.of(2018, 1, 1))
-                        .build(),
-                beskrivelse);
-
-        verify(oppgavebehandlingV3).lagreOppgave(captor.capture());
-
-        assertThat(captor.getValue().getEndreOppgave().getBeskrivelse()).isEqualTo("Beskriv beskriv\n\nBeskrivelse");
-        assertThat(captor.getValue().getEndretAvEnhetId()).isEqualTo(9999);
-    }
 
     @Test
     public void opprettOppgave() {

@@ -1,7 +1,10 @@
 package no.nav.syfo.service;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.syfo.consumer.ws.*;
+import no.nav.syfo.consumer.ws.AktoridConsumer;
+import no.nav.syfo.consumer.ws.BehandleSakConsumer;
+import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer;
+import no.nav.syfo.consumer.ws.OppgavebehandlingConsumer;
 import no.nav.syfo.domain.Inntektsmelding;
 import no.nav.syfo.domain.Oppgave;
 import no.nav.syfo.domain.Sykepengesoknad;
@@ -24,17 +27,15 @@ public class SaksbehandlingService {
     private final OppgavebehandlingConsumer oppgavebehandlingConsumer;
     private final BehandlendeEnhetConsumer behandlendeEnhetConsumer;
     private final BehandleSakConsumer behandleSakConsumer;
-    private final OppgaveConsumer oppgaveConsumer;
     private final SykepengesoknadDAO sykepengesoknadDAO;
     private final AktoridConsumer aktoridConsumer;
     private final SykmeldingDAO sykmeldingDAO;
 
     @Inject
-    public SaksbehandlingService(OppgavebehandlingConsumer oppgavebehandlingConsumer, BehandlendeEnhetConsumer behandlendeEnhetConsumer, BehandleSakConsumer behandleSakConsumer, OppgaveConsumer oppgaveConsumer, SykepengesoknadDAO sykepengesoknadDAO, AktoridConsumer aktoridConsumer, SykmeldingDAO sykmeldingDAO) {
+    public SaksbehandlingService(OppgavebehandlingConsumer oppgavebehandlingConsumer, BehandlendeEnhetConsumer behandlendeEnhetConsumer, BehandleSakConsumer behandleSakConsumer, SykepengesoknadDAO sykepengesoknadDAO, AktoridConsumer aktoridConsumer, SykmeldingDAO sykmeldingDAO) {
         this.oppgavebehandlingConsumer = oppgavebehandlingConsumer;
         this.behandlendeEnhetConsumer = behandlendeEnhetConsumer;
         this.behandleSakConsumer = behandleSakConsumer;
-        this.oppgaveConsumer = oppgaveConsumer;
         this.sykepengesoknadDAO = sykepengesoknadDAO;
         this.aktoridConsumer = aktoridConsumer;
         this.sykmeldingDAO = sykmeldingDAO;
@@ -51,20 +52,7 @@ public class SaksbehandlingService {
                 ? sisteSykepengesoknad.get().getSaksId()
                 : behandleSakConsumer.opprettSak(inntektsmelding.getFnr());
 
-        if (sisteSykepengesoknad.isPresent()) {
-            Optional<Oppgave> oppgave = oppgaveConsumer.finnOppgave(sisteSykepengesoknad.get().getOppgaveId());
-
-            if (oppgave.isPresent() && oppgave.get().getStatus().equals("A")) {
-                log.info("Fant eksisterende åpen oppgave. Oppdaterete beskrivelsen.");
-                oppgavebehandlingConsumer.oppdaterOppgavebeskrivelse(oppgave.get(), "Det har kommet en inntektsmelding på sykepenger.");
-            } else {
-                log.info("Fant ikke eksisterende åpen oppgave. Opprettet ny oppgave.");
-                opprettOppgave(inntektsmelding.getFnr(), byggOppgave(inntektsmelding.getJournalpostId(), saksId));
-            }
-        } else {
-            log.info("Fant ikke tilhørende åpen sak for journalpost: {}. Opprettet ny sak og ny oppgave med sak: {}.", inntektsmelding.getJournalpostId(), saksId);
-            opprettOppgave(inntektsmelding.getFnr(), byggOppgave(inntektsmelding.getJournalpostId(), saksId));
-        }
+        opprettOppgave(inntektsmelding.getFnr(), byggOppgave(inntektsmelding.getJournalpostId(), saksId));
 
         return saksId;
     }
