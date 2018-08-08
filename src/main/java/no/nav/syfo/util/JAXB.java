@@ -24,7 +24,7 @@ public final class JAXB {
                     ObjectFactory.class
             );
             INNTEKTSMELDING = newInstance(
-                    no.seres.xsd.nav.inntektsmelding_m._20171205.ObjectFactory.class
+                    no.seres.xsd.nav.inntektsmelding_m._20180618.ObjectFactory.class
             );
         } catch (JAXBException e) {
             throw new RuntimeException(e);
