@@ -4,18 +4,18 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>no.nav.syfo</groupId>
-    <artifactId>syfomottak</artifactId>
+    <artifactId>syfoinntektsmelding</artifactId>
     <packaging>jar</packaging>
     <version>1.0.0-SNAPSHOT</version>
-    <name>Syfomottak</name>
+    <name>Syfoinntektsmelding</name>
 
     <prerequisites>
         <maven>3.3.9</maven>
     </prerequisites>
 
     <scm>
-        <developerConnection>scm:git:https://github.com/navikt/syfomottak.git</developerConnection>
-        <url>https://github.com/navikt/syfomottak</url>
+        <developerConnection>scm:git:https://github.com/navikt/syfoinntektsmelding.git</developerConnection>
+        <url>https://github.com/navikt/syfoinntektsmelding</url>
         <tag>HEAD</tag>
     </scm>
 

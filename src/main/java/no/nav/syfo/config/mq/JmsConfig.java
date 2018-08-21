@@ -29,7 +29,7 @@ public class JmsConfig {
 
     @Value("${syfo.mottak.inntektsmelding.queuename}")
     private String inntektsmeldingQueuename;
-    @Value("${syfomottak.channel.name}")
+    @Value("${syfoinntektsmelding.channel.name}")
     private String channelName;
     @Value("${mqgateway03.hostname}")
     private String gatewayHostname;

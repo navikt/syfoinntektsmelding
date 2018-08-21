@@ -1,5 +1,5 @@
-name: syfomottak
-image: "repo.adeo.no:5443/syfomottak"
+name: syfoinntektsmelding
+image: "repo.adeo.no:5443/syfoinntektsmelding"
 replicas:
   min: 1
   max: 2
@@ -28,7 +28,7 @@ resources:
     memory: 384Mi
 fasitResources:
   exposed:
-  - alias: syfomottakApi
+  - alias: syfoinntektsmeldingApi
     resourceType: restservice
     path: /api
   used:
@@ -54,7 +54,7 @@ fasitResources:
     resourceType: webservicegateway
     propertyMap:
       url: SERVICEGATEWAY_URL
-  - alias: srvSyfomottak
+  - alias: srvSyfoinntektsmelding
     resourceType: credential
   - alias: isso-jwks
     resourceType: baseurl
@@ -62,7 +62,7 @@ fasitResources:
     resourceType: baseurl
   - alias: mqGateway03
     resourceType: queueManager
-  - alias: syfomottak_channel
+  - alias: syfoinntektsmelding_channel
     resourceType: channel
   - alias: syfo_mottak_inntektsmelding
     resourceType: queue
