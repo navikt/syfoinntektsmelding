@@ -4,8 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.syfo.domain.Inntektsmelding;
 import no.nav.syfo.util.JAXB;
 import no.nav.tjeneste.virksomhet.journal.v2.*;
-import no.seres.xsd.nav.inntektsmelding_m._20180618.XMLInntektsmeldingM;
-import no.seres.xsd.nav.inntektsmelding_m._20180618.XMLSkjemainnhold;
+import no.seres.xsd.nav.inntektsmelding_m._20180924.XMLInntektsmeldingM;
+import no.seres.xsd.nav.inntektsmelding_m._20180924.XMLSkjemainnhold;
 import org.springframework.stereotype.Component;
 
 import javax.xml.bind.JAXBElement;
@@ -32,7 +32,7 @@ public class JournalConsumer {
             JAXBElement<XMLInntektsmeldingM> inntektsmeldingM = JAXB.unmarshalInntektsmelding(inntektsmelding);
             final XMLSkjemainnhold skjemainnhold = inntektsmeldingM.getValue().getSkjemainnhold();
 
-            log.info("Inntektsmelding med arbeidsgiver: {}", skjemainnhold.getArbeidsgiver().getJuridiskEnhet());
+            log.info("Inntektsmelding med arbeidsgiver: {}", skjemainnhold.getArbeidsgiver().getVirksomhetsnummer());
             return Inntektsmelding.builder()
                     .fnr(skjemainnhold.getArbeidstakerFnr())
                     .arbeidsgiverOrgnummer(skjemainnhold.getArbeidsgiver().getVirksomhetsnummer())

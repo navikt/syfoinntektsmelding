@@ -22,19 +22,19 @@ import static org.mockito.Mockito.when;
 public class JournalConsumerTest {
 
     @Mock
-    private JournalV2 journalV3;
+    private JournalV2 journal;
 
     @InjectMocks
     private JournalConsumer journalConsumer;
 
     @Test
     public void hentInntektsmelding() throws Exception {
-        when(journalV3.hentDokument(any())).thenReturn(new WSHentDokumentResponse().withDokument(getInntektsmelding().getBytes()));
+        when(journal.hentDokument(any())).thenReturn(new WSHentDokumentResponse().withDokument(getInntektsmelding().getBytes()));
         ArgumentCaptor<WSHentDokumentRequest> captor = ArgumentCaptor.forClass(WSHentDokumentRequest.class);
 
         Inntektsmelding inntektsmelding = journalConsumer.hentInntektsmelding("journalpostId", "dokumentId");
 
-        verify(journalV3).hentDokument(captor.capture());
+        verify(journal).hentDokument(captor.capture());
 
         assertThat(inntektsmelding.getFnr()).isEqualTo("18018522868");
         assertThat(captor.getValue().getJournalpostId()).isEqualTo("journalpostId");
