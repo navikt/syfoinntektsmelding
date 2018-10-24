@@ -20,7 +20,8 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 
-import static java.util.Optional.of;
+import java.util.Optional;
+
 import static no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.informasjon.WSEnhetsstatus.AKTIV;
 
 @Component
@@ -40,7 +41,7 @@ public class BehandlendeEnhetConsumer {
         String geografiskTilknytning = hentGeografiskTilknytning(fnr);
 
         try {
-            String behandlendeEnhet = arbeidsfordelingV1.finnBehandlendeEnhetListe(new WSFinnBehandlendeEnhetListeRequest()
+            return arbeidsfordelingV1.finnBehandlendeEnhetListe(new WSFinnBehandlendeEnhetListeRequest()
                     .withArbeidsfordelingKriterier(new WSArbeidsfordelingKriterier()
                             .withGeografiskTilknytning(new WSGeografi().withValue(geografiskTilknytning))
                             .withTema(new WSTema().withValue("SYK"))))
@@ -50,8 +51,6 @@ public class BehandlendeEnhetConsumer {
                     .map(WSOrganisasjonsenhet::getEnhetId)
                     .findFirst()
                     .orElseThrow(() -> new RuntimeException("Fant ingen aktiv enhet for " + geografiskTilknytning));
-            log.info("Fant behandlende enhet: {} for geografisk tilknytning: {}", behandlendeEnhet, geografiskTilknytning);
-            return behandlendeEnhet;
         } catch (FinnBehandlendeEnhetListeUgyldigInput e) {
             log.error("Feil ved henting av brukers forvaltningsenhet", e);
             throw new RuntimeException("Feil ved henting av brukers forvaltningsenhet", e);
@@ -63,14 +62,12 @@ public class BehandlendeEnhetConsumer {
 
     public String hentGeografiskTilknytning(String fnr) {
         try {
-            String geografiskTilknytning = of(personV3.hentGeografiskTilknytning(
+            return Optional.of(personV3.hentGeografiskTilknytning(
                     new HentGeografiskTilknytningRequest()
                             .withAktoer(new PersonIdent().withIdent(new NorskIdent().withIdent(fnr)))))
                     .map(HentGeografiskTilknytningResponse::getGeografiskTilknytning)
                     .map(GeografiskTilknytning::getGeografiskTilknytning)
                     .orElseThrow(() -> new RuntimeException("Kunne ikke hente geografisk tilknytning"));
-            log.info("Hentet geografisk tilknytning: {}", geografiskTilknytning);
-            return geografiskTilknytning;
         } catch (HentGeografiskTilknytningSikkerhetsbegrensing | HentGeografiskTilknytningPersonIkkeFunnet e) {
             log.error("Feil ved henting av geografisk tilknytning", e);
             throw new RuntimeException("Feil ved henting av geografisk tilknytning", e);

@@ -10,6 +10,7 @@ import no.nav.syfo.domain.Sykepengesoknad;
 import no.nav.syfo.domain.Sykmelding;
 import no.nav.syfo.repository.SykepengesoknadDAO;
 import no.nav.syfo.repository.SykmeldingDAO;
+import no.nav.syfo.util.Metrikk;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,21 +33,18 @@ public class SaksbehandlingServiceTest {
 
     @Mock
     private OppgavebehandlingConsumer oppgavebehandlingConsumer;
-
     @Mock
     private BehandlendeEnhetConsumer behandlendeEnhetConsumer;
-
     @Mock
     private BehandleSakConsumer behandleSakConsumer;
-
     @Mock
     private SykepengesoknadDAO sykepengesoknadDAO;
-
     @Mock
     private AktoridConsumer aktoridConsumer;
-
     @Mock
     private SykmeldingDAO sykmeldingDAO;
+    @Mock
+    private Metrikk metrikk;
 
     @InjectMocks
     private SaksbehandlingService saksbehandlingService;
@@ -76,15 +74,15 @@ public class SaksbehandlingServiceTest {
         return Inntektsmelding.builder()
                 .fnr("fnr")
                 .arbeidsgiverOrgnummer("orgnummer")
-                .journalpostId("journalpostId").build();
+                .journalpostId("journalpostId")
+                .arbeidsforholdId(null)
+                .endring(false)
+                .build();
     }
 
     @Test
     public void returnererSaksIdOmSakFinnes() {
-        String saksId = saksbehandlingService.behandleInntektsmelding((Inntektsmelding.builder()
-                .fnr("fnr")
-                .arbeidsgiverOrgnummer("orgnummer")
-                .journalpostId("journalpostId").build()));
+        String saksId = saksbehandlingService.behandleInntektsmelding(lagInntektsmelding());
 
         assertThat(saksId).isEqualTo("saksId");
     }
@@ -100,10 +98,7 @@ public class SaksbehandlingServiceTest {
 
     @Test
     public void oppretterOppgaveForSak() {
-        saksbehandlingService.behandleInntektsmelding(Inntektsmelding.builder()
-                .fnr("fnr")
-                .arbeidsgiverOrgnummer("orgnummer")
-                .journalpostId("journalpostId").build());
+        saksbehandlingService.behandleInntektsmelding(lagInntektsmelding());
 
         verify(oppgavebehandlingConsumer).opprettOppgave(anyString(), any(Oppgave.class));
     }

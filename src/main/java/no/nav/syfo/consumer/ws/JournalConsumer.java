@@ -9,6 +9,7 @@ import no.seres.xsd.nav.inntektsmelding_m._20180924.XMLSkjemainnhold;
 import org.springframework.stereotype.Component;
 
 import javax.xml.bind.JAXBElement;
+import java.util.Optional;
 
 @Component
 @Slf4j
@@ -31,12 +32,17 @@ public class JournalConsumer {
             String inntektsmelding = new String(inntektsmeldingRAW);
             JAXBElement<XMLInntektsmeldingM> inntektsmeldingM = JAXB.unmarshalInntektsmelding(inntektsmelding);
             final XMLSkjemainnhold skjemainnhold = inntektsmeldingM.getValue().getSkjemainnhold();
+            String arbeidsforholdId =
+                    Optional.ofNullable(skjemainnhold.getArbeidsforhold().getValue().getArbeidsforholdId())
+                            .map(JAXBElement::getValue)
+                            .orElse(null);
 
-            log.info("Inntektsmelding med arbeidsgiver: {}", skjemainnhold.getArbeidsgiver().getVirksomhetsnummer());
             return Inntektsmelding.builder()
                     .fnr(skjemainnhold.getArbeidstakerFnr())
                     .arbeidsgiverOrgnummer(skjemainnhold.getArbeidsgiver().getVirksomhetsnummer())
                     .journalpostId(journalpostId)
+                    .arbeidsforholdId(arbeidsforholdId)
+                    .endring("Endring" .equals(skjemainnhold.getAarsakTilInnsending()))
                     .build();
         } catch (HentDokumentSikkerhetsbegrensning e) {
             log.error("Feil ved henting av dokument: Sikkerhetsbegrensning!");

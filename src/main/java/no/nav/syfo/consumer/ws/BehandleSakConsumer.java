@@ -23,7 +23,7 @@ public class BehandleSakConsumer {
 
     public String opprettSak(String fnr) {
         try {
-            String sakId = behandleSakV1.opprettSak(new WSOpprettSakRequest()
+            return behandleSakV1.opprettSak(new WSOpprettSakRequest()
                     .withSak(new WSSak()
                             .withSakstype(new WSSakstyper().withValue("GEN"))
                             .withFagomraade(new WSFagomraader().withValue("SYK"))
@@ -31,8 +31,6 @@ public class BehandleSakConsumer {
                             .withGjelderBrukerListe(new WSPerson().withIdent(fnr))
                     )
             ).getSakId();
-            log.info("Opprettet sak i GSAK: {}", sakId);
-            return sakId;
         } catch (OpprettSakSakEksistererAllerede e) {
             log.error("Sak finnes allerede", e);
             throw new RuntimeException("Sak finnes allerede", e);
