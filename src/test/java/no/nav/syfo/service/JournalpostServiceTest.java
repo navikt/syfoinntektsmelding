@@ -43,7 +43,7 @@ public class JournalpostServiceTest {
                         .arbeidsgiverOrgnummer("orgnummer")
                         .journalpostId("journalpostId")
                         .arbeidsforholdId(null)
-                        .endring(false)
+                        .arsakTilInnsending("Ny")
                         .build());
 
         verify(behandlendeEnhetConsumer).hentBehandlendeEnhet("fnr");
