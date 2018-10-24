@@ -26,7 +26,10 @@ public class InntektsmeldingConsumer {
     private SaksbehandlingService saksbehandlingService;
     private Metrikk metrikk;
 
-    public InntektsmeldingConsumer(JournalpostService journalpostService, SaksbehandlingService saksbehandlingService, Metrikk metrikk) {
+    public InntektsmeldingConsumer(
+            JournalpostService journalpostService,
+            SaksbehandlingService saksbehandlingService,
+            Metrikk metrikk) {
         this.journalpostService = journalpostService;
         this.saksbehandlingService = saksbehandlingService;
         this.metrikk = metrikk;
@@ -41,9 +44,9 @@ public class InntektsmeldingConsumer {
             putToMDC(MDC_CALL_ID, ofNullable(textMessage.getStringProperty("callId")).orElse(generateCallId()));
             JAXBElement<XMLForsendelsesinformasjon> xmlForsendelsesinformasjon = JAXB.unmarshalForsendelsesinformasjon(textMessage.getText());
             final XMLForsendelsesinformasjon info = xmlForsendelsesinformasjon.getValue();
-            metrikk.tellInntektsmeldingerMottat();
 
             Inntektsmelding inntektsmelding = journalpostService.hentInntektsmelding(info.getArkivId());
+            metrikk.tellInntektsmeldingerMottat(inntektsmelding);
 
             String saksId = saksbehandlingService.behandleInntektsmelding(inntektsmelding);
 
