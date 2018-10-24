@@ -42,7 +42,7 @@ public class JournalConsumer {
                     .arbeidsgiverOrgnummer(skjemainnhold.getArbeidsgiver().getVirksomhetsnummer())
                     .journalpostId(journalpostId)
                     .arbeidsforholdId(arbeidsforholdId)
-                    .endring("Endring" .equals(skjemainnhold.getAarsakTilInnsending()))
+                    .arsakTilInnsending(skjemainnhold.getAarsakTilInnsending())
                     .build();
         } catch (HentDokumentSikkerhetsbegrensning e) {
             log.error("Feil ved henting av dokument: Sikkerhetsbegrensning!");

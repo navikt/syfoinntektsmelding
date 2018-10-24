@@ -2,6 +2,7 @@ package no.nav.syfo.util;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tags;
+import no.nav.syfo.domain.Inntektsmelding;
 import org.springframework.stereotype.Controller;
 
 import javax.inject.Inject;
@@ -16,19 +17,18 @@ public class Metrikk {
         this.registry = registry;
     }
 
-    public void tellInntektsmeldingerMottat() {
-        registry.counter("syfoinntektsmelding_inntektsmeldinger_mottatt", Tags.of("type", "info")).increment();
+    public void tellInntektsmeldingerMottat(Inntektsmelding inntektsmelding) {
+        registry.counter(
+                "syfoinntektsmelding_inntektsmeldinger_mottatt",
+                Tags.of(
+                        "type", "info",
+                        "arbeidsforholdId", inntektsmelding.getArbeidsforholdId(),
+                        "arsakTilEndring", inntektsmelding.getArsakTilInnsending()
+                ))
+                .increment();
     }
 
     public void tellInntektsmeldingerJournalfort() {
         registry.counter("syfoinntektsmelding_inntektsmeldinger_journalfort", Tags.of("type", "info")).increment();
-    }
-
-    public void tellInntektsmeldingerMedArbeidsforholdId() {
-        registry.counter("syfoinntektsmelding_inntektsmeldinger_med_arbeidsforhold_id", Tags.of("type", "info")).increment();
-    }
-
-    public void tellInntektsmeldingerSomErEndringsmeldinger() {
-        registry.counter("syfoinntektsmelding_inntektsmeldinger_som_er_endringsmeldinger", Tags.of("type", "info")).increment();
     }
 }

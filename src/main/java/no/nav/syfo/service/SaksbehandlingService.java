@@ -11,7 +11,6 @@ import no.nav.syfo.domain.Sykepengesoknad;
 import no.nav.syfo.domain.Sykmelding;
 import no.nav.syfo.repository.SykepengesoknadDAO;
 import no.nav.syfo.repository.SykmeldingDAO;
-import no.nav.syfo.util.Metrikk;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -31,7 +30,6 @@ public class SaksbehandlingService {
     private final SykepengesoknadDAO sykepengesoknadDAO;
     private final AktoridConsumer aktoridConsumer;
     private final SykmeldingDAO sykmeldingDAO;
-    private final Metrikk metrikk;
 
     @Inject
     public SaksbehandlingService(
@@ -40,27 +38,17 @@ public class SaksbehandlingService {
             BehandleSakConsumer behandleSakConsumer,
             SykepengesoknadDAO sykepengesoknadDAO,
             AktoridConsumer aktoridConsumer,
-            SykmeldingDAO sykmeldingDAO,
-            Metrikk metrikk) {
+            SykmeldingDAO sykmeldingDAO) {
         this.oppgavebehandlingConsumer = oppgavebehandlingConsumer;
         this.behandlendeEnhetConsumer = behandlendeEnhetConsumer;
         this.behandleSakConsumer = behandleSakConsumer;
         this.sykepengesoknadDAO = sykepengesoknadDAO;
         this.aktoridConsumer = aktoridConsumer;
         this.sykmeldingDAO = sykmeldingDAO;
-        this.metrikk = metrikk;
     }
 
     public String behandleInntektsmelding(Inntektsmelding inntektsmelding) {
         String aktorid = aktoridConsumer.hentAktoerIdForFnr(inntektsmelding.getFnr());
-
-        if (inntektsmelding.getArbeidsforholdId() != null) {
-            metrikk.tellInntektsmeldingerMedArbeidsforholdId();
-        }
-
-        if (inntektsmelding.getEndring()) {
-            metrikk.tellInntektsmeldingerSomErEndringsmeldinger();
-        }
 
         Optional<Sykepengesoknad> sisteSykepengesoknad = hentSykepengesoknader(aktorid, inntektsmelding.getArbeidsgiverOrgnummer())
                 .stream()

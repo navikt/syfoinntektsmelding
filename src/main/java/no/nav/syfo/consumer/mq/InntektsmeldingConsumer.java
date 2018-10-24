@@ -41,9 +41,9 @@ public class InntektsmeldingConsumer {
             putToMDC(MDC_CALL_ID, ofNullable(textMessage.getStringProperty("callId")).orElse(generateCallId()));
             JAXBElement<XMLForsendelsesinformasjon> xmlForsendelsesinformasjon = JAXB.unmarshalForsendelsesinformasjon(textMessage.getText());
             final XMLForsendelsesinformasjon info = xmlForsendelsesinformasjon.getValue();
-            metrikk.tellInntektsmeldingerMottat();
 
             Inntektsmelding inntektsmelding = journalpostService.hentInntektsmelding(info.getArkivId());
+            metrikk.tellInntektsmeldingerMottat(inntektsmelding);
 
             String saksId = saksbehandlingService.behandleInntektsmelding(inntektsmelding);
 

@@ -43,8 +43,6 @@ public class SaksbehandlingServiceTest {
     private AktoridConsumer aktoridConsumer;
     @Mock
     private SykmeldingDAO sykmeldingDAO;
-    @Mock
-    private Metrikk metrikk;
 
     @InjectMocks
     private SaksbehandlingService saksbehandlingService;
@@ -76,7 +74,7 @@ public class SaksbehandlingServiceTest {
                 .arbeidsgiverOrgnummer("orgnummer")
                 .journalpostId("journalpostId")
                 .arbeidsforholdId(null)
-                .endring(false)
+                .arsakTilInnsending("Ny")
                 .build();
     }
 

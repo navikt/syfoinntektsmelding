@@ -14,5 +14,5 @@ public class Inntektsmelding {
     String arbeidsgiverOrgnummer;
     String journalpostId;
     String arbeidsforholdId;
-    Boolean endring;
+    String arsakTilInnsending;
 }
