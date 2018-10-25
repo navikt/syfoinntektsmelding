@@ -6,6 +6,7 @@ import no.nav.syfo.domain.Inntektsmelding;
 import no.nav.syfo.service.JournalpostService;
 import no.nav.syfo.service.SaksbehandlingService;
 import no.nav.syfo.util.JAXB;
+import no.nav.syfo.util.Metrikk;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,15 +24,19 @@ public class InntektsmeldingConsumer {
 
     private JournalpostService journalpostService;
     private SaksbehandlingService saksbehandlingService;
+    private Metrikk metrikk;
 
-    public InntektsmeldingConsumer(JournalpostService journalpostService, SaksbehandlingService saksbehandlingService) {
+    public InntektsmeldingConsumer(
+            JournalpostService journalpostService,
+            SaksbehandlingService saksbehandlingService,
+            Metrikk metrikk) {
         this.journalpostService = journalpostService;
         this.saksbehandlingService = saksbehandlingService;
+        this.metrikk = metrikk;
     }
 
     @Transactional
-    // Køen er foreløpig skrudd av frem til inntektsmelding behandling er ferdigstillt.
-    // @JmsListener(id = "inntektsmelding_listener", containerFactory = "jmsListenerContainerFactory", destination = "inntektsmeldingQueue")
+    @JmsListener(id = "inntektsmelding_listener", containerFactory = "jmsListenerContainerFactory", destination = "inntektsmeldingQueue")
     public void listen(Object message) {
 
         TextMessage textMessage = (TextMessage) message;
@@ -39,21 +44,17 @@ public class InntektsmeldingConsumer {
             putToMDC(MDC_CALL_ID, ofNullable(textMessage.getStringProperty("callId")).orElse(generateCallId()));
             JAXBElement<XMLForsendelsesinformasjon> xmlForsendelsesinformasjon = JAXB.unmarshalForsendelsesinformasjon(textMessage.getText());
             final XMLForsendelsesinformasjon info = xmlForsendelsesinformasjon.getValue();
-            log.info("Fikk melding om inntektskjema - arkivid: {}, arkivsystem: {}, tema: {}, behandingstema: {}",
-                    info.getArkivId(),
-                    info.getArkivsystem(),
-                    info.getTema().getValue(),
-                    info.getBehandlingstema().getValue());
 
             Inntektsmelding inntektsmelding = journalpostService.hentInntektsmelding(info.getArkivId());
+            metrikk.tellInntektsmeldingerMottat(inntektsmelding);
 
             String saksId = saksbehandlingService.behandleInntektsmelding(inntektsmelding);
 
             journalpostService.ferdigstillJournalpost(saksId, inntektsmelding);
 
-            log.info("Behandlet melding om inntektskjema - journalpost: {}", info.getArkivId());
+            log.info("Inntektsmelding journalført. id: {}", inntektsmelding.getJournalpostId());
         } catch (JMSException e) {
-            log.error("Feil med parsing av inntektsmelding fra kø", e);
+            log.error("Feil ved parsing av inntektsmelding fra kø", e);
             throw new RuntimeException("Feil ved lesing av melding", e);
         }
     }

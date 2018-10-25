@@ -20,11 +20,8 @@ public class AktoridConsumer {
     }
 
     public String hentAktoerIdForFnr(String fnr) {
-        log.info("Henter aktoerid for fnr");
         try {
-            String aktoerid = aktoerV2.hentAktoerIdForIdent(new WSHentAktoerIdForIdentRequest().withIdent(fnr)).getAktoerId();
-            log.info("Fant aktoerid for fnr: {}", aktoerid);
-            return aktoerid;
+            return aktoerV2.hentAktoerIdForIdent(new WSHentAktoerIdForIdentRequest().withIdent(fnr)).getAktoerId();
         } catch (HentAktoerIdForIdentPersonIkkeFunnet e) {
             log.error("Fant ikke person med gitt fnr");
             throw new RuntimeException(e);

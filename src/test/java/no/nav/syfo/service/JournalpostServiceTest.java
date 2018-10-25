@@ -5,6 +5,7 @@ import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer;
 import no.nav.syfo.consumer.ws.InngaaendeJournalConsumer;
 import no.nav.syfo.consumer.ws.JournalConsumer;
 import no.nav.syfo.domain.Inntektsmelding;
+import no.nav.syfo.util.Metrikk;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -27,6 +28,8 @@ public class JournalpostServiceTest {
     private JournalConsumer journalConsumer;
     @Mock
     private BehandleInngaaendeJournalConsumer behandleInngaaendeJournalConsumer;
+    @Mock
+    private Metrikk metrikk;
 
     @InjectMocks
     private JournalpostService journalpostService;
@@ -39,6 +42,8 @@ public class JournalpostServiceTest {
                         .fnr("fnr")
                         .arbeidsgiverOrgnummer("orgnummer")
                         .journalpostId("journalpostId")
+                        .arbeidsforholdId(null)
+                        .arsakTilInnsending("Ny")
                         .build());
 
         verify(behandlendeEnhetConsumer).hentBehandlendeEnhet("fnr");

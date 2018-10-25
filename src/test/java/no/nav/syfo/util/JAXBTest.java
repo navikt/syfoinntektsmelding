@@ -1,6 +1,6 @@
 package no.nav.syfo.util;
 
-import no.seres.xsd.nav.inntektsmelding_m._20180618.XMLInntektsmeldingM;
+import no.seres.xsd.nav.inntektsmelding_m._20180924.XMLInntektsmeldingM;
 import org.junit.Test;
 
 import javax.xml.bind.JAXBElement;
@@ -9,7 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class JAXBTest {
     public static String getInntektsmelding() {
-        return "<ns2:melding xmlns:ns2=\"http://seres.no/xsd/NAV/Inntektsmelding_M/20180618\">\n" +
+        return "<ns2:melding xmlns:ns2=\"http://seres.no/xsd/NAV/Inntektsmelding_M/20180924\">\n" +
                 "    <ns2:Skjemainnhold>\n" +
                 "        <ns2:ytelse>Sykepenger</ns2:ytelse>\n" +
                 "        <ns2:aarsakTilInnsending>Ny</ns2:aarsakTilInnsending>\n" +
