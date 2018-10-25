@@ -21,9 +21,9 @@ public class OppgavebehandlingConsumer {
         this.oppgavebehandlingV3 = oppgavebehandlingV3;
     }
 
-    public String opprettOppgave(String fnr, Oppgave oppgave) {
+    public void opprettOppgave(String fnr, Oppgave oppgave) {
         try {
-            String oppgaveId = oppgavebehandlingV3.opprettOppgave(new WSOpprettOppgaveRequest()
+            oppgavebehandlingV3.opprettOppgave(new WSOpprettOppgaveRequest()
                     .withOpprettetAvEnhetId(9999)
                     .withOpprettOppgave(new WSOpprettOppgave()
                             .withBrukerId(fnr)
@@ -42,8 +42,6 @@ public class OppgavebehandlingConsumer {
                             .withOppfolging("\nDu kan gi oss tilbakemelding på søknaden om sykepenger.\n" +
                                     "Gå til internettadresse: nav.no/digitalsykmelding/tilbakemelding")
                     )).getOppgaveId();
-            log.info("Opprettet oppgave: {} på sak: {}", oppgaveId, oppgave.getSaksnummer());
-            return oppgaveId;
         } catch (RuntimeException e) {
             log.error("Klarte ikke å opprette oppgave. ", e);
             throw new RuntimeException(e);

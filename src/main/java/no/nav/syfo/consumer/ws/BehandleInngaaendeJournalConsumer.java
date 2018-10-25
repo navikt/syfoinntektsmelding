@@ -28,7 +28,6 @@ public class BehandleInngaaendeJournalConsumer {
             behandleInngaaendeJournalV1.oppdaterJournalpost(new WSOppdaterJournalpostRequest()
                     .withInngaaendeJournalpost(inngaaendeJournalpost)
             );
-            log.info("Oppdaterte journalpost: {}", journalpostId);
         } catch (OppdaterJournalpostUgyldigInput e) {
             log.error("Feil ved oppdatering av journalpost: {} - Ugyldig input!", journalpostId, e);
             throw new RuntimeException("Feil ved oppdatering av journalpost: " + journalpostId + " - Ugyldig input!", e);
@@ -54,7 +53,6 @@ public class BehandleInngaaendeJournalConsumer {
                     .withEnhetId(inngaendeJournalpost.getBehandlendeEnhetId())
                     .withJournalpostId(journalpostId)
             );
-            log.info("Ferdigstiller journalpost med id: {}", journalpostId);
         } catch (FerdigstillJournalfoeringUgyldigInput e) {
             log.error("Feil ved ferdigstilling av journalpost: {} - Ugyldig input!", journalpostId, e);
             throw new RuntimeException("Feil ved ferdigstilling av journalpost: " + journalpostId + " - Ugyldig innput!", e);

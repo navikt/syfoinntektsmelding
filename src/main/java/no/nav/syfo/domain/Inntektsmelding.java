@@ -11,4 +11,6 @@ public class Inntektsmelding {
     String fnr;
     String arbeidsgiverOrgnummer;
     String journalpostId;
+    String arbeidsforholdId;
+    String arsakTilInnsending;
 }

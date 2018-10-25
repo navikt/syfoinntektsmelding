@@ -32,7 +32,13 @@ public class SaksbehandlingService {
     private final SykmeldingDAO sykmeldingDAO;
 
     @Inject
-    public SaksbehandlingService(OppgavebehandlingConsumer oppgavebehandlingConsumer, BehandlendeEnhetConsumer behandlendeEnhetConsumer, BehandleSakConsumer behandleSakConsumer, SykepengesoknadDAO sykepengesoknadDAO, AktoridConsumer aktoridConsumer, SykmeldingDAO sykmeldingDAO) {
+    public SaksbehandlingService(
+            OppgavebehandlingConsumer oppgavebehandlingConsumer,
+            BehandlendeEnhetConsumer behandlendeEnhetConsumer,
+            BehandleSakConsumer behandleSakConsumer,
+            SykepengesoknadDAO sykepengesoknadDAO,
+            AktoridConsumer aktoridConsumer,
+            SykmeldingDAO sykmeldingDAO) {
         this.oppgavebehandlingConsumer = oppgavebehandlingConsumer;
         this.behandlendeEnhetConsumer = behandlendeEnhetConsumer;
         this.behandleSakConsumer = behandleSakConsumer;
@@ -86,8 +92,7 @@ public class SaksbehandlingService {
                 .ansvarligEnhetId(behandlendeEnhet)
                 .build();
 
-        String oppgaveId = oppgavebehandlingConsumer.opprettOppgave(fnr, nyOppgave);
-        log.info("Opprettet oppgave: {}", oppgaveId);
+        oppgavebehandlingConsumer.opprettOppgave(fnr, nyOppgave);
     }
 
     private Oppgave byggOppgave(String dokumentId, String saksnummer) {

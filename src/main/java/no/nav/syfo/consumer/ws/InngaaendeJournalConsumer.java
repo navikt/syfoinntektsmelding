@@ -16,9 +16,12 @@ public class InngaaendeJournalConsumer {
 
     public String hentDokumentId(String journalpostId) {
         try {
-            final WSInngaaendeJournalpost inngaendeJournalpost = inngaaendeJournalV1.hentJournalpost(new WSHentJournalpostRequest().withJournalpostId(journalpostId)).getInngaaendeJournalpost();
-            log.info("Hentet dokumentid: {}", inngaendeJournalpost.getHoveddokument().getDokumentId());
-            return inngaendeJournalpost.getHoveddokument().getDokumentId();
+            return inngaaendeJournalV1.hentJournalpost(
+                    new WSHentJournalpostRequest()
+                            .withJournalpostId(journalpostId))
+                    .getInngaaendeJournalpost()
+                    .getHoveddokument()
+                    .getDokumentId();
 
         } catch (HentJournalpostSikkerhetsbegrensning e) {
             log.error("Feil ved henting av journalpost: Sikkerhetsbegrensning!");
