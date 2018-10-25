@@ -26,7 +26,7 @@ public class Metrikk {
                 Tags.of(
                         "type", "info",
                         "arbeidsforholdId", arbeidsforholdId,
-                        "arsakTilEndring", inntektsmelding.getArsakTilInnsending()
+                        "arsakTilSending", inntektsmelding.getArsakTilInnsending()
                 ))
                 .increment();
     }

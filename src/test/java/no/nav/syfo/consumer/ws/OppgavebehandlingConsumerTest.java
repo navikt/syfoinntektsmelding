@@ -42,12 +42,11 @@ public class OppgavebehandlingConsumerTest {
                 .ansvarligEnhetId(ansvarligEnhetId)
                 .aktivTil(LocalDate.of(2018, 1, 1))
                 .build();
-        String oppgaveId = oppgavebehandlingConsumer.opprettOppgave("12345678910", oppgave);
+        oppgavebehandlingConsumer.opprettOppgave("12345678910", oppgave);
 
         verify(oppgavebehandlingV3).opprettOppgave(captor.capture());
         WSOpprettOppgave opprettOppgave = captor.getValue().getOpprettOppgave();
 
-        assertThat(oppgaveId).isEqualTo("1234");
         assertThat(opprettOppgave.getBrukertypeKode()).isEqualTo("PERSON");
         assertThat(opprettOppgave.getOppgavetypeKode()).isEqualTo("INNT_SYK");
         assertThat(opprettOppgave.getFagomradeKode()).isEqualTo("SYK");

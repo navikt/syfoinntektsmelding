@@ -54,7 +54,6 @@ public class SaksbehandlingServiceTest {
                 .thenReturn(singletonList(Sykmelding.builder().orgnummer("orgnummer").id(123).build()));
         when(behandlendeEnhetConsumer.hentGeografiskTilknytning(anyString())).thenReturn("Geografisktilknytning");
         when(behandlendeEnhetConsumer.hentBehandlendeEnhet(anyString())).thenReturn("behandlendeenhet1234");
-        when(oppgavebehandlingConsumer.opprettOppgave(anyString(), any())).thenReturn("1234");
         when(behandleSakConsumer.opprettSak("fnr")).thenReturn("opprettetSaksId");
         when(sykepengesoknadDAO.hentSykepengesoknaderForPerson(anyString(), anyInt()))
                 .thenReturn(new ArrayList<Sykepengesoknad>() {{
