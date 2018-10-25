@@ -21,9 +21,9 @@ public class OppgavebehandlingConsumer {
         this.oppgavebehandlingV3 = oppgavebehandlingV3;
     }
 
-    public String opprettOppgave(String fnr, Oppgave oppgave) {
+    public void opprettOppgave(String fnr, Oppgave oppgave) {
         try {
-            return oppgavebehandlingV3.opprettOppgave(new WSOpprettOppgaveRequest()
+            oppgavebehandlingV3.opprettOppgave(new WSOpprettOppgaveRequest()
                     .withOpprettetAvEnhetId(9999)
                     .withOpprettOppgave(new WSOpprettOppgave()
                             .withBrukerId(fnr)
