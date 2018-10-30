@@ -3,15 +3,13 @@ package no.nav.syfo.consumer.ws;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.ArbeidsfordelingV1;
 import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.FinnBehandlendeEnhetListeUgyldigInput;
-import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.informasjon.WSArbeidsfordelingKriterier;
-import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.informasjon.WSGeografi;
-import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.informasjon.WSOrganisasjonsenhet;
-import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.informasjon.WSTema;
+import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.informasjon.*;
 import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.meldinger.WSFinnBehandlendeEnhetListeRequest;
 import no.nav.tjeneste.virksomhet.person.v3.binding.HentGeografiskTilknytningPersonIkkeFunnet;
 import no.nav.tjeneste.virksomhet.person.v3.binding.HentGeografiskTilknytningSikkerhetsbegrensing;
 import no.nav.tjeneste.virksomhet.person.v3.binding.PersonV3;
 import no.nav.tjeneste.virksomhet.person.v3.informasjon.GeografiskTilknytning;
+import no.nav.tjeneste.virksomhet.person.v3.informasjon.Kodeverdi;
 import no.nav.tjeneste.virksomhet.person.v3.informasjon.NorskIdent;
 import no.nav.tjeneste.virksomhet.person.v3.informasjon.PersonIdent;
 import no.nav.tjeneste.virksomhet.person.v3.meldinger.HentGeografiskTilknytningRequest;
@@ -20,8 +18,7 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 
-import java.util.Optional;
-
+import static java.util.Optional.ofNullable;
 import static no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.informasjon.WSEnhetsstatus.AKTIV;
 
 @Component
@@ -38,19 +35,23 @@ public class BehandlendeEnhetConsumer {
     }
 
     public String hentBehandlendeEnhet(String fnr) {
-        String geografiskTilknytning = hentGeografiskTilknytning(fnr);
+        GeografiskTilknytningData geografiskTilknytning = hentGeografiskTilknytning(fnr);
 
         try {
             return arbeidsfordelingV1.finnBehandlendeEnhetListe(new WSFinnBehandlendeEnhetListeRequest()
                     .withArbeidsfordelingKriterier(new WSArbeidsfordelingKriterier()
-                            .withGeografiskTilknytning(new WSGeografi().withValue(geografiskTilknytning))
+                            .withDiskresjonskode(
+                                    geografiskTilknytning.diskresjonskode != null
+                                            ? new WSDiskresjonskoder().withValue(geografiskTilknytning.diskresjonskode)
+                                            : null)
+                            .withGeografiskTilknytning(new WSGeografi().withValue(geografiskTilknytning.geografiskTilknytning))
                             .withTema(new WSTema().withValue("SYK"))))
                     .getBehandlendeEnhetListe()
                     .stream()
                     .filter(wsOrganisasjonsenhet -> AKTIV.equals(wsOrganisasjonsenhet.getStatus()))
                     .map(WSOrganisasjonsenhet::getEnhetId)
                     .findFirst()
-                    .orElseThrow(() -> new RuntimeException("Fant ingen aktiv enhet for " + geografiskTilknytning));
+                    .orElseThrow(() -> new RuntimeException("Fant ingen aktiv enhet for " + geografiskTilknytning.geografiskTilknytning));
         } catch (FinnBehandlendeEnhetListeUgyldigInput e) {
             log.error("Feil ved henting av brukers forvaltningsenhet", e);
             throw new RuntimeException("Feil ved henting av brukers forvaltningsenhet", e);
@@ -60,14 +61,22 @@ public class BehandlendeEnhetConsumer {
         }
     }
 
-    public String hentGeografiskTilknytning(String fnr) {
+    public GeografiskTilknytningData hentGeografiskTilknytning(String fnr) {
         try {
-            return Optional.of(personV3.hentGeografiskTilknytning(
-                    new HentGeografiskTilknytningRequest()
-                            .withAktoer(new PersonIdent().withIdent(new NorskIdent().withIdent(fnr)))))
-                    .map(HentGeografiskTilknytningResponse::getGeografiskTilknytning)
-                    .map(GeografiskTilknytning::getGeografiskTilknytning)
-                    .orElseThrow(() -> new RuntimeException("Kunne ikke hente geografisk tilknytning"));
+            HentGeografiskTilknytningResponse response = personV3.hentGeografiskTilknytning(new HentGeografiskTilknytningRequest()
+                    .withAktoer(new PersonIdent().withIdent(new NorskIdent().withIdent(fnr))));
+
+            return GeografiskTilknytningData
+                    .builder()
+                    .geografiskTilknytning(
+                            ofNullable(response.getGeografiskTilknytning())
+                                    .map(GeografiskTilknytning::getGeografiskTilknytning)
+                                    .orElse(null))
+                    .diskresjonskode(
+                            ofNullable(response.getDiskresjonskode())
+                                    .map(Kodeverdi::getValue)
+                                    .orElse(null))
+                    .build();
         } catch (HentGeografiskTilknytningSikkerhetsbegrensing | HentGeografiskTilknytningPersonIkkeFunnet e) {
             log.error("Feil ved henting av geografisk tilknytning", e);
             throw new RuntimeException("Feil ved henting av geografisk tilknytning", e);
