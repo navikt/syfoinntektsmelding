@@ -1,14 +1,8 @@
 package no.nav.syfo.service;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.syfo.consumer.ws.AktoridConsumer;
-import no.nav.syfo.consumer.ws.BehandleSakConsumer;
-import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer;
-import no.nav.syfo.consumer.ws.OppgavebehandlingConsumer;
-import no.nav.syfo.domain.Inntektsmelding;
-import no.nav.syfo.domain.Oppgave;
-import no.nav.syfo.domain.Sykepengesoknad;
-import no.nav.syfo.domain.Sykmelding;
+import no.nav.syfo.consumer.ws.*;
+import no.nav.syfo.domain.*;
 import no.nav.syfo.repository.SykepengesoknadDAO;
 import no.nav.syfo.repository.SykmeldingDAO;
 import org.springframework.stereotype.Component;
@@ -81,14 +75,14 @@ public class SaksbehandlingService {
 
     private void opprettOppgave(String fnr, Oppgave oppgave) {
         String behandlendeEnhet = behandlendeEnhetConsumer.hentBehandlendeEnhet(fnr);
-        String geografiskTilknytning = behandlendeEnhetConsumer.hentGeografiskTilknytning(fnr);
+        GeografiskTilknytningData geografiskTilknytning = behandlendeEnhetConsumer.hentGeografiskTilknytning(fnr);
 
         Oppgave nyOppgave = Oppgave.builder()
                 .aktivTil(oppgave.getAktivTil())
                 .beskrivelse(oppgave.getBeskrivelse())
                 .saksnummer(oppgave.getSaksnummer())
                 .dokumentId(oppgave.getDokumentId())
-                .geografiskTilknytning(geografiskTilknytning)
+                .geografiskTilknytning(geografiskTilknytning.geografiskTilknytning)
                 .ansvarligEnhetId(behandlendeEnhet)
                 .build();
 
