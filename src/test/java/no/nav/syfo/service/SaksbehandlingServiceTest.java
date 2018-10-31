@@ -1,16 +1,9 @@
 package no.nav.syfo.service;
 
-import no.nav.syfo.consumer.ws.AktoridConsumer;
-import no.nav.syfo.consumer.ws.BehandleSakConsumer;
-import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer;
-import no.nav.syfo.consumer.ws.OppgavebehandlingConsumer;
-import no.nav.syfo.domain.Inntektsmelding;
-import no.nav.syfo.domain.Oppgave;
-import no.nav.syfo.domain.Sykepengesoknad;
-import no.nav.syfo.domain.Sykmelding;
+import no.nav.syfo.consumer.ws.*;
+import no.nav.syfo.domain.*;
 import no.nav.syfo.repository.SykepengesoknadDAO;
 import no.nav.syfo.repository.SykmeldingDAO;
-import no.nav.syfo.util.Metrikk;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,7 +45,7 @@ public class SaksbehandlingServiceTest {
         when(aktoridConsumer.hentAktoerIdForFnr(anyString())).thenReturn("aktorid");
         when(sykmeldingDAO.hentSykmeldingerForOrgnummer(anyString(), anyString()))
                 .thenReturn(singletonList(Sykmelding.builder().orgnummer("orgnummer").id(123).build()));
-        when(behandlendeEnhetConsumer.hentGeografiskTilknytning(anyString())).thenReturn("Geografisktilknytning");
+        when(behandlendeEnhetConsumer.hentGeografiskTilknytning(anyString())).thenReturn(GeografiskTilknytningData.builder().geografiskTilknytning("Geografisktilknytning").build());
         when(behandlendeEnhetConsumer.hentBehandlendeEnhet(anyString())).thenReturn("behandlendeenhet1234");
         when(behandleSakConsumer.opprettSak("fnr")).thenReturn("opprettetSaksId");
         when(sykepengesoknadDAO.hentSykepengesoknaderForPerson(anyString(), anyInt()))
