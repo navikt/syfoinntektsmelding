@@ -38,9 +38,8 @@ public class InntektsmeldingConsumer {
     @Transactional
     @JmsListener(id = "inntektsmelding_listener", containerFactory = "jmsListenerContainerFactory", destination = "inntektsmeldingQueue")
     public void listen(Object message) {
-
-        TextMessage textMessage = (TextMessage) message;
         try {
+            TextMessage textMessage = (TextMessage) message;
             putToMDC(MDC_CALL_ID, ofNullable(textMessage.getStringProperty("callId")).orElse(generateCallId()));
             JAXBElement<XMLForsendelsesinformasjon> xmlForsendelsesinformasjon = JAXB.unmarshalForsendelsesinformasjon(textMessage.getText());
             final XMLForsendelsesinformasjon info = xmlForsendelsesinformasjon.getValue();
@@ -55,7 +54,14 @@ public class InntektsmeldingConsumer {
             log.info("Inntektsmelding journalført. id: {}", inntektsmelding.getJournalpostId());
         } catch (JMSException e) {
             log.error("Feil ved parsing av inntektsmelding fra kø", e);
+            metrikk.tellInntektsmeldingfeil();
             throw new RuntimeException("Feil ved lesing av melding", e);
+        } catch (Exception e) {
+            log.error("Det skjedde en feil ved journalføring", e);
+            metrikk.tellInntektsmeldingfeil();
+            throw new RuntimeException("Det skjedde en feil ved journalføring", e);
+        } finally {
+            remove(MDC_CALL_ID);
         }
     }
 }

@@ -34,4 +34,8 @@ public class Metrikk {
     public void tellInntektsmeldingerJournalfort() {
         registry.counter("syfoinntektsmelding_inntektsmeldinger_journalfort", Tags.of("type", "info")).increment();
     }
+
+    public void tellInntektsmeldingfeil() {
+        registry.counter("syfoinntektsmelding_inntektsmeldingfeil", Tags.of("type", "error")).increment();
+    }
 }
