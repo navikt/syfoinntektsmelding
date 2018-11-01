@@ -23,13 +23,7 @@ public final class MDCOperations {
         int randomNr = getRandomNumber();
         long systemTime = getSystemTime();
 
-        StringBuilder callId = new StringBuilder();
-        callId.append("CallId_");
-        callId.append(systemTime);
-        callId.append("_");
-        callId.append(randomNr);
-
-        return callId.toString();
+        return "CallId_" + systemTime + "_" + randomNr;
     }
 
     public static String getFromMDC(String key) {
@@ -49,8 +43,7 @@ public final class MDCOperations {
     }
 
     private static int getRandomNumber() {
-        int value = RANDOM.nextInt(Integer.MAX_VALUE);
-        return value;
+        return RANDOM.nextInt(Integer.MAX_VALUE);
     }
 
     private static long getSystemTime() {

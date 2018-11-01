@@ -12,12 +12,15 @@ import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.namespace.QName;
+import java.util.Optional;
+
+import static no.nav.syfo.util.MDCOperations.*;
 
 public class CallIdHeader extends AbstractPhaseInterceptor<Message> {
 
     private static final Logger logger = LoggerFactory.getLogger(CallIdHeader.class);
 
-    public CallIdHeader() {
+    CallIdHeader() {
         super(Phase.PRE_STREAM);
     }
 
@@ -25,15 +28,13 @@ public class CallIdHeader extends AbstractPhaseInterceptor<Message> {
     public void handleMessage(Message message) throws Fault {
         try {
             QName qName = new QName("uri:no.nav.applikasjonsrammeverk", "callId");
-            SoapHeader header = new SoapHeader(qName, randomValue(), new JAXBDataBinding(String.class));
+            String callId = Optional.ofNullable(getFromMDC(MDC_CALL_ID))
+                    .orElse(generateCallId());
+            SoapHeader header = new SoapHeader(qName, callId, new JAXBDataBinding(String.class));
             ((SoapMessage) message).getHeaders().add(header);
         } catch (JAXBException ex) {
             logger.warn("Error while setting CallId header", ex);
         }
-    }
-
-    private String randomValue() {
-        return "syfomottoakoppslag-" + (int) (Math.random() * 10000);
     }
 
 }
