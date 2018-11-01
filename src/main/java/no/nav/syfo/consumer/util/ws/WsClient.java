@@ -25,6 +25,7 @@ public class WsClient<T> {
         ((BindingProvider) port).getBinding().setHandlerChain(handlers);
         Client client = ClientProxy.getClient(port);
         Arrays.stream(interceptors).forEach(client.getOutInterceptors()::add);
+        client.getOutInterceptors().add(new CallIdHeader());
         STSClientConfig.configureRequestSamlToken(port);
         return port;
     }
