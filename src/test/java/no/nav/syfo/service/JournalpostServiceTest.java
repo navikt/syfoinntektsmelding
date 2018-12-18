@@ -4,6 +4,7 @@ import no.nav.syfo.consumer.ws.BehandleInngaaendeJournalConsumer;
 import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer;
 import no.nav.syfo.consumer.ws.InngaaendeJournalConsumer;
 import no.nav.syfo.consumer.ws.JournalConsumer;
+import no.nav.syfo.domain.InngaaendeJournal;
 import no.nav.syfo.domain.Inntektsmelding;
 import no.nav.syfo.util.Metrikk;
 import org.junit.Test;
@@ -12,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static no.nav.syfo.domain.InngaaendeJournal.MIDLERTIDIG;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -36,6 +38,9 @@ public class JournalpostServiceTest {
 
     @Test
     public void ferdigstillJournalpost() {
+        InngaaendeJournal journal = InngaaendeJournal.builder().dokumentId("dokumentId").status("MIDLERTIDIG").build();
+        when(inngaaendeJournalConsumer.hentDokumentId("journalpostId")).thenReturn(journal);
+
         journalpostService.ferdigstillJournalpost(
                 "saksId",
                 Inntektsmelding.builder()
@@ -44,6 +49,7 @@ public class JournalpostServiceTest {
                         .journalpostId("journalpostId")
                         .arbeidsforholdId(null)
                         .arsakTilInnsending("Ny")
+                        .status(MIDLERTIDIG)
                         .build());
 
         verify(behandlendeEnhetConsumer).hentBehandlendeEnhet("fnr");
@@ -54,13 +60,15 @@ public class JournalpostServiceTest {
 
     @Test
     public void hentInntektsmelding() {
-        when(inngaaendeJournalConsumer.hentDokumentId("journalpostId")).thenReturn("dokumentId");
-        when(journalConsumer.hentInntektsmelding("journalpostId", "dokumentId"))
+        InngaaendeJournal journal = InngaaendeJournal.builder().dokumentId("dokumentId").status("MIDLERTIDIG").build();
+        when(inngaaendeJournalConsumer.hentDokumentId("journalpostId")).thenReturn(journal);
+        when(journalConsumer.hentInntektsmelding("journalpostId", journal))
                 .thenReturn(Inntektsmelding
                         .builder()
                         .arbeidsgiverOrgnummer("arbeidsgiverOrgNr")
                         .fnr("fnr")
                         .journalpostId("journalpostId")
+                        .status("MIDLERTIDIG")
                         .build());
 
         Inntektsmelding inntektsmelding = journalpostService.hentInntektsmelding("journalpostId");

@@ -5,6 +5,7 @@ import no.nav.syfo.consumer.ws.*;
 import no.nav.syfo.domain.*;
 import no.nav.syfo.repository.SykepengesoknadDAO;
 import no.nav.syfo.repository.SykmeldingDAO;
+import no.nav.tjeneste.virksomhet.aktoer.v2.HentAktoerIdForIdentPersonIkkeFunnet;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -42,7 +43,14 @@ public class SaksbehandlingService {
     }
 
     public String behandleInntektsmelding(Inntektsmelding inntektsmelding) {
-        String aktorid = aktoridConsumer.hentAktoerIdForFnr(inntektsmelding.getFnr());
+
+        String aktorid;
+        try {
+            aktorid = aktoridConsumer.hentAktoerIdForFnr(inntektsmelding.getFnr());
+        } catch (HentAktoerIdForIdentPersonIkkeFunnet e) {
+            log.error("Fant ikke fnr for personen knyttet til journalpost: {}", inntektsmelding.getJournalpostId());
+            throw new RuntimeException(e);
+        }
 
         Optional<Sykepengesoknad> sisteSykepengesoknad = hentSykepengesoknader(aktorid, inntektsmelding.getArbeidsgiverOrgnummer())
                 .stream()

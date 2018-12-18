@@ -19,12 +19,7 @@ public class AktoridConsumer {
         this.aktoerV2 = aktoerV2;
     }
 
-    public String hentAktoerIdForFnr(String fnr) {
-        try {
-            return aktoerV2.hentAktoerIdForIdent(new WSHentAktoerIdForIdentRequest().withIdent(fnr)).getAktoerId();
-        } catch (HentAktoerIdForIdentPersonIkkeFunnet e) {
-            log.error("Fant ikke person med gitt fnr");
-            throw new RuntimeException(e);
-        }
+    public String hentAktoerIdForFnr(String fnr) throws HentAktoerIdForIdentPersonIkkeFunnet {
+        return aktoerV2.hentAktoerIdForIdent(new WSHentAktoerIdForIdentRequest().withIdent(fnr)).getAktoerId();
     }
 }

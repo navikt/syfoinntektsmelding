@@ -16,6 +16,7 @@ import javax.jms.TextMessage;
 import javax.xml.bind.JAXBElement;
 
 import static java.util.Optional.ofNullable;
+import static no.nav.syfo.domain.InngaaendeJournal.MIDLERTIDIG;
 import static no.nav.syfo.util.MDCOperations.*;
 
 @Component
@@ -45,13 +46,18 @@ public class InntektsmeldingConsumer {
             final XMLForsendelsesinformasjon info = xmlForsendelsesinformasjon.getValue();
 
             Inntektsmelding inntektsmelding = journalpostService.hentInntektsmelding(info.getArkivId());
-            metrikk.tellInntektsmeldingerMottat(inntektsmelding);
 
-            String saksId = saksbehandlingService.behandleInntektsmelding(inntektsmelding);
+            if (MIDLERTIDIG.equals(inntektsmelding.getStatus())) {
+                metrikk.tellInntektsmeldingerMottat(inntektsmelding);
 
-            journalpostService.ferdigstillJournalpost(saksId, inntektsmelding);
+                String saksId = saksbehandlingService.behandleInntektsmelding(inntektsmelding);
 
-            log.info("Inntektsmelding journalført. id: {}", inntektsmelding.getJournalpostId());
+                journalpostService.ferdigstillJournalpost(saksId, inntektsmelding);
+
+                log.info("Inntektsmelding {} er journalført", inntektsmelding.getJournalpostId());
+            } else {
+                log.info("Behandler ikke inntektsmelding {} da den har status: {}", inntektsmelding.getJournalpostId(), inntektsmelding.getStatus());
+            }
         } catch (JMSException e) {
             log.error("Feil ved parsing av inntektsmelding fra kø", e);
             metrikk.tellInntektsmeldingfeil();

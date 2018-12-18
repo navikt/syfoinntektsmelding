@@ -4,6 +4,7 @@ import no.nav.syfo.consumer.ws.*;
 import no.nav.syfo.domain.*;
 import no.nav.syfo.repository.SykepengesoknadDAO;
 import no.nav.syfo.repository.SykmeldingDAO;
+import no.nav.tjeneste.virksomhet.aktoer.v2.HentAktoerIdForIdentPersonIkkeFunnet;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,7 +42,7 @@ public class SaksbehandlingServiceTest {
     private SaksbehandlingService saksbehandlingService;
 
     @Before
-    public void setup() {
+    public void setup() throws HentAktoerIdForIdentPersonIkkeFunnet {
         when(aktoridConsumer.hentAktoerIdForFnr(anyString())).thenReturn("aktorid");
         when(sykmeldingDAO.hentSykmeldingerForOrgnummer(anyString(), anyString()))
                 .thenReturn(singletonList(Sykmelding.builder().orgnummer("orgnummer").id(123).build()));
@@ -91,5 +92,12 @@ public class SaksbehandlingServiceTest {
         saksbehandlingService.behandleInntektsmelding(lagInntektsmelding());
 
         verify(oppgavebehandlingConsumer).opprettOppgave(anyString(), any(Oppgave.class));
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void test() throws HentAktoerIdForIdentPersonIkkeFunnet {
+        when(aktoridConsumer.hentAktoerIdForFnr(anyString())).thenThrow(HentAktoerIdForIdentPersonIkkeFunnet.class);
+
+        saksbehandlingService.behandleInntektsmelding(lagInntektsmelding());
     }
 }

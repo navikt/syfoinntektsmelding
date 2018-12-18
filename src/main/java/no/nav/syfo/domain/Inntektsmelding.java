@@ -13,4 +13,5 @@ public class Inntektsmelding {
     String journalpostId;
     String arbeidsforholdId;
     String arsakTilInnsending;
+    String status;
 }

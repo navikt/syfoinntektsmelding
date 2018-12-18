@@ -1,6 +1,7 @@
 package no.nav.syfo.consumer.ws;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.syfo.domain.InngaaendeJournal;
 import no.nav.syfo.domain.Inntektsmelding;
 import no.nav.syfo.util.JAXB;
 import no.nav.tjeneste.virksomhet.journal.v2.*;
@@ -21,10 +22,10 @@ public class JournalConsumer {
         this.journalV2 = journalV2;
     }
 
-    public Inntektsmelding hentInntektsmelding(String journalpostId, String dokumentId) {
+    public Inntektsmelding hentInntektsmelding(String journalpostId, InngaaendeJournal inngaaendeJournal) {
         WSHentDokumentRequest request = new WSHentDokumentRequest()
                 .withJournalpostId(journalpostId)
-                .withDokumentId(dokumentId)
+                .withDokumentId(inngaaendeJournal.getDokumentId())
                 .withVariantformat(new WSVariantformater().withValue("ORIGINAL"));
 
         try {
@@ -43,6 +44,7 @@ public class JournalConsumer {
                     .journalpostId(journalpostId)
                     .arbeidsforholdId(arbeidsforholdId)
                     .arsakTilInnsending(skjemainnhold.getAarsakTilInnsending())
+                    .status(inngaaendeJournal.getStatus())
                     .build();
         } catch (HentDokumentSikkerhetsbegrensning e) {
             log.error("Feil ved henting av dokument: Sikkerhetsbegrensning!");
@@ -51,7 +53,7 @@ public class JournalConsumer {
             log.error("Feil ved henting av dokument: Dokument ikke funnet!");
             throw new RuntimeException("Feil ved henting av journalpost: Dokument ikke funnet!", e);
         } catch (RuntimeException e) {
-            log.error("Klarte ikke å hente inntektsmelding med journalpostId: {} og dokumentId: {}", journalpostId, dokumentId, e);
+            log.error("Klarte ikke å hente inntektsmelding med journalpostId: {} og dokumentId: {}", journalpostId, inngaaendeJournal.getDokumentId(), e);
             throw new RuntimeException(e);
         }
     }

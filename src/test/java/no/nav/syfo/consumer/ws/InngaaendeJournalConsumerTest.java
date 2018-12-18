@@ -1,5 +1,6 @@
 package no.nav.syfo.consumer.ws;
 
+import no.nav.syfo.domain.InngaaendeJournal;
 import no.nav.tjeneste.virksomhet.inngaaende.journal.v1.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -8,6 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static no.nav.tjeneste.virksomhet.inngaaende.journal.v1.WSJournaltilstand.MIDLERTIDIG;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -27,14 +29,16 @@ public class InngaaendeJournalConsumerTest {
         final String dokumentId1 = "dokumentId";
         final String journalpostId = "journalpostId";
 
-        when(inngaaendeJournalV1.hentJournalpost(any())).thenReturn(new WSHentJournalpostResponse().withInngaaendeJournalpost(new WSInngaaendeJournalpost().withHoveddokument(new WSDokumentinformasjon().withDokumentId(dokumentId1))));
+        when(inngaaendeJournalV1.hentJournalpost(any())).thenReturn(new WSHentJournalpostResponse().withInngaaendeJournalpost(new WSInngaaendeJournalpost()
+                .withHoveddokument(new WSDokumentinformasjon().withDokumentId(dokumentId1))
+                .withJournaltilstand(MIDLERTIDIG)));
         ArgumentCaptor<WSHentJournalpostRequest> captor = ArgumentCaptor.forClass(WSHentJournalpostRequest.class);
 
-        String dokumentId = inngaaendeJournalConsumer.hentDokumentId(journalpostId);
+        InngaaendeJournal inngaaendeJournal = inngaaendeJournalConsumer.hentDokumentId(journalpostId);
 
         verify(inngaaendeJournalV1).hentJournalpost(captor.capture());
 
-        assertThat(dokumentId).isEqualTo(dokumentId1);
+        assertThat(inngaaendeJournal.getDokumentId()).isEqualTo(dokumentId1);
         assertThat(captor.getValue().getJournalpostId()).isEqualTo(journalpostId);
     }
 
