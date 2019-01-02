@@ -1,6 +1,8 @@
 package no.nav.syfo.util;
 
+
 import no.seres.xsd.nav.inntektsmelding_m._20180924.XMLInntektsmeldingM;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.xml.bind.JAXBElement;
@@ -58,5 +60,4 @@ public class JAXBTest {
         JAXBElement<XMLInntektsmeldingM> inntektsmeldingM = JAXB.unmarshalInntektsmelding(getInntektsmelding());
         assertThat(inntektsmeldingM.getValue().getSkjemainnhold().getArbeidsgiver().getVirksomhetsnummer()).isEqualTo("910969900");
     }
-
 }

@@ -17,7 +17,7 @@ public class Metrikk {
         this.registry = registry;
     }
 
-    public void tellInntektsmeldingerMottat(Inntektsmelding inntektsmelding) {
+    public void tellInntektsmeldingerMottatt(Inntektsmelding inntektsmelding) {
         String arbeidsforholdId = inntektsmelding.getArbeidsforholdId() == null
                 ? "null"
                 : inntektsmelding.getArbeidsforholdId();

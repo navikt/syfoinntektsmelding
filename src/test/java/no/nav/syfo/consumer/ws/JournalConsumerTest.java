@@ -5,6 +5,7 @@ import no.nav.syfo.domain.Inntektsmelding;
 import no.nav.tjeneste.virksomhet.journal.v2.JournalV2;
 import no.nav.tjeneste.virksomhet.journal.v2.WSHentDokumentRequest;
 import no.nav.tjeneste.virksomhet.journal.v2.WSHentDokumentResponse;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;

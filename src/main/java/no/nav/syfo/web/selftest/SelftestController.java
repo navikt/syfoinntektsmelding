@@ -1,15 +1,10 @@
 package no.nav.syfo.web.selftest;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.syfo.domain.Inntektsmelding;
-import no.nav.syfo.service.SaksbehandlingService;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.inject.Inject;
 
 @Slf4j
 @RestController
@@ -29,5 +24,4 @@ public class SelftestController {
     public String isReady() {
         return APPLICATION_READY;
     }
-
 }
