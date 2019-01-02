@@ -1,7 +1,7 @@
 package no.nav.syfo.util;
 
 
-import no.seres.xsd.nav.inntektsmelding_m._20181211.XMLInntektsmeldingM;
+import no.seres.xsd.nav.inntektsmelding_m._20180924.XMLInntektsmeldingM;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -9,7 +9,6 @@ import javax.xml.bind.JAXBElement;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-// TODO: Må oppdateres etter bump av meldingsformat
 public class JAXBTest {
     public static String getInntektsmelding() {
         return "<ns2:melding xmlns:ns2=\"http://seres.no/xsd/NAV/Inntektsmelding_M/20180924\">\n" +
@@ -57,10 +56,8 @@ public class JAXBTest {
     }
 
     @Test
-    @Ignore // Må oppdateres med ny inntektsmelding etter bump av meldingsformat
     public void unmarshalInntektsmelding() {
         JAXBElement<XMLInntektsmeldingM> inntektsmeldingM = JAXB.unmarshalInntektsmelding(getInntektsmelding());
-        assertThat(inntektsmeldingM.getValue().getSkjemainnhold().getArbeidsgiver().getValue().getVirksomhetsnummer()).isEqualTo("910969900");
+        assertThat(inntektsmeldingM.getValue().getSkjemainnhold().getArbeidsgiver().getVirksomhetsnummer()).isEqualTo("910969900");
     }
-
 }
