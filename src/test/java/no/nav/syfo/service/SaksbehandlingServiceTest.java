@@ -1,5 +1,6 @@
 package no.nav.syfo.service;
 
+import no.nav.syfo.consumer.rest.AktorConsumer;
 import no.nav.syfo.consumer.ws.*;
 import no.nav.syfo.domain.*;
 import no.nav.syfo.repository.SykepengesoknadDAO;
@@ -34,7 +35,7 @@ public class SaksbehandlingServiceTest {
     @Mock
     private SykepengesoknadDAO sykepengesoknadDAO;
     @Mock
-    private AktoridConsumer aktoridConsumer;
+    private AktorConsumer aktoridConsumer;
     @Mock
     private SykmeldingDAO sykmeldingDAO;
 
@@ -43,7 +44,7 @@ public class SaksbehandlingServiceTest {
 
     @Before
     public void setup() throws HentAktoerIdForIdentPersonIkkeFunnet {
-        when(aktoridConsumer.hentAktoerIdForFnr(anyString())).thenReturn("aktorid");
+        when(aktoridConsumer.getAktorId(anyString())).thenReturn("aktorid");
         when(sykmeldingDAO.hentSykmeldingerForOrgnummer(anyString(), anyString()))
                 .thenReturn(singletonList(Sykmelding.builder().orgnummer("orgnummer").id(123).build()));
         when(behandlendeEnhetConsumer.hentGeografiskTilknytning(anyString())).thenReturn(GeografiskTilknytningData.builder().geografiskTilknytning("Geografisktilknytning").build());
@@ -96,7 +97,7 @@ public class SaksbehandlingServiceTest {
 
     @Test(expected = RuntimeException.class)
     public void test() throws HentAktoerIdForIdentPersonIkkeFunnet {
-        when(aktoridConsumer.hentAktoerIdForFnr(anyString())).thenThrow(HentAktoerIdForIdentPersonIkkeFunnet.class);
+        when(aktoridConsumer.getAktorId(anyString())).thenThrow(HentAktoerIdForIdentPersonIkkeFunnet.class);
 
         saksbehandlingService.behandleInntektsmelding(lagInntektsmelding());
     }

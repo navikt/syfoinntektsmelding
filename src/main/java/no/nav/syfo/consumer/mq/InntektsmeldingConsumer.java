@@ -54,6 +54,8 @@ public class InntektsmeldingConsumer {
 
                 journalpostService.ferdigstillJournalpost(saksId, inntektsmelding);
 
+            // Lagre det vi trenger fra inntektsmeldingen
+
                 log.info("Inntektsmelding {} er journalført", inntektsmelding.getJournalpostId());
             } else {
                 log.info("Behandler ikke inntektsmelding {} da den har status: {}", inntektsmelding.getJournalpostId(), inntektsmelding.getStatus());

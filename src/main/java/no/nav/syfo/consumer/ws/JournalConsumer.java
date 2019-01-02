@@ -5,8 +5,8 @@ import no.nav.syfo.domain.InngaaendeJournal;
 import no.nav.syfo.domain.Inntektsmelding;
 import no.nav.syfo.util.JAXB;
 import no.nav.tjeneste.virksomhet.journal.v2.*;
-import no.seres.xsd.nav.inntektsmelding_m._20180924.XMLInntektsmeldingM;
-import no.seres.xsd.nav.inntektsmelding_m._20180924.XMLSkjemainnhold;
+import no.seres.xsd.nav.inntektsmelding_m._20181211.XMLInntektsmeldingM;
+import no.seres.xsd.nav.inntektsmelding_m._20181211.XMLSkjemainnhold;
 import org.springframework.stereotype.Component;
 
 import javax.xml.bind.JAXBElement;
@@ -31,6 +31,7 @@ public class JournalConsumer {
         try {
             final byte[] inntektsmeldingRAW = journalV2.hentDokument(request).getDokument();
             String inntektsmelding = new String(inntektsmeldingRAW);
+            log.info(inntektsmelding);
             JAXBElement<XMLInntektsmeldingM> inntektsmeldingM = JAXB.unmarshalInntektsmelding(inntektsmelding);
             final XMLSkjemainnhold skjemainnhold = inntektsmeldingM.getValue().getSkjemainnhold();
             String arbeidsforholdId =
@@ -40,7 +41,7 @@ public class JournalConsumer {
 
             return Inntektsmelding.builder()
                     .fnr(skjemainnhold.getArbeidstakerFnr())
-                    .arbeidsgiverOrgnummer(skjemainnhold.getArbeidsgiver().getVirksomhetsnummer())
+                    .arbeidsgiverOrgnummer(skjemainnhold.getArbeidsgiver().getValue().getVirksomhetsnummer())
                     .journalpostId(journalpostId)
                     .arbeidsforholdId(arbeidsforholdId)
                     .arsakTilInnsending(skjemainnhold.getAarsakTilInnsending())

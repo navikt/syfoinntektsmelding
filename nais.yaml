@@ -49,8 +49,6 @@ fasitResources:
     resourceType: webserviceendpoint
   - alias: virksomhet:Oppgavebehandling_v3
     resourceType: webserviceendpoint
-  - alias: Aktoer_v2
-    resourceType: webserviceendpoint
   - alias: servicegateway
     resourceType: webservicegateway
     propertyMap:
@@ -69,6 +67,10 @@ fasitResources:
     resourceType: queue
   - alias: securityTokenService
     resourceType: baseurl
+  - alias: security-token-service-token
+    resourceType: restservice
+  - alias: aktoerregister.api.v1
+    resourceType: restservice
   - alias: syfoserviceDB
     resourceType: datasource
     propertyMap:

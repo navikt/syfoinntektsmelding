@@ -1,6 +1,7 @@
 package no.nav.syfo.service;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.syfo.consumer.rest.AktorConsumer;
 import no.nav.syfo.consumer.ws.*;
 import no.nav.syfo.domain.*;
 import no.nav.syfo.repository.SykepengesoknadDAO;
@@ -23,7 +24,7 @@ public class SaksbehandlingService {
     private final BehandlendeEnhetConsumer behandlendeEnhetConsumer;
     private final BehandleSakConsumer behandleSakConsumer;
     private final SykepengesoknadDAO sykepengesoknadDAO;
-    private final AktoridConsumer aktoridConsumer;
+    private final AktorConsumer aktorConsumer;
     private final SykmeldingDAO sykmeldingDAO;
 
     @Inject
@@ -32,25 +33,17 @@ public class SaksbehandlingService {
             BehandlendeEnhetConsumer behandlendeEnhetConsumer,
             BehandleSakConsumer behandleSakConsumer,
             SykepengesoknadDAO sykepengesoknadDAO,
-            AktoridConsumer aktoridConsumer,
-            SykmeldingDAO sykmeldingDAO) {
+            AktorConsumer aktorConsumer, SykmeldingDAO sykmeldingDAO) {
         this.oppgavebehandlingConsumer = oppgavebehandlingConsumer;
         this.behandlendeEnhetConsumer = behandlendeEnhetConsumer;
         this.behandleSakConsumer = behandleSakConsumer;
         this.sykepengesoknadDAO = sykepengesoknadDAO;
-        this.aktoridConsumer = aktoridConsumer;
+        this.aktorConsumer = aktorConsumer;
         this.sykmeldingDAO = sykmeldingDAO;
     }
 
     public String behandleInntektsmelding(Inntektsmelding inntektsmelding) {
-
-        String aktorid;
-        try {
-            aktorid = aktoridConsumer.hentAktoerIdForFnr(inntektsmelding.getFnr());
-        } catch (HentAktoerIdForIdentPersonIkkeFunnet e) {
-            log.error("Fant ikke fnr for personen knyttet til journalpost: {}", inntektsmelding.getJournalpostId());
-            throw new RuntimeException(e);
-        }
+        String aktorid = aktorConsumer.getAktorId(inntektsmelding.getFnr());
 
         Optional<Sykepengesoknad> sisteSykepengesoknad = hentSykepengesoknader(aktorid, inntektsmelding.getArbeidsgiverOrgnummer())
                 .stream()
