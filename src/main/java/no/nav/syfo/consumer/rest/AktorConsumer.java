@@ -37,12 +37,10 @@ public class AktorConsumer {
         this.url = url;
     }
 
-    @Cacheable("aktorId")
     public String getAktorId(String fnr) {
         return getIdent(fnr, "AktoerId");
     }
 
-    @Cacheable("fnr")
     public String getFnr(String aktorId) {
         return getIdent(aktorId, "NorskIdent");
     }
