@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.syfo.util.MDCOperations;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -17,6 +17,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
+import static no.nav.syfo.util.MDCOperations.MDC_CALL_ID;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpStatus.OK;
 
@@ -49,9 +50,10 @@ public class AktorConsumer {
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         headers.set("Authorization", "Bearer " + tokenConsumer.getToken());
-        headers.set("Nav-Callid", "Nav-Callid");
+        headers.set("Nav-Call-Id", MDCOperations.getFromMDC(MDC_CALL_ID)); // Nav-Call-Id skal fases ut.
+        headers.set("Nav-Callid", MDCOperations.getFromMDC(MDC_CALL_ID));
         headers.set("Nav-Consumer-Id", username);
-        headers.set("Nav-Identer", sokeIdent);
+        headers.set("Nav-Personidenter", sokeIdent);
 
         final String uriString = UriComponentsBuilder.fromHttpUrl(url + "/identer")
                 .queryParam("gjeldende", "true")
