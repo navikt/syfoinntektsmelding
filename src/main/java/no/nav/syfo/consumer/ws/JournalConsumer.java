@@ -31,8 +31,8 @@ public class JournalConsumer {
         try {
             final byte[] inntektsmeldingRAW = journalV2.hentDokument(request).getDokument();
             String inntektsmelding = new String(inntektsmeldingRAW);
-            log.info(inntektsmelding);
             JAXBElement<XMLInntektsmeldingM> inntektsmeldingM = JAXB.unmarshalInntektsmelding(inntektsmelding);
+
             final XMLSkjemainnhold skjemainnhold = inntektsmeldingM.getValue().getSkjemainnhold();
             String arbeidsforholdId =
                     Optional.ofNullable(skjemainnhold.getArbeidsforhold().getValue().getArbeidsforholdId())
@@ -46,6 +46,8 @@ public class JournalConsumer {
                     .arbeidsforholdId(arbeidsforholdId)
                     .arsakTilInnsending(skjemainnhold.getAarsakTilInnsending())
                     .status(inngaaendeJournal.getStatus())
+                    .arbeidsgiverperiodeFom(skjemainnhold.getSykepengerIArbeidsgiverperioden().getValue().getArbeidsgiverperiodeListe().getValue().getArbeidsgiverperiode().get(0).getFom().getValue())
+                    .arbeidsgiverperiodeTom(skjemainnhold.getSykepengerIArbeidsgiverperioden().getValue().getArbeidsgiverperiodeListe().getValue().getArbeidsgiverperiode().get(0).getTom().getValue())
                     .build();
         } catch (HentDokumentSikkerhetsbegrensning e) {
             log.error("Feil ved henting av dokument: Sikkerhetsbegrensning!");
