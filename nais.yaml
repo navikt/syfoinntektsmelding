@@ -76,7 +76,7 @@ fasitResources:
   - alias: syfoinntektsmeldingDB
     resourceType: datasource
     propertyMap:
-      url: SPRING_INNTEKTSMELDINGDB_URL
-      username: SPRING_INNTEKTSMELDINGDB_USERNAME
-      password: SPRING_INNTEKTSMELDINGDB_PASSWORD
+      url: SPRING_DATASOURCE_URL
+      username: SPRING_DATASOURCE_USERNAME
+      password: SPRING_DATASOURCE_PASSWORD
 
