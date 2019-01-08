@@ -65,7 +65,6 @@ public class InntektsmeldingConsumer {
 
                 journalpostService.ferdigstillJournalpost(saksId, inntektsmelding);
 
-
                 //Lagre behandling
                 inntektsmeldingDAO.opprett(
                         InntektsmeldingMeta.builder()

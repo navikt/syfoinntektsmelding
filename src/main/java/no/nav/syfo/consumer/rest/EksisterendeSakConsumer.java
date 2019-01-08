@@ -12,6 +12,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.Optional;
+
 import static no.nav.syfo.util.MDCOperations.MDC_CALL_ID;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpStatus.OK;
@@ -28,12 +30,11 @@ public class EksisterendeSakConsumer {
         this.stranglerUrl = stranglerUrl;
     }
 
-    public String finnEksisterendeSaksId(String aktorId, String orgnummer) {
+    public Optional<String> finnEksisterendeSaksId(String aktorId, String orgnummer) {
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         headers.set("Authorization", "Bearer " + tokenConsumer.getToken());
         headers.set("Nav-Callid", MDCOperations.getFromMDC(MDC_CALL_ID));
-
 
         final String uriString = UriComponentsBuilder.fromHttpUrl(stranglerUrl + "/syfoservicestrangler/" + aktorId + "/soknader/nyesteSak")
                 .queryParam("orgnummer", orgnummer)
@@ -46,6 +47,9 @@ public class EksisterendeSakConsumer {
             log.error(message);
             throw new RuntimeException(message);
         }
-        return result.getBody();
+
+        log.info("Svar fra strangler: " + result.getBody());
+
+        return result.getBody().isEmpty() ? Optional.empty() : Optional.of(result.getBody());
     }
 }
