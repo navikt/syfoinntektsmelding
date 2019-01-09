@@ -38,7 +38,7 @@ import static org.mockito.Mockito.when;
 @SpringBootTest(classes = LocalApplication.class)
 @TestPropertySource("classpath:application-test.properties")
 @DirtiesContext
-public class InntektsmeldingConsumerVerdikjedeTest {
+public class InntektsmeldingConsumerIntegrassjonsTest {
 
     @MockBean
     private InngaaendeJournalConsumer inngaaendeJournalConsumer;
