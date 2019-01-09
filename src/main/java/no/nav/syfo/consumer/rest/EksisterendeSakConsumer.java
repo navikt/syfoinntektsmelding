@@ -22,11 +22,13 @@ import static org.springframework.http.HttpStatus.OK;
 @Component
 public class EksisterendeSakConsumer {
 
-    private TokenConsumer tokenConsumer;
-    private String stranglerUrl;
+    private final TokenConsumer tokenConsumer;
+    private final RestTemplate restTemplate;
+    private final String stranglerUrl;
 
-    public EksisterendeSakConsumer(TokenConsumer tokenConsumer, @Value("${syfoservicestranglerApi.url}") String stranglerUrl) {
+    public EksisterendeSakConsumer(TokenConsumer tokenConsumer, RestTemplate restTemplate, @Value("${syfoservicestranglerApi.url}") String stranglerUrl) {
         this.tokenConsumer = tokenConsumer;
+        this.restTemplate = restTemplate;
         this.stranglerUrl = stranglerUrl;
     }
 
@@ -40,7 +42,7 @@ public class EksisterendeSakConsumer {
                 .queryParam("orgnummer", orgnummer)
                 .toUriString();
 
-        final ResponseEntity<String> result = new RestTemplate().exchange(uriString, GET, new HttpEntity<>(headers), String.class);
+        final ResponseEntity<String> result = restTemplate.exchange(uriString, GET, new HttpEntity<>(headers), String.class);
 
         if (result.getStatusCode() != OK) {
             final String message = "Kall mot aktørregister feiler med HTTP-" + result.getStatusCode();
