@@ -33,7 +33,7 @@ public class EksisterendeSakConsumerTest {
 
     @Test
     public void test() {
-        when(restTemplate.exchange(anyString(), any(HttpMethod.class), any(HttpEntity.class), (Class<Object>) any())).thenReturn(new ResponseEntity<>("", HttpStatus.OK));
+        when(restTemplate.exchange(anyString(), any(HttpMethod.class), any(HttpEntity.class), (Class<NyesteSakResponse>) any())).thenReturn(new ResponseEntity<>(NyesteSakResponse.builder().build(), HttpStatus.OK));
 
         eksisterendeSakConsumer.finnEksisterendeSaksId("123", "orgnummer");
     }

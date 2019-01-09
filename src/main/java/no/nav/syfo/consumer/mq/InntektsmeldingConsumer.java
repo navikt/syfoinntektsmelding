@@ -18,8 +18,6 @@ import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import javax.xml.bind.JAXBElement;
 
-import java.util.Optional;
-
 import static java.util.Optional.ofNullable;
 import static no.nav.syfo.domain.InngaaendeJournal.MIDLERTIDIG;
 import static no.nav.syfo.util.MDCOperations.*;
@@ -59,13 +57,12 @@ public class InntektsmeldingConsumer {
             String aktorid = aktorConsumer.getAktorId(inntektsmelding.getFnr());
 
             if (MIDLERTIDIG.equals(inntektsmelding.getStatus())) {
-                metrikk.tellInntektsmeldingerMottat(inntektsmelding);
+                metrikk.tellInntektsmeldingerMottatt(inntektsmelding);
 
                 String saksId = saksbehandlingService.behandleInntektsmelding(inntektsmelding, aktorid);
 
                 journalpostService.ferdigstillJournalpost(saksId, inntektsmelding);
 
-                //Lagre behandling
                 inntektsmeldingDAO.opprett(
                         InntektsmeldingMeta.builder()
                                 .orgnummer(inntektsmelding.getArbeidsgiverOrgnummer())

@@ -42,7 +42,7 @@ public class EksisterendeSakConsumer {
                 .queryParam("orgnummer", orgnummer)
                 .toUriString();
 
-        final ResponseEntity<String> result = restTemplate.exchange(uriString, GET, new HttpEntity<>(headers), String.class);
+        final ResponseEntity<NyesteSakResponse> result = restTemplate.exchange(uriString, GET, new HttpEntity<>(headers), NyesteSakResponse.class);
 
         if (result.getStatusCode() != OK) {
             final String message = "Kall mot aktørregister feiler med HTTP-" + result.getStatusCode();
@@ -50,8 +50,6 @@ public class EksisterendeSakConsumer {
             throw new RuntimeException(message);
         }
 
-        log.info("Svar fra strangler: " + result.getBody());
-
-        return result.getBody().isEmpty() ? Optional.empty() : Optional.of(result.getBody());
+        return Optional.ofNullable(result.getBody().getNyesteSak());
     }
 }
