@@ -64,6 +64,7 @@ public class AktorConsumer {
 
         if (result.getStatusCode() != OK) {
             final String message = "Kall mot aktørregister feiler med HTTP-" + result.getStatusCode();
+            log.error(result.getBody());
             log.error(message);
             throw new RuntimeException(message);
         }
