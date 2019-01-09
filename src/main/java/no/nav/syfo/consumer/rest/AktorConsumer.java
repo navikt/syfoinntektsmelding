@@ -29,13 +29,15 @@ public class AktorConsumer {
     private String username;
     private String url;
     private ObjectMapper objectMapper = new ObjectMapper();
+    private final RestTemplate restTemplate;
 
     public AktorConsumer(TokenConsumer tokenConsumer,
                          @Value("${srvsyfoinntektsmelding.username}") String username,
-                         @Value("${aktoerregister.api.v1.url}") String url) {
+                         @Value("${aktoerregister.api.v1.url}") String url, RestTemplate restTemplate) {
         this.tokenConsumer = tokenConsumer;
         this.username = username;
         this.url = url;
+        this.restTemplate = restTemplate;
     }
 
     public String getAktorId(String fnr) {
@@ -60,7 +62,7 @@ public class AktorConsumer {
                 .queryParam("identgruppe", identgruppe)
                 .toUriString();
 
-        final ResponseEntity<String> result = new RestTemplate().exchange(uriString, GET, new HttpEntity<>(headers), String.class);
+        final ResponseEntity<String> result = restTemplate.exchange(uriString, GET, new HttpEntity<>(headers), String.class);
 
         if (result.getStatusCode() != OK) {
             final String message = "Kall mot aktørregister feiler med HTTP-" + result.getStatusCode();

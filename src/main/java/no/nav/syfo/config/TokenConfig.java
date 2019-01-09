@@ -10,7 +10,7 @@ import org.springframework.web.client.RestTemplate;
 public class TokenConfig {
 
     @Bean
-    RestTemplate restTemplate(@Value("${srvsyfoinntektsmelding.username}") String username,
+    public RestTemplate restTemplate(@Value("${srvsyfoinntektsmelding.username}") String username,
                               @Value("${srvsyfoinntektsmelding.password}") String password) {
         return new RestTemplateBuilder()
                 .basicAuthorization(username, password)
