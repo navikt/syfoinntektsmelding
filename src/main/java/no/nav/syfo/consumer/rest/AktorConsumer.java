@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.syfo.util.MDCOperations;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -15,11 +14,10 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
+import java.util.Optional;
 import java.util.UUID;
 
-import static no.nav.syfo.util.MDCOperations.MDC_CALL_ID;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpStatus.OK;
 
@@ -71,30 +69,38 @@ public class AktorConsumer {
                 throw new RuntimeException(message);
             }
 
-            try {
-                log.info(result.getBody());
-                final JsonNode jsonNode = objectMapper
-                        .readTree(result.getBody())
-                        .at("/" + sokeIdent + "/identer");
 
-                List<Ident> identer = objectMapper
-                        .readerFor(new TypeReference<ArrayList<Ident>>() {
-                        }).readValue(jsonNode);
+            final JsonNode identNode = objectMapper
+                    .readTree(result.getBody())
+                    .at("/" + sokeIdent);
 
-                return identer.stream()
-                        .map(Ident::getIdent)
-                        .findFirst()
-                        .orElseThrow(() -> new RuntimeException("Finner ikke ident"));
-            } catch (Exception exception) {
-                final String message = "Uventet feil ved henting av ident fra aktørregister";
-                log.error(message);
-                throw new RuntimeException(message, exception);
+            if (identNode.isMissingNode()) {
+                log.error("Fnr som ble slått opp på er ikke i responsen!");
+                throw new RuntimeException("Fnr som ble slått opp på er ikke i responsen!");
             }
 
+            AktorResponse aktor = objectMapper
+                    .readerFor(new TypeReference<AktorResponse>() {
+                    }).readValue(identNode);
+
+            return Optional.ofNullable(aktor.getIdenter())
+                    .orElseThrow(() -> {
+                        log.error("Ident er null: " + aktor.getFeilmelding());
+                        return new RuntimeException("Ident er null: " + aktor.getFeilmelding());
+                    })
+                    .stream()
+                    .map(Ident::getIdent)
+                    .findFirst()
+                    .orElseThrow(() -> {
+                        log.error("Ident er tom!");
+                        return new RuntimeException("Ident er tom!");
+                    });
+
         } catch (HttpClientErrorException e) {
-            log.error(e.getMessage());
-            log.error(e.getResponseBodyAsString());
-            log.error("Uventet feil ved henting av ident fra aktørregister");
+            log.error("Feil ved oppslag i aktørtjenesten");
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            log.error("Feil ved deserialisering av respons", e);
             throw new RuntimeException(e);
         }
     }
