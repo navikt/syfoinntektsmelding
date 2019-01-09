@@ -17,6 +17,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static no.nav.syfo.util.MDCOperations.MDC_CALL_ID;
 import static org.springframework.http.HttpMethod.GET;
@@ -53,8 +54,7 @@ public class AktorConsumer {
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         headers.set("Authorization", "Bearer " + tokenConsumer.getToken());
-        headers.set("Nav-Call-Id", MDCOperations.getFromMDC(MDC_CALL_ID)); // Nav-Call-Id skal fases ut.
-        headers.set("Nav-Callid", MDCOperations.getFromMDC(MDC_CALL_ID));
+        headers.set("Nav-Call-Id", "syfo-" + UUID.randomUUID()); // Nav-Call-Id skal fases ut.
         headers.set("Nav-Consumer-Id", username);
         headers.set("Nav-Personidenter", sokeIdent);
 
