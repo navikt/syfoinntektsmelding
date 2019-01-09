@@ -11,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -61,33 +62,39 @@ public class AktorConsumer {
                 .queryParam("gjeldende", "true")
                 .queryParam("identgruppe", identgruppe)
                 .toUriString();
-
-        final ResponseEntity<String> result = restTemplate.exchange(uriString, GET, new HttpEntity<>(headers), String.class);
-
-        if (result.getStatusCode() != OK) {
-            final String message = "Kall mot aktørregister feiler med HTTP-" + result.getStatusCode();
-            log.error(result.getBody());
-            log.error(message);
-            throw new RuntimeException(message);
-        }
-
         try {
-            final JsonNode jsonNode = objectMapper
-                    .readTree(result.getBody())
-                    .at("/" + sokeIdent + "/identer");
+            final ResponseEntity<String> result = restTemplate.exchange(uriString, GET, new HttpEntity<>(headers), String.class);
 
-            List<Ident> identer = objectMapper
-                    .readerFor(new TypeReference<ArrayList<Ident>>() {
-                    }).readValue(jsonNode);
+            if (result.getStatusCode() != OK) {
+                final String message = "Kall mot aktørregister feiler med HTTP-" + result.getStatusCode();
+                log.error(message);
+                throw new RuntimeException(message);
+            }
 
-            return identer.stream()
-                    .map(Ident::getIdent)
-                    .findFirst()
-                    .orElseThrow(() -> new RuntimeException("Finner ikke ident"));
-        } catch (Exception exception) {
-            final String message = "Uventet feil ved henting av ident fra aktørregister";
-            log.error(message);
-            throw new RuntimeException(message, exception);
+            try {
+                final JsonNode jsonNode = objectMapper
+                        .readTree(result.getBody())
+                        .at("/" + sokeIdent + "/identer");
+
+                List<Ident> identer = objectMapper
+                        .readerFor(new TypeReference<ArrayList<Ident>>() {
+                        }).readValue(jsonNode);
+
+                return identer.stream()
+                        .map(Ident::getIdent)
+                        .findFirst()
+                        .orElseThrow(() -> new RuntimeException("Finner ikke ident"));
+            } catch (Exception exception) {
+                final String message = "Uventet feil ved henting av ident fra aktørregister";
+                log.error(message);
+                throw new RuntimeException(message, exception);
+            }
+
+        } catch (HttpClientErrorException e) {
+            log.error(e.getMessage());
+            log.error(e.getResponseBodyAsString());
+            log.error("Uventet feil ved henting av ident fra aktørregister");
+            throw new RuntimeException(e);
         }
     }
 }
