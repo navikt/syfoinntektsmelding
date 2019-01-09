@@ -72,6 +72,7 @@ public class AktorConsumer {
             }
 
             try {
+                log.info(result.getBody());
                 final JsonNode jsonNode = objectMapper
                         .readTree(result.getBody())
                         .at("/" + sokeIdent + "/identer");
