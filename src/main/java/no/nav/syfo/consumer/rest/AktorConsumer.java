@@ -54,7 +54,7 @@ public class AktorConsumer {
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         headers.set("Authorization", "Bearer " + tokenConsumer.getToken());
-        headers.set("Nav-Call-Id", "syfo-" + UUID.randomUUID()); // Nav-Call-Id skal fases ut.
+        headers.set("Nav-Call-Id", "syfo-" + UUID.randomUUID().toString()); // Nav-Call-Id skal fases ut.
         headers.set("Nav-Consumer-Id", username);
         headers.set("Nav-Personidenter", sokeIdent);
 
