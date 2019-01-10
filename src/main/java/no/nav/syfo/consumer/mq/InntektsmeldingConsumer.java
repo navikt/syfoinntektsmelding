@@ -46,6 +46,7 @@ public class InntektsmeldingConsumer {
     @Transactional
     @JmsListener(id = "inntektsmelding_listener", containerFactory = "jmsListenerContainerFactory", destination = "inntektsmeldingQueue")
     public void listen(Object message) {
+        log.info("Mottar inntektsmelding på koe");
         try {
             TextMessage textMessage = (TextMessage) message;
             putToMDC(MDC_CALL_ID, ofNullable(textMessage.getStringProperty("callId")).orElse(generateCallId()));
