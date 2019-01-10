@@ -38,7 +38,7 @@ public class EksisterendeSakConsumer {
         headers.set("Authorization", "Bearer " + tokenConsumer.getToken());
         headers.set("Nav-Callid", MDCOperations.getFromMDC(MDC_CALL_ID));
 
-        final String uriString = UriComponentsBuilder.fromHttpUrl(stranglerUrl + "/syfoservicestrangler/" + aktorId + "/soknader/nyesteSak")
+        final String uriString = UriComponentsBuilder.fromHttpUrl(stranglerUrl + aktorId + "/soknader/nyesteSak")
                 .queryParam("orgnummer", orgnummer)
                 .toUriString();
 
