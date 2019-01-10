@@ -1,7 +1,6 @@
 package no.nav.syfo.service;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.syfo.consumer.rest.AktorConsumer;
 import no.nav.syfo.consumer.rest.EksisterendeSakConsumer;
 import no.nav.syfo.consumer.ws.BehandleSakConsumer;
 import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer;

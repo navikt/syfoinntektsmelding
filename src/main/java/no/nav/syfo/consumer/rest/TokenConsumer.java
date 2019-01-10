@@ -18,16 +18,16 @@ import static org.springframework.http.HttpStatus.OK;
 @Component
 public class TokenConsumer {
 
-    private RestTemplate restTemplate;
+    private RestTemplate basicAuthRestTemplate;
     private String url;
 
-    public TokenConsumer(RestTemplate restTemplate,
+    public TokenConsumer(RestTemplate basicAuthRestTemplate,
                          @Value("${security-token-service-token.url}") String url) {
-        this.restTemplate = restTemplate;
+        this.basicAuthRestTemplate = basicAuthRestTemplate;
         this.url = url;
     }
 
-    String getToken() {
+    public String getToken() {
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
@@ -36,7 +36,7 @@ public class TokenConsumer {
                 .queryParam("scope", "openid")
                 .toUriString();
 
-        final ResponseEntity<Token> result = restTemplate.exchange(uriString, GET, new HttpEntity<>(headers), Token.class);
+        final ResponseEntity<Token> result = basicAuthRestTemplate.exchange(uriString, GET, new HttpEntity<>(headers), Token.class);
 
         if (result.getStatusCode() != OK) {
             throw new RuntimeException("Henting av token feiler med HTTP-" + result.getStatusCode());

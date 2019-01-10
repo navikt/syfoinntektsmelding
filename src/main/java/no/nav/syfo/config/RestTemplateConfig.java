@@ -7,13 +7,18 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
-public class TokenConfig {
+public class RestTemplateConfig {
 
     @Bean
-    public RestTemplate restTemplate(@Value("${srvsyfoinntektsmelding.username}") String username,
-                              @Value("${srvsyfoinntektsmelding.password}") String password) {
+    public RestTemplate basicAuthRestTemplate(@Value("${srvsyfoinntektsmelding.username}") String username,
+                                              @Value("${srvsyfoinntektsmelding.password}") String password) {
         return new RestTemplateBuilder()
                 .basicAuthorization(username, password)
                 .build();
+    }
+
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
     }
 }

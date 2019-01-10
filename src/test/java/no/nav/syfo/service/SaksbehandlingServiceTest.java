@@ -1,6 +1,6 @@
 package no.nav.syfo.service;
 
-import no.nav.syfo.consumer.rest.AktorConsumer;
+import no.nav.syfo.consumer.rest.aktor.AktorConsumer;
 import no.nav.syfo.consumer.rest.EksisterendeSakConsumer;
 import no.nav.syfo.consumer.ws.BehandleSakConsumer;
 import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer;

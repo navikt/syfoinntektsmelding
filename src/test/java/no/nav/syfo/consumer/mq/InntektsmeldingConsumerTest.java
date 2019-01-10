@@ -1,6 +1,6 @@
 package no.nav.syfo.consumer.mq;
 
-import no.nav.syfo.consumer.rest.AktorConsumer;
+import no.nav.syfo.consumer.rest.aktor.AktorConsumer;
 import no.nav.syfo.domain.Inntektsmelding;
 import no.nav.syfo.repository.InntektsmeldingDAO;
 import no.nav.syfo.service.JournalpostService;

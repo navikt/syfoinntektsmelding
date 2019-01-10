@@ -1,7 +1,7 @@
 package no.nav.syfo.consumer.mq;
 
 import no.nav.syfo.LocalApplication;
-import no.nav.syfo.consumer.rest.AktorConsumer;
+import no.nav.syfo.consumer.rest.aktor.AktorConsumer;
 import no.nav.syfo.consumer.rest.EksisterendeSakConsumer;
 import no.nav.syfo.consumer.ws.*;
 import no.nav.syfo.domain.GeografiskTilknytningData;
@@ -14,7 +14,6 @@ import org.apache.activemq.command.ActiveMQTextMessage;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.stubbing.Answer;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.jdbc.core.JdbcTemplate;

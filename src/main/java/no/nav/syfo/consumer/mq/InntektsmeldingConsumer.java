@@ -2,7 +2,7 @@ package no.nav.syfo.consumer.mq;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.melding.virksomhet.dokumentnotifikasjon.v1.XMLForsendelsesinformasjon;
-import no.nav.syfo.consumer.rest.AktorConsumer;
+import no.nav.syfo.consumer.rest.aktor.AktorConsumer;
 import no.nav.syfo.domain.Inntektsmelding;
 import no.nav.syfo.repository.InntektsmeldingDAO;
 import no.nav.syfo.repository.InntektsmeldingMeta;
