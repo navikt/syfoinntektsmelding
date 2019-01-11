@@ -71,7 +71,7 @@ public class AktorConsumer {
                     .map(HttpEntity::getBody)
                     .map(body -> body.get(sokeIdent))
                     .map(aktor -> Optional.ofNullable(aktor.getIdenter()).orElseThrow(() -> {
-                        log.error("Fant ikke aktøren");
+                        log.error("Fant ikke aktøren: " + aktor.getFeilmelding());
                         return new RuntimeException("Fant ikke aktøren");
                     }))
                     .flatMap(idents -> idents.stream().map(Ident::getIdent)
