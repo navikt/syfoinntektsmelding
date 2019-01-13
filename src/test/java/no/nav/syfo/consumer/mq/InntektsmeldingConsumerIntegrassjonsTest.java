@@ -122,7 +122,7 @@ public class InntektsmeldingConsumerIntegrassjonsTest {
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId1"));
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId2"));
 
-        List<InntektsmeldingMeta> inntektsmeldingMetas = inntektsmeldingDAO.finnBehandledeInntektsmeldinger("aktorId", "orgnummer");
+        List<InntektsmeldingMeta> inntektsmeldingMetas = inntektsmeldingDAO.finnBehandledeInntektsmeldinger("aktorId");
         assertThat(inntektsmeldingMetas.size()).isEqualTo(2);
         assertThat(inntektsmeldingMetas.get(0).getSakId()).isEqualTo(inntektsmeldingMetas.get(1).getSakId());
 
@@ -140,7 +140,7 @@ public class InntektsmeldingConsumerIntegrassjonsTest {
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId1"));
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId2"));
 
-        List<InntektsmeldingMeta> inntektsmeldingMetas = inntektsmeldingDAO.finnBehandledeInntektsmeldinger("aktorId", "orgnummer");
+        List<InntektsmeldingMeta> inntektsmeldingMetas = inntektsmeldingDAO.finnBehandledeInntektsmeldinger("aktorId");
         assertThat(inntektsmeldingMetas.size()).isEqualTo(2);
         assertThat(inntektsmeldingMetas.get(0).getSakId()).isNotEqualTo(inntektsmeldingMetas.get(1).getSakId());
 
@@ -162,7 +162,7 @@ public class InntektsmeldingConsumerIntegrassjonsTest {
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId1"));
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId2"));
 
-        List<InntektsmeldingMeta> inntektsmeldingMetas = inntektsmeldingDAO.finnBehandledeInntektsmeldinger("aktorId", "orgnummer");
+        List<InntektsmeldingMeta> inntektsmeldingMetas = inntektsmeldingDAO.finnBehandledeInntektsmeldinger("aktorId");
         assertThat(inntektsmeldingMetas.size()).isEqualTo(2);
         assertThat(inntektsmeldingMetas.get(0).getSakId()).isNotEqualTo(inntektsmeldingMetas.get(1).getSakId());
 

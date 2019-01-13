@@ -41,11 +41,10 @@ public class InntektsmeldingDAO {
         );
     }
 
-    public List<InntektsmeldingMeta> finnBehandledeInntektsmeldinger(String aktoerId, String orgnummer) {
-        return namedParameterJdbcTemplate.query("SELECT * FROM INNTEKTSMELDING WHERE (AKTOR_ID = :aktorid AND ORGNUMMER = :orgnummer)",
+    public List<InntektsmeldingMeta> finnBehandledeInntektsmeldinger(String aktoerId) {
+        return namedParameterJdbcTemplate.query("SELECT * FROM INNTEKTSMELDING WHERE (AKTOR_ID = :aktorid)",
                 new MapSqlParameterSource()
-                        .addValue("aktorid", aktoerId)
-                        .addValue("orgnummer", orgnummer),
+                        .addValue("aktorid", aktoerId),
                 (rs, rowNum) -> InntektsmeldingMeta
                         .builder()
                         .uuid(rs.getString("INNTEKTSMELDING_UUID"))

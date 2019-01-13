@@ -42,7 +42,7 @@ public class SaksbehandlingService {
     }
 
     private Optional<InntektsmeldingMeta> finnTilhorendeInntektsmelding(Inntektsmelding inntektsmelding, String aktorId) {
-        return inntektsmeldingDAO.finnBehandledeInntektsmeldinger(aktorId, inntektsmelding.getArbeidsgiverOrgnummer())
+        return inntektsmeldingDAO.finnBehandledeInntektsmeldinger(aktorId)
                 .stream()
                 .filter(tidligereBehandletInntektsmelding -> {
                     LocalDate fom = tidligereBehandletInntektsmelding.getArbeidsgiverperiodeFom();

@@ -77,9 +77,9 @@ public class InntektsmeldingDAOTest {
 
     @Test
     public void henterAlleInntektsmeldingenePaaAktorOgOrgnummer() {
-        List<InntektsmeldingMeta> inntektsmeldingMetas = inntektsmeldingDAO.finnBehandledeInntektsmeldinger("aktorId-1", "orgnummer-1");
+        List<InntektsmeldingMeta> inntektsmeldingMetas = inntektsmeldingDAO.finnBehandledeInntektsmeldinger("aktorId-1");
 
-        assertThat(inntektsmeldingMetas.size()).isEqualTo(1);
+        assertThat(inntektsmeldingMetas.size()).isEqualTo(2);
         assertThat(inntektsmeldingMetas.get(0).getSakId()).isEqualTo("1");
     }
 }

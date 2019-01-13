@@ -49,7 +49,7 @@ public class SaksbehandlingServiceTest {
 
     @Before
     public void setup() {
-        when(inntektsmeldingDAO.finnBehandledeInntektsmeldinger(any(), anyString())).thenReturn(emptyList());
+        when(inntektsmeldingDAO.finnBehandledeInntektsmeldinger(any())).thenReturn(emptyList());
         when(aktoridConsumer.getAktorId(anyString())).thenReturn("aktorid");
         when(behandlendeEnhetConsumer.hentGeografiskTilknytning(anyString())).thenReturn(GeografiskTilknytningData.builder().geografiskTilknytning("Geografisktilknytning").build());
         when(behandlendeEnhetConsumer.hentBehandlendeEnhet(anyString())).thenReturn("behandlendeenhet1234");
@@ -101,7 +101,7 @@ public class SaksbehandlingServiceTest {
 
     @Test
     public void girNyInntektsmeldingEksisterendeSakIdOmTomOverlapper () {
-        when(inntektsmeldingDAO.finnBehandledeInntektsmeldinger("aktorId", "orgnummer")).thenReturn(singletonList(
+        when(inntektsmeldingDAO.finnBehandledeInntektsmeldinger("aktorId")).thenReturn(singletonList(
                 InntektsmeldingMeta
                         .builder()
                         .sakId("1")
@@ -117,7 +117,7 @@ public class SaksbehandlingServiceTest {
 
     @Test
     public void girNyInntektsmeldingEksisterendeSakIdOmFomOverlapper () {
-        when(inntektsmeldingDAO.finnBehandledeInntektsmeldinger("aktorId", "orgnummer")).thenReturn(singletonList(
+        when(inntektsmeldingDAO.finnBehandledeInntektsmeldinger("aktorId")).thenReturn(singletonList(
                 InntektsmeldingMeta
                         .builder()
                         .sakId("1")
@@ -133,7 +133,7 @@ public class SaksbehandlingServiceTest {
 
     @Test
     public void girNyInntektsmeldingEksisterendeSakIdOmFomOgTomOverlapper () {
-        when(inntektsmeldingDAO.finnBehandledeInntektsmeldinger("aktorId", "orgnummer")).thenReturn(singletonList(
+        when(inntektsmeldingDAO.finnBehandledeInntektsmeldinger("aktorId")).thenReturn(singletonList(
                 InntektsmeldingMeta
                         .builder()
                         .sakId("1")
