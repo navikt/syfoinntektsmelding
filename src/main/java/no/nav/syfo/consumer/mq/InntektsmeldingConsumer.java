@@ -18,6 +18,8 @@ import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import javax.xml.bind.JAXBElement;
 
+import java.time.LocalDateTime;
+
 import static java.util.Optional.ofNullable;
 import static no.nav.syfo.domain.InngaaendeJournal.MIDLERTIDIG;
 import static no.nav.syfo.util.MDCOperations.*;
@@ -63,14 +65,7 @@ public class InntektsmeldingConsumer {
 
                 journalpostService.ferdigstillJournalpost(saksId, inntektsmelding);
 
-                inntektsmeldingDAO.opprett(
-                        InntektsmeldingMeta.builder()
-                                .orgnummer(inntektsmelding.getArbeidsgiverOrgnummer())
-                                .aktorId(aktorid)
-                                .sakId(saksId)
-                                .arbeidsgiverperiodeFom(inntektsmelding.getArbeidsgiverperiodeFom())
-                                .arbeidsgiverperiodeTom(inntektsmelding.getArbeidsgiverperiodeTom())
-                                .build());
+                lagreBehandling(inntektsmelding, aktorid, saksId);
 
                 log.info("Inntektsmelding {} er journalført", inntektsmelding.getJournalpostId());
             } else {
@@ -87,5 +82,18 @@ public class InntektsmeldingConsumer {
         } finally {
             remove(MDC_CALL_ID);
         }
+    }
+
+    private void lagreBehandling(Inntektsmelding inntektsmelding, String aktorid, String saksId) {
+        inntektsmeldingDAO.opprett(
+                InntektsmeldingMeta.builder()
+                        .orgnummer(inntektsmelding.getArbeidsgiverOrgnummer())
+                        .aktorId(aktorid)
+                        .sakId(saksId)
+                        .arbeidsgiverperiodeFom(inntektsmelding.getArbeidsgiverperiodeFom())
+                        .arbeidsgiverperiodeTom(inntektsmelding.getArbeidsgiverperiodeTom())
+                        .journalpostId(inntektsmelding.getJournalpostId())
+                        .behandlet(LocalDateTime.now())
+                        .build());
     }
 }
