@@ -58,6 +58,7 @@ public class SaksbehandlingService {
     public String behandleInntektsmelding(Inntektsmelding inntektsmelding, String aktorId) {
 
         Optional<InntektsmeldingMeta> tilhorendeInntektsmelding = finnTilhorendeInntektsmelding(inntektsmelding, aktorId);
+        tilhorendeInntektsmelding.ifPresent(inntektsmeldingMeta -> log.info("Fant overlappende inntektsmelding, bruker samme saksId: {}", inntektsmeldingMeta.getSakId()));
 
         String saksId = tilhorendeInntektsmelding
                 .map(InntektsmeldingMeta::getSakId)

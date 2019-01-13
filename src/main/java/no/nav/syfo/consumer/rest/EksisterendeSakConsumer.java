@@ -50,6 +50,9 @@ public class EksisterendeSakConsumer {
             throw new RuntimeException(message);
         }
 
-        return Optional.ofNullable(result.getBody().getNyesteSak());
+        Optional<String> maybeNyesteSak = Optional.ofNullable(result.getBody().getNyesteSak());
+        maybeNyesteSak.ifPresent(saksId -> log.info("Fant eksisterende sak i syfoservice: {}", saksId));
+
+        return maybeNyesteSak;
     }
 }

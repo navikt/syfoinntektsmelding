@@ -23,6 +23,7 @@ public class BehandleSakConsumer {
 
     public String opprettSak(String fnr) {
         try {
+            log.info("Oppretter ny sak");
             return behandleSakV1.opprettSak(new WSOpprettSakRequest()
                     .withSak(new WSSak()
                             .withSakstype(new WSSakstyper().withValue("GEN"))
