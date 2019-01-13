@@ -7,7 +7,9 @@ import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -24,8 +26,8 @@ public class InntektsmeldingDAO {
 
     public void opprett(InntektsmeldingMeta inntektsmeldingMeta) {
         namedParameterJdbcTemplate.update(
-                "INSERT INTO INNTEKTSMELDING(INNTEKTSMELDING_UUID, AKTOR_ID, ARBEIDSGIVERPERIODE_FOM, ARBEIDSGIVERPERIODE_TOM, SAK_ID, ORGNUMMER) " +
-                        "VALUES(:uuid, :aktorid, :arbeidsgiverperiodeFom, :arbeidsgiverperiodeTom, :sakid, :orgnummer)",
+                "INSERT INTO INNTEKTSMELDING(INNTEKTSMELDING_UUID, AKTOR_ID, ARBEIDSGIVERPERIODE_FOM, ARBEIDSGIVERPERIODE_TOM, SAK_ID, ORGNUMMER, JOURNALPOST_ID, BEHANDLET) " +
+                        "VALUES(:uuid, :aktorid, :arbeidsgiverperiodeFom, :arbeidsgiverperiodeTom, :sakid, :orgnummer, :journalpostId, :behandlet)",
 
                 new MapSqlParameterSource()
                         .addValue("uuid", UUID.randomUUID().toString())
@@ -34,6 +36,8 @@ public class InntektsmeldingDAO {
                         .addValue("arbeidsgiverperiodeFom", inntektsmeldingMeta.getArbeidsgiverperiodeFom())
                         .addValue("arbeidsgiverperiodeTom", inntektsmeldingMeta.getArbeidsgiverperiodeTom())
                         .addValue("sakid", inntektsmeldingMeta.getSakId())
+                        .addValue("journalpostId", inntektsmeldingMeta.getJournalpostId())
+                        .addValue("behandlet", inntektsmeldingMeta.getBehandlet())
         );
     }
 
@@ -50,6 +54,8 @@ public class InntektsmeldingDAO {
                         .arbeidsgiverperiodeFom(rs.getDate("ARBEIDSGIVERPERIODE_FOM").toLocalDate())
                         .arbeidsgiverperiodeTom(rs.getDate("ARBEIDSGIVERPERIODE_TOM").toLocalDate())
                         .sakId(rs.getString("SAK_ID"))
+                        .journalpostId(rs.getString("JOURNALPOST_ID"))
+                        .behandlet(Optional.ofNullable(rs.getTimestamp("BEHANDLET")).map(Timestamp::toLocalDateTime).orElse(null))
                         .build());
     }
 }

@@ -42,7 +42,7 @@ public class AktorConsumerTest {
 
     @Test
     public void finnerAktorId() {
-        AktorResponse response = AktorResponse.builder().build();
+        AktorResponse response = new AktorResponse();
         response.put("fnr", Aktor.builder()
                 .identer(asList(Ident.builder()
                         .ident("aktorId")
@@ -66,7 +66,7 @@ public class AktorConsumerTest {
 
     @Test(expected = RuntimeException.class)
     public void finnerIkkeIdent() {
-        AktorResponse response = AktorResponse.builder().build();
+        AktorResponse response = new AktorResponse();
         response.put("fnr", Aktor.builder()
                 .identer(null)
                 .feilmelding("Fant ikke aktør")
@@ -83,7 +83,7 @@ public class AktorConsumerTest {
 
     @Test(expected = RuntimeException.class)
     public void manglendeFnrIResponsGirFeilmelding() {
-        AktorResponse response = AktorResponse.builder().build();
+        AktorResponse response = new AktorResponse();
         response.put("etAnnetFnr", Aktor.builder()
                 .identer(asList(Ident.builder()
                         .ident("aktorId")
@@ -106,7 +106,7 @@ public class AktorConsumerTest {
 
     @Test(expected = RuntimeException.class)
     public void manglendeIdentGirFeilmelding() {
-        AktorResponse response = AktorResponse.builder().build();
+        AktorResponse response = new AktorResponse();
         response.put("fnr", Aktor.builder()
                 .identer(Collections.emptyList())
                 .feilmelding(null)
