@@ -2,7 +2,6 @@ package no.nav.syfo.util;
 
 
 import no.seres.xsd.nav.inntektsmelding_m._20180924.XMLInntektsmeldingM;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.xml.bind.JAXBElement;
