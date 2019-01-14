@@ -1,6 +1,7 @@
 package no.nav.syfo.consumer.ws;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.syfo.domain.InngaaendeJournal;
 import no.nav.tjeneste.virksomhet.inngaaende.journal.v1.*;
 import org.springframework.stereotype.Component;
 
@@ -14,14 +15,18 @@ public class InngaaendeJournalConsumer {
         this.inngaaendeJournalV1 = inngaaendeJournalV1;
     }
 
-    public String hentDokumentId(String journalpostId) {
+    public InngaaendeJournal hentDokumentId(String journalpostId) {
         try {
-            return inngaaendeJournalV1.hentJournalpost(
+            WSInngaaendeJournalpost inngaaendeJournalpost = inngaaendeJournalV1.hentJournalpost(
                     new WSHentJournalpostRequest()
                             .withJournalpostId(journalpostId))
-                    .getInngaaendeJournalpost()
-                    .getHoveddokument()
-                    .getDokumentId();
+                    .getInngaaendeJournalpost();
+
+            return InngaaendeJournal.builder()
+                    .dokumentId(inngaaendeJournalpost.getHoveddokument().getDokumentId())
+                    .status(inngaaendeJournalpost.getJournaltilstand().name())
+                    .build();
+
 
         } catch (HentJournalpostSikkerhetsbegrensning e) {
             log.error("Feil ved henting av journalpost: Sikkerhetsbegrensning!");

@@ -2,7 +2,10 @@ package no.nav.syfo.consumer.mq;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.melding.virksomhet.dokumentnotifikasjon.v1.XMLForsendelsesinformasjon;
+import no.nav.syfo.consumer.rest.aktor.AktorConsumer;
 import no.nav.syfo.domain.Inntektsmelding;
+import no.nav.syfo.repository.InntektsmeldingDAO;
+import no.nav.syfo.repository.InntektsmeldingMeta;
 import no.nav.syfo.service.JournalpostService;
 import no.nav.syfo.service.SaksbehandlingService;
 import no.nav.syfo.util.JAXB;
@@ -15,7 +18,10 @@ import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import javax.xml.bind.JAXBElement;
 
+import java.time.LocalDateTime;
+
 import static java.util.Optional.ofNullable;
+import static no.nav.syfo.domain.InngaaendeJournal.MIDLERTIDIG;
 import static no.nav.syfo.util.MDCOperations.*;
 
 @Component
@@ -25,14 +31,18 @@ public class InntektsmeldingConsumer {
     private JournalpostService journalpostService;
     private SaksbehandlingService saksbehandlingService;
     private Metrikk metrikk;
+    private InntektsmeldingDAO inntektsmeldingDAO;
+    private AktorConsumer aktorConsumer;
 
     public InntektsmeldingConsumer(
             JournalpostService journalpostService,
             SaksbehandlingService saksbehandlingService,
-            Metrikk metrikk) {
+            Metrikk metrikk, InntektsmeldingDAO inntektsmeldingDAO, AktorConsumer aktorConsumer) {
         this.journalpostService = journalpostService;
         this.saksbehandlingService = saksbehandlingService;
         this.metrikk = metrikk;
+        this.inntektsmeldingDAO = inntektsmeldingDAO;
+        this.aktorConsumer = aktorConsumer;
     }
 
     @Transactional
@@ -45,13 +55,22 @@ public class InntektsmeldingConsumer {
             final XMLForsendelsesinformasjon info = xmlForsendelsesinformasjon.getValue();
 
             Inntektsmelding inntektsmelding = journalpostService.hentInntektsmelding(info.getArkivId());
-            metrikk.tellInntektsmeldingerMottat(inntektsmelding);
 
-            String saksId = saksbehandlingService.behandleInntektsmelding(inntektsmelding);
+            String aktorid = aktorConsumer.getAktorId(inntektsmelding.getFnr());
 
-            journalpostService.ferdigstillJournalpost(saksId, inntektsmelding);
+            if (MIDLERTIDIG.equals(inntektsmelding.getStatus())) {
+                metrikk.tellInntektsmeldingerMottatt(inntektsmelding);
 
-            log.info("Inntektsmelding journalført. id: {}", inntektsmelding.getJournalpostId());
+                String saksId = saksbehandlingService.behandleInntektsmelding(inntektsmelding, aktorid);
+
+                journalpostService.ferdigstillJournalpost(saksId, inntektsmelding);
+
+                lagreBehandling(inntektsmelding, aktorid, saksId);
+
+                log.info("Inntektsmelding {} er journalført", inntektsmelding.getJournalpostId());
+            } else {
+                log.info("Behandler ikke inntektsmelding {} da den har status: {}", inntektsmelding.getJournalpostId(), inntektsmelding.getStatus());
+            }
         } catch (JMSException e) {
             log.error("Feil ved parsing av inntektsmelding fra kø", e);
             metrikk.tellInntektsmeldingfeil();
@@ -63,5 +82,18 @@ public class InntektsmeldingConsumer {
         } finally {
             remove(MDC_CALL_ID);
         }
+    }
+
+    private void lagreBehandling(Inntektsmelding inntektsmelding, String aktorid, String saksId) {
+        inntektsmeldingDAO.opprett(
+                InntektsmeldingMeta.builder()
+                        .orgnummer(inntektsmelding.getArbeidsgiverOrgnummer())
+                        .aktorId(aktorid)
+                        .sakId(saksId)
+                        .arbeidsgiverperiodeFom(inntektsmelding.getArbeidsgiverperiodeFom())
+                        .arbeidsgiverperiodeTom(inntektsmelding.getArbeidsgiverperiodeTom())
+                        .journalpostId(inntektsmelding.getJournalpostId())
+                        .behandlet(LocalDateTime.now())
+                        .build());
     }
 }

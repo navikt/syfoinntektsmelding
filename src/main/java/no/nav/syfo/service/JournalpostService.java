@@ -5,6 +5,7 @@ import no.nav.syfo.consumer.ws.BehandleInngaaendeJournalConsumer;
 import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer;
 import no.nav.syfo.consumer.ws.InngaaendeJournalConsumer;
 import no.nav.syfo.consumer.ws.JournalConsumer;
+import no.nav.syfo.domain.InngaaendeJournal;
 import no.nav.syfo.domain.InngaendeJournalpost;
 import no.nav.syfo.domain.Inntektsmelding;
 import no.nav.syfo.util.Metrikk;
@@ -34,8 +35,8 @@ public class JournalpostService {
     }
 
     public Inntektsmelding hentInntektsmelding(String journalpostId) {
-        String dokumentId = inngaaendeJournalConsumer.hentDokumentId(journalpostId);
-        return journalConsumer.hentInntektsmelding(journalpostId, dokumentId);
+        InngaaendeJournal inngaaendeJournal = inngaaendeJournalConsumer.hentDokumentId(journalpostId);
+        return journalConsumer.hentInntektsmelding(journalpostId, inngaaendeJournal);
     }
 
     public void ferdigstillJournalpost(String saksId, Inntektsmelding inntektsmelding) {
@@ -46,14 +47,14 @@ public class JournalpostService {
     }
 
     private InngaendeJournalpost hentInngaendeJournalpost(String gsakId, Inntektsmelding inntektsmelding) {
-        String dokumentId = inngaaendeJournalConsumer.hentDokumentId(inntektsmelding.getJournalpostId());
+        InngaaendeJournal inngaaendeJournal = inngaaendeJournalConsumer.hentDokumentId(inntektsmelding.getJournalpostId());
         String behandlendeEnhet = behandlendeEnhetConsumer.hentBehandlendeEnhet(inntektsmelding.getFnr());
 
         return InngaendeJournalpost.builder()
                 .fnr(inntektsmelding.getFnr())
                 .gsakId(gsakId)
                 .journalpostId(inntektsmelding.getJournalpostId())
-                .dokumentId(dokumentId)
+                .dokumentId(inngaaendeJournal.getDokumentId())
                 .behandlendeEnhetId(behandlendeEnhet)
                 .arbeidsgiverOrgnummer(inntektsmelding.getArbeidsgiverOrgnummer())
                 .build();
