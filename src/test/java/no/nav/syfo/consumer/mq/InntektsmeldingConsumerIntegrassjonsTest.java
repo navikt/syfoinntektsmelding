@@ -7,6 +7,7 @@ import no.nav.syfo.consumer.ws.*;
 import no.nav.syfo.domain.GeografiskTilknytningData;
 import no.nav.syfo.domain.InngaaendeJournal;
 import no.nav.syfo.domain.Inntektsmelding;
+import no.nav.syfo.domain.Periode;
 import no.nav.syfo.repository.InntektsmeldingDAO;
 import no.nav.syfo.repository.InntektsmeldingMeta;
 import no.nav.syfo.util.Metrikk;
@@ -27,6 +28,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Arrays.asList;
 import static no.nav.syfo.domain.InngaaendeJournal.MIDLERTIDIG;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
@@ -79,6 +81,7 @@ public class InntektsmeldingConsumerIntegrassjonsTest {
 
     @Before
     public void setup() {
+        jdbcTemplate.update("DELETE FROM ARBEIDSGIVERPERIODE");
         jdbcTemplate.update("DELETE FROM INNTEKTSMELDING");
         saksIdteller = 0;
 
@@ -89,7 +92,7 @@ public class InntektsmeldingConsumerIntegrassjonsTest {
         when(inngaaendeJournalConsumer.hentDokumentId("arkivId")).thenReturn(inngaaendeJournal);
 
         when(journalConsumer.hentInntektsmelding("arkivId", inngaaendeJournal)).thenReturn(
-                inntektsmelding("arkivId", LocalDate.of(2019,1,1), LocalDate.of(2019,1,16)));
+                inntektsmelding("arkivId1", asList(Periode.builder().fom(LocalDate.of(2019, 1,1)).tom(LocalDate.of(2019,1,16)).build())));
 
         when(aktorConsumer.getAktorId("fnr")).thenReturn("aktorId");
         when(eksisterendeSakConsumer.finnEksisterendeSaksId("aktorId", "orgnummer")).thenReturn(Optional.empty());
@@ -107,17 +110,12 @@ public class InntektsmeldingConsumerIntegrassjonsTest {
     }
 
     @Test
-    public void test() throws MessageNotWriteableException {
-        inntektsmeldingConsumer.listen(opprettKoemelding("arkivId"));
-    }
-
-    @Test
     public void gjenbrukerSaksIdHvisViFarToOverlappendeInntektsmeldinger() throws MessageNotWriteableException {
         when(inngaaendeJournalConsumer.hentDokumentId("arkivId1")).thenReturn(inngaaendeJournal("arkivId1"));
         when(inngaaendeJournalConsumer.hentDokumentId("arkivId2")).thenReturn(inngaaendeJournal("arkivId2"));
 
-        when(journalConsumer.hentInntektsmelding("arkivId1", inngaaendeJournal("arkivId1"))).thenReturn(inntektsmelding("arkivId1", LocalDate.of(2019, 1,1), LocalDate.of(2019,1,16)));
-        when(journalConsumer.hentInntektsmelding("arkivId2", inngaaendeJournal("arkivId2"))).thenReturn(inntektsmelding("arkivId2", LocalDate.of(2019, 1,2), LocalDate.of(2019,1,16)));
+        when(journalConsumer.hentInntektsmelding("arkivId1", inngaaendeJournal("arkivId1"))).thenReturn(inntektsmelding("arkivId1", asList(Periode.builder().fom(LocalDate.of(2019, 1,1)).tom(LocalDate.of(2019,1,16)).build())));
+        when(journalConsumer.hentInntektsmelding("arkivId2", inngaaendeJournal("arkivId2"))).thenReturn(inntektsmelding("arkivId2", asList(Periode.builder().fom(LocalDate.of(2019, 1,2)).tom(LocalDate.of(2019,1,16)).build()) ));
 
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId1"));
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId2"));
@@ -134,8 +132,8 @@ public class InntektsmeldingConsumerIntegrassjonsTest {
         when(inngaaendeJournalConsumer.hentDokumentId("arkivId1")).thenReturn(inngaaendeJournal("arkivId1"));
         when(inngaaendeJournalConsumer.hentDokumentId("arkivId2")).thenReturn(inngaaendeJournal("arkivId2"));
 
-        when(journalConsumer.hentInntektsmelding("arkivId1", inngaaendeJournal("arkivId1"))).thenReturn(inntektsmelding("arkivId1", LocalDate.of(2019, 1,1), LocalDate.of(2019,1,16)));
-        when(journalConsumer.hentInntektsmelding("arkivId2", inngaaendeJournal("arkivId2"))).thenReturn(inntektsmelding("arkivId2", LocalDate.of(2019, 2,1), LocalDate.of(2019,2,16)));
+        when(journalConsumer.hentInntektsmelding("arkivId1", inngaaendeJournal("arkivId1"))).thenReturn(inntektsmelding("arkivId1", asList(Periode.builder().fom(LocalDate.of(2019, 1,1)).tom(LocalDate.of(2019,1,16)).build())));
+        when(journalConsumer.hentInntektsmelding("arkivId2", inngaaendeJournal("arkivId2"))).thenReturn(inntektsmelding("arkivId2", asList(Periode.builder().fom(LocalDate.of(2019, 2,1)).tom(LocalDate.of(2019,2,16)).build()) ));
 
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId1"));
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId2"));
@@ -156,8 +154,8 @@ public class InntektsmeldingConsumerIntegrassjonsTest {
         when(inngaaendeJournalConsumer.hentDokumentId("arkivId1")).thenReturn(inngaaendeJournal("arkivId1"));
         when(inngaaendeJournalConsumer.hentDokumentId("arkivId2")).thenReturn(inngaaendeJournal("arkivId2"));
 
-        when(journalConsumer.hentInntektsmelding("arkivId1", inngaaendeJournal("arkivId1"))).thenReturn(inntektsmelding("arkivId1", LocalDate.of(2019, 1,1), LocalDate.of(2019,1,16)));
-        when(journalConsumer.hentInntektsmelding("arkivId2", inngaaendeJournal("arkivId2"))).thenReturn(inntektsmelding("arkivId2", LocalDate.of(2019, 2,1), LocalDate.of(2019,2,16)));
+        when(journalConsumer.hentInntektsmelding("arkivId1", inngaaendeJournal("arkivId1"))).thenReturn(inntektsmelding("arkivId1", asList(Periode.builder().fom(LocalDate.of(2019, 1,1)).tom(LocalDate.of(2019,1,16)).build())));
+        when(journalConsumer.hentInntektsmelding("arkivId2", inngaaendeJournal("arkivId2"))).thenReturn(inntektsmelding("arkivId2", asList(Periode.builder().fom(LocalDate.of(2019, 2,1)).tom(LocalDate.of(2019,2,16)).build()) ));
 
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId1"));
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId2"));
@@ -172,7 +170,7 @@ public class InntektsmeldingConsumerIntegrassjonsTest {
         verify(behandleSakConsumer, times(1)).opprettSak("fnr");
     }
 
-    private Inntektsmelding inntektsmelding(String arkivId, LocalDate fom, LocalDate tom) {
+    private Inntektsmelding inntektsmelding(String arkivId, List<Periode> perioder) {
         return Inntektsmelding
                 .builder()
                 .fnr("fnr")
@@ -180,8 +178,7 @@ public class InntektsmeldingConsumerIntegrassjonsTest {
                 .arbeidsforholdId("arbeidsforholdId")
                 .arbeidsgiverOrgnummer("orgnummer")
                 .arsakTilInnsending("arsak")
-                .arbeidsgiverperiodeFom(fom)
-                .arbeidsgiverperiodeTom(tom)
+                .arbeidsgiverperioder(perioder)
                 .status(MIDLERTIDIG)
                 .build();
     }

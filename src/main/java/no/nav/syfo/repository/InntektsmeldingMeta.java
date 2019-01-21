@@ -3,9 +3,10 @@ package no.nav.syfo.repository;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Value;
+import no.nav.syfo.domain.Periode;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Value
 @Builder
@@ -16,7 +17,6 @@ public class InntektsmeldingMeta {
     private String sakId;
     private String journalpostId;
     private String orgnummer;
-    private LocalDate arbeidsgiverperiodeFom;
-    private LocalDate arbeidsgiverperiodeTom;
     private LocalDateTime behandlet;
+    private List<Periode> arbeidsgiverperioder;
 }

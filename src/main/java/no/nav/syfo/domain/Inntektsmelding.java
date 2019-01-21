@@ -4,7 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Value;
 
-import java.time.LocalDate;
+import java.util.List;
 
 @Value
 @Builder
@@ -16,6 +16,5 @@ public class Inntektsmelding {
     String arbeidsforholdId;
     String arsakTilInnsending;
     String status;
-    LocalDate arbeidsgiverperiodeFom;
-    LocalDate arbeidsgiverperiodeTom;
+    List<Periode> arbeidsgiverperioder;
 }
