@@ -11,6 +11,7 @@ import no.nav.syfo.domain.Oppgave;
 import no.nav.syfo.domain.Periode;
 import no.nav.syfo.repository.InntektsmeldingDAO;
 import no.nav.syfo.repository.InntektsmeldingMeta;
+import no.nav.syfo.util.Metrikk;
 import no.nav.tjeneste.virksomhet.aktoer.v2.HentAktoerIdForIdentPersonIkkeFunnet;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,6 +46,8 @@ public class SaksbehandlingServiceTest {
     private InntektsmeldingDAO inntektsmeldingDAO;
     @Mock
     private EksisterendeSakConsumer eksisterendeSakConsumer;
+    @Mock
+    private Metrikk metrikk;
 
     @InjectMocks
     private SaksbehandlingService saksbehandlingService;

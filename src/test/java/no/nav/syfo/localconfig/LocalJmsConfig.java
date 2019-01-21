@@ -1,6 +1,7 @@
 package no.nav.syfo.localconfig;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.syfo.consumer.mq.MQErrorHandler;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +19,12 @@ import javax.naming.NamingException;
 @EnableJms
 public class LocalJmsConfig {
 
+    private final MQErrorHandler errorHandler;
+
+    public LocalJmsConfig(MQErrorHandler errorHandler) {
+        this.errorHandler = errorHandler;
+    }
+
     @Bean(name = "jmsListenerContainerFactory")
     public DefaultJmsListenerContainerFactory jmsListenerContainerFactory(ConnectionFactory xaJmsConnectionFactory, Destination destination, PlatformTransactionManager platformTransactionManager) {
         DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
@@ -25,6 +32,7 @@ public class LocalJmsConfig {
         factory.setDestinationResolver((session, s, b) -> destination);
         factory.setConcurrency("3-10");
         factory.setTransactionManager(platformTransactionManager);
+        factory.setErrorHandler(errorHandler);
         return factory;
     }
 

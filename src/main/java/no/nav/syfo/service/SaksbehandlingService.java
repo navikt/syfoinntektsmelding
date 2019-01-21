@@ -12,14 +12,13 @@ import no.nav.syfo.domain.Periode;
 import no.nav.syfo.repository.InntektsmeldingDAO;
 import no.nav.syfo.repository.InntektsmeldingMeta;
 import no.nav.syfo.util.DateUtil;
+import no.nav.syfo.util.Metrikk;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-
-import static no.nav.syfo.util.DateUtil.compare;
 
 @Component
 @Slf4j
@@ -29,6 +28,7 @@ public class SaksbehandlingService {
     private final BehandleSakConsumer behandleSakConsumer;
     private final EksisterendeSakConsumer eksisterendeSakConsumer;
     private final InntektsmeldingDAO inntektsmeldingDAO;
+    private final Metrikk metrikk;
 
     @Inject
     public SaksbehandlingService(
@@ -36,12 +36,13 @@ public class SaksbehandlingService {
             BehandlendeEnhetConsumer behandlendeEnhetConsumer,
             BehandleSakConsumer behandleSakConsumer,
             EksisterendeSakConsumer eksisterendeSakConsumer,
-            InntektsmeldingDAO inntektsmeldingDAO) {
+            InntektsmeldingDAO inntektsmeldingDAO, Metrikk metrikk) {
         this.oppgavebehandlingConsumer = oppgavebehandlingConsumer;
         this.behandlendeEnhetConsumer = behandlendeEnhetConsumer;
         this.behandleSakConsumer = behandleSakConsumer;
         this.eksisterendeSakConsumer = eksisterendeSakConsumer;
         this.inntektsmeldingDAO = inntektsmeldingDAO;
+        this.metrikk = metrikk;
     }
 
     private boolean helper(List<Periode> perioder, Periode periode) {
@@ -62,7 +63,10 @@ public class SaksbehandlingService {
     public String behandleInntektsmelding(Inntektsmelding inntektsmelding, String aktorId) {
 
         Optional<InntektsmeldingMeta> tilhorendeInntektsmelding = finnTilhorendeInntektsmelding(inntektsmelding, aktorId);
-        tilhorendeInntektsmelding.ifPresent(inntektsmeldingMeta -> log.info("Fant overlappende inntektsmelding, bruker samme saksId: {}", inntektsmeldingMeta.getSakId()));
+        tilhorendeInntektsmelding.ifPresent(inntektsmeldingMeta -> {
+            log.info("Fant overlappende inntektsmelding, bruker samme saksId: {}", inntektsmeldingMeta.getSakId());
+            metrikk.tellOverlappendeInntektsmelding();
+        });
 
         String saksId = tilhorendeInntektsmelding
                 .map(InntektsmeldingMeta::getSakId)

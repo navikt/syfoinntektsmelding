@@ -2,6 +2,8 @@ package no.nav.syfo.config.mq;
 
 import com.ibm.mq.jms.MQQueue;
 import com.ibm.mq.jms.MQXAConnectionFactory;
+import lombok.extern.slf4j.Slf4j;
+import no.nav.syfo.consumer.mq.MQErrorHandler;
 import no.nav.syfo.consumer.util.jms.UserCredentialsXaConnectionFactoryAdapter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.jms.XAConnectionFactoryWrapper;
@@ -24,6 +26,7 @@ import static com.ibm.msg.client.wmq.WMQConstants.*;
 @Configuration
 @EnableJms
 @Profile({"remote"})
+@Slf4j
 public class JmsConfig {
     private static final int UTF_8_WITH_PUA = 1208;
 
@@ -42,6 +45,12 @@ public class JmsConfig {
     @Value("${srvappserver.password}")
     private String srvAppserverPassword;
 
+    private final MQErrorHandler errorHandler;
+
+    public JmsConfig(MQErrorHandler errorHandler) {
+        this.errorHandler = errorHandler;
+    }
+
     @Bean
     public Queue inntektsmeldingQueue() throws JMSException {
         return new MQQueue(inntektsmeldingQueuename);
@@ -54,6 +63,7 @@ public class JmsConfig {
         factory.setDestinationResolver(destinationResolver);
         factory.setConcurrency("3-10");
         factory.setTransactionManager(platformTransactionManager);
+        factory.setErrorHandler(errorHandler);
         return factory;
     }
 

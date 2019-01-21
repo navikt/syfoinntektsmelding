@@ -3,6 +3,7 @@ package no.nav.syfo.consumer.rest;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.syfo.util.MDCOperations;
+import no.nav.syfo.util.Metrikk;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -25,11 +26,13 @@ public class EksisterendeSakConsumer {
     private final TokenConsumer tokenConsumer;
     private final RestTemplate restTemplate;
     private final String stranglerUrl;
+    private final Metrikk metrikk;
 
-    public EksisterendeSakConsumer(TokenConsumer tokenConsumer, RestTemplate restTemplate, @Value("${syfoservicestranglerApi.url}") String stranglerUrl) {
+    public EksisterendeSakConsumer(TokenConsumer tokenConsumer, RestTemplate restTemplate, @Value("${syfoservicestranglerApi.url}") String stranglerUrl, Metrikk metrikk) {
         this.tokenConsumer = tokenConsumer;
         this.restTemplate = restTemplate;
         this.stranglerUrl = stranglerUrl;
+        this.metrikk = metrikk;
     }
 
     public Optional<String> finnEksisterendeSaksId(String aktorId, String orgnummer) {
@@ -51,7 +54,10 @@ public class EksisterendeSakConsumer {
         }
 
         Optional<String> maybeNyesteSak = Optional.ofNullable(result.getBody().getNyesteSak());
-        maybeNyesteSak.ifPresent(saksId -> log.info("Fant eksisterende sak i syfoservice: {}", saksId));
+        maybeNyesteSak.ifPresent(saksId -> {
+            log.info("Fant eksisterende sak i syfoservice: {}", saksId);
+            metrikk.tellInntektsmeldingSaksIdFraSyfo();
+        });
 
         return maybeNyesteSak;
     }
