@@ -19,14 +19,8 @@ import javax.naming.NamingException;
 @EnableJms
 public class LocalJmsConfig {
 
-    private final MQErrorHandler errorHandler;
-
-    public LocalJmsConfig(MQErrorHandler errorHandler) {
-        this.errorHandler = errorHandler;
-    }
-
     @Bean(name = "jmsListenerContainerFactory")
-    public DefaultJmsListenerContainerFactory jmsListenerContainerFactory(ConnectionFactory xaJmsConnectionFactory, Destination destination, PlatformTransactionManager platformTransactionManager) {
+    public DefaultJmsListenerContainerFactory jmsListenerContainerFactory(ConnectionFactory xaJmsConnectionFactory, Destination destination, PlatformTransactionManager platformTransactionManager, MQErrorHandler errorHandler) {
         DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
         factory.setConnectionFactory(xaJmsConnectionFactory);
         factory.setDestinationResolver((session, s, b) -> destination);

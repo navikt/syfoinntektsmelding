@@ -9,6 +9,6 @@ import org.springframework.util.ErrorHandler;
 public class MQErrorHandler implements ErrorHandler {
     @Override
     public void handleError(Throwable throwable) {
-        log.error("Feil ved mottak av inngående journalpost: ");
+        log.error("Feil ved mottak av inngående journalpost", throwable);
     }
 }

@@ -45,19 +45,13 @@ public class JmsConfig {
     @Value("${srvappserver.password}")
     private String srvAppserverPassword;
 
-    private final MQErrorHandler errorHandler;
-
-    public JmsConfig(MQErrorHandler errorHandler) {
-        this.errorHandler = errorHandler;
-    }
-
     @Bean
     public Queue inntektsmeldingQueue() throws JMSException {
         return new MQQueue(inntektsmeldingQueuename);
     }
 
     @Bean
-    public DefaultJmsListenerContainerFactory jmsListenerContainerFactory(ConnectionFactory connectionFactory, DestinationResolver destinationResolver, PlatformTransactionManager platformTransactionManager) {
+    public DefaultJmsListenerContainerFactory jmsListenerContainerFactory(ConnectionFactory connectionFactory, DestinationResolver destinationResolver, PlatformTransactionManager platformTransactionManager, MQErrorHandler errorHandler) {
         DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
         factory.setConnectionFactory(connectionFactory);
         factory.setDestinationResolver(destinationResolver);
