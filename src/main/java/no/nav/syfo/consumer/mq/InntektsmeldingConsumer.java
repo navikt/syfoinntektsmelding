@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import javax.xml.bind.JAXBElement;
-
 import java.time.LocalDateTime;
 
 import static java.util.Optional.ofNullable;
@@ -90,8 +89,7 @@ public class InntektsmeldingConsumer {
                         .orgnummer(inntektsmelding.getArbeidsgiverOrgnummer())
                         .aktorId(aktorid)
                         .sakId(saksId)
-                        .arbeidsgiverperiodeFom(inntektsmelding.getArbeidsgiverperiodeFom())
-                        .arbeidsgiverperiodeTom(inntektsmelding.getArbeidsgiverperiodeTom())
+                        .arbeidsgiverperioder(inntektsmelding.getArbeidsgiverperioder())
                         .journalpostId(inntektsmelding.getJournalpostId())
                         .behandlet(LocalDateTime.now())
                         .build());

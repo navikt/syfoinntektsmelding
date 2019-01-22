@@ -2,6 +2,8 @@ package no.nav.syfo.config.mq;
 
 import com.ibm.mq.jms.MQQueue;
 import com.ibm.mq.jms.MQXAConnectionFactory;
+import lombok.extern.slf4j.Slf4j;
+import no.nav.syfo.consumer.mq.MQErrorHandler;
 import no.nav.syfo.consumer.util.jms.UserCredentialsXaConnectionFactoryAdapter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.jms.XAConnectionFactoryWrapper;
@@ -48,12 +50,13 @@ public class JmsConfig {
     }
 
     @Bean
-    public DefaultJmsListenerContainerFactory jmsListenerContainerFactory(ConnectionFactory connectionFactory, DestinationResolver destinationResolver, PlatformTransactionManager platformTransactionManager) {
+    public DefaultJmsListenerContainerFactory jmsListenerContainerFactory(ConnectionFactory connectionFactory, DestinationResolver destinationResolver, PlatformTransactionManager platformTransactionManager, MQErrorHandler errorHandler) {
         DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
         factory.setConnectionFactory(connectionFactory);
         factory.setDestinationResolver(destinationResolver);
         factory.setConcurrency("3-10");
         factory.setTransactionManager(platformTransactionManager);
+        factory.setErrorHandler(errorHandler);
         return factory;
     }
 
