@@ -26,7 +26,6 @@ import static com.ibm.msg.client.wmq.WMQConstants.*;
 @Configuration
 @EnableJms
 @Profile({"remote"})
-@Slf4j
 public class JmsConfig {
     private static final int UTF_8_WITH_PUA = 1208;
 
