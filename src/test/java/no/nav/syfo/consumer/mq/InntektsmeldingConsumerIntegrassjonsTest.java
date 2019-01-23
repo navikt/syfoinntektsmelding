@@ -1,8 +1,8 @@
 package no.nav.syfo.consumer.mq;
 
 import no.nav.syfo.LocalApplication;
-import no.nav.syfo.consumer.rest.aktor.AktorConsumer;
 import no.nav.syfo.consumer.rest.EksisterendeSakConsumer;
+import no.nav.syfo.consumer.rest.aktor.AktorConsumer;
 import no.nav.syfo.consumer.ws.*;
 import no.nav.syfo.domain.GeografiskTilknytningData;
 import no.nav.syfo.domain.InngaaendeJournal;
@@ -29,11 +29,10 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static no.nav.syfo.domain.InngaaendeJournal.MIDLERTIDIG;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = LocalApplication.class)
@@ -168,6 +167,41 @@ public class InntektsmeldingConsumerIntegrassjonsTest {
         assertThat(inntektsmeldingMetas.get(1).getSakId()).isEqualTo("syfosak");
 
         verify(behandleSakConsumer, times(1)).opprettSak("fnr");
+    }
+
+    @Test
+    public void mottarInntektsmeldingUtenArbeidsgiverperioder() throws MessageNotWriteableException {
+        when(journalConsumer.hentInntektsmelding("arkivId", inngaaendeJournal("arkivId"))).thenReturn(inntektsmelding("arkivId", emptyList()));
+
+        inntektsmeldingConsumer.listen(opprettKoemelding("arkivId"));
+
+        List<InntektsmeldingMeta> inntektsmeldinger = inntektsmeldingDAO.finnBehandledeInntektsmeldinger("aktorId");
+
+        assertThat(inntektsmeldinger.get(0).getArbeidsgiverperioder().size()).isEqualTo(0);
+    }
+
+    @Test
+    public void mottarInntektsmeldingMedFlerePerioder() throws MessageNotWriteableException {
+        when(journalConsumer.hentInntektsmelding("arkivId", inngaaendeJournal("arkivId"))).thenReturn(inntektsmelding("arkivId", asList(
+                Periode.builder()
+                        .fom(LocalDate.of(2019,1,1))
+                        .tom(LocalDate.of(2019,1,12))
+                        .build(),
+                Periode.builder()
+                        .fom(LocalDate.of(2019,1,12))
+                        .tom(LocalDate.of(2019,1,14))
+                        .build()
+                )));
+
+        inntektsmeldingConsumer.listen(opprettKoemelding("arkivId"));
+
+        List<InntektsmeldingMeta> inntektsmeldinger = inntektsmeldingDAO.finnBehandledeInntektsmeldinger("aktorId");
+
+        assertThat(inntektsmeldinger.get(0).getArbeidsgiverperioder().size()).isEqualTo(2);
+        assertThat(inntektsmeldinger.get(0).getArbeidsgiverperioder().get(0).getFom()).isEqualTo(LocalDate.of(2019,1,1));
+        assertThat(inntektsmeldinger.get(0).getArbeidsgiverperioder().get(0).getTom()).isEqualTo(LocalDate.of(2019,1,12));
+        assertThat(inntektsmeldinger.get(0).getArbeidsgiverperioder().get(1).getFom()).isEqualTo(LocalDate.of(2019,1,12));
+        assertThat(inntektsmeldinger.get(0).getArbeidsgiverperioder().get(1).getTom()).isEqualTo(LocalDate.of(2019,1,14));
     }
 
     private Inntektsmelding inntektsmelding(String arkivId, List<Periode> perioder) {
