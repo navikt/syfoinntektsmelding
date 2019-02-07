@@ -17,6 +17,7 @@ public class InntektsmeldingMeta {
     private String sakId;
     private String journalpostId;
     private String orgnummer;
+    private String orgnummerPrivatperson;
     private LocalDateTime behandlet;
     private List<Periode> arbeidsgiverperioder;
 }

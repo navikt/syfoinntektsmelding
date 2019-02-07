@@ -13,6 +13,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.Optional;
+
 import static no.nav.syfo.domain.InngaaendeJournal.MIDLERTIDIG;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -45,7 +47,7 @@ public class JournalpostServiceTest {
                 "saksId",
                 Inntektsmelding.builder()
                         .fnr("fnr")
-                        .arbeidsgiverOrgnummer("orgnummer")
+                        .arbeidsgiverOrgnummer(Optional.of("orgnummer"))
                         .journalpostId("journalpostId")
                         .arbeidsforholdId(null)
                         .arsakTilInnsending("Ny")
@@ -65,7 +67,7 @@ public class JournalpostServiceTest {
         when(journalConsumer.hentInntektsmelding("journalpostId", journal))
                 .thenReturn(Inntektsmelding
                         .builder()
-                        .arbeidsgiverOrgnummer("arbeidsgiverOrgNr")
+                        .arbeidsgiverOrgnummer(Optional.of("orgnummer"))
                         .fnr("fnr")
                         .journalpostId("journalpostId")
                         .status("MIDLERTIDIG")

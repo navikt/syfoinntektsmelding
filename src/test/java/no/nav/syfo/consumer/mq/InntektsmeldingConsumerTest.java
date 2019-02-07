@@ -16,6 +16,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.jms.MessageNotWriteableException;
 
+import java.util.Optional;
+
 import static no.nav.syfo.domain.InngaaendeJournal.MIDLERTIDIG;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -53,6 +55,8 @@ public class InntektsmeldingConsumerTest {
     public void behandlerInntektsmelding() throws MessageNotWriteableException {
         when(journalpostService.hentInntektsmelding("arkivId")).thenReturn(Inntektsmelding.builder()
                 .status(MIDLERTIDIG)
+                .arbeidsgiverOrgnummer(Optional.of("orgnummer"))
+                .orgnummerPrivatperson(Optional.empty())
                 .journalpostId("akrivId")
                 .fnr("fnr")
                 .build());

@@ -5,13 +5,15 @@ import lombok.Getter;
 import lombok.Value;
 
 import java.util.List;
+import java.util.Optional;
 
 @Value
-@Builder
+@Builder(toBuilder = true)
 @Getter
 public class Inntektsmelding {
     String fnr;
-    String arbeidsgiverOrgnummer;
+    Optional<String> arbeidsgiverOrgnummer;
+    Optional<String> orgnummerPrivatperson;
     String journalpostId;
     String arbeidsforholdId;
     String arsakTilInnsending;

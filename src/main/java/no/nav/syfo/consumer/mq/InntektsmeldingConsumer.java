@@ -86,7 +86,8 @@ public class InntektsmeldingConsumer {
     private void lagreBehandling(Inntektsmelding inntektsmelding, String aktorid, String saksId) {
         inntektsmeldingDAO.opprett(
                 InntektsmeldingMeta.builder()
-                        .orgnummer(inntektsmelding.getArbeidsgiverOrgnummer())
+                        .orgnummer(inntektsmelding.getArbeidsgiverOrgnummer().orElse(null))
+                        .orgnummerPrivatperson(inntektsmelding.getOrgnummerPrivatperson().orElse(null))
                         .aktorId(aktorid)
                         .sakId(saksId)
                         .arbeidsgiverperioder(inntektsmelding.getArbeidsgiverperioder())

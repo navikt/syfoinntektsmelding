@@ -65,7 +65,7 @@ public class SaksbehandlingServiceTest {
     private Inntektsmelding lagInntektsmelding() {
         return Inntektsmelding.builder()
                 .fnr("fnr")
-                .arbeidsgiverOrgnummer("orgnummer")
+                .arbeidsgiverOrgnummer(Optional.of("orgnummer"))
                 .journalpostId("journalpostId")
                 .arbeidsforholdId(null)
                 .arsakTilInnsending("Ny")

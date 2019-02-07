@@ -17,11 +17,14 @@ public class BehandleInngaaendeJournalConsumer {
 
     public void oppdaterJournalpost(InngaendeJournalpost inngaendeJournalpost) {
         String journalpostId = inngaendeJournalpost.getJournalpostId();
+        String avsender = inngaendeJournalpost.getArbeidsgiverOrgnummer()
+                .orElse(inngaendeJournalpost.getOrgnummerPrivatperson()
+                        .orElseThrow(() -> new RuntimeException("Mangler avsender")));
 
         WSInngaaendeJournalpost inngaaendeJournalpost = new WSInngaaendeJournalpost()
                 .withJournalpostId(journalpostId)
                 .withBruker(new WSPerson().withIdent(inngaendeJournalpost.getFnr()))
-                .withAvsender(new WSAvsender().withAvsenderNavn("Arbeidsgiver").withAvsenderId(inngaendeJournalpost.getArbeidsgiverOrgnummer()))
+                .withAvsender(new WSAvsender().withAvsenderNavn("Arbeidsgiver").withAvsenderId(avsender))
                 .withArkivSak(new WSArkivSak().withArkivSakId(inngaendeJournalpost.getGsakId()).withArkivSakSystem("FS22"));
 
         try {
