@@ -18,7 +18,7 @@ public class BehandleInngaaendeJournalConsumer {
     public void oppdaterJournalpost(InngaendeJournalpost inngaendeJournalpost) {
         String journalpostId = inngaendeJournalpost.getJournalpostId();
         String avsender = inngaendeJournalpost.getArbeidsgiverOrgnummer()
-                .orElse(inngaendeJournalpost.getArbeidsgiverPrivat()
+                .orElseGet(() -> inngaendeJournalpost.getArbeidsgiverPrivat()
                         .orElseThrow(() -> new RuntimeException("Mangler avsender")));
 
         WSInngaaendeJournalpost inngaaendeJournalpost = new WSInngaaendeJournalpost()

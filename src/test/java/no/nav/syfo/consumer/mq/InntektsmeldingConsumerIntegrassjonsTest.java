@@ -6,11 +6,15 @@ import no.nav.syfo.consumer.rest.aktor.AktorConsumer;
 import no.nav.syfo.consumer.ws.*;
 import no.nav.syfo.domain.GeografiskTilknytningData;
 import no.nav.syfo.domain.InngaaendeJournal;
-import no.nav.syfo.domain.Inntektsmelding;
 import no.nav.syfo.domain.Periode;
 import no.nav.syfo.repository.InntektsmeldingDAO;
 import no.nav.syfo.repository.InntektsmeldingMeta;
 import no.nav.syfo.util.Metrikk;
+import no.nav.tjeneste.virksomhet.behandle.inngaaende.journal.v1.BehandleInngaaendeJournalV1;
+import no.nav.tjeneste.virksomhet.journal.v2.HentDokumentDokumentIkkeFunnet;
+import no.nav.tjeneste.virksomhet.journal.v2.HentDokumentSikkerhetsbegrensning;
+import no.nav.tjeneste.virksomhet.journal.v2.JournalV2;
+import no.nav.tjeneste.virksomhet.journal.v2.WSHentDokumentResponse;
 import org.apache.activemq.command.ActiveMQTextMessage;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,6 +29,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import javax.inject.Inject;
 import javax.jms.MessageNotWriteableException;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,7 +49,7 @@ public class InntektsmeldingConsumerIntegrassjonsTest {
     private InngaaendeJournalConsumer inngaaendeJournalConsumer;
 
     @MockBean
-    private JournalConsumer journalConsumer;
+    private JournalV2 journalV2;
 
     @MockBean
     private AktorConsumer aktorConsumer;
@@ -62,7 +67,7 @@ public class InntektsmeldingConsumerIntegrassjonsTest {
     private OppgavebehandlingConsumer oppgavebehandlingConsumer;
 
     @MockBean
-    private BehandleInngaaendeJournalConsumer behandleInngaaendeJournalConsumer;
+    private BehandleInngaaendeJournalV1 behandleInngaaendeJournalV1;
 
     @MockBean
     private Metrikk metrikk;
@@ -90,14 +95,6 @@ public class InntektsmeldingConsumerIntegrassjonsTest {
 
         when(inngaaendeJournalConsumer.hentDokumentId("arkivId")).thenReturn(inngaaendeJournal);
 
-        when(journalConsumer.hentInntektsmelding("arkivId", inngaaendeJournal)).thenReturn(
-                inntektsmelding("arkivId1",
-                        asList(Periode.builder()
-                                .fom(LocalDate.of(2019, 1, 1))
-                                .tom(LocalDate.of(2019, 1, 16))
-                                .build()))
-        );
-
         when(aktorConsumer.getAktorId("fnr")).thenReturn("aktorId");
         when(eksisterendeSakConsumer.finnEksisterendeSaksId("aktorId", "orgnummer")).thenReturn(Optional.empty());
 
@@ -114,12 +111,18 @@ public class InntektsmeldingConsumerIntegrassjonsTest {
     }
 
     @Test
-    public void gjenbrukerSaksIdHvisViFarToOverlappendeInntektsmeldinger() throws MessageNotWriteableException {
+    public void gjenbrukerSaksIdHvisViFarToOverlappendeInntektsmeldinger() throws MessageNotWriteableException, HentDokumentSikkerhetsbegrensning, HentDokumentDokumentIkkeFunnet {
         when(inngaaendeJournalConsumer.hentDokumentId("arkivId1")).thenReturn(inngaaendeJournal("arkivId1"));
         when(inngaaendeJournalConsumer.hentDokumentId("arkivId2")).thenReturn(inngaaendeJournal("arkivId2"));
 
-        when(journalConsumer.hentInntektsmelding("arkivId1", inngaaendeJournal("arkivId1"))).thenReturn(inntektsmelding("arkivId1", asList(Periode.builder().fom(LocalDate.of(2019, 1, 1)).tom(LocalDate.of(2019, 1, 16)).build())));
-        when(journalConsumer.hentInntektsmelding("arkivId2", inngaaendeJournal("arkivId2"))).thenReturn(inntektsmelding("arkivId2", asList(Periode.builder().fom(LocalDate.of(2019, 1, 2)).tom(LocalDate.of(2019, 1, 16)).build())));
+        when(journalV2.hentDokument(any())).thenReturn(
+                new WSHentDokumentResponse().withDokument(JournalConsumerTest.inntektsmeldingArbeidsgiver(
+                        Collections.singletonList(Periode.builder().fom(LocalDate.of(2019, 1, 1)).tom(LocalDate.of(2019, 1, 16)).build())
+                ).getBytes()),
+                new WSHentDokumentResponse().withDokument(JournalConsumerTest.inntektsmeldingArbeidsgiver(
+                        Collections.singletonList(Periode.builder().fom(LocalDate.of(2019, 1, 2)).tom(LocalDate.of(2019, 1, 16)).build())
+                ).getBytes())
+        );
 
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId1"));
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId2"));
@@ -132,12 +135,18 @@ public class InntektsmeldingConsumerIntegrassjonsTest {
     }
 
     @Test
-    public void gjenbrukerIkkeSaksIdHvisViFarToInntektsmeldingerSomIkkeOverlapper() throws MessageNotWriteableException {
+    public void gjenbrukerIkkeSaksIdHvisViFarToInntektsmeldingerSomIkkeOverlapper() throws MessageNotWriteableException, HentDokumentSikkerhetsbegrensning, HentDokumentDokumentIkkeFunnet {
         when(inngaaendeJournalConsumer.hentDokumentId("arkivId1")).thenReturn(inngaaendeJournal("arkivId1"));
         when(inngaaendeJournalConsumer.hentDokumentId("arkivId2")).thenReturn(inngaaendeJournal("arkivId2"));
 
-        when(journalConsumer.hentInntektsmelding("arkivId1", inngaaendeJournal("arkivId1"))).thenReturn(inntektsmelding("arkivId1", asList(Periode.builder().fom(LocalDate.of(2019, 1, 1)).tom(LocalDate.of(2019, 1, 16)).build())));
-        when(journalConsumer.hentInntektsmelding("arkivId2", inngaaendeJournal("arkivId2"))).thenReturn(inntektsmelding("arkivId2", asList(Periode.builder().fom(LocalDate.of(2019, 2, 1)).tom(LocalDate.of(2019, 2, 16)).build())));
+        when(journalV2.hentDokument(any())).thenReturn(
+                new WSHentDokumentResponse().withDokument(JournalConsumerTest.inntektsmeldingArbeidsgiver(
+                        Collections.singletonList(Periode.builder().fom(LocalDate.of(2019, 1, 1)).tom(LocalDate.of(2019, 1, 16)).build())
+                ).getBytes()),
+                new WSHentDokumentResponse().withDokument(JournalConsumerTest.inntektsmeldingArbeidsgiver(
+                        Collections.singletonList(Periode.builder().fom(LocalDate.of(2019, 2, 2)).tom(LocalDate.of(2019, 2, 16)).build())
+                ).getBytes())
+        );
 
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId1"));
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId2"));
@@ -153,13 +162,19 @@ public class InntektsmeldingConsumerIntegrassjonsTest {
     }
 
     @Test
-    public void brukerSaksIdFraSykeforloepOmViIkkeHarOverlappendeInntektsmelding() throws MessageNotWriteableException {
+    public void brukerSaksIdFraSykeforloepOmViIkkeHarOverlappendeInntektsmelding() throws MessageNotWriteableException, HentDokumentSikkerhetsbegrensning, HentDokumentDokumentIkkeFunnet {
         when(eksisterendeSakConsumer.finnEksisterendeSaksId("aktorId", "orgnummer")).thenReturn(Optional.empty(), Optional.of("syfosak"));
         when(inngaaendeJournalConsumer.hentDokumentId("arkivId1")).thenReturn(inngaaendeJournal("arkivId1"));
         when(inngaaendeJournalConsumer.hentDokumentId("arkivId2")).thenReturn(inngaaendeJournal("arkivId2"));
 
-        when(journalConsumer.hentInntektsmelding("arkivId1", inngaaendeJournal("arkivId1"))).thenReturn(inntektsmelding("arkivId1", asList(Periode.builder().fom(LocalDate.of(2019, 1, 1)).tom(LocalDate.of(2019, 1, 16)).build())));
-        when(journalConsumer.hentInntektsmelding("arkivId2", inngaaendeJournal("arkivId2"))).thenReturn(inntektsmelding("arkivId2", asList(Periode.builder().fom(LocalDate.of(2019, 2, 1)).tom(LocalDate.of(2019, 2, 16)).build())));
+        when(journalV2.hentDokument(any())).thenReturn(
+                new WSHentDokumentResponse().withDokument(JournalConsumerTest.inntektsmeldingArbeidsgiver(
+                        Collections.singletonList(Periode.builder().fom(LocalDate.of(2019, 1, 1)).tom(LocalDate.of(2019, 1, 16)).build())
+                ).getBytes()),
+                new WSHentDokumentResponse().withDokument(JournalConsumerTest.inntektsmeldingArbeidsgiver(
+                        Collections.singletonList(Periode.builder().fom(LocalDate.of(2019, 2, 2)).tom(LocalDate.of(2019, 2, 16)).build())
+                ).getBytes())
+        );
 
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId1"));
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId2"));
@@ -175,8 +190,10 @@ public class InntektsmeldingConsumerIntegrassjonsTest {
     }
 
     @Test
-    public void mottarInntektsmeldingUtenArbeidsgiverperioder() throws MessageNotWriteableException {
-        when(journalConsumer.hentInntektsmelding("arkivId", inngaaendeJournal("arkivId"))).thenReturn(inntektsmelding("arkivId", emptyList()));
+    public void mottarInntektsmeldingUtenArbeidsgiverperioder() throws MessageNotWriteableException, HentDokumentSikkerhetsbegrensning, HentDokumentDokumentIkkeFunnet {
+        when(journalV2.hentDokument(any())).thenReturn(
+                new WSHentDokumentResponse().withDokument(JournalConsumerTest.inntektsmeldingArbeidsgiver(emptyList()).getBytes())
+        );
 
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId"));
 
@@ -186,17 +203,13 @@ public class InntektsmeldingConsumerIntegrassjonsTest {
     }
 
     @Test
-    public void mottarInntektsmeldingMedFlerePerioder() throws MessageNotWriteableException {
-        when(journalConsumer.hentInntektsmelding("arkivId", inngaaendeJournal("arkivId"))).thenReturn(inntektsmelding("arkivId", asList(
-                Periode.builder()
-                        .fom(LocalDate.of(2019, 1, 1))
-                        .tom(LocalDate.of(2019, 1, 12))
-                        .build(),
-                Periode.builder()
-                        .fom(LocalDate.of(2019, 1, 12))
-                        .tom(LocalDate.of(2019, 1, 14))
-                        .build()
-        )));
+    public void mottarInntektsmeldingMedFlerePerioder() throws MessageNotWriteableException, HentDokumentSikkerhetsbegrensning, HentDokumentDokumentIkkeFunnet {
+        when(journalV2.hentDokument(any())).thenReturn(
+                new WSHentDokumentResponse().withDokument(JournalConsumerTest.inntektsmeldingArbeidsgiver(
+                        asList(Periode.builder().fom(LocalDate.of(2019, 1, 1)).tom(LocalDate.of(2019, 1, 12)).build(),
+                                Periode.builder().fom(LocalDate.of(2019, 1, 12)).tom(LocalDate.of(2019, 1, 14)).build())
+                ).getBytes())
+        );
 
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId"));
 
@@ -210,14 +223,10 @@ public class InntektsmeldingConsumerIntegrassjonsTest {
     }
 
     @Test
-    public void mottarInntektsmeldingMedPrivatArbeidsgiver() throws MessageNotWriteableException {
-        when(journalConsumer.hentInntektsmelding("arkivId", inngaaendeJournal("arkivId")))
-                .thenReturn(
-                        inntektsmelding("arkivId", emptyList())
-                                .toBuilder()
-                                .arbeidsgiverOrgnummer(Optional.empty())
-                                .arbeidsgiverPrivat(Optional.of("arbeidsgiverPrivat"))
-                                .build());
+    public void mottarInntektsmeldingMedPrivatArbeidsgiver() throws MessageNotWriteableException, HentDokumentSikkerhetsbegrensning, HentDokumentDokumentIkkeFunnet {
+        when(journalV2.hentDokument(any())).thenReturn(
+                new WSHentDokumentResponse().withDokument(JournalConsumerTest.inntektsmeldingArbeidsgiverPrivat().getBytes())
+        );
 
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId"));
 
@@ -226,20 +235,6 @@ public class InntektsmeldingConsumerIntegrassjonsTest {
         assertThat(inntektsmeldinger.get(0).getArbeidsgiverPrivat()).isEqualTo("arbeidsgiverPrivat");
         assertThat(inntektsmeldinger.get(0).getOrgnummer()).isNull();
         assertThat(inntektsmeldinger.get(0).getAktorId()).isEqualTo("aktorId");
-    }
-
-    private Inntektsmelding inntektsmelding(String arkivId, List<Periode> perioder) {
-        return Inntektsmelding
-                .builder()
-                .fnr("fnr")
-                .journalpostId(arkivId)
-                .arbeidsforholdId("arbeidsforholdId")
-                .arbeidsgiverOrgnummer(Optional.of("orgnummer"))
-                .arbeidsgiverPrivat(Optional.empty())
-                .arsakTilInnsending("arsak")
-                .arbeidsgiverperioder(perioder)
-                .status(MIDLERTIDIG)
-                .build();
     }
 
     private ActiveMQTextMessage opprettKoemelding(String arkivId) throws MessageNotWriteableException {

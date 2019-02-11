@@ -5,7 +5,6 @@ import no.nav.syfo.domain.InngaaendeJournal;
 import no.nav.syfo.domain.Inntektsmelding;
 import no.nav.syfo.util.JAXB;
 import no.nav.tjeneste.virksomhet.journal.v2.*;
-import no.seres.xsd.nav.inntektsmelding_m._20180924.XMLInntektsmeldingM;
 import org.springframework.stereotype.Component;
 
 import javax.xml.bind.JAXBElement;
@@ -32,7 +31,7 @@ public class JournalConsumer {
 
             JAXBElement<Object> jaxbInntektsmelding = JAXB.unmarshalInntektsmelding(inntektsmelding);
 
-            XMLInntektsmelding xmlInntektsmelding = jaxbInntektsmelding.getValue() instanceof XMLInntektsmeldingM
+            XMLInntektsmelding xmlInntektsmelding = jaxbInntektsmelding.getValue() instanceof no.seres.xsd.nav.inntektsmelding_m._20180924.XMLInntektsmeldingM
                     ? InntektsmeldingArbeidsgiver20180924Mapper.tilXMLInntektsmelding(jaxbInntektsmelding)
                     : InntektsmeldingArbeidsgiverPrivat20181211Mapper.tilXMLInntektsmelding(jaxbInntektsmelding);
 
