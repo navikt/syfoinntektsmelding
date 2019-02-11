@@ -2,9 +2,10 @@ package no.nav.syfo.consumer.ws;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.syfo.domain.Periode;
-import no.seres.xsd.nav.inntektsmelding_m._20181211.XMLInntektsmeldingM;
-import no.seres.xsd.nav.inntektsmelding_m._20181211.XMLSkjemainnhold;
-import no.seres.xsd.nav.inntektsmelding_m._20181211.XMLArbeidsgiverperiodeListe;
+import no.seres.xsd.nav.inntektsmelding_m._20180924.XMLArbeidsgiver;
+import no.seres.xsd.nav.inntektsmelding_m._20180924.XMLArbeidsgiverperiodeListe;
+import no.seres.xsd.nav.inntektsmelding_m._20180924.XMLInntektsmeldingM;
+import no.seres.xsd.nav.inntektsmelding_m._20180924.XMLSkjemainnhold;
 
 import javax.xml.bind.JAXBElement;
 import java.util.List;
@@ -14,11 +15,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Slf4j
-class Inntektsmelding20181211Mapper {
+class InntektsmeldingArbeidsgiver20180924Mapper {
 
-    static XMLInntektsmelding tilXMLInntektsmelding(JAXBElement<Object> jaxbInntektsmelding) {
-        log.info("Behandling inntektsmelding på 20181211 format");
-        XMLSkjemainnhold skjemainnhold = ((XMLInntektsmeldingM) jaxbInntektsmelding.getValue()).getSkjemainnhold();
+    static XMLInntektsmelding tilXMLInntektsmelding(JAXBElement<Object> jabxInntektsmelding) {
+        log.info("Behandling inntektsmelding på 20180924 format");
+        XMLSkjemainnhold skjemainnhold = ((XMLInntektsmeldingM) jabxInntektsmelding.getValue()).getSkjemainnhold();
 
         XMLInntektsmelding xmlInntektsmelding;
         String arbeidsforholdId = Optional.ofNullable(skjemainnhold.getArbeidsforhold().getValue().getArbeidsforholdId())
@@ -41,8 +42,8 @@ class Inntektsmelding20181211Mapper {
                 arbeidsforholdId,
                 perioder,
                 skjemainnhold.getArbeidstakerFnr(),
-                Optional.ofNullable(skjemainnhold.getArbeidsgiver()).map(arbeidsgiver -> arbeidsgiver.getValue().getVirksomhetsnummer()),
-                Optional.ofNullable(skjemainnhold.getArbeidsgiverPrivat()).map(arbeidsgiverPrivat -> arbeidsgiverPrivat.getValue().getArbeidsgiverFnr()),
+                Optional.ofNullable(skjemainnhold.getArbeidsgiver()).map(XMLArbeidsgiver::getVirksomhetsnummer),
+                Optional.empty(),
                 skjemainnhold.getAarsakTilInnsending()
         );
         return xmlInntektsmelding;

@@ -33,8 +33,8 @@ public class JournalConsumer {
             JAXBElement<Object> jaxbInntektsmelding = JAXB.unmarshalInntektsmelding(inntektsmelding);
 
             XMLInntektsmelding xmlInntektsmelding = jaxbInntektsmelding.getValue() instanceof XMLInntektsmeldingM
-                    ? Inntektsmelding20181211Mapper.tilXMLInntektsmelding(jaxbInntektsmelding)
-                    : Inntektsmelding20180924Mapper.tilXMLInntektsmelding(jaxbInntektsmelding);
+                    ? InntektsmeldingArbeidsgiver20180924Mapper.tilXMLInntektsmelding(jaxbInntektsmelding)
+                    : InntektsmeldingArbeidsgiverPrivat20181211Mapper.tilXMLInntektsmelding(jaxbInntektsmelding);
 
             return Inntektsmelding.builder()
                     .fnr(xmlInntektsmelding.getArbeidstakerFnr())
