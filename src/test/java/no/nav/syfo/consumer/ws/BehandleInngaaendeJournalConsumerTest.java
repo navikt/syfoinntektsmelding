@@ -52,7 +52,7 @@ public class BehandleInngaaendeJournalConsumerTest {
                 .arbeidsgiverOrgnummer(Optional.empty())
                 .dokumentId("dokumentId")
                 .journalpostId("journalpostId")
-                .orgnummerPrivatperson(Optional.of("10101033333"))
+                .arbeidsgiverPrivat(Optional.of("10101033333"))
                 .build();
 
         ArgumentCaptor<WSOppdaterJournalpostRequest> captor = ArgumentCaptor.forClass(WSOppdaterJournalpostRequest.class);

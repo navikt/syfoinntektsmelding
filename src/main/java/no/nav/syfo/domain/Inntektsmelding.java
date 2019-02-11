@@ -13,7 +13,7 @@ import java.util.Optional;
 public class Inntektsmelding {
     String fnr;
     Optional<String> arbeidsgiverOrgnummer;
-    Optional<String> orgnummerPrivatperson;
+    Optional<String> arbeidsgiverPrivat;
     String journalpostId;
     String arbeidsforholdId;
     String arsakTilInnsending;

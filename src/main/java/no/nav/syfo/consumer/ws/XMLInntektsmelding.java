@@ -16,6 +16,6 @@ public class XMLInntektsmelding {
     List<Periode> perioder;
     String arbeidstakerFnr;
     Optional<String> virksomhetsnummer;
-    Optional<String> orgnummerPrivatperson;
+    Optional<String> arbeidsgiverPrivat;
     String aarsakTilInnsending;
 }

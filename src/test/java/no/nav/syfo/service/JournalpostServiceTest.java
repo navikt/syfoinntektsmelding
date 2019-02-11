@@ -68,7 +68,7 @@ public class JournalpostServiceTest {
                 .thenReturn(Inntektsmelding
                         .builder()
                         .arbeidsgiverOrgnummer(Optional.of("orgnummer"))
-                        .orgnummerPrivatperson(Optional.empty())
+                        .arbeidsgiverPrivat(Optional.empty())
                         .fnr("fnr")
                         .journalpostId("journalpostId")
                         .status("MIDLERTIDIG")
@@ -77,6 +77,6 @@ public class JournalpostServiceTest {
         Inntektsmelding inntektsmelding = journalpostService.hentInntektsmelding("journalpostId");
 
         assertThat(inntektsmelding.getFnr()).isEqualTo("fnr");
-        assertThat(inntektsmelding.getOrgnummerPrivatperson()).isEqualTo(Optional.empty());
+        assertThat(inntektsmelding.getArbeidsgiverPrivat()).isEqualTo(Optional.empty());
     }
 }

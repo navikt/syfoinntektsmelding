@@ -102,13 +102,13 @@ public class InntektsmeldingDAOTest {
                 .sakId("saksId")
                 .behandlet(LocalDate.of(2019, 2, 6).atStartOfDay())
                 .orgnummer(null)
-                .orgnummerPrivatperson("fnrprivat")
+                .arbeidsgiverPrivat("fnrprivat")
                 .arbeidsgiverperioder(Collections.emptyList())
                 .build();
         inntektsmeldingDAO.opprett(meta);
 
         List<InntektsmeldingMeta> metas = inntektsmeldingDAO.finnBehandledeInntektsmeldinger("aktor");
-        assertThat(metas.get(0).getOrgnummerPrivatperson()).isEqualTo("fnrprivat");
+        assertThat(metas.get(0).getArbeidsgiverPrivat()).isEqualTo("fnrprivat");
         assertThat(metas.get(0).getOrgnummer()).isEqualTo(null);
     }
 }

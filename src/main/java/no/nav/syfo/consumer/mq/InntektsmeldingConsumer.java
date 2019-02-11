@@ -87,7 +87,7 @@ public class InntektsmeldingConsumer {
         inntektsmeldingDAO.opprett(
                 InntektsmeldingMeta.builder()
                         .orgnummer(inntektsmelding.getArbeidsgiverOrgnummer().orElse(null))
-                        .orgnummerPrivatperson(inntektsmelding.getOrgnummerPrivatperson().orElse(null))
+                        .arbeidsgiverPrivat(inntektsmelding.getArbeidsgiverPrivat().orElse(null))
                         .aktorId(aktorid)
                         .sakId(saksId)
                         .arbeidsgiverperioder(inntektsmelding.getArbeidsgiverperioder())

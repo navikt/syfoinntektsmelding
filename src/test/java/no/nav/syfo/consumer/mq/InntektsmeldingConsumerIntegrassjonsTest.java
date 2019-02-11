@@ -216,14 +216,14 @@ public class InntektsmeldingConsumerIntegrassjonsTest {
                         inntektsmelding("arkivId", emptyList())
                                 .toBuilder()
                                 .arbeidsgiverOrgnummer(Optional.empty())
-                                .orgnummerPrivatperson(Optional.of("orgnummerPrivat"))
+                                .arbeidsgiverPrivat(Optional.of("arbeidsgiverPrivat"))
                                 .build());
 
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId"));
 
         List<InntektsmeldingMeta> inntektsmeldinger = inntektsmeldingDAO.finnBehandledeInntektsmeldinger("aktorId");
 
-        assertThat(inntektsmeldinger.get(0).getOrgnummerPrivatperson()).isEqualTo("orgnummerPrivat");
+        assertThat(inntektsmeldinger.get(0).getArbeidsgiverPrivat()).isEqualTo("arbeidsgiverPrivat");
         assertThat(inntektsmeldinger.get(0).getOrgnummer()).isNull();
         assertThat(inntektsmeldinger.get(0).getAktorId()).isEqualTo("aktorId");
     }
@@ -235,7 +235,7 @@ public class InntektsmeldingConsumerIntegrassjonsTest {
                 .journalpostId(arkivId)
                 .arbeidsforholdId("arbeidsforholdId")
                 .arbeidsgiverOrgnummer(Optional.of("orgnummer"))
-                .orgnummerPrivatperson(Optional.empty())
+                .arbeidsgiverPrivat(Optional.empty())
                 .arsakTilInnsending("arsak")
                 .arbeidsgiverperioder(perioder)
                 .status(MIDLERTIDIG)

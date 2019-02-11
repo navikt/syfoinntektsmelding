@@ -16,5 +16,5 @@ public class InngaendeJournalpost {
     String behandlendeEnhetId;
     String gsakId;
     Optional<String> arbeidsgiverOrgnummer;
-    Optional<String> orgnummerPrivatperson;
+    Optional<String> arbeidsgiverPrivat;
 }

@@ -57,7 +57,7 @@ public class JournalConsumerTest {
         Inntektsmelding inntektsmelding = journalConsumer.hentInntektsmelding("journalpostId", InngaaendeJournal.builder().build());
 
         assertThat(inntektsmelding.getArbeidsgiverperioder().isEmpty()).isFalse();
-        assertThat(inntektsmelding.getOrgnummerPrivatperson().isPresent()).isTrue();
+        assertThat(inntektsmelding.getArbeidsgiverPrivat().isPresent()).isTrue();
     }
 
     private String inntektsmeldingUtenPerioder() {

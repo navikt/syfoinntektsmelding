@@ -56,7 +56,7 @@ public class InntektsmeldingConsumerTest {
         when(journalpostService.hentInntektsmelding("arkivId")).thenReturn(Inntektsmelding.builder()
                 .status(MIDLERTIDIG)
                 .arbeidsgiverOrgnummer(Optional.of("orgnummer"))
-                .orgnummerPrivatperson(Optional.empty())
+                .arbeidsgiverPrivat(Optional.empty())
                 .journalpostId("akrivId")
                 .fnr("fnr")
                 .build());
