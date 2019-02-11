@@ -70,7 +70,8 @@ public class SaksbehandlingService {
 
         String saksId = tilhorendeInntektsmelding
                 .map(InntektsmeldingMeta::getSakId)
-                .orElseGet(() -> eksisterendeSakConsumer.finnEksisterendeSaksId(aktorId, inntektsmelding.getArbeidsgiverOrgnummer())
+                .orElseGet(() -> inntektsmelding.getArbeidsgiverOrgnummer()
+                        .flatMap(orgnummer -> eksisterendeSakConsumer.finnEksisterendeSaksId(aktorId, orgnummer))
                         .orElseGet(() -> behandleSakConsumer.opprettSak(inntektsmelding.getFnr())));
 
         opprettOppgave(inntektsmelding.getFnr(), byggOppgave(inntektsmelding.getJournalpostId(), saksId));

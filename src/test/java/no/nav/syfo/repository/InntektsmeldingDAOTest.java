@@ -14,6 +14,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.inject.Inject;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -35,7 +36,10 @@ public class InntektsmeldingDAOTest {
     public void setup() {
         jdbcTemplate.update("DELETE FROM INNTEKTSMELDING");
         jdbcTemplate.update("DELETE FROM ARBEIDSGIVERPERIODE");
+    }
 
+    @Test
+    public void henterAlleInntektsmeldingenePaaAktorOgOrgnummer() {
         InntektsmeldingMeta melding1 = InntektsmeldingMeta
                 .builder()
                 .aktorId("aktorId-1")
@@ -84,13 +88,27 @@ public class InntektsmeldingDAOTest {
         inntektsmeldingDAO.opprett(melding2);
         inntektsmeldingDAO.opprett(melding3);
         inntektsmeldingDAO.opprett(melding4);
-    }
 
-    @Test
-    public void henterAlleInntektsmeldingenePaaAktorOgOrgnummer() {
         List<InntektsmeldingMeta> inntektsmeldingMetas = inntektsmeldingDAO.finnBehandledeInntektsmeldinger("aktorId-1");
 
         assertThat(inntektsmeldingMetas.size()).isEqualTo(2);
         assertThat(inntektsmeldingMetas.get(0).getSakId()).isEqualTo("1");
+    }
+
+    @Test
+    public void lagererInntektsmeldingMedArbeidsgiverPrivatperson() {
+        InntektsmeldingMeta meta = InntektsmeldingMeta.builder()
+                .aktorId("aktor")
+                .sakId("saksId")
+                .behandlet(LocalDate.of(2019, 2, 6).atStartOfDay())
+                .orgnummer(null)
+                .arbeidsgiverPrivat("fnrprivat")
+                .arbeidsgiverperioder(Collections.emptyList())
+                .build();
+        inntektsmeldingDAO.opprett(meta);
+
+        List<InntektsmeldingMeta> metas = inntektsmeldingDAO.finnBehandledeInntektsmeldinger("aktor");
+        assertThat(metas.get(0).getArbeidsgiverPrivat()).isEqualTo("fnrprivat");
+        assertThat(metas.get(0).getOrgnummer()).isEqualTo(null);
     }
 }

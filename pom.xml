@@ -168,6 +168,12 @@
         </dependency>
 
         <dependency>
+            <groupId>no.nav.syfo.tjenester</groupId>
+            <artifactId>inntektsmelding-v2</artifactId>
+            <version>1.0-20181211_V7</version>
+        </dependency>
+
+        <dependency>
             <groupId>no.nav.tjenester</groupId>
             <artifactId>nav-person-v3-tjenestespesifikasjon</artifactId>
             <version>3.2.0</version>

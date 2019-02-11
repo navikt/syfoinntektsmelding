@@ -28,8 +28,8 @@ public class InntektsmeldingDAO {
     public void opprett(InntektsmeldingMeta inntektsmeldingMeta) {
         String uuid = UUID.randomUUID().toString();
         namedParameterJdbcTemplate.update(
-                "INSERT INTO INNTEKTSMELDING(INNTEKTSMELDING_UUID, AKTOR_ID, SAK_ID, ORGNUMMER, JOURNALPOST_ID, BEHANDLET) " +
-                        "VALUES(:uuid, :aktorid, :sakid, :orgnummer, :journalpostId, :behandlet)",
+                "INSERT INTO INNTEKTSMELDING(INNTEKTSMELDING_UUID, AKTOR_ID, SAK_ID, ORGNUMMER, JOURNALPOST_ID, BEHANDLET, ARBEIDSGIVER_PRIVAT) " +
+                        "VALUES(:uuid, :aktorid, :sakid, :orgnummer, :journalpostId, :behandlet, :arbeidsgiverPrivat)",
 
                 new MapSqlParameterSource()
                         .addValue("uuid", uuid)
@@ -38,6 +38,7 @@ public class InntektsmeldingDAO {
                         .addValue("sakid", inntektsmeldingMeta.getSakId())
                         .addValue("journalpostId", inntektsmeldingMeta.getJournalpostId())
                         .addValue("behandlet", inntektsmeldingMeta.getBehandlet())
+                        .addValue("arbeidsgiverPrivat", inntektsmeldingMeta.getArbeidsgiverPrivat())
         );
 
         inntektsmeldingMeta.getArbeidsgiverperioder().forEach(ap -> namedParameterJdbcTemplate.update(
@@ -62,6 +63,7 @@ public class InntektsmeldingDAO {
                             .uuid(inntektsmelding_uuid)
                             .aktorId(rs.getString("AKTOR_ID"))
                             .orgnummer(rs.getString("ORGNUMMER"))
+                            .arbeidsgiverPrivat(rs.getString("ARBEIDSGIVER_PRIVAT"))
                             .arbeidsgiverperioder(hentPerioder(inntektsmelding_uuid))
                             .sakId(rs.getString("SAK_ID"))
                             .journalpostId(rs.getString("JOURNALPOST_ID"))

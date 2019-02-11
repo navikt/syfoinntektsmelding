@@ -57,6 +57,7 @@ public class JournalpostService {
                 .dokumentId(inngaaendeJournal.getDokumentId())
                 .behandlendeEnhetId(behandlendeEnhet)
                 .arbeidsgiverOrgnummer(inntektsmelding.getArbeidsgiverOrgnummer())
+                .arbeidsgiverPrivat(inntektsmelding.getArbeidsgiverPrivat())
                 .build();
     }
 }

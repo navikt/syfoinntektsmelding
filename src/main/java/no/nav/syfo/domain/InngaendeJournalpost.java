@@ -4,6 +4,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Value;
 
+import java.util.Optional;
+
 @Value
 @Builder
 @Getter
@@ -13,5 +15,6 @@ public class InngaendeJournalpost {
     String dokumentId;
     String behandlendeEnhetId;
     String gsakId;
-    String arbeidsgiverOrgnummer;
+    Optional<String> arbeidsgiverOrgnummer;
+    Optional<String> arbeidsgiverPrivat;
 }

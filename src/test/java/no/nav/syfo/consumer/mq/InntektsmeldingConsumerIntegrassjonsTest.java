@@ -86,12 +86,17 @@ public class InntektsmeldingConsumerIntegrassjonsTest {
 
         InngaaendeJournal inngaaendeJournal = inngaaendeJournal("arkivId");
 
-        when(behandleSakConsumer.opprettSak("fnr")).thenAnswer(invocation -> "saksId"+saksIdteller++);
+        when(behandleSakConsumer.opprettSak("fnr")).thenAnswer(invocation -> "saksId" + saksIdteller++);
 
         when(inngaaendeJournalConsumer.hentDokumentId("arkivId")).thenReturn(inngaaendeJournal);
 
         when(journalConsumer.hentInntektsmelding("arkivId", inngaaendeJournal)).thenReturn(
-                inntektsmelding("arkivId1", asList(Periode.builder().fom(LocalDate.of(2019, 1,1)).tom(LocalDate.of(2019,1,16)).build())));
+                inntektsmelding("arkivId1",
+                        asList(Periode.builder()
+                                .fom(LocalDate.of(2019, 1, 1))
+                                .tom(LocalDate.of(2019, 1, 16))
+                                .build()))
+        );
 
         when(aktorConsumer.getAktorId("fnr")).thenReturn("aktorId");
         when(eksisterendeSakConsumer.finnEksisterendeSaksId("aktorId", "orgnummer")).thenReturn(Optional.empty());
@@ -113,8 +118,8 @@ public class InntektsmeldingConsumerIntegrassjonsTest {
         when(inngaaendeJournalConsumer.hentDokumentId("arkivId1")).thenReturn(inngaaendeJournal("arkivId1"));
         when(inngaaendeJournalConsumer.hentDokumentId("arkivId2")).thenReturn(inngaaendeJournal("arkivId2"));
 
-        when(journalConsumer.hentInntektsmelding("arkivId1", inngaaendeJournal("arkivId1"))).thenReturn(inntektsmelding("arkivId1", asList(Periode.builder().fom(LocalDate.of(2019, 1,1)).tom(LocalDate.of(2019,1,16)).build())));
-        when(journalConsumer.hentInntektsmelding("arkivId2", inngaaendeJournal("arkivId2"))).thenReturn(inntektsmelding("arkivId2", asList(Periode.builder().fom(LocalDate.of(2019, 1,2)).tom(LocalDate.of(2019,1,16)).build()) ));
+        when(journalConsumer.hentInntektsmelding("arkivId1", inngaaendeJournal("arkivId1"))).thenReturn(inntektsmelding("arkivId1", asList(Periode.builder().fom(LocalDate.of(2019, 1, 1)).tom(LocalDate.of(2019, 1, 16)).build())));
+        when(journalConsumer.hentInntektsmelding("arkivId2", inngaaendeJournal("arkivId2"))).thenReturn(inntektsmelding("arkivId2", asList(Periode.builder().fom(LocalDate.of(2019, 1, 2)).tom(LocalDate.of(2019, 1, 16)).build())));
 
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId1"));
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId2"));
@@ -131,8 +136,8 @@ public class InntektsmeldingConsumerIntegrassjonsTest {
         when(inngaaendeJournalConsumer.hentDokumentId("arkivId1")).thenReturn(inngaaendeJournal("arkivId1"));
         when(inngaaendeJournalConsumer.hentDokumentId("arkivId2")).thenReturn(inngaaendeJournal("arkivId2"));
 
-        when(journalConsumer.hentInntektsmelding("arkivId1", inngaaendeJournal("arkivId1"))).thenReturn(inntektsmelding("arkivId1", asList(Periode.builder().fom(LocalDate.of(2019, 1,1)).tom(LocalDate.of(2019,1,16)).build())));
-        when(journalConsumer.hentInntektsmelding("arkivId2", inngaaendeJournal("arkivId2"))).thenReturn(inntektsmelding("arkivId2", asList(Periode.builder().fom(LocalDate.of(2019, 2,1)).tom(LocalDate.of(2019,2,16)).build()) ));
+        when(journalConsumer.hentInntektsmelding("arkivId1", inngaaendeJournal("arkivId1"))).thenReturn(inntektsmelding("arkivId1", asList(Periode.builder().fom(LocalDate.of(2019, 1, 1)).tom(LocalDate.of(2019, 1, 16)).build())));
+        when(journalConsumer.hentInntektsmelding("arkivId2", inngaaendeJournal("arkivId2"))).thenReturn(inntektsmelding("arkivId2", asList(Periode.builder().fom(LocalDate.of(2019, 2, 1)).tom(LocalDate.of(2019, 2, 16)).build())));
 
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId1"));
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId2"));
@@ -153,8 +158,8 @@ public class InntektsmeldingConsumerIntegrassjonsTest {
         when(inngaaendeJournalConsumer.hentDokumentId("arkivId1")).thenReturn(inngaaendeJournal("arkivId1"));
         when(inngaaendeJournalConsumer.hentDokumentId("arkivId2")).thenReturn(inngaaendeJournal("arkivId2"));
 
-        when(journalConsumer.hentInntektsmelding("arkivId1", inngaaendeJournal("arkivId1"))).thenReturn(inntektsmelding("arkivId1", asList(Periode.builder().fom(LocalDate.of(2019, 1,1)).tom(LocalDate.of(2019,1,16)).build())));
-        when(journalConsumer.hentInntektsmelding("arkivId2", inngaaendeJournal("arkivId2"))).thenReturn(inntektsmelding("arkivId2", asList(Periode.builder().fom(LocalDate.of(2019, 2,1)).tom(LocalDate.of(2019,2,16)).build()) ));
+        when(journalConsumer.hentInntektsmelding("arkivId1", inngaaendeJournal("arkivId1"))).thenReturn(inntektsmelding("arkivId1", asList(Periode.builder().fom(LocalDate.of(2019, 1, 1)).tom(LocalDate.of(2019, 1, 16)).build())));
+        when(journalConsumer.hentInntektsmelding("arkivId2", inngaaendeJournal("arkivId2"))).thenReturn(inntektsmelding("arkivId2", asList(Periode.builder().fom(LocalDate.of(2019, 2, 1)).tom(LocalDate.of(2019, 2, 16)).build())));
 
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId1"));
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId2"));
@@ -184,24 +189,43 @@ public class InntektsmeldingConsumerIntegrassjonsTest {
     public void mottarInntektsmeldingMedFlerePerioder() throws MessageNotWriteableException {
         when(journalConsumer.hentInntektsmelding("arkivId", inngaaendeJournal("arkivId"))).thenReturn(inntektsmelding("arkivId", asList(
                 Periode.builder()
-                        .fom(LocalDate.of(2019,1,1))
-                        .tom(LocalDate.of(2019,1,12))
+                        .fom(LocalDate.of(2019, 1, 1))
+                        .tom(LocalDate.of(2019, 1, 12))
                         .build(),
                 Periode.builder()
-                        .fom(LocalDate.of(2019,1,12))
-                        .tom(LocalDate.of(2019,1,14))
+                        .fom(LocalDate.of(2019, 1, 12))
+                        .tom(LocalDate.of(2019, 1, 14))
                         .build()
-                )));
+        )));
 
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId"));
 
         List<InntektsmeldingMeta> inntektsmeldinger = inntektsmeldingDAO.finnBehandledeInntektsmeldinger("aktorId");
 
         assertThat(inntektsmeldinger.get(0).getArbeidsgiverperioder().size()).isEqualTo(2);
-        assertThat(inntektsmeldinger.get(0).getArbeidsgiverperioder().get(0).getFom()).isEqualTo(LocalDate.of(2019,1,1));
-        assertThat(inntektsmeldinger.get(0).getArbeidsgiverperioder().get(0).getTom()).isEqualTo(LocalDate.of(2019,1,12));
-        assertThat(inntektsmeldinger.get(0).getArbeidsgiverperioder().get(1).getFom()).isEqualTo(LocalDate.of(2019,1,12));
-        assertThat(inntektsmeldinger.get(0).getArbeidsgiverperioder().get(1).getTom()).isEqualTo(LocalDate.of(2019,1,14));
+        assertThat(inntektsmeldinger.get(0).getArbeidsgiverperioder().get(0).getFom()).isEqualTo(LocalDate.of(2019, 1, 1));
+        assertThat(inntektsmeldinger.get(0).getArbeidsgiverperioder().get(0).getTom()).isEqualTo(LocalDate.of(2019, 1, 12));
+        assertThat(inntektsmeldinger.get(0).getArbeidsgiverperioder().get(1).getFom()).isEqualTo(LocalDate.of(2019, 1, 12));
+        assertThat(inntektsmeldinger.get(0).getArbeidsgiverperioder().get(1).getTom()).isEqualTo(LocalDate.of(2019, 1, 14));
+    }
+
+    @Test
+    public void mottarInntektsmeldingMedPrivatArbeidsgiver() throws MessageNotWriteableException {
+        when(journalConsumer.hentInntektsmelding("arkivId", inngaaendeJournal("arkivId")))
+                .thenReturn(
+                        inntektsmelding("arkivId", emptyList())
+                                .toBuilder()
+                                .arbeidsgiverOrgnummer(Optional.empty())
+                                .arbeidsgiverPrivat(Optional.of("arbeidsgiverPrivat"))
+                                .build());
+
+        inntektsmeldingConsumer.listen(opprettKoemelding("arkivId"));
+
+        List<InntektsmeldingMeta> inntektsmeldinger = inntektsmeldingDAO.finnBehandledeInntektsmeldinger("aktorId");
+
+        assertThat(inntektsmeldinger.get(0).getArbeidsgiverPrivat()).isEqualTo("arbeidsgiverPrivat");
+        assertThat(inntektsmeldinger.get(0).getOrgnummer()).isNull();
+        assertThat(inntektsmeldinger.get(0).getAktorId()).isEqualTo("aktorId");
     }
 
     private Inntektsmelding inntektsmelding(String arkivId, List<Periode> perioder) {
@@ -210,7 +234,8 @@ public class InntektsmeldingConsumerIntegrassjonsTest {
                 .fnr("fnr")
                 .journalpostId(arkivId)
                 .arbeidsforholdId("arbeidsforholdId")
-                .arbeidsgiverOrgnummer("orgnummer")
+                .arbeidsgiverOrgnummer(Optional.of("orgnummer"))
+                .arbeidsgiverPrivat(Optional.empty())
                 .arsakTilInnsending("arsak")
                 .arbeidsgiverperioder(perioder)
                 .status(MIDLERTIDIG)
@@ -225,7 +250,7 @@ public class InntektsmeldingConsumerIntegrassjonsTest {
                 "    xmlns:ns2=\"http://nav.no/melding/virksomhet/dokumentforsendelse/v1\" " +
                 "    xmlns:ns4=\"http://nav.no/dokmot/jms/reply\" " +
                 "    xmlns:ns3=\"http://nav.no.dokmot/jms/viderebehandling\">" +
-                "  <arkivId>"+arkivId+"</arkivId>" +
+                "  <arkivId>" + arkivId + "</arkivId>" +
                 "  <arkivsystem>JOARK</arkivsystem>" +
                 "  <tema>SYK</tema>" +
                 "  <behandlingstema>ab0061</behandlingstema>" +
