@@ -2,6 +2,7 @@ package no.nav.syfo.consumer.ws;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.syfo.domain.GeografiskTilknytningData;
+import no.nav.syfo.util.Metrikk;
 import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.ArbeidsfordelingV1;
 import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.FinnBehandlendeEnhetListeUgyldigInput;
 import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.informasjon.*;
@@ -28,18 +29,20 @@ public class BehandlendeEnhetConsumer {
 
     private final PersonV3 personV3;
     private final ArbeidsfordelingV1 arbeidsfordelingV1;
+    private final Metrikk metrikk;
 
     @Inject
-    public BehandlendeEnhetConsumer(PersonV3 personV3, ArbeidsfordelingV1 arbeidsfordelingV1) {
+    public BehandlendeEnhetConsumer(PersonV3 personV3, ArbeidsfordelingV1 arbeidsfordelingV1, Metrikk metrikk) {
         this.personV3 = personV3;
         this.arbeidsfordelingV1 = arbeidsfordelingV1;
+        this.metrikk = metrikk;
     }
 
     public String hentBehandlendeEnhet(String fnr) {
         GeografiskTilknytningData geografiskTilknytning = hentGeografiskTilknytning(fnr);
 
         try {
-            return arbeidsfordelingV1.finnBehandlendeEnhetListe(new WSFinnBehandlendeEnhetListeRequest()
+            String behandlendeEnhet = arbeidsfordelingV1.finnBehandlendeEnhetListe(new WSFinnBehandlendeEnhetListeRequest()
                     .withArbeidsfordelingKriterier(new WSArbeidsfordelingKriterier()
                             .withDiskresjonskode(
                                     geografiskTilknytning.diskresjonskode != null
@@ -53,6 +56,15 @@ public class BehandlendeEnhetConsumer {
                     .map(WSOrganisasjonsenhet::getEnhetId)
                     .findFirst()
                     .orElseThrow(() -> new RuntimeException("Fant ingen aktiv enhet for " + geografiskTilknytning.geografiskTilknytning));
+
+            // 4474 er enhetsnummeret til sykepenger utland
+            if ("4474".equals(behandlendeEnhet)) {
+                log.info("Behandlende enhet er 4474. Med geografisk tilknytning: {}", geografiskTilknytning.geografiskTilknytning);
+                metrikk.tellInntektsmeldingSykepengerUtland();
+            }
+
+            return behandlendeEnhet;
+
         } catch (FinnBehandlendeEnhetListeUgyldigInput e) {
             log.error("Feil ved henting av brukers forvaltningsenhet", e);
             throw new RuntimeException("Feil ved henting av brukers forvaltningsenhet", e);
