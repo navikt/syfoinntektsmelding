@@ -39,7 +39,7 @@ public class BehandlendeEnhetConsumer {
         GeografiskTilknytningData geografiskTilknytning = hentGeografiskTilknytning(fnr);
 
         try {
-            return arbeidsfordelingV1.finnBehandlendeEnhetListe(new WSFinnBehandlendeEnhetListeRequest()
+            String behandlendeEnhet = arbeidsfordelingV1.finnBehandlendeEnhetListe(new WSFinnBehandlendeEnhetListeRequest()
                     .withArbeidsfordelingKriterier(new WSArbeidsfordelingKriterier()
                             .withDiskresjonskode(
                                     geografiskTilknytning.diskresjonskode != null
@@ -53,6 +53,14 @@ public class BehandlendeEnhetConsumer {
                     .map(WSOrganisasjonsenhet::getEnhetId)
                     .findFirst()
                     .orElseThrow(() -> new RuntimeException("Fant ingen aktiv enhet for " + geografiskTilknytning.geografiskTilknytning));
+
+            // 4474 er enhetsnummeret til sykepenger utland
+            if ("4474".equals(behandlendeEnhet)) {
+                log.info("Behandlende enhet er 4474. Med geografisk tilknytning: {}", geografiskTilknytning.geografiskTilknytning);
+            }
+
+            return behandlendeEnhet;
+
         } catch (FinnBehandlendeEnhetListeUgyldigInput e) {
             log.error("Feil ved henting av brukers forvaltningsenhet", e);
             throw new RuntimeException("Feil ved henting av brukers forvaltningsenhet", e);
