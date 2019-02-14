@@ -60,6 +60,10 @@ public class Metrikk {
         )).increment();
     }
 
+    public void tellInntektsmeldingSykepengerUtland() {
+        registry.counter("syfoinntektsmelding_sykepenger_utland").increment();
+    }
+
     public void tellInntektsmeldingfeil() {
         registry.counter("syfoinntektsmelding_inntektsmeldingfeil", Tags.of("type", "error")).increment();
     }
