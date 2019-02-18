@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.jms.annotation.EnableJms;
 import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
 import org.springframework.jms.connection.JmsTransactionManager;
+import org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter;
 import org.springframework.jms.support.destination.DestinationResolver;
 
 import javax.jms.ConnectionFactory;
@@ -74,7 +75,11 @@ public class JmsConfig {
         connectionFactory.setIntProperty(JMS_IBM_ENCODING, MQENC_NATIVE);
         connectionFactory.setIntProperty(JMS_IBM_CHARACTER_SET, UTF_8_WITH_PUA);
         connectionFactory.createContext(srvAppserverUsername, srvAppserverPassword);
-        return connectionFactory;
+        UserCredentialsConnectionFactoryAdapter adapter = new UserCredentialsConnectionFactoryAdapter();
+        adapter.setTargetConnectionFactory(connectionFactory);
+        adapter.setUsername(srvAppserverUsername);
+        adapter.setPassword(srvAppserverPassword);
+        return adapter;
     }
 
     @Bean
