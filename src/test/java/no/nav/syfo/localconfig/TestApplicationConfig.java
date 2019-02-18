@@ -5,8 +5,10 @@ import org.springframework.boot.autoconfigure.flyway.FlywayMigrationStrategy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.transaction.jta.JtaTransactionManager;
+
+import javax.sql.DataSource;
 
 @Configuration
 @EnableTransactionManagement
@@ -21,7 +23,14 @@ public class TestApplicationConfig {
     // Sørger for at flyway migrering skjer etter at JTA transaction manager er ferdig satt opp av Spring.
     // Forhindrer WARNING: transaction manager not running? loggspam fra Atomikos.
     @Bean
-    FlywayMigrationStrategy flywayMigrationStrategy(final JtaTransactionManager jtaTransactionManager) {
+    FlywayMigrationStrategy flywayMigrationStrategy(final DataSourceTransactionManager datasourceTransactionManager) {
         return Flyway::migrate;
+    }
+
+    @Bean
+    public DataSourceTransactionManager datasourceTransactionManager(DataSource dataSource) {
+        DataSourceTransactionManager dataSourceTransactionManager = new DataSourceTransactionManager();
+        dataSourceTransactionManager.setDataSource(dataSource);
+        return dataSourceTransactionManager;
     }
 }
