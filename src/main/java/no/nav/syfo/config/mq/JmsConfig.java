@@ -74,7 +74,6 @@ public class JmsConfig {
         connectionFactory.setCCSID(UTF_8_WITH_PUA);
         connectionFactory.setIntProperty(JMS_IBM_ENCODING, MQENC_NATIVE);
         connectionFactory.setIntProperty(JMS_IBM_CHARACTER_SET, UTF_8_WITH_PUA);
-        connectionFactory.createContext(srvAppserverUsername, srvAppserverPassword);
         UserCredentialsConnectionFactoryAdapter adapter = new UserCredentialsConnectionFactoryAdapter();
         adapter.setTargetConnectionFactory(connectionFactory);
         adapter.setUsername(srvAppserverUsername);
