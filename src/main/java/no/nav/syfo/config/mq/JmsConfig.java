@@ -1,20 +1,18 @@
 package no.nav.syfo.config.mq;
 
+import com.ibm.mq.jms.MQConnectionFactory;
 import com.ibm.mq.jms.MQQueue;
-import com.ibm.mq.jms.MQXAConnectionFactory;
-import lombok.extern.slf4j.Slf4j;
 import no.nav.syfo.consumer.mq.MQErrorHandler;
-import no.nav.syfo.consumer.util.jms.UserCredentialsXaConnectionFactoryAdapter;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.jms.XAConnectionFactoryWrapper;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jms.annotation.EnableJms;
 import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
+import org.springframework.jms.connection.JmsTransactionManager;
+import org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter;
 import org.springframework.jms.support.destination.DestinationResolver;
-import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
@@ -50,12 +48,12 @@ public class JmsConfig {
     }
 
     @Bean
-    public DefaultJmsListenerContainerFactory jmsListenerContainerFactory(ConnectionFactory connectionFactory, DestinationResolver destinationResolver, PlatformTransactionManager platformTransactionManager, MQErrorHandler errorHandler) {
+    public DefaultJmsListenerContainerFactory jmsListenerContainerFactory(ConnectionFactory connectionFactory, DestinationResolver destinationResolver, JmsTransactionManager jmsTransactionManager, MQErrorHandler errorHandler) {
         DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
         factory.setConnectionFactory(connectionFactory);
         factory.setDestinationResolver(destinationResolver);
         factory.setConcurrency("3-10");
-        factory.setTransactionManager(platformTransactionManager);
+        factory.setTransactionManager(jmsTransactionManager);
         factory.setErrorHandler(errorHandler);
         return factory;
     }
@@ -66,8 +64,8 @@ public class JmsConfig {
     }
 
     @Bean
-    public ConnectionFactory connectionFactory(XAConnectionFactoryWrapper xaConnectionFactoryWrapper) throws Exception {
-        MQXAConnectionFactory connectionFactory = new MQXAConnectionFactory();
+    public ConnectionFactory connectionFactory() throws Exception {
+        MQConnectionFactory connectionFactory = new MQConnectionFactory();
         connectionFactory.setHostName(gatewayHostname);
         connectionFactory.setPort(gatewayPort);
         connectionFactory.setChannel(channelName);
@@ -76,10 +74,18 @@ public class JmsConfig {
         connectionFactory.setCCSID(UTF_8_WITH_PUA);
         connectionFactory.setIntProperty(JMS_IBM_ENCODING, MQENC_NATIVE);
         connectionFactory.setIntProperty(JMS_IBM_CHARACTER_SET, UTF_8_WITH_PUA);
-        UserCredentialsXaConnectionFactoryAdapter adapter = new UserCredentialsXaConnectionFactoryAdapter();
+        UserCredentialsConnectionFactoryAdapter adapter = new UserCredentialsConnectionFactoryAdapter();
         adapter.setTargetConnectionFactory(connectionFactory);
         adapter.setUsername(srvAppserverUsername);
         adapter.setPassword(srvAppserverPassword);
-        return xaConnectionFactoryWrapper.wrapConnectionFactory(adapter);
+        return adapter;
+    }
+
+    @Bean
+    public JmsTransactionManager jmsTransactionManager(ConnectionFactory connectionFactory) {
+        JmsTransactionManager jmsTransactionManager = new JmsTransactionManager();
+        jmsTransactionManager.setConnectionFactory(connectionFactory);
+        jmsTransactionManager.setDefaultTimeout(300);
+        return jmsTransactionManager;
     }
 }

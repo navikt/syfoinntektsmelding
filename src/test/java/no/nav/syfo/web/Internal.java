@@ -8,7 +8,6 @@ import no.nav.syfo.util.JAXB;
 import org.springframework.http.MediaType;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,7 +25,6 @@ public class Internal {
     }
 
     @RequestMapping(value = "/inntektsmelding/ny/{arkivId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Transactional
     public String leggMeldingPaaKoe(@PathVariable String arkivId) {
         ObjectFactory objectFactory = new ObjectFactory();
         final JAXBElement<XMLForsendelsesinformasjon> forsendelsesinformasjon = objectFactory.createForsendelsesinformasjon(new XMLForsendelsesinformasjon()

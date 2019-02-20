@@ -44,7 +44,7 @@ public class InntektsmeldingConsumer {
         this.aktorConsumer = aktorConsumer;
     }
 
-    @Transactional
+    @Transactional(transactionManager = "jmsTransactionManager")
     @JmsListener(id = "inntektsmelding_listener", containerFactory = "jmsListenerContainerFactory", destination = "inntektsmeldingQueue")
     public void listen(Object message) {
         try {

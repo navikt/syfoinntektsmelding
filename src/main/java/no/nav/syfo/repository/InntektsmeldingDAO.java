@@ -15,7 +15,7 @@ import java.util.UUID;
 
 @Service
 @Slf4j
-@Transactional
+@Transactional(transactionManager = "datasourceTransactionManager")
 @Repository
 public class InntektsmeldingDAO {
 

@@ -7,8 +7,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.annotation.EnableJms;
 import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
+import org.springframework.jms.connection.JmsTransactionManager;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
@@ -20,12 +20,12 @@ import javax.naming.NamingException;
 public class LocalJmsConfig {
 
     @Bean(name = "jmsListenerContainerFactory")
-    public DefaultJmsListenerContainerFactory jmsListenerContainerFactory(ConnectionFactory xaJmsConnectionFactory, Destination destination, PlatformTransactionManager platformTransactionManager, MQErrorHandler errorHandler) {
+    public DefaultJmsListenerContainerFactory jmsListenerContainerFactory(ConnectionFactory connectionFactory, Destination destination, JmsTransactionManager jmsTransactionManager, MQErrorHandler errorHandler) {
         DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
-        factory.setConnectionFactory(xaJmsConnectionFactory);
+        factory.setConnectionFactory(connectionFactory);
         factory.setDestinationResolver((session, s, b) -> destination);
         factory.setConcurrency("3-10");
-        factory.setTransactionManager(platformTransactionManager);
+        factory.setTransactionManager(jmsTransactionManager);
         factory.setErrorHandler(errorHandler);
         return factory;
     }
@@ -36,9 +36,17 @@ public class LocalJmsConfig {
     }
 
     @Bean(name = "inntektsmeldingQueue")
-    public JmsTemplate inntektsmeldingQueue(ConnectionFactory xaJmsConnectionFactory) throws NamingException {
-        JmsTemplate jmsTemplate = new JmsTemplate(xaJmsConnectionFactory);
+    public JmsTemplate inntektsmeldingQueue(ConnectionFactory jmsConnectionFactory) throws NamingException {
+        JmsTemplate jmsTemplate = new JmsTemplate(jmsConnectionFactory);
         jmsTemplate.setDefaultDestination(inntektsmeldingDestination());
         return jmsTemplate;
+    }
+
+    @Bean
+    public JmsTransactionManager jmsTransactionManager(ConnectionFactory connectionFactory) {
+        JmsTransactionManager jmsTransactionManager = new JmsTransactionManager();
+        jmsTransactionManager.setConnectionFactory(connectionFactory);
+        jmsTransactionManager.setDefaultTimeout(300);
+        return jmsTransactionManager;
     }
 }
