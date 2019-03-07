@@ -85,7 +85,3 @@ fasitResources:
     resourceType: credential
   - alias: aadaccesstoken
     resourceType: baseUrl
-  - alias: aad_syfogsak_clientid
-    resourceType: credential
-
-
