@@ -1,8 +1,8 @@
 package no.nav.syfo.consumer.mq;
 
 import no.nav.syfo.LocalApplication;
-import no.nav.syfo.consumer.rest.EksisterendeSakConsumer;
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer;
+import no.nav.syfo.service.EksisterendeSakService;
 import no.nav.syfo.consumer.ws.*;
 import no.nav.syfo.domain.GeografiskTilknytningData;
 import no.nav.syfo.domain.InngaaendeJournal;
@@ -31,7 +31,6 @@ import javax.jms.MessageNotWriteableException;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -55,7 +54,7 @@ public class InntektsmeldingConsumerIntegrassjonsTest {
     private AktorConsumer aktorConsumer;
 
     @MockBean
-    private EksisterendeSakConsumer eksisterendeSakConsumer;
+    private EksisterendeSakService eksisterendeSakService;
 
     @MockBean
     private BehandleSakConsumer behandleSakConsumer;
@@ -96,7 +95,7 @@ public class InntektsmeldingConsumerIntegrassjonsTest {
         when(inngaaendeJournalConsumer.hentDokumentId("arkivId")).thenReturn(inngaaendeJournal);
 
         when(aktorConsumer.getAktorId("fnr")).thenReturn("aktorId");
-        when(eksisterendeSakConsumer.finnEksisterendeSaksId("aktorId", "orgnummer")).thenReturn(Optional.empty());
+        when(eksisterendeSakService.finnEksisterendeSak("aktorId", "orgnummer")).thenReturn(null);
 
         when(behandlendeEnhetConsumer.hentBehandlendeEnhet("fnr")).thenReturn("enhet");
         when(behandlendeEnhetConsumer.hentGeografiskTilknytning("fnr")).thenReturn(GeografiskTilknytningData.builder().geografiskTilknytning("tilknytning").diskresjonskode("").build());
@@ -163,7 +162,7 @@ public class InntektsmeldingConsumerIntegrassjonsTest {
 
     @Test
     public void brukerSaksIdFraSykeforloepOmViIkkeHarOverlappendeInntektsmelding() throws MessageNotWriteableException, HentDokumentSikkerhetsbegrensning, HentDokumentDokumentIkkeFunnet {
-        when(eksisterendeSakConsumer.finnEksisterendeSaksId("aktorId", "orgnummer")).thenReturn(Optional.empty(), Optional.of("syfosak"));
+        when(eksisterendeSakService.finnEksisterendeSak("aktorId", "orgnummer")).thenReturn(null, "syfosak");
         when(inngaaendeJournalConsumer.hentDokumentId("arkivId1")).thenReturn(inngaaendeJournal("arkivId1"));
         when(inngaaendeJournalConsumer.hentDokumentId("arkivId2")).thenReturn(inngaaendeJournal("arkivId2"));
 

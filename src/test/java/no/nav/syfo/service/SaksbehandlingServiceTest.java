@@ -1,6 +1,5 @@
 package no.nav.syfo.service;
 
-import no.nav.syfo.consumer.rest.EksisterendeSakConsumer;
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer;
 import no.nav.syfo.consumer.ws.BehandleSakConsumer;
 import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer;
@@ -45,7 +44,7 @@ public class SaksbehandlingServiceTest {
     @Mock
     private InntektsmeldingDAO inntektsmeldingDAO;
     @Mock
-    private EksisterendeSakConsumer eksisterendeSakConsumer;
+    private EksisterendeSakService eksisterendeSakService;
     @Mock
     private Metrikk metrikk;
 
@@ -59,7 +58,7 @@ public class SaksbehandlingServiceTest {
         when(behandlendeEnhetConsumer.hentGeografiskTilknytning(anyString())).thenReturn(GeografiskTilknytningData.builder().geografiskTilknytning("Geografisktilknytning").build());
         when(behandlendeEnhetConsumer.hentBehandlendeEnhet(anyString())).thenReturn("behandlendeenhet1234");
         when(behandleSakConsumer.opprettSak("fnr")).thenReturn("opprettetSaksId");
-        when(eksisterendeSakConsumer.finnEksisterendeSaksId(any(), anyString())).thenReturn(Optional.of("saksId"));
+        when(eksisterendeSakService.finnEksisterendeSak(any(), anyString())).thenReturn("saksId");
     }
 
     private Inntektsmelding lagInntektsmelding() {
@@ -85,7 +84,7 @@ public class SaksbehandlingServiceTest {
 
     @Test
     public void oppretterSakOmSakIkkeFinnes() {
-        when(eksisterendeSakConsumer.finnEksisterendeSaksId(any(), anyString())).thenReturn(Optional.empty());
+        when(eksisterendeSakService.finnEksisterendeSak(any(), anyString())).thenReturn(null);
 
         String saksId = saksbehandlingService.behandleInntektsmelding(lagInntektsmelding(), "aktorId");
 

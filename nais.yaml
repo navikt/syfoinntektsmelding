@@ -79,4 +79,13 @@ fasitResources:
       url: SPRING_DATASOURCE_URL
       username: SPRING_DATASOURCE_USERNAME
       password: SPRING_DATASOURCE_PASSWORD
+  - alias: aad_syfoinntektsmelding_clientid
+      resourceType: credential
+  - alias: aad_syfogsak_clientid
+    resourceType: credential
+  - alias: aadaccesstoken
+    resourceType: baseUrl
+  - alias: aad_syfogsak_clientid
+    resourceType: credential
+
 
