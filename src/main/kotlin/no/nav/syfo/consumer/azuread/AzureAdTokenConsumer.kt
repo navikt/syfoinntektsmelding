@@ -1,6 +1,5 @@
 package no.nav.syfo.consumer.azuread
 
-import lombok.extern.slf4j.Slf4j
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
@@ -14,7 +13,7 @@ import org.springframework.web.client.RestTemplate
 import org.springframework.web.util.UriComponentsBuilder
 import java.util.Objects.requireNonNull
 
-@Slf4j
+
 @Component
 class AzureAdTokenConsumer(private val restTemplateMedProxy: RestTemplate,
                            @param:Value("\${aadaccesstoken.url}") private val url: String,
