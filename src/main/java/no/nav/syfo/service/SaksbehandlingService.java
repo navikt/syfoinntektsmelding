@@ -1,7 +1,6 @@
 package no.nav.syfo.service;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.syfo.consumer.rest.EksisterendeSakConsumer;
 import no.nav.syfo.consumer.ws.BehandleSakConsumer;
 import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer;
 import no.nav.syfo.consumer.ws.OppgavebehandlingConsumer;
@@ -26,7 +25,7 @@ public class SaksbehandlingService {
     private final OppgavebehandlingConsumer oppgavebehandlingConsumer;
     private final BehandlendeEnhetConsumer behandlendeEnhetConsumer;
     private final BehandleSakConsumer behandleSakConsumer;
-    private final EksisterendeSakConsumer eksisterendeSakConsumer;
+    private final EksisterendeSakService eksisterendeSakService;
     private final InntektsmeldingDAO inntektsmeldingDAO;
     private final Metrikk metrikk;
 
@@ -35,12 +34,11 @@ public class SaksbehandlingService {
             OppgavebehandlingConsumer oppgavebehandlingConsumer,
             BehandlendeEnhetConsumer behandlendeEnhetConsumer,
             BehandleSakConsumer behandleSakConsumer,
-            EksisterendeSakConsumer eksisterendeSakConsumer,
-            InntektsmeldingDAO inntektsmeldingDAO, Metrikk metrikk) {
+            EksisterendeSakService eksisterendeSakService, InntektsmeldingDAO inntektsmeldingDAO, Metrikk metrikk) {
         this.oppgavebehandlingConsumer = oppgavebehandlingConsumer;
         this.behandlendeEnhetConsumer = behandlendeEnhetConsumer;
         this.behandleSakConsumer = behandleSakConsumer;
-        this.eksisterendeSakConsumer = eksisterendeSakConsumer;
+        this.eksisterendeSakService = eksisterendeSakService;
         this.inntektsmeldingDAO = inntektsmeldingDAO;
         this.metrikk = metrikk;
     }
@@ -71,7 +69,7 @@ public class SaksbehandlingService {
         String saksId = tilhorendeInntektsmelding
                 .map(InntektsmeldingMeta::getSakId)
                 .orElseGet(() -> inntektsmelding.getArbeidsgiverOrgnummer()
-                        .flatMap(orgnummer -> eksisterendeSakConsumer.finnEksisterendeSaksId(aktorId, orgnummer))
+                        .map(orgnummer -> eksisterendeSakService.finnEksisterendeSak(aktorId, orgnummer))
                         .orElseGet(() -> behandleSakConsumer.opprettSak(inntektsmelding.getFnr())));
 
         opprettOppgave(inntektsmelding.getFnr(), byggOppgave(inntektsmelding.getJournalpostId(), saksId));
