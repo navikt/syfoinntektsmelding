@@ -2,6 +2,7 @@ package no.nav.syfo.consumer.mq;
 
 import no.nav.syfo.LocalApplication;
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer;
+import no.nav.syfo.domain.Inntektsmelding;
 import no.nav.syfo.service.EksisterendeSakService;
 import no.nav.syfo.consumer.ws.*;
 import no.nav.syfo.domain.GeografiskTilknytningData;
@@ -19,6 +20,8 @@ import org.apache.activemq.command.ActiveMQTextMessage;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -31,6 +34,9 @@ import javax.jms.MessageNotWriteableException;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -90,15 +96,15 @@ public class InntektsmeldingConsumerIntegrassjonsTest {
 
         InngaaendeJournal inngaaendeJournal = inngaaendeJournal("arkivId");
 
-        when(behandleSakConsumer.opprettSak("fnr")).thenAnswer(invocation -> "saksId" + saksIdteller++);
+        when(behandleSakConsumer.opprettSak(anyString())).thenAnswer(invocation -> "saksId" + saksIdteller++);
 
         when(inngaaendeJournalConsumer.hentDokumentId("arkivId")).thenReturn(inngaaendeJournal);
 
-        when(aktorConsumer.getAktorId("fnr")).thenReturn("aktorId");
-        when(eksisterendeSakService.finnEksisterendeSak("aktorId", "orgnummer")).thenReturn(null);
+        when(aktorConsumer.getAktorId(anyString())).then((Answer<String>) invocation -> "aktorId_for_" + invocation.getArgument(0));
+        when(eksisterendeSakService.finnEksisterendeSak(anyString(), eq("orgnummer"))).thenReturn(null);
 
-        when(behandlendeEnhetConsumer.hentBehandlendeEnhet("fnr")).thenReturn("enhet");
-        when(behandlendeEnhetConsumer.hentGeografiskTilknytning("fnr")).thenReturn(GeografiskTilknytningData.builder().geografiskTilknytning("tilknytning").diskresjonskode("").build());
+        when(behandlendeEnhetConsumer.hentBehandlendeEnhet(anyString())).thenReturn("enhet");
+        when(behandlendeEnhetConsumer.hentGeografiskTilknytning(anyString())).thenReturn(GeografiskTilknytningData.builder().geografiskTilknytning("tilknytning").diskresjonskode("").build());
     }
 
     private InngaaendeJournal inngaaendeJournal(String arkivId) {
@@ -126,7 +132,7 @@ public class InntektsmeldingConsumerIntegrassjonsTest {
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId1"));
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId2"));
 
-        List<InntektsmeldingMeta> inntektsmeldingMetas = inntektsmeldingDAO.finnBehandledeInntektsmeldinger("aktorId");
+        List<InntektsmeldingMeta> inntektsmeldingMetas = inntektsmeldingDAO.finnBehandledeInntektsmeldinger("aktorId_for_fnr");
         assertThat(inntektsmeldingMetas.size()).isEqualTo(2);
         assertThat(inntektsmeldingMetas.get(0).getSakId()).isEqualTo(inntektsmeldingMetas.get(1).getSakId());
 
@@ -150,7 +156,7 @@ public class InntektsmeldingConsumerIntegrassjonsTest {
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId1"));
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId2"));
 
-        List<InntektsmeldingMeta> inntektsmeldingMetas = inntektsmeldingDAO.finnBehandledeInntektsmeldinger("aktorId");
+        List<InntektsmeldingMeta> inntektsmeldingMetas = inntektsmeldingDAO.finnBehandledeInntektsmeldinger("aktorId_for_fnr");
         assertThat(inntektsmeldingMetas.size()).isEqualTo(2);
         assertThat(inntektsmeldingMetas.get(0).getSakId()).isNotEqualTo(inntektsmeldingMetas.get(1).getSakId());
 
@@ -162,7 +168,7 @@ public class InntektsmeldingConsumerIntegrassjonsTest {
 
     @Test
     public void brukerSaksIdFraSykeforloepOmViIkkeHarOverlappendeInntektsmelding() throws MessageNotWriteableException, HentDokumentSikkerhetsbegrensning, HentDokumentDokumentIkkeFunnet {
-        when(eksisterendeSakService.finnEksisterendeSak("aktorId", "orgnummer")).thenReturn(null, "syfosak");
+        when(eksisterendeSakService.finnEksisterendeSak("aktorId_for_fnr", "orgnummer")).thenReturn(null, "syfosak");
         when(inngaaendeJournalConsumer.hentDokumentId("arkivId1")).thenReturn(inngaaendeJournal("arkivId1"));
         when(inngaaendeJournalConsumer.hentDokumentId("arkivId2")).thenReturn(inngaaendeJournal("arkivId2"));
 
@@ -178,7 +184,7 @@ public class InntektsmeldingConsumerIntegrassjonsTest {
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId1"));
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId2"));
 
-        List<InntektsmeldingMeta> inntektsmeldingMetas = inntektsmeldingDAO.finnBehandledeInntektsmeldinger("aktorId");
+        List<InntektsmeldingMeta> inntektsmeldingMetas = inntektsmeldingDAO.finnBehandledeInntektsmeldinger("aktorId_for_fnr");
         assertThat(inntektsmeldingMetas.size()).isEqualTo(2);
         assertThat(inntektsmeldingMetas.get(0).getSakId()).isNotEqualTo(inntektsmeldingMetas.get(1).getSakId());
 
@@ -196,7 +202,7 @@ public class InntektsmeldingConsumerIntegrassjonsTest {
 
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId"));
 
-        List<InntektsmeldingMeta> inntektsmeldinger = inntektsmeldingDAO.finnBehandledeInntektsmeldinger("aktorId");
+        List<InntektsmeldingMeta> inntektsmeldinger = inntektsmeldingDAO.finnBehandledeInntektsmeldinger("aktorId_for_fnr");
 
         assertThat(inntektsmeldinger.get(0).getArbeidsgiverperioder().size()).isEqualTo(0);
     }
@@ -212,7 +218,7 @@ public class InntektsmeldingConsumerIntegrassjonsTest {
 
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId"));
 
-        List<InntektsmeldingMeta> inntektsmeldinger = inntektsmeldingDAO.finnBehandledeInntektsmeldinger("aktorId");
+        List<InntektsmeldingMeta> inntektsmeldinger = inntektsmeldingDAO.finnBehandledeInntektsmeldinger("aktorId_for_fnr");
 
         assertThat(inntektsmeldinger.get(0).getArbeidsgiverperioder().size()).isEqualTo(2);
         assertThat(inntektsmeldinger.get(0).getArbeidsgiverperioder().get(0).getFom()).isEqualTo(LocalDate.of(2019, 1, 1));
@@ -229,11 +235,11 @@ public class InntektsmeldingConsumerIntegrassjonsTest {
 
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId"));
 
-        List<InntektsmeldingMeta> inntektsmeldinger = inntektsmeldingDAO.finnBehandledeInntektsmeldinger("aktorId");
+        List<InntektsmeldingMeta> inntektsmeldinger = inntektsmeldingDAO.finnBehandledeInntektsmeldinger("aktorId_for_fnr");
 
         assertThat(inntektsmeldinger.get(0).getArbeidsgiverPrivat()).isEqualTo("arbeidsgiverPrivat");
         assertThat(inntektsmeldinger.get(0).getOrgnummer()).isNull();
-        assertThat(inntektsmeldinger.get(0).getAktorId()).isEqualTo("aktorId");
+        assertThat(inntektsmeldinger.get(0).getAktorId()).isEqualTo("aktorId_for_fnr");
     }
 
     private ActiveMQTextMessage opprettKoemelding(String arkivId) throws MessageNotWriteableException {
@@ -251,5 +257,57 @@ public class InntektsmeldingConsumerIntegrassjonsTest {
                 "</ns5:forsendelsesinformasjon>");
 
         return message;
+    }
+
+    @Test
+    public void behandlerInntektsmeldingSomEnSakMedVedLikPeriode() throws Exception {
+        when(journalV2.hentDokument(any())).thenReturn(
+                new WSHentDokumentResponse().withDokument(JournalConsumerTest.inntektsmeldingArbeidsgiver(
+                        Collections.singletonList(Periode.builder()
+                                .fom(LocalDate.now())
+                                .tom(LocalDate.now().plusDays(20))
+                                .build())
+                ).getBytes())
+        );
+
+        int numThreads = 16;
+        produceParallelMessages(numThreads);
+
+        verify(behandleSakConsumer, times(1)).opprettSak(anyString());
+        verify(behandleInngaaendeJournalV1, times(numThreads)).ferdigstillJournalfoering(any());
+    }
+
+    @Test
+    public void behandlerInntektsmeldingerForFlerPersonerSamtidig() throws Exception {
+        AtomicInteger fnr = new AtomicInteger();
+        when(journalV2.hentDokument(any())).then((Answer<WSHentDokumentResponse>) invocation -> new WSHentDokumentResponse().withDokument(JournalConsumerTest.inntektsmeldingArbeidsgiver(
+                Collections.singletonList(Periode.builder()
+                        .fom(LocalDate.now())
+                        .tom(LocalDate.now().plusDays(20))
+                        .build()),
+                "fnr" + fnr.incrementAndGet()
+        ).getBytes()));
+
+        int numThreads = 16;
+        produceParallelMessages(numThreads);
+
+        verify(behandleSakConsumer, times(numThreads)).opprettSak(anyString());
+        verify(behandleInngaaendeJournalV1, times(numThreads)).ferdigstillJournalfoering(any());
+    }
+
+    public void produceParallelMessages(int numThreads) throws Exception {
+        CountDownLatch countdown = new CountDownLatch(numThreads);
+
+        for (int i = 0; i < numThreads; i++) {
+            new Thread(() -> {
+                try {
+                    inntektsmeldingConsumer.listen(opprettKoemelding("arkivId"));
+                } catch (MessageNotWriteableException e) {
+                    e.printStackTrace();
+                }
+                countdown.countDown();
+            }).start();
+        }
+        countdown.await();
     }
 }

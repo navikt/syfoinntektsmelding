@@ -1,5 +1,6 @@
 package no.nav.syfo.consumer.mq;
 
+import com.google.common.util.concurrent.Striped;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.melding.virksomhet.dokumentnotifikasjon.v1.XMLForsendelsesinformasjon;
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer;
@@ -18,6 +19,8 @@ import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import javax.xml.bind.JAXBElement;
 import java.time.LocalDateTime;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
 
 import static java.util.Optional.ofNullable;
 import static no.nav.syfo.domain.InngaaendeJournal.MIDLERTIDIG;
@@ -26,6 +29,7 @@ import static no.nav.syfo.util.MDCOperations.*;
 @Component
 @Slf4j
 public class InntektsmeldingConsumer {
+    private final Striped<Lock> consumerLocks = Striped.lock(8);
 
     private JournalpostService journalpostService;
     private SaksbehandlingService saksbehandlingService;
@@ -54,21 +58,29 @@ public class InntektsmeldingConsumer {
             final XMLForsendelsesinformasjon info = xmlForsendelsesinformasjon.getValue();
 
             Inntektsmelding inntektsmelding = journalpostService.hentInntektsmelding(info.getArkivId());
+            Lock consumerLock = consumerLocks.get(inntektsmelding.getFnr());
 
-            String aktorid = aktorConsumer.getAktorId(inntektsmelding.getFnr());
+            try {
+                consumerLock.lock();
+                String aktorid = aktorConsumer.getAktorId(inntektsmelding.getFnr());
 
-            if (MIDLERTIDIG.equals(inntektsmelding.getStatus())) {
-                metrikk.tellInntektsmeldingerMottatt(inntektsmelding);
+                if (MIDLERTIDIG.equals(inntektsmelding.getStatus())) {
+                    metrikk.tellInntektsmeldingerMottatt(inntektsmelding);
 
-                String saksId = saksbehandlingService.behandleInntektsmelding(inntektsmelding, aktorid);
+                    String saksId = saksbehandlingService.behandleInntektsmelding(inntektsmelding, aktorid);
 
-                journalpostService.ferdigstillJournalpost(saksId, inntektsmelding);
+                    journalpostService.ferdigstillJournalpost(saksId, inntektsmelding);
 
-                lagreBehandling(inntektsmelding, aktorid, saksId);
+                    lagreBehandling(inntektsmelding, aktorid, saksId);
 
-                log.info("Inntektsmelding {} er journalført", inntektsmelding.getJournalpostId());
-            } else {
-                log.info("Behandler ikke inntektsmelding {} da den har status: {}", inntektsmelding.getJournalpostId(), inntektsmelding.getStatus());
+                    log.info("Inntektsmelding {} er journalført", inntektsmelding.getJournalpostId());
+                } else {
+                    log.info("Behandler ikke inntektsmelding {} da den har status: {}",
+                            inntektsmelding.getJournalpostId(),
+                            inntektsmelding.getStatus());
+                }
+            } finally {
+                consumerLock.unlock();
             }
         } catch (JMSException e) {
             log.error("Feil ved parsing av inntektsmelding fra kø", e);
