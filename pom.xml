@@ -25,6 +25,14 @@
         <version>2.0.5.RELEASE</version>
     </parent>
 
+    <repositories>
+        <repository>
+            <id>maven-releases</id>
+            <name>NAV Internal Repository</name>
+            <url>https://repo.adeo.no/repository/maven-releases/</url>
+        </repository>
+    </repositories>
+
     <distributionManagement>
         <repository>
             <id>maven-releases</id>

@@ -76,9 +76,11 @@ public class JournalConsumerTest {
         assertThat(inntektsmelding.getArbeidsgiverOrgnummer().isPresent()).isTrue();
         assertThat(inntektsmelding.getArbeidsgiverPrivat().isPresent()).isFalse();
     }
-
     public static String inntektsmeldingArbeidsgiver(List<Periode> perioder) {
+        return inntektsmeldingArbeidsgiver(perioder, "fnr");
+    }
 
+    public static String inntektsmeldingArbeidsgiver(List<Periode> perioder, String fnr) {
         return "<ns6:melding xmlns:ns6=\"http://seres.no/xsd/NAV/Inntektsmelding_M/20180924\">" +
                 "    <ns6:Skjemainnhold>" +
                 "        <ns6:ytelse>Sykepenger</ns6:ytelse>" +
@@ -90,7 +92,7 @@ public class JournalConsumerTest {
                 "                <ns6:telefonnummer>81549300</ns6:telefonnummer>" +
                 "            </ns6:kontaktinformasjon>" +
                 "        </ns6:arbeidsgiver>" +
-                "        <ns6:arbeidstakerFnr>fnr</ns6:arbeidstakerFnr>" +
+                "        <ns6:arbeidstakerFnr>" + fnr + "</ns6:arbeidstakerFnr>" +
                 "        <ns6:naerRelasjon>false</ns6:naerRelasjon>" +
                 "        <ns6:arbeidsforhold>" +
                 "            <ns6:foersteFravaersdag>2019-02-01</ns6:foersteFravaersdag>" +

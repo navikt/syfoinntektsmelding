@@ -27,6 +27,16 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class InntektsmeldingConsumerTest {
+    private static String inputPayload = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" +
+            "  <ns5:forsendelsesinformasjon xmlns:ns5=\"http://nav.no/melding/virksomhet/dokumentnotifikasjon/v1\" " +
+            "    xmlns:ns2=\"http://nav.no/melding/virksomhet/dokumentforsendelse/v1\" " +
+            "    xmlns:ns4=\"http://nav.no/dokmot/jms/reply\" " +
+            "    xmlns:ns3=\"http://nav.no.dokmot/jms/viderebehandling\">" +
+            "  <arkivId>arkivId</arkivId>" +
+            "  <arkivsystem>JOARK</arkivsystem>" +
+            "  <tema>SYK</tema>" +
+            "  <behandlingstema>ab0061</behandlingstema>" +
+            "</ns5:forsendelsesinformasjon>";
 
     @Mock
     private Metrikk metrikk;
@@ -63,17 +73,7 @@ public class InntektsmeldingConsumerTest {
         when(saksbehandlingService.behandleInntektsmelding(any(), anyString())).thenReturn("saksId");
 
         ActiveMQTextMessage message = new ActiveMQTextMessage();
-        message.setText("" +
-                "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" +
-                "  <ns5:forsendelsesinformasjon xmlns:ns5=\"http://nav.no/melding/virksomhet/dokumentnotifikasjon/v1\" " +
-                "    xmlns:ns2=\"http://nav.no/melding/virksomhet/dokumentforsendelse/v1\" " +
-                "    xmlns:ns4=\"http://nav.no/dokmot/jms/reply\" " +
-                "    xmlns:ns3=\"http://nav.no.dokmot/jms/viderebehandling\">" +
-                "  <arkivId>arkivId</arkivId>" +
-                "  <arkivsystem>JOARK</arkivsystem>" +
-                "  <tema>SYK</tema>" +
-                "  <behandlingstema>ab0061</behandlingstema>" +
-                "</ns5:forsendelsesinformasjon>");
+        message.setText(inputPayload);
         inntektsmeldingConsumer.listen(message);
 
         verify(saksbehandlingService).behandleInntektsmelding(any(), anyString());
@@ -89,17 +89,7 @@ public class InntektsmeldingConsumerTest {
                 .build());
 
         ActiveMQTextMessage message = new ActiveMQTextMessage();
-        message.setText("" +
-                "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" +
-                "  <ns5:forsendelsesinformasjon xmlns:ns5=\"http://nav.no/melding/virksomhet/dokumentnotifikasjon/v1\" " +
-                "    xmlns:ns2=\"http://nav.no/melding/virksomhet/dokumentforsendelse/v1\" " +
-                "    xmlns:ns4=\"http://nav.no/dokmot/jms/reply\" " +
-                "    xmlns:ns3=\"http://nav.no.dokmot/jms/viderebehandling\">" +
-                "  <arkivId>arkivId</arkivId>" +
-                "  <arkivsystem>JOARK</arkivsystem>" +
-                "  <tema>SYK</tema>" +
-                "  <behandlingstema>ab0061</behandlingstema>" +
-                "</ns5:forsendelsesinformasjon>");
+        message.setText(inputPayload);
         inntektsmeldingConsumer.listen(message);
 
         verify(saksbehandlingService, never()).behandleInntektsmelding(any(), anyString());
