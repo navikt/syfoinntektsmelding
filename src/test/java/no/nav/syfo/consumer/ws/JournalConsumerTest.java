@@ -52,7 +52,7 @@ public class JournalConsumerTest {
     public void parserInntektsmeldingUtenPerioder() throws HentDokumentSikkerhetsbegrensning, HentDokumentDokumentIkkeFunnet {
         when(journal.hentDokument(any())).thenReturn(new WSHentDokumentResponse().withDokument(inntektsmeldingArbeidsgiver(Collections.emptyList()).getBytes()));
 
-        Inntektsmelding inntektsmelding = journalConsumer.hentInntektsmelding("jounralpostID", InngaaendeJournal.builder().build());
+        Inntektsmelding inntektsmelding = journalConsumer.hentInntektsmelding("jounralpostID", InngaaendeJournal.builder().status("ANNET").build());
 
         assertThat(inntektsmelding.getArbeidsgiverperioder().isEmpty());
     }
@@ -61,20 +61,20 @@ public class JournalConsumerTest {
     public void parseInntektsmeldingV7() throws HentDokumentSikkerhetsbegrensning, HentDokumentDokumentIkkeFunnet {
         when(journal.hentDokument(any())).thenReturn(new WSHentDokumentResponse().withDokument(inntektsmeldingArbeidsgiverPrivat().getBytes()));
 
-        Inntektsmelding inntektsmelding = journalConsumer.hentInntektsmelding("journalpostId", InngaaendeJournal.builder().build());
+        Inntektsmelding inntektsmelding = journalConsumer.hentInntektsmelding("journalpostId", InngaaendeJournal.builder().status("ANNET").build());
 
         assertThat(inntektsmelding.getArbeidsgiverperioder().isEmpty()).isFalse();
-        assertThat(inntektsmelding.getArbeidsgiverPrivat().isPresent()).isTrue();
+        assertThat(inntektsmelding.getArbeidsgiverPrivat() != null).isTrue();
     }
 
     @Test
     public void parseInntektsmelding0924() throws HentDokumentSikkerhetsbegrensning, HentDokumentDokumentIkkeFunnet {
-        when(journal.hentDokument(any())).thenReturn(new WSHentDokumentResponse().withDokument(inntektsmeldingArbeidsgiver(asList(Periode.builder().fom(LocalDate.of(2019,2,1)).tom(LocalDate.of(2019,2,16)).build())).getBytes()));
+        when(journal.hentDokument(any())).thenReturn(new WSHentDokumentResponse().withDokument(inntektsmeldingArbeidsgiver(asList(new Periode(LocalDate.of(2019,2,1), LocalDate.of(2019,2,16)))).getBytes()));
 
-        Inntektsmelding inntektsmelding = journalConsumer.hentInntektsmelding("journalpostId", InngaaendeJournal.builder().build());
+        Inntektsmelding inntektsmelding = journalConsumer.hentInntektsmelding("journalpostId", InngaaendeJournal.builder().status("ANNET").build());
 
-        assertThat(inntektsmelding.getArbeidsgiverOrgnummer().isPresent()).isTrue();
-        assertThat(inntektsmelding.getArbeidsgiverPrivat().isPresent()).isFalse();
+        assertThat(inntektsmelding.getArbeidsgiverOrgnummer() != null).isTrue();
+        assertThat(inntektsmelding.getArbeidsgiverPrivat() != null).isFalse();
     }
     public static String inntektsmeldingArbeidsgiver(List<Periode> perioder) {
         return inntektsmeldingArbeidsgiver(perioder, "fnr");

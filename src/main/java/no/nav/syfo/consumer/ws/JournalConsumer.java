@@ -32,19 +32,18 @@ public class JournalConsumer {
             JAXBElement<Object> jaxbInntektsmelding = JAXB.unmarshalInntektsmelding(inntektsmelding);
 
             XMLInntektsmelding xmlInntektsmelding = jaxbInntektsmelding.getValue() instanceof no.seres.xsd.nav.inntektsmelding_m._20180924.XMLInntektsmeldingM
-                    ? InntektsmeldingArbeidsgiver20180924Mapper.tilXMLInntektsmelding(jaxbInntektsmelding)
-                    : InntektsmeldingArbeidsgiverPrivat20181211Mapper.tilXMLInntektsmelding(jaxbInntektsmelding);
+                    ? InntektsmeldingArbeidsgiver20180924Mapper.INSTANCE.tilXMLInntektsmelding(jaxbInntektsmelding)
+                    : InntektsmeldingArbeidsgiverPrivat20181211Mapper.INSTANCE.tilXMLInntektsmelding(jaxbInntektsmelding);
 
-            return Inntektsmelding.builder()
-                    .fnr(xmlInntektsmelding.getArbeidstakerFnr())
-                    .arbeidsgiverOrgnummer(xmlInntektsmelding.getVirksomhetsnummer())
-                    .arbeidsgiverPrivat(xmlInntektsmelding.getArbeidsgiverPrivat())
-                    .journalpostId(journalpostId)
-                    .arbeidsforholdId(xmlInntektsmelding.getArbeidsforholdId())
-                    .arsakTilInnsending(xmlInntektsmelding.getAarsakTilInnsending())
-                    .status(inngaaendeJournal.getStatus())
-                    .arbeidsgiverperioder(xmlInntektsmelding.getPerioder())
-                    .build();
+            return new Inntektsmelding(
+                    xmlInntektsmelding.getArbeidstakerFnr(),
+                    xmlInntektsmelding.getVirksomhetsnummer(),
+                    xmlInntektsmelding.getArbeidsgiverPrivat(),
+                    journalpostId,
+                    xmlInntektsmelding.getArbeidsforholdId(),
+                    xmlInntektsmelding.getAarsakTilInnsending(),
+                    inngaaendeJournal.getStatus(),
+                    xmlInntektsmelding.getPerioder());
         } catch (HentDokumentSikkerhetsbegrensning e) {
             log.error("Feil ved henting av dokument: Sikkerhetsbegrensning!");
             throw new RuntimeException("Feil ved henting av dokument: Sikkerhetsbegrensning!", e);

@@ -11,6 +11,8 @@ import no.nav.syfo.domain.Inntektsmelding;
 import no.nav.syfo.util.Metrikk;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 @Component
 @Slf4j
 public class JournalpostService {
@@ -56,8 +58,8 @@ public class JournalpostService {
                 .journalpostId(inntektsmelding.getJournalpostId())
                 .dokumentId(inngaaendeJournal.getDokumentId())
                 .behandlendeEnhetId(behandlendeEnhet)
-                .arbeidsgiverOrgnummer(inntektsmelding.getArbeidsgiverOrgnummer())
-                .arbeidsgiverPrivat(inntektsmelding.getArbeidsgiverPrivat())
+                .arbeidsgiverOrgnummer(Optional.ofNullable(inntektsmelding.getArbeidsgiverOrgnummer()))
+                .arbeidsgiverPrivat(Optional.ofNullable(inntektsmelding.getArbeidsgiverPrivat()))
                 .build();
     }
 }
