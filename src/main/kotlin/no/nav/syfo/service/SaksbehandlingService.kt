@@ -11,6 +11,7 @@ import no.nav.syfo.domain.InntektsmeldingMeta
 import no.nav.syfo.domain.Oppgave
 import no.nav.syfo.util.DateUtil
 import no.nav.syfo.util.Metrikk
+import no.nav.syfo.util.sammenslattPeriode
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 
@@ -49,10 +50,12 @@ class SaksbehandlingService(
                 metrikk.tellOverlappendeInntektsmelding()
             }
 
+        val sammenslattPeriode = sammenslattPeriode(inntektsmelding.arbeidsgiverperioder)
+
         val saksId = tilhorendeInntektsmelding
             ?.sakId
             ?: inntektsmelding.arbeidsgiverOrgnummer
-                ?.let { eksisterendeSakService.finnEksisterendeSak(aktorId, null, null) }
+                ?.let { eksisterendeSakService.finnEksisterendeSak(aktorId, sammenslattPeriode?.fom, sammenslattPeriode?.tom) }
             ?: behandleSakConsumer.opprettSak(inntektsmelding.fnr)
 
 

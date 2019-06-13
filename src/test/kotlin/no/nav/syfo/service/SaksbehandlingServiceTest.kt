@@ -18,10 +18,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentMatcher
-import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.anyString
-import org.mockito.BDDMockito
 import org.mockito.BDDMockito.given
 import org.mockito.InjectMocks
 import org.mockito.Mock
@@ -58,7 +55,11 @@ class SaksbehandlingServiceTest {
     fun setup() {
         `when`(inntektsmeldingDAO.finnBehandledeInntektsmeldinger(any())).thenReturn(emptyList())
         `when`(aktoridConsumer.getAktorId(anyString())).thenReturn("aktorid")
-        `when`(behandlendeEnhetConsumer.hentGeografiskTilknytning(anyString())).thenReturn(GeografiskTilknytningData(geografiskTilknytning = "Geografisktilknytning"))
+        `when`(behandlendeEnhetConsumer.hentGeografiskTilknytning(anyString())).thenReturn(
+            GeografiskTilknytningData(
+                geografiskTilknytning = "Geografisktilknytning"
+            )
+        )
         `when`(behandlendeEnhetConsumer.hentBehandlendeEnhet(anyString())).thenReturn("behandlendeenhet1234")
         `when`(behandleSakConsumer.opprettSak("fnr")).thenReturn("opprettetSaksId")
         given(eksisterendeSakService.finnEksisterendeSak(any(), any(), any())).willReturn("saksId")
@@ -182,5 +183,45 @@ class SaksbehandlingServiceTest {
         val sakId = saksbehandlingService.behandleInntektsmelding(lagInntektsmelding(), "aktorId")
         assertThat(sakId).isEqualTo("1")
         verify<BehandleSakConsumer>(behandleSakConsumer, never()).opprettSak(anyString())
+    }
+
+    @Test
+    fun kallerHentSakMedFomTomFraArbeidsgiverperiodeIInntektsmeldingMedEnPeriode() {
+        saksbehandlingService.behandleInntektsmelding(
+            lagInntektsmelding()
+                .copy(
+                    arbeidsgiverperioder = asList(
+                        Periode(
+                            fom = LocalDate.of(2019, 6, 6),
+                            tom = LocalDate.of(2019, 6, 10)
+                        )
+                    )
+                ), "aktor"
+        )
+        verify(eksisterendeSakService).finnEksisterendeSak("aktor", LocalDate.of(2019, 6, 6), LocalDate.of(2019, 6, 10))
+    }
+
+    @Test
+    fun kallerHentSakMedTidligsteFomOgSenesteTomFraArbeidsgiverperiodeIInntektsmeldingFlerePerioder() {
+        saksbehandlingService.behandleInntektsmelding(
+            lagInntektsmelding()
+                .copy(
+                    arbeidsgiverperioder = asList(
+                        Periode(
+                            fom = LocalDate.of(2019, 6, 6),
+                            tom = LocalDate.of(2019, 6, 10)
+                        ),
+                        Periode(
+                            fom = LocalDate.of(2019, 6, 1),
+                            tom = LocalDate.of(2019, 6, 5)
+                        ),
+                        Periode(
+                            fom = LocalDate.of(2019, 6, 11),
+                            tom = LocalDate.of(2019, 6, 14)
+                        )
+                    )
+                ), "aktor"
+        )
+        verify(eksisterendeSakService).finnEksisterendeSak("aktor", LocalDate.of(2019, 6, 1), LocalDate.of(2019, 6, 14))
     }
 }

@@ -128,7 +128,7 @@ class InntektsmeldingConsumerIntegrassjonsTest {
         `when`(inngaaendeJournalConsumer!!.hentDokumentId("arkivId1")).thenReturn(inngaaendeJournal("arkivId1"))
         `when`(inngaaendeJournalConsumer.hentDokumentId("arkivId2")).thenReturn(inngaaendeJournal("arkivId2"))
 
-        `when`(journalV2!!.hentDokument(ArgumentMatchers.any())).thenReturn(
+        `when`(journalV2!!.hentDokument(any())).thenReturn(
             WSHentDokumentResponse().withDokument(
                 JournalConsumerTest.inntektsmeldingArbeidsgiver(
                     listOf(Periode(LocalDate.of(2019, 1, 1), LocalDate.of(2019, 1, 16)))
@@ -161,7 +161,7 @@ class InntektsmeldingConsumerIntegrassjonsTest {
         `when`(inngaaendeJournalConsumer!!.hentDokumentId("arkivId1")).thenReturn(inngaaendeJournal("arkivId1"))
         `when`(inngaaendeJournalConsumer.hentDokumentId("arkivId2")).thenReturn(inngaaendeJournal("arkivId2"))
 
-        `when`(journalV2!!.hentDokument(ArgumentMatchers.any())).thenReturn(
+        `when`(journalV2!!.hentDokument(any())).thenReturn(
             WSHentDokumentResponse().withDokument(
                 JournalConsumerTest.inntektsmeldingArbeidsgiver(
                     listOf(Periode(LocalDate.of(2019, 1, 1), LocalDate.of(2019, 1, 16)))
@@ -199,7 +199,7 @@ class InntektsmeldingConsumerIntegrassjonsTest {
         `when`(inngaaendeJournalConsumer!!.hentDokumentId("arkivId1")).thenReturn(inngaaendeJournal("arkivId1"))
         `when`(inngaaendeJournalConsumer.hentDokumentId("arkivId2")).thenReturn(inngaaendeJournal("arkivId2"))
 
-        `when`(journalV2!!.hentDokument(ArgumentMatchers.any())).thenReturn(
+        `when`(journalV2!!.hentDokument(any())).thenReturn(
             WSHentDokumentResponse().withDokument(
                 JournalConsumerTest.inntektsmeldingArbeidsgiver(
                     listOf(Periode(LocalDate.of(2019, 1, 1), LocalDate.of(2019, 1, 16)))
@@ -232,7 +232,7 @@ class InntektsmeldingConsumerIntegrassjonsTest {
         HentDokumentDokumentIkkeFunnet::class
     )
     fun mottarInntektsmeldingUtenArbeidsgiverperioder() {
-        `when`(journalV2!!.hentDokument(ArgumentMatchers.any())).thenReturn(
+        `when`(journalV2!!.hentDokument(any())).thenReturn(
             WSHentDokumentResponse().withDokument(JournalConsumerTest.inntektsmeldingArbeidsgiver(emptyList<Periode>()).toByteArray())
         )
 
@@ -250,7 +250,7 @@ class InntektsmeldingConsumerIntegrassjonsTest {
         HentDokumentDokumentIkkeFunnet::class
     )
     fun mottarInntektsmeldingMedFlerePerioder() {
-        `when`(journalV2!!.hentDokument(ArgumentMatchers.any())).thenReturn(
+        `when`(journalV2!!.hentDokument(any())).thenReturn(
             WSHentDokumentResponse().withDokument(
                 JournalConsumerTest.inntektsmeldingArbeidsgiver(
                     asList(
@@ -279,7 +279,7 @@ class InntektsmeldingConsumerIntegrassjonsTest {
         HentDokumentDokumentIkkeFunnet::class
     )
     fun mottarInntektsmeldingMedPrivatArbeidsgiver() {
-        `when`(journalV2!!.hentDokument(ArgumentMatchers.any())).thenReturn(
+        `when`(journalV2!!.hentDokument(any())).thenReturn(
             WSHentDokumentResponse().withDokument(JournalConsumerTest.inntektsmeldingArbeidsgiverPrivat().toByteArray())
         )
 
@@ -313,7 +313,7 @@ class InntektsmeldingConsumerIntegrassjonsTest {
     @Test
     @Throws(Exception::class)
     fun behandlerInntektsmeldingSomEnSakMedVedLikPeriode() {
-        `when`(journalV2!!.hentDokument(ArgumentMatchers.any())).thenReturn(
+        `when`(journalV2!!.hentDokument(any())).thenReturn(
             WSHentDokumentResponse().withDokument(
                 JournalConsumerTest.inntektsmeldingArbeidsgiver(
                     listOf(
@@ -328,7 +328,7 @@ class InntektsmeldingConsumerIntegrassjonsTest {
 
         verify<BehandleSakConsumer>(behandleSakConsumer, times(1)).opprettSak(ArgumentMatchers.anyString())
         verify<BehandleInngaaendeJournalV1>(behandleInngaaendeJournalV1, times(numThreads)).ferdigstillJournalfoering(
-            ArgumentMatchers.any()
+            any()
         )
     }
 
@@ -336,7 +336,7 @@ class InntektsmeldingConsumerIntegrassjonsTest {
     @Throws(Exception::class)
     fun behandlerInntektsmeldingerForFlerPersonerSamtidig() {
         val fnr = AtomicInteger()
-        given(journalV2.hentDokument(ArgumentMatchers.any<WSHentDokumentRequest>())).willAnswer {
+        given(journalV2.hentDokument(any<WSHentDokumentRequest>())).willAnswer {
             WSHentDokumentResponse().withDokument(
                 JournalConsumerTest.inntektsmeldingArbeidsgiver(
                     listOf(
@@ -355,7 +355,7 @@ class InntektsmeldingConsumerIntegrassjonsTest {
 
         verify<BehandleSakConsumer>(behandleSakConsumer, times(numThreads)).opprettSak(ArgumentMatchers.anyString())
         verify<BehandleInngaaendeJournalV1>(behandleInngaaendeJournalV1, times(numThreads)).ferdigstillJournalfoering(
-            ArgumentMatchers.any()
+            any()
         )
     }
 
