@@ -2,8 +2,8 @@ package no.nav.syfo.consumer.mq
 
 import any
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
-import no.nav.syfo.domain.InngaaendeJournal.MIDLERTIDIG
 import no.nav.syfo.domain.Inntektsmelding
+import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.repository.InntektsmeldingDAO
 import no.nav.syfo.service.JournalpostService
 import no.nav.syfo.service.SaksbehandlingService
@@ -53,7 +53,7 @@ class InntektsmeldingConsumerTest {
         `when`(journalpostService!!.hentInntektsmelding("arkivId")).thenReturn(
             Inntektsmelding(
                 arbeidsforholdId = "",
-                status = MIDLERTIDIG,
+                status = JournalStatus.MIDLERTIDIG,
                 arbeidsgiverOrgnummer = "orgnummer",
                 arbeidsgiverPrivat = null,
                 journalpostId = "akrivId",
@@ -80,7 +80,7 @@ class InntektsmeldingConsumerTest {
                 arbeidsforholdId = "123",
                 arsakTilInnsending = "",
                 arbeidsgiverperioder = emptyList(),
-                status = "ANNET",
+                status = JournalStatus.ANNET,
                 journalpostId = "arkivId",
                 fnr = "fnr"
             )

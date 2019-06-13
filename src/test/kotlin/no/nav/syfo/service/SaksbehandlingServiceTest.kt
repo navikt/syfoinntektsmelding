@@ -8,6 +8,7 @@ import no.nav.syfo.consumer.ws.OppgavebehandlingConsumer
 import no.nav.syfo.domain.GeografiskTilknytningData
 import no.nav.syfo.domain.Inntektsmelding
 import no.nav.syfo.domain.InntektsmeldingMeta
+import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Oppgave
 import no.nav.syfo.domain.Periode
 import no.nav.syfo.repository.InntektsmeldingDAO
@@ -17,6 +18,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.ArgumentMatcher
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.BDDMockito
 import org.mockito.BDDMockito.given
@@ -55,11 +58,7 @@ class SaksbehandlingServiceTest {
     fun setup() {
         `when`(inntektsmeldingDAO.finnBehandledeInntektsmeldinger(any())).thenReturn(emptyList())
         `when`(aktoridConsumer.getAktorId(anyString())).thenReturn("aktorid")
-        `when`(behandlendeEnhetConsumer.hentGeografiskTilknytning(anyString())).thenReturn(
-            GeografiskTilknytningData.builder().geografiskTilknytning(
-                "Geografisktilknytning"
-            ).build()
-        )
+        `when`(behandlendeEnhetConsumer.hentGeografiskTilknytning(anyString())).thenReturn(GeografiskTilknytningData(geografiskTilknytning = "Geografisktilknytning"))
         `when`(behandlendeEnhetConsumer.hentBehandlendeEnhet(anyString())).thenReturn("behandlendeenhet1234")
         `when`(behandleSakConsumer.opprettSak("fnr")).thenReturn("opprettetSaksId")
         given(eksisterendeSakService.finnEksisterendeSak(any(), any(), any())).willReturn("saksId")
@@ -67,7 +66,7 @@ class SaksbehandlingServiceTest {
 
     private fun lagInntektsmelding(): Inntektsmelding {
         return Inntektsmelding(
-            status = "status",
+            status = JournalStatus.MIDLERTIDIG,
             fnr = "fnr",
             arbeidsgiverOrgnummer = "orgnummer",
             journalpostId = "journalpostId",
@@ -104,7 +103,7 @@ class SaksbehandlingServiceTest {
 
         verify<OppgavebehandlingConsumer>(oppgavebehandlingConsumer).opprettOppgave(
             anyString(),
-            BDDMockito.any(Oppgave::class.java)
+            any<Oppgave>()
         )
     }
 

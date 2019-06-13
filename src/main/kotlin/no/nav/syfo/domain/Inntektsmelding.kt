@@ -8,7 +8,7 @@ data class Inntektsmelding(
     val journalpostId: String,
     val arbeidsforholdId: String? = null,
     val arsakTilInnsending: String,
-    val status: String,
+    val status: JournalStatus,
     val arbeidsgiverperioder: List<Periode> = emptyList()
 )
 

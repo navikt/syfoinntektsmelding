@@ -9,7 +9,7 @@ import no.nav.syfo.consumer.ws.JournalConsumerTest
 import no.nav.syfo.consumer.ws.OppgavebehandlingConsumer
 import no.nav.syfo.domain.GeografiskTilknytningData
 import no.nav.syfo.domain.InngaaendeJournal
-import no.nav.syfo.domain.InngaaendeJournal.MIDLERTIDIG
+import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
 import no.nav.syfo.repository.InntektsmeldingDAO
 import no.nav.syfo.service.EksisterendeSakService
@@ -27,13 +27,10 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.BDDMockito.anyString
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.`when`
-import org.mockito.Mockito.anyString
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
-import org.mockito.stubbing.Answer
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.jdbc.core.JdbcTemplate
@@ -110,16 +107,15 @@ class InntektsmeldingConsumerIntegrassjonsTest {
 
         `when`(behandlendeEnhetConsumer!!.hentBehandlendeEnhet(ArgumentMatchers.anyString())).thenReturn("enhet")
         `when`(behandlendeEnhetConsumer.hentGeografiskTilknytning(ArgumentMatchers.anyString())).thenReturn(
-            GeografiskTilknytningData.builder().geografiskTilknytning("tilknytning").diskresjonskode("").build()
+            GeografiskTilknytningData(geografiskTilknytning = "tilknytning", diskresjonskode = "")
         )
     }
 
     private fun inngaaendeJournal(arkivId: String): InngaaendeJournal {
-        return InngaaendeJournal
-            .builder()
-            .status(MIDLERTIDIG)
-            .dokumentId(arkivId)
-            .build()
+        return InngaaendeJournal(
+            dokumentId = arkivId,
+            status = JournalStatus.MIDLERTIDIG
+        )
     }
 
     @Test
@@ -367,7 +363,7 @@ class InntektsmeldingConsumerIntegrassjonsTest {
     fun produceParallelMessages(numThreads: Int) {
         val countdown = CountDownLatch(numThreads)
 
-        for (i in 0 until numThreads) {
+        repeat(numThreads) {
             Thread {
                 try {
                     inntektsmeldingConsumer!!.listen(opprettKoemelding("arkivId"))

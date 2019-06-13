@@ -1,5 +1,6 @@
 package no.nav.syfo.service
 
+import any
 import no.nav.syfo.consumer.ws.BehandleInngaaendeJournalConsumer
 import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
 import no.nav.syfo.consumer.ws.InngaaendeJournalConsumer
@@ -13,12 +14,11 @@ import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 
-import java.util.Optional
-
-import no.nav.syfo.domain.InngaaendeJournal.MIDLERTIDIG
 import no.nav.syfo.domain.InngaendeJournalpost
+import no.nav.syfo.domain.JournalStatus
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.anyString
+import org.mockito.BDDMockito.given
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 
@@ -26,13 +26,13 @@ import org.mockito.Mockito.`when`
 class JournalpostServiceTest {
 
     @Mock
-    private val inngaaendeJournalConsumer: InngaaendeJournalConsumer? = null
+    private lateinit var inngaaendeJournalConsumer: InngaaendeJournalConsumer
     @Mock
-    private val behandlendeEnhetConsumer: BehandlendeEnhetConsumer? = null
+    private lateinit var behandlendeEnhetConsumer: BehandlendeEnhetConsumer
     @Mock
-    private val journalConsumer: JournalConsumer? = null
+    private lateinit var journalConsumer: JournalConsumer
     @Mock
-    private val behandleInngaaendeJournalConsumer: BehandleInngaaendeJournalConsumer? = null
+    private lateinit var behandleInngaaendeJournalConsumer: BehandleInngaaendeJournalConsumer
     @Mock
     private val metrikk: Metrikk? = null
 
@@ -41,8 +41,9 @@ class JournalpostServiceTest {
 
     @Test
     fun ferdigstillJournalpost() {
-        val journal = InngaaendeJournal.builder().dokumentId("dokumentId").status("MIDLERTIDIG").build()
+        val journal = InngaaendeJournal(dokumentId = "dokumentId", status = JournalStatus.MIDLERTIDIG)
         `when`(inngaaendeJournalConsumer!!.hentDokumentId("journalpostId")).thenReturn(journal)
+        given(behandlendeEnhetConsumer.hentBehandlendeEnhet(anyString())).willReturn("enhet")
 
         journalpostService!!.ferdigstillJournalpost(
             "saksId",
@@ -52,18 +53,19 @@ class JournalpostServiceTest {
                 journalpostId = "journalpostId",
                 arbeidsforholdId = null,
                 arsakTilInnsending = "Ny",
-                status = MIDLERTIDIG)
+                status = JournalStatus.MIDLERTIDIG
+            )
         )
 
         verify<BehandlendeEnhetConsumer>(behandlendeEnhetConsumer).hentBehandlendeEnhet("fnr")
         verify(inngaaendeJournalConsumer).hentDokumentId("journalpostId")
-        verify<BehandleInngaaendeJournalConsumer>(behandleInngaaendeJournalConsumer).oppdaterJournalpost(any<InngaendeJournalpost>())
-        verify<BehandleInngaaendeJournalConsumer>(behandleInngaaendeJournalConsumer).ferdigstillJournalpost(any<InngaendeJournalpost>())
+        verify<BehandleInngaaendeJournalConsumer>(behandleInngaaendeJournalConsumer).oppdaterJournalpost(any())
+        verify<BehandleInngaaendeJournalConsumer>(behandleInngaaendeJournalConsumer).ferdigstillJournalpost(any())
     }
 
     @Test
     fun hentInntektsmelding() {
-        val journal = InngaaendeJournal.builder().dokumentId("dokumentId").status("MIDLERTIDIG").build()
+        val journal = InngaaendeJournal(dokumentId = "dokumentId", status = JournalStatus.MIDLERTIDIG)
         `when`(inngaaendeJournalConsumer!!.hentDokumentId("journalpostId")).thenReturn(journal)
         `when`(journalConsumer!!.hentInntektsmelding("journalpostId", journal))
             .thenReturn(
@@ -72,7 +74,7 @@ class JournalpostServiceTest {
                     arbeidsgiverPrivat = null,
                     fnr = "fnr",
                     journalpostId = "journalpostId",
-                    status = "MIDLERTIDIG",
+                    status = JournalStatus.MIDLERTIDIG,
                     arsakTilInnsending = ""
                 )
             )

@@ -4,9 +4,9 @@ import com.google.common.util.concurrent.Striped
 import log
 import no.nav.melding.virksomhet.dokumentnotifikasjon.v1.XMLForsendelsesinformasjon
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
-import no.nav.syfo.domain.InngaaendeJournal.MIDLERTIDIG
 import no.nav.syfo.domain.Inntektsmelding
 import no.nav.syfo.domain.InntektsmeldingMeta
+import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.repository.InntektsmeldingDAO
 import no.nav.syfo.service.JournalpostService
 import no.nav.syfo.service.SaksbehandlingService
@@ -57,7 +57,7 @@ class InntektsmeldingConsumer(
                 consumerLock.lock()
                 val aktorid = aktorConsumer.getAktorId(inntektsmelding.fnr)
 
-                if (MIDLERTIDIG == inntektsmelding.status) {
+                if (JournalStatus.MIDLERTIDIG == inntektsmelding.status) {
                     metrikk.tellInntektsmeldingerMottatt(inntektsmelding)
 
                     val saksId = saksbehandlingService.behandleInntektsmelding(inntektsmelding, aktorid)
