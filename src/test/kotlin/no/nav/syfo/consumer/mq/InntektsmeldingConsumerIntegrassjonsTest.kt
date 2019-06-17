@@ -1,5 +1,6 @@
 package no.nav.syfo.consumer.mq
 
+import any
 import no.nav.syfo.LocalApplication
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
 import no.nav.syfo.consumer.ws.BehandleSakConsumer
@@ -26,7 +27,6 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.times
@@ -52,7 +52,7 @@ import javax.jms.MessageNotWriteableException
 class InntektsmeldingConsumerIntegrassjonsTest {
 
     @MockBean
-    private val inngaaendeJournalConsumer: InngaaendeJournalConsumer? = null
+    private lateinit var inngaaendeJournalConsumer: InngaaendeJournalConsumer
 
     @MockBean
     private lateinit var journalV2: JournalV2
@@ -64,48 +64,48 @@ class InntektsmeldingConsumerIntegrassjonsTest {
     private lateinit var eksisterendeSakService: EksisterendeSakService
 
     @MockBean
-    private val behandleSakConsumer: BehandleSakConsumer? = null
+    private lateinit var behandleSakConsumer: BehandleSakConsumer
 
     @MockBean
-    private val behandlendeEnhetConsumer: BehandlendeEnhetConsumer? = null
+    private lateinit var behandlendeEnhetConsumer: BehandlendeEnhetConsumer
 
     @MockBean
-    private val oppgavebehandlingConsumer: OppgavebehandlingConsumer? = null
+    private lateinit var oppgavebehandlingConsumer: OppgavebehandlingConsumer
 
     @MockBean
-    private val behandleInngaaendeJournalV1: BehandleInngaaendeJournalV1? = null
+    private lateinit var behandleInngaaendeJournalV1: BehandleInngaaendeJournalV1
 
     @MockBean
     private val metrikk: Metrikk? = null
 
     @Inject
-    private val inntektsmeldingConsumer: InntektsmeldingConsumer? = null
+    private lateinit var inntektsmeldingConsumer: InntektsmeldingConsumer
 
     @Inject
-    private val inntektsmeldingDAO: InntektsmeldingDAO? = null
+    private lateinit var inntektsmeldingDAO: InntektsmeldingDAO
 
     @Inject
-    private val jdbcTemplate: JdbcTemplate? = null
+    private lateinit var jdbcTemplate: JdbcTemplate
 
     private var saksIdteller = 0
 
     @Before
     fun setup() {
-        jdbcTemplate!!.update("DELETE FROM ARBEIDSGIVERPERIODE")
+        jdbcTemplate.update("DELETE FROM ARBEIDSGIVERPERIODE")
         jdbcTemplate.update("DELETE FROM INNTEKTSMELDING")
         saksIdteller = 0
 
         val inngaaendeJournal = inngaaendeJournal("arkivId")
 
-        `when`(behandleSakConsumer!!.opprettSak(ArgumentMatchers.anyString())).thenAnswer { invocation -> "saksId" + saksIdteller++ }
+        `when`(behandleSakConsumer.opprettSak(ArgumentMatchers.anyString())).thenAnswer { invocation -> "saksId" + saksIdteller++ }
 
-        `when`(inngaaendeJournalConsumer!!.hentDokumentId("arkivId")).thenReturn(inngaaendeJournal)
+        `when`(inngaaendeJournalConsumer.hentDokumentId("arkivId")).thenReturn(inngaaendeJournal)
 
         given(aktorConsumer.getAktorId(ArgumentMatchers.anyString())).willAnswer { "aktorId_for_" + it.getArgument(0) }
 
         given(eksisterendeSakService.finnEksisterendeSak(ArgumentMatchers.anyString(), any(), any())).willReturn(null)
 
-        `when`(behandlendeEnhetConsumer!!.hentBehandlendeEnhet(ArgumentMatchers.anyString())).thenReturn("enhet")
+        `when`(behandlendeEnhetConsumer.hentBehandlendeEnhet(ArgumentMatchers.anyString())).thenReturn("enhet")
         `when`(behandlendeEnhetConsumer.hentGeografiskTilknytning(ArgumentMatchers.anyString())).thenReturn(
             GeografiskTilknytningData(geografiskTilknytning = "tilknytning", diskresjonskode = "")
         )
@@ -125,10 +125,10 @@ class InntektsmeldingConsumerIntegrassjonsTest {
         HentDokumentDokumentIkkeFunnet::class
     )
     fun gjenbrukerSaksIdHvisViFarToOverlappendeInntektsmeldinger() {
-        `when`(inngaaendeJournalConsumer!!.hentDokumentId("arkivId1")).thenReturn(inngaaendeJournal("arkivId1"))
+        `when`(inngaaendeJournalConsumer.hentDokumentId("arkivId1")).thenReturn(inngaaendeJournal("arkivId1"))
         `when`(inngaaendeJournalConsumer.hentDokumentId("arkivId2")).thenReturn(inngaaendeJournal("arkivId2"))
 
-        `when`(journalV2!!.hentDokument(any())).thenReturn(
+        `when`(journalV2.hentDokument(any())).thenReturn(
             WSHentDokumentResponse().withDokument(
                 JournalConsumerTest.inntektsmeldingArbeidsgiver(
                     listOf(Periode(LocalDate.of(2019, 1, 1), LocalDate.of(2019, 1, 16)))
@@ -141,10 +141,10 @@ class InntektsmeldingConsumerIntegrassjonsTest {
             )
         )
 
-        inntektsmeldingConsumer!!.listen(opprettKoemelding("arkivId1"))
+        inntektsmeldingConsumer.listen(opprettKoemelding("arkivId1"))
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId2"))
 
-        val inntektsmeldingMetas = inntektsmeldingDAO!!.finnBehandledeInntektsmeldinger("aktorId_for_fnr")
+        val inntektsmeldingMetas = inntektsmeldingDAO.finnBehandledeInntektsmeldinger("aktorId_for_fnr")
         assertThat(inntektsmeldingMetas.size).isEqualTo(2)
         assertThat(inntektsmeldingMetas[0].sakId).isEqualTo(inntektsmeldingMetas[1].sakId)
 
@@ -158,10 +158,10 @@ class InntektsmeldingConsumerIntegrassjonsTest {
         HentDokumentDokumentIkkeFunnet::class
     )
     fun gjenbrukerIkkeSaksIdHvisViFarToInntektsmeldingerSomIkkeOverlapper() {
-        `when`(inngaaendeJournalConsumer!!.hentDokumentId("arkivId1")).thenReturn(inngaaendeJournal("arkivId1"))
+        `when`(inngaaendeJournalConsumer.hentDokumentId("arkivId1")).thenReturn(inngaaendeJournal("arkivId1"))
         `when`(inngaaendeJournalConsumer.hentDokumentId("arkivId2")).thenReturn(inngaaendeJournal("arkivId2"))
 
-        `when`(journalV2!!.hentDokument(any())).thenReturn(
+        `when`(journalV2.hentDokument(any())).thenReturn(
             WSHentDokumentResponse().withDokument(
                 JournalConsumerTest.inntektsmeldingArbeidsgiver(
                     listOf(Periode(LocalDate.of(2019, 1, 1), LocalDate.of(2019, 1, 16)))
@@ -174,10 +174,10 @@ class InntektsmeldingConsumerIntegrassjonsTest {
             )
         )
 
-        inntektsmeldingConsumer!!.listen(opprettKoemelding("arkivId1"))
+        inntektsmeldingConsumer.listen(opprettKoemelding("arkivId1"))
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId2"))
 
-        val inntektsmeldingMetas = inntektsmeldingDAO!!.finnBehandledeInntektsmeldinger("aktorId_for_fnr")
+        val inntektsmeldingMetas = inntektsmeldingDAO.finnBehandledeInntektsmeldinger("aktorId_for_fnr")
         assertThat(inntektsmeldingMetas.size).isEqualTo(2)
         assertThat(inntektsmeldingMetas[0].sakId).isNotEqualTo(inntektsmeldingMetas[1].sakId)
 
@@ -194,12 +194,12 @@ class InntektsmeldingConsumerIntegrassjonsTest {
         HentDokumentDokumentIkkeFunnet::class
     )
     fun brukerSaksIdFraSykeforloepOmViIkkeHarOverlappendeInntektsmelding() {
-        given(eksisterendeSakService.finnEksisterendeSak("aktorId_for_fnr", null, null)).willReturn(null, "syfosak")
+        given(eksisterendeSakService.finnEksisterendeSak(any(), any(), any())).willReturn(null, "syfosak")
 
-        `when`(inngaaendeJournalConsumer!!.hentDokumentId("arkivId1")).thenReturn(inngaaendeJournal("arkivId1"))
+        `when`(inngaaendeJournalConsumer.hentDokumentId("arkivId1")).thenReturn(inngaaendeJournal("arkivId1"))
         `when`(inngaaendeJournalConsumer.hentDokumentId("arkivId2")).thenReturn(inngaaendeJournal("arkivId2"))
 
-        `when`(journalV2!!.hentDokument(any())).thenReturn(
+        `when`(journalV2.hentDokument(any())).thenReturn(
             WSHentDokumentResponse().withDokument(
                 JournalConsumerTest.inntektsmeldingArbeidsgiver(
                     listOf(Periode(LocalDate.of(2019, 1, 1), LocalDate.of(2019, 1, 16)))
@@ -212,10 +212,10 @@ class InntektsmeldingConsumerIntegrassjonsTest {
             )
         )
 
-        inntektsmeldingConsumer!!.listen(opprettKoemelding("arkivId1"))
+        inntektsmeldingConsumer.listen(opprettKoemelding("arkivId1"))
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId2"))
 
-        val inntektsmeldingMetas = inntektsmeldingDAO!!.finnBehandledeInntektsmeldinger("aktorId_for_fnr")
+        val inntektsmeldingMetas = inntektsmeldingDAO.finnBehandledeInntektsmeldinger("aktorId_for_fnr")
         assertThat(inntektsmeldingMetas.size).isEqualTo(2)
         assertThat(inntektsmeldingMetas[0].sakId).isNotEqualTo(inntektsmeldingMetas[1].sakId)
 
@@ -232,13 +232,13 @@ class InntektsmeldingConsumerIntegrassjonsTest {
         HentDokumentDokumentIkkeFunnet::class
     )
     fun mottarInntektsmeldingUtenArbeidsgiverperioder() {
-        `when`(journalV2!!.hentDokument(any())).thenReturn(
+        `when`(journalV2.hentDokument(any())).thenReturn(
             WSHentDokumentResponse().withDokument(JournalConsumerTest.inntektsmeldingArbeidsgiver(emptyList<Periode>()).toByteArray())
         )
 
-        inntektsmeldingConsumer!!.listen(opprettKoemelding("arkivId"))
+        inntektsmeldingConsumer.listen(opprettKoemelding("arkivId"))
 
-        val inntektsmeldinger = inntektsmeldingDAO!!.finnBehandledeInntektsmeldinger("aktorId_for_fnr")
+        val inntektsmeldinger = inntektsmeldingDAO.finnBehandledeInntektsmeldinger("aktorId_for_fnr")
 
         assertThat(inntektsmeldinger[0].arbeidsgiverperioder.size).isEqualTo(0)
     }
@@ -250,7 +250,7 @@ class InntektsmeldingConsumerIntegrassjonsTest {
         HentDokumentDokumentIkkeFunnet::class
     )
     fun mottarInntektsmeldingMedFlerePerioder() {
-        `when`(journalV2!!.hentDokument(any())).thenReturn(
+        `when`(journalV2.hentDokument(any())).thenReturn(
             WSHentDokumentResponse().withDokument(
                 JournalConsumerTest.inntektsmeldingArbeidsgiver(
                     asList(
@@ -261,9 +261,9 @@ class InntektsmeldingConsumerIntegrassjonsTest {
             )
         )
 
-        inntektsmeldingConsumer!!.listen(opprettKoemelding("arkivId"))
+        inntektsmeldingConsumer.listen(opprettKoemelding("arkivId"))
 
-        val inntektsmeldinger = inntektsmeldingDAO!!.finnBehandledeInntektsmeldinger("aktorId_for_fnr")
+        val inntektsmeldinger = inntektsmeldingDAO.finnBehandledeInntektsmeldinger("aktorId_for_fnr")
 
         assertThat(inntektsmeldinger[0].arbeidsgiverperioder.size).isEqualTo(2)
         assertThat(inntektsmeldinger[0].arbeidsgiverperioder[0].fom).isEqualTo(LocalDate.of(2019, 1, 1))
@@ -279,13 +279,13 @@ class InntektsmeldingConsumerIntegrassjonsTest {
         HentDokumentDokumentIkkeFunnet::class
     )
     fun mottarInntektsmeldingMedPrivatArbeidsgiver() {
-        `when`(journalV2!!.hentDokument(any())).thenReturn(
+        `when`(journalV2.hentDokument(any())).thenReturn(
             WSHentDokumentResponse().withDokument(JournalConsumerTest.inntektsmeldingArbeidsgiverPrivat().toByteArray())
         )
 
-        inntektsmeldingConsumer!!.listen(opprettKoemelding("arkivId"))
+        inntektsmeldingConsumer.listen(opprettKoemelding("arkivId"))
 
-        val inntektsmeldinger = inntektsmeldingDAO!!.finnBehandledeInntektsmeldinger("aktorId_for_fnr")
+        val inntektsmeldinger = inntektsmeldingDAO.finnBehandledeInntektsmeldinger("aktorId_for_fnr")
 
         assertThat(inntektsmeldinger[0].arbeidsgiverPrivat).isEqualTo("arbeidsgiverPrivat")
         assertThat(inntektsmeldinger[0].orgnummer).isNull()
@@ -313,7 +313,7 @@ class InntektsmeldingConsumerIntegrassjonsTest {
     @Test
     @Throws(Exception::class)
     fun behandlerInntektsmeldingSomEnSakMedVedLikPeriode() {
-        `when`(journalV2!!.hentDokument(any())).thenReturn(
+        `when`(journalV2.hentDokument(any())).thenReturn(
             WSHentDokumentResponse().withDokument(
                 JournalConsumerTest.inntektsmeldingArbeidsgiver(
                     listOf(
@@ -366,7 +366,7 @@ class InntektsmeldingConsumerIntegrassjonsTest {
         repeat(numThreads) {
             Thread {
                 try {
-                    inntektsmeldingConsumer!!.listen(opprettKoemelding("arkivId"))
+                    inntektsmeldingConsumer.listen(opprettKoemelding("arkivId"))
                 } catch (e: MessageNotWriteableException) {
                     e.printStackTrace()
                 }
