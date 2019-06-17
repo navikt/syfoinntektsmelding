@@ -39,7 +39,7 @@ class SakConsumer(
 
         val result: ResponseEntity<SisteSakRespons>
         result =
-            restTemplate.exchange(uriBuilder.toUriString(), HttpMethod.GET, HttpEntity(null, headers), SisteSakRespons::class.java)
+            restTemplate.exchange(uriBuilder.toUriString(), HttpMethod.GET, HttpEntity<Any>(headers), SisteSakRespons::class.java)
 
         if (result.statusCode != HttpStatus.OK) {
             val message = "Kall mot syfonarmesteleder feiler med HTTP-" + result.statusCode

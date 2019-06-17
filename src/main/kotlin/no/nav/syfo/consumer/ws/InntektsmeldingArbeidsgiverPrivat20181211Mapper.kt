@@ -18,14 +18,12 @@ internal object InntektsmeldingArbeidsgiverPrivat20181211Mapper {
         val xmlInntektsmelding: XMLInntektsmelding
         val arbeidsforholdId = skjemainnhold.arbeidsforhold.value.arbeidsforholdId?.value
 
-        val perioder = Stream.of(skjemainnhold.sykepengerIArbeidsgiverperioden.value.arbeidsgiverperiodeListe)
-            .map { it.value }
-            .filter { it != null }
-            .map { it.arbeidsgiverperiode }
-            .flatMap { it.stream() }
-            .filter { xmlPeriode -> xmlPeriode.fom != null && xmlPeriode.tom != null }
-            .map { Periode(it.fom.value, it.tom.value) }
-            .collect(Collectors.toList())
+        val perioder = skjemainnhold.sykepengerIArbeidsgiverperioden.value.arbeidsgiverperiodeListe
+            .value
+            ?.arbeidsgiverperiode
+            ?.filter { xmlPeriode -> xmlPeriode.fom != null && xmlPeriode.tom != null }
+            ?.map { Periode(it.fom.value, it.tom.value) }
+            ?: emptyList()
 
         xmlInntektsmelding = XMLInntektsmelding(
             arbeidsforholdId,
