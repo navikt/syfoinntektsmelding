@@ -14,8 +14,7 @@ class EksisterendeSakService(
 
     fun finnEksisterendeSak(aktorId: String, fom:LocalDate?, tom:LocalDate?): String? {
         val maybeSakFraSyfogsak = sakConsumer.finnSisteSak(aktorId, fom, tom)
-
-        log.info("Sak fra service: {}, sak fra syfogsak: {}", maybeSakFraSyfogsak)
+            ?.also { log.info("Sak fra syfogsak: {}", it) }
 
         return maybeSakFraSyfogsak
     }
