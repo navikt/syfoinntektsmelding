@@ -142,6 +142,7 @@ class InntektsmeldingConsumerTest {
 
         verify<SaksbehandlingService>(saksbehandlingService, never()).behandleInntektsmelding(any(), anyString())
         verify(journalpostService, never()).ferdigstillJournalpost(any(), any())
+        verify(inntektsmeldingProducer!!, never()).sendBehandletInntektsmelding(any())
     }
 
     companion object {
