@@ -4,6 +4,7 @@ import any
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
 import no.nav.syfo.domain.Inntektsmelding
 import no.nav.syfo.domain.JournalStatus
+import no.nav.syfo.producer.InntektsmeldingProducer
 import no.nav.syfo.repository.InntektsmeldingDAO
 import no.nav.syfo.service.JournalpostService
 import no.nav.syfo.service.SaksbehandlingService
@@ -39,6 +40,9 @@ class InntektsmeldingConsumerTest {
     @Mock
     private val inntektsmeldingDAO: InntektsmeldingDAO? = null
 
+    @Mock
+    private val inntektsmeldingProducer: InntektsmeldingProducer? = null
+
     @InjectMocks
     private lateinit var inntektsmeldingConsumer: InntektsmeldingConsumer
 
@@ -70,6 +74,7 @@ class InntektsmeldingConsumerTest {
 
         verify(saksbehandlingService).behandleInntektsmelding(any(), anyString())
         verify(journalpostService).ferdigstillJournalpost(any(), any())
+        verify(inntektsmeldingProducer!!).sendBehandletInntektsmelding(any())
     }
 
     @Test
@@ -114,6 +119,7 @@ class InntektsmeldingConsumerTest {
 
         verify<SaksbehandlingService>(saksbehandlingService, never()).behandleInntektsmelding(any(), anyString())
         verify(journalpostService, never()).ferdigstillJournalpost(any(), any())
+        verify(inntektsmeldingProducer!!, never()).sendBehandletInntektsmelding(any())
     }
 
     companion object {

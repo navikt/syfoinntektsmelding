@@ -7,6 +7,7 @@ import no.nav.syfo.consumer.rest.aktor.AktorConsumer
 import no.nav.syfo.domain.Inntektsmelding
 import no.nav.syfo.domain.InntektsmeldingMeta
 import no.nav.syfo.domain.JournalStatus
+import no.nav.syfo.producer.InntektsmeldingProducer
 import no.nav.syfo.repository.InntektsmeldingDAO
 import no.nav.syfo.service.JournalpostService
 import no.nav.syfo.service.SaksbehandlingService
@@ -31,7 +32,8 @@ class InntektsmeldingConsumer(
     private val saksbehandlingService: SaksbehandlingService,
     private val metrikk: Metrikk,
     private val inntektsmeldingDAO: InntektsmeldingDAO,
-    private val aktorConsumer: AktorConsumer
+    private val aktorConsumer: AktorConsumer,
+    private val inntektsmeldingProducer: InntektsmeldingProducer
 ) {
     private val consumerLocks = Striped.lock(8)
     private val log = log()
@@ -67,6 +69,8 @@ class InntektsmeldingConsumer(
                     journalpostService.ferdigstillJournalpost(saksId, inntektsmelding)
 
                     lagreBehandling(inntektsmelding, aktorid, saksId)
+
+                    inntektsmeldingProducer.sendBehandletInntektsmelding(inntektsmelding)
 
                     log.info("Inntektsmelding {} er journalført", inntektsmelding.journalpostId)
                 } else {
