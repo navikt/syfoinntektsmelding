@@ -48,7 +48,7 @@
 
     <properties>
         <start-class>no.nav.syfo.Application</start-class>
-        <java.version>1.8</java.version>
+        <java.version>11</java.version>
         <javax.inject.version>1</javax.inject.version>
         <spring-boot.version>2.0.5.RELEASE</spring-boot.version>
         <ojdbc8.version>12.2.0.1</ojdbc8.version>
@@ -66,14 +66,25 @@
         <cxf.version>3.2.0</cxf.version>
         <inngaaendeJournal.version>1.3</inngaaendeJournal.version>
         <behandleInngaaendeJournal.version>1.1</behandleInngaaendeJournal.version>
-        <kotlin.version>1.3.0</kotlin.version>
+        <kotlin.version>1.3.41</kotlin.version>
         <jackson-module-kotlin.version>2.9.8</jackson-module-kotlin.version>
     </properties>
 
     <dependencies>
         <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.ws</groupId>
+            <artifactId>jaxws-ri</artifactId>
+            <version>2.3.2</version>
+            <type>pom</type>
+        </dependency>
+        <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-stdlib-jdk8</artifactId>
+            <artifactId>kotlin-stdlib</artifactId>
             <version>${kotlin.version}</version>
         </dependency>
         <dependency>
@@ -249,7 +260,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.16.20</version>
+            <version>1.18.8</version>
             <scope>provided</scope>
         </dependency>
 
