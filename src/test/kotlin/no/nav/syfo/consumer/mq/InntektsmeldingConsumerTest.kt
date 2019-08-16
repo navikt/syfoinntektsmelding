@@ -122,6 +122,28 @@ class InntektsmeldingConsumerTest {
         verify(inntektsmeldingProducer!!, never()).sendBehandletInntektsmelding(any())
     }
 
+    @Test
+    @Throws(MessageNotWriteableException::class)
+    fun behandlerIkkeInntektsmeldingMedStatusEndelig() {
+        `when`(journalpostService!!.hentInntektsmelding("arkivId")).thenReturn(
+            Inntektsmelding(
+                arbeidsforholdId = "123",
+                arsakTilInnsending = "",
+                arbeidsgiverperioder = emptyList(),
+                status = JournalStatus.ENDELIG,
+                journalpostId = "arkivId",
+                fnr = "fnr"
+            )
+        )
+
+        val message = ActiveMQTextMessage()
+        message.text = inputPayload
+        inntektsmeldingConsumer!!.listen(message)
+
+        verify<SaksbehandlingService>(saksbehandlingService, never()).behandleInntektsmelding(any(), anyString())
+        verify(journalpostService, never()).ferdigstillJournalpost(any(), any())
+    }
+
     companion object {
         private val inputPayload = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" +
                 "  <ns5:forsendelsesinformasjon xmlns:ns5=\"http://nav.no/melding/virksomhet/dokumentnotifikasjon/v1\" " +
