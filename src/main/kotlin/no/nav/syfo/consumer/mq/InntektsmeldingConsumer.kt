@@ -57,6 +57,8 @@ class InntektsmeldingConsumer(
                 consumerLock.lock()
                 val aktorid = aktorConsumer.getAktorId(inntektsmelding.fnr)
 
+                metrikk.tellJournalpoststatus(inntektsmelding.status);
+
                 if (JournalStatus.MIDLERTIDIG == inntektsmelding.status) {
                     metrikk.tellInntektsmeldingerMottatt(inntektsmelding)
 

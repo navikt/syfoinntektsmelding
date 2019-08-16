@@ -28,29 +28,29 @@ class InntektsmeldingConsumerTest {
     private val metrikk: Metrikk? = null
 
     @Mock
-    private val journalpostService: JournalpostService? = null
+    private lateinit var journalpostService: JournalpostService
 
     @Mock
-    private val saksbehandlingService: SaksbehandlingService? = null
+    private lateinit var saksbehandlingService: SaksbehandlingService
 
     @Mock
-    private val aktorConsumer: AktorConsumer? = null
+    private lateinit var aktorConsumer: AktorConsumer
 
     @Mock
     private val inntektsmeldingDAO: InntektsmeldingDAO? = null
 
     @InjectMocks
-    private val inntektsmeldingConsumer: InntektsmeldingConsumer? = null
+    private lateinit var inntektsmeldingConsumer: InntektsmeldingConsumer
 
     @Before
     fun setup() {
-        `when`(aktorConsumer!!.getAktorId(anyString())).thenReturn("aktor")
+        `when`(aktorConsumer.getAktorId(anyString())).thenReturn("aktor")
     }
 
     @Test
     @Throws(MessageNotWriteableException::class)
     fun behandlerInntektsmelding() {
-        `when`(journalpostService!!.hentInntektsmelding("arkivId")).thenReturn(
+        `when`(journalpostService.hentInntektsmelding("arkivId")).thenReturn(
             Inntektsmelding(
                 arbeidsforholdId = "",
                 status = JournalStatus.MIDLERTIDIG,
@@ -62,11 +62,11 @@ class InntektsmeldingConsumerTest {
                 arsakTilInnsending = ""
             )
         )
-        `when`(saksbehandlingService!!.behandleInntektsmelding(any(), anyString())).thenReturn("saksId")
+        `when`(saksbehandlingService.behandleInntektsmelding(any(), anyString())).thenReturn("saksId")
 
         val message = ActiveMQTextMessage()
         message.text = inputPayload
-        inntektsmeldingConsumer!!.listen(message)
+        inntektsmeldingConsumer.listen(message)
 
         verify(saksbehandlingService).behandleInntektsmelding(any(), anyString())
         verify(journalpostService).ferdigstillJournalpost(any(), any())
@@ -75,7 +75,7 @@ class InntektsmeldingConsumerTest {
     @Test
     @Throws(MessageNotWriteableException::class)
     fun behandlerIkkeInntektsmeldingMedStatusForskjelligFraMidlertidig() {
-        `when`(journalpostService!!.hentInntektsmelding("arkivId")).thenReturn(
+        `when`(journalpostService.hentInntektsmelding("arkivId")).thenReturn(
             Inntektsmelding(
                 arbeidsforholdId = "123",
                 arsakTilInnsending = "",
@@ -88,7 +88,29 @@ class InntektsmeldingConsumerTest {
 
         val message = ActiveMQTextMessage()
         message.text = inputPayload
-        inntektsmeldingConsumer!!.listen(message)
+        inntektsmeldingConsumer.listen(message)
+
+        verify<SaksbehandlingService>(saksbehandlingService, never()).behandleInntektsmelding(any(), anyString())
+        verify(journalpostService, never()).ferdigstillJournalpost(any(), any())
+    }
+
+    @Test
+    @Throws(MessageNotWriteableException::class)
+    fun behandlerIkkeInntektsmeldingMedStatusEndelig() {
+        `when`(journalpostService.hentInntektsmelding("arkivId")).thenReturn(
+            Inntektsmelding(
+                arbeidsforholdId = "123",
+                arsakTilInnsending = "",
+                arbeidsgiverperioder = emptyList(),
+                status = JournalStatus.ENDELIG,
+                journalpostId = "arkivId",
+                fnr = "fnr"
+            )
+        )
+
+        val message = ActiveMQTextMessage()
+        message.text = inputPayload
+        inntektsmeldingConsumer.listen(message)
 
         verify<SaksbehandlingService>(saksbehandlingService, never()).behandleInntektsmelding(any(), anyString())
         verify(journalpostService, never()).ferdigstillJournalpost(any(), any())
