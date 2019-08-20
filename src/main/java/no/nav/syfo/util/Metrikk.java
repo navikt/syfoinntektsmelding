@@ -70,6 +70,8 @@ public class Metrikk {
     }
 
     public void tellJournalpoststatus(JournalStatus status) {
-        registry.counter("syfoinntektsmelding_journalpost", Tags.of("type", "info", "status", status.name()));
+        registry
+                .counter("syfoinntektsmelding_journalpost", Tags.of("type", "info", "status", status.name()))
+                .increment();
     }
 }
