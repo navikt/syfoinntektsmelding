@@ -2,23 +2,12 @@ package no.nav.syfo.consumer.ws
 
 import log
 import no.nav.syfo.domain.InngaendeJournalpost
-import no.nav.tjeneste.virksomhet.behandle.inngaaende.journal.v1.BehandleInngaaendeJournalV1
-import no.nav.tjeneste.virksomhet.behandle.inngaaende.journal.v1.FerdigstillJournalfoeringFerdigstillingIkkeMulig
-import no.nav.tjeneste.virksomhet.behandle.inngaaende.journal.v1.FerdigstillJournalfoeringJournalpostIkkeInngaaende
-import no.nav.tjeneste.virksomhet.behandle.inngaaende.journal.v1.FerdigstillJournalfoeringObjektIkkeFunnet
-import no.nav.tjeneste.virksomhet.behandle.inngaaende.journal.v1.FerdigstillJournalfoeringSikkerhetsbegrensning
-import no.nav.tjeneste.virksomhet.behandle.inngaaende.journal.v1.FerdigstillJournalfoeringUgyldigInput
-import no.nav.tjeneste.virksomhet.behandle.inngaaende.journal.v1.OppdaterJournalpostJournalpostIkkeInngaaende
-import no.nav.tjeneste.virksomhet.behandle.inngaaende.journal.v1.OppdaterJournalpostObjektIkkeFunnet
-import no.nav.tjeneste.virksomhet.behandle.inngaaende.journal.v1.OppdaterJournalpostOppdateringIkkeMulig
-import no.nav.tjeneste.virksomhet.behandle.inngaaende.journal.v1.OppdaterJournalpostSikkerhetsbegrensning
-import no.nav.tjeneste.virksomhet.behandle.inngaaende.journal.v1.OppdaterJournalpostUgyldigInput
-import no.nav.tjeneste.virksomhet.behandle.inngaaende.journal.v1.WSArkivSak
-import no.nav.tjeneste.virksomhet.behandle.inngaaende.journal.v1.WSAvsender
-import no.nav.tjeneste.virksomhet.behandle.inngaaende.journal.v1.WSFerdigstillJournalfoeringRequest
-import no.nav.tjeneste.virksomhet.behandle.inngaaende.journal.v1.WSInngaaendeJournalpost
-import no.nav.tjeneste.virksomhet.behandle.inngaaende.journal.v1.WSOppdaterJournalpostRequest
-import no.nav.tjeneste.virksomhet.behandle.inngaaende.journal.v1.WSPerson
+import no.nav.tjeneste.virksomhet.behandleinngaaendejournal.v1.binding.*
+import no.nav.tjeneste.virksomhet.behandleinngaaendejournal.v1.informasjon.ArkivSak
+import no.nav.tjeneste.virksomhet.behandleinngaaendejournal.v1.informasjon.Avsender
+import no.nav.tjeneste.virksomhet.behandleinngaaendejournal.v1.informasjon.InngaaendeJournalpost
+import no.nav.tjeneste.virksomhet.behandleinngaaendejournal.v1.meldinger.FerdigstillJournalfoeringRequest
+import no.nav.tjeneste.virksomhet.behandleinngaaendejournal.v1.meldinger.OppdaterJournalpostRequest
 import org.springframework.stereotype.Component
 
 @Component
@@ -28,21 +17,29 @@ class BehandleInngaaendeJournalConsumer(private val behandleInngaaendeJournalV1:
 
     fun oppdaterJournalpost(inngaendeJournalpost: InngaendeJournalpost) {
         val journalpostId = inngaendeJournalpost.journalpostId
-        val avsender = inngaendeJournalpost.arbeidsgiverOrgnummer
+        val avsenderNr = inngaendeJournalpost.arbeidsgiverOrgnummer
             ?: inngaendeJournalpost.arbeidsgiverPrivat
             ?: throw RuntimeException("Mangler avsender")
 
-        val inngaaendeJournalpost = WSInngaaendeJournalpost()
-            .withJournalpostId(journalpostId)
-            .withBruker(WSPerson().withIdent(inngaendeJournalpost.fnr))
-            .withAvsender(WSAvsender().withAvsenderNavn("Arbeidsgiver").withAvsenderId(avsender))
-            .withArkivSak(WSArkivSak().withArkivSakId(inngaendeJournalpost.gsakId).withArkivSakSystem("FS22"))
+        val person = no.nav.tjeneste.virksomhet.behandleinngaaendejournal.v1.informasjon.Person()
+        person.ident = inngaendeJournalpost.fnr
 
+        val avsender = Avsender()
+        avsender.avsenderId = avsenderNr
+
+        val arkivSak = ArkivSak()
+        arkivSak.arkivSakId = "FS22"
+
+        val inn = InngaaendeJournalpost()
+        inn.journalpostId = journalpostId
+        inn.avsender = avsender
+        inn.bruker = person
+        inn.arkivSak = arkivSak
+
+        val request = OppdaterJournalpostRequest()
+        request.inngaaendeJournalpost = inn
         try {
-            behandleInngaaendeJournalV1.oppdaterJournalpost(
-                WSOppdaterJournalpostRequest()
-                    .withInngaaendeJournalpost(inngaaendeJournalpost)
-            )
+            behandleInngaaendeJournalV1.oppdaterJournalpost( request )
         } catch (e: OppdaterJournalpostUgyldigInput) {
             log.error("Feil ved oppdatering av journalpost: {} - Ugyldig input!", journalpostId, e)
             throw RuntimeException("Feil ved oppdatering av journalpost: $journalpostId - Ugyldig input!", e)
@@ -67,12 +64,13 @@ class BehandleInngaaendeJournalConsumer(private val behandleInngaaendeJournalV1:
 
     fun ferdigstillJournalpost(inngaendeJournalpost: InngaendeJournalpost) {
         val journalpostId = inngaendeJournalpost.journalpostId
+
+        val request = FerdigstillJournalfoeringRequest()
+        request.enhetId = inngaendeJournalpost.behandlendeEnhetId
+        request.journalpostId = journalpostId
+
         try {
-            behandleInngaaendeJournalV1.ferdigstillJournalfoering(
-                WSFerdigstillJournalfoeringRequest()
-                    .withEnhetId(inngaendeJournalpost.behandlendeEnhetId)
-                    .withJournalpostId(journalpostId)
-            )
+            behandleInngaaendeJournalV1.ferdigstillJournalfoering(request)
         } catch (e: FerdigstillJournalfoeringUgyldigInput) {
             log.error("Feil ved ferdigstilling av journalpost: {} - Ugyldig input!", journalpostId, e)
             throw RuntimeException("Feil ved ferdigstilling av journalpost: $journalpostId - Ugyldig innput!", e)
