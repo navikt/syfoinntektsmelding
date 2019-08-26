@@ -68,6 +68,7 @@
         <behandleInngaaendeJournal.version>1.1</behandleInngaaendeJournal.version>
         <kotlin.version>1.3.41</kotlin.version>
         <jackson-module-kotlin.version>2.9.8</jackson-module-kotlin.version>
+        <tjenestespesifikasjoner.version>1.2019.08.12-12.12-4258f3dded02</tjenestespesifikasjoner.version>
     </properties>
 
     <dependencies>
@@ -157,70 +158,122 @@
             <version>${flyway-core.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>no.nav.syfo.tjenester</groupId>
-            <artifactId>inngaaendeJournal-v1</artifactId>
-            <version>1.3</version>
-        </dependency>
+<!--        NAV : Start -->
 
+        <!--        <dependency>-->
+        <!--            <groupId>no.nav.syfo.tjenester</groupId>-->
+        <!--            <artifactId>inngaaendeJournal-v1</artifactId>-->
+        <!--            <version>1.3</version>-->
+        <!--        </dependency>-->
         <dependency>
-            <groupId>no.nav.syfo.tjenester</groupId>
-            <artifactId>behandleInngaaendeJournal-v1</artifactId>
-            <version>1.1</version>
+            <groupId>no.nav.tjenestespesifikasjoner</groupId>
+            <artifactId>nav-inngaaendeJournal-v1-tjenestespesifikasjon</artifactId>
+            <version>${tjenestespesifikasjoner.version}</version>
         </dependency>
-
+        <!--        <dependency>-->
+        <!--            <groupId>no.nav.syfo.tjenester</groupId>-->
+        <!--            <artifactId>behandleInngaaendeJournal-v1</artifactId>-->
+        <!--            <version>1.1</version>-->
+        <!--        </dependency>-->
         <dependency>
-            <groupId>no.nav.syfo.tjenester</groupId>
-            <artifactId>behandleSak-v1</artifactId>
-            <version>1.0.2</version>
+            <groupId>no.nav.tjenestespesifikasjoner</groupId>
+            <artifactId>nav-behandleInngaaendeJournal-v1-tjenestespesifikasjon</artifactId>
+            <version>${tjenestespesifikasjoner.version}</version>
         </dependency>
-
+        <!--        <dependency>-->
+        <!--            <groupId>no.nav.syfo.tjenester</groupId>-->
+        <!--            <artifactId>behandleSak-v1</artifactId>-->
+        <!--            <version>1.0.2</version>-->
+        <!--        </dependency>-->
         <dependency>
-            <groupId>no.nav.syfo.tjenester</groupId>
+            <groupId>no.nav.tjenestespesifikasjoner</groupId>
+            <artifactId>behandlesak-v2-tjenestespesifikasjon</artifactId>
+            <version>${tjenestespesifikasjoner.version}</version>
+        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>no.nav.syfo.tjenester</groupId>-->
+        <!--            <artifactId>oppgavebehandling-v3-tjenestespesifikasjon</artifactId>-->
+        <!--            <version>3.1.2</version>-->
+        <!--        </dependency>-->
+        <dependency>
+            <groupId>no.nav.tjenestespesifikasjoner</groupId>
             <artifactId>oppgavebehandling-v3-tjenestespesifikasjon</artifactId>
-            <version>3.1.2</version>
+            <version>${tjenestespesifikasjoner.version}</version>
         </dependency>
-
+        <!--        <dependency>-->
+        <!--            <groupId>no.nav.syfo.tjenester</groupId>-->
+        <!--            <artifactId>journal-v2</artifactId>-->
+        <!--            <version>1.0</version>-->
+        <!--        </dependency>-->
         <dependency>
-            <groupId>no.nav.syfo.tjenester</groupId>
-            <artifactId>journal-v2</artifactId>
-            <version>1.0</version>
+            <groupId>no.nav.tjenestespesifikasjoner</groupId>
+            <artifactId>nav-journal-v2-tjenestespesifikasjon</artifactId>
+            <version>${tjenestespesifikasjoner.version}</version>
         </dependency>
-
+        <!--        <dependency>-->
+        <!--            <groupId>no.nav.syfo.tjenester</groupId>-->
+        <!--            <artifactId>oppgave-v3-tjenestespesifikasjon</artifactId>-->
+        <!--            <version>3.0.1</version>-->
+        <!--        </dependency>-->
         <dependency>
-            <groupId>no.nav.syfo.tjenester</groupId>
+            <groupId>no.nav.tjenestespesifikasjoner</groupId>
             <artifactId>oppgave-v3-tjenestespesifikasjon</artifactId>
-            <version>3.0.1</version>
+            <version>${tjenestespesifikasjoner.version}</version>
         </dependency>
-
+        <!--        <dependency>-->
+        <!--            <groupId>no.nav.syfo.tjenester</groupId>-->
+        <!--            <artifactId>inntektsmelding</artifactId>-->
+        <!--            <version>1.1-20180924_V6</version>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>no.nav.syfo.tjenester</groupId>-->
+        <!--            <artifactId>inntektsmelding-v2</artifactId>-->
+        <!--            <version>1.0-20181211_V7</version>-->
+        <!--        </dependency>-->
         <dependency>
-            <groupId>no.nav.syfo.tjenester</groupId>
-            <artifactId>inntektsmelding</artifactId>
-            <version>1.1-20180924_V6</version>
+            <groupId>no.nav.tjenestespesifikasjoner</groupId>
+            <artifactId>nav-altinn-inntektsmelding</artifactId>
+            <version>${tjenestespesifikasjoner.version}</version>
         </dependency>
-
+        <!--        <dependency>-->
+        <!--            <groupId>no.nav.syfo.tjenester</groupId>-->
+        <!--            <artifactId>dokumentnotifikasjon-v1</artifactId>-->
+        <!--            <version>1.0</version>-->
+        <!--        </dependency>-->
         <dependency>
-            <groupId>no.nav.syfo.tjenester</groupId>
-            <artifactId>inntektsmelding-v2</artifactId>
-            <version>1.0-20181211_V7</version>
+            <groupId>no.nav.meldinger.virksomhet</groupId>
+            <artifactId>nav-virksomhet-dokumentnotifikasjon-v1-meldingsdefinisjon</artifactId>
+            <version>1.2019.01.08-09.21</version>
         </dependency>
-
+        <!--        <dependency>-->
+        <!--            <groupId>no.nav.syfo.tjenester</groupId>-->
+        <!--            <artifactId>arbeidsfordeling-v1-tjenestespesifikasjon</artifactId>-->
+        <!--            <version>1.0.0</version>-->
+        <!--        </dependency>-->
         <dependency>
-            <groupId>no.nav.tjenester</groupId>
-            <artifactId>nav-person-v3-tjenestespesifikasjon</artifactId>
-            <version>3.2.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>no.nav.syfo.tjenester</groupId>
+            <groupId>no.nav.tjenestespesifikasjoner</groupId>
             <artifactId>arbeidsfordeling-v1-tjenestespesifikasjon</artifactId>
-            <version>1.0.0</version>
+            <version>${tjenestespesifikasjoner.version}</version>
         </dependency>
-
+        <!--        <dependency>-->
+        <!--            <groupId>no.nav.syfo.tjenester</groupId>-->
+        <!--            <artifactId>aktoer-v2</artifactId>-->
+        <!--            <version>1.0</version>-->
+        <!--        </dependency>-->
         <dependency>
-            <groupId>no.nav.syfo.tjenester</groupId>
-            <artifactId>aktoer-v2</artifactId>
-            <version>1.0</version>
+            <groupId>no.nav.tjenestespesifikasjoner</groupId>
+            <artifactId>dial-nav-tjeneste-aktoer_v2</artifactId>
+            <version>${tjenestespesifikasjoner.version}</version>
+        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>no.nav.tjenester</groupId>-->
+        <!--            <artifactId>nav-person-v3-tjenestespesifikasjon</artifactId>-->
+        <!--            <version>3.2.0</version>-->
+        <!--        </dependency>-->
+        <dependency>
+            <groupId>no.nav.tjenestespesifikasjoner</groupId>
+            <artifactId>person-v3-tjenestespesifikasjon</artifactId>
+            <version>${tjenestespesifikasjoner.version}</version>
         </dependency>
 
         <dependency>
@@ -249,12 +302,6 @@
             <artifactId>logstash-logback-encoder</artifactId>
             <version>${logstash-logback-encoder.version}</version>
             <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>no.nav.syfo.tjenester</groupId>
-            <artifactId>dokumentnotifikasjon-v1</artifactId>
-            <version>1.0</version>
         </dependency>
 
         <dependency>

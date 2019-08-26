@@ -2,44 +2,38 @@ package no.nav.syfo.consumer.ws
 
 import log
 import no.nav.syfo.util.Metrikk
-import no.nav.tjeneste.virksomhet.behandlesak.v1.BehandleSakV1
-import no.nav.tjeneste.virksomhet.behandlesak.v1.OpprettSakSakEksistererAllerede
-import no.nav.tjeneste.virksomhet.behandlesak.v1.OpprettSakUgyldigInput
-import no.nav.tjeneste.virksomhet.behandlesak.v1.informasjon.*
-import no.nav.tjeneste.virksomhet.behandlesak.v1.meldinger.WSOpprettSakRequest
+import no.nav.tjeneste.virksomhet.behandlesak.v2.*
 import org.springframework.stereotype.Component
 
 import javax.inject.Inject
 
 @Component
 class BehandleSakConsumer @Inject
-constructor(private val behandleSakV1: BehandleSakV1, private val metrikk: Metrikk) {
+constructor(private val behandleSakV2: BehandleSakV2, private val metrikk: Metrikk) {
 
     var log = log()
 
     fun opprettSak(fnr: String): String {
         try {
-            val sakId = behandleSakV1.opprettSak(
-                WSOpprettSakRequest()
-                    .withSak(
-                        WSSak()
-                            .withSakstype(WSSakstyper().withValue("GEN"))
-                            .withFagomraade(WSFagomraader().withValue("SYK"))
-                            .withFagsystem(WSFagsystemer().withValue("FS22"))
-                            .withGjelderBrukerListe(WSPerson().withIdent(fnr))
+            val aktoer = WSAktor().withIdent(fnr)
+            val sakId = behandleSakV2.opprettSak(
+                    WSOpprettSakRequest().withSak(
+                            WSSak()
+                                    .withSaktype("GEN")
+                                    .withFagomrade("SYK")
+                                    .withFagsystem("FS22")
+                                    .withGjelderBrukerListe(aktoer)
                     )
             ).sakId
-
             log.info("Opprettet ny sak")
             metrikk.tellInntektsmeldingNySak()
             return sakId
-        } catch (e: OpprettSakSakEksistererAllerede) {
+        } catch (e: WSSakEksistererAlleredeException) {
             log.error("Sak finnes allerede", e)
             throw RuntimeException("Sak finnes allerede", e)
-        } catch (e: OpprettSakUgyldigInput) {
+        } catch (e: WSUgyldigInputException) {
             log.error("Ugyldig input", e)
             throw RuntimeException("Ugyldid input i sak", e)
         }
-
     }
 }
