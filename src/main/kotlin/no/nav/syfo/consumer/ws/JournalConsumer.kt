@@ -4,7 +4,11 @@ import log
 import no.nav.syfo.domain.InngaaendeJournal
 import no.nav.syfo.domain.Inntektsmelding
 import no.nav.syfo.util.JAXB
-import no.nav.tjeneste.virksomhet.journal.v2.*
+import no.nav.tjeneste.virksomhet.journal.v2.binding.HentDokumentDokumentIkkeFunnet
+import no.nav.tjeneste.virksomhet.journal.v2.binding.HentDokumentSikkerhetsbegrensning
+import no.nav.tjeneste.virksomhet.journal.v2.binding.JournalV2
+import no.nav.tjeneste.virksomhet.journal.v2.informasjon.Variantformater
+import no.nav.tjeneste.virksomhet.journal.v2.meldinger.HentDokumentRequest
 import org.springframework.stereotype.Component
 
 import javax.xml.bind.JAXBElement
@@ -15,10 +19,14 @@ class JournalConsumer(private val journalV2: JournalV2) {
     var log = log()
 
     fun hentInntektsmelding(journalpostId: String, inngaaendeJournal: InngaaendeJournal): Inntektsmelding {
-        val request = WSHentDokumentRequest()
-            .withJournalpostId(journalpostId)
-            .withDokumentId(inngaaendeJournal.dokumentId)
-            .withVariantformat(WSVariantformater().withValue("ORIGINAL"))
+
+        val format = Variantformater()
+        format.value = "ORIGINAL"
+
+        val request = HentDokumentRequest()
+        request.journalpostId = journalpostId
+        request.dokumentId = inngaaendeJournal.dokumentId
+        request.variantformat = format
 
         try {
             val inntektsmeldingRAW = journalV2.hentDokument(request).dokument
