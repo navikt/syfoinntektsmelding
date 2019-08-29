@@ -63,7 +63,7 @@
         <assertj-core.version>3.11.1</assertj-core.version>
         <h2.version>1.4.196</h2.version>
         <flyway-core.version>5.0.7</flyway-core.version>
-        <cxf.version>3.2.0</cxf.version>
+        <cxf.version>3.3.3</cxf.version>
         <inngaaendeJournal.version>1.3</inngaaendeJournal.version>
         <behandleInngaaendeJournal.version>1.1</behandleInngaaendeJournal.version>
         <kotlin.version>1.3.0</kotlin.version>
