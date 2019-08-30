@@ -74,4 +74,9 @@ public class Metrikk {
                 .counter("syfoinntektsmelding_journalpost", Tags.of("type", "info", "status", status.name()))
                 .increment();
     }
+
+    public void tellInntektsmeldingSendt() {
+        registry
+                .counter("syfoinntektsmelding_inntektsmelding_sendt").increment();
+    }
 }

@@ -7,19 +7,17 @@ import no.nav.syfo.consumer.rest.aktor.AktorConsumer
 import no.nav.syfo.domain.Inntektsmelding
 import no.nav.syfo.domain.InntektsmeldingMeta
 import no.nav.syfo.domain.JournalStatus
-import no.nav.syfo.producer.InntektsmeldingProducer
+import no.nav.syfo.mapping.mapInntektsmelding
 import no.nav.syfo.repository.InntektsmeldingDAO
 import no.nav.syfo.service.JournalpostService
 import no.nav.syfo.service.SaksbehandlingService
 import no.nav.syfo.util.JAXB
-import no.nav.syfo.util.MDCOperations.MDC_CALL_ID
-import no.nav.syfo.util.MDCOperations.generateCallId
-import no.nav.syfo.util.MDCOperations.putToMDC
-import no.nav.syfo.util.MDCOperations.remove
+import no.nav.syfo.util.MDCOperations.*
 import no.nav.syfo.util.Metrikk
 import org.springframework.jms.annotation.JmsListener
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
+import producer.InntektsmeldingProducer
 import java.time.LocalDateTime
 import java.util.Optional.ofNullable
 import javax.jms.JMSException
@@ -70,7 +68,7 @@ class InntektsmeldingConsumer(
 
                     lagreBehandling(inntektsmelding, aktorid, saksId)
 
-                    inntektsmeldingProducer.sendBehandletInntektsmelding(inntektsmelding)
+                    inntektsmeldingProducer.sendBehandletInntektsmelding(mapInntektsmelding(inntektsmelding, aktorid))
 
                     log.info("Inntektsmelding {} er journalført", inntektsmelding.journalpostId)
                 } else {

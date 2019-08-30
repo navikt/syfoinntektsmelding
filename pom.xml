@@ -31,6 +31,11 @@
             <name>NAV Internal Repository</name>
             <url>https://repo.adeo.no/repository/maven-releases/</url>
         </repository>
+        <repository>
+            <id>central</id>
+            <name>Maven central</name>
+            <url>http://repo1.maven.org/maven2/</url>
+        </repository>
     </repositories>
 
     <distributionManagement>
@@ -443,6 +448,13 @@
             <artifactId>h2</artifactId>
             <version>${h2.version}</version>
             <scope>test</scope>
+        </dependency>
+
+
+        <dependency>
+            <groupId>no.nav.sykepenger.kontrakter</groupId>
+            <artifactId>inntektsmelding-kontrakt</artifactId>
+            <version>2019.08.30-12-25-34f0b</version>
         </dependency>
 
     </dependencies>
