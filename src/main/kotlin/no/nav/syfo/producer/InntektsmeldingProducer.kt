@@ -1,4 +1,4 @@
-package producer
+package no.nav.syfo.producer
 
 import no.nav.inntektsmelding.kontrakt.serde.JacksonJsonConfig
 import no.nav.inntektsmeldingkontrakt.Inntektsmelding

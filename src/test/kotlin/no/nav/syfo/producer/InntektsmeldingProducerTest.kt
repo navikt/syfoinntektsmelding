@@ -1,4 +1,4 @@
-package producer
+package no.nav.syfo.producer
 
 import junit.framework.Assert.assertEquals
 import no.nav.syfo.mapping.mapInntektsmelding

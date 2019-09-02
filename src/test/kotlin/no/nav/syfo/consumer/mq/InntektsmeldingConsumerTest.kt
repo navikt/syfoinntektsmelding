@@ -4,6 +4,7 @@ import any
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
 import no.nav.syfo.domain.Inntektsmelding
 import no.nav.syfo.domain.JournalStatus
+import no.nav.syfo.producer.InntektsmeldingProducer
 import no.nav.syfo.repository.InntektsmeldingDAO
 import no.nav.syfo.service.JournalpostService
 import no.nav.syfo.service.SaksbehandlingService
@@ -17,7 +18,6 @@ import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Mockito.*
 import org.mockito.junit.MockitoJUnitRunner
-import producer.InntektsmeldingProducer
 import javax.jms.MessageNotWriteableException
 
 @RunWith(MockitoJUnitRunner::class)

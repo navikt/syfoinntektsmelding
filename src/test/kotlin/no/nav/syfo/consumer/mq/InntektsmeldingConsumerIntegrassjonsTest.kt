@@ -3,24 +3,17 @@ package no.nav.syfo.consumer.mq
 import any
 import no.nav.syfo.LocalApplication
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
-import no.nav.syfo.consumer.ws.BehandleSakConsumer
-import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
-import no.nav.syfo.consumer.ws.InngaaendeJournalConsumer
-import no.nav.syfo.consumer.ws.JournalConsumerTest
-import no.nav.syfo.consumer.ws.OppgavebehandlingConsumer
+import no.nav.syfo.consumer.ws.*
 import no.nav.syfo.domain.GeografiskTilknytningData
 import no.nav.syfo.domain.InngaaendeJournal
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
+import no.nav.syfo.producer.InntektsmeldingProducer
 import no.nav.syfo.repository.InntektsmeldingDAO
 import no.nav.syfo.service.EksisterendeSakService
 import no.nav.syfo.util.Metrikk
 import no.nav.tjeneste.virksomhet.behandle.inngaaende.journal.v1.BehandleInngaaendeJournalV1
-import no.nav.tjeneste.virksomhet.journal.v2.HentDokumentDokumentIkkeFunnet
-import no.nav.tjeneste.virksomhet.journal.v2.HentDokumentSikkerhetsbegrensning
-import no.nav.tjeneste.virksomhet.journal.v2.JournalV2
-import no.nav.tjeneste.virksomhet.journal.v2.WSHentDokumentRequest
-import no.nav.tjeneste.virksomhet.journal.v2.WSHentDokumentResponse
+import no.nav.tjeneste.virksomhet.journal.v2.*
 import org.apache.activemq.command.ActiveMQTextMessage
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
@@ -28,9 +21,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers
 import org.mockito.BDDMockito.given
-import org.mockito.Mockito.`when`
-import org.mockito.Mockito.times
-import org.mockito.Mockito.verify
+import org.mockito.Mockito.*
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.jdbc.core.JdbcTemplate
@@ -80,6 +71,9 @@ class InntektsmeldingConsumerIntegrassjonsTest {
 
     @Inject
     private lateinit var inntektsmeldingConsumer: InntektsmeldingConsumer
+
+    @MockBean
+    private lateinit var inntektsmeldingProducer: InntektsmeldingProducer
 
     @Inject
     private lateinit var inntektsmeldingDAO: InntektsmeldingDAO
