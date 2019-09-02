@@ -13,8 +13,7 @@ import org.springframework.stereotype.Component
 import java.util.*
 
 @Component
-class InntektsmeldingProducer(@Value("\${inntektsmelding.behandlet.topic}") private val inntektsmeldingTopic: String,
-                              @Value("\${spring.kafka.bootstrap-servers}") private val bootstrapServers: String,
+class InntektsmeldingProducer(@Value("\${spring.kafka.bootstrap-servers}") private val bootstrapServers: String,
                               @Value("\${srvappserver.username}") private val username: String,
                               @Value("\${srvappserver.password}") private val password: String,
                               private val metrikk: Metrikk) {
@@ -35,6 +34,8 @@ class InntektsmeldingProducer(@Value("\${inntektsmelding.behandlet.topic}") priv
         put("sasl.jaas.config", jaasCfg)
     }
 
+
+    private val inntektsmeldingTopic = "privat-sykepenger-inntektsmelding"
     private val objectMapper = JacksonJsonConfig.objectMapperFactory.opprettObjectMapper()
 
     private val kafkaproducer = KafkaProducer<String, String>(producerProperties)
