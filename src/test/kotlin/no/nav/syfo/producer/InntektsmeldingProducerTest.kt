@@ -11,7 +11,7 @@ class InntektsmeldingProducerTest {
 
 
     val kontraktInntektsmelding = mapInntektsmelding(grunnleggendeInntektsmelding, "0000")
-    val producer = InntektsmeldingProducer("test.topic",
+    val producer = InntektsmeldingProducer(
             "localhost:9092",
             "user",
             "pass",
