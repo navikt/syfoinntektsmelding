@@ -1,7 +1,5 @@
 package no.nav.syfo.util;
 
-import no.nav.melding.virksomhet.dokumentnotifikasjon.v1.ObjectFactory;
-
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -21,7 +19,8 @@ public final class JAXB {
     static {
         try {
             FORSENDELSESINFORMASJON = newInstance(
-                    ObjectFactory.class
+                    no.seres.xsd.nav.inntektsmelding_m._20180924.ObjectFactory.class,
+                    no.seres.xsd.nav.inntektsmelding_m._20181211.ObjectFactory.class
             );
             INNTEKTSMELDING = newInstance(
                     no.seres.xsd.nav.inntektsmelding_m._20180924.ObjectFactory.class,

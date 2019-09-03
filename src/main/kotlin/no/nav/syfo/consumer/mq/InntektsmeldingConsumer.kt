@@ -2,7 +2,7 @@ package no.nav.syfo.consumer.mq
 
 import com.google.common.util.concurrent.Striped
 import log
-import no.nav.melding.virksomhet.dokumentnotifikasjon.v1.XMLForsendelsesinformasjon
+import no.nav.melding.virksomhet.dokumentforsendelse.v1.Forsendelsesinformasjon
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
 import no.nav.syfo.domain.Inntektsmelding
 import no.nav.syfo.domain.InntektsmeldingMeta
@@ -47,12 +47,10 @@ class InntektsmeldingConsumer(
             val textMessage = message as TextMessage
             putToMDC(MDC_CALL_ID, ofNullable(textMessage.getStringProperty("callId")).orElse(generateCallId()))
             val xmlForsendelsesinformasjon =
-                JAXB.unmarshalForsendelsesinformasjon<JAXBElement<XMLForsendelsesinformasjon>>(textMessage.text)
+                JAXB.unmarshalForsendelsesinformasjon<JAXBElement<Forsendelsesinformasjon>>(textMessage.text)
             val info = xmlForsendelsesinformasjon.value
-
-            val inntektsmelding = journalpostService.hentInntektsmelding(info.arkivId)
+            val inntektsmelding = journalpostService.hentInntektsmelding(info.arkivSak.arkivSakId)
             val consumerLock = consumerLocks.get(inntektsmelding.fnr)
-
             try {
                 consumerLock.lock()
                 val aktorid = aktorConsumer.getAktorId(inntektsmelding.fnr)
