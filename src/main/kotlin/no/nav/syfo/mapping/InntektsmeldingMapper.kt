@@ -1,20 +1,20 @@
 package no.nav.syfo.mapping
 
 import no.nav.inntektsmeldingkontrakt.*
-import no.nav.syfo.domain.Inntektsmelding
+import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 
 fun mapInntektsmelding(inntektsmelding: Inntektsmelding, arbeidstakerAktørId: String): no.nav.inntektsmeldingkontrakt.Inntektsmelding {
     return Inntektsmelding(
-            inntektsmeldingId = "", //TODO
+            inntektsmeldingId = "", //TODO Arkivreferanse når vi har en enkel måte å få tak i den på
             arbeidstakerFnr = inntektsmelding.fnr,
             arbeidstakerAktorId = arbeidstakerAktørId,
             virksomhetsnummer = inntektsmelding.arbeidsgiverOrgnummer,
-            arbeidsgiverFnr = inntektsmelding.arbeidsgiverPrivat,
-            arbeidsgiverAktorId = "", //TODO
+            arbeidsgiverFnr = inntektsmelding.arbeidsgiverPrivatFnr,
+            arbeidsgiverAktorId = inntektsmelding.arbeidsgiverPrivatAktørId,
             arbeidsgivertype = mapArbeidsgivertype(inntektsmelding),
             arbeidsforholdId = inntektsmelding.arbeidsforholdId,
             arbeidsgiverperioder = mapArbeidsgiverperioder(inntektsmelding),
-            beregnetInntekt = null, //TODO
+            beregnetInntekt = inntektsmelding.beregnetInntekt,
             refusjon = mapRefusjon(inntektsmelding),
             endringIRefusjoner = mapEndringIRefusjon(inntektsmelding),
             opphoerAvNaturalytelser = mapOpphørAvNaturalytelser(inntektsmelding),
@@ -29,8 +29,8 @@ fun mapArbeidsgiverperioder(inntektsmelding: Inntektsmelding): List<Periode> {
 }
 
 fun mapArbeidsgivertype(inntektsmelding: Inntektsmelding): Arbeidsgivertype {
-    check(!(inntektsmelding.arbeidsgiverOrgnummer.isNullOrEmpty() && inntektsmelding.arbeidsgiverPrivat.isNullOrEmpty())) { "Inntektsmelding har hverken orgnummer eller fødselsnummer for arbeidsgiver" }
-    check(!(!inntektsmelding.arbeidsgiverOrgnummer.isNullOrEmpty() && !inntektsmelding.arbeidsgiverPrivat.isNullOrEmpty())) { "Inntektsmelding har både orgnummer og fødselsnummer for arbeidsgiver" }
+    check(!(inntektsmelding.arbeidsgiverOrgnummer.isNullOrEmpty() && inntektsmelding.arbeidsgiverPrivatFnr.isNullOrEmpty())) { "Inntektsmelding har hverken orgnummer eller fødselsnummer for arbeidsgiver" }
+    check(!(!inntektsmelding.arbeidsgiverOrgnummer.isNullOrEmpty() && !inntektsmelding.arbeidsgiverPrivatFnr.isNullOrEmpty())) { "Inntektsmelding har både orgnummer og fødselsnummer for arbeidsgiver" }
     if (inntektsmelding.arbeidsgiverOrgnummer.isNullOrEmpty()) {
         return Arbeidsgivertype.PRIVAT
     }
@@ -42,17 +42,24 @@ fun mapStatus(inntektsmelding: Inntektsmelding): Status {
 }
 
 fun mapGjenopptakelseAvNaturalytelser(inntektsmelding: Inntektsmelding): List<GjenopptakelseNaturalytelse> {
-    return emptyList() //TODO
+    return inntektsmelding.gjenopptakelserNaturalYtelse.map { go -> GjenopptakelseNaturalytelse(mapNaturalytelseType(go.naturalytelse), go.fom, go.beloepPrMnd) }
 }
 
 fun mapOpphørAvNaturalytelser(inntektsmelding: Inntektsmelding): List<OpphoerAvNaturalytelse> {
-    return emptyList() //TODO
+    return inntektsmelding.opphørAvNaturalYtelse.map { on -> OpphoerAvNaturalytelse(mapNaturalytelseType(on.naturalytelse), on.fom, on.beloepPrMnd) }
 }
 
 fun mapEndringIRefusjon(inntektsmelding: Inntektsmelding): List<EndringIRefusjon> {
-    return emptyList() //TODO
+    return inntektsmelding.endringerIRefusjon.map { er -> EndringIRefusjon(er.endringsdato, er.beloep) }
 }
 
 fun mapRefusjon(inntektsmelding: Inntektsmelding): Refusjon {
-    return Refusjon() //TODO
+    return Refusjon(inntektsmelding.refusjon.beloepPrMnd, inntektsmelding.refusjon.opphoersdato)
+}
+
+fun mapNaturalytelseType(naturalytelseType: no.nav.syfo.domain.inntektsmelding.Naturalytelse?): Naturalytelse {
+    return naturalytelseType?.let { n ->
+        if (Naturalytelse.values().map { it.name }.contains(n.name)) Naturalytelse.valueOf(n.name) else Naturalytelse.annet
+    }
+            ?: Naturalytelse.annet
 }

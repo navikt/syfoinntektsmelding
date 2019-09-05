@@ -4,9 +4,9 @@ import com.google.common.util.concurrent.Striped
 import log
 import no.nav.melding.virksomhet.dokumentnotifikasjon.v1.XMLForsendelsesinformasjon
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
-import no.nav.syfo.domain.Inntektsmelding
 import no.nav.syfo.domain.InntektsmeldingMeta
 import no.nav.syfo.domain.JournalStatus
+import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.mapping.mapInntektsmelding
 import no.nav.syfo.producer.InntektsmeldingProducer
 import no.nav.syfo.repository.InntektsmeldingDAO
@@ -57,9 +57,9 @@ class InntektsmeldingConsumer(
                 consumerLock.lock()
                 val aktorid = aktorConsumer.getAktorId(inntektsmelding.fnr)
 
-                metrikk.tellJournalpoststatus(inntektsmelding.status);
+                metrikk.tellJournalpoststatus(inntektsmelding.journalStatus);
 
-                if (JournalStatus.MIDLERTIDIG == inntektsmelding.status) {
+                if (JournalStatus.MIDLERTIDIG == inntektsmelding.journalStatus) {
                     metrikk.tellInntektsmeldingerMottatt(inntektsmelding)
 
                     val saksId = saksbehandlingService.behandleInntektsmelding(inntektsmelding, aktorid)
@@ -75,7 +75,7 @@ class InntektsmeldingConsumer(
                     log.info(
                         "Behandler ikke inntektsmelding {} da den har status: {}",
                         inntektsmelding.journalpostId,
-                        inntektsmelding.status
+                            inntektsmelding.journalStatus
                     )
                 }
             } finally {
@@ -98,7 +98,7 @@ class InntektsmeldingConsumer(
         inntektsmeldingDAO.opprett(
             InntektsmeldingMeta(
                 orgnummer = inntektsmelding.arbeidsgiverOrgnummer,
-                arbeidsgiverPrivat = inntektsmelding.arbeidsgiverPrivat,
+                    arbeidsgiverPrivat = inntektsmelding.arbeidsgiverPrivatFnr,
                 arbeidsgiverperioder = inntektsmelding.arbeidsgiverperioder,
                 aktorId = aktorid,
                 sakId = saksId,

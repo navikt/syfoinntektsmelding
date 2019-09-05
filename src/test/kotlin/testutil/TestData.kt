@@ -1,8 +1,8 @@
 package testutil
 
-import no.nav.syfo.domain.Inntektsmelding
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
+import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import java.time.LocalDate
 
 
@@ -15,6 +15,6 @@ val grunnleggendeInntektsmelding = Inntektsmelding(
         arbeidsgiverOrgnummer = "1234",
         journalpostId = "123",
         arsakTilInnsending = "TEST",
-        status = JournalStatus.ENDELIG,
+        journalStatus = JournalStatus.ENDELIG,
         arbeidsgiverperioder = listOf(Periode(FØRSTE_JANUAR, FØRSTE_FEBRUAR))
 )

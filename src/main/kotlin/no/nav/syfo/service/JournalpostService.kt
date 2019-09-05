@@ -5,13 +5,10 @@ import no.nav.syfo.consumer.ws.BehandleInngaaendeJournalConsumer
 import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
 import no.nav.syfo.consumer.ws.InngaaendeJournalConsumer
 import no.nav.syfo.consumer.ws.JournalConsumer
-import no.nav.syfo.domain.InngaaendeJournal
 import no.nav.syfo.domain.InngaendeJournalpost
-import no.nav.syfo.domain.Inntektsmelding
+import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.util.Metrikk
 import org.springframework.stereotype.Component
-
-import java.util.Optional
 
 @Component
 @Slf4j
@@ -46,7 +43,7 @@ class JournalpostService(
             dokumentId = inngaaendeJournal.dokumentId,
             behandlendeEnhetId = behandlendeEnhet,
             arbeidsgiverOrgnummer = inntektsmelding.arbeidsgiverOrgnummer,
-            arbeidsgiverPrivat = inntektsmelding.arbeidsgiverPrivat
+                arbeidsgiverPrivat = inntektsmelding.arbeidsgiverPrivatFnr
         )
     }
 }

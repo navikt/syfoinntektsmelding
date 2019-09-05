@@ -1,27 +1,24 @@
 package no.nav.syfo.consumer.ws
 
+import no.nav.syfo.consumer.rest.aktor.AktorConsumer
 import no.nav.syfo.domain.InngaaendeJournal
-import no.nav.syfo.domain.Inntektsmelding
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
+import no.nav.syfo.util.JAXBTest.getInntektsmelding
 import no.nav.tjeneste.virksomhet.journal.v2.*
+import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
+import org.mockito.ArgumentMatchers.any
 import org.mockito.InjectMocks
 import org.mockito.Mock
+import org.mockito.Mockito.`when`
+import org.mockito.Mockito.verify
 import org.mockito.junit.MockitoJUnitRunner
-
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.Collections
-
 import java.util.Arrays.asList
-import no.nav.syfo.util.JAXBTest.getInntektsmelding
-import org.assertj.core.api.AssertionsForClassTypes.assertThat
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.verify
-import org.mockito.Mockito.`when`
 import java.util.function.BinaryOperator
 
 
@@ -30,6 +27,9 @@ class JournalConsumerTest {
 
     @Mock
     private val journal: JournalV2? = null
+
+    @Mock
+    private val aktør: AktorConsumer? = null
 
     @InjectMocks
     private val journalConsumer: JournalConsumer? = null
@@ -61,7 +61,7 @@ class JournalConsumerTest {
             )
         )
 
-        val (_, _, _, _, _, _, _, arbeidsgiverperioder) = journalConsumer!!.hentInntektsmelding(
+        val (_, _, _, _, _, _, _, _, arbeidsgiverperioder) = journalConsumer!!.hentInntektsmelding(
             "jounralpostID",
             InngaaendeJournal(dokumentId = "", status = JournalStatus.ANNET)
         )
@@ -78,7 +78,7 @@ class JournalConsumerTest {
             )
         )
 
-        val (_, _, arbeidsgiverPrivat, _, _, _, _, arbeidsgiverperioder) = journalConsumer!!.hentInntektsmelding(
+        val (_, _, arbeidsgiverPrivat, _, _, _, _, _, arbeidsgiverperioder) = journalConsumer!!.hentInntektsmelding(
             "journalpostId",
             InngaaendeJournal(dokumentId = "", status = JournalStatus.ANNET)
         )

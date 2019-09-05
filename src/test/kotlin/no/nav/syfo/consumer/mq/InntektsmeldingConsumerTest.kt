@@ -2,8 +2,8 @@ package no.nav.syfo.consumer.mq
 
 import any
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
-import no.nav.syfo.domain.Inntektsmelding
 import no.nav.syfo.domain.JournalStatus
+import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.producer.InntektsmeldingProducer
 import no.nav.syfo.repository.InntektsmeldingDAO
 import no.nav.syfo.service.JournalpostService
@@ -53,16 +53,16 @@ class InntektsmeldingConsumerTest {
     @Throws(MessageNotWriteableException::class)
     fun behandlerInntektsmelding() {
         `when`(journalpostService.hentInntektsmelding("arkivId")).thenReturn(
-            Inntektsmelding(
-                arbeidsforholdId = "",
-                status = JournalStatus.MIDLERTIDIG,
-                arbeidsgiverOrgnummer = "orgnummer",
-                arbeidsgiverPrivat = null,
-                journalpostId = "akrivId",
-                fnr = "fnr",
-                arbeidsgiverperioder = emptyList(),
-                arsakTilInnsending = ""
-            )
+                Inntektsmelding(
+                        arbeidsforholdId = "",
+                        journalStatus = JournalStatus.MIDLERTIDIG,
+                        arbeidsgiverOrgnummer = "orgnummer",
+                        arbeidsgiverPrivatFnr = null,
+                        journalpostId = "akrivId",
+                        fnr = "fnr",
+                        arbeidsgiverperioder = emptyList(),
+                        arsakTilInnsending = ""
+                )
         )
         `when`(saksbehandlingService.behandleInntektsmelding(any(), anyString())).thenReturn("saksId")
 
@@ -79,14 +79,14 @@ class InntektsmeldingConsumerTest {
     @Throws(MessageNotWriteableException::class)
     fun behandlerIkkeInntektsmeldingMedStatusForskjelligFraMidlertidig() {
         `when`(journalpostService.hentInntektsmelding("arkivId")).thenReturn(
-            Inntektsmelding(
-                arbeidsforholdId = "123",
-                arsakTilInnsending = "",
-                arbeidsgiverperioder = emptyList(),
-                status = JournalStatus.ANNET,
-                journalpostId = "arkivId",
-                fnr = "fnr"
-            )
+                Inntektsmelding(
+                        arbeidsforholdId = "123",
+                        arsakTilInnsending = "",
+                        arbeidsgiverperioder = emptyList(),
+                        journalStatus = JournalStatus.ANNET,
+                        journalpostId = "arkivId",
+                        fnr = "fnr"
+                )
         )
 
         val message = ActiveMQTextMessage()
@@ -101,14 +101,14 @@ class InntektsmeldingConsumerTest {
     @Throws(MessageNotWriteableException::class)
     fun behandlerIkkeInntektsmeldingMedStatusEndelig() {
         `when`(journalpostService.hentInntektsmelding("arkivId")).thenReturn(
-            Inntektsmelding(
-                arbeidsforholdId = "123",
-                arsakTilInnsending = "",
-                arbeidsgiverperioder = emptyList(),
-                status = JournalStatus.ENDELIG,
-                journalpostId = "arkivId",
-                fnr = "fnr"
-            )
+                Inntektsmelding(
+                        arbeidsforholdId = "123",
+                        arsakTilInnsending = "",
+                        arbeidsgiverperioder = emptyList(),
+                        journalStatus = JournalStatus.ENDELIG,
+                        journalpostId = "arkivId",
+                        fnr = "fnr"
+                )
         )
 
         val message = ActiveMQTextMessage()

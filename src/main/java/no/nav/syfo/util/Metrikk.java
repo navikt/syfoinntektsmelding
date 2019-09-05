@@ -2,8 +2,8 @@ package no.nav.syfo.util;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tags;
-import no.nav.syfo.domain.Inntektsmelding;
 import no.nav.syfo.domain.JournalStatus;
+import no.nav.syfo.domain.inntektsmelding.Inntektsmelding;
 import org.springframework.stereotype.Controller;
 
 import javax.inject.Inject;
