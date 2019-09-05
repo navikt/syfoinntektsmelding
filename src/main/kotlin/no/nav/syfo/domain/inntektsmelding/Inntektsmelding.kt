@@ -6,6 +6,7 @@ import java.math.BigDecimal
 
 
 data class Inntektsmelding(
+        val id: String = "",
         val fnr: String,
         val arbeidsgiverOrgnummer: String? = null,
         val arbeidsgiverPrivatFnr: String? = null,

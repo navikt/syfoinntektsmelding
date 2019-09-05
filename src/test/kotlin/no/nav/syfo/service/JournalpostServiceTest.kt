@@ -44,7 +44,7 @@ class JournalpostServiceTest {
         given(behandlendeEnhetConsumer.hentBehandlendeEnhet(anyString())).willReturn("enhet")
 
         journalpostService!!.ferdigstillJournalpost(
-            "saksId",
+                "saksId",
                 Inntektsmelding(
                         fnr = "fnr",
                         arbeidsgiverOrgnummer = "orgnummer",
@@ -65,19 +65,19 @@ class JournalpostServiceTest {
     fun hentInntektsmelding() {
         val journal = InngaaendeJournal(dokumentId = "dokumentId", status = JournalStatus.MIDLERTIDIG)
         `when`(inngaaendeJournalConsumer!!.hentDokumentId("journalpostId")).thenReturn(journal)
-        `when`(journalConsumer!!.hentInntektsmelding("journalpostId", journal))
-            .thenReturn(
-                    Inntektsmelding(
-                            arbeidsgiverOrgnummer = "orgnummer",
-                            arbeidsgiverPrivatFnr = null,
-                            fnr = "fnr",
-                            journalpostId = "journalpostId",
-                            journalStatus = JournalStatus.MIDLERTIDIG,
-                            arsakTilInnsending = ""
-                    )
-            )
+        `when`(journalConsumer!!.hentInntektsmelding("journalpostId", journal, "AR123"))
+                .thenReturn(
+                        Inntektsmelding(
+                                arbeidsgiverOrgnummer = "orgnummer",
+                                arbeidsgiverPrivatFnr = null,
+                                fnr = "fnr",
+                                journalpostId = "journalpostId",
+                                journalStatus = JournalStatus.MIDLERTIDIG,
+                                arsakTilInnsending = ""
+                        )
+                )
 
-        val (fnr, _, arbeidsgiverPrivat) = journalpostService!!.hentInntektsmelding("journalpostId")
+        val (_, fnr, _, arbeidsgiverPrivat) = journalpostService!!.hentInntektsmelding("journalpostId", "AR123")
 
         assertThat(fnr).isEqualTo("fnr")
         assertThat(arbeidsgiverPrivat).isNull()

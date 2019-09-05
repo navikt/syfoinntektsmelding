@@ -50,7 +50,8 @@ class InntektsmeldingConsumer(
                 JAXB.unmarshalForsendelsesinformasjon<JAXBElement<XMLForsendelsesinformasjon>>(textMessage.text)
             val info = xmlForsendelsesinformasjon.value
 
-            val inntektsmelding = journalpostService.hentInntektsmelding(info.arkivId)
+            val inntektsmelding = journalpostService.hentInntektsmelding(info.arkivId, textMessage.jmsCorrelationID
+                    ?: "UKJENT")
             val consumerLock = consumerLocks.get(inntektsmelding.fnr)
 
             try {

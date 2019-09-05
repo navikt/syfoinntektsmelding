@@ -52,8 +52,9 @@ class InntektsmeldingConsumerTest {
     @Test
     @Throws(MessageNotWriteableException::class)
     fun behandlerInntektsmelding() {
-        `when`(journalpostService.hentInntektsmelding("arkivId")).thenReturn(
+        `when`(journalpostService.hentInntektsmelding("arkivId", "UKJENT")).thenReturn(
                 Inntektsmelding(
+                        "AR123",
                         arbeidsforholdId = "",
                         journalStatus = JournalStatus.MIDLERTIDIG,
                         arbeidsgiverOrgnummer = "orgnummer",
@@ -78,8 +79,9 @@ class InntektsmeldingConsumerTest {
     @Test
     @Throws(MessageNotWriteableException::class)
     fun behandlerIkkeInntektsmeldingMedStatusForskjelligFraMidlertidig() {
-        `when`(journalpostService.hentInntektsmelding("arkivId")).thenReturn(
+        `when`(journalpostService.hentInntektsmelding("arkivId", "UKJENT")).thenReturn(
                 Inntektsmelding(
+                        "AR123",
                         arbeidsforholdId = "123",
                         arsakTilInnsending = "",
                         arbeidsgiverperioder = emptyList(),
@@ -100,15 +102,16 @@ class InntektsmeldingConsumerTest {
     @Test
     @Throws(MessageNotWriteableException::class)
     fun behandlerIkkeInntektsmeldingMedStatusEndelig() {
-        `when`(journalpostService.hentInntektsmelding("arkivId")).thenReturn(
-            Inntektsmelding(
-                arbeidsforholdId = "123",
-                arsakTilInnsending = "",
-                arbeidsgiverperioder = emptyList(),
-                    journalStatus = JournalStatus.ENDELIG,
-                journalpostId = "arkivId",
-                fnr = "fnr"
-            )
+        `when`(journalpostService.hentInntektsmelding("arkivId", "UKJENT")).thenReturn(
+                Inntektsmelding(
+                        "AR123",
+                        arbeidsforholdId = "123",
+                        arsakTilInnsending = "",
+                        arbeidsgiverperioder = emptyList(),
+                        journalStatus = JournalStatus.ENDELIG,
+                        journalpostId = "arkivId",
+                        fnr = "fnr"
+                )
         )
 
         val message = ActiveMQTextMessage()

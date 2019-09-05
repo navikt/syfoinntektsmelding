@@ -15,7 +15,7 @@ internal object InntektsmeldingArbeidsgiver20180924Mapper {
 
     val log = log()
 
-    fun tilXMLInntektsmelding(jabxInntektsmelding: JAXBElement<Any>, journalpostId: String, status: JournalStatus): Inntektsmelding {
+    fun tilXMLInntektsmelding(jabxInntektsmelding: JAXBElement<Any>, journalpostId: String, status: JournalStatus, arkivreferanse: String): Inntektsmelding {
         log.info("Behandling inntektsmelding på 20180924 format")
         val skjemainnhold = (jabxInntektsmelding.value as XMLInntektsmeldingM).skjemainnhold
 
@@ -30,6 +30,7 @@ internal object InntektsmeldingArbeidsgiver20180924Mapper {
                 ?: emptyList()
 
         return Inntektsmelding(
+                arkivreferanse,
                 skjemainnhold.arbeidstakerFnr,
                 skjemainnhold.arbeidsgiver?.virksomhetsnummer,
                 null,

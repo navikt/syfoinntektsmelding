@@ -13,16 +13,16 @@ import org.springframework.stereotype.Component
 @Component
 @Slf4j
 class JournalpostService(
-    private val inngaaendeJournalConsumer: InngaaendeJournalConsumer,
-    private val behandleInngaaendeJournalConsumer: BehandleInngaaendeJournalConsumer,
-    private val journalConsumer: JournalConsumer,
-    private val behandlendeEnhetConsumer: BehandlendeEnhetConsumer,
-    private val metrikk: Metrikk
+        private val inngaaendeJournalConsumer: InngaaendeJournalConsumer,
+        private val behandleInngaaendeJournalConsumer: BehandleInngaaendeJournalConsumer,
+        private val journalConsumer: JournalConsumer,
+        private val behandlendeEnhetConsumer: BehandlendeEnhetConsumer,
+        private val metrikk: Metrikk
 ) {
 
-    fun hentInntektsmelding(journalpostId: String): Inntektsmelding {
+    fun hentInntektsmelding(journalpostId: String, arkivreferanse: String): Inntektsmelding {
         val inngaaendeJournal = inngaaendeJournalConsumer.hentDokumentId(journalpostId)
-        return journalConsumer.hentInntektsmelding(journalpostId, inngaaendeJournal)
+        return journalConsumer.hentInntektsmelding(journalpostId, inngaaendeJournal, arkivreferanse)
     }
 
     fun ferdigstillJournalpost(saksId: String, inntektsmelding: Inntektsmelding) {
@@ -37,12 +37,12 @@ class JournalpostService(
         val behandlendeEnhet = behandlendeEnhetConsumer.hentBehandlendeEnhet(inntektsmelding.fnr)
 
         return InngaendeJournalpost(
-            fnr = inntektsmelding.fnr,
-            gsakId = gsakId,
-            journalpostId = inntektsmelding.journalpostId,
-            dokumentId = inngaaendeJournal.dokumentId,
-            behandlendeEnhetId = behandlendeEnhet,
-            arbeidsgiverOrgnummer = inntektsmelding.arbeidsgiverOrgnummer,
+                fnr = inntektsmelding.fnr,
+                gsakId = gsakId,
+                journalpostId = inntektsmelding.journalpostId,
+                dokumentId = inngaaendeJournal.dokumentId,
+                behandlendeEnhetId = behandlendeEnhet,
+                arbeidsgiverOrgnummer = inntektsmelding.arbeidsgiverOrgnummer,
                 arbeidsgiverPrivat = inntektsmelding.arbeidsgiverPrivatFnr
         )
     }

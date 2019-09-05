@@ -5,7 +5,7 @@ import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 
 fun mapInntektsmelding(inntektsmelding: Inntektsmelding, arbeidstakerAktørId: String): no.nav.inntektsmeldingkontrakt.Inntektsmelding {
     return Inntektsmelding(
-            inntektsmeldingId = "", //TODO Arkivreferanse når vi har en enkel måte å få tak i den på
+            inntektsmeldingId = inntektsmelding.id,
             arbeidstakerFnr = inntektsmelding.fnr,
             arbeidstakerAktorId = arbeidstakerAktørId,
             virksomhetsnummer = inntektsmelding.arbeidsgiverOrgnummer,
