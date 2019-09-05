@@ -54,7 +54,7 @@ internal object InntektsmeldingArbeidsgiverPrivat20181211Mapper {
                 ?: emptyList()
     }
 
-    private fun mapXmlOpphørNaturalytelser(xmlOpphørsliste: JAXBElement<XMLOpphoerAvNaturalytelseListe>): List<OpphoerAvNaturalytelse> {
+    private fun mapXmlOpphørNaturalytelser(xmlOpphørsliste: JAXBElement<XMLOpphoerAvNaturalytelseListe>?): List<OpphoerAvNaturalytelse> {
         return xmlOpphørsliste?.value?.opphoerAvNaturalytelse?.map { o ->
             OpphoerAvNaturalytelse(mapNaturalytelseType(o.naturalytelseType), o.fom?.value, o.beloepPrMnd.value)
         }
@@ -62,12 +62,12 @@ internal object InntektsmeldingArbeidsgiverPrivat20181211Mapper {
 
     }
 
-    private fun mapXmlEndringRefusjon(xmlRefusjon: JAXBElement<XMLRefusjon>): List<EndringIRefusjon> {
+    private fun mapXmlEndringRefusjon(xmlRefusjon: JAXBElement<XMLRefusjon>?): List<EndringIRefusjon> {
         return xmlRefusjon?.value?.endringIRefusjonListe?.value?.endringIRefusjon?.map { e -> EndringIRefusjon(e.endringsdato?.value, e.refusjonsbeloepPrMnd?.value) }
                 ?: emptyList()
     }
 
-    private fun mapXmlRefusjon(refusjon: JAXBElement<XMLRefusjon>): Refusjon {
+    private fun mapXmlRefusjon(refusjon: JAXBElement<XMLRefusjon>?): Refusjon {
         return Refusjon(refusjon?.value?.refusjonsbeloepPrMnd?.value, refusjon?.value?.refusjonsopphoersdato?.value)
     }
 }
