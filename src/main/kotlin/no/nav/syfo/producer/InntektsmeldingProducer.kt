@@ -40,9 +40,9 @@ class InntektsmeldingProducer(@Value("\${spring.kafka.bootstrap-servers}") priva
 
     private val kafkaproducer = KafkaProducer<String, String>(producerProperties)
 
-    fun sendBehandletInntektsmelding(inntektsmelding: no.nav.inntektsmeldingkontrakt.Inntektsmelding) {
+    fun leggMottattInntektsmeldingPåTopic(inntektsmelding: no.nav.inntektsmeldingkontrakt.Inntektsmelding) {
         kafkaproducer.send(ProducerRecord(inntektsmeldingTopic, serialiseringInntektsmelding(inntektsmelding)))
-        metrikk.tellInntektsmeldingSendt()
+        metrikk.tellInntektsmeldingLagtPåTopic()
     }
 
     fun serialiseringInntektsmelding(inntektsmelding: Inntektsmelding) =

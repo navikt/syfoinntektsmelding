@@ -1,5 +1,5 @@
 package no.nav.syfo.domain.inntektsmelding
 
 enum class Naturalytelse {
-    kostDoegn, losji, annet, skattepliktigDelForsikringer, bil, kostDager, rentefordelLaan, bolig, elektroniskKommunikasjon, aksjerGrunnfondsbevisTilUnderkurs, opsjoner, kostbesparelseIHjemmet, friTransport, bedriftsbarnehageplass, tilskuddBarnehageplass, besoeksreiserHjemmetAnnet, innbetalingTilUtenlandskPensjonsordning, yrkebilTjenestligbehovListepris, yrkebilTjenestligbehovKilometer
+    KOSTDOEGN, LOSJI, ANNET, SKATTEPLIKTIGDELFORSIKRINGER, BIL, KOSTDAGER, RENTEFORDELLAAN, BOLIG, ELEKTRONISKKOMMUNIKASJON, AKSJERGRUNNFONDSBEVISTILUNDERKURS, OPSJONER, KOSTBESPARELSEIHJEMMET, FRITRANSPORT, BEDRIFTSBARNEHAGEPLASS, TILSKUDDBARNEHAGEPLASS, BESOEKSREISERHJEMMETANNET, INNBETALINGTILUTENLANDSKPENSJONSORDNING, YRKEBILTJENESTLIGBEHOVLISTEPRIS, YRKEBILTJENESTLIGBEHOVKILOMETER
 }

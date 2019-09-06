@@ -32,14 +32,4 @@ class InntektsmeldingMapperKtTest {
                 Arbeidsgivertype.PRIVAT)
     }
 
-    @Test(expected = IllegalStateException::class)
-    fun skal_gi_feilmelding_hvis_både_privat_og_virksomhet() {
-        mapArbeidsgivertype(grunnleggendeInntektsmelding.copy(arbeidsgiverPrivatFnr = "0"))
-    }
-
-    @Test(expected = IllegalStateException::class)
-    fun skal_gi_feilmelding_hvis_hverken_privat_eller_virksomhet() {
-        mapArbeidsgivertype(grunnleggendeInntektsmelding.copy(arbeidsgiverOrgnummer = null))
-    }
-
 }

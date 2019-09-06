@@ -22,7 +22,7 @@ class InntektsmeldingProducerTest {
     fun skal_serialisere_og_deserialisere_inntektsmelding() {
         val jsonString = producer.serialiseringInntektsmelding(kontraktInntektsmelding)
         assertEquals("""
-            {"inntektsmeldingId":"","arbeidstakerFnr":"12345678901","arbeidstakerAktorId":"0000","virksomhetsnummer":"1234","arbeidsgivertype":"VIRKSOMHET","refusjon":{},"endringIRefusjoner":[],"opphoerAvNaturalytelser":[],"gjenopptakelseNaturalytelser":[],"arbeidsgiverperioder":[{"fom":"2019-01-01","tom":"2019-02-01"}],"status":"GYLDIG"}
+            {"inntektsmeldingId":"ID","arbeidstakerFnr":"12345678901","arbeidstakerAktorId":"0000","virksomhetsnummer":"1234","arbeidsgivertype":"VIRKSOMHET","refusjon":{},"endringIRefusjoner":[],"opphoerAvNaturalytelser":[],"gjenopptakelseNaturalytelser":[],"arbeidsgiverperioder":[{"fom":"2019-01-01","tom":"2019-02-01"}],"status":"GYLDIG","arkivreferanse":"AR123"}
         """.trimIndent(),
                 jsonString)
         val deserialisertInntektsmelding = producer.objectMapper.readValue(jsonString, Inntektsmelding::class.java)

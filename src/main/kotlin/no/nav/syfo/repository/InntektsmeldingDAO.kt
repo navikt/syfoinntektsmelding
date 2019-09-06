@@ -8,8 +8,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Repository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-
-import java.util.UUID
+import java.util.*
 
 @Service
 @Slf4j
@@ -17,7 +16,7 @@ import java.util.UUID
 @Repository
 class InntektsmeldingDAO(private val namedParameterJdbcTemplate: NamedParameterJdbcTemplate) {
 
-    fun opprett(inntektsmeldingMeta: InntektsmeldingMeta) {
+    fun opprett(inntektsmeldingMeta: InntektsmeldingMeta): String {
         val uuid = UUID.randomUUID().toString()
         namedParameterJdbcTemplate.update(
             "INSERT INTO INNTEKTSMELDING(INNTEKTSMELDING_UUID, AKTOR_ID, SAK_ID, ORGNUMMER, JOURNALPOST_ID, BEHANDLET, ARBEIDSGIVER_PRIVAT) " + "VALUES(:uuid, :aktorid, :sakid, :orgnummer, :journalpostId, :behandlet, :arbeidsgiverPrivat)",
@@ -42,6 +41,7 @@ class InntektsmeldingDAO(private val namedParameterJdbcTemplate: NamedParameterJ
                     .addValue("tom", tom)
             )
         }
+        return uuid
     }
 
     fun finnBehandledeInntektsmeldinger(aktoerId: String): List<InntektsmeldingMeta> {

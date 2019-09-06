@@ -454,7 +454,7 @@
         <dependency>
             <groupId>no.nav.sykepenger.kontrakter</groupId>
             <artifactId>inntektsmelding-kontrakt</artifactId>
-            <version>2019.09.05-12-38-a7808</version>
+            <version>2019.09.06-09-24-0426e</version>
         </dependency>
 
     </dependencies>

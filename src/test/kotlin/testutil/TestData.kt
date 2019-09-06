@@ -11,10 +11,12 @@ val FØRSTE_FEBRUAR = LocalDate.of(2019, 2, 1)
 
 
 val grunnleggendeInntektsmelding = Inntektsmelding(
+        id = "ID",
         fnr = "12345678901",
         arbeidsgiverOrgnummer = "1234",
         journalpostId = "123",
         arsakTilInnsending = "TEST",
         journalStatus = JournalStatus.ENDELIG,
-        arbeidsgiverperioder = listOf(Periode(FØRSTE_JANUAR, FØRSTE_FEBRUAR))
+        arbeidsgiverperioder = listOf(Periode(FØRSTE_JANUAR, FØRSTE_FEBRUAR)),
+        arkivRefereranse = "AR123"
 )

@@ -75,8 +75,8 @@ public class Metrikk {
                 .increment();
     }
 
-    public void tellInntektsmeldingSendt() {
+    public void tellInntektsmeldingLagtPåTopic() {
         registry
-                .counter("syfoinntektsmelding_inntektsmelding_sendt").increment();
+                .counter("syfoinntektsmelding_inntektsmelding_lagt_pa_topic").increment();
     }
 }

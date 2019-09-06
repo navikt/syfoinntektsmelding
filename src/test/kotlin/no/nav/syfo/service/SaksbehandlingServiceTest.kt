@@ -61,6 +61,8 @@ class SaksbehandlingServiceTest {
 
     private fun lagInntektsmelding(): Inntektsmelding {
         return Inntektsmelding(
+                id = "ID",
+                arkivRefereranse = "AR",
                 journalStatus = JournalStatus.MIDLERTIDIG,
                 fnr = "fnr",
                 arbeidsgiverOrgnummer = "orgnummer",

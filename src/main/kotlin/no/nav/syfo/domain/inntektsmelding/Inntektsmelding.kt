@@ -21,6 +21,7 @@ data class Inntektsmelding(
         val endringerIRefusjon: List<EndringIRefusjon> = emptyList(),
         val opphørAvNaturalYtelse: List<OpphoerAvNaturalytelse> = emptyList(),
         val gjenopptakelserNaturalYtelse: List<GjenopptakelseNaturalytelse> = emptyList(),
-        val gyldighetsStatus: Gyldighetsstatus = Gyldighetsstatus.GYLDIG
+        val gyldighetsStatus: Gyldighetsstatus = Gyldighetsstatus.GYLDIG,
+        val arkivRefereranse: String
 )
 

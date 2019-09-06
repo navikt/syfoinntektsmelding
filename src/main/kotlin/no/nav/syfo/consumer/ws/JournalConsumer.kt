@@ -19,7 +19,7 @@ class JournalConsumer(private val journalV2: JournalV2,
 
     var log = log()
 
-    fun hentInntektsmelding(journalpostId: String, inngaaendeJournal: InngaaendeJournal, arkivreferanse: String): Inntektsmelding {
+    fun hentInntektsmelding(journalpostId: String, inngaaendeJournal: InngaaendeJournal): Inntektsmelding {
         val request = WSHentDokumentRequest()
                 .withJournalpostId(journalpostId)
                 .withDokumentId(inngaaendeJournal.dokumentId)
@@ -32,9 +32,9 @@ class JournalConsumer(private val journalV2: JournalV2,
             val jaxbInntektsmelding = JAXB.unmarshalInntektsmelding<JAXBElement<Any>>(inntektsmelding)
 
             return if (jaxbInntektsmelding.value is XMLInntektsmeldingM)
-                InntektsmeldingArbeidsgiver20180924Mapper.tilXMLInntektsmelding(jaxbInntektsmelding, journalpostId, inngaaendeJournal.status, arkivreferanse)
+                InntektsmeldingArbeidsgiver20180924Mapper.tilXMLInntektsmelding(jaxbInntektsmelding, journalpostId, inngaaendeJournal.status)
             else
-                InntektsmeldingArbeidsgiverPrivat20181211Mapper.tilXMLInntektsmelding(jaxbInntektsmelding, journalpostId, inngaaendeJournal.status, aktorConsumer, arkivreferanse)
+                InntektsmeldingArbeidsgiverPrivat20181211Mapper.tilXMLInntektsmelding(jaxbInntektsmelding, journalpostId, inngaaendeJournal.status, aktorConsumer)
         } catch (e: HentDokumentSikkerhetsbegrensning) {
             log.error("Feil ved henting av dokument: Sikkerhetsbegrensning!")
             throw RuntimeException("Feil ved henting av dokument: Sikkerhetsbegrensning!", e)

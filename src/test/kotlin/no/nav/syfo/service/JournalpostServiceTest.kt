@@ -46,6 +46,7 @@ class JournalpostServiceTest {
         journalpostService!!.ferdigstillJournalpost(
                 "saksId",
                 Inntektsmelding(
+                        arkivRefereranse = "AR123",
                         fnr = "fnr",
                         arbeidsgiverOrgnummer = "orgnummer",
                         journalpostId = "journalpostId",
@@ -65,9 +66,10 @@ class JournalpostServiceTest {
     fun hentInntektsmelding() {
         val journal = InngaaendeJournal(dokumentId = "dokumentId", status = JournalStatus.MIDLERTIDIG)
         `when`(inngaaendeJournalConsumer!!.hentDokumentId("journalpostId")).thenReturn(journal)
-        `when`(journalConsumer!!.hentInntektsmelding("journalpostId", journal, "AR123"))
+        `when`(journalConsumer!!.hentInntektsmelding("journalpostId", journal))
                 .thenReturn(
                         Inntektsmelding(
+                                arkivRefereranse = "AR123",
                                 arbeidsgiverOrgnummer = "orgnummer",
                                 arbeidsgiverPrivatFnr = null,
                                 fnr = "fnr",
@@ -77,7 +79,7 @@ class JournalpostServiceTest {
                         )
                 )
 
-        val (_, fnr, _, arbeidsgiverPrivat) = journalpostService!!.hentInntektsmelding("journalpostId", "AR123")
+        val (_, fnr, _, arbeidsgiverPrivat) = journalpostService!!.hentInntektsmelding("journalpostId")
 
         assertThat(fnr).isEqualTo("fnr")
         assertThat(arbeidsgiverPrivat).isNull()

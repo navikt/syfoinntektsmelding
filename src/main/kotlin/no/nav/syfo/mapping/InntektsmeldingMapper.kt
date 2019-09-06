@@ -1,6 +1,7 @@
 package no.nav.syfo.mapping
 
 import no.nav.inntektsmeldingkontrakt.*
+import no.nav.syfo.domain.inntektsmelding.Gyldighetsstatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 
 fun mapInntektsmelding(inntektsmelding: Inntektsmelding, arbeidstakerAktørId: String): no.nav.inntektsmeldingkontrakt.Inntektsmelding {
@@ -19,9 +20,17 @@ fun mapInntektsmelding(inntektsmelding: Inntektsmelding, arbeidstakerAktørId: S
             endringIRefusjoner = mapEndringIRefusjon(inntektsmelding),
             opphoerAvNaturalytelser = mapOpphørAvNaturalytelser(inntektsmelding),
             gjenopptakelseNaturalytelser = mapGjenopptakelseAvNaturalytelser(inntektsmelding),
-            status = mapStatus(inntektsmelding)
+            status = mapStatus(inntektsmelding),
+            arkivreferanse = inntektsmelding.arkivRefereranse
 
     )
+}
+
+fun mapStatus(inntektsmelding: Inntektsmelding): Status {
+    if (inntektsmelding.gyldighetsStatus.equals(Gyldighetsstatus.GYLDIG))
+        return Status.GYLDIG
+    return Status.MANGELFULL
+
 }
 
 fun mapArbeidsgiverperioder(inntektsmelding: Inntektsmelding): List<Periode> {
@@ -29,28 +38,22 @@ fun mapArbeidsgiverperioder(inntektsmelding: Inntektsmelding): List<Periode> {
 }
 
 fun mapArbeidsgivertype(inntektsmelding: Inntektsmelding): Arbeidsgivertype {
-    check(!(inntektsmelding.arbeidsgiverOrgnummer.isNullOrEmpty() && inntektsmelding.arbeidsgiverPrivatFnr.isNullOrEmpty())) { "Inntektsmelding har hverken orgnummer eller fødselsnummer for arbeidsgiver" }
-    check(!(!inntektsmelding.arbeidsgiverOrgnummer.isNullOrEmpty() && !inntektsmelding.arbeidsgiverPrivatFnr.isNullOrEmpty())) { "Inntektsmelding har både orgnummer og fødselsnummer for arbeidsgiver" }
     if (inntektsmelding.arbeidsgiverOrgnummer.isNullOrEmpty()) {
         return Arbeidsgivertype.PRIVAT
     }
     return Arbeidsgivertype.VIRKSOMHET
 }
 
-fun mapStatus(inntektsmelding: Inntektsmelding): Status {
-    return Status.GYLDIG //TODO
-}
-
 fun mapGjenopptakelseAvNaturalytelser(inntektsmelding: Inntektsmelding): List<GjenopptakelseNaturalytelse> {
-    return inntektsmelding.gjenopptakelserNaturalYtelse.map { go -> GjenopptakelseNaturalytelse(mapNaturalytelseType(go.naturalytelse), go.fom, go.beloepPrMnd) }
+    return inntektsmelding.gjenopptakelserNaturalYtelse.map { gjenopptakelse -> GjenopptakelseNaturalytelse(mapNaturalytelseType(gjenopptakelse.naturalytelse), gjenopptakelse.fom, gjenopptakelse.beloepPrMnd) }
 }
 
 fun mapOpphørAvNaturalytelser(inntektsmelding: Inntektsmelding): List<OpphoerAvNaturalytelse> {
-    return inntektsmelding.opphørAvNaturalYtelse.map { on -> OpphoerAvNaturalytelse(mapNaturalytelseType(on.naturalytelse), on.fom, on.beloepPrMnd) }
+    return inntektsmelding.opphørAvNaturalYtelse.map { opphør -> OpphoerAvNaturalytelse(mapNaturalytelseType(opphør.naturalytelse), opphør.fom, opphør.beloepPrMnd) }
 }
 
 fun mapEndringIRefusjon(inntektsmelding: Inntektsmelding): List<EndringIRefusjon> {
-    return inntektsmelding.endringerIRefusjon.map { er -> EndringIRefusjon(er.endringsdato, er.beloep) }
+    return inntektsmelding.endringerIRefusjon.map { endring -> EndringIRefusjon(endring.endringsdato, endring.beloep) }
 }
 
 fun mapRefusjon(inntektsmelding: Inntektsmelding): Refusjon {
@@ -58,8 +61,8 @@ fun mapRefusjon(inntektsmelding: Inntektsmelding): Refusjon {
 }
 
 fun mapNaturalytelseType(naturalytelseType: no.nav.syfo.domain.inntektsmelding.Naturalytelse?): Naturalytelse {
-    return naturalytelseType?.let { n ->
-        if (Naturalytelse.values().map { it.name }.contains(n.name)) Naturalytelse.valueOf(n.name) else Naturalytelse.annet
+    return naturalytelseType?.let { naturalytelse ->
+        if (Naturalytelse.values().map { it.name }.contains(naturalytelse.name)) Naturalytelse.valueOf(naturalytelse.name) else Naturalytelse.ANNET
     }
-            ?: Naturalytelse.annet
+            ?: Naturalytelse.ANNET
 }

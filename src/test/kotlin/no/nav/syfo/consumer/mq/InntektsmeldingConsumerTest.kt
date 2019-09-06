@@ -47,14 +47,15 @@ class InntektsmeldingConsumerTest {
     @Before
     fun setup() {
         `when`(aktorConsumer.getAktorId(anyString())).thenReturn("aktor")
+        `when`(inntektsmeldingDAO?.opprett(any())).thenReturn("ID")
     }
 
     @Test
     @Throws(MessageNotWriteableException::class)
     fun behandlerInntektsmelding() {
-        `when`(journalpostService.hentInntektsmelding("arkivId", "UKJENT")).thenReturn(
+        `when`(journalpostService.hentInntektsmelding("arkivId")).thenReturn(
                 Inntektsmelding(
-                        "AR123",
+                        arkivRefereranse = "AR123",
                         arbeidsforholdId = "",
                         journalStatus = JournalStatus.MIDLERTIDIG,
                         arbeidsgiverOrgnummer = "orgnummer",
@@ -73,15 +74,15 @@ class InntektsmeldingConsumerTest {
 
         verify(saksbehandlingService).behandleInntektsmelding(any(), anyString())
         verify(journalpostService).ferdigstillJournalpost(any(), any())
-        verify(inntektsmeldingProducer!!).sendBehandletInntektsmelding(any())
+        verify(inntektsmeldingProducer!!).leggMottattInntektsmeldingPåTopic(any())
     }
 
     @Test
     @Throws(MessageNotWriteableException::class)
     fun behandlerIkkeInntektsmeldingMedStatusForskjelligFraMidlertidig() {
-        `when`(journalpostService.hentInntektsmelding("arkivId", "UKJENT")).thenReturn(
+        `when`(journalpostService.hentInntektsmelding("arkivId")).thenReturn(
                 Inntektsmelding(
-                        "AR123",
+                        arkivRefereranse = "AR123",
                         arbeidsforholdId = "123",
                         arsakTilInnsending = "",
                         arbeidsgiverperioder = emptyList(),
@@ -102,9 +103,9 @@ class InntektsmeldingConsumerTest {
     @Test
     @Throws(MessageNotWriteableException::class)
     fun behandlerIkkeInntektsmeldingMedStatusEndelig() {
-        `when`(journalpostService.hentInntektsmelding("arkivId", "UKJENT")).thenReturn(
+        `when`(journalpostService.hentInntektsmelding("arkivId")).thenReturn(
                 Inntektsmelding(
-                        "AR123",
+                        arkivRefereranse = "AR123",
                         arbeidsforholdId = "123",
                         arsakTilInnsending = "",
                         arbeidsgiverperioder = emptyList(),
@@ -120,7 +121,7 @@ class InntektsmeldingConsumerTest {
 
         verify<SaksbehandlingService>(saksbehandlingService, never()).behandleInntektsmelding(any(), anyString())
         verify(journalpostService, never()).ferdigstillJournalpost(any(), any())
-        verify(inntektsmeldingProducer!!, never()).sendBehandletInntektsmelding(any())
+        verify(inntektsmeldingProducer!!, never()).leggMottattInntektsmeldingPåTopic(any())
     }
 
     companion object {
