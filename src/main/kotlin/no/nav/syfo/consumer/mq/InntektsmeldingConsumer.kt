@@ -96,11 +96,10 @@ class InntektsmeldingConsumer(
     }
 
     private fun validerOgLeggPåId(inntektsmelding: Inntektsmelding, aktorid: String, saksId: String, arkivreferanse: String?): Inntektsmelding {
-        val inntektsmeldingMedId = inntektsmelding.copy(id = lagreBehandling(inntektsmelding, aktorid, saksId), arkivRefereranse = arkivreferanse
-                ?: "UKJENT")
-
-        val validertInntektsmelding = inntektsmelding.copy(gyldighetsStatus = validerInntektsmelding(inntektsmeldingMedId))
-        return inntektsmeldingMedId
+        val id = lagreBehandling(inntektsmelding, aktorid, saksId)
+        val gyldighet = validerInntektsmelding(inntektsmelding)
+        return inntektsmelding.copy(id = id, arkivRefereranse = arkivreferanse
+                ?: "UKJENT", gyldighetsStatus = gyldighet)
     }
 
     private fun lagreBehandling(inntektsmelding: Inntektsmelding, aktorid: String, saksId: String): String {
