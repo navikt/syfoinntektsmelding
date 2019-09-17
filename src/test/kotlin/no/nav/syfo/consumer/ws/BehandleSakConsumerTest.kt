@@ -1,12 +1,9 @@
 package no.nav.syfo.consumer.ws
 
 import no.nav.syfo.util.Metrikk
-import no.nav.tjeneste.virksomhet.behandlesak.v1.BehandleSakV1
-import no.nav.tjeneste.virksomhet.behandlesak.v1.informasjon.WSAktoer
-import no.nav.tjeneste.virksomhet.behandlesak.v1.informasjon.WSPerson
-import no.nav.tjeneste.virksomhet.behandlesak.v1.informasjon.WSSak
-import no.nav.tjeneste.virksomhet.behandlesak.v1.meldinger.WSOpprettSakRequest
-import no.nav.tjeneste.virksomhet.behandlesak.v1.meldinger.WSOpprettSakResponse
+import no.nav.tjeneste.virksomhet.behandlesak.v2.*
+import no.nav.tjeneste.virksomhet.behandlesak.v2.WSOpprettSakRequest
+import no.nav.tjeneste.virksomhet.behandlesak.v2.WSOpprettSakResponse
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
@@ -24,7 +21,7 @@ import org.mockito.Mockito.`when`
 @TestPropertySource(locations = ["classpath:application-test.properties"])
 class BehandleSakConsumerTest {
     @Mock
-    private val behandleSakV1: BehandleSakV1? = null
+    private val behandleSak: BehandleSakV2? = null
 
     @Mock
     private val metrikk: Metrikk? = null
@@ -35,18 +32,18 @@ class BehandleSakConsumerTest {
     @Test
     @Throws(Exception::class)
     fun opprettSak() {
-        `when`(behandleSakV1!!.opprettSak(any())).thenReturn(WSOpprettSakResponse().withSakId("1"))
+        `when`(behandleSak!!.opprettSak(any())).thenReturn(WSOpprettSakResponse().withSakId("1"))
         val captor = ArgumentCaptor.forClass(WSOpprettSakRequest::class.java)
 
         val sakId = behandleSakConsumer!!.opprettSak("12345678910")
 
-        verify(behandleSakV1).opprettSak(captor.capture())
+        verify(behandleSak).opprettSak(captor.capture())
         val sak = captor.value.sak
 
         assertThat(sakId).isEqualTo("1")
-        assertThat(sak.fagomraade.value).isEqualTo("SYK")
-        assertThat(sak.fagsystem.value).isEqualTo("FS22")
-        assertThat(sak.sakstype.value).isEqualTo("GEN")
-        assertThat<WSAktoer>(sak.gjelderBrukerListe).contains(WSPerson().withIdent("12345678910"))
+        assertThat(sak.fagomrade).isEqualTo("SYK")
+        assertThat(sak.fagsystem).isEqualTo("FS22")
+        assertThat(sak.saktype).isEqualTo("GEN")
+        assertThat<WSAktor>(sak.gjelderBrukerListe).contains( WSAktor().withIdent("12345678910") )
     }
 }
