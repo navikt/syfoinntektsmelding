@@ -25,18 +25,6 @@
         <version>2.0.5.RELEASE</version>
     </parent>
 
-    <repositories>
-        <repository>
-            <id>maven-releases</id>
-            <name>NAV Internal Repository</name>
-            <url>https://repo.adeo.no/repository/maven-releases/</url>
-        </repository>
-        <repository>
-            <id>central</id>
-            <name>Maven central</name>
-            <url>http://repo1.maven.org/maven2/</url>
-        </repository>
-    </repositories>
 
     <distributionManagement>
         <repository>
@@ -56,7 +44,7 @@
         <java.version>11</java.version>
         <javax.inject.version>1</javax.inject.version>
         <spring-boot.version>2.0.5.RELEASE</spring-boot.version>
-        <ojdbc8.version>12.2.0.1</ojdbc8.version>
+        <ojdbc10.version>19.3.0.0</ojdbc10.version>
         <jose4j.version>0.5.0</jose4j.version>
         <abac-spring.version>1.4.1</abac-spring.version>
         <logstash-logback-encoder.version>4.10</logstash-logback-encoder.version>
@@ -151,9 +139,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.oracle</groupId>
-            <artifactId>ojdbc8</artifactId>
-            <version>${ojdbc8.version}</version>
+            <groupId>com.oracle.ojdbc</groupId>
+            <artifactId>ojdbc10</artifactId>
+            <version>${ojdbc10.version}</version>
             <scope>runtime</scope>
         </dependency>
 
