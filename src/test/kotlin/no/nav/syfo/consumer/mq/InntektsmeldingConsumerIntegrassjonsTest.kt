@@ -15,12 +15,12 @@ import no.nav.syfo.domain.Periode
 import no.nav.syfo.repository.InntektsmeldingDAO
 import no.nav.syfo.service.EksisterendeSakService
 import no.nav.syfo.util.Metrikk
-import no.nav.tjeneste.virksomhet.behandle.inngaaende.journal.v1.BehandleInngaaendeJournalV1
-import no.nav.tjeneste.virksomhet.journal.v2.HentDokumentDokumentIkkeFunnet
-import no.nav.tjeneste.virksomhet.journal.v2.HentDokumentSikkerhetsbegrensning
-import no.nav.tjeneste.virksomhet.journal.v2.JournalV2
-import no.nav.tjeneste.virksomhet.journal.v2.WSHentDokumentRequest
-import no.nav.tjeneste.virksomhet.journal.v2.WSHentDokumentResponse
+import no.nav.tjeneste.virksomhet.behandleinngaaendejournal.v1.binding.BehandleInngaaendeJournalV1
+import no.nav.tjeneste.virksomhet.journal.v2.binding.HentDokumentDokumentIkkeFunnet
+import no.nav.tjeneste.virksomhet.journal.v2.binding.HentDokumentSikkerhetsbegrensning
+import no.nav.tjeneste.virksomhet.journal.v2.binding.JournalV2
+import no.nav.tjeneste.virksomhet.journal.v2.meldinger.HentDokumentRequest
+import no.nav.tjeneste.virksomhet.journal.v2.meldinger.HentDokumentResponse
 import org.apache.activemq.command.ActiveMQTextMessage
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
@@ -97,7 +97,7 @@ class InntektsmeldingConsumerIntegrassjonsTest {
 
         val inngaaendeJournal = inngaaendeJournal("arkivId")
 
-        `when`(behandleSakConsumer.opprettSak(ArgumentMatchers.anyString())).thenAnswer { invocation -> "saksId" + saksIdteller++ }
+        `when`(behandleSakConsumer.opprettSak(ArgumentMatchers.anyString())).thenAnswer { "saksId" + saksIdteller++ }
 
         `when`(inngaaendeJournalConsumer.hentDokumentId("arkivId")).thenReturn(inngaaendeJournal)
 
@@ -128,17 +128,22 @@ class InntektsmeldingConsumerIntegrassjonsTest {
         `when`(inngaaendeJournalConsumer.hentDokumentId("arkivId1")).thenReturn(inngaaendeJournal("arkivId1"))
         `when`(inngaaendeJournalConsumer.hentDokumentId("arkivId2")).thenReturn(inngaaendeJournal("arkivId2"))
 
+        val dokumentResponse1 = no.nav.tjeneste.virksomhet.journal.v2.HentDokumentResponse()
+        dokumentResponse1.response = HentDokumentResponse()
+        dokumentResponse1.response.dokument = JournalConsumerTest.inntektsmeldingArbeidsgiver(
+                listOf(Periode(LocalDate.of(2019, 1, 1), LocalDate.of(2019, 1, 16)))
+        ).toByteArray()
+
+
+        val dokumentResponse2 = no.nav.tjeneste.virksomhet.journal.v2.HentDokumentResponse()
+        dokumentResponse2.response = HentDokumentResponse()
+        dokumentResponse2.response.dokument = JournalConsumerTest.inntektsmeldingArbeidsgiver(
+                listOf(Periode(LocalDate.of(2019, 1, 2), LocalDate.of(2019, 1, 16)))
+        ).toByteArray()
+
         `when`(journalV2.hentDokument(any())).thenReturn(
-            WSHentDokumentResponse().withDokument(
-                JournalConsumerTest.inntektsmeldingArbeidsgiver(
-                    listOf(Periode(LocalDate.of(2019, 1, 1), LocalDate.of(2019, 1, 16)))
-                ).toByteArray()
-            ),
-            WSHentDokumentResponse().withDokument(
-                JournalConsumerTest.inntektsmeldingArbeidsgiver(
-                    listOf(Periode(LocalDate.of(2019, 1, 2), LocalDate.of(2019, 1, 16)))
-                ).toByteArray()
-            )
+                dokumentResponse1.response,
+                dokumentResponse2.response
         )
 
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId1"))
@@ -161,17 +166,22 @@ class InntektsmeldingConsumerIntegrassjonsTest {
         `when`(inngaaendeJournalConsumer.hentDokumentId("arkivId1")).thenReturn(inngaaendeJournal("arkivId1"))
         `when`(inngaaendeJournalConsumer.hentDokumentId("arkivId2")).thenReturn(inngaaendeJournal("arkivId2"))
 
+        val dokumentResponse1 = no.nav.tjeneste.virksomhet.journal.v2.HentDokumentResponse()
+        dokumentResponse1.response = HentDokumentResponse()
+        dokumentResponse1.response.dokument = JournalConsumerTest.inntektsmeldingArbeidsgiver(
+                listOf(Periode(LocalDate.of(2019, 1, 1), LocalDate.of(2019, 1, 16)))
+        ).toByteArray()
+
+
+        val dokumentResponse2 = no.nav.tjeneste.virksomhet.journal.v2.HentDokumentResponse()
+        dokumentResponse2.response = HentDokumentResponse()
+        dokumentResponse2.response.dokument = JournalConsumerTest.inntektsmeldingArbeidsgiver(
+                listOf(Periode(LocalDate.of(2019, 2, 2), LocalDate.of(2019, 2, 16)))
+        ).toByteArray()
+
         `when`(journalV2.hentDokument(any())).thenReturn(
-            WSHentDokumentResponse().withDokument(
-                JournalConsumerTest.inntektsmeldingArbeidsgiver(
-                    listOf(Periode(LocalDate.of(2019, 1, 1), LocalDate.of(2019, 1, 16)))
-                ).toByteArray()
-            ),
-            WSHentDokumentResponse().withDokument(
-                JournalConsumerTest.inntektsmeldingArbeidsgiver(
-                    listOf(Periode(LocalDate.of(2019, 2, 2), LocalDate.of(2019, 2, 16)))
-                ).toByteArray()
-            )
+            dokumentResponse1.response,
+            dokumentResponse2.response
         )
 
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId1"))
@@ -199,17 +209,21 @@ class InntektsmeldingConsumerIntegrassjonsTest {
         `when`(inngaaendeJournalConsumer.hentDokumentId("arkivId1")).thenReturn(inngaaendeJournal("arkivId1"))
         `when`(inngaaendeJournalConsumer.hentDokumentId("arkivId2")).thenReturn(inngaaendeJournal("arkivId2"))
 
+        val dokumentResponse1 = no.nav.tjeneste.virksomhet.journal.v2.HentDokumentResponse()
+        dokumentResponse1.response = HentDokumentResponse()
+        dokumentResponse1.response.dokument = JournalConsumerTest.inntektsmeldingArbeidsgiver(
+                listOf(Periode(LocalDate.of(2019, 1, 1), LocalDate.of(2019, 1, 16)))
+        ).toByteArray()
+
+        val dokumentResponse2 = no.nav.tjeneste.virksomhet.journal.v2.HentDokumentResponse()
+        dokumentResponse2.response = HentDokumentResponse()
+        dokumentResponse2.response.dokument = JournalConsumerTest.inntektsmeldingArbeidsgiver(
+                listOf(Periode(LocalDate.of(2019, 2, 2), LocalDate.of(2019, 2, 16)))
+        ).toByteArray()
+
         `when`(journalV2.hentDokument(any())).thenReturn(
-            WSHentDokumentResponse().withDokument(
-                JournalConsumerTest.inntektsmeldingArbeidsgiver(
-                    listOf(Periode(LocalDate.of(2019, 1, 1), LocalDate.of(2019, 1, 16)))
-                ).toByteArray()
-            ),
-            WSHentDokumentResponse().withDokument(
-                JournalConsumerTest.inntektsmeldingArbeidsgiver(
-                    listOf(Periode(LocalDate.of(2019, 2, 2), LocalDate.of(2019, 2, 16)))
-                ).toByteArray()
-            )
+            dokumentResponse1.response,
+            dokumentResponse2.response
         )
 
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId1"))
@@ -232,8 +246,13 @@ class InntektsmeldingConsumerIntegrassjonsTest {
         HentDokumentDokumentIkkeFunnet::class
     )
     fun mottarInntektsmeldingUtenArbeidsgiverperioder() {
+        val dokumentResponse = no.nav.tjeneste.virksomhet.journal.v2.HentDokumentResponse()
+        dokumentResponse.response = HentDokumentResponse()
+        dokumentResponse.response.dokument = JournalConsumerTest.inntektsmeldingArbeidsgiver(
+                emptyList<Periode>()
+        ).toByteArray()
         `when`(journalV2.hentDokument(any())).thenReturn(
-            WSHentDokumentResponse().withDokument(JournalConsumerTest.inntektsmeldingArbeidsgiver(emptyList<Periode>()).toByteArray())
+                dokumentResponse.response
         )
 
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId"))
@@ -250,16 +269,16 @@ class InntektsmeldingConsumerIntegrassjonsTest {
         HentDokumentDokumentIkkeFunnet::class
     )
     fun mottarInntektsmeldingMedFlerePerioder() {
-        `when`(journalV2.hentDokument(any())).thenReturn(
-            WSHentDokumentResponse().withDokument(
-                JournalConsumerTest.inntektsmeldingArbeidsgiver(
-                    asList(
+        val dokumentResponse = no.nav.tjeneste.virksomhet.journal.v2.HentDokumentResponse()
+        dokumentResponse.response = HentDokumentResponse()
+        dokumentResponse.response.dokument = JournalConsumerTest.inntektsmeldingArbeidsgiver(
+                asList(
                         Periode(LocalDate.of(2019, 1, 1), LocalDate.of(2019, 1, 12)),
                         Periode(LocalDate.of(2019, 1, 12), LocalDate.of(2019, 1, 14))
-                    )
-                ).toByteArray()
-            )
-        )
+                )
+        ).toByteArray()
+
+        `when`(journalV2.hentDokument(any())).thenReturn(dokumentResponse.response)
 
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId"))
 
@@ -279,8 +298,12 @@ class InntektsmeldingConsumerIntegrassjonsTest {
         HentDokumentDokumentIkkeFunnet::class
     )
     fun mottarInntektsmeldingMedPrivatArbeidsgiver() {
+        val dokumentResponse = no.nav.tjeneste.virksomhet.journal.v2.HentDokumentResponse()
+        dokumentResponse.response = HentDokumentResponse()
+        dokumentResponse.response.dokument = JournalConsumerTest.inntektsmeldingArbeidsgiverPrivat().toByteArray()
+
         `when`(journalV2.hentDokument(any())).thenReturn(
-            WSHentDokumentResponse().withDokument(JournalConsumerTest.inntektsmeldingArbeidsgiverPrivat().toByteArray())
+                dokumentResponse.response
         )
 
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId"))
@@ -313,14 +336,16 @@ class InntektsmeldingConsumerIntegrassjonsTest {
     @Test
     @Throws(Exception::class)
     fun behandlerInntektsmeldingSomEnSakMedVedLikPeriode() {
-        `when`(journalV2.hentDokument(any())).thenReturn(
-            WSHentDokumentResponse().withDokument(
-                JournalConsumerTest.inntektsmeldingArbeidsgiver(
-                    listOf(
+        val dokumentResponse = no.nav.tjeneste.virksomhet.journal.v2.HentDokumentResponse()
+        dokumentResponse.response = HentDokumentResponse()
+        dokumentResponse.response.dokument = JournalConsumerTest.inntektsmeldingArbeidsgiver(
+                listOf(
                         Periode(LocalDate.now(), LocalDate.now().plusDays(20))
-                    )
-                ).toByteArray()
-            )
+                )
+        ).toByteArray()
+
+        `when`(journalV2.hentDokument(any())).thenReturn(
+                dokumentResponse.response
         )
 
         val numThreads = 16
@@ -328,26 +353,30 @@ class InntektsmeldingConsumerIntegrassjonsTest {
 
         verify<BehandleSakConsumer>(behandleSakConsumer, times(1)).opprettSak(ArgumentMatchers.anyString())
         verify<BehandleInngaaendeJournalV1>(behandleInngaaendeJournalV1, times(numThreads)).ferdigstillJournalfoering(
-            any()
+                any()
         )
+    }
+
+    fun build(fnr:AtomicInteger) : no.nav.tjeneste.virksomhet.journal.v2.meldinger.HentDokumentResponse {
+        val dokumentResponse = no.nav.tjeneste.virksomhet.journal.v2.meldinger.HentDokumentResponse()
+        dokumentResponse.dokument = JournalConsumerTest.inntektsmeldingArbeidsgiver(
+                listOf(
+                        Periode(
+                                fom = LocalDate.now(),
+                                tom = LocalDate.now().plusDays(20)
+                        )
+                ),
+                "fnr" + fnr.incrementAndGet()
+        ).toByteArray()
+        return dokumentResponse
     }
 
     @Test
     @Throws(Exception::class)
     fun behandlerInntektsmeldingerForFlerPersonerSamtidig() {
         val fnr = AtomicInteger()
-        given(journalV2.hentDokument(any<WSHentDokumentRequest>())).willAnswer {
-            WSHentDokumentResponse().withDokument(
-                JournalConsumerTest.inntektsmeldingArbeidsgiver(
-                    listOf(
-                        Periode(
-                            fom = LocalDate.now(),
-                            tom = LocalDate.now().plusDays(20)
-                        )
-                    ),
-                    "fnr" + fnr.incrementAndGet()
-                ).toByteArray()
-            )
+        given(journalV2.hentDokument(any<HentDokumentRequest>())).willAnswer {
+            build(fnr)
         }
 
         val numThreads = 16

@@ -1,12 +1,10 @@
 package no.nav.syfo.consumer.ws
 
 import no.nav.syfo.util.Metrikk
-import no.nav.tjeneste.virksomhet.behandlesak.v1.BehandleSakV1
-import no.nav.tjeneste.virksomhet.behandlesak.v1.informasjon.WSAktoer
-import no.nav.tjeneste.virksomhet.behandlesak.v1.informasjon.WSPerson
-import no.nav.tjeneste.virksomhet.behandlesak.v1.informasjon.WSSak
-import no.nav.tjeneste.virksomhet.behandlesak.v1.meldinger.WSOpprettSakRequest
-import no.nav.tjeneste.virksomhet.behandlesak.v1.meldinger.WSOpprettSakResponse
+import no.nav.tjeneste.virksomhet.behandlesak.v2.WSAktor
+import no.nav.tjeneste.virksomhet.behandlesak.v2.BehandleSakV2
+import no.nav.tjeneste.virksomhet.behandlesak.v2.WSOpprettSakRequest
+import no.nav.tjeneste.virksomhet.behandlesak.v2.WSOpprettSakResponse
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
@@ -24,7 +22,7 @@ import org.mockito.Mockito.`when`
 @TestPropertySource(locations = ["classpath:application-test.properties"])
 class BehandleSakConsumerTest {
     @Mock
-    private val behandleSakV1: BehandleSakV1? = null
+    private val behandleSakV1: BehandleSakV2? = null
 
     @Mock
     private val metrikk: Metrikk? = null
@@ -44,9 +42,9 @@ class BehandleSakConsumerTest {
         val sak = captor.value.sak
 
         assertThat(sakId).isEqualTo("1")
-        assertThat(sak.fagomraade.value).isEqualTo("SYK")
-        assertThat(sak.fagsystem.value).isEqualTo("FS22")
-        assertThat(sak.sakstype.value).isEqualTo("GEN")
-        assertThat<WSAktoer>(sak.gjelderBrukerListe).contains(WSPerson().withIdent("12345678910"))
+        assertThat(sak.fagomrade).isEqualTo("SYK")
+        assertThat(sak.fagsystem).isEqualTo("FS22")
+        assertThat(sak.saktype).isEqualTo("GEN")
+        assertThat<WSAktor>(sak.gjelderBrukerListe).contains(WSAktor().withIdent("12345678910"))
     }
 }

@@ -3,3 +3,4 @@
 application-local.properties
 transaction-logs
 target
+.gradle

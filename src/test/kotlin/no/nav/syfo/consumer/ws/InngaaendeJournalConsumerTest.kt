@@ -1,6 +1,12 @@
 package no.nav.syfo.consumer.ws
 
-import no.nav.tjeneste.virksomhet.inngaaende.journal.v1.*
+import no.nav.syfo.domain.JournalStatus
+import no.nav.tjeneste.virksomhet.inngaaendejournal.v1.binding.InngaaendeJournalV1
+import no.nav.tjeneste.virksomhet.inngaaendejournal.v1.informasjon.Dokumentinformasjon
+import no.nav.tjeneste.virksomhet.inngaaendejournal.v1.informasjon.InngaaendeJournalpost
+import no.nav.tjeneste.virksomhet.inngaaendejournal.v1.informasjon.Journaltilstand
+import no.nav.tjeneste.virksomhet.inngaaendejournal.v1.meldinger.HentJournalpostRequest
+import no.nav.tjeneste.virksomhet.inngaaendejournal.v1.meldinger.HentJournalpostResponse
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
@@ -8,7 +14,7 @@ import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 
-import no.nav.tjeneste.virksomhet.inngaaende.journal.v1.WSJournaltilstand.MIDLERTIDIG
+
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.verify
@@ -29,14 +35,19 @@ class InngaaendeJournalConsumerTest {
         val dokumentId1 = "dokumentId"
         val journalpostId = "journalpostId"
 
+        val ijp = InngaaendeJournalpost()
+        ijp.hoveddokument = Dokumentinformasjon()
+        ijp.hoveddokument.dokumentId = dokumentId1
+        ijp.journaltilstand = Journaltilstand.MIDLERTIDIG
+        // JournalStatus.MIDLERTIDIG
+
+        val journalpostResponse = HentJournalpostResponse()
+        journalpostResponse.inngaaendeJournalpost = ijp
+
         `when`(inngaaendeJournalV1!!.hentJournalpost(any())).thenReturn(
-            WSHentJournalpostResponse().withInngaaendeJournalpost(
-                WSInngaaendeJournalpost()
-                    .withHoveddokument(WSDokumentinformasjon().withDokumentId(dokumentId1))
-                    .withJournaltilstand(MIDLERTIDIG)
-            )
+            journalpostResponse
         )
-        val captor = ArgumentCaptor.forClass(WSHentJournalpostRequest::class.java)
+        val captor = ArgumentCaptor.forClass(HentJournalpostRequest::class.java)
 
         val inngaaendeJournal = inngaaendeJournalConsumer!!.hentDokumentId(journalpostId)
 

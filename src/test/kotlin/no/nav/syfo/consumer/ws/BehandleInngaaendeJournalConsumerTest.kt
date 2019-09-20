@@ -1,7 +1,9 @@
 package no.nav.syfo.consumer.ws
 
 import no.nav.syfo.domain.InngaendeJournalpost
-import no.nav.tjeneste.virksomhet.behandle.inngaaende.journal.v1.*
+import no.nav.tjeneste.virksomhet.behandleinngaaendejournal.v1.binding.*
+import no.nav.tjeneste.virksomhet.behandleinngaaendejournal.v1.meldinger.FerdigstillJournalfoeringRequest
+import no.nav.tjeneste.virksomhet.behandleinngaaendejournal.v1.meldinger.OppdaterJournalpostRequest
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
@@ -30,10 +32,10 @@ class BehandleInngaaendeJournalConsumerTest {
         val behandlendeEngetId = "behandlendeEngetId"
         val journalpostId = "journalpostId"
 
-        val captor = ArgumentCaptor.forClass(WSFerdigstillJournalfoeringRequest::class.java)
+        val captor = ArgumentCaptor.forClass(FerdigstillJournalfoeringRequest::class.java)
 
         behandleInngaaendeJournalConsumer!!.ferdigstillJournalpost(
-            InngaendeJournalpost(behandlendeEnhetId = behandlendeEngetId, journalpostId = journalpostId, dokumentId = "dokumentId", fnr = "fnr", gsakId = "id")
+                InngaendeJournalpost(behandlendeEnhetId = behandlendeEngetId, journalpostId = journalpostId, dokumentId = "dokumentId", fnr = "fnr", gsakId = "id")
         )
         verify<BehandleInngaaendeJournalV1>(behandleInngaaendeJournalV1).ferdigstillJournalfoering(captor.capture())
 
@@ -43,23 +45,23 @@ class BehandleInngaaendeJournalConsumerTest {
 
     @Test
     @Throws(
-        OppdaterJournalpostSikkerhetsbegrensning::class,
-        OppdaterJournalpostOppdateringIkkeMulig::class,
-        OppdaterJournalpostUgyldigInput::class,
-        OppdaterJournalpostJournalpostIkkeInngaaende::class,
-        OppdaterJournalpostObjektIkkeFunnet::class
+            OppdaterJournalpostSikkerhetsbegrensning::class,
+            OppdaterJournalpostOppdateringIkkeMulig::class,
+            OppdaterJournalpostUgyldigInput::class,
+            OppdaterJournalpostJournalpostIkkeInngaaende::class,
+            OppdaterJournalpostObjektIkkeFunnet::class
     )
     fun oppdaterJournalpostMedPrivatAvsender() {
         val inngaendeJournalpost = InngaendeJournalpost(
-            fnr = "fnr",
-            gsakId = "saksID",
-            behandlendeEnhetId = "enhet",
-            dokumentId = "dokumentId",
-            journalpostId = "journalpostId",
-            arbeidsgiverPrivat = "10101033333"
+                fnr = "fnr",
+                gsakId = "saksID",
+                behandlendeEnhetId = "enhet",
+                dokumentId = "dokumentId",
+                journalpostId = "journalpostId",
+                arbeidsgiverPrivat = "10101033333"
         )
 
-        val captor = ArgumentCaptor.forClass(WSOppdaterJournalpostRequest::class.java)
+        val captor = ArgumentCaptor.forClass(OppdaterJournalpostRequest::class.java)
 
         behandleInngaaendeJournalConsumer!!.oppdaterJournalpost(inngaendeJournalpost)
 
