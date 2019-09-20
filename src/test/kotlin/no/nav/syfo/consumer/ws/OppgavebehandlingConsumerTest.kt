@@ -1,9 +1,9 @@
 package no.nav.syfo.consumer.ws
 
 import no.nav.syfo.domain.Oppgave
-import no.nav.tjeneste.virksomhet.oppgavebehandling.v3.OppgavebehandlingV3
-import no.nav.tjeneste.virksomhet.oppgavebehandling.v3.meldinger.WSOpprettOppgaveRequest
-import no.nav.tjeneste.virksomhet.oppgavebehandling.v3.meldinger.WSOpprettOppgaveResponse
+import no.nav.tjeneste.virksomhet.oppgavebehandling.v3.meldinger.OpprettOppgaveResponse
+import no.nav.tjeneste.virksomhet.oppgavebehandling.v3.binding.OppgavebehandlingV3
+import no.nav.tjeneste.virksomhet.oppgavebehandling.v3.meldinger.OpprettOppgaveRequest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -28,21 +28,28 @@ class OppgavebehandlingConsumerTest {
 
     @Test
     fun opprettOppgave() {
-        `when`(oppgavebehandlingV3!!.opprettOppgave(any())).thenReturn(WSOpprettOppgaveResponse().withOppgaveId("1234"))
-        val captor = ArgumentCaptor.forClass(WSOpprettOppgaveRequest::class.java)
+        val ooresponse = OpprettOppgaveResponse()
+        ooresponse.oppgaveId = "1234"
 
+        `when`(oppgavebehandlingV3!!.opprettOppgave(any())).thenReturn(ooresponse)
+        val captor = ArgumentCaptor.forClass(OpprettOppgaveRequest::class.java)
         val ansvarligEnhetId = "behandlendeenhet1234"
         val oppgave = Oppgave(
-            beskrivelse = "Beskriv beskriv",
-            saksnummer = "gsak1234",
-            dokumentId = "journalpost1234",
-            ansvarligEnhetId = ansvarligEnhetId,
-            aktivTil = LocalDate.of(2018, 1, 1)
+                beskrivelse = "Beskriv beskriv",
+                saksnummer = "gsak1234",
+                dokumentId = "journalpost1234",
+                ansvarligEnhetId = ansvarligEnhetId,
+                aktivTil = LocalDate.of(2018, 1, 1)
         )
         oppgavebehandlingConsumer!!.opprettOppgave("12345678910", oppgave)
 
         verify(oppgavebehandlingV3).opprettOppgave(captor.capture())
         val opprettOppgave = captor.value.opprettOppgave
+
+        val aktivTil = LocalDate.of(
+                opprettOppgave.aktivTil.getYear(),
+                opprettOppgave.aktivTil.getMonth(),
+                opprettOppgave.aktivTil.getDay())
 
         assertThat(opprettOppgave.brukertypeKode).isEqualTo("PERSON")
         assertThat(opprettOppgave.oppgavetypeKode).isEqualTo("INNT_SYK")
@@ -50,7 +57,7 @@ class OppgavebehandlingConsumerTest {
         assertThat(opprettOppgave.underkategoriKode).isEqualTo("SYK_SYK")
         assertThat(opprettOppgave.prioritetKode).isEqualTo("NORM_SYK")
         assertThat(opprettOppgave.beskrivelse).isEqualTo(oppgave.beskrivelse)
-        assertThat(opprettOppgave.aktivTil).isEqualTo(oppgave.aktivTil)
+        assertThat(aktivTil).isEqualTo(oppgave.aktivTil)
         assertThat(opprettOppgave.ansvarligEnhetId).isEqualTo(ansvarligEnhetId)
         assertThat(opprettOppgave.dokumentId).isEqualTo(oppgave.dokumentId)
         assertThat(opprettOppgave.saksnummer).isEqualTo(oppgave.saksnummer)
