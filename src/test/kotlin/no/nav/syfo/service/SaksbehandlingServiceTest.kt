@@ -5,12 +5,8 @@ import no.nav.syfo.consumer.rest.aktor.AktorConsumer
 import no.nav.syfo.consumer.ws.BehandleSakConsumer
 import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
 import no.nav.syfo.consumer.ws.OppgavebehandlingConsumer
-import no.nav.syfo.domain.GeografiskTilknytningData
-import no.nav.syfo.domain.Inntektsmelding
-import no.nav.syfo.domain.InntektsmeldingMeta
-import no.nav.syfo.domain.JournalStatus
-import no.nav.syfo.domain.Oppgave
-import no.nav.syfo.domain.Periode
+import no.nav.syfo.domain.*
+import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.repository.InntektsmeldingDAO
 import no.nav.syfo.util.Metrikk
 import no.nav.tjeneste.virksomhet.aktoer.v2.HentAktoerIdForIdentPersonIkkeFunnet
@@ -22,9 +18,7 @@ import org.mockito.ArgumentMatchers.anyString
 import org.mockito.BDDMockito.given
 import org.mockito.InjectMocks
 import org.mockito.Mock
-import org.mockito.Mockito.`when`
-import org.mockito.Mockito.never
-import org.mockito.Mockito.verify
+import org.mockito.Mockito.*
 import org.mockito.junit.MockitoJUnitRunner
 import java.time.LocalDate
 import java.util.Arrays.asList
@@ -67,18 +61,20 @@ class SaksbehandlingServiceTest {
 
     private fun lagInntektsmelding(): Inntektsmelding {
         return Inntektsmelding(
-            status = JournalStatus.MIDLERTIDIG,
-            fnr = "fnr",
-            arbeidsgiverOrgnummer = "orgnummer",
-            journalpostId = "journalpostId",
-            arbeidsforholdId = null,
-            arsakTilInnsending = "Ny",
-            arbeidsgiverperioder = listOf(
-                Periode(
-                    fom = LocalDate.of(2019, 1, 4),
-                    tom = LocalDate.of(2019, 1, 20)
+                id = "ID",
+                arkivRefereranse = "AR",
+                journalStatus = JournalStatus.MIDLERTIDIG,
+                fnr = "fnr",
+                arbeidsgiverOrgnummer = "orgnummer",
+                journalpostId = "journalpostId",
+                arbeidsforholdId = null,
+                arsakTilInnsending = "Ny",
+                arbeidsgiverperioder = listOf(
+                        Periode(
+                                fom = LocalDate.of(2019, 1, 4),
+                                tom = LocalDate.of(2019, 1, 20)
+                        )
                 )
-            )
         )
     }
 

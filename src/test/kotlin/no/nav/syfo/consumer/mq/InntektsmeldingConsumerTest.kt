@@ -2,8 +2,9 @@ package no.nav.syfo.consumer.mq
 
 import any
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
-import no.nav.syfo.domain.Inntektsmelding
 import no.nav.syfo.domain.JournalStatus
+import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
+import no.nav.syfo.producer.InntektsmeldingProducer
 import no.nav.syfo.repository.InntektsmeldingDAO
 import no.nav.syfo.service.JournalpostService
 import no.nav.syfo.service.SaksbehandlingService
@@ -15,9 +16,7 @@ import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.InjectMocks
 import org.mockito.Mock
-import org.mockito.Mockito.`when`
-import org.mockito.Mockito.never
-import org.mockito.Mockito.verify
+import org.mockito.Mockito.*
 import org.mockito.junit.MockitoJUnitRunner
 import javax.jms.MessageNotWriteableException
 
@@ -39,28 +38,33 @@ class InntektsmeldingConsumerTest {
     @Mock
     private val inntektsmeldingDAO: InntektsmeldingDAO? = null
 
+    @Mock
+    private val inntektsmeldingProducer: InntektsmeldingProducer? = null
+
     @InjectMocks
     private lateinit var inntektsmeldingConsumer: InntektsmeldingConsumer
 
     @Before
     fun setup() {
         `when`(aktorConsumer.getAktorId(anyString())).thenReturn("aktor")
+        `when`(inntektsmeldingDAO?.opprett(any())).thenReturn("ID")
     }
 
     @Test
     @Throws(MessageNotWriteableException::class)
     fun behandlerInntektsmelding() {
         `when`(journalpostService.hentInntektsmelding("arkivId")).thenReturn(
-            Inntektsmelding(
-                arbeidsforholdId = "",
-                status = JournalStatus.MIDLERTIDIG,
-                arbeidsgiverOrgnummer = "orgnummer",
-                arbeidsgiverPrivat = null,
-                journalpostId = "akrivId",
-                fnr = "fnr",
-                arbeidsgiverperioder = emptyList(),
-                arsakTilInnsending = ""
-            )
+                Inntektsmelding(
+                        arkivRefereranse = "AR123",
+                        arbeidsforholdId = "",
+                        journalStatus = JournalStatus.MIDLERTIDIG,
+                        arbeidsgiverOrgnummer = "orgnummer",
+                        arbeidsgiverPrivatFnr = null,
+                        journalpostId = "akrivId",
+                        fnr = "fnr",
+                        arbeidsgiverperioder = emptyList(),
+                        arsakTilInnsending = ""
+                )
         )
         `when`(saksbehandlingService.behandleInntektsmelding(any(), anyString())).thenReturn("saksId")
 
@@ -70,20 +74,22 @@ class InntektsmeldingConsumerTest {
 
         verify(saksbehandlingService).behandleInntektsmelding(any(), anyString())
         verify(journalpostService).ferdigstillJournalpost(any(), any())
+        verify(inntektsmeldingProducer!!).leggMottattInntektsmeldingPåTopic(any())
     }
 
     @Test
     @Throws(MessageNotWriteableException::class)
     fun behandlerIkkeInntektsmeldingMedStatusForskjelligFraMidlertidig() {
         `when`(journalpostService.hentInntektsmelding("arkivId")).thenReturn(
-            Inntektsmelding(
-                arbeidsforholdId = "123",
-                arsakTilInnsending = "",
-                arbeidsgiverperioder = emptyList(),
-                status = JournalStatus.ANNET,
-                journalpostId = "arkivId",
-                fnr = "fnr"
-            )
+                Inntektsmelding(
+                        arkivRefereranse = "AR123",
+                        arbeidsforholdId = "123",
+                        arsakTilInnsending = "",
+                        arbeidsgiverperioder = emptyList(),
+                        journalStatus = JournalStatus.ANNET,
+                        journalpostId = "arkivId",
+                        fnr = "fnr"
+                )
         )
 
         val message = ActiveMQTextMessage()
@@ -98,14 +104,15 @@ class InntektsmeldingConsumerTest {
     @Throws(MessageNotWriteableException::class)
     fun behandlerIkkeInntektsmeldingMedStatusEndelig() {
         `when`(journalpostService.hentInntektsmelding("arkivId")).thenReturn(
-            Inntektsmelding(
-                arbeidsforholdId = "123",
-                arsakTilInnsending = "",
-                arbeidsgiverperioder = emptyList(),
-                status = JournalStatus.ENDELIG,
-                journalpostId = "arkivId",
-                fnr = "fnr"
-            )
+                Inntektsmelding(
+                        arkivRefereranse = "AR123",
+                        arbeidsforholdId = "123",
+                        arsakTilInnsending = "",
+                        arbeidsgiverperioder = emptyList(),
+                        journalStatus = JournalStatus.ENDELIG,
+                        journalpostId = "arkivId",
+                        fnr = "fnr"
+                )
         )
 
         val message = ActiveMQTextMessage()
@@ -114,6 +121,7 @@ class InntektsmeldingConsumerTest {
 
         verify<SaksbehandlingService>(saksbehandlingService, never()).behandleInntektsmelding(any(), anyString())
         verify(journalpostService, never()).ferdigstillJournalpost(any(), any())
+        verify(inntektsmeldingProducer!!, never()).leggMottattInntektsmeldingPåTopic(any())
     }
 
     companion object {

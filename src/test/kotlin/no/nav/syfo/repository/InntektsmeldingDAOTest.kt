@@ -101,7 +101,7 @@ class InntektsmeldingDAOTest {
     }
 
     @Test
-    fun lagererInntektsmeldingMedArbeidsgiverPrivatperson() {
+    fun lagrerInntektsmeldingMedArbeidsgiverPrivatperson() {
         val meta = InntektsmeldingMeta(
             aktorId = "aktor",
             sakId = "saksId",

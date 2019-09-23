@@ -1,27 +1,24 @@
 package no.nav.syfo.consumer.ws
 
+import no.nav.syfo.consumer.rest.aktor.AktorConsumer
 import no.nav.syfo.domain.InngaaendeJournal
-import no.nav.syfo.domain.Inntektsmelding
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
+import no.nav.syfo.util.JAXBTest.getInntektsmelding
 import no.nav.tjeneste.virksomhet.journal.v2.*
+import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
+import org.mockito.ArgumentMatchers.any
 import org.mockito.InjectMocks
 import org.mockito.Mock
+import org.mockito.Mockito.`when`
+import org.mockito.Mockito.verify
 import org.mockito.junit.MockitoJUnitRunner
-
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.Collections
-
 import java.util.Arrays.asList
-import no.nav.syfo.util.JAXBTest.getInntektsmelding
-import org.assertj.core.api.AssertionsForClassTypes.assertThat
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.verify
-import org.mockito.Mockito.`when`
 import java.util.function.BinaryOperator
 
 
@@ -30,6 +27,9 @@ class JournalConsumerTest {
 
     @Mock
     private val journal: JournalV2? = null
+
+    @Mock
+    private val aktør: AktorConsumer? = null
 
     @InjectMocks
     private val journalConsumer: JournalConsumer? = null
@@ -40,9 +40,9 @@ class JournalConsumerTest {
         `when`(journal!!.hentDokument(any())).thenReturn(WSHentDokumentResponse().withDokument(getInntektsmelding().toByteArray()))
         val captor = ArgumentCaptor.forClass(WSHentDokumentRequest::class.java)
 
-        val (fnr) = journalConsumer!!.hentInntektsmelding(
-            "journalpostId",
-            InngaaendeJournal(dokumentId = "dokumentId", status = JournalStatus.MIDLERTIDIG)
+        val (_, fnr) = journalConsumer!!.hentInntektsmelding(
+                "journalpostId",
+                InngaaendeJournal(dokumentId = "dokumentId", status = JournalStatus.MIDLERTIDIG)
         )
 
         verify(journal).hentDokument(captor.capture())
@@ -56,15 +56,14 @@ class JournalConsumerTest {
     @Throws(HentDokumentSikkerhetsbegrensning::class, HentDokumentDokumentIkkeFunnet::class)
     fun parserInntektsmeldingUtenPerioder() {
         `when`(journal!!.hentDokument(any())).thenReturn(
-            WSHentDokumentResponse().withDokument(
-                inntektsmeldingArbeidsgiver(emptyList()).toByteArray()
-            )
+                WSHentDokumentResponse().withDokument(
+                        inntektsmeldingArbeidsgiver(emptyList()).toByteArray()
+                )
         )
 
-        val (_, _, _, _, _, _, _, arbeidsgiverperioder) = journalConsumer!!.hentInntektsmelding(
-            "jounralpostID",
-            InngaaendeJournal(dokumentId = "", status = JournalStatus.ANNET)
-        )
+        val (_, _, _, _, _, _, _, _, _, arbeidsgiverperioder) = journalConsumer!!.hentInntektsmelding(
+                "jounralpostID",
+                InngaaendeJournal(dokumentId = "", status = JournalStatus.ANNET))
 
         assertThat(arbeidsgiverperioder.isEmpty())
     }
@@ -73,15 +72,14 @@ class JournalConsumerTest {
     @Throws(HentDokumentSikkerhetsbegrensning::class, HentDokumentDokumentIkkeFunnet::class)
     fun parseInntektsmeldingV7() {
         `when`(journal!!.hentDokument(any())).thenReturn(
-            WSHentDokumentResponse().withDokument(
-                inntektsmeldingArbeidsgiverPrivat().toByteArray()
-            )
+                WSHentDokumentResponse().withDokument(
+                        inntektsmeldingArbeidsgiverPrivat().toByteArray()
+                )
         )
 
-        val (_, _, arbeidsgiverPrivat, _, _, _, _, arbeidsgiverperioder) = journalConsumer!!.hentInntektsmelding(
-            "journalpostId",
-            InngaaendeJournal(dokumentId = "", status = JournalStatus.ANNET)
-        )
+        val (_, _, _, arbeidsgiverPrivat, _, _, _, _, _, arbeidsgiverperioder) = journalConsumer!!.hentInntektsmelding(
+                "journalpostId",
+                InngaaendeJournal(dokumentId = "", status = JournalStatus.ANNET))
 
         assertThat(arbeidsgiverperioder.isEmpty()).isFalse()
         assertThat(arbeidsgiverPrivat != null).isTrue()
@@ -91,22 +89,21 @@ class JournalConsumerTest {
     @Throws(HentDokumentSikkerhetsbegrensning::class, HentDokumentDokumentIkkeFunnet::class)
     fun parseInntektsmelding0924() {
         `when`(journal!!.hentDokument(any())).thenReturn(
-            WSHentDokumentResponse().withDokument(
-                inntektsmeldingArbeidsgiver(
-                    asList(
-                        Periode(
-                            LocalDate.of(2019, 2, 1),
-                            LocalDate.of(2019, 2, 16)
-                        )
-                    )
-                ).toByteArray()
-            )
+                WSHentDokumentResponse().withDokument(
+                        inntektsmeldingArbeidsgiver(
+                                asList(
+                                        Periode(
+                                                LocalDate.of(2019, 2, 1),
+                                                LocalDate.of(2019, 2, 16)
+                                        )
+                                )
+                        ).toByteArray()
+                )
         )
 
-        val (_, arbeidsgiverOrgnummer, arbeidsgiverPrivat) = journalConsumer!!.hentInntektsmelding(
-            "journalpostId",
-            InngaaendeJournal(dokumentId = "", status = JournalStatus.ANNET)
-        )
+        val (_, _, arbeidsgiverOrgnummer, arbeidsgiverPrivat) = journalConsumer!!.hentInntektsmelding(
+                "journalpostId",
+                InngaaendeJournal(dokumentId = "", status = JournalStatus.ANNET))
 
         assertThat(arbeidsgiverOrgnummer != null).isTrue()
         assertThat(arbeidsgiverPrivat != null).isFalse()

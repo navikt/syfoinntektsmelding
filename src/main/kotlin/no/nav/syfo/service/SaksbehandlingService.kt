@@ -4,11 +4,11 @@ import log
 import no.nav.syfo.consumer.ws.BehandleSakConsumer
 import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
 import no.nav.syfo.consumer.ws.OppgavebehandlingConsumer
-import no.nav.syfo.domain.Inntektsmelding
-import no.nav.syfo.domain.Periode
-import no.nav.syfo.repository.InntektsmeldingDAO
 import no.nav.syfo.domain.InntektsmeldingMeta
 import no.nav.syfo.domain.Oppgave
+import no.nav.syfo.domain.Periode
+import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
+import no.nav.syfo.repository.InntektsmeldingDAO
 import no.nav.syfo.util.DateUtil
 import no.nav.syfo.util.Metrikk
 import no.nav.syfo.util.sammenslattPeriode

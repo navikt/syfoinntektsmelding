@@ -6,21 +6,19 @@ import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
 import no.nav.syfo.consumer.ws.InngaaendeJournalConsumer
 import no.nav.syfo.consumer.ws.JournalConsumer
 import no.nav.syfo.domain.InngaaendeJournal
-import no.nav.syfo.domain.Inntektsmelding
+import no.nav.syfo.domain.JournalStatus
+import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.util.Metrikk
+import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.InjectMocks
-import org.mockito.Mock
-import org.mockito.junit.MockitoJUnitRunner
-
-import no.nav.syfo.domain.InngaendeJournalpost
-import no.nav.syfo.domain.JournalStatus
-import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.BDDMockito.given
-import org.mockito.Mockito.verify
+import org.mockito.InjectMocks
+import org.mockito.Mock
 import org.mockito.Mockito.`when`
+import org.mockito.Mockito.verify
+import org.mockito.junit.MockitoJUnitRunner
 
 @RunWith(MockitoJUnitRunner::class)
 class JournalpostServiceTest {
@@ -46,15 +44,16 @@ class JournalpostServiceTest {
         given(behandlendeEnhetConsumer.hentBehandlendeEnhet(anyString())).willReturn("enhet")
 
         journalpostService!!.ferdigstillJournalpost(
-            "saksId",
-            Inntektsmelding(
-                fnr = "fnr",
-                arbeidsgiverOrgnummer = "orgnummer",
-                journalpostId = "journalpostId",
-                arbeidsforholdId = null,
-                arsakTilInnsending = "Ny",
-                status = JournalStatus.MIDLERTIDIG
-            )
+                "saksId",
+                Inntektsmelding(
+                        arkivRefereranse = "AR123",
+                        fnr = "fnr",
+                        arbeidsgiverOrgnummer = "orgnummer",
+                        journalpostId = "journalpostId",
+                        arbeidsforholdId = null,
+                        arsakTilInnsending = "Ny",
+                        journalStatus = JournalStatus.MIDLERTIDIG
+                )
         )
 
         verify<BehandlendeEnhetConsumer>(behandlendeEnhetConsumer).hentBehandlendeEnhet("fnr")
@@ -68,18 +67,19 @@ class JournalpostServiceTest {
         val journal = InngaaendeJournal(dokumentId = "dokumentId", status = JournalStatus.MIDLERTIDIG)
         `when`(inngaaendeJournalConsumer!!.hentDokumentId("journalpostId")).thenReturn(journal)
         `when`(journalConsumer!!.hentInntektsmelding("journalpostId", journal))
-            .thenReturn(
-                Inntektsmelding(
-                    arbeidsgiverOrgnummer = "orgnummer",
-                    arbeidsgiverPrivat = null,
-                    fnr = "fnr",
-                    journalpostId = "journalpostId",
-                    status = JournalStatus.MIDLERTIDIG,
-                    arsakTilInnsending = ""
+                .thenReturn(
+                        Inntektsmelding(
+                                arkivRefereranse = "AR123",
+                                arbeidsgiverOrgnummer = "orgnummer",
+                                arbeidsgiverPrivatFnr = null,
+                                fnr = "fnr",
+                                journalpostId = "journalpostId",
+                                journalStatus = JournalStatus.MIDLERTIDIG,
+                                arsakTilInnsending = ""
+                        )
                 )
-            )
 
-        val (fnr, _, arbeidsgiverPrivat) = journalpostService!!.hentInntektsmelding("journalpostId")
+        val (_, fnr, _, arbeidsgiverPrivat) = journalpostService!!.hentInntektsmelding("journalpostId")
 
         assertThat(fnr).isEqualTo("fnr")
         assertThat(arbeidsgiverPrivat).isNull()
