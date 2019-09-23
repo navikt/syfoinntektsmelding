@@ -1,0 +1,118 @@
+apiVersion: "nais.io/v1alpha1"
+kind: "Application"
+metadata:
+  name: syfoinntektsmelding
+  namespace:
+  labels:
+    team: teamarbeidsgiver
+spec:
+  image: repo.adeo.no:5443/syfoinntektsmelding:RELEASE_VERSION # Required. Docker image.
+  port: 8080 # Required. The port number which is exposed by the container and should receive HTTP traffic.
+  liveness: # HTTP endpoint that signals 200 OK when the application is running.
+    path: /internal/isAlive
+    initialDelay: 60
+    timeout: 1
+    periodSeconds: 10     # How often (in seconds) to perform the probe. Default to 10 seconds
+    failureThreshold: 3 # when a Pod starts and the probe fails,
+    # nais will try failureThreshold times before giving up and restarting the Pod
+    # Defaults to 3
+  readiness: # HTTP endpoint that signals 200 OK when it is okay to start routing traffic to the application.
+    path: /internal/isReady
+    initialDelay: 60
+    timeout: 1
+    periodSeconds: 10
+    failureThreshold: 3
+  prometheus:
+    enabled: true
+    path: /internal/prometheus
+  replicas: # Optional. Set min = max to disable autoscaling.
+    min: 1 # minimum number of replicas.
+    max: 1 # maximum number of replicas.
+  cpuThresholdPercentage: 90 # total cpu percentage threshold on deployment, at which point it will increase number of pods if current < max
+  istio: # Optional.
+    enabled: false # Optional. When true, envoy-proxy sidecar will be injected into pod and https urls envvars will be rewritten
+  resources: # Optional. See: http://kubernetes.io/docs/user-guide/compute-resources/
+    limits:
+      cpu: 1000m
+      memory: 1024Mi
+      requests:
+        cpu: 500m
+        memory: 384Mi
+  vault:
+    enabled: true
+  env:
+    - name: LOADBALANCER_FQDN
+      value: syfoinntektsmelding.nais.preprod.local
+    - name: ABAC_PDP_ENDPOINT_URL
+      value: https://wasapp-q0.adeo.no/asm-pdp/authorize
+    - name: SECURITYTOKENSERVICE_URL
+      value: https://sts-q1.preprod.local/SecurityTokenServiceProvider/
+      #Systembruker
+    - name: SRVSYFOINNTEKTSMELDING_USERNAME
+      value: srvsyfoinntektsmel
+    #OpenID
+    - name: OPENIDCONNECT_ISSOHOST
+      value: https://isso-q.adeo.no:443/isso/oauth2
+    - name: OPENIDCONNECT_ISSOISSUER
+      value: https://isso-q.adeo.no:443/isso/oauth2
+    - name: OPENIDCONNECT_ISSOJWKS
+      value: https://isso-q.adeo.no:443/isso/oauth2/connect/jwk_uri
+    - name: OPENIDCONNECT_USERNAME
+      value: syfoinntektsmelding-q1
+      #OIDC
+    - name: OIDC_STS_ISSUERURL
+      value: https://security-token-service.nais.preprod.local
+    - name: OIDC_STS_JWKSURL
+      value: https://security-token-service.nais.preprod.local/rest/v1/sts/jwks
+    #Generell Kafka
+    - name: SPRING_KAFKA_BOOTSTRAP-SERVERS
+      value: b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443
+    #Database
+    - name: SPRING_DATASOURCE_USERNAME
+      value: SYFOINNTEKTSMELDING_Q1
+    - name: SPRING_DATASOURCE_URL
+      value: jdbc:oracle:thin@a01dbfl032.adeo.no:1521/syfoinntektsmeldingq1
+    - name: spring_datasource_driver-class-name
+      value: oracle.jdbc.OracleDriver
+    #MQ
+    - name: SYFO_MOTTAK_INNTEKTSMELDING_QUEUENAME
+      value: QA.Q1_SYFO.MOTTAK_INNTEKTSMELDING
+    - name: SYFOINNTEKTSMELDING_CHANNEL_NAME
+      value: Q1_SYFOINNTEKTSMLD
+    - name: MQGATEWAY03_HOSTNAME
+      value: mq://b27apvl173.preprod.local
+    - name: MQGATEWAY03_PORT
+      value: 1413
+    - name: MQGATEWAY03_NAME
+      value: MQ1LSC03
+    # Eksterne systemer
+    - name: INNGAAENDEJOURNAL_V1_ENDPOINTURL
+      value: https://dokarkiv-q1.nais.preprod.local/services/inngaaendejournal/v1
+    - name: BEHANDLEINNGAAENDEJOURNAL_V1_ENDPOINTURL
+      value: https://dokarkiv-q1.nais.preprod.local/services/behandleinngaaendejournal/v1
+    - name: JOURNAL_V2_ENDPOINTURL
+      value: https://wasapp-q1.adeo.no/joark/Journal/v2
+    - name: VIRKSOMHET_PERSON_V3_ENDPOINTURL
+      value: https://wasapp-q1.adeo.no/tpsws/ws/Person/v3
+    - name: VIRKSOMHET_ARBEIDSFORDELING_V1_ENDPOINTURL
+      value: https://app-q1.adeo.no/norg2/ws/Arbeidsfordeling/v1
+    - name: SERVICEGATEWAY_URL
+      value: https://service-gw-q1.preprod.local/
+    - name: VIRKSOMHET_BEHANDLESAK_V1_ENDPOINTURL
+      value: https://wasapp-q1.adeo.no/nav-gsak-ws/BehandleSakV1
+    - name: VIRKSOMHET_OPPGAVE_V3_ENDPOINTURL
+      value: https://wasapp-q1.adeo.no/nav-gsak-ws/OppgaveV3
+    - name: VIRKSOMHET_OPPGAVEBEHANDLING_V3_ENDPOINTURL
+      value: https://wasapp-q1.adeo.no/nav-gsak-ws/OppgavebehandlingV3
+    - name: SYFOSERVICESTRANGLERAPI_URL
+      value: https://syfoservicestrangler.nais.preprod.local/api
+    - name: AKTOERREGISTER_API_V1_URL
+      value: https://app-q1.adeo.no/aktoerregister/api/v1
+    - name: SECURITY-TOKEN-SERVICE-TOKEN_URL
+      value: https://security-token-service.nais.preprod.local/rest/v1/sts/token
+    - name: AADACCESSTOKEN_URL
+      value: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth2/token
+    - name: AAD_SYFOGSAK_CLIENTID_USERNAME
+      value: ddbeeacd-9280-4741-a49a-45d7690b730e
+    - name: AAD_SYFOINNTEKTSMELDING_CLIENTID_USERNAME
+      value: 56813e1b-97db-4da9-bcc1-a53d0a677ca2
