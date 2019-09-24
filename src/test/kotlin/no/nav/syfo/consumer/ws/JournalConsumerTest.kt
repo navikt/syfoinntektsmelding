@@ -75,7 +75,7 @@ class JournalConsumerTest {
 
         `when`(journal!!.hentDokument(any())).thenReturn(response.response)
 
-        val (_, _, _, _, _, _, _, arbeidsgiverperioder) = journalConsumer!!.hentInntektsmelding(
+        val (_, _, _, _, _, _, _, _, _, arbeidsgiverperioder) = journalConsumer!!.hentInntektsmelding(
                 "jounralpostID",
                 InngaaendeJournal(dokumentId = "", status = JournalStatus.ANNET)
         )
@@ -92,7 +92,7 @@ class JournalConsumerTest {
 
         `when`(journal!!.hentDokument(any())).thenReturn(response.response)
 
-        val (_, _, arbeidsgiverPrivat, _, _, _, _, arbeidsgiverperioder) = journalConsumer!!.hentInntektsmelding(
+        val (_, _, _, arbeidsgiverPrivat, _, _, _, _, _, arbeidsgiverperioder) = journalConsumer!!.hentInntektsmelding(
                 "journalpostId",
                 InngaaendeJournal(dokumentId = "", status = JournalStatus.ANNET)
         )
@@ -117,7 +117,7 @@ class JournalConsumerTest {
 
         `when`(journal!!.hentDokument(any())).thenReturn(response.response)
 
-        val (_, arbeidsgiverOrgnummer, arbeidsgiverPrivat) = journalConsumer!!.hentInntektsmelding(
+        val (_, _, arbeidsgiverOrgnummer, arbeidsgiverPrivat) = journalConsumer!!.hentInntektsmelding(
                 "journalpostId",
                 InngaaendeJournal(dokumentId = "", status = JournalStatus.ANNET)
         )

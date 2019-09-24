@@ -25,10 +25,6 @@ class JournalConsumer(private val journalV2: JournalV2,
     var log = log()
 
     fun hentInntektsmelding(journalpostId: String, inngaaendeJournal: InngaaendeJournal): Inntektsmelding {
-        val request = WSHentDokumentRequest()
-                .withJournalpostId(journalpostId)
-                .withDokumentId(inngaaendeJournal.dokumentId)
-                .withVariantformat(WSVariantformater().withValue("ORIGINAL"))
 
         val format = Variantformater()
         format.value = "ORIGINAL"
