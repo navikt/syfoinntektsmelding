@@ -1,4 +1,4 @@
-FROM navikt/java:8
+FROM navikt/java:12
 COPY target/app.jar /app/
 
 #ENV NAIS_SECRETS="/var/run/secrets/naisd.io/"
