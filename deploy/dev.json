@@ -132,7 +132,7 @@
         "value": "https://app-q1.adeo.no/aktoerregister/api/v1"
       },
       {
-        "name": "SECURITY-TOKEN-SERVICE-TOKEN_URL",
+        "name": "SECURITY_TOKEN_SERVICE_TOKEN_URL",
         "value": "https://security-token-service.nais.preprod.local/rest/v1/sts/token"
       },
       {
