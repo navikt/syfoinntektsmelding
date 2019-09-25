@@ -181,7 +181,7 @@
         "memory": "1024Mi",
         "requests": {
           "cpu": "500m",
-          "memory": "386Mi"
+          "memory": "384Mi"
         }
       }
     },
