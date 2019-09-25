@@ -77,7 +77,7 @@
       },
       {
         "name": "MQGATEWAY03_HOSTNAME",
-        "value": "mq://b27apvl173.preprod.local"
+        "value": "b27apvl173.preprod.local"
       },
       {
         "name": "MQGATEWAY03_PORT",
