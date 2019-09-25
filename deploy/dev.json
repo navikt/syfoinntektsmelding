@@ -81,7 +81,7 @@
       },
       {
         "name": "MQGATEWAY03_PORT",
-        "value": 1413
+        "value": "1413"
       },
       {
         "name": "MQGATEWAY03_NAME",
