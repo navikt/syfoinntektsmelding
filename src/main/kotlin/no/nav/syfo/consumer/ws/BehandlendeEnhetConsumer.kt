@@ -3,14 +3,10 @@ package no.nav.syfo.consumer.ws
 import log
 import no.nav.syfo.domain.GeografiskTilknytningData
 import no.nav.syfo.util.Metrikk
-import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.ArbeidsfordelingV1
-import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.FinnBehandlendeEnhetListeUgyldigInput
-import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.informasjon.WSArbeidsfordelingKriterier
-import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.informasjon.WSDiskresjonskoder
-import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.informasjon.WSEnhetsstatus.AKTIV
-import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.informasjon.WSGeografi
-import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.informasjon.WSTema
-import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.meldinger.WSFinnBehandlendeEnhetListeRequest
+import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.binding.ArbeidsfordelingV1
+import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.binding.FinnBehandlendeEnhetListeUgyldigInput
+import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.informasjon.*
+import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.meldinger.FinnBehandlendeEnhetListeRequest
 import no.nav.tjeneste.virksomhet.person.v3.binding.HentGeografiskTilknytningPersonIkkeFunnet
 import no.nav.tjeneste.virksomhet.person.v3.binding.HentGeografiskTilknytningSikkerhetsbegrensing
 import no.nav.tjeneste.virksomhet.person.v3.binding.PersonV3
@@ -31,27 +27,36 @@ class BehandlendeEnhetConsumer(
     fun hentBehandlendeEnhet(fnr: String): String {
         val geografiskTilknytning = hentGeografiskTilknytning(fnr)
 
+        val tema = Tema()
+        tema.value = "SYK"
+
+        val disk = Diskresjonskoder()
+        disk.value = geografiskTilknytning.diskresjonskode
+
+        val geo = Geografi()
+        geo.value = geografiskTilknytning.geografiskTilknytning
+
+        val kriterier = ArbeidsfordelingKriterier()
+        kriterier.tema = tema
+        kriterier.diskresjonskode = null
+        kriterier.geografiskTilknytning = geo
+
+
+        if (geografiskTilknytning.diskresjonskode != null){
+            kriterier.diskresjonskode = disk
+        }
+
+        val request = FinnBehandlendeEnhetListeRequest()
+        request.arbeidsfordelingKriterier = kriterier
+
         try {
-            val behandlendeEnhet = arbeidsfordelingV1.finnBehandlendeEnhetListe(
-                WSFinnBehandlendeEnhetListeRequest()
-                    .withArbeidsfordelingKriterier(
-                        WSArbeidsfordelingKriterier()
-                            .withDiskresjonskode(
-                                if (geografiskTilknytning.diskresjonskode != null)
-                                    WSDiskresjonskoder().withValue(geografiskTilknytning.diskresjonskode)
-                                else
-                                    null
-                            )
-                            .withGeografiskTilknytning(WSGeografi().withValue(geografiskTilknytning.geografiskTilknytning))
-                            .withTema(WSTema().withValue("SYK"))
-                    )
-            )
-                .behandlendeEnhetListe
-                .stream()
-                .filter { wsOrganisasjonsenhet -> AKTIV == wsOrganisasjonsenhet.status }
-                .map { it.enhetId }
-                .findFirst()
-                .orElseThrow { RuntimeException("Fant ingen aktiv enhet for " + geografiskTilknytning.geografiskTilknytning) }
+            val behandlendeEnhet = arbeidsfordelingV1.finnBehandlendeEnhetListe(request)
+                    .behandlendeEnhetListe
+                    .stream()
+                    .filter { wsOrganisasjonsenhet -> Enhetsstatus.AKTIV == wsOrganisasjonsenhet.status }
+                    .map { it.enhetId }
+                    .findFirst()
+                    .orElseThrow { RuntimeException("Fant ingen aktiv enhet for " + geografiskTilknytning.geografiskTilknytning) }
 
             // 4474 er enhetsnummeret til sykepenger utland
             if ("4474" == behandlendeEnhet) {

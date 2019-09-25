@@ -1,5 +1,5 @@
 name: syfoinntektsmelding
-team: teamsykefravr
+team: teamarbeidsgiver
 image: "repo.adeo.no:5443/syfoinntektsmelding"
 replicas:
   min: 1

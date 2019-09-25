@@ -19,6 +19,15 @@ import org.mockito.junit.MockitoJUnitRunner
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Arrays.asList
+import no.nav.syfo.util.JAXBTest.getInntektsmelding
+import no.nav.tjeneste.virksomhet.journal.v2.binding.HentDokumentDokumentIkkeFunnet
+import no.nav.tjeneste.virksomhet.journal.v2.binding.HentDokumentSikkerhetsbegrensning
+import no.nav.tjeneste.virksomhet.journal.v2.binding.JournalV2
+import no.nav.tjeneste.virksomhet.journal.v2.meldinger.HentDokumentRequest
+import org.assertj.core.api.AssertionsForClassTypes.assertThat
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.verify
+import org.mockito.Mockito.`when`
 import java.util.function.BinaryOperator
 
 
@@ -37,8 +46,13 @@ class JournalConsumerTest {
     @Test
     @Throws(Exception::class)
     fun hentInntektsmelding() {
-        `when`(journal!!.hentDokument(any())).thenReturn(WSHentDokumentResponse().withDokument(getInntektsmelding().toByteArray()))
-        val captor = ArgumentCaptor.forClass(WSHentDokumentRequest::class.java)
+        val r = no.nav.tjeneste.virksomhet.journal.v2.meldinger.HentDokumentResponse()
+        val response = HentDokumentResponse()
+        response.response  = r
+        r.dokument = getInntektsmelding().toByteArray()
+
+        `when`(journal!!.hentDokument(any())).thenReturn(r)
+        val captor = ArgumentCaptor.forClass(HentDokumentRequest::class.java)
 
         val (_, fnr) = journalConsumer!!.hentInntektsmelding(
                 "journalpostId",
@@ -55,15 +69,16 @@ class JournalConsumerTest {
     @Test
     @Throws(HentDokumentSikkerhetsbegrensning::class, HentDokumentDokumentIkkeFunnet::class)
     fun parserInntektsmeldingUtenPerioder() {
-        `when`(journal!!.hentDokument(any())).thenReturn(
-                WSHentDokumentResponse().withDokument(
-                        inntektsmeldingArbeidsgiver(emptyList()).toByteArray()
-                )
-        )
+        val response = HentDokumentResponse()
+        response.response  = no.nav.tjeneste.virksomhet.journal.v2.meldinger.HentDokumentResponse()
+        response.response.dokument = inntektsmeldingArbeidsgiver(emptyList()).toByteArray()
+
+        `when`(journal!!.hentDokument(any())).thenReturn(response.response)
 
         val (_, _, _, _, _, _, _, _, _, arbeidsgiverperioder) = journalConsumer!!.hentInntektsmelding(
                 "jounralpostID",
-                InngaaendeJournal(dokumentId = "", status = JournalStatus.ANNET))
+                InngaaendeJournal(dokumentId = "", status = JournalStatus.ANNET)
+        )
 
         assertThat(arbeidsgiverperioder.isEmpty())
     }
@@ -71,15 +86,16 @@ class JournalConsumerTest {
     @Test
     @Throws(HentDokumentSikkerhetsbegrensning::class, HentDokumentDokumentIkkeFunnet::class)
     fun parseInntektsmeldingV7() {
-        `when`(journal!!.hentDokument(any())).thenReturn(
-                WSHentDokumentResponse().withDokument(
-                        inntektsmeldingArbeidsgiverPrivat().toByteArray()
-                )
-        )
+        val response = HentDokumentResponse()
+        response.response  = no.nav.tjeneste.virksomhet.journal.v2.meldinger.HentDokumentResponse()
+        response.response.dokument = inntektsmeldingArbeidsgiverPrivat().toByteArray()
+
+        `when`(journal!!.hentDokument(any())).thenReturn(response.response)
 
         val (_, _, _, arbeidsgiverPrivat, _, _, _, _, _, arbeidsgiverperioder) = journalConsumer!!.hentInntektsmelding(
                 "journalpostId",
-                InngaaendeJournal(dokumentId = "", status = JournalStatus.ANNET))
+                InngaaendeJournal(dokumentId = "", status = JournalStatus.ANNET)
+        )
 
         assertThat(arbeidsgiverperioder.isEmpty()).isFalse()
         assertThat(arbeidsgiverPrivat != null).isTrue()
@@ -88,22 +104,23 @@ class JournalConsumerTest {
     @Test
     @Throws(HentDokumentSikkerhetsbegrensning::class, HentDokumentDokumentIkkeFunnet::class)
     fun parseInntektsmelding0924() {
-        `when`(journal!!.hentDokument(any())).thenReturn(
-                WSHentDokumentResponse().withDokument(
-                        inntektsmeldingArbeidsgiver(
-                                asList(
-                                        Periode(
-                                                LocalDate.of(2019, 2, 1),
-                                                LocalDate.of(2019, 2, 16)
-                                        )
-                                )
-                        ).toByteArray()
+        val response = HentDokumentResponse()
+        response.response  = no.nav.tjeneste.virksomhet.journal.v2.meldinger.HentDokumentResponse()
+        response.response.dokument = inntektsmeldingArbeidsgiver(
+                asList(
+                        Periode(
+                                LocalDate.of(2019, 2, 1),
+                                LocalDate.of(2019, 2, 16)
+                        )
                 )
-        )
+        ).toByteArray()
+
+        `when`(journal!!.hentDokument(any())).thenReturn(response.response)
 
         val (_, _, arbeidsgiverOrgnummer, arbeidsgiverPrivat) = journalConsumer!!.hentInntektsmelding(
                 "journalpostId",
-                InngaaendeJournal(dokumentId = "", status = JournalStatus.ANNET))
+                InngaaendeJournal(dokumentId = "", status = JournalStatus.ANNET)
+        )
 
         assertThat(arbeidsgiverOrgnummer != null).isTrue()
         assertThat(arbeidsgiverPrivat != null).isFalse()
