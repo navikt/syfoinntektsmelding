@@ -3,7 +3,7 @@
   "kind": "Application",
   "metadata": {
     "labels": {
-      "team": "arbeidsgiver"
+      "team": "teamarbeidsgiver"
     },
     "name": "syfoinntektsmelding",
     "namespace": "default"
