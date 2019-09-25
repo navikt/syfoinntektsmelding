@@ -45,7 +45,7 @@ class InngaaendeJournalConsumerTest {
         journalpostResponse.inngaaendeJournalpost = ijp
 
         `when`(inngaaendeJournalV1!!.hentJournalpost(any())).thenReturn(
-            journalpostResponse
+                journalpostResponse
         )
         val captor = ArgumentCaptor.forClass(HentJournalpostRequest::class.java)
 

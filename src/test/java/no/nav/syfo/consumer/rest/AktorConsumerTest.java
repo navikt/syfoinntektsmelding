@@ -44,22 +44,22 @@ public class AktorConsumerTest {
     public void finnerAktorId() {
         AktorResponse response = new AktorResponse();
         response.put("fnr", Aktor.builder()
-                .identer(asList(Ident.builder()
-                        .ident("aktorId")
-                        .identgruppe("AktoerId")
-                        .gjeldende(true)
-                        .build()
-                ))
-                .feilmelding(null)
-                .build());
+            .identer(asList(Ident.builder()
+                .ident("aktorId")
+                .identgruppe("AktoerId")
+                .gjeldende(true)
+                .build()
+            ))
+            .feilmelding(null)
+            .build());
 
         when(restTemplate.exchange(
-                anyString(),
-                any(HttpMethod.class),
-                any(HttpEntity.class),
-                (Class<AktorResponse>) any()
+            anyString(),
+            any(HttpMethod.class),
+            any(HttpEntity.class),
+            (Class<AktorResponse>) any()
         ))
-                .thenReturn(new ResponseEntity<>(response, HttpStatus.OK));
+            .thenReturn(new ResponseEntity<>(response, HttpStatus.OK));
         String aktorId = aktorConsumer.getAktorId("fnr");
         assertThat(aktorId).isEqualTo("aktorId");
     }
@@ -68,15 +68,15 @@ public class AktorConsumerTest {
     public void finnerIkkeIdent() {
         AktorResponse response = new AktorResponse();
         response.put("fnr", Aktor.builder()
-                .identer(null)
-                .feilmelding("Fant ikke aktør")
-                .build());
+            .identer(null)
+            .feilmelding("Fant ikke aktør")
+            .build());
 
         when(restTemplate.exchange(
-                anyString(),
-                any(HttpMethod.class),
-                any(HttpEntity.class),
-                (Class<AktorResponse>) any())
+            anyString(),
+            any(HttpMethod.class),
+            any(HttpEntity.class),
+            (Class<AktorResponse>) any())
         ).thenReturn(new ResponseEntity<>(response, HttpStatus.OK));
         aktorConsumer.getAktorId("fnr");
     }
@@ -85,21 +85,21 @@ public class AktorConsumerTest {
     public void manglendeFnrIResponsGirFeilmelding() {
         AktorResponse response = new AktorResponse();
         response.put("etAnnetFnr", Aktor.builder()
-                .identer(asList(Ident.builder()
-                        .ident("aktorId")
-                        .identgruppe("AktoerId")
-                        .gjeldende(true)
-                        .build()
-                ))
-                .feilmelding(null)
-                .build());
+            .identer(asList(Ident.builder()
+                .ident("aktorId")
+                .identgruppe("AktoerId")
+                .gjeldende(true)
+                .build()
+            ))
+            .feilmelding(null)
+            .build());
 
 
         when(restTemplate.exchange(
-                anyString(),
-                any(HttpMethod.class),
-                any(HttpEntity.class),
-                (Class<AktorResponse>) any())
+            anyString(),
+            any(HttpMethod.class),
+            any(HttpEntity.class),
+            (Class<AktorResponse>) any())
         ).thenReturn(new ResponseEntity<>(response, HttpStatus.OK));
         aktorConsumer.getAktorId("fnr");
     }
@@ -108,15 +108,15 @@ public class AktorConsumerTest {
     public void manglendeIdentGirFeilmelding() {
         AktorResponse response = new AktorResponse();
         response.put("fnr", Aktor.builder()
-                .identer(Collections.emptyList())
-                .feilmelding(null)
-                .build());
+            .identer(Collections.emptyList())
+            .feilmelding(null)
+            .build());
 
         when(restTemplate.exchange(
-                anyString(),
-                any(HttpMethod.class),
-                any(HttpEntity.class),
-                (Class<AktorResponse>) any())
+            anyString(),
+            any(HttpMethod.class),
+            any(HttpEntity.class),
+            (Class<AktorResponse>) any())
         ).thenReturn(new ResponseEntity<>(response, HttpStatus.OK));
         aktorConsumer.getAktorId("fnr");
     }

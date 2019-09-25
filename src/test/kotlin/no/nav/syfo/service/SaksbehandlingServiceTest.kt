@@ -50,9 +50,9 @@ class SaksbehandlingServiceTest {
         `when`(inntektsmeldingDAO.finnBehandledeInntektsmeldinger(any())).thenReturn(emptyList())
         `when`(aktoridConsumer.getAktorId(anyString())).thenReturn("aktorid")
         `when`(behandlendeEnhetConsumer.hentGeografiskTilknytning(anyString())).thenReturn(
-            GeografiskTilknytningData(
-                geografiskTilknytning = "Geografisktilknytning"
-            )
+                GeografiskTilknytningData(
+                        geografiskTilknytning = "Geografisktilknytning"
+                )
         )
         `when`(behandlendeEnhetConsumer.hentBehandlendeEnhet(anyString())).thenReturn("behandlendeenhet1234")
         `when`(behandleSakConsumer.opprettSak("fnr")).thenReturn("opprettetSaksId")
@@ -99,8 +99,8 @@ class SaksbehandlingServiceTest {
         saksbehandlingService.behandleInntektsmelding(lagInntektsmelding(), "aktorId")
 
         verify<OppgavebehandlingConsumer>(oppgavebehandlingConsumer).opprettOppgave(
-            anyString(),
-            any<Oppgave>()
+                anyString(),
+                any<Oppgave>()
         )
     }
 
@@ -115,19 +115,19 @@ class SaksbehandlingServiceTest {
     @Test
     fun girNyInntektsmeldingEksisterendeSakIdOmTomOverlapper() {
         `when`(inntektsmeldingDAO.finnBehandledeInntektsmeldinger("aktorId")).thenReturn(
-            listOf(
-                InntektsmeldingMeta(
-                    aktorId = "aktorId",
-                    journalpostId = "id",
-                    sakId = "1",
-                    arbeidsgiverperioder = asList(
-                        Periode(
-                            fom = LocalDate.of(2019, 1, 1),
-                            tom = LocalDate.of(2019, 1, 20)
+                listOf(
+                        InntektsmeldingMeta(
+                                aktorId = "aktorId",
+                                journalpostId = "id",
+                                sakId = "1",
+                                arbeidsgiverperioder = asList(
+                                        Periode(
+                                                fom = LocalDate.of(2019, 1, 1),
+                                                tom = LocalDate.of(2019, 1, 20)
+                                        )
+                                )
                         )
-                    )
                 )
-            )
         )
 
         val sakId = saksbehandlingService.behandleInntektsmelding(lagInntektsmelding(), "aktorId")
@@ -138,19 +138,19 @@ class SaksbehandlingServiceTest {
     @Test
     fun girNyInntektsmeldingEksisterendeSakIdOmFomOverlapper() {
         `when`(inntektsmeldingDAO.finnBehandledeInntektsmeldinger("aktorId")).thenReturn(
-            listOf(
-                InntektsmeldingMeta(
-                    aktorId = "aktorId",
-                    journalpostId = "journalPostId",
-                    sakId = "1",
-                    arbeidsgiverperioder = asList(
-                        Periode(
-                            fom = LocalDate.of(2019, 1, 1),
-                            tom = LocalDate.of(2019, 1, 24)
+                listOf(
+                        InntektsmeldingMeta(
+                                aktorId = "aktorId",
+                                journalpostId = "journalPostId",
+                                sakId = "1",
+                                arbeidsgiverperioder = asList(
+                                        Periode(
+                                                fom = LocalDate.of(2019, 1, 1),
+                                                tom = LocalDate.of(2019, 1, 24)
+                                        )
+                                )
                         )
-                    )
                 )
-            )
         )
 
         val sakId = saksbehandlingService.behandleInntektsmelding(lagInntektsmelding(), "aktorId")
@@ -161,19 +161,19 @@ class SaksbehandlingServiceTest {
     @Test
     fun girNyInntektsmeldingEksisterendeSakIdOmFomOgTomOverlapper() {
         `when`(inntektsmeldingDAO.finnBehandledeInntektsmeldinger("aktorId")).thenReturn(
-            listOf(
-                InntektsmeldingMeta(
-                    aktorId = "aktorId",
-                    journalpostId = "journalPostId",
-                    sakId = "1",
-                    arbeidsgiverperioder = asList(
-                        Periode(
-                            fom = LocalDate.of(2019, 1, 1),
-                            tom = LocalDate.of(2019, 1, 20)
+                listOf(
+                        InntektsmeldingMeta(
+                                aktorId = "aktorId",
+                                journalpostId = "journalPostId",
+                                sakId = "1",
+                                arbeidsgiverperioder = asList(
+                                        Periode(
+                                                fom = LocalDate.of(2019, 1, 1),
+                                                tom = LocalDate.of(2019, 1, 20)
+                                        )
+                                )
                         )
-                    )
                 )
-            )
         )
 
         val sakId = saksbehandlingService.behandleInntektsmelding(lagInntektsmelding(), "aktorId")
@@ -184,15 +184,15 @@ class SaksbehandlingServiceTest {
     @Test
     fun kallerHentSakMedFomTomFraArbeidsgiverperiodeIInntektsmeldingMedEnPeriode() {
         saksbehandlingService.behandleInntektsmelding(
-            lagInntektsmelding()
-                .copy(
-                    arbeidsgiverperioder = asList(
-                        Periode(
-                            fom = LocalDate.of(2019, 6, 6),
-                            tom = LocalDate.of(2019, 6, 10)
-                        )
-                    )
-                ), "aktor"
+                lagInntektsmelding()
+                        .copy(
+                                arbeidsgiverperioder = asList(
+                                        Periode(
+                                                fom = LocalDate.of(2019, 6, 6),
+                                                tom = LocalDate.of(2019, 6, 10)
+                                        )
+                                )
+                        ), "aktor"
         )
         verify(eksisterendeSakService).finnEksisterendeSak("aktor", LocalDate.of(2019, 6, 6), LocalDate.of(2019, 6, 10))
     }
@@ -200,23 +200,23 @@ class SaksbehandlingServiceTest {
     @Test
     fun kallerHentSakMedTidligsteFomOgSenesteTomFraArbeidsgiverperiodeIInntektsmeldingFlerePerioder() {
         saksbehandlingService.behandleInntektsmelding(
-            lagInntektsmelding()
-                .copy(
-                    arbeidsgiverperioder = asList(
-                        Periode(
-                            fom = LocalDate.of(2019, 6, 6),
-                            tom = LocalDate.of(2019, 6, 10)
-                        ),
-                        Periode(
-                            fom = LocalDate.of(2019, 6, 1),
-                            tom = LocalDate.of(2019, 6, 5)
-                        ),
-                        Periode(
-                            fom = LocalDate.of(2019, 6, 11),
-                            tom = LocalDate.of(2019, 6, 14)
-                        )
-                    )
-                ), "aktor"
+                lagInntektsmelding()
+                        .copy(
+                                arbeidsgiverperioder = asList(
+                                        Periode(
+                                                fom = LocalDate.of(2019, 6, 6),
+                                                tom = LocalDate.of(2019, 6, 10)
+                                        ),
+                                        Periode(
+                                                fom = LocalDate.of(2019, 6, 1),
+                                                tom = LocalDate.of(2019, 6, 5)
+                                        ),
+                                        Periode(
+                                                fom = LocalDate.of(2019, 6, 11),
+                                                tom = LocalDate.of(2019, 6, 14)
+                                        )
+                                )
+                        ), "aktor"
         )
         verify(eksisterendeSakService).finnEksisterendeSak("aktor", LocalDate.of(2019, 6, 1), LocalDate.of(2019, 6, 14))
     }
