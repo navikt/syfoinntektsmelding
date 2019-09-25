@@ -6,7 +6,7 @@
       "team": "teamarbeidsgiver"
     },
     "name": "syfoinntektsmelding",
-    "namespace": null
+    "namespace": "default"
   },
   "spec": {
     "cpuThresholdPercentage": 90,
