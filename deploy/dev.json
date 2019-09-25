@@ -52,7 +52,7 @@
         "value": "https://security-token-service.nais.preprod.local/rest/v1/sts/jwks"
       },
       {
-        "name": "SPRING_KAFKA_BOOTSTRAP_SERVERS",
+        "name": "SPRING_KAFKA_BOOTSTRAP-SERVERS",
         "value": "b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443"
       },
       {
