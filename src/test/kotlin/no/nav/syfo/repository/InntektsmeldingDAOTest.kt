@@ -38,55 +38,55 @@ class InntektsmeldingDAOTest {
     @Test
     fun henterAlleInntektsmeldingenePaaAktorOgOrgnummer() {
         val melding1 = InntektsmeldingMeta(
-            aktorId = "aktorId-1",
-            orgnummer = "orgnummer-1",
-            journalpostId = "journalpostId",
-            sakId = "1",
-            arbeidsgiverperioder = asList(
-                Periode(
-                    fom = LocalDate.of(2019, 1, 3),
-                    tom = LocalDate.of(2019, 1, 19)
+                aktorId = "aktorId-1",
+                orgnummer = "orgnummer-1",
+                journalpostId = "journalpostId",
+                sakId = "1",
+                arbeidsgiverperioder = asList(
+                        Periode(
+                                fom = LocalDate.of(2019, 1, 3),
+                                tom = LocalDate.of(2019, 1, 19)
+                        )
                 )
-            )
         )
 
         val melding2 = InntektsmeldingMeta(
-            aktorId = "aktorId-1",
-            orgnummer = "orgnummer-2",
-            sakId = "2",
-            journalpostId = "journalpostId",
-            arbeidsgiverperioder = asList(
-                Periode(
-                    fom = LocalDate.of(2019, 1, 3),
-                    tom = LocalDate.of(2019, 1, 19)
+                aktorId = "aktorId-1",
+                orgnummer = "orgnummer-2",
+                sakId = "2",
+                journalpostId = "journalpostId",
+                arbeidsgiverperioder = asList(
+                        Periode(
+                                fom = LocalDate.of(2019, 1, 3),
+                                tom = LocalDate.of(2019, 1, 19)
+                        )
                 )
-            )
         )
 
         val melding3 = InntektsmeldingMeta(
-            aktorId = "aktorId-2",
-            orgnummer = "orgnummer-1",
-            sakId = "3",
-            journalpostId = "journalpostId",
-            arbeidsgiverperioder = asList(
-                Periode(
-                    fom = LocalDate.of(2019, 1, 3),
-                    tom = LocalDate.of(2019, 1, 19)
+                aktorId = "aktorId-2",
+                orgnummer = "orgnummer-1",
+                sakId = "3",
+                journalpostId = "journalpostId",
+                arbeidsgiverperioder = asList(
+                        Periode(
+                                fom = LocalDate.of(2019, 1, 3),
+                                tom = LocalDate.of(2019, 1, 19)
+                        )
                 )
-            )
         )
 
         val melding4 = InntektsmeldingMeta(
-            aktorId = "aktorId-2",
-            orgnummer = "orgnummer-2",
-            sakId = "4",
-            journalpostId = "journalpostId",
-            arbeidsgiverperioder = asList(
-                Periode(
-                    fom = LocalDate.of(2019, 1, 3),
-                    tom = LocalDate.of(2019, 1, 19)
+                aktorId = "aktorId-2",
+                orgnummer = "orgnummer-2",
+                sakId = "4",
+                journalpostId = "journalpostId",
+                arbeidsgiverperioder = asList(
+                        Periode(
+                                fom = LocalDate.of(2019, 1, 3),
+                                tom = LocalDate.of(2019, 1, 19)
+                        )
                 )
-            )
         )
 
         inntektsmeldingDAO.opprett(melding1)
@@ -103,12 +103,12 @@ class InntektsmeldingDAOTest {
     @Test
     fun lagrerInntektsmeldingMedArbeidsgiverPrivatperson() {
         val meta = InntektsmeldingMeta(
-            aktorId = "aktor",
-            sakId = "saksId",
-            journalpostId = "journalpostId",
-            behandlet = LocalDate.of(2019, 2, 6).atStartOfDay(),
-            orgnummer = null,
-            arbeidsgiverPrivat = "fnrprivat"
+                aktorId = "aktor",
+                sakId = "saksId",
+                journalpostId = "journalpostId",
+                behandlet = LocalDate.of(2019, 2, 6).atStartOfDay(),
+                orgnummer = null,
+                arbeidsgiverPrivat = "fnrprivat"
         )
 
         inntektsmeldingDAO.opprett(meta)

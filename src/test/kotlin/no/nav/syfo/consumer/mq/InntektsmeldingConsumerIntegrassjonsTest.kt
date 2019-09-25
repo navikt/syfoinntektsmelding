@@ -105,22 +105,22 @@ class InntektsmeldingConsumerIntegrassjonsTest {
 
         `when`(behandlendeEnhetConsumer.hentBehandlendeEnhet(ArgumentMatchers.anyString())).thenReturn("enhet")
         `when`(behandlendeEnhetConsumer.hentGeografiskTilknytning(ArgumentMatchers.anyString())).thenReturn(
-            GeografiskTilknytningData(geografiskTilknytning = "tilknytning", diskresjonskode = "")
+                GeografiskTilknytningData(geografiskTilknytning = "tilknytning", diskresjonskode = "")
         )
     }
 
     private fun inngaaendeJournal(arkivId: String): InngaaendeJournal {
         return InngaaendeJournal(
-            dokumentId = arkivId,
-            status = JournalStatus.MIDLERTIDIG
+                dokumentId = arkivId,
+                status = JournalStatus.MIDLERTIDIG
         )
     }
 
     @Test
     @Throws(
-        MessageNotWriteableException::class,
-        HentDokumentSikkerhetsbegrensning::class,
-        HentDokumentDokumentIkkeFunnet::class
+            MessageNotWriteableException::class,
+            HentDokumentSikkerhetsbegrensning::class,
+            HentDokumentDokumentIkkeFunnet::class
     )
     fun gjenbrukerSaksIdHvisViFarToOverlappendeInntektsmeldinger() {
         `when`(inngaaendeJournalConsumer.hentDokumentId("arkivId1")).thenReturn(inngaaendeJournal("arkivId1"))
@@ -156,9 +156,9 @@ class InntektsmeldingConsumerIntegrassjonsTest {
 
     @Test
     @Throws(
-        MessageNotWriteableException::class,
-        HentDokumentSikkerhetsbegrensning::class,
-        HentDokumentDokumentIkkeFunnet::class
+            MessageNotWriteableException::class,
+            HentDokumentSikkerhetsbegrensning::class,
+            HentDokumentDokumentIkkeFunnet::class
     )
     fun gjenbrukerIkkeSaksIdHvisViFarToInntektsmeldingerSomIkkeOverlapper() {
         `when`(inngaaendeJournalConsumer.hentDokumentId("arkivId1")).thenReturn(inngaaendeJournal("arkivId1"))
@@ -178,8 +178,8 @@ class InntektsmeldingConsumerIntegrassjonsTest {
         ).toByteArray()
 
         `when`(journalV2.hentDokument(any())).thenReturn(
-            dokumentResponse1.response,
-            dokumentResponse2.response
+                dokumentResponse1.response,
+                dokumentResponse2.response
         )
 
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId1"))
@@ -197,9 +197,9 @@ class InntektsmeldingConsumerIntegrassjonsTest {
 
     @Test
     @Throws(
-        MessageNotWriteableException::class,
-        HentDokumentSikkerhetsbegrensning::class,
-        HentDokumentDokumentIkkeFunnet::class
+            MessageNotWriteableException::class,
+            HentDokumentSikkerhetsbegrensning::class,
+            HentDokumentDokumentIkkeFunnet::class
     )
     fun brukerSaksIdFraSykeforloepOmViIkkeHarOverlappendeInntektsmelding() {
         given(eksisterendeSakService.finnEksisterendeSak(any(), any(), any())).willReturn(null, "syfosak")
@@ -220,8 +220,8 @@ class InntektsmeldingConsumerIntegrassjonsTest {
         ).toByteArray()
 
         `when`(journalV2.hentDokument(any())).thenReturn(
-            dokumentResponse1.response,
-            dokumentResponse2.response
+                dokumentResponse1.response,
+                dokumentResponse2.response
         )
 
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId1"))
@@ -239,9 +239,9 @@ class InntektsmeldingConsumerIntegrassjonsTest {
 
     @Test
     @Throws(
-        MessageNotWriteableException::class,
-        HentDokumentSikkerhetsbegrensning::class,
-        HentDokumentDokumentIkkeFunnet::class
+            MessageNotWriteableException::class,
+            HentDokumentSikkerhetsbegrensning::class,
+            HentDokumentDokumentIkkeFunnet::class
     )
     fun mottarInntektsmeldingUtenArbeidsgiverperioder() {
         val dokumentResponse = no.nav.tjeneste.virksomhet.journal.v2.HentDokumentResponse()
@@ -262,9 +262,9 @@ class InntektsmeldingConsumerIntegrassjonsTest {
 
     @Test
     @Throws(
-        MessageNotWriteableException::class,
-        HentDokumentSikkerhetsbegrensning::class,
-        HentDokumentDokumentIkkeFunnet::class
+            MessageNotWriteableException::class,
+            HentDokumentSikkerhetsbegrensning::class,
+            HentDokumentDokumentIkkeFunnet::class
     )
     fun mottarInntektsmeldingMedFlerePerioder() {
         val dokumentResponse = no.nav.tjeneste.virksomhet.journal.v2.HentDokumentResponse()
@@ -291,9 +291,9 @@ class InntektsmeldingConsumerIntegrassjonsTest {
 
     @Test
     @Throws(
-        MessageNotWriteableException::class,
-        HentDokumentSikkerhetsbegrensning::class,
-        HentDokumentDokumentIkkeFunnet::class
+            MessageNotWriteableException::class,
+            HentDokumentSikkerhetsbegrensning::class,
+            HentDokumentDokumentIkkeFunnet::class
     )
     fun mottarInntektsmeldingMedPrivatArbeidsgiver() {
         val dokumentResponse = no.nav.tjeneste.virksomhet.journal.v2.HentDokumentResponse()
@@ -355,7 +355,7 @@ class InntektsmeldingConsumerIntegrassjonsTest {
         )
     }
 
-    fun build(fnr:AtomicInteger) : no.nav.tjeneste.virksomhet.journal.v2.meldinger.HentDokumentResponse {
+    fun build(fnr: AtomicInteger): no.nav.tjeneste.virksomhet.journal.v2.meldinger.HentDokumentResponse {
         val dokumentResponse = no.nav.tjeneste.virksomhet.journal.v2.meldinger.HentDokumentResponse()
         dokumentResponse.dokument = JournalConsumerTest.inntektsmeldingArbeidsgiver(
                 listOf(
@@ -382,7 +382,7 @@ class InntektsmeldingConsumerIntegrassjonsTest {
 
         verify<BehandleSakConsumer>(behandleSakConsumer, times(numThreads)).opprettSak(ArgumentMatchers.anyString())
         verify<BehandleInngaaendeJournalV1>(behandleInngaaendeJournalV1, times(numThreads)).ferdigstillJournalfoering(
-            any()
+                any()
         )
     }
 

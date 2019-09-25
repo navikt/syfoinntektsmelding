@@ -48,7 +48,7 @@ class JournalConsumerTest {
     fun hentInntektsmelding() {
         val r = no.nav.tjeneste.virksomhet.journal.v2.meldinger.HentDokumentResponse()
         val response = HentDokumentResponse()
-        response.response  = r
+        response.response = r
         r.dokument = getInntektsmelding().toByteArray()
 
         `when`(journal!!.hentDokument(any())).thenReturn(r)
@@ -70,7 +70,7 @@ class JournalConsumerTest {
     @Throws(HentDokumentSikkerhetsbegrensning::class, HentDokumentDokumentIkkeFunnet::class)
     fun parserInntektsmeldingUtenPerioder() {
         val response = HentDokumentResponse()
-        response.response  = no.nav.tjeneste.virksomhet.journal.v2.meldinger.HentDokumentResponse()
+        response.response = no.nav.tjeneste.virksomhet.journal.v2.meldinger.HentDokumentResponse()
         response.response.dokument = inntektsmeldingArbeidsgiver(emptyList()).toByteArray()
 
         `when`(journal!!.hentDokument(any())).thenReturn(response.response)
@@ -87,7 +87,7 @@ class JournalConsumerTest {
     @Throws(HentDokumentSikkerhetsbegrensning::class, HentDokumentDokumentIkkeFunnet::class)
     fun parseInntektsmeldingV7() {
         val response = HentDokumentResponse()
-        response.response  = no.nav.tjeneste.virksomhet.journal.v2.meldinger.HentDokumentResponse()
+        response.response = no.nav.tjeneste.virksomhet.journal.v2.meldinger.HentDokumentResponse()
         response.response.dokument = inntektsmeldingArbeidsgiverPrivat().toByteArray()
 
         `when`(journal!!.hentDokument(any())).thenReturn(response.response)
@@ -105,7 +105,7 @@ class JournalConsumerTest {
     @Throws(HentDokumentSikkerhetsbegrensning::class, HentDokumentDokumentIkkeFunnet::class)
     fun parseInntektsmelding0924() {
         val response = HentDokumentResponse()
-        response.response  = no.nav.tjeneste.virksomhet.journal.v2.meldinger.HentDokumentResponse()
+        response.response = no.nav.tjeneste.virksomhet.journal.v2.meldinger.HentDokumentResponse()
         response.response.dokument = inntektsmeldingArbeidsgiver(
                 asList(
                         Periode(

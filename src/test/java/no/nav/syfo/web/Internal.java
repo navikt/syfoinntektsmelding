@@ -28,10 +28,10 @@ public class Internal {
     public String leggMeldingPaaKoe(@PathVariable String arkivId) {
         ObjectFactory objectFactory = new ObjectFactory();
         final JAXBElement<XMLForsendelsesinformasjon> forsendelsesinformasjon = objectFactory.createForsendelsesinformasjon(new XMLForsendelsesinformasjon()
-                .withArkivId(arkivId)
-                .withArkivsystem("JOARK")
-                .withTema(new XMLTema().withValue("SYK"))
-                .withBehandlingstema(new XMLBehandlingstema().withValue("ab0061")));
+            .withArkivId(arkivId)
+            .withArkivsystem("JOARK")
+            .withTema(new XMLTema().withValue("SYK"))
+            .withBehandlingstema(new XMLBehandlingstema().withValue("ab0061")));
 
         MessageCreator messageCreator = session -> session.createTextMessage(JAXB.marshallForsendelsesinformasjon(forsendelsesinformasjon));
 
