@@ -179,11 +179,6 @@
         </dependency>
         <dependency>
             <groupId>no.nav.tjenestespesifikasjoner</groupId>
-            <artifactId>oppgave-v3-tjenestespesifikasjon</artifactId>
-            <version>${tjenestespesifikasjoner.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>no.nav.tjenestespesifikasjoner</groupId>
             <artifactId>nav-altinn-inntektsmelding</artifactId>
             <version>${tjenestespesifikasjoner.version}</version>
         </dependency>
@@ -200,6 +195,11 @@
         <dependency>
             <groupId>no.nav.tjenestespesifikasjoner</groupId>
             <artifactId>person-v3-tjenestespesifikasjon</artifactId>
+            <version>${tjenestespesifikasjoner.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.tjenestespesifikasjoner</groupId>
+            <artifactId>diskresjonskodev1-tjenestespesifikasjon</artifactId>
             <version>${tjenestespesifikasjoner.version}</version>
         </dependency>
         <dependency>
@@ -419,6 +419,36 @@
             <groupId>no.nav.sykepenger.kontrakter</groupId>
             <artifactId>inntektsmelding-kontrakt</artifactId>
             <version>2019.09.06-09-24-0426e</version>
+        </dependency>
+        <dependency>
+            <groupId>io.ktor</groupId>
+            <artifactId>ktor-client-core</artifactId>
+            <version>1.2.4</version>
+        </dependency>
+        <dependency>
+            <groupId>io.ktor</groupId>
+            <artifactId>ktor</artifactId>
+            <version>1.2.4</version>
+        </dependency>
+        <dependency>
+            <groupId>io.ktor</groupId>
+            <artifactId>ktor-client-jackson</artifactId>
+            <version>1.2.4</version>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.syfo.sm</groupId>
+            <artifactId>syfosm-common-rest-sts</artifactId>
+            <version>2019.09.03-10-50-64032e3b6381665e9f9c0914cef626331399e66d</version>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.syfo.sm</groupId>
+            <artifactId>syfosm-common-networking</artifactId>
+            <version>2019.09.03-10-50-64032e3b6381665e9f9c0914cef626331399e66d</version>
+        </dependency>
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+            <version>6.2</version>
         </dependency>
     </dependencies>
 
