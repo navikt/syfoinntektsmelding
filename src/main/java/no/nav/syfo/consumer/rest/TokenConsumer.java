@@ -22,7 +22,7 @@ public class TokenConsumer {
     private String url;
 
     public TokenConsumer(RestTemplate basicAuthRestTemplate,
-                         @Value("${security-token-service.url}") String url) {
+                         @Value("${securitytokenservice.url}") String url) {
         this.basicAuthRestTemplate = basicAuthRestTemplate;
         this.url = url;
     }

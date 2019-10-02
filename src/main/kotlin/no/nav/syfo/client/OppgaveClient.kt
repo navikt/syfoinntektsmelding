@@ -1,6 +1,12 @@
 package no.nav.syfo.client
 
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import io.ktor.client.HttpClient
+import io.ktor.client.features.json.JacksonSerializer
+import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.parameter
@@ -14,11 +20,36 @@ import no.nav.syfo.helpers.retry
 import java.time.LocalDate
 import log
 import net.logstash.logback.argument.StructuredArguments.fields
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.stereotype.Component
+import io.ktor.client.engine.apache.Apache
 
 @KtorExperimentalAPI
-class OppgaveClient constructor(private val url: String, private val oidcClient: StsOidcClient, private val httpClient: HttpClient) {
+@Component
+class OppgaveClient constructor (
+        @Value("\${oppgavebehandling_url}") private val url: String,
+        @Value("\${securitytokenservice.url}") private val tokenUrl: String,
+        @Value("\${srvappserver.username}") private val username: String,
+        @Value("\${srvappserver.password}") private val password: String
+) {
 
     private val log = log()
+    private val oidcClient = StsOidcClient(username, password, tokenUrl)
+    private val httpClient = buildClient()
+
+    private fun buildClient(): HttpClient {
+        return HttpClient(Apache) {
+            install(JsonFeature) {
+                serializer = JacksonSerializer {
+                    registerKotlinModule()
+                    registerModule(JavaTimeModule())
+                    configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+                    configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                }
+                expectSuccess = false
+            }
+        }
+    }
 
     private suspend fun opprettOppgave(opprettOppgaveRequest: OpprettOppgaveRequest, msgId: String): OpprettOppgaveResponse = retry("opprett_oppgave") {
         httpClient.post<OpprettOppgaveResponse>(url) {

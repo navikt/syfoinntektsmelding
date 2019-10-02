@@ -27,7 +27,7 @@ import java.time.ZonedDateTime
 @Component
 class SakClient constructor (
         @Value("\${opprett_sak_url}") private val url: String,
-        @Value("\${security-token-service.url}") private val tokenUrl: String,
+        @Value("\${securitytokenservice.url}") private val tokenUrl: String,
         @Value("\${srvappserver.username}") private val username: String,
         @Value("\${srvappserver.password}") private val password: String
 ) {
