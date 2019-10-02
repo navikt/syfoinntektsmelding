@@ -1,7 +1,8 @@
 package no.nav.syfo.service
 
+import kotlinx.coroutines.runBlocking
 import log
-import no.nav.syfo.consumer.ws.BehandleSakConsumer
+import no.nav.syfo.client.SakClient
 import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
 import no.nav.syfo.consumer.ws.OppgavebehandlingConsumer
 import no.nav.syfo.domain.InntektsmeldingMeta
@@ -19,9 +20,9 @@ import java.time.LocalDate
 class SaksbehandlingService(
     private val oppgavebehandlingConsumer: OppgavebehandlingConsumer,
     private val behandlendeEnhetConsumer: BehandlendeEnhetConsumer,
-    private val behandleSakConsumer: BehandleSakConsumer,
     private val eksisterendeSakService: EksisterendeSakService,
     private val inntektsmeldingDAO: InntektsmeldingDAO,
+    private val sakClient: SakClient,
     private val metrikk: Metrikk
 ) {
 
@@ -41,7 +42,6 @@ class SaksbehandlingService(
             }
     }
 
-
     fun behandleInntektsmelding(inntektsmelding: Inntektsmelding, aktorId: String): String {
 
         val tilhorendeInntektsmelding = finnTilhorendeInntektsmelding(inntektsmelding, aktorId)
@@ -52,15 +52,26 @@ class SaksbehandlingService(
 
         val sammenslattPeriode = sammenslattPeriode(inntektsmelding.arbeidsgiverperioder)
 
-        val saksId = tilhorendeInntektsmelding
-            ?.sakId
-            ?: inntektsmelding.arbeidsgiverOrgnummer
-                ?.let { eksisterendeSakService.finnEksisterendeSak(aktorId, sammenslattPeriode?.fom, sammenslattPeriode?.tom) }
-            ?: behandleSakConsumer.opprettSak(inntektsmelding.fnr)
-
+        val saksId = finnSaksId(tilhorendeInntektsmelding, inntektsmelding, aktorId, sammenslattPeriode, inntektsmelding.arkivRefereranse)
 
         opprettOppgave(inntektsmelding.fnr, byggOppgave(inntektsmelding.journalpostId, saksId))
 
+        return saksId
+    }
+
+    private fun finnSaksId(tilhorendeInntektsmelding: InntektsmeldingMeta?, inntektsmelding: Inntektsmelding, aktorId: String, sammenslattPeriode: Periode?, msgId: String): String {
+        return (tilhorendeInntektsmelding
+                ?.sakId
+                ?: inntektsmelding.arbeidsgiverOrgnummer
+                        ?.let { eksisterendeSakService.finnEksisterendeSak(aktorId, sammenslattPeriode?.fom, sammenslattPeriode?.tom) }
+                ?: opprettSak(aktorId, msgId))
+    }
+
+    private fun opprettSak(aktorId: String, msgId: String): String {
+        var saksId = "";
+        runBlocking {
+            saksId = sakClient.opprettSak(aktorId, msgId).id.toString()
+        }
         return saksId
     }
 

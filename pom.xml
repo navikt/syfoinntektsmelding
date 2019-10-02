@@ -450,6 +450,11 @@
             <artifactId>logstash-logback-encoder</artifactId>
             <version>6.2</version>
         </dependency>
+        <dependency>
+            <groupId>io.ktor</groupId>
+            <artifactId>ktor-client-apache</artifactId>
+            <version>1.2.4</version>
+        </dependency>
     </dependencies>
 
     <build>

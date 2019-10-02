@@ -1,6 +1,13 @@
 package no.nav.syfo.client
 
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import io.ktor.client.HttpClient
+import io.ktor.client.engine.apache.Apache
+import io.ktor.client.features.json.JacksonSerializer
+import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.parameter
@@ -12,25 +19,44 @@ import net.logstash.logback.argument.StructuredArguments.fields
 import no.nav.syfo.LoggingMeta
 import no.nav.syfo.helpers.retry
 import log
-import java.time.LocalDate
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.stereotype.Component
 import java.time.ZonedDateTime
 
 @KtorExperimentalAPI
-class SakClient constructor(
-        private val url: String,
-        private val oidcClient: StsOidcClient,
-        private val httpClient: HttpClient
+@Component
+class SakClient constructor (
+        @Value("\${opprett_sak_url}") private val url: String,
+        @Value("\${security-token-service.url}") private val tokenUrl: String,
+        @Value("\${srvappserver.username}") private val username: String,
+        @Value("\${srvappserver.password}") private val password: String
 ) {
 
     private val log = log()
+    private val oidcClient = StsOidcClient(username, password, tokenUrl)
+    private val httpClient = buildClient()
 
-    private suspend fun opprettSak(pasientAktoerId: String, msgId: String): SakResponse = retry("opprett_sak") {
+    private fun buildClient(): HttpClient {
+        return HttpClient(Apache) {
+            install(JsonFeature) {
+                serializer = JacksonSerializer {
+                    registerKotlinModule()
+                    registerModule(JavaTimeModule())
+                    configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+                    configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                }
+                expectSuccess = false
+            }
+        }
+    }
+
+    suspend fun opprettSak(pasientAktoerId: String, msgId: String): SakResponse = retry("opprett_sak") {
         httpClient.post<SakResponse>(url) {
             contentType(ContentType.Application.Json)
             header("X-Correlation-ID", msgId)
             header("Authorization", "Bearer ${oidcClient.oidcToken().access_token}")
             body = OpprettSakRequest(
-                    tema = "SYM",
+                    tema = "SYK",
                     applikasjon = "FS22",
                     aktoerId = pasientAktoerId,
                     orgnr = null,
