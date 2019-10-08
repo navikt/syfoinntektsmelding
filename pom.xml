@@ -446,11 +446,6 @@
             <version>2019.09.03-10-50-64032e3b6381665e9f9c0914cef626331399e66d</version>
         </dependency>
         <dependency>
-            <groupId>net.logstash.logback</groupId>
-            <artifactId>logstash-logback-encoder</artifactId>
-            <version>${logstash-logback-encoder.version}</version>
-        </dependency>
-        <dependency>
             <groupId>io.ktor</groupId>
             <artifactId>ktor-client-apache</artifactId>
             <version>1.2.4</version>
