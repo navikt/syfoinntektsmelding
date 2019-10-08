@@ -5,7 +5,6 @@ import kotlinx.coroutines.runBlocking
 import no.nav.syfo.client.SakClient
 import no.nav.syfo.client.SakResponse
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
-//import no.nav.syfo.consumer.ws.BehandleSakConsumer
 import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
 import no.nav.syfo.consumer.ws.OppgavebehandlingConsumer
 import no.nav.syfo.domain.*
@@ -36,8 +35,6 @@ class SaksbehandlingServiceTest {
     private lateinit var oppgavebehandlingConsumer: OppgavebehandlingConsumer
     @Mock
     private lateinit var behandlendeEnhetConsumer: BehandlendeEnhetConsumer
-//    @Mock
-//    private lateinit var behandleSakConsumer: BehandleSakConsumer
     @Mock
     private lateinit var aktoridConsumer: AktorConsumer
     @Mock
@@ -139,7 +136,6 @@ class SaksbehandlingServiceTest {
 
         val sakId = saksbehandlingService.behandleInntektsmelding(lagInntektsmelding(), "aktorId")
         assertThat(sakId).isEqualTo("1")
-//        verify<BehandleSakConsumer>(behandleSakConsumer, never()).opprettSak(anyString())
         runBlocking {
             verify<SakClient>(sakClient, never()).opprettSak(ArgumentMatchers.anyString(), ArgumentMatchers.anyString())
         }
@@ -165,7 +161,6 @@ class SaksbehandlingServiceTest {
 
         val sakId = saksbehandlingService.behandleInntektsmelding(lagInntektsmelding(), "aktorId")
         assertThat(sakId).isEqualTo("1")
-//        verify<BehandleSakConsumer>(behandleSakConsumer, never()).opprettSak(anyString())
         runBlocking {
             verify<SakClient>(sakClient, never()).opprettSak(ArgumentMatchers.anyString(), ArgumentMatchers.anyString())
         }
@@ -191,7 +186,6 @@ class SaksbehandlingServiceTest {
 
         val sakId = saksbehandlingService.behandleInntektsmelding(lagInntektsmelding(), "aktorId")
         assertThat(sakId).isEqualTo("1")
-//        verify<BehandleSakConsumer>(behandleSakConsumer, never()).opprettSak(anyString())
         runBlocking {
             verify<SakClient>(sakClient, never()).opprettSak(ArgumentMatchers.anyString(), ArgumentMatchers.anyString())
         }
