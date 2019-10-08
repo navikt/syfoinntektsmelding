@@ -33,7 +33,9 @@ class SakClient constructor (
 ) {
 
     private val log = log()
-    private val oidcClient = StsOidcClient(username, password, tokenUrl)
+    private val oidcClient : StsOidcClient by lazy {
+        StsOidcClient(username, password, tokenUrl)
+    }
     private val httpClient = buildClient()
 
     private fun buildClient(): HttpClient {

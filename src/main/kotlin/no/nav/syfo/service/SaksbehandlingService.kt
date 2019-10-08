@@ -52,7 +52,9 @@ class SaksbehandlingService(
 
         val sammenslattPeriode = sammenslattPeriode(inntektsmelding.arbeidsgiverperioder)
 
-        val saksId = finnSaksId(tilhorendeInntektsmelding, inntektsmelding, aktorId, sammenslattPeriode, inntektsmelding.arkivRefereranse)
+//        TODO Endre timestamp til arkivReferanse
+        val msgId = "${inntektsmelding.id}" // inntektsmelding.arkivReferanse
+        val saksId = finnSaksId(tilhorendeInntektsmelding, inntektsmelding, aktorId, sammenslattPeriode, msgId)
 
         opprettOppgave(inntektsmelding.fnr, byggOppgave(inntektsmelding.journalpostId, saksId))
 

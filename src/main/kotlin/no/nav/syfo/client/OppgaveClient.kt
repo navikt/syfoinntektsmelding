@@ -27,15 +27,17 @@ import io.ktor.client.engine.apache.Apache
 @KtorExperimentalAPI
 @Component
 class OppgaveClient constructor (
-        @Value("\${oppgavebehandling_url}") private val url: String,
+        @Value("\${oppgavebehandling.url}") private val url: String,
         @Value("\${securitytokenservice.url}") private val tokenUrl: String,
         @Value("\${srvappserver.username}") private val username: String,
         @Value("\${srvappserver.password}") private val password: String
 ) {
 
     private val log = log()
-    private val oidcClient = StsOidcClient(username, password, tokenUrl)
     private val httpClient = buildClient()
+    private val oidcClient : StsOidcClient by lazy {
+        StsOidcClient(username, password, tokenUrl)
+    }
 
     private fun buildClient(): HttpClient {
         return HttpClient(Apache) {
