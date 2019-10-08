@@ -1,8 +1,10 @@
 package no.nav.syfo.service
 
 import any
+import kotlinx.coroutines.runBlocking
+import no.nav.syfo.client.SakClient
+import no.nav.syfo.client.SakResponse
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
-import no.nav.syfo.consumer.ws.BehandleSakConsumer
 import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
 import no.nav.syfo.consumer.ws.OppgavebehandlingConsumer
 import no.nav.syfo.domain.*
@@ -14,6 +16,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.BDDMockito.given
 import org.mockito.InjectMocks
@@ -21,6 +24,7 @@ import org.mockito.Mock
 import org.mockito.Mockito.*
 import org.mockito.junit.MockitoJUnitRunner
 import java.time.LocalDate
+import java.time.ZonedDateTime
 import java.util.Arrays.asList
 import java.util.Collections.emptyList
 
@@ -32,13 +36,13 @@ class SaksbehandlingServiceTest {
     @Mock
     private lateinit var behandlendeEnhetConsumer: BehandlendeEnhetConsumer
     @Mock
-    private lateinit var behandleSakConsumer: BehandleSakConsumer
-    @Mock
     private lateinit var aktoridConsumer: AktorConsumer
     @Mock
     private lateinit var inntektsmeldingDAO: InntektsmeldingDAO
     @Mock
     private lateinit var eksisterendeSakService: EksisterendeSakService
+    @Mock
+    private lateinit var sakClient: SakClient
     @Mock
     private val metrikk: Metrikk? = null
 
@@ -55,8 +59,8 @@ class SaksbehandlingServiceTest {
                 )
         )
         `when`(behandlendeEnhetConsumer.hentBehandlendeEnhet(anyString())).thenReturn("behandlendeenhet1234")
-        `when`(behandleSakConsumer.opprettSak("fnr")).thenReturn("opprettetSaksId")
         given(eksisterendeSakService.finnEksisterendeSak(any(), any(), any())).willReturn("saksId")
+        given(runBlocking{sakClient.opprettSak(any(), any())}).willReturn(SakResponse(id=987, tema = "a", aktoerId = "123", applikasjon = "", fagsakNr = "123", opprettetAv = "", opprettetTidspunkt = ZonedDateTime.now(), orgnr = ""))
     }
 
     private fun lagInntektsmelding(): Inntektsmelding {
@@ -91,7 +95,7 @@ class SaksbehandlingServiceTest {
 
         val saksId = saksbehandlingService.behandleInntektsmelding(lagInntektsmelding(), "aktorId")
 
-        assertThat(saksId).isEqualTo("opprettetSaksId")
+        assertThat(saksId).isEqualTo("987")
     }
 
     @Test
@@ -132,7 +136,9 @@ class SaksbehandlingServiceTest {
 
         val sakId = saksbehandlingService.behandleInntektsmelding(lagInntektsmelding(), "aktorId")
         assertThat(sakId).isEqualTo("1")
-        verify<BehandleSakConsumer>(behandleSakConsumer, never()).opprettSak(anyString())
+        runBlocking {
+            verify<SakClient>(sakClient, never()).opprettSak(ArgumentMatchers.anyString(), ArgumentMatchers.anyString())
+        }
     }
 
     @Test
@@ -155,7 +161,9 @@ class SaksbehandlingServiceTest {
 
         val sakId = saksbehandlingService.behandleInntektsmelding(lagInntektsmelding(), "aktorId")
         assertThat(sakId).isEqualTo("1")
-        verify<BehandleSakConsumer>(behandleSakConsumer, never()).opprettSak(anyString())
+        runBlocking {
+            verify<SakClient>(sakClient, never()).opprettSak(ArgumentMatchers.anyString(), ArgumentMatchers.anyString())
+        }
     }
 
     @Test
@@ -178,7 +186,9 @@ class SaksbehandlingServiceTest {
 
         val sakId = saksbehandlingService.behandleInntektsmelding(lagInntektsmelding(), "aktorId")
         assertThat(sakId).isEqualTo("1")
-        verify<BehandleSakConsumer>(behandleSakConsumer, never()).opprettSak(anyString())
+        runBlocking {
+            verify<SakClient>(sakClient, never()).opprettSak(ArgumentMatchers.anyString(), ArgumentMatchers.anyString())
+        }
     }
 
     @Test

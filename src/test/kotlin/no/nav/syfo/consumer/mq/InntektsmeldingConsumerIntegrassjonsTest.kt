@@ -1,7 +1,11 @@
 package no.nav.syfo.consumer.mq
 
 import any
+import kotlinx.coroutines.runBlocking
 import no.nav.syfo.LocalApplication
+import no.nav.syfo.client.OppgaveClient
+import no.nav.syfo.client.SakClient
+import no.nav.syfo.client.SakResponse
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
 import no.nav.syfo.consumer.ws.*
 import no.nav.syfo.domain.GeografiskTilknytningData
@@ -33,6 +37,7 @@ import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit4.SpringRunner
 import java.time.LocalDate
+import java.time.ZonedDateTime
 import java.util.Arrays.asList
 import java.util.Collections.emptyList
 import java.util.concurrent.CountDownLatch
@@ -59,9 +64,6 @@ class InntektsmeldingConsumerIntegrassjonsTest {
     private lateinit var eksisterendeSakService: EksisterendeSakService
 
     @MockBean
-    private lateinit var behandleSakConsumer: BehandleSakConsumer
-
-    @MockBean
     private lateinit var behandlendeEnhetConsumer: BehandlendeEnhetConsumer
 
     @MockBean
@@ -85,17 +87,25 @@ class InntektsmeldingConsumerIntegrassjonsTest {
     @Inject
     private lateinit var jdbcTemplate: JdbcTemplate
 
-    private var saksIdteller = 0
+    @MockBean
+    private lateinit var oppgaveClient : OppgaveClient
+
+    @MockBean
+    private lateinit var sakClient : SakClient
 
     @Before
     fun setup() {
         jdbcTemplate.update("DELETE FROM ARBEIDSGIVERPERIODE")
         jdbcTemplate.update("DELETE FROM INNTEKTSMELDING")
-        saksIdteller = 0
 
         val inngaaendeJournal = inngaaendeJournal("arkivId")
 
-        `when`(behandleSakConsumer.opprettSak(ArgumentMatchers.anyString())).thenAnswer { "saksId" + saksIdteller++ }
+        runBlocking {
+            given(sakClient.opprettSak( any(), any())).willReturn(
+                    SakResponse(id=987, tema = "SYM", aktoerId = "444", applikasjon = "", fagsakNr = "123000", opprettetAv = "meg", opprettetTidspunkt = ZonedDateTime.now(), orgnr = "999888777"),
+                    SakResponse(id=988, tema = "SYM", aktoerId = "444", applikasjon = "", fagsakNr = "123000", opprettetAv = "meg", opprettetTidspunkt = ZonedDateTime.now(), orgnr = "999888777")
+            )
+        }
 
         `when`(inngaaendeJournalConsumer.hentDokumentId("arkivId")).thenReturn(inngaaendeJournal)
 
@@ -151,7 +161,9 @@ class InntektsmeldingConsumerIntegrassjonsTest {
         assertThat(inntektsmeldingMetas.size).isEqualTo(2)
         assertThat(inntektsmeldingMetas[0].sakId).isEqualTo(inntektsmeldingMetas[1].sakId)
 
-        verify<BehandleSakConsumer>(behandleSakConsumer, times(1)).opprettSak("fnr")
+        runBlocking {
+            verify<SakClient>(sakClient, times(1)).opprettSak("aktorId_for_fnr", "")
+        }
     }
 
     @Test
@@ -182,17 +194,21 @@ class InntektsmeldingConsumerIntegrassjonsTest {
                 dokumentResponse2.response
         )
 
+        given(aktorConsumer.getAktorId(ArgumentMatchers.anyString())).willReturn("777", "777")
+
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId1"))
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId2"))
 
-        val inntektsmeldingMetas = inntektsmeldingDAO.finnBehandledeInntektsmeldinger("aktorId_for_fnr")
+        val inntektsmeldingMetas = inntektsmeldingDAO.finnBehandledeInntektsmeldinger("777")
         assertThat(inntektsmeldingMetas.size).isEqualTo(2)
         assertThat(inntektsmeldingMetas[0].sakId).isNotEqualTo(inntektsmeldingMetas[1].sakId)
 
-        assertThat(inntektsmeldingMetas[0].sakId).isEqualTo("saksId0")
-        assertThat(inntektsmeldingMetas[1].sakId).isEqualTo("saksId1")
+        assertThat(inntektsmeldingMetas[0].sakId).isEqualTo("987")
+        assertThat(inntektsmeldingMetas[1].sakId).isEqualTo("988")
 
-        verify<BehandleSakConsumer>(behandleSakConsumer, times(2)).opprettSak("fnr")
+        runBlocking {
+            verify<SakClient>(sakClient, times(2)).opprettSak("777", "")
+        }
     }
 
     @Test
@@ -223,18 +239,21 @@ class InntektsmeldingConsumerIntegrassjonsTest {
                 dokumentResponse1.response,
                 dokumentResponse2.response
         )
+        given(aktorConsumer.getAktorId(ArgumentMatchers.anyString())).willReturn("999", "999")
 
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId1"))
         inntektsmeldingConsumer.listen(opprettKoemelding("arkivId2"))
 
-        val inntektsmeldingMetas = inntektsmeldingDAO.finnBehandledeInntektsmeldinger("aktorId_for_fnr")
+        val inntektsmeldingMetas = inntektsmeldingDAO.finnBehandledeInntektsmeldinger("999")
         assertThat(inntektsmeldingMetas.size).isEqualTo(2)
         assertThat(inntektsmeldingMetas[0].sakId).isNotEqualTo(inntektsmeldingMetas[1].sakId)
 
-        assertThat(inntektsmeldingMetas[0].sakId).isEqualTo("saksId0")
+        assertThat(inntektsmeldingMetas[0].sakId).isEqualTo("987")
         assertThat(inntektsmeldingMetas[1].sakId).isEqualTo("syfosak")
 
-        verify<BehandleSakConsumer>(behandleSakConsumer, times(1)).opprettSak("fnr")
+        runBlocking {
+            verify<SakClient>(sakClient, times(1)).opprettSak(ArgumentMatchers.anyString(), ArgumentMatchers.anyString())
+        }
     }
 
     @Test
@@ -349,7 +368,9 @@ class InntektsmeldingConsumerIntegrassjonsTest {
         val numThreads = 16
         produceParallelMessages(numThreads)
 
-        verify<BehandleSakConsumer>(behandleSakConsumer, times(1)).opprettSak(ArgumentMatchers.anyString())
+        runBlocking {
+            verify<SakClient>(sakClient, times(1)).opprettSak(ArgumentMatchers.anyString(), ArgumentMatchers.anyString())
+        }
         verify<BehandleInngaaendeJournalV1>(behandleInngaaendeJournalV1, times(numThreads)).ferdigstillJournalfoering(
                 any()
         )
@@ -379,8 +400,9 @@ class InntektsmeldingConsumerIntegrassjonsTest {
 
         val numThreads = 16
         produceParallelMessages(numThreads)
-
-        verify<BehandleSakConsumer>(behandleSakConsumer, times(numThreads)).opprettSak(ArgumentMatchers.anyString())
+        runBlocking {
+            verify<SakClient>(sakClient, times(numThreads)).opprettSak(ArgumentMatchers.anyString(), ArgumentMatchers.anyString())
+        }
         verify<BehandleInngaaendeJournalV1>(behandleInngaaendeJournalV1, times(numThreads)).ferdigstillJournalfoering(
                 any()
         )
