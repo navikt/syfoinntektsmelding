@@ -4,7 +4,7 @@ import com.ctc.wstx.exc.WstxException
 import io.ktor.util.KtorExperimentalAPI
 import net.logstash.logback.argument.StructuredArguments.fields
 import no.nav.syfo.LoggingMeta
-import no.nav.syfo.client.OppgaveClient
+import no.nav.syfo.consumer.rest.OppgaveClient
 import no.nav.syfo.domain.OppgaveResultat
 import no.nav.syfo.helpers.retry
 import log

@@ -1,4 +1,4 @@
-package no.nav.syfo.client
+package no.nav.syfo.consumer.rest
 
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.SerializationFeature
@@ -19,20 +19,19 @@ import net.logstash.logback.argument.StructuredArguments.fields
 import no.nav.syfo.LoggingMeta
 import no.nav.syfo.helpers.retry
 import log
+import no.nav.syfo.client.StsOidcClient
 import no.nav.syfo.config.SakClientConfig
 import org.springframework.stereotype.Component
 import java.time.ZonedDateTime
 
 @KtorExperimentalAPI
 @Component
-class SakClient constructor (
-        val config: SakClientConfig
+class SakClient constructor(
+        val config: SakClientConfig,
+        val tokenConsumer: TokenConsumer
 ) {
 
     private val log = log()
-    private val oidcClient : StsOidcClient by lazy {
-        StsOidcClient(config.username, config.password, config.tokenUrl)
-    }
     private val httpClient = buildClient()
 
     private fun buildClient(): HttpClient {
@@ -53,7 +52,7 @@ class SakClient constructor (
         httpClient.post<SakResponse>(config.url) {
             contentType(ContentType.Application.Json)
             header("X-Correlation-ID", msgId)
-            header("Authorization", "Bearer ${oidcClient.oidcToken().access_token}")
+            header("Authorization", "Bearer ${tokenConsumer.getToken()}")
             body = OpprettSakRequest(
                     tema = "SYK",
                     applikasjon = "FS22",
@@ -68,7 +67,7 @@ class SakClient constructor (
         httpClient.get<List<SakResponse>?>(config.url) {
             contentType(ContentType.Application.Json)
             header("X-Correlation-ID", msgId)
-            header("Authorization", "Bearer ${oidcClient.oidcToken().access_token}")
+            header("Authorization", "Bearer ${tokenConsumer.getToken()}")
             parameter("tema", "SYM")
             parameter("aktoerId", pasientAktoerId)
             parameter("applikasjon", "FS22")

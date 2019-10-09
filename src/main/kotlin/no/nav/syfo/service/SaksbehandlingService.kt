@@ -2,7 +2,7 @@ package no.nav.syfo.service
 
 import kotlinx.coroutines.runBlocking
 import log
-import no.nav.syfo.client.SakClient
+import no.nav.syfo.consumer.rest.SakClient
 import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
 import no.nav.syfo.consumer.ws.OppgavebehandlingConsumer
 import no.nav.syfo.domain.InntektsmeldingMeta
@@ -18,12 +18,12 @@ import java.time.LocalDate
 
 @Service
 class SaksbehandlingService(
-    private val oppgavebehandlingConsumer: OppgavebehandlingConsumer,
-    private val behandlendeEnhetConsumer: BehandlendeEnhetConsumer,
-    private val eksisterendeSakService: EksisterendeSakService,
-    private val inntektsmeldingDAO: InntektsmeldingDAO,
-    private val sakClient: SakClient,
-    private val metrikk: Metrikk
+        private val oppgavebehandlingConsumer: OppgavebehandlingConsumer,
+        private val behandlendeEnhetConsumer: BehandlendeEnhetConsumer,
+        private val eksisterendeSakService: EksisterendeSakService,
+        private val inntektsmeldingDAO: InntektsmeldingDAO,
+        private val sakClient: SakClient,
+        private val metrikk: Metrikk
 ) {
 
     val log = log()

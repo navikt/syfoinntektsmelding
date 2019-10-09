@@ -3,9 +3,9 @@ package no.nav.syfo.consumer.mq
 import any
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.LocalApplication
-import no.nav.syfo.client.OppgaveClient
-import no.nav.syfo.client.SakClient
-import no.nav.syfo.client.SakResponse
+import no.nav.syfo.consumer.rest.OppgaveClient
+import no.nav.syfo.consumer.rest.SakClient
+import no.nav.syfo.consumer.rest.SakResponse
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
 import no.nav.syfo.consumer.ws.*
 import no.nav.syfo.domain.GeografiskTilknytningData
@@ -102,8 +102,8 @@ class InntektsmeldingConsumerIntegrassjonsTest {
 
         runBlocking {
             given(sakClient.opprettSak( any(), any())).willReturn(
-                    SakResponse(id=987, tema = "SYM", aktoerId = "444", applikasjon = "", fagsakNr = "123000", opprettetAv = "meg", opprettetTidspunkt = ZonedDateTime.now(), orgnr = "999888777"),
-                    SakResponse(id=988, tema = "SYM", aktoerId = "444", applikasjon = "", fagsakNr = "123000", opprettetAv = "meg", opprettetTidspunkt = ZonedDateTime.now(), orgnr = "999888777")
+                    SakResponse(id = 987, tema = "SYM", aktoerId = "444", applikasjon = "", fagsakNr = "123000", opprettetAv = "meg", opprettetTidspunkt = ZonedDateTime.now(), orgnr = "999888777"),
+                    SakResponse(id = 988, tema = "SYM", aktoerId = "444", applikasjon = "", fagsakNr = "123000", opprettetAv = "meg", opprettetTidspunkt = ZonedDateTime.now(), orgnr = "999888777")
             )
         }
 

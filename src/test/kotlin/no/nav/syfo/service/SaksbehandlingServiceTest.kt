@@ -2,8 +2,8 @@ package no.nav.syfo.service
 
 import any
 import kotlinx.coroutines.runBlocking
-import no.nav.syfo.client.SakClient
-import no.nav.syfo.client.SakResponse
+import no.nav.syfo.consumer.rest.SakClient
+import no.nav.syfo.consumer.rest.SakResponse
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
 import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
 import no.nav.syfo.consumer.ws.OppgavebehandlingConsumer
@@ -60,7 +60,7 @@ class SaksbehandlingServiceTest {
         )
         `when`(behandlendeEnhetConsumer.hentBehandlendeEnhet(anyString())).thenReturn("behandlendeenhet1234")
         given(eksisterendeSakService.finnEksisterendeSak(any(), any(), any())).willReturn("saksId")
-        given(runBlocking{sakClient.opprettSak(any(), any())}).willReturn(SakResponse(id=987, tema = "a", aktoerId = "123", applikasjon = "", fagsakNr = "123", opprettetAv = "", opprettetTidspunkt = ZonedDateTime.now(), orgnr = ""))
+        given(runBlocking{sakClient.opprettSak(any(), any())}).willReturn(SakResponse(id = 987, tema = "a", aktoerId = "123", applikasjon = "", fagsakNr = "123", opprettetAv = "", opprettetTidspunkt = ZonedDateTime.now(), orgnr = ""))
     }
 
     private fun lagInntektsmelding(): Inntektsmelding {

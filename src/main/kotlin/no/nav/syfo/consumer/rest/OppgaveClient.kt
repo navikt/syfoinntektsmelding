@@ -1,4 +1,4 @@
-package no.nav.syfo.client
+package no.nav.syfo.consumer.rest
 
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.SerializationFeature
@@ -22,19 +22,19 @@ import log
 import net.logstash.logback.argument.StructuredArguments.fields
 import org.springframework.stereotype.Component
 import io.ktor.client.engine.apache.Apache
+import no.nav.syfo.client.StsOidcClient
 import no.nav.syfo.config.OppgaveConfig
 
 @KtorExperimentalAPI
 @Component
 class OppgaveClient constructor (
-        val config: OppgaveConfig
+        val config: OppgaveConfig,
+        val tokenConsumer: TokenConsumer
 ) {
 
     private val log = log()
     private val httpClient = buildClient()
-    private val oidcClient : StsOidcClient by lazy {
-        StsOidcClient(config.username, config.password, config.tokenUrl)
-    }
+
 
     private fun buildClient(): HttpClient {
         return HttpClient(Apache) {
@@ -53,8 +53,7 @@ class OppgaveClient constructor (
     private suspend fun opprettOppgave(opprettOppgaveRequest: OpprettOppgaveRequest, msgId: String): OpprettOppgaveResponse = retry("opprett_oppgave") {
         httpClient.post<OpprettOppgaveResponse>(config.url) {
             contentType(ContentType.Application.Json)
-            val oidcToken = oidcClient.oidcToken()
-            this.header("Authorization", "Bearer ${oidcToken.access_token}")
+            this.header("Authorization", "Bearer ${tokenConsumer.getToken()}")
             this.header("X-Correlation-ID", msgId)
             body = opprettOppgaveRequest
         }
@@ -62,8 +61,7 @@ class OppgaveClient constructor (
 
     private suspend fun hentOppgave(oppgavetype: String, journalpostId: String, msgId: String): OppgaveResponse = retry("hent_oppgave") {
         httpClient.get<OppgaveResponse>(config.url) {
-            val oidcToken = oidcClient.oidcToken()
-            this.header("Authorization", "Bearer ${oidcToken.access_token}")
+            this.header("Authorization", "Bearer ${tokenConsumer.getToken()}")
             this.header("X-Correlation-ID", msgId)
             parameter("tema", "SYM")
             parameter("oppgavetype", oppgavetype)
