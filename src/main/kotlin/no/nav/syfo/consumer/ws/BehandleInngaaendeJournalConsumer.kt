@@ -40,6 +40,7 @@ class BehandleInngaaendeJournalConsumer(private val behandleInngaaendeJournalV1:
 
         val arkivSak = ArkivSak()
         arkivSak.arkivSakId = "FS22"
+        arkivSak.arkivSakSystem = "GSAK"
 
         val inn = InngaaendeJournalpost()
         inn.journalpostId = journalpostId
