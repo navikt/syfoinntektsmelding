@@ -148,7 +148,7 @@
         "value": "56813e1b-97db-4da9-bcc1-a53d0a677ca2"
       },
       {
-        "name": "OPPGAVEBEHANDLING.URL",
+        "name": "OPPGAVEBEHANDLING_URL",
         "value": "http://oppgave/api/v1/oppgaver"
       },
       {
