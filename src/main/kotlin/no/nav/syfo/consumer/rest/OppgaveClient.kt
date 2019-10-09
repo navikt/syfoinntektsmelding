@@ -24,6 +24,7 @@ import org.springframework.stereotype.Component
 import io.ktor.client.engine.apache.Apache
 import no.nav.syfo.client.StsOidcClient
 import no.nav.syfo.config.OppgaveConfig
+import no.nav.syfo.util.MDCOperations
 
 @KtorExperimentalAPI
 @Component
@@ -53,16 +54,16 @@ class OppgaveClient constructor (
     private suspend fun opprettOppgave(opprettOppgaveRequest: OpprettOppgaveRequest, msgId: String): OpprettOppgaveResponse = retry("opprett_oppgave") {
         httpClient.post<OpprettOppgaveResponse>(config.url) {
             contentType(ContentType.Application.Json)
-            this.header("Authorization", "Bearer ${tokenConsumer.getToken()}")
-            this.header("X-Correlation-ID", msgId)
+            this.header("Authorization", "Bearer ${tokenConsumer.token}")
+            this.header("X-Correlation-ID", MDCOperations.getFromMDC(MDCOperations.MDC_CALL_ID))
             body = opprettOppgaveRequest
         }
     }
 
     private suspend fun hentOppgave(oppgavetype: String, journalpostId: String, msgId: String): OppgaveResponse = retry("hent_oppgave") {
         httpClient.get<OppgaveResponse>(config.url) {
-            this.header("Authorization", "Bearer ${tokenConsumer.getToken()}")
-            this.header("X-Correlation-ID", msgId)
+            this.header("Authorization", "Bearer ${tokenConsumer.token}")
+            this.header("X-Correlation-ID", MDCOperations.getFromMDC(MDCOperations.MDC_CALL_ID))
             parameter("tema", "SYM")
             parameter("oppgavetype", oppgavetype)
             parameter("journalpostId", journalpostId)

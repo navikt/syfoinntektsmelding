@@ -21,6 +21,8 @@ import no.nav.syfo.helpers.retry
 import log
 import no.nav.syfo.client.StsOidcClient
 import no.nav.syfo.config.SakClientConfig
+import no.nav.syfo.util.MDCOperations.MDC_CALL_ID
+import no.nav.syfo.util.MDCOperations.getFromMDC
 import org.springframework.stereotype.Component
 import java.time.ZonedDateTime
 
@@ -51,8 +53,8 @@ class SakClient constructor(
     suspend fun opprettSak(pasientAktoerId: String, msgId: String): SakResponse = retry("opprett_sak") {
         httpClient.post<SakResponse>(config.url) {
             contentType(ContentType.Application.Json)
-            header("X-Correlation-ID", msgId)
-            header("Authorization", "Bearer ${tokenConsumer.getToken()}")
+            header("X-Correlation-ID", getFromMDC(MDC_CALL_ID))
+            header("Authorization", "Bearer ${tokenConsumer.token}")
             body = OpprettSakRequest(
                     tema = "SYK",
                     applikasjon = "FS22",
@@ -66,8 +68,8 @@ class SakClient constructor(
     private suspend fun finnSak(pasientAktoerId: String, msgId: String): List<SakResponse>? = retry("finn_sak") {
         httpClient.get<List<SakResponse>?>(config.url) {
             contentType(ContentType.Application.Json)
-            header("X-Correlation-ID", msgId)
-            header("Authorization", "Bearer ${tokenConsumer.getToken()}")
+            header("X-Correlation-ID", getFromMDC(MDC_CALL_ID))
+            header("Authorization", "Bearer ${tokenConsumer.token}")
             parameter("tema", "SYM")
             parameter("aktoerId", pasientAktoerId)
             parameter("applikasjon", "FS22")
