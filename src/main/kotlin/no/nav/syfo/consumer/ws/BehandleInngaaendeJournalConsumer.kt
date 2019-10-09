@@ -37,6 +37,7 @@ class BehandleInngaaendeJournalConsumer(private val behandleInngaaendeJournalV1:
 
         val avsender = Avsender()
         avsender.avsenderId = avsenderNr
+        avsender.avsenderNavn = "Arbeidsgiver"
 
         val arkivSak = ArkivSak()
         arkivSak.arkivSakId = inngaendeJournalpost.gsakId
