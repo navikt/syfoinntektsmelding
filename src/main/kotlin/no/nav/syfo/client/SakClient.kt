@@ -19,22 +19,19 @@ import net.logstash.logback.argument.StructuredArguments.fields
 import no.nav.syfo.LoggingMeta
 import no.nav.syfo.helpers.retry
 import log
-import org.springframework.beans.factory.annotation.Value
+import no.nav.syfo.config.SakClientConfig
 import org.springframework.stereotype.Component
 import java.time.ZonedDateTime
 
 @KtorExperimentalAPI
 @Component
 class SakClient constructor (
-        @Value("\${opprett_sak_url}") private val url: String,
-        @Value("\${securitytokenservice.url}") private val tokenUrl: String,
-        @Value("\${srvappserver.username}") private val username: String,
-        @Value("\${srvappserver.password}") private val password: String
+        val config: SakClientConfig
 ) {
 
     private val log = log()
     private val oidcClient : StsOidcClient by lazy {
-        StsOidcClient(username, password, tokenUrl)
+        StsOidcClient(config.username, config.password, config.tokenUrl)
     }
     private val httpClient = buildClient()
 
@@ -53,7 +50,7 @@ class SakClient constructor (
     }
 
     suspend fun opprettSak(pasientAktoerId: String, msgId: String): SakResponse = retry("opprett_sak") {
-        httpClient.post<SakResponse>(url) {
+        httpClient.post<SakResponse>(config.url) {
             contentType(ContentType.Application.Json)
             header("X-Correlation-ID", msgId)
             header("Authorization", "Bearer ${oidcClient.oidcToken().access_token}")
@@ -68,7 +65,7 @@ class SakClient constructor (
     }
 
     private suspend fun finnSak(pasientAktoerId: String, msgId: String): List<SakResponse>? = retry("finn_sak") {
-        httpClient.get<List<SakResponse>?>(url) {
+        httpClient.get<List<SakResponse>?>(config.url) {
             contentType(ContentType.Application.Json)
             header("X-Correlation-ID", msgId)
             header("Authorization", "Bearer ${oidcClient.oidcToken().access_token}")

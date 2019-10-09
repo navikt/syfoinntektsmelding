@@ -20,23 +20,20 @@ import no.nav.syfo.helpers.retry
 import java.time.LocalDate
 import log
 import net.logstash.logback.argument.StructuredArguments.fields
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import io.ktor.client.engine.apache.Apache
+import no.nav.syfo.config.OppgaveConfig
 
 @KtorExperimentalAPI
 @Component
 class OppgaveClient constructor (
-        @Value("\${oppgavebehandling.url}") private val url: String,
-        @Value("\${securitytokenservice.url}") private val tokenUrl: String,
-        @Value("\${srvappserver.username}") private val username: String,
-        @Value("\${srvappserver.password}") private val password: String
+        val config: OppgaveConfig
 ) {
 
     private val log = log()
     private val httpClient = buildClient()
     private val oidcClient : StsOidcClient by lazy {
-        StsOidcClient(username, password, tokenUrl)
+        StsOidcClient(config.username, config.password, config.tokenUrl)
     }
 
     private fun buildClient(): HttpClient {
@@ -54,7 +51,7 @@ class OppgaveClient constructor (
     }
 
     private suspend fun opprettOppgave(opprettOppgaveRequest: OpprettOppgaveRequest, msgId: String): OpprettOppgaveResponse = retry("opprett_oppgave") {
-        httpClient.post<OpprettOppgaveResponse>(url) {
+        httpClient.post<OpprettOppgaveResponse>(config.url) {
             contentType(ContentType.Application.Json)
             val oidcToken = oidcClient.oidcToken()
             this.header("Authorization", "Bearer ${oidcToken.access_token}")
@@ -64,7 +61,7 @@ class OppgaveClient constructor (
     }
 
     private suspend fun hentOppgave(oppgavetype: String, journalpostId: String, msgId: String): OppgaveResponse = retry("hent_oppgave") {
-        httpClient.get<OppgaveResponse>(url) {
+        httpClient.get<OppgaveResponse>(config.url) {
             val oidcToken = oidcClient.oidcToken()
             this.header("Authorization", "Bearer ${oidcToken.access_token}")
             this.header("X-Correlation-ID", msgId)
