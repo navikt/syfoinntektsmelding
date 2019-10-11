@@ -1,0 +1,47 @@
+name: Bygg og deploy
+
+on:
+  push:
+    tags:
+    - prod
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-java@v1
+      with:
+        java-version: '11.x'
+    - name: create docker tag
+      env:
+        DOCKER_IMAGE: docker.pkg.github.com/${{ github.repository }}/syfoinntektsmelding
+      run: |
+        echo $DOCKER_IMAGE > .docker_image
+        echo $(echo $GITHUB_SHA | cut -c1-7) > .docker_tag
+    - name: test and build
+      run: mvn -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn -B clean test install
+    - name: build docker image
+      run: docker build . --pull -t $(cat .docker_image):$(cat .docker_tag)
+    - name: push docker image
+      run: |
+        echo "$GITHUB_ACCESS_TOKEN" | docker login --username "x-access-token" --password-stdin https://docker.pkg.github.com
+        docker push $(cat .docker_image):$(cat .docker_tag)
+      env:
+        GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_ACCESS_TOKEN }}
+    - name: deploy to prod
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        NAV_CLUSTER: prod-fss
+        NAISERATOR_FILE: deploy/prod.json
+      run: |
+        NAISERATOR=$(jq '.spec.image = "'$(cat .docker_image)':'$(cat .docker_tag)'"' -c $NAISERATOR_FILE )
+        DEPLOY_PAYLOAD=$(jq ".payload.kubernetes.resources += [$NAISERATOR]" deploy/deployreq.json)
+        DEPLOY_PAYLOAD=$(echo $DEPLOY_PAYLOAD | jq '.environment = "'$NAV_CLUSTER'"')
+        DEPLOY_PAYLOAD=$(echo $DEPLOY_PAYLOAD | jq '.ref = "'$(cat .docker_tag)'"')
+        curl -i -n --fail \
+           -X POST \
+           -u x-access-token:$GITHUB_TOKEN \
+           -d "$DEPLOY_PAYLOAD" \
+           -H "Accept: application/vnd.github.ant-man-preview+json" \
+           https://api.github.com/repos/$GITHUB_REPOSITORY/deployments
