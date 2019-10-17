@@ -71,7 +71,7 @@ class InntektsmeldingConsumer(
 
                     inntektsmeldingProducer.leggMottattInntektsmeldingPåTopic(mapInntektsmelding(validertInntektsmeldingMedId, aktorid))
 
-                    log.info("Inntektsmelding {} er journalført", inntektsmelding.journalpostId)
+                    log.info("Inntektsmelding {} er journalført for {}", inntektsmelding.journalpostId, textMessage.jmsCorrelationID ?: "UKJENT")
                 } else {
                     log.info(
                             "Behandler ikke inntektsmelding {} da den har status: {}",
