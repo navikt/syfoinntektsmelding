@@ -20,7 +20,10 @@ jobs:
         echo $DOCKER_IMAGE > .docker_image
         echo $(echo $GITHUB_SHA | cut -c1-7) > .docker_tag
     - name: test and build
-      run: mvn -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn -B clean test install
+      run: ./gradlew test build
+      env:
+        ORG_GRADLE_PROJECT_githubUser: x-access-token
+        ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
     - name: build docker image
       run: docker build . --pull -t $(cat .docker_image):$(cat .docker_tag)
     - name: push docker image

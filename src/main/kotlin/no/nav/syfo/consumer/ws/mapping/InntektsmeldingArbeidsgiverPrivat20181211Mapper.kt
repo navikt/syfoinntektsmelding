@@ -9,6 +9,7 @@ import no.seres.xsd.nav.inntektsmelding_m._20181211.XMLGjenopptakelseNaturalytel
 import no.seres.xsd.nav.inntektsmelding_m._20181211.XMLInntektsmeldingM
 import no.seres.xsd.nav.inntektsmelding_m._20181211.XMLOpphoerAvNaturalytelseListe
 import no.seres.xsd.nav.inntektsmelding_m._20181211.XMLRefusjon
+import java.time.LocalDate
 import javax.xml.bind.JAXBElement
 
 internal object InntektsmeldingArbeidsgiverPrivat20181211Mapper {
@@ -45,7 +46,10 @@ internal object InntektsmeldingArbeidsgiverPrivat20181211Mapper {
                 opphørAvNaturalYtelse = mapXmlOpphørNaturalytelser(skjemainnhold.opphoerAvNaturalytelseListe),
                 gjenopptakelserNaturalYtelse = mapXmlGjenopptakelseNaturalytelser(skjemainnhold.gjenopptakelseNaturalytelseListe),
                 gyldighetsStatus = Gyldighetsstatus.GYLDIG,
-                arkivRefereranse = "")
+                arkivRefereranse = "",
+                feriePerioder = emptyList(),
+                mottattDato = LocalDate.now(),
+                førsteFraværsdag = LocalDate.now())
     }
 
     private fun mapXmlGjenopptakelseNaturalytelser(xmlGjenopptakelseListe: JAXBElement<XMLGjenopptakelseNaturalytelseListe>?): List<GjenopptakelseNaturalytelse> {

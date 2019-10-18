@@ -3,9 +3,11 @@ package no.nav.syfo.mapping
 import no.nav.inntektsmeldingkontrakt.*
 import no.nav.syfo.domain.inntektsmelding.Gyldighetsstatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 fun mapInntektsmelding(inntektsmelding: Inntektsmelding, arbeidstakerAktørId: String): no.nav.inntektsmeldingkontrakt.Inntektsmelding {
-    return Inntektsmelding(
+    return no.nav.inntektsmeldingkontrakt.Inntektsmelding(
             inntektsmeldingId = inntektsmelding.id,
             arbeidstakerFnr = inntektsmelding.fnr,
             arbeidstakerAktorId = arbeidstakerAktørId,
@@ -21,8 +23,10 @@ fun mapInntektsmelding(inntektsmelding: Inntektsmelding, arbeidstakerAktørId: S
             opphoerAvNaturalytelser = mapOpphørAvNaturalytelser(inntektsmelding),
             gjenopptakelseNaturalytelser = mapGjenopptakelseAvNaturalytelser(inntektsmelding),
             status = mapStatus(inntektsmelding),
-            arkivreferanse = inntektsmelding.arkivRefereranse
-
+            arkivreferanse = inntektsmelding.arkivRefereranse,
+            ferieperioder = emptyList(), //TODO
+            mottattDato = inntektsmelding.mottattDato.atStartOfDay(),
+            foersteFravaersdag = inntektsmelding.førsteFraværsdag
     )
 }
 

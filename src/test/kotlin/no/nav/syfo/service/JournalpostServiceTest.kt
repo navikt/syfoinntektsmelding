@@ -19,6 +19,7 @@ import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.verify
 import org.mockito.junit.MockitoJUnitRunner
+import java.time.LocalDate
 
 @RunWith(MockitoJUnitRunner::class)
 class JournalpostServiceTest {
@@ -52,7 +53,9 @@ class JournalpostServiceTest {
                         journalpostId = "journalpostId",
                         arbeidsforholdId = null,
                         arsakTilInnsending = "Ny",
-                        journalStatus = JournalStatus.MIDLERTIDIG
+                        journalStatus = JournalStatus.MIDLERTIDIG,
+                        førsteFraværsdag = LocalDate.now(),
+                        mottattDato = LocalDate.now()
                 )
         )
 
@@ -75,7 +78,9 @@ class JournalpostServiceTest {
                                 fnr = "fnr",
                                 journalpostId = "journalpostId",
                                 journalStatus = JournalStatus.MIDLERTIDIG,
-                                arsakTilInnsending = ""
+                                arsakTilInnsending = "",
+                                førsteFraværsdag = LocalDate.now(),
+                                mottattDato = LocalDate.now()
                         )
                 )
 

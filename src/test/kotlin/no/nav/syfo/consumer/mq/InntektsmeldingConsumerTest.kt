@@ -18,6 +18,8 @@ import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Mockito.*
 import org.mockito.junit.MockitoJUnitRunner
+import java.time.LocalDate
+import java.time.LocalDateTime
 import javax.jms.MessageNotWriteableException
 
 @RunWith(MockitoJUnitRunner::class)
@@ -63,7 +65,10 @@ class InntektsmeldingConsumerTest {
                         journalpostId = "akrivId",
                         fnr = "fnr",
                         arbeidsgiverperioder = emptyList(),
-                        arsakTilInnsending = ""
+                        arsakTilInnsending = "",
+                        feriePerioder = emptyList(),
+                        førsteFraværsdag = LocalDate.now(),
+                        mottattDato = LocalDate.now()
                 )
         )
         `when`(saksbehandlingService.behandleInntektsmelding(any(), anyString())).thenReturn("saksId")
@@ -88,7 +93,9 @@ class InntektsmeldingConsumerTest {
                         arbeidsgiverperioder = emptyList(),
                         journalStatus = JournalStatus.ANNET,
                         journalpostId = "arkivId",
-                        fnr = "fnr"
+                        fnr = "fnr",
+                        førsteFraværsdag = LocalDate.now(),
+                        mottattDato = LocalDate.now()
                 )
         )
 
@@ -111,7 +118,9 @@ class InntektsmeldingConsumerTest {
                         arbeidsgiverperioder = emptyList(),
                         journalStatus = JournalStatus.ENDELIG,
                         journalpostId = "arkivId",
-                        fnr = "fnr"
+                        fnr = "fnr",
+                        førsteFraværsdag = LocalDate.now(),
+                        mottattDato = LocalDate.now()
                 )
         )
 

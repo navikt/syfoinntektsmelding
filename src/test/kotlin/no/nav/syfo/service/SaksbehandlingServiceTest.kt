@@ -78,7 +78,9 @@ class SaksbehandlingServiceTest {
                                 fom = LocalDate.of(2019, 1, 4),
                                 tom = LocalDate.of(2019, 1, 20)
                         )
-                )
+                ),
+                førsteFraværsdag = LocalDate.now(),
+                mottattDato = LocalDate.now()
         )
     }
 
