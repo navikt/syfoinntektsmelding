@@ -140,6 +140,25 @@ dependencies {
     testAnnotationProcessor("org.projectlombok:lombok:1.18.8")
 }
 
+tasks.named<Jar>("jar") {
+    baseName = "app"
+
+    manifest {
+        attributes["Main-Class"] = mainClass
+        attributes["Class-Path"] = configurations.runtimeClasspath.get().joinToString(separator = " ") {
+            it.name
+        }
+    }
+
+    doLast {
+        configurations.runtimeClasspath.get().forEach {
+            val file = File("$buildDir/libs/${it.name}")
+            if (!file.exists())
+                it.copyTo(file)
+        }
+    }
+}
+
 tasks.named<KotlinCompile>("compileKotlin") {
     kotlinOptions.jvmTarget = "11"
 }
