@@ -24,6 +24,7 @@ import org.mockito.Mock
 import org.mockito.Mockito.*
 import org.mockito.junit.MockitoJUnitRunner
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.ZonedDateTime
 import java.util.Arrays.asList
 import java.util.Collections.emptyList
@@ -78,7 +79,9 @@ class SaksbehandlingServiceTest {
                                 fom = LocalDate.of(2019, 1, 4),
                                 tom = LocalDate.of(2019, 1, 20)
                         )
-                )
+                ),
+                førsteFraværsdag = LocalDate.now(),
+                mottattDato = LocalDateTime.now()
         )
     }
 

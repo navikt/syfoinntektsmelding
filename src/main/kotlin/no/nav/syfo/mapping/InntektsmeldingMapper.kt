@@ -5,7 +5,7 @@ import no.nav.syfo.domain.inntektsmelding.Gyldighetsstatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 
 fun mapInntektsmelding(inntektsmelding: Inntektsmelding, arbeidstakerAktørId: String): no.nav.inntektsmeldingkontrakt.Inntektsmelding {
-    return Inntektsmelding(
+    return no.nav.inntektsmeldingkontrakt.Inntektsmelding(
             inntektsmeldingId = inntektsmelding.id,
             arbeidstakerFnr = inntektsmelding.fnr,
             arbeidstakerAktorId = arbeidstakerAktørId,
@@ -21,9 +21,15 @@ fun mapInntektsmelding(inntektsmelding: Inntektsmelding, arbeidstakerAktørId: S
             opphoerAvNaturalytelser = mapOpphørAvNaturalytelser(inntektsmelding),
             gjenopptakelseNaturalytelser = mapGjenopptakelseAvNaturalytelser(inntektsmelding),
             status = mapStatus(inntektsmelding),
-            arkivreferanse = inntektsmelding.arkivRefereranse
-
+            arkivreferanse = inntektsmelding.arkivRefereranse,
+            ferieperioder = mapFerieperioder(inntektsmelding),
+            foersteFravaersdag = inntektsmelding.førsteFraværsdag,
+            mottattDato = inntektsmelding.mottattDato
     )
+}
+
+fun mapFerieperioder(inntektsmelding: Inntektsmelding): List<Periode> {
+    return inntektsmelding.feriePerioder.map { p -> Periode(p.fom, p.tom) }
 }
 
 fun mapStatus(inntektsmelding: Inntektsmelding): Status {

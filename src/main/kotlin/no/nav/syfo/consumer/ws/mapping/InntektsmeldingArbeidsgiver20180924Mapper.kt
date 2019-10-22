@@ -1,13 +1,11 @@
 package no.nav.syfo.consumer.ws.mapping
 
 import log
-import no.nav.syfo.domain.JournalStatus
+import no.nav.syfo.domain.InngaaendeJournal
 import no.nav.syfo.domain.Periode
 import no.nav.syfo.domain.inntektsmelding.*
-import no.seres.xsd.nav.inntektsmelding_m._20180924.XMLGjenopptakelseNaturalytelseListe
-import no.seres.xsd.nav.inntektsmelding_m._20180924.XMLInntektsmeldingM
-import no.seres.xsd.nav.inntektsmelding_m._20180924.XMLOpphoerAvNaturalytelseListe
-import no.seres.xsd.nav.inntektsmelding_m._20180924.XMLRefusjon
+import no.seres.xsd.nav.inntektsmelding_m._20180924.*
+import java.time.LocalDate
 import javax.xml.bind.JAXBElement
 
 
@@ -15,7 +13,7 @@ internal object InntektsmeldingArbeidsgiver20180924Mapper {
 
     val log = log()
 
-    fun tilXMLInntektsmelding(jabxInntektsmelding: JAXBElement<Any>, journalpostId: String, status: JournalStatus): Inntektsmelding {
+    fun tilXMLInntektsmelding(jabxInntektsmelding: JAXBElement<Any>, journalpostId: String, inngaaendeJournal: InngaaendeJournal): Inntektsmelding {
         log.info("Behandling inntektsmelding på 20180924 format")
         val skjemainnhold = (jabxInntektsmelding.value as XMLInntektsmeldingM).skjemainnhold
 
@@ -37,7 +35,7 @@ internal object InntektsmeldingArbeidsgiver20180924Mapper {
                 arbeidsforholdId = arbeidsforholdId,
                 journalpostId = journalpostId,
                 arsakTilInnsending = skjemainnhold.aarsakTilInnsending,
-                journalStatus = status,
+                journalStatus = inngaaendeJournal.status,
                 arbeidsgiverperioder = perioder,
                 beregnetInntekt = beregnetInntekt,
                 refusjon = mapXmlRefusjon(skjemainnhold.refusjon),
@@ -45,7 +43,19 @@ internal object InntektsmeldingArbeidsgiver20180924Mapper {
                 opphørAvNaturalYtelse = mapXmlOpphørNaturalytelser(skjemainnhold.opphoerAvNaturalytelseListe),
                 gjenopptakelserNaturalYtelse = mapXmlGjenopptakelseNaturalytelser(skjemainnhold.gjenopptakelseNaturalytelseListe),
                 gyldighetsStatus = Gyldighetsstatus.GYLDIG,
-                arkivRefereranse = "")
+                arkivRefereranse = "",
+                feriePerioder = mapFerie(skjemainnhold.arbeidsforhold),
+                førsteFraværsdag = mapFørsteFraværsdag(skjemainnhold.arbeidsforhold),
+                mottattDato = mapXmlGregorianTilLocalDate(inngaaendeJournal.mottattDato))
+    }
+
+    private fun mapFerie(arbeidsforhold: JAXBElement<XMLArbeidsforhold>): List<Periode> {
+        return arbeidsforhold?.value?.avtaltFerieListe?.value?.avtaltFerie?.filter { f -> f.fom != null }?.map { f -> Periode(f.fom.value, f.tom.value) }
+                ?: emptyList()
+    }
+
+    private fun mapFørsteFraværsdag(arbeidsforhold: JAXBElement<XMLArbeidsforhold>?): LocalDate {
+        return arbeidsforhold?.value?.foersteFravaersdag?.value ?: throw IllegalStateException()
     }
 
     private fun mapXmlGjenopptakelseNaturalytelser(xmlGjenopptakelseListe: JAXBElement<XMLGjenopptakelseNaturalytelseListe>?): List<GjenopptakelseNaturalytelse> {

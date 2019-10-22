@@ -5,7 +5,11 @@ import no.nav.syfo.domain.InngaaendeJournal
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
 import no.nav.syfo.util.JAXBTest.getInntektsmelding
-import no.nav.tjeneste.virksomhet.journal.v2.*
+import no.nav.tjeneste.virksomhet.journal.v2.HentDokumentResponse
+import no.nav.tjeneste.virksomhet.journal.v2.binding.HentDokumentDokumentIkkeFunnet
+import no.nav.tjeneste.virksomhet.journal.v2.binding.HentDokumentSikkerhetsbegrensning
+import no.nav.tjeneste.virksomhet.journal.v2.binding.JournalV2
+import no.nav.tjeneste.virksomhet.journal.v2.meldinger.HentDokumentRequest
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -19,15 +23,6 @@ import org.mockito.junit.MockitoJUnitRunner
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Arrays.asList
-import no.nav.syfo.util.JAXBTest.getInntektsmelding
-import no.nav.tjeneste.virksomhet.journal.v2.binding.HentDokumentDokumentIkkeFunnet
-import no.nav.tjeneste.virksomhet.journal.v2.binding.HentDokumentSikkerhetsbegrensning
-import no.nav.tjeneste.virksomhet.journal.v2.binding.JournalV2
-import no.nav.tjeneste.virksomhet.journal.v2.meldinger.HentDokumentRequest
-import org.assertj.core.api.AssertionsForClassTypes.assertThat
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.verify
-import org.mockito.Mockito.`when`
 import java.util.function.BinaryOperator
 
 
@@ -196,6 +191,7 @@ class JournalConsumerTest {
                     "<ns7:arbeidstakerFnr>fnr</ns7:arbeidstakerFnr>" +
                     "<ns7:naerRelasjon>false</ns7:naerRelasjon>" +
                     "<ns7:arbeidsforhold>" +
+                    "<ns7:foersteFravaersdag>2019-02-01</ns7:foersteFravaersdag>" +
                     "<ns7:beregnetInntekt>" +
                     "<ns7:beloep>20000</ns7:beloep>" +
                     "</ns7:beregnetInntekt>" +

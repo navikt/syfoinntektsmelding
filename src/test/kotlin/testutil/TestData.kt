@@ -18,5 +18,7 @@ val grunnleggendeInntektsmelding = Inntektsmelding(
         arsakTilInnsending = "TEST",
         journalStatus = JournalStatus.ENDELIG,
         arbeidsgiverperioder = listOf(Periode(FØRSTE_JANUAR, FØRSTE_FEBRUAR)),
-        arkivRefereranse = "AR123"
+        arkivRefereranse = "AR123",
+        førsteFraværsdag = LocalDate.of(2019,1,1),
+        mottattDato = LocalDate.of(2019, 1, 1).atStartOfDay()
 )

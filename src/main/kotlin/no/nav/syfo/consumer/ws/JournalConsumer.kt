@@ -7,15 +7,13 @@ import no.nav.syfo.consumer.ws.mapping.InntektsmeldingArbeidsgiverPrivat20181211
 import no.nav.syfo.domain.InngaaendeJournal
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.util.JAXB
-import no.nav.tjeneste.virksomhet.journal.v2.*
-import no.seres.xsd.nav.inntektsmelding_m._20180924.XMLInntektsmeldingM
 import no.nav.tjeneste.virksomhet.journal.v2.binding.HentDokumentDokumentIkkeFunnet
 import no.nav.tjeneste.virksomhet.journal.v2.binding.HentDokumentSikkerhetsbegrensning
 import no.nav.tjeneste.virksomhet.journal.v2.binding.JournalV2
 import no.nav.tjeneste.virksomhet.journal.v2.informasjon.Variantformater
 import no.nav.tjeneste.virksomhet.journal.v2.meldinger.HentDokumentRequest
+import no.seres.xsd.nav.inntektsmelding_m._20180924.XMLInntektsmeldingM
 import org.springframework.stereotype.Component
-
 import javax.xml.bind.JAXBElement
 
 @Component
@@ -41,9 +39,9 @@ class JournalConsumer(private val journalV2: JournalV2,
             val jaxbInntektsmelding = JAXB.unmarshalInntektsmelding<JAXBElement<Any>>(inntektsmelding)
 
             return if (jaxbInntektsmelding.value is XMLInntektsmeldingM)
-                InntektsmeldingArbeidsgiver20180924Mapper.tilXMLInntektsmelding(jaxbInntektsmelding, journalpostId, inngaaendeJournal.status)
+                InntektsmeldingArbeidsgiver20180924Mapper.tilXMLInntektsmelding(jaxbInntektsmelding, journalpostId, inngaaendeJournal)
             else
-                InntektsmeldingArbeidsgiverPrivat20181211Mapper.tilXMLInntektsmelding(jaxbInntektsmelding, journalpostId, inngaaendeJournal.status, aktorConsumer)
+                InntektsmeldingArbeidsgiverPrivat20181211Mapper.tilXMLInntektsmelding(jaxbInntektsmelding, journalpostId, inngaaendeJournal, aktorConsumer)
         } catch (e: HentDokumentSikkerhetsbegrensning) {
             log.error("Feil ved henting av dokument: Sikkerhetsbegrensning!")
             throw RuntimeException("Feil ved henting av dokument: Sikkerhetsbegrensning!", e)

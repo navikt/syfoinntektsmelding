@@ -1,24 +1,23 @@
 package no.nav.syfo.consumer.ws
 
-import no.nav.syfo.domain.JournalStatus
+
 import no.nav.tjeneste.virksomhet.inngaaendejournal.v1.binding.InngaaendeJournalV1
 import no.nav.tjeneste.virksomhet.inngaaendejournal.v1.informasjon.Dokumentinformasjon
 import no.nav.tjeneste.virksomhet.inngaaendejournal.v1.informasjon.InngaaendeJournalpost
 import no.nav.tjeneste.virksomhet.inngaaendejournal.v1.informasjon.Journaltilstand
 import no.nav.tjeneste.virksomhet.inngaaendejournal.v1.meldinger.HentJournalpostRequest
 import no.nav.tjeneste.virksomhet.inngaaendejournal.v1.meldinger.HentJournalpostResponse
+import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
+import org.mockito.ArgumentMatchers.any
 import org.mockito.InjectMocks
 import org.mockito.Mock
-import org.mockito.junit.MockitoJUnitRunner
-
-
-import org.assertj.core.api.AssertionsForClassTypes.assertThat
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
+import org.mockito.Mockito.verify
+import org.mockito.junit.MockitoJUnitRunner
+import javax.xml.datatype.DatatypeFactory
 
 @RunWith(MockitoJUnitRunner::class)
 class InngaaendeJournalConsumerTest {
@@ -39,6 +38,7 @@ class InngaaendeJournalConsumerTest {
         ijp.hoveddokument = Dokumentinformasjon()
         ijp.hoveddokument.dokumentId = dokumentId1
         ijp.journaltilstand = Journaltilstand.MIDLERTIDIG
+        ijp.forsendelseMottatt = DatatypeFactory.newInstance().newXMLGregorianCalendar()
         // JournalStatus.MIDLERTIDIG
 
         val journalpostResponse = HentJournalpostResponse()

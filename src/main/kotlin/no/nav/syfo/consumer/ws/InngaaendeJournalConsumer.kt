@@ -3,11 +3,7 @@ package no.nav.syfo.consumer.ws
 import log
 import no.nav.syfo.domain.InngaaendeJournal
 import no.nav.syfo.domain.JournalStatus
-import no.nav.tjeneste.virksomhet.inngaaendejournal.v1.binding.HentJournalpostJournalpostIkkeFunnet
-import no.nav.tjeneste.virksomhet.inngaaendejournal.v1.binding.HentJournalpostJournalpostIkkeInngaaende
-import no.nav.tjeneste.virksomhet.inngaaendejournal.v1.binding.HentJournalpostSikkerhetsbegrensning
-import no.nav.tjeneste.virksomhet.inngaaendejournal.v1.binding.HentJournalpostUgyldigInput
-import no.nav.tjeneste.virksomhet.inngaaendejournal.v1.binding.InngaaendeJournalV1
+import no.nav.tjeneste.virksomhet.inngaaendejournal.v1.binding.*
 import no.nav.tjeneste.virksomhet.inngaaendejournal.v1.meldinger.HentJournalpostRequest
 import org.springframework.stereotype.Component
 
@@ -24,7 +20,8 @@ class InngaaendeJournalConsumer(private val inngaaendeJournalV1: InngaaendeJourn
                     .inngaaendeJournalpost
             return InngaaendeJournal(
                     dokumentId = inngaaendeJournalpost.hoveddokument.dokumentId,
-                    status = JournalStatus.valueOf(inngaaendeJournalpost.journaltilstand.name)
+                    status = JournalStatus.valueOf(inngaaendeJournalpost.journaltilstand.name),
+                    mottattDato = inngaaendeJournalpost.forsendelseMottatt
             )
 
 

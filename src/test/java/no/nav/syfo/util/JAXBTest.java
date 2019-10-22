@@ -33,6 +33,7 @@ public class JAXBTest {
             "            </ns2:avtaltFerieListe>\n" +
             "            <ns2:utsettelseAvForeldrepengerListe/>\n" +
             "            <ns2:graderingIForeldrepengerListe/>\n" +
+            "            <ns2:foersteFravaersdag>2019-02-01</ns2:foersteFravaersdag>" +
             "        </ns2:arbeidsforhold>\n" +
             "        <ns2:refusjon></ns2:refusjon>\n" +
             "        <ns2:sykepengerIArbeidsgiverperioden>\n" +

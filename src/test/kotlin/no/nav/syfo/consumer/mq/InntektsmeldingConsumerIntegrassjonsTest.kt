@@ -7,7 +7,10 @@ import no.nav.syfo.consumer.rest.OppgaveClient
 import no.nav.syfo.consumer.rest.SakClient
 import no.nav.syfo.consumer.rest.SakResponse
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
-import no.nav.syfo.consumer.ws.*
+import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
+import no.nav.syfo.consumer.ws.InngaaendeJournalConsumer
+import no.nav.syfo.consumer.ws.JournalConsumerTest
+import no.nav.syfo.consumer.ws.OppgavebehandlingConsumer
 import no.nav.syfo.domain.GeografiskTilknytningData
 import no.nav.syfo.domain.InngaaendeJournal
 import no.nav.syfo.domain.JournalStatus
@@ -122,8 +125,7 @@ class InntektsmeldingConsumerIntegrassjonsTest {
     private fun inngaaendeJournal(arkivId: String): InngaaendeJournal {
         return InngaaendeJournal(
                 dokumentId = arkivId,
-                status = JournalStatus.MIDLERTIDIG
-        )
+                status = JournalStatus.MIDLERTIDIG)
     }
 
     @Test
