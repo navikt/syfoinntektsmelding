@@ -68,7 +68,7 @@ class InntektsmeldingConsumerTest {
                         arsakTilInnsending = "",
                         feriePerioder = emptyList(),
                         førsteFraværsdag = LocalDate.now(),
-                        mottattDato = LocalDate.now()
+                        mottattDato = LocalDateTime.now()
                 )
         )
         `when`(saksbehandlingService.behandleInntektsmelding(any(), anyString())).thenReturn("saksId")
@@ -95,7 +95,7 @@ class InntektsmeldingConsumerTest {
                         journalpostId = "arkivId",
                         fnr = "fnr",
                         førsteFraværsdag = LocalDate.now(),
-                        mottattDato = LocalDate.now()
+                        mottattDato = LocalDateTime.now()
                 )
         )
 
@@ -120,7 +120,7 @@ class InntektsmeldingConsumerTest {
                         journalpostId = "arkivId",
                         fnr = "fnr",
                         førsteFraværsdag = LocalDate.now(),
-                        mottattDato = LocalDate.now()
+                        mottattDato = LocalDateTime.now()
                 )
         )
 

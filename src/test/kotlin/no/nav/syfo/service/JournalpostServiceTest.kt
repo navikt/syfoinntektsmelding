@@ -20,6 +20,7 @@ import org.mockito.Mockito.`when`
 import org.mockito.Mockito.verify
 import org.mockito.junit.MockitoJUnitRunner
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 @RunWith(MockitoJUnitRunner::class)
 class JournalpostServiceTest {
@@ -55,7 +56,7 @@ class JournalpostServiceTest {
                         arsakTilInnsending = "Ny",
                         journalStatus = JournalStatus.MIDLERTIDIG,
                         førsteFraværsdag = LocalDate.now(),
-                        mottattDato = LocalDate.now()
+                        mottattDato = LocalDateTime.now()
                 )
         )
 
@@ -80,7 +81,7 @@ class JournalpostServiceTest {
                                 journalStatus = JournalStatus.MIDLERTIDIG,
                                 arsakTilInnsending = "",
                                 førsteFraværsdag = LocalDate.now(),
-                                mottattDato = LocalDate.now()
+                                mottattDato = LocalDateTime.now()
                         )
                 )
 

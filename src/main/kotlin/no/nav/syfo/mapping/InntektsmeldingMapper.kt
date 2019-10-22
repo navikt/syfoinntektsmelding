@@ -3,8 +3,6 @@ package no.nav.syfo.mapping
 import no.nav.inntektsmeldingkontrakt.*
 import no.nav.syfo.domain.inntektsmelding.Gyldighetsstatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
-import java.time.LocalDate
-import java.time.LocalDateTime
 
 fun mapInntektsmelding(inntektsmelding: Inntektsmelding, arbeidstakerAktørId: String): no.nav.inntektsmeldingkontrakt.Inntektsmelding {
     return no.nav.inntektsmeldingkontrakt.Inntektsmelding(
@@ -24,10 +22,14 @@ fun mapInntektsmelding(inntektsmelding: Inntektsmelding, arbeidstakerAktørId: S
             gjenopptakelseNaturalytelser = mapGjenopptakelseAvNaturalytelser(inntektsmelding),
             status = mapStatus(inntektsmelding),
             arkivreferanse = inntektsmelding.arkivRefereranse,
-            ferieperioder = emptyList(), //TODO
-            mottattDato = inntektsmelding.mottattDato.atStartOfDay(),
-            foersteFravaersdag = inntektsmelding.førsteFraværsdag
+            ferieperioder = mapFerieperioder(inntektsmelding),
+            foersteFravaersdag = inntektsmelding.førsteFraværsdag,
+            mottattDato = inntektsmelding.mottattDato
     )
+}
+
+fun mapFerieperioder(inntektsmelding: Inntektsmelding): List<Periode> {
+    return inntektsmelding.feriePerioder.map { p -> Periode(p.fom, p.tom) }
 }
 
 fun mapStatus(inntektsmelding: Inntektsmelding): Status {

@@ -4,6 +4,7 @@ import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
 import java.math.BigDecimal
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 
 data class Inntektsmelding(
@@ -26,6 +27,6 @@ data class Inntektsmelding(
         val arkivRefereranse: String,
         val feriePerioder: List<Periode> = emptyList(),
         val førsteFraværsdag: LocalDate,
-        val mottattDato: LocalDate
+        val mottattDato: LocalDateTime
 )
 

@@ -20,5 +20,5 @@ val grunnleggendeInntektsmelding = Inntektsmelding(
         arbeidsgiverperioder = listOf(Periode(FØRSTE_JANUAR, FØRSTE_FEBRUAR)),
         arkivRefereranse = "AR123",
         førsteFraværsdag = LocalDate.of(2019,1,1),
-        mottattDato = LocalDate.of(2019,1,1)
+        mottattDato = LocalDate.of(2019, 1, 1).atStartOfDay()
 )
