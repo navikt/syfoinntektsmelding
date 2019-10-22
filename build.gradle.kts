@@ -5,6 +5,8 @@ val springVersion = "5.2.0.RELEASE"
 val springKafkaVersion = "2.3.1.RELEASE"
 val micrometerVersion = "1.3.0"
 
+val mainClass = "no.nav.syfo.Application"
+
 val githubPassword: String by project
 
 plugins {
