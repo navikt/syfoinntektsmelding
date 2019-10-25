@@ -4,6 +4,7 @@ val springBootVersion = "2.2.0.RELEASE"
 val springVersion = "5.2.0.RELEASE"
 val springKafkaVersion = "2.3.1.RELEASE"
 val micrometerVersion = "1.3.0"
+val flywayVersion = "5.1.4"
 
 val mainClass = "no.nav.syfo.Application"
 
@@ -13,7 +14,7 @@ plugins {
     "maven-publish"
     id("org.jetbrains.kotlin.jvm") version "1.3.50"
     id("org.jetbrains.kotlin.plugin.allopen") version "1.3.50"
-    id("org.flywaydb.flyway") version "6.0.6"
+    id("org.flywaydb.flyway") version "5.1.4"
     java
 }
 
@@ -93,7 +94,7 @@ dependencies {
 
     implementation("org.apache.neethi:neethi:3.1.0")
 
-    implementation("org.flywaydb:flyway-core:6.0.6")
+    implementation("org.flywaydb:flyway-core:$flywayVersion")
 
     implementation("no.nav.sykepenger.kontrakter:inntektsmelding-kontrakt:2019.10.14-12-21-local-build")
 
