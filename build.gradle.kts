@@ -1,8 +1,8 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val springBootVersion = "2.0.5.RELEASE"
-val springVersion = "5.1.0.RELEASE"
-val springKafkaVersion = "2.1.13.RELEASE"
+val springBootVersion = "2.2.0.RELEASE"
+val springVersion = "5.2.0.RELEASE"
+val springKafkaVersion = "2.3.1.RELEASE"
 val micrometerVersion = "1.3.0"
 
 val mainClass = "no.nav.syfo.Application"
@@ -13,19 +13,11 @@ plugins {
     "maven-publish"
     id("org.jetbrains.kotlin.jvm") version "1.3.50"
     id("org.jetbrains.kotlin.plugin.allopen") version "1.3.50"
-    id("org.flywaydb.flyway") version "5.1.4"
-    id("com.gradle.build-scan") version "2.0.2"
-    id("io.spring.dependency-management") version "1.0.8.RELEASE"
-    idea
+    id("org.flywaydb.flyway") version "6.0.6"
     java
 }
 
 buildscript {
-    repositories {
-        maven {
-            url = uri("https://repo.spring.io/plugins-snapshot")
-        }
-    }
     dependencies {
         classpath("org.junit.platform:junit-platform-gradle-plugin:1.2.0")
     }
@@ -71,10 +63,10 @@ dependencies {
     implementation("org.springframework:spring-jms:$springVersion")
     implementation("org.springframework.kafka:spring-kafka:$springKafkaVersion")
 
-    implementation("org.springframework.boot:spring-boot-starter-test:$springBootVersion")
-    implementation("org.springframework.boot:spring-boot-test:$springBootVersion")
-    implementation("org.springframework:spring-test:$springVersion")
-    implementation("org.springframework.boot:spring-boot-starter-activemq:$springBootVersion")
+    testImplementation("org.springframework.boot:spring-boot-starter-test:$springBootVersion")
+    testImplementation("org.springframework.boot:spring-boot-starter-activemq:$springBootVersion")
+    testImplementation("org.springframework.boot:spring-boot-test:$springBootVersion")
+    testImplementation("org.springframework:spring-test:$springVersion")
 
     implementation("javax.xml.bind:jaxb-api:2.3.1")
     implementation("javax.inject:javax.inject:1")
@@ -94,14 +86,14 @@ dependencies {
     implementation("org.apache.cxf:cxf-core:3.3.3")
     implementation("org.apache.cxf:cxf-rt-bindings-soap:3.3.3")
     implementation("org.apache.cxf:cxf-rt-databinding-jaxb:3.3.3")
-    implementation("org.apache.cxf:cxf-spring-boot-starter-jaxws:3.3.3")
-    implementation("org.apache.cxf:cxf-rt-features-logging:3.3.3")
+    runtime("org.apache.cxf:cxf-spring-boot-starter-jaxws:3.3.3")
+    runtime("org.apache.cxf:cxf-rt-features-logging:3.3.3")
 
-    implementation("com.oracle.ojdbc:ojdbc10:19.3.0.0")
+    runtime("com.oracle.ojdbc:ojdbc10:19.3.0.0")
 
     implementation("org.apache.neethi:neethi:3.1.0")
 
-    implementation("org.flywaydb:flyway-core:5.1.4")
+    implementation("org.flywaydb:flyway-core:6.0.6")
 
     implementation("no.nav.sykepenger.kontrakter:inntektsmelding-kontrakt:2019.10.14-12-21-local-build")
 
@@ -126,7 +118,7 @@ dependencies {
     implementation("org.apache.httpcomponents:httpclient:4.5.6")
 
     implementation("io.micrometer:micrometer-core:$micrometerVersion")
-    implementation("io.micrometer:micrometer-registry-prometheus:$micrometerVersion")
+    runtime("io.micrometer:micrometer-registry-prometheus:$micrometerVersion")
 
     implementation("io.ktor:ktor-client-core:1.2.4")
     implementation("io.ktor:ktor:1.2.4")
@@ -136,14 +128,13 @@ dependencies {
     implementation("no.nav.syfo.sm:syfosm-common-rest-sts:2019.09.03-10-50-64032e3b6381665e9f9c0914cef626331399e66d")
     implementation("no.nav.syfo.sm:syfosm-common-networking:2019.09.03-10-50-64032e3b6381665e9f9c0914cef626331399e66d")
 
-    testImplementation("org.springframework.kafka:spring-kafka-test:$springKafkaVersion")
+    testImplementation("org.springframework.kafka:spring-kafka-test:2.1.10.RELEASE")
 
     testImplementation("junit:junit:4.12")
-    testImplementation("org.mockito:mockito-core:3.1.0")
-    testImplementation("org.assertj:assertj-core:3.13.2")
-    testImplementation("net.bytebuddy:byte-buddy:1.10.1")
+    testImplementation("org.mockito:mockito-core:2.23.4")
+    testImplementation("org.assertj:assertj-core:3.11.1")
 
-    implementation("com.h2database:h2:1.4.195")
+    implementation("com.h2database:h2:1.4.199")
 
     compileOnly("org.projectlombok:lombok:1.18.8")
     annotationProcessor("org.projectlombok:lombok:1.18.8")
