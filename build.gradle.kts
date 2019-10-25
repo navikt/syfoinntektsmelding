@@ -5,6 +5,7 @@ val springVersion = "5.2.0.RELEASE"
 val springKafkaVersion = "2.3.1.RELEASE"
 val micrometerVersion = "1.3.0"
 val flywayVersion = "5.1.4"
+val cxfVersion = "3.3.3"
 
 val mainClass = "no.nav.syfo.Application"
 
@@ -71,6 +72,7 @@ dependencies {
 
     implementation("javax.xml.bind:jaxb-api:2.3.1")
     implementation("javax.inject:javax.inject:1")
+    implementation("javax.activation:javax.activation-api:1.2.0")
 
     implementation("com.sun.xml.ws:jaxws-ri:2.3.2")
 
@@ -79,16 +81,17 @@ dependencies {
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.8")
 
-    implementation("org.apache.cxf:cxf-rt-ws-security:3.3.3")
-    implementation("org.apache.cxf:cxf-rt-ws-policy:3.3.3")
-    implementation("org.apache.cxf:cxf-rt-frontend-jaxws:3.3.3")
-    implementation("org.apache.cxf:cxf-rt-frontend-simple:3.3.3")
-    implementation("org.apache.cxf:cxf-rt-security:3.3.3")
-    implementation("org.apache.cxf:cxf-core:3.3.3")
-    implementation("org.apache.cxf:cxf-rt-bindings-soap:3.3.3")
-    implementation("org.apache.cxf:cxf-rt-databinding-jaxb:3.3.3")
-    runtime("org.apache.cxf:cxf-spring-boot-starter-jaxws:3.3.3")
-    runtime("org.apache.cxf:cxf-rt-features-logging:3.3.3")
+
+    implementation("org.apache.cxf:cxf-rt-ws-security:$cxfVersion")
+    implementation("org.apache.cxf:cxf-rt-security:$cxfVersion")
+    implementation("org.apache.cxf:cxf-rt-ws-policy:$cxfVersion")
+    implementation("org.apache.cxf:cxf-rt-frontend-jaxws:$cxfVersion")
+    implementation("org.apache.cxf:cxf-rt-frontend-simple:$cxfVersion")
+    implementation("org.apache.cxf:cxf-core:$cxfVersion")
+    implementation("org.apache.cxf:cxf-rt-bindings-soap:$cxfVersion")
+    implementation("org.apache.cxf:cxf-rt-databinding-jaxb:$cxfVersion")
+    runtime("org.apache.cxf:cxf-spring-boot-starter-jaxws:$cxfVersion")
+    runtime("org.apache.cxf:cxf-rt-features-logging:$cxfVersion")
 
     runtime("com.oracle.ojdbc:ojdbc10:19.3.0.0")
 
@@ -141,6 +144,8 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok:1.18.8")
     testCompileOnly("org.projectlombok:lombok:1.18.8")
     testAnnotationProcessor("org.projectlombok:lombok:1.18.8")
+
+    implementation("com.google.guava:guava:28.1-jre")
 }
 
 tasks.named<Jar>("jar") {
