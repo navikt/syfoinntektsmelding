@@ -70,11 +70,12 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-test:$springBootVersion")
     testImplementation("org.springframework:spring-test:$springVersion")
 
-    implementation("javax.xml.bind:jaxb-api:2.3.1")
     implementation("javax.inject:javax.inject:1")
-    implementation("javax.activation:javax.activation-api:1.2.0")
 
-    implementation("com.sun.xml.ws:jaxws-ri:2.3.2")
+    implementation("jakarta.activation:jakarta.activation-api:1.2.1")
+    implementation("jakarta.xml.bind:jakarta.xml.bind-api:2.3.1")
+    implementation("jakarta.xml.ws:jakarta.xml.ws-api:2.3.2")
+    implementation("jakarta.ws.rs:jakarta.ws.rs-api:2.1.6")
 
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.3.41")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.3.41")
