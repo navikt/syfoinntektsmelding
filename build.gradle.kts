@@ -1,8 +1,8 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val springBootVersion = "2.0.5.RELEASE"
-val springVersion = "5.1.0.RELEASE"
-val springKafkaVersion = "2.1.13.RELEASE"
+val springBootVersion = "2.1.5.RELEASE"
+val springVersion = "5.1.7.RELEASE"
+val springKafkaVersion = "2.2.6.RELEASE"
 val micrometerVersion = "1.3.0"
 
 val mainClass = "no.nav.syfo.Application"
@@ -13,7 +13,7 @@ plugins {
     "maven-publish"
     id("org.jetbrains.kotlin.jvm") version "1.3.50"
     id("org.jetbrains.kotlin.plugin.allopen") version "1.3.50"
-    id("org.flywaydb.flyway") version "5.1.4"
+    id("org.flywaydb.flyway") version "5.2.4"
     id("com.gradle.build-scan") version "2.0.2"
     id("io.spring.dependency-management") version "1.0.8.RELEASE"
     idea
@@ -101,7 +101,7 @@ dependencies {
 
     implementation("org.apache.neethi:neethi:3.1.0")
 
-    implementation("org.flywaydb:flyway-core:5.1.4")
+    implementation("org.flywaydb:flyway-core:5.2.4")
 
     implementation("no.nav.sykepenger.kontrakter:inntektsmelding-kontrakt:2019.10.14-12-21-local-build")
 
