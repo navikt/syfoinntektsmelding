@@ -2,8 +2,7 @@ package no.nav.syfo.localconfig;
 
 import org.flywaydb.core.Flyway;
 import org.springframework.boot.autoconfigure.flyway.FlywayMigrationStrategy;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;

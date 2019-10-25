@@ -4,9 +4,9 @@ import no.nav.inntektsmeldingkontrakt.*
 import no.nav.syfo.domain.inntektsmelding.Gyldighetsstatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 
-fun mapInntektsmelding(inntektsmelding: Inntektsmelding, arbeidstakerAktørId: String): no.nav.inntektsmeldingkontrakt.Inntektsmelding {
+fun mapInntektsmeldingKontrakt(inntektsmelding: Inntektsmelding, arbeidstakerAktørId: String, gyldighetsstatus: Gyldighetsstatus, arkivreferanse: String, uuid: String): no.nav.inntektsmeldingkontrakt.Inntektsmelding {
     return no.nav.inntektsmeldingkontrakt.Inntektsmelding(
-            inntektsmeldingId = inntektsmelding.id,
+            inntektsmeldingId = uuid,
             arbeidstakerFnr = inntektsmelding.fnr,
             arbeidstakerAktorId = arbeidstakerAktørId,
             virksomhetsnummer = inntektsmelding.arbeidsgiverOrgnummer,
@@ -20,11 +20,11 @@ fun mapInntektsmelding(inntektsmelding: Inntektsmelding, arbeidstakerAktørId: S
             endringIRefusjoner = mapEndringIRefusjon(inntektsmelding),
             opphoerAvNaturalytelser = mapOpphørAvNaturalytelser(inntektsmelding),
             gjenopptakelseNaturalytelser = mapGjenopptakelseAvNaturalytelser(inntektsmelding),
-            status = mapStatus(inntektsmelding),
-            arkivreferanse = inntektsmelding.arkivRefereranse,
-            ferieperioder = mapFerieperioder(inntektsmelding),
-            foersteFravaersdag = inntektsmelding.førsteFraværsdag,
-            mottattDato = inntektsmelding.mottattDato
+            status = mapStatus(gyldighetsstatus),
+            arkivreferanse = arkivreferanse
+//            ferieperioder = mapFerieperioder(inntektsmelding),
+//            foersteFravaersdag = inntektsmelding.førsteFraværsdag,
+//            mottattDato = inntektsmelding.mottattDato
     )
 }
 
@@ -32,8 +32,8 @@ fun mapFerieperioder(inntektsmelding: Inntektsmelding): List<Periode> {
     return inntektsmelding.feriePerioder.map { p -> Periode(p.fom, p.tom) }
 }
 
-fun mapStatus(inntektsmelding: Inntektsmelding): Status {
-    if (inntektsmelding.gyldighetsStatus.equals(Gyldighetsstatus.GYLDIG))
+fun mapStatus(status: Gyldighetsstatus): Status {
+    if (status == Gyldighetsstatus.GYLDIG)
         return Status.GYLDIG
     return Status.MANGELFULL
 
