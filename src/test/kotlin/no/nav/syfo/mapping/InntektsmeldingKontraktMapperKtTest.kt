@@ -26,6 +26,7 @@ class InntektsmeldingKontraktMapperKtTest {
                 sakId = "sakId",
                 fnr = "fnr",
                 aktorId = "aktorId",
+                arbeidsgiverPrivatFnr = "fnr",
                 arbeidsgiverperioder = ArrayList(),
                 arsakTilInnsending = "",
                 journalStatus = JournalStatus.MIDLERTIDIG,
@@ -41,8 +42,7 @@ class InntektsmeldingKontraktMapperKtTest {
         Assertions.assertThat(dto.arbeidsgiverPrivat).isEqualTo("fnr")
         Assertions.assertThat(dto.uuid).isNotNull()
         Assertions.assertThat(dto.behandlet).isEqualTo(LocalDateTime.of(2019,10,1,5,18,45,0))
-        Assertions.assertThat(dto.orgnummer).isEqualTo("abc")
-        Assertions.assertThat(dto.arbeidsgiverperioder.size).isEqualTo(1)
+        Assertions.assertThat(dto.arbeidsgiverperioder.size).isEqualTo(0)
     }
 
     @Test
@@ -55,6 +55,7 @@ class InntektsmeldingKontraktMapperKtTest {
                 arbeidsgiverPrivat = "arbeidsgiverPrivat",
                 aktorId = "aktorId"
         )
+        dto.leggtilArbeidsgiverperiode(LocalDate.of(2019,10,5), LocalDate.of(2019,10,25))
         val i = toInntektsmelding(dto)
         Assertions.assertThat(i.journalpostId).isEqualTo("journalpostId")
         Assertions.assertThat(i.mottattDato).isEqualTo(LocalDateTime.of(2019,10,1,5,18,45,0))

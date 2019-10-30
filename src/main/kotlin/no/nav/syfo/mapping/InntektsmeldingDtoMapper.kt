@@ -38,7 +38,7 @@ fun toInntektsmelding(dto: InntektsmeldingDto) : Inntektsmelding {
             opphørAvNaturalYtelse = ArrayList(),
             gjenopptakelserNaturalYtelse = ArrayList(),
             gyldighetsStatus = Gyldighetsstatus.GYLDIG,
-            arkivRefereranse = "ar123",
+            arkivRefereranse = "???",
             feriePerioder = ArrayList(),
             førsteFraværsdag = LocalDate.now(),
             mottattDato = dto.behandlet!!

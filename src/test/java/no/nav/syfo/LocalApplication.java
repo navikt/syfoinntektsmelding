@@ -12,6 +12,7 @@ import java.sql.SQLException;
 
 @SpringBootApplication(exclude = FlywayAutoConfiguration.class)
 @Slf4j
+@Profile(value = "test")
 public class LocalApplication {
     public static void main(String[] args) {
         SpringApplication.run(LocalApplication.class, args);

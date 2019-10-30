@@ -11,6 +11,7 @@ import javax.sql.DataSource;
 
 @Configuration
 @EnableTransactionManagement
+@Profile(value = "test")
 public class TestApplicationConfig {
 
     public TestApplicationConfig(Environment environment) {

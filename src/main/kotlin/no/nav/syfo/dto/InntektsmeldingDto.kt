@@ -41,6 +41,12 @@ data class InntektsmeldingDto(
                 arbeidsgiverperioder.add(periode)
         }
 
+        fun leggtilArbeidsgiverperiode(fom: LocalDate, tom: LocalDate){
+                val periode = ArbeidsgiverperiodeDto()
+                periode.inntektsmelding = this
+                arbeidsgiverperioder.add(periode)
+        }
+
 }
 
 //data class InntektsmeldingMeta (

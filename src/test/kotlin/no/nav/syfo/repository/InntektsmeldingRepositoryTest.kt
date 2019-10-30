@@ -37,7 +37,7 @@ class InntektsmeldingRepositoryTest {
                 arbeidsgiverPrivat = "arbeidsgiverPrivat",
                 aktorId = "aktorId"
         )
-        inntektsmelding.leggtilArbeidsgiverperiode(ArbeidsgiverperiodeDto(inntektsmelding = inntektsmelding, fom = LocalDate.of(2019, 10, 5), tom = LocalDate.of(2019, 10, 25)))
+        inntektsmelding.leggtilArbeidsgiverperiode(fom = LocalDate.of(2019, 10, 5), tom = LocalDate.of(2019, 10, 25))
         entityManager.persist<Any>(inntektsmelding)
     }
 
