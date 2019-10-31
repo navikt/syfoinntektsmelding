@@ -9,3 +9,5 @@ target
 /build/
 /syfoinntektsmelding.ipr
 /syfoinntektsmelding.iws
+out/
+gradle.properties
