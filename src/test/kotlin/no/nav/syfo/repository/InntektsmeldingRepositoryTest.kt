@@ -19,7 +19,7 @@ import java.time.LocalDateTime
 @RunWith(SpringRunner::class)
 @ActiveProfiles("jpa")
 @DataJpaTest
-class InntektsmeldingRepositoryTest {
+open class InntektsmeldingRepositoryTest {
     @Autowired
     private lateinit var entityManager: TestEntityManager
 

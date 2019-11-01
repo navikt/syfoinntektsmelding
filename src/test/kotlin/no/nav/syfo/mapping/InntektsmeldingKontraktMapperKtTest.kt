@@ -55,7 +55,6 @@ class InntektsmeldingKontraktMapperKtTest {
                 arbeidsgiverPrivat = "arbeidsgiverPrivat",
                 aktorId = "aktorId"
         )
-        dto.leggtilArbeidsgiverperiode(LocalDate.of(2019,10,5), LocalDate.of(2019,10,25))
         val i = toInntektsmelding(dto)
         Assertions.assertThat(i.journalpostId).isEqualTo("journalpostId")
         Assertions.assertThat(i.mottattDato).isEqualTo(LocalDateTime.of(2019,10,1,5,18,45,0))
@@ -63,7 +62,7 @@ class InntektsmeldingKontraktMapperKtTest {
         Assertions.assertThat(i.arbeidsgiverOrgnummer).isEqualTo("orgnummer")
         Assertions.assertThat(i.fnr).isEqualTo("arbeidsgiverPrivat")
         Assertions.assertThat(i.aktorId).isEqualTo("aktorId")
-        Assertions.assertThat(i.arbeidsgiverperioder.size).isEqualTo(1)
+        Assertions.assertThat(i.arbeidsgiverperioder.size).isEqualTo(0)
     }
 
     @Test

@@ -21,10 +21,10 @@ fun mapInntektsmeldingKontrakt(inntektsmelding: Inntektsmelding, arbeidstakerAkt
             opphoerAvNaturalytelser = mapOpphørAvNaturalytelser(inntektsmelding),
             gjenopptakelseNaturalytelser = mapGjenopptakelseAvNaturalytelser(inntektsmelding),
             status = mapStatus(gyldighetsstatus),
-            arkivreferanse = arkivreferanse
-//            ferieperioder = mapFerieperioder(inntektsmelding),
-//            foersteFravaersdag = inntektsmelding.førsteFraværsdag,
-//            mottattDato = inntektsmelding.mottattDato
+            arkivreferanse = arkivreferanse,
+            ferieperioder = mapFerieperioder(inntektsmelding),
+            foersteFravaersdag = inntektsmelding.førsteFraværsdag,
+            mottattDato = inntektsmelding.mottattDato
     )
 }
 

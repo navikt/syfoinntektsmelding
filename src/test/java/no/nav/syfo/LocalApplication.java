@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Profile;
 
 import java.sql.SQLException;
 
-@SpringBootApplication(exclude = FlywayAutoConfiguration.class)
+@SpringBootApplication
 @Slf4j
 @Profile(value = "test")
 public class LocalApplication {

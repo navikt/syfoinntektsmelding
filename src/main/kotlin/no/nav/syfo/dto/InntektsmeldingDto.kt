@@ -36,13 +36,10 @@ data class InntektsmeldingDto(
         @OneToMany(mappedBy = "inntektsmelding", cascade = [ALL], orphanRemoval = true, fetch = FetchType.EAGER)
         val arbeidsgiverperioder: MutableList<ArbeidsgiverperiodeDto> = ArrayList()
 
-        fun leggtilArbeidsgiverperiode(periode: ArbeidsgiverperiodeDto){
-                periode.inntektsmelding = this
-                arbeidsgiverperioder.add(periode)
-        }
-
         fun leggtilArbeidsgiverperiode(fom: LocalDate, tom: LocalDate){
                 val periode = ArbeidsgiverperiodeDto()
+                periode.fom = fom
+                periode.tom = tom
                 periode.inntektsmelding = this
                 arbeidsgiverperioder.add(periode)
         }

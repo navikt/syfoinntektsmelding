@@ -6,7 +6,6 @@ import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.domain.inntektsmelding.Refusjon
 import no.nav.syfo.dto.InntektsmeldingDto
 import java.time.LocalDate
-import java.time.LocalDateTime
 
 
 fun toInntektsmeldingDTO(inntektsmelding : Inntektsmelding) : InntektsmeldingDto {
@@ -15,7 +14,8 @@ fun toInntektsmeldingDTO(inntektsmelding : Inntektsmelding) : InntektsmeldingDto
             sakId = inntektsmelding.sakId ?: "",
             journalpostId = inntektsmelding.journalpostId,
             arbeidsgiverPrivat = inntektsmelding.arbeidsgiverPrivatFnr,
-            orgnummer = inntektsmelding.arbeidsgiverOrgnummer
+            orgnummer = inntektsmelding.arbeidsgiverOrgnummer,
+            behandlet = inntektsmelding.mottattDato
     )
 }
 
