@@ -13,7 +13,8 @@ public class RestTemplateConfig {
     public RestTemplate basicAuthRestTemplate(@Value("${srvsyfoinntektsmelding.username}") String username,
                                               @Value("${srvsyfoinntektsmelding.password}") String password) {
         return new RestTemplateBuilder()
-                .build();
+            .basicAuthentication(username, password)
+            .build();
     }
 
     @Bean

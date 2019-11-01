@@ -15,12 +15,12 @@ public class FlywayConfig {
 
     @Bean
     Flyway flyway(DataSource dataSource) {
-        Flyway flyway = new Flyway();
-        flyway.setDataSource(dataSource);
-        flyway.setBaselineOnMigrate(true);
-        flyway.setCleanDisabled(true);
-        flyway.setSchemas();
-        return flyway;
+        return Flyway.configure()
+            .dataSource(dataSource)
+            .baselineOnMigrate(true)
+            .cleanDisabled(true)
+            .schemas()
+            .load();
     }
 
     @Bean
