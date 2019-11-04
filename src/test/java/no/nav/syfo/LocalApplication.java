@@ -2,9 +2,9 @@ package no.nav.syfo;
 
 import lombok.extern.slf4j.Slf4j;
 import org.h2.tools.Server;
-import org.springframework.boot.SpringApplication;
+import org.springframework.boot.*;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration;
+import org.springframework.boot.builder.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
 
@@ -15,7 +15,9 @@ import java.sql.SQLException;
 @Profile(value = "test")
 public class LocalApplication {
     public static void main(String[] args) {
-        SpringApplication.run(LocalApplication.class, args);
+        new SpringApplicationBuilder(LocalApplication.class)
+            .web(WebApplicationType.NONE)
+            .run(args);
     }
 
     @Bean
