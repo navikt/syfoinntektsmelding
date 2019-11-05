@@ -12,7 +12,6 @@ import java.sql.SQLException;
 
 @SpringBootApplication
 @Slf4j
-@Profile(value = "test")
 public class LocalApplication {
     public static void main(String[] args) {
         new SpringApplicationBuilder(LocalApplication.class)
