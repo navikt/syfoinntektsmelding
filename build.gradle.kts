@@ -51,6 +51,8 @@ allOpen {
 
 dependencies {
     // Spring
+    compile("io.springfox:springfox-swagger2:2.7.0")
+    compile("io.springfox:springfox-swagger-ui:2.7.0")
     implementation("org.springframework.boot:spring-boot-starter-web:$springBootVersion")
     implementation("org.springframework.boot:spring-boot:$springBootVersion")
     implementation("org.springframework.boot:spring-boot-autoconfigure:$springBootVersion")

@@ -1,22 +1,18 @@
 package no.nav.syfo;
 
-import lombok.extern.slf4j.Slf4j;
-import org.h2.tools.Server;
+import lombok.extern.slf4j.*;
+import org.h2.tools.*;
 import org.springframework.boot.*;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.builder.*;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Profile;
+import org.springframework.boot.autoconfigure.*;
+import org.springframework.context.annotation.*;
 
-import java.sql.SQLException;
+import java.sql.*;
 
 @SpringBootApplication
 @Slf4j
 public class LocalApplication {
     public static void main(String[] args) {
-        new SpringApplicationBuilder(LocalApplication.class)
-            .web(WebApplicationType.NONE)
-            .run(args);
+        SpringApplication.run(Application.class, args);
     }
 
     @Bean
