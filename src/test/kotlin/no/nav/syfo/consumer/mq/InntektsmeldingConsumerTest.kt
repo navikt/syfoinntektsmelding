@@ -1,16 +1,14 @@
 package no.nav.syfo.consumer.mq
 
-import any
 import no.nav.syfo.behandling.InntektsmeldingBehandler
 import no.nav.syfo.util.Metrikk
 import org.apache.activemq.command.ActiveMQTextMessage
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentMatchers.anyString
 import org.mockito.InjectMocks
 import org.mockito.Mock
-import org.mockito.Mockito.*
+import org.mockito.Mockito.verify
 import org.mockito.junit.MockitoJUnitRunner
 import javax.jms.MessageNotWriteableException
 
@@ -18,7 +16,7 @@ import javax.jms.MessageNotWriteableException
 class InntektsmeldingConsumerTest {
 
     @Mock
-    private val metrikk: Metrikk? = null
+    private lateinit var metrikk: Metrikk
 
     @Mock
     private lateinit var inntektsmeldingBehandler: InntektsmeldingBehandler
@@ -45,7 +43,7 @@ class InntektsmeldingConsumerTest {
 
     @Test
     @Throws(MessageNotWriteableException::class)
-    fun listen() {
+    fun medArkivReferanse() {
         val message = ActiveMQTextMessage()
         message.text = inputPayload
         message.jmsCorrelationID = "AR-123"
@@ -53,4 +51,12 @@ class InntektsmeldingConsumerTest {
         verify(inntektsmeldingBehandler).behandle("arkivId", "AR-123")
     }
 
+    @Test
+    @Throws(MessageNotWriteableException::class)
+    fun utenArkivReferanse() {
+        val message = ActiveMQTextMessage()
+        message.text = inputPayload
+        inntektsmeldingConsumer.listen(message)
+        verify(inntektsmeldingBehandler).behandle("arkivId", "UKJENT")
+    }
 }
