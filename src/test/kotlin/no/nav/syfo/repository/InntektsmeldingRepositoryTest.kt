@@ -2,7 +2,6 @@ package no.nav.syfo.repository
 
 import junit.framework.Assert.assertEquals
 import junit.framework.Assert.assertNotNull
-import no.nav.syfo.dto.ArbeidsgiverperiodeDto
 import no.nav.syfo.dto.InntektsmeldingDto
 import org.junit.Before
 import org.junit.Test
@@ -10,15 +9,16 @@ import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
-import org.springframework.context.annotation.Profile
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit4.SpringRunner
 import java.time.LocalDate
 import java.time.LocalDateTime
 
 @RunWith(SpringRunner::class)
-@ActiveProfiles("jpa")
 @DataJpaTest
+@TestPropertySource(locations = ["classpath:application-test.properties"])
+@ActiveProfiles("test")
 open class InntektsmeldingRepositoryTest {
     @Autowired
     private lateinit var entityManager: TestEntityManager

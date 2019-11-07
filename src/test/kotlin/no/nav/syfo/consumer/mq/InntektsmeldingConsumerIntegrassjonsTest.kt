@@ -1,8 +1,6 @@
 package no.nav.syfo.consumer.mq
 
-import any
 import kotlinx.coroutines.runBlocking
-import no.nav.syfo.LocalApplication
 import no.nav.syfo.consumer.rest.OppgaveClient
 import no.nav.syfo.consumer.rest.SakClient
 import no.nav.syfo.consumer.rest.SakResponse
@@ -18,6 +16,7 @@ import no.nav.syfo.domain.Periode
 import no.nav.syfo.producer.InntektsmeldingProducer
 import no.nav.syfo.repository.InntektsmeldingService
 import no.nav.syfo.service.EksisterendeSakService
+import no.nav.syfo.test.LocalApplication
 import no.nav.syfo.util.Metrikk
 import no.nav.tjeneste.virksomhet.behandleinngaaendejournal.v1.binding.BehandleInngaaendeJournalV1
 import no.nav.tjeneste.virksomhet.journal.v2.binding.HentDokumentDokumentIkkeFunnet

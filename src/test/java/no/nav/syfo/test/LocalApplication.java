@@ -1,6 +1,7 @@
-package no.nav.syfo;
+package no.nav.syfo.test;
 
 import lombok.extern.slf4j.*;
+import no.nav.syfo.*;
 import org.h2.tools.*;
 import org.springframework.boot.*;
 import org.springframework.boot.autoconfigure.*;
@@ -11,6 +12,7 @@ import java.sql.*;
 @SpringBootApplication
 @Slf4j
 public class LocalApplication {
+
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }

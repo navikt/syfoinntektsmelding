@@ -12,8 +12,9 @@ import no.nav.syfo.service.SaksbehandlingService
 import no.nav.syfo.util.Metrikk
 import no.nav.syfo.util.validerInntektsmelding
 import org.springframework.stereotype.Component
+import org.springframework.stereotype.Service
 
-@Component
+@Service
 class InntektsmeldingBehandler (
         private val journalpostService: JournalpostService,
         private val saksbehandlingService: SaksbehandlingService,
