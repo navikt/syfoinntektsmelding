@@ -26,24 +26,20 @@ open class InntektsmeldingRepositoryTest {
     @Autowired
     private lateinit var respository: InntektsmeldingRepository
 
-    @Before
-    fun setUp() {
+    @Test
+    fun findByAktorId(){
         val behandlet = LocalDateTime.of(2019,10,1,5,18,45,0)
         val inntektsmelding = InntektsmeldingDto(
-                journalpostId = "journalpostId",
-                behandlet = behandlet,
-                sakId = "sakId",
-                orgnummer = "orgnummer",
-                arbeidsgiverPrivat = "arbeidsgiverPrivat",
-                aktorId = "aktorId"
+            journalpostId = "journalpostId",
+            behandlet = behandlet,
+            sakId = "sakId",
+            orgnummer = "orgnummer",
+            arbeidsgiverPrivat = "arbeidsgiverPrivat",
+            aktorId = "aktorId1"
         )
         inntektsmelding.leggtilArbeidsgiverperiode(fom = LocalDate.of(2019, 10, 5), tom = LocalDate.of(2019, 10, 25))
         entityManager.persist<Any>(inntektsmelding)
-    }
-
-    @Test
-    fun findByAktorId(){
-        val inntektsmeldinger = respository.findByAktorId("aktorId")
+        val inntektsmeldinger = respository.findByAktorId("aktorId1")
         assertEquals(inntektsmeldinger.size,1)
         val i = inntektsmeldinger[0]
         assertNotNull(i.uuid)
@@ -51,13 +47,55 @@ open class InntektsmeldingRepositoryTest {
         assertEquals(i.sakId,"sakId")
         assertEquals(i.orgnummer,"orgnummer")
         assertEquals(i.arbeidsgiverPrivat,"arbeidsgiverPrivat")
-        assertEquals(i.aktorId,"aktorId")
+        assertEquals(i.aktorId,"aktorId1")
         assertEquals(i.behandlet,LocalDateTime.of(2019,10,1,5,18,45,0))
         assertEquals(i.arbeidsgiverperioder.size,1)
         assertEquals(i.arbeidsgiverperioder[0].inntektsmelding, i)
         assertNotNull(i.arbeidsgiverperioder[0].uuid)
         assertEquals(i.arbeidsgiverperioder[0].fom, LocalDate.of(2019,10,5))
         assertEquals(i.arbeidsgiverperioder[0].tom, LocalDate.of(2019,10,25))
+    }
+
+    @Test
+    fun lagre_flere_arbeidsgiverperioder(){
+        val behandlet = LocalDateTime.of(2019,10,1,5,18,45,0)
+        val inntektsmelding = InntektsmeldingDto(
+            journalpostId = "journalpostId",
+            behandlet = behandlet,
+            sakId = "sakId",
+            orgnummer = "orgnummer",
+            arbeidsgiverPrivat = "arbeidsgiverPrivat",
+            aktorId = "aktorId2"
+        )
+        inntektsmelding.leggtilArbeidsgiverperiode(fom = LocalDate.of(2019, 10, 5), tom = LocalDate.of(2019, 10, 25))
+        inntektsmelding.leggtilArbeidsgiverperiode(fom = LocalDate.of(2018, 10, 5), tom = LocalDate.of(2018, 10, 25))
+        entityManager.persist<Any>(inntektsmelding)
+        val inntektsmeldinger = respository.findByAktorId("aktorId2")
+        assertEquals(inntektsmeldinger.size,1)
+        val i = inntektsmeldinger[0]
+        assertEquals(i.arbeidsgiverperioder.size,2)
+        assertEquals(i.arbeidsgiverperioder[0].inntektsmelding, i)
+        assertNotNull(i.arbeidsgiverperioder[0].uuid)
+        assertEquals(i.arbeidsgiverperioder[0].fom, LocalDate.of(2019,10,5))
+        assertEquals(i.arbeidsgiverperioder[0].tom, LocalDate.of(2019,10,25))
+    }
+
+    @Test
+    fun lagre_uten_arbeidsgiverperioder(){
+        val behandlet = LocalDateTime.of(2019,10,1,5,18,45,0)
+        val inntektsmelding = InntektsmeldingDto(
+            journalpostId = "journalpostId",
+            behandlet = behandlet,
+            sakId = "sakId",
+            orgnummer = "orgnummer",
+            arbeidsgiverPrivat = "arbeidsgiverPrivat",
+            aktorId = "aktorId3"
+        )
+        entityManager.persist<Any>(inntektsmelding)
+        val inntektsmeldinger = respository.findByAktorId("aktorId3")
+        val i = inntektsmeldinger[0]
+        assertEquals(inntektsmeldinger.size,1)
+        assertEquals(i.arbeidsgiverperioder.size,0)
     }
 
 }
