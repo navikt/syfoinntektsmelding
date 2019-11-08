@@ -26,7 +26,7 @@ data class Inntektsmelding(
         val gyldighetsStatus: Gyldighetsstatus = Gyldighetsstatus.GYLDIG,
         val arkivRefereranse: String,
         val feriePerioder: List<Periode> = emptyList(),
-        val førsteFraværsdag: LocalDate,
+        val førsteFraværsdag: LocalDate?,
         val mottattDato: LocalDateTime
 )
 

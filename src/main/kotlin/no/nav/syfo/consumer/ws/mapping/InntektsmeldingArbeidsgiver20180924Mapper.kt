@@ -54,8 +54,8 @@ internal object InntektsmeldingArbeidsgiver20180924Mapper {
                 ?: emptyList()
     }
 
-    private fun mapFørsteFraværsdag(arbeidsforhold: JAXBElement<XMLArbeidsforhold>?): LocalDate {
-        return arbeidsforhold?.value?.foersteFravaersdag?.value ?: throw IllegalStateException()
+    private fun mapFørsteFraværsdag(arbeidsforhold: JAXBElement<XMLArbeidsforhold>?): LocalDate? {
+        return arbeidsforhold?.value?.foersteFravaersdag?.value
     }
 
     private fun mapXmlGjenopptakelseNaturalytelser(xmlGjenopptakelseListe: JAXBElement<XMLGjenopptakelseNaturalytelseListe>?): List<GjenopptakelseNaturalytelse> {
