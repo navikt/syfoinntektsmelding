@@ -4,6 +4,7 @@ import log
 import com.google.common.util.concurrent.Striped
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
 import no.nav.syfo.domain.JournalStatus
+import no.nav.syfo.dto.InntektsmeldingDto
 import no.nav.syfo.mapping.mapInntektsmeldingKontrakt
 import no.nav.syfo.producer.InntektsmeldingProducer
 import no.nav.syfo.repository.InntektsmeldingService
@@ -23,10 +24,11 @@ class InntektsmeldingBehandler (
         private val aktorConsumer: AktorConsumer,
         private val inntektsmeldingProducer: InntektsmeldingProducer
 ) {
-    private val consumerLocks = Striped.lock(8)
-    private val log = log()
 
-    fun behandle(arkivId: String, arkivreferanse: String) {
+    fun behandle(arkivId: String, arkivreferanse: String) : InntektsmeldingDto? {
+        val consumerLocks = Striped.lock(8)
+        val log = log()
+
         val inntektsmelding = journalpostService.hentInntektsmelding(arkivId)
         val consumerLock = consumerLocks.get(inntektsmelding.fnr)
         try {
@@ -56,6 +58,7 @@ class InntektsmeldingBehandler (
                 )
 
                 log.info("Inntektsmelding {} er journalført for {}", inntektsmelding.journalpostId, arkivreferanse)
+                return dto
             } else {
                 log.info(
                         "Behandler ikke inntektsmelding {} da den har status: {}",
@@ -66,6 +69,7 @@ class InntektsmeldingBehandler (
         } finally {
             consumerLock.unlock()
         }
+        return null
     }
 
 }

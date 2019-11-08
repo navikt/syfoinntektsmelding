@@ -65,7 +65,7 @@ class InntektsmeldingBehandlerTest {
 
     @Test
     @Throws(MessageNotWriteableException::class)
-    fun behandlerInntektsmelding() {
+    fun behandler_midlertidig() {
         `when`(journalpostService.hentInntektsmelding("arkivId")).thenReturn(
                 Inntektsmelding(
                         arbeidsgiverOrgnummer = "orgnummer",
@@ -90,7 +90,7 @@ class InntektsmeldingBehandlerTest {
 
     @Test
     @Throws(MessageNotWriteableException::class)
-    fun behandlerIkkeInntektsmeldingMedStatusForskjelligFraMidlertidig() {
+    fun behandler_Ikke_ForskjelligFraMidlertidig() {
         `when`(journalpostService.hentInntektsmelding("arkivId")).thenReturn(
                 Inntektsmelding(
                         arkivRefereranse = "AR-123",
@@ -113,7 +113,7 @@ class InntektsmeldingBehandlerTest {
 
     @Test
     @Throws(MessageNotWriteableException::class)
-    fun behandlerIkkeInntektsmeldingMedStatusEndelig() {
+    fun behandler_Ikke_StatusEndelig() {
         `when`(journalpostService.hentInntektsmelding("arkivId")).thenReturn(
                 Inntektsmelding(
                         arkivRefereranse = "AR-123",
@@ -128,9 +128,6 @@ class InntektsmeldingBehandlerTest {
                 )
         )
 
-        val message = ActiveMQTextMessage()
-        message.text = inputPayload
-        message.jmsCorrelationID = "AR-123"
         inntektsmeldingBehandler.behandle("arkivId", "AR-123")
 
         verify<SaksbehandlingService>(saksbehandlingService, never()).behandleInntektsmelding(any(), anyString(), anyString())
@@ -140,39 +137,9 @@ class InntektsmeldingBehandlerTest {
 
     @Test
     @Throws(MessageNotWriteableException::class)
-    fun inntektsmelding_uten_arkivreferanse() {
-        `when`(journalpostService.hentInntektsmelding("arkivId")).thenReturn(
-                Inntektsmelding(
-                        arkivRefereranse = "AR-123",
-                        arbeidsforholdId = "123",
-                        arsakTilInnsending = "",
-                        arbeidsgiverperioder = emptyList(),
-                        mottattDato = LocalDate.of(2019, 2, 6).atStartOfDay(),
-                        journalStatus = JournalStatus.MIDLERTIDIG,
-                        journalpostId = "arkivId",
-                        fnr = "fnr",
-                        førsteFraværsdag = LocalDate.now()
-                )
-        )
+    fun behandler_paralellt() {
 
-        inntektsmeldingBehandler.behandle("arkivId", "AR-123")
-
-//        verify<SaksbehandlingService>(saksbehandlingService, never()).behandleInntektsmelding(any(), anyString(), anyString())
-//        verify(journalpostService, never()).ferdigstillJournalpost(any(), any())
-//        verify(inntektsmeldingProducer!!, never()).leggMottattInntektsmeldingPåTopic(any())
     }
 
-    companion object {
-        private val inputPayload = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" +
-                "  <ns5:forsendelsesinformasjon xmlns:ns5=\"http://nav.no/melding/virksomhet/dokumentnotifikasjon/v1\" " +
-                "    xmlns:ns2=\"http://nav.no/melding/virksomhet/dokumentforsendelse/v1\" " +
-                "    xmlns:ns4=\"http://nav.no/dokmot/jms/reply\" " +
-                "    xmlns:ns3=\"http://nav.no.dokmot/jms/viderebehandling\">" +
-                "  <arkivId>arkivId</arkivId>" +
-                "  <arkivsystem>JOARK</arkivsystem>" +
-                "  <tema>SYK</tema>" +
-                "  <behandlingstema>ab0061</behandlingstema>" +
-                "</ns5:forsendelsesinformasjon>"
-    }
 }
 

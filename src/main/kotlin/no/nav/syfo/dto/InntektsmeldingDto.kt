@@ -7,7 +7,7 @@ import javax.persistence.CascadeType.ALL
 
 @Entity
 @Table(name = "INNTEKTSMELDING")
-data class InntektsmeldingDto(
+data class InntektsmeldingDto (
 
         @Id
         @Column(name = "INNTEKTSMELDING_UUID", length = 100, updatable = false)

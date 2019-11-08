@@ -14,7 +14,7 @@ class InntektsmeldingAPI (
 ){
 
     @PostMapping
-    fun create(@RequestBody request: InntektsmeldingRequest): ResponseEntity<String> {
+    fun registrerInntektsmelding(@RequestBody request: InntektsmeldingRequest): ResponseEntity<String> {
         inntektsmeldingBehandler.behandle( request.arkivId, request.arkivReferanse )
         return ResponseEntity.status(HttpStatus.CREATED).body("Inntektsmelding mottatt.")
     }

@@ -10,14 +10,12 @@ import org.springframework.stereotype.Service
 
 @Service
 @Slf4j
-class InntektsmeldingService {
-
-    @Autowired
-    private lateinit var repository: InntektsmeldingRepository
+class InntektsmeldingService (
+    private val repository: InntektsmeldingRepository
+) {
 
     fun opprett(inntektsmelding: Inntektsmelding): String {
         val dto = toInntektsmeldingDTO(inntektsmelding)
-        println("Oppretter inntektsmelding ${dto.uuid}")
         return repository.save(dto).uuid!!
     }
 
@@ -30,7 +28,9 @@ class InntektsmeldingService {
         val dto = toInntektsmeldingDTO(inntektsmelding)
         dto.aktorId = aktorid
         dto.sakId = saksId
-        println("Lagrer inntektsmelding ${dto.uuid}")
+        dto.arbeidsgiverPrivat = "eqweqwe"
+        dto.orgnummer = "123"
+        println(dto)
         return repository.save(dto)
     }
 

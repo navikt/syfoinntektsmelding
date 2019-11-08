@@ -32,7 +32,9 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers
 import org.mockito.BDDMockito.given
+import org.mockito.InjectMocks
 import org.mockito.Mockito.*
+import org.mockito.junit.MockitoJUnitRunner
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.jdbc.core.JdbcTemplate
@@ -52,7 +54,7 @@ import javax.jms.MessageNotWriteableException
 @SpringBootTest(classes = [LocalApplication::class])
 @TestPropertySource("classpath:application-test.properties")
 @DirtiesContext
-@Ignore
+//@Ignore
 class InntektsmeldingConsumerIntegrassjonsTest {
 
     @MockBean
@@ -79,17 +81,11 @@ class InntektsmeldingConsumerIntegrassjonsTest {
     @MockBean
     private val metrikk: Metrikk? = null
 
-    @Inject
-    private lateinit var inntektsmeldingConsumer: InntektsmeldingConsumer
-
     @MockBean
     private lateinit var inntektsmeldingProducer: InntektsmeldingProducer
 
-    @Inject
-    private lateinit var inntektsmeldingDAO: InntektsmeldingService
-
-    @Inject
-    private lateinit var jdbcTemplate: JdbcTemplate
+//    @Inject
+//    private lateinit var jdbcTemplate: JdbcTemplate
 
     @MockBean
     private lateinit var oppgaveClient : OppgaveClient
@@ -97,10 +93,17 @@ class InntektsmeldingConsumerIntegrassjonsTest {
     @MockBean
     private lateinit var sakClient : SakClient
 
+
+    @MockBean
+    lateinit var inntektsmeldingConsumer: InntektsmeldingConsumer
+
+    @MockBean
+    lateinit var inntektsmeldingDAO: InntektsmeldingService
+
     @Before
     fun setup() {
-        jdbcTemplate.update("DELETE FROM ARBEIDSGIVERPERIODE")
-        jdbcTemplate.update("DELETE FROM INNTEKTSMELDING")
+//        jdbcTemplate.update("DELETE FROM ARBEIDSGIVERPERIODE")
+//        jdbcTemplate.update("DELETE FROM INNTEKTSMELDING")
 
         val inngaaendeJournal = inngaaendeJournal("arkivId")
 
@@ -292,7 +295,7 @@ class InntektsmeldingConsumerIntegrassjonsTest {
         val dokumentResponse = no.nav.tjeneste.virksomhet.journal.v2.HentDokumentResponse()
         dokumentResponse.response = HentDokumentResponse()
         dokumentResponse.response.dokument = JournalConsumerTest.inntektsmeldingArbeidsgiver(
-                asList(
+                listOf(
                         Periode(LocalDate.of(2019, 1, 1), LocalDate.of(2019, 1, 12)),
                         Periode(LocalDate.of(2019, 1, 12), LocalDate.of(2019, 1, 14))
                 )

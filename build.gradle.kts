@@ -6,6 +6,8 @@ val springKafkaVersion = "2.3.1.RELEASE"
 val micrometerVersion = "1.3.0"
 val flywayVersion = "6.0.8"
 val cxfVersion = "3.3.3"
+val swaggerVersion = "2.7.0"
+val kotlinVersion = "1.3.50"
 
 val mainClass = "no.nav.syfo.Application"
 
@@ -15,6 +17,7 @@ plugins {
     "maven-publish"
     id("org.jetbrains.kotlin.jvm") version "1.3.50"
     id("org.jetbrains.kotlin.plugin.allopen") version "1.3.50"
+    id("org.jetbrains.kotlin.plugin.jpa") version "1.3.50"
     id("org.flywaydb.flyway") version "6.0.8"
     java
 }
@@ -22,6 +25,7 @@ plugins {
 buildscript {
     dependencies {
         classpath("org.junit.platform:junit-platform-gradle-plugin:1.2.0")
+        classpath("org.jetbrains.kotlin:kotlin-noarg:1.3.50")
     }
 }
 
@@ -51,8 +55,8 @@ allOpen {
 
 dependencies {
     // Spring
-    compile("io.springfox:springfox-swagger2:2.7.0")
-    compile("io.springfox:springfox-swagger-ui:2.7.0")
+    implementation("io.springfox:springfox-swagger2:$swaggerVersion")
+    implementation("io.springfox:springfox-swagger-ui:$swaggerVersion")
     implementation("org.springframework.boot:spring-boot-starter-web:$springBootVersion")
     implementation("org.springframework.boot:spring-boot:$springBootVersion")
     implementation("org.springframework.boot:spring-boot-autoconfigure:$springBootVersion")
