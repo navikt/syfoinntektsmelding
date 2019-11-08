@@ -22,10 +22,10 @@ data class InntektsmeldingDto (
         @Column(name = "JOURNALPOST_ID", length = 100)
         var journalpostId: String,
 
-        @Column(name = "ORGNUMMER", nullable = false, length = 50)
+        @Column(name = "ORGNUMMER", nullable = true, length = 50)
         var orgnummer: String? = null,
 
-        @Column(name = "ARBEIDSGIVER_PRIVAT", nullable = false, length = 50)
+        @Column(name = "ARBEIDSGIVER_PRIVAT", nullable = true, length = 50)
         var arbeidsgiverPrivat: String? = null,
 
         @Column(name = "BEHANDLET")

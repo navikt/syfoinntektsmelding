@@ -9,7 +9,7 @@ import java.time.LocalDate
 
 
 fun toInntektsmeldingDTO(inntektsmelding : Inntektsmelding) : InntektsmeldingDto {
-    return InntektsmeldingDto(
+    val dto = InntektsmeldingDto(
             aktorId = inntektsmelding.aktorId ?: "",
             sakId = inntektsmelding.sakId ?: "",
             journalpostId = inntektsmelding.journalpostId,
@@ -17,6 +17,8 @@ fun toInntektsmeldingDTO(inntektsmelding : Inntektsmelding) : InntektsmeldingDto
             orgnummer = inntektsmelding.arbeidsgiverOrgnummer,
             behandlet = inntektsmelding.mottattDato
     )
+    inntektsmelding.arbeidsgiverperioder.forEach { p -> dto.leggtilArbeidsgiverperiode(p.fom, p.tom) }
+    return dto
 }
 
 fun toInntektsmelding(dto: InntektsmeldingDto) : Inntektsmelding {

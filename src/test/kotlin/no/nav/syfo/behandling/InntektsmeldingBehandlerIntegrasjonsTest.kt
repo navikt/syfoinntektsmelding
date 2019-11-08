@@ -1,10 +1,10 @@
 package no.nav.syfo.behandling
 
 import any
-import junit.framework.Assert.assertEquals
-import junit.framework.Assert.assertNotNull
+import junit.framework.Assert.*
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
 import no.nav.syfo.domain.JournalStatus
+import no.nav.syfo.domain.Periode
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.producer.InntektsmeldingProducer
 import no.nav.syfo.repository.InntektsmeldingRepository
@@ -71,7 +71,7 @@ open class InntektsmeldingBehandlerIntegrasjonsTest {
     }
 
     @Test
-    fun gjenbruker_SaksIdHvisViFar_ToOverlappendeInntektsmeldinger() {
+    fun uten_arbeidsgiverperioder() {
         `when`(journalpostService.hentInntektsmelding("arkivId")).thenReturn(
             Inntektsmelding(
                 id="abc",
@@ -81,18 +81,96 @@ open class InntektsmeldingBehandlerIntegrasjonsTest {
                 journalStatus = JournalStatus.MIDLERTIDIG,
                 arkivRefereranse = "AR-123",
                 førsteFraværsdag = LocalDate.of(2019,1,1),
-                mottattDato = LocalDateTime.now()
+                mottattDato = LocalDateTime.of(2018,12,24, 13,44,55),
+                arbeidsgiverOrgnummer = "987654321"
             )
         )
         `when`(aktorConsumer.getAktorId("fnr")).thenReturn("aktorId") // inntektsmelding.fnr
         `when`(saksbehandlingService.behandleInntektsmelding(any(), matches("aktorId"), matches("AR-123"))).thenReturn("saksId")
 
         val dto = inntektsmeldingBehandler.behandle("arkivId", "AR-123")
+        assertNotNull(dto)
         assertNotNull(dto?.uuid)
         assertEquals("arkivId", dto?.journalpostId)
         assertEquals("aktorId", dto?.aktorId)
         assertEquals("saksId", dto?.sakId)
-//        assertEquals("fnr", )
+
+        assertEquals(0, dto?.arbeidsgiverperioder?.size)
+        assertEquals("987654321", dto?.orgnummer)
+        assertNull(dto?.arbeidsgiverPrivat)
+        assertEquals(LocalDateTime.of(2018,12,24, 13,44,55), dto?.behandlet)
+    }
+
+    @Test
+    fun med_FlerePerioder() {
+        `when`(journalpostService.hentInntektsmelding("arkivId")).thenReturn(
+            Inntektsmelding(
+                id="abc",
+                fnr = "fnr",
+                journalpostId = "arkivId",
+                arsakTilInnsending = "asd",
+                journalStatus = JournalStatus.MIDLERTIDIG,
+                arkivRefereranse = "AR-123",
+                førsteFraværsdag = LocalDate.of(2019,1,1),
+                mottattDato = LocalDateTime.of(2018,12,24, 13,44,55),
+                arbeidsgiverPrivatFnr = "123456789",
+                arbeidsgiverperioder = listOf(
+                    Periode(LocalDate.of(2019,12,24), LocalDate.of(2019, 12, 28)),
+                    Periode(LocalDate.of(2018,12,24), LocalDate.of(2018, 12, 28))
+                )
+            )
+        )
+        `when`(aktorConsumer.getAktorId("fnr")).thenReturn("aktorId") // inntektsmelding.fnr
+        `when`(saksbehandlingService.behandleInntektsmelding(any(), matches("aktorId"), matches("AR-123"))).thenReturn("saksId")
+
+        val dto = inntektsmeldingBehandler.behandle("arkivId", "AR-123")
+        assertNotNull(dto)
+        assertNotNull(dto?.uuid)
+        assertEquals("arkivId", dto?.journalpostId)
+        assertEquals("aktorId", dto?.aktorId)
+        assertEquals("saksId", dto?.sakId)
+
+        assertEquals(2, dto?.arbeidsgiverperioder?.size)
+        assertNull(dto?.orgnummer)
+        assertEquals("123456789", dto?.arbeidsgiverPrivat)
+        assertEquals(LocalDateTime.of(2018,12,24, 13,44,55), dto?.behandlet)
+    }
+
+    @Test
+    fun med_PrivatArbeidsgiver() {
+        `when`(journalpostService.hentInntektsmelding("arkivId")).thenReturn(
+            Inntektsmelding(
+                id="abc",
+                fnr = "fnr",
+                journalpostId = "arkivId",
+                arsakTilInnsending = "asd",
+                journalStatus = JournalStatus.MIDLERTIDIG,
+                arkivRefereranse = "AR-123",
+                førsteFraværsdag = LocalDate.of(2019,1,1),
+                mottattDato = LocalDateTime.of(2018,12,24, 13,44,55),
+                arbeidsgiverPrivatFnr = "123456789"
+            )
+        )
+        `when`(aktorConsumer.getAktorId("fnr")).thenReturn("aktorId") // inntektsmelding.fnr
+        `when`(saksbehandlingService.behandleInntektsmelding(any(), matches("aktorId"), matches("AR-123"))).thenReturn("saksId")
+
+        val dto = inntektsmeldingBehandler.behandle("arkivId", "AR-123")
+        assertNotNull(dto)
+        assertNotNull(dto?.uuid)
+        assertEquals("arkivId", dto?.journalpostId)
+        assertEquals("aktorId", dto?.aktorId)
+        assertEquals("saksId", dto?.sakId)
+
+        assertEquals(0, dto?.arbeidsgiverperioder?.size)
+        assertNull(dto?.orgnummer)
+        assertEquals("123456789", dto?.arbeidsgiverPrivat)
+        assertEquals(LocalDateTime.of(2018,12,24, 13,44,55), dto?.behandlet)
+    }
+
+
+    @Test
+    fun gjenbruker_SaksIdHvisViFar_ToOverlappendeInntektsmeldinger() {
+
     }
 
     @Test
@@ -103,18 +181,6 @@ open class InntektsmeldingBehandlerIntegrasjonsTest {
     fun brukerSaksIdFraSykeforloepOmViIkkeHarOverlappendeInntektsmelding() {
     }
 
-    @Test
-    fun uten_arbeidsgiverperioder() {
-
-    }
-
-    @Test
-    fun med_FlerePerioder() {
-    }
-
-    @Test
-    fun med_PrivatArbeidsgiver() {
-    }
 
     @Test
     fun somEnSakMedVedLikPeriode() {
