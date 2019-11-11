@@ -177,6 +177,9 @@ open class InntektsmeldingBehandlerIntegrasjonsTest {
             dokumentResponse2.response
         )
 
+//        `when`(inngaaendeJournalConsumer.hentDokumentId("arkivId3")).thenReturn(inngaaendeJournal("arkivId3"))
+//        `when`(inngaaendeJournalConsumer.hentDokumentId("arkivId4")).thenReturn(inngaaendeJournal("arkivId4"))
+
         given(aktorConsumer.getAktorId(ArgumentMatchers.anyString())).willReturn("778", "778")
 
         inntektsmeldingBehandler.behandle("arkivId3", "AR-123")
@@ -255,7 +258,9 @@ open class InntektsmeldingBehandlerIntegrasjonsTest {
             dokumentResponse.response
         )
 
-        inntektsmeldingBehandler.behandle("arkivId1", "AR-123")
+        `when`(inngaaendeJournalConsumer.hentDokumentId("arkivId6")).thenReturn(inngaaendeJournal("arkivId6"))
+
+        inntektsmeldingBehandler.behandle("arkivId6", "AR-123")
 
         val inntektsmeldinger = inntektsmeldingService.finnBehandledeInntektsmeldinger("aktorId_for_fnr")
 
@@ -349,9 +354,10 @@ open class InntektsmeldingBehandlerIntegrasjonsTest {
         runBlocking {
             Mockito.verify<SakClient>(sakClient, Mockito.times(numThreads)).opprettSak(ArgumentMatchers.anyString(), ArgumentMatchers.anyString())
         }
-        Mockito.verify<BehandleInngaaendeJournalV1>(behandleInngaaendeJournalV1, Mockito.times(numThreads)).ferdigstillJournalfoering(
-            Mockito.any()
-        )
+//        Mockito.verify<BehandleInngaaendeJournalV1>(behandleInngaaendeJournalV1, Mockito.times(numThreads)).ferdigstillJournalfoering(
+//            Mockito.any()
+//        )
+        Mockito.verify<JournalpostService>(journalpostService).ferdigstillJournalpost(anyString(), any())
     }
 
     fun build(fnr: AtomicInteger): no.nav.tjeneste.virksomhet.journal.v2.meldinger.HentDokumentResponse {
