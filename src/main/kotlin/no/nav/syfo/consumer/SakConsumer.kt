@@ -3,14 +3,8 @@ package no.nav.syfo.consumer
 import log
 import no.nav.syfo.consumer.azuread.AzureAdTokenConsumer
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.http.HttpEntity
-import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpMethod
-import org.springframework.http.HttpStatus
-import org.springframework.http.MediaType
-import org.springframework.http.ResponseEntity
+import org.springframework.http.*
 import org.springframework.stereotype.Component
-import org.springframework.util.MultiValueMap
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.util.UriComponentsBuilder
 import java.time.LocalDate
@@ -29,7 +23,7 @@ class SakConsumer(
         headers.contentType = MediaType.APPLICATION_JSON
         headers.set("Authorization", "Bearer " + azureAdTokenConsumer.getAccessToken(syfogsakClientId))
 
-        val uriBuilder = UriComponentsBuilder.fromHttpUrl("http://syfogsak.default/$aktorId/sisteSak")
+        val uriBuilder = UriComponentsBuilder.fromHttpUrl("http://syfogsak.default.svc.nais.local/$aktorId/sisteSak")
 
         if (fom != null && tom != null) {
             uriBuilder
