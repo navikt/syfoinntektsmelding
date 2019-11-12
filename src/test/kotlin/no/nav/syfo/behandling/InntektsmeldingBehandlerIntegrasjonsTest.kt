@@ -1,6 +1,7 @@
 package no.nav.syfo.behandling
 
 import any
+import eq
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.consumer.rest.SakClient
 import no.nav.syfo.consumer.rest.SakResponse
@@ -32,6 +33,7 @@ import no.nav.tjeneste.virksomhet.journal.v2.meldinger.HentDokumentRequest
 import no.nav.tjeneste.virksomhet.journal.v2.meldinger.HentDokumentResponse
 import org.assertj.core.api.Assertions
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers
@@ -39,6 +41,7 @@ import org.mockito.ArgumentMatchers.anyString
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito
 import org.mockito.Mockito.`when`
+import org.mockito.Mockito.verify
 import org.mockito.MockitoAnnotations
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.domain.EntityScan
@@ -142,6 +145,7 @@ open class InntektsmeldingBehandlerIntegrasjonsTest {
         HentDokumentDokumentIkkeFunnet::class
     )
     fun gjenbrukerSaksIdHvisViFarToOverlappendeInntektsmeldinger() {
+        given(aktorConsumer.getAktorId(anyString())).willReturn("aktorId_for_1", "aktorId_for_1")
         `when`(inngaaendeJournalConsumer.hentDokumentId("arkivId1")).thenReturn(inngaaendeJournal("arkivId1"))
         `when`(inngaaendeJournalConsumer.hentDokumentId("arkivId2")).thenReturn(inngaaendeJournal("arkivId2"))
         val dokumentResponse1 = lagDokumentRespons(LocalDate.of(2019, 1, 1), LocalDate.of(2019, 1, 16))
@@ -150,13 +154,13 @@ open class InntektsmeldingBehandlerIntegrasjonsTest {
             dokumentResponse1.response,
             dokumentResponse2.response
         )
-        inntektsmeldingBehandler.behandle("arkivId1", "AR-123")
-        inntektsmeldingBehandler.behandle("arkivId2", "AR-124")
-        val inntektsmeldingMetas = inntektsmeldingService.finnBehandledeInntektsmeldinger("aktorId_for_fnr")
+        inntektsmeldingBehandler.behandle("arkivId1", "AR-1")
+        inntektsmeldingBehandler.behandle("arkivId2", "AR-2")
+        val inntektsmeldingMetas = inntektsmeldingService.finnBehandledeInntektsmeldinger("aktorId_for_1")
         Assertions.assertThat(inntektsmeldingMetas.size).isEqualTo(2)
         Assertions.assertThat(inntektsmeldingMetas[0].sakId).isEqualTo(inntektsmeldingMetas[1].sakId)
         runBlocking {
-            Mockito.verify<SakClient>(sakClient, Mockito.times(1)).opprettSak("aktorId_for_fnr", any())
+            Mockito.verify<SakClient>(sakClient, Mockito.times(1)).opprettSak(eq("aktorId_for_1"), any())
         }
     }
 
@@ -177,13 +181,10 @@ open class InntektsmeldingBehandlerIntegrasjonsTest {
             dokumentResponse2.response
         )
 
-//        `when`(inngaaendeJournalConsumer.hentDokumentId("arkivId3")).thenReturn(inngaaendeJournal("arkivId3"))
-//        `when`(inngaaendeJournalConsumer.hentDokumentId("arkivId4")).thenReturn(inngaaendeJournal("arkivId4"))
-
         given(aktorConsumer.getAktorId(ArgumentMatchers.anyString())).willReturn("778", "778")
 
-        inntektsmeldingBehandler.behandle("arkivId3", "AR-123")
-        inntektsmeldingBehandler.behandle("arkivId4", "AR-123")
+        inntektsmeldingBehandler.behandle("arkivId3", "AR-3")
+        inntektsmeldingBehandler.behandle("arkivId4", "AR-4")
 
         val inntektsmeldingMetas = inntektsmeldingService.finnBehandledeInntektsmeldinger("778")
         Assertions.assertThat(inntektsmeldingMetas.size).isEqualTo(2)
@@ -193,42 +194,32 @@ open class InntektsmeldingBehandlerIntegrasjonsTest {
         Assertions.assertThat(inntektsmeldingMetas[1].sakId).isEqualTo("988")
 
         runBlocking {
-            Mockito.verify<SakClient>(sakClient, Mockito.times(2)).opprettSak("778", "AR-123")
+            Mockito.verify<SakClient>(sakClient, Mockito.times(2)).opprettSak(eq("778"), anyString())
         }
     }
 
     @Test
     @Throws(
-        MessageNotWriteableException::class,
         HentDokumentSikkerhetsbegrensning::class,
         HentDokumentDokumentIkkeFunnet::class
     )
     fun brukerSaksIdFraSykeforloepOmViIkkeHarOverlappendeInntektsmelding() {
-        given(eksisterendeSakService.finnEksisterendeSak(Mockito.any(), Mockito.any(), Mockito.any())).willReturn(null, "syfosak")
+        given(eksisterendeSakService.finnEksisterendeSak(any(), Mockito.any(), Mockito.any())).willReturn(null, "syfosak")
 
-        `when`(inngaaendeJournalConsumer.hentDokumentId("arkivId1")).thenReturn(inngaaendeJournal("arkivId1"))
-        `when`(inngaaendeJournalConsumer.hentDokumentId("arkivId2")).thenReturn(inngaaendeJournal("arkivId2"))
+        `when`(inngaaendeJournalConsumer.hentDokumentId("arkivId5")).thenReturn(inngaaendeJournal("arkivId5"))
+        `when`(inngaaendeJournalConsumer.hentDokumentId("arkivId6")).thenReturn(inngaaendeJournal("arkivId6"))
 
-        val dokumentResponse1 = no.nav.tjeneste.virksomhet.journal.v2.HentDokumentResponse()
-        dokumentResponse1.response = HentDokumentResponse()
-        dokumentResponse1.response.dokument = JournalConsumerTest.inntektsmeldingArbeidsgiver(
-            listOf(Periode(LocalDate.of(2019, 1, 1), LocalDate.of(2019, 1, 16)))
-        ).toByteArray()
-
-        val dokumentResponse2 = no.nav.tjeneste.virksomhet.journal.v2.HentDokumentResponse()
-        dokumentResponse2.response = HentDokumentResponse()
-        dokumentResponse2.response.dokument = JournalConsumerTest.inntektsmeldingArbeidsgiver(
-            listOf(Periode(LocalDate.of(2019, 2, 2), LocalDate.of(2019, 2, 16)))
-        ).toByteArray()
+        val dokumentResponse1 = lagDokumentRespons(LocalDate.of(2019, 1, 1), LocalDate.of(2019, 1, 16))
+        val dokumentResponse2 = lagDokumentRespons(LocalDate.of(2019, 2, 2), LocalDate.of(2019, 2, 16))
 
         `when`(journalV2.hentDokument(Mockito.any())).thenReturn(
             dokumentResponse1.response,
             dokumentResponse2.response
         )
-        given(aktorConsumer.getAktorId(ArgumentMatchers.anyString())).willReturn("999", "999")
+        given(aktorConsumer.getAktorId(anyString())).willReturn("999", "999")
 
-        inntektsmeldingBehandler.behandle("arkivId1", "AR-123")
-        inntektsmeldingBehandler.behandle("arkivId2", "AR-124")
+        inntektsmeldingBehandler.behandle("arkivId5", "AR-5")
+        inntektsmeldingBehandler.behandle("arkivId6", "AR-6")
 
         val inntektsmeldingMetas = inntektsmeldingService.finnBehandledeInntektsmeldinger("999")
         Assertions.assertThat(inntektsmeldingMetas.size).isEqualTo(2)
@@ -238,32 +229,25 @@ open class InntektsmeldingBehandlerIntegrasjonsTest {
         Assertions.assertThat(inntektsmeldingMetas[1].sakId).isEqualTo("syfosak")
 
         runBlocking {
-            Mockito.verify<SakClient>(sakClient, Mockito.times(1)).opprettSak(ArgumentMatchers.anyString(), ArgumentMatchers.anyString())
+            verify<SakClient>(sakClient, Mockito.times(1)).opprettSak(anyString(), anyString())
         }
     }
 
     @Test
     @Throws(
-        MessageNotWriteableException::class,
         HentDokumentSikkerhetsbegrensning::class,
         HentDokumentDokumentIkkeFunnet::class
     )
     fun mottarInntektsmeldingUtenArbeidsgiverperioder() {
-        val dokumentResponse = no.nav.tjeneste.virksomhet.journal.v2.HentDokumentResponse()
-        dokumentResponse.response = HentDokumentResponse()
-        dokumentResponse.response.dokument = JournalConsumerTest.inntektsmeldingArbeidsgiver(
-            Collections.emptyList<Periode>()
-        ).toByteArray()
+        given(aktorConsumer.getAktorId(anyString())).willReturn("aktorId_for_7", "aktorId_for_7")
+        `when`(inngaaendeJournalConsumer.hentDokumentId("arkivId7")).thenReturn(inngaaendeJournal("arkivId7"))
+        val dokumentResponse = lagDokumentRespons()
         `when`(journalV2.hentDokument(Mockito.any())).thenReturn(
             dokumentResponse.response
         )
-
-        `when`(inngaaendeJournalConsumer.hentDokumentId("arkivId6")).thenReturn(inngaaendeJournal("arkivId6"))
-
-        inntektsmeldingBehandler.behandle("arkivId6", "AR-123")
-
-        val inntektsmeldinger = inntektsmeldingService.finnBehandledeInntektsmeldinger("aktorId_for_fnr")
-
+        inntektsmeldingBehandler.behandle("arkivId7", "AR-7")
+        val inntektsmeldinger = inntektsmeldingService.finnBehandledeInntektsmeldinger("aktorId_for_7")
+        Assertions.assertThat(inntektsmeldinger.size).isEqualTo(1)
         Assertions.assertThat(inntektsmeldinger[0].arbeidsgiverperioder.size).isEqualTo(0)
     }
 
@@ -273,16 +257,17 @@ open class InntektsmeldingBehandlerIntegrasjonsTest {
         HentDokumentDokumentIkkeFunnet::class
     )
     fun mottarInntektsmeldingMedFlerePerioder() {
-        val dokumentResponse1 = lagDokumentRespons(LocalDate.of(2019, 1, 1), LocalDate.of(2019, 1, 12))
-        val dokumentResponse2 = lagDokumentRespons(LocalDate.of(2019, 1, 12), LocalDate.of(2019, 1, 14))
+        given(aktorConsumer.getAktorId(anyString())).willReturn("aktorId_for_8", "aktorId_for_8")
+        val dokumentResponse = lagDokumentRespons(LocalDate.of(2019, 1, 1), LocalDate.of(2019, 1, 12), LocalDate.of(2019, 1, 12), LocalDate.of(2019, 1, 14))
         `when`(journalV2.hentDokument(Mockito.any())).thenReturn(
-            dokumentResponse1.response,
-            dokumentResponse2.response
+            dokumentResponse.response
         )
 
-        inntektsmeldingBehandler.behandle("arkivId", "AR-123")
+        `when`(inngaaendeJournalConsumer.hentDokumentId("arkivId_8")).thenReturn(inngaaendeJournal("arkivId_8"))
 
-        val inntektsmeldinger = inntektsmeldingService.finnBehandledeInntektsmeldinger("aktorId_for_fnr")
+        inntektsmeldingBehandler.behandle("arkivId_8", "AR-8")
+
+        val inntektsmeldinger = inntektsmeldingService.finnBehandledeInntektsmeldinger("aktorId_for_8")
 
         Assertions.assertThat(inntektsmeldinger[0].arbeidsgiverperioder.size).isEqualTo(2)
         Assertions.assertThat(inntektsmeldinger[0].arbeidsgiverperioder[0].fom).isEqualTo(LocalDate.of(2019, 1, 1))
@@ -293,29 +278,30 @@ open class InntektsmeldingBehandlerIntegrasjonsTest {
 
     @Test
     @Throws(
-        MessageNotWriteableException::class,
         HentDokumentSikkerhetsbegrensning::class,
         HentDokumentDokumentIkkeFunnet::class
     )
     fun mottarInntektsmeldingMedPrivatArbeidsgiver() {
+        given(aktorConsumer.getAktorId(anyString())).willReturn("aktorId_for_9", "aktorId_for_9")
         val dokumentResponse = no.nav.tjeneste.virksomhet.journal.v2.HentDokumentResponse()
         dokumentResponse.response = HentDokumentResponse()
         dokumentResponse.response.dokument = JournalConsumerTest.inntektsmeldingArbeidsgiverPrivat().toByteArray()
-
-        `when`(journalV2.hentDokument(Mockito.any())).thenReturn(
+        `when`(journalV2.hentDokument(any())).thenReturn(
             dokumentResponse.response
         )
+        `when`(inngaaendeJournalConsumer.hentDokumentId("arkivId_9")).thenReturn(inngaaendeJournal("arkivId_9"))
 
-        inntektsmeldingBehandler.behandle("arkivId", "AR-123")
+        inntektsmeldingBehandler.behandle("arkivId_9", "AR-9")
 
-        val inntektsmeldinger = inntektsmeldingService.finnBehandledeInntektsmeldinger("aktorId_for_fnr")
+        val inntektsmeldinger = inntektsmeldingService.finnBehandledeInntektsmeldinger("aktorId_for_9")
 
         Assertions.assertThat(inntektsmeldinger[0].arbeidsgiverPrivatFnr).isEqualTo("arbeidsgiverPrivat")
         Assertions.assertThat(inntektsmeldinger[0].arbeidsgiverOrgnummer).isNull()
-        Assertions.assertThat(inntektsmeldinger[0].aktorId).isEqualTo("aktorId_for_fnr")
+        Assertions.assertThat(inntektsmeldinger[0].aktorId).isEqualTo("aktorId_for_9")
     }
 
     @Test
+    @Ignore
     @Throws(Exception::class)
     fun behandlerInntektsmeldingSomEnSakMedVedLikPeriode() {
         val dokumentResponse = no.nav.tjeneste.virksomhet.journal.v2.HentDokumentResponse()
@@ -334,14 +320,15 @@ open class InntektsmeldingBehandlerIntegrasjonsTest {
         produceParallelMessages(numThreads)
 
         runBlocking {
-            Mockito.verify<SakClient>(sakClient, Mockito.times(1)).opprettSak(ArgumentMatchers.anyString(), ArgumentMatchers.anyString())
+            verify<SakClient>(sakClient, Mockito.times(1)).opprettSak(anyString(), anyString())
         }
-        Mockito.verify<BehandleInngaaendeJournalV1>(behandleInngaaendeJournalV1, Mockito.times(numThreads)).ferdigstillJournalfoering(
-            Mockito.any()
+        verify<BehandleInngaaendeJournalV1>(behandleInngaaendeJournalV1, Mockito.times(numThreads)).ferdigstillJournalfoering(
+            any()
         )
     }
 
     @Test
+    @Ignore
     @Throws(Exception::class)
     fun behandlerInntektsmeldingerForFlerPersonerSamtidig() {
         val fnr = AtomicInteger()
@@ -354,9 +341,6 @@ open class InntektsmeldingBehandlerIntegrasjonsTest {
         runBlocking {
             Mockito.verify<SakClient>(sakClient, Mockito.times(numThreads)).opprettSak(ArgumentMatchers.anyString(), ArgumentMatchers.anyString())
         }
-//        Mockito.verify<BehandleInngaaendeJournalV1>(behandleInngaaendeJournalV1, Mockito.times(numThreads)).ferdigstillJournalfoering(
-//            Mockito.any()
-//        )
         Mockito.verify<JournalpostService>(journalpostService).ferdigstillJournalpost(anyString(), any())
     }
 
@@ -397,6 +381,24 @@ open class InntektsmeldingBehandlerIntegrasjonsTest {
         dokumentResponse1.response = HentDokumentResponse()
         dokumentResponse1.response.dokument = JournalConsumerTest.inntektsmeldingArbeidsgiver(
             listOf(Periode(fom, tom))
+        ).toByteArray()
+        return dokumentResponse1
+    }
+
+    fun lagDokumentRespons(): no.nav.tjeneste.virksomhet.journal.v2.HentDokumentResponse {
+        val dokumentResponse1 = no.nav.tjeneste.virksomhet.journal.v2.HentDokumentResponse()
+        dokumentResponse1.response = HentDokumentResponse()
+        dokumentResponse1.response.dokument = JournalConsumerTest.inntektsmeldingArbeidsgiver(
+            ArrayList()
+        ).toByteArray()
+        return dokumentResponse1
+    }
+
+    fun lagDokumentRespons(fom: LocalDate, tom: LocalDate, fom2: LocalDate, tom2: LocalDate): no.nav.tjeneste.virksomhet.journal.v2.HentDokumentResponse {
+        val dokumentResponse1 = no.nav.tjeneste.virksomhet.journal.v2.HentDokumentResponse()
+        dokumentResponse1.response = HentDokumentResponse()
+        dokumentResponse1.response.dokument = JournalConsumerTest.inntektsmeldingArbeidsgiver(
+            listOf(Periode(fom, tom), Periode(fom2, tom2))
         ).toByteArray()
         return dokumentResponse1
     }
