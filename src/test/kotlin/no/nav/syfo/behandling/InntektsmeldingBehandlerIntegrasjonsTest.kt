@@ -301,9 +301,9 @@ open class InntektsmeldingBehandlerIntegrasjonsTest {
     }
 
     @Test
-    @Ignore
     @Throws(Exception::class)
-    fun behandlerInntektsmeldingSomEnSakMedVedLikPeriode() {
+    fun behandlerInntektsmeldingSomEnSakMedVedLikPeriode() = runBlocking {
+        given(aktorConsumer.getAktorId(anyString())).willReturn("aktorId_for_10", "aktorId_for_10")
         val dokumentResponse = no.nav.tjeneste.virksomhet.journal.v2.HentDokumentResponse()
         dokumentResponse.response = HentDokumentResponse()
         dokumentResponse.response.dokument = JournalConsumerTest.inntektsmeldingArbeidsgiver(
@@ -311,37 +311,35 @@ open class InntektsmeldingBehandlerIntegrasjonsTest {
                 Periode(LocalDate.now(), LocalDate.now().plusDays(20))
             )
         ).toByteArray()
-
+        `when`(inngaaendeJournalConsumer.hentDokumentId("arkivId_10")).thenReturn(inngaaendeJournal("arkivId_10"))
         `when`(journalV2.hentDokument(Mockito.any())).thenReturn(
             dokumentResponse.response
         )
 
         val numThreads = 16
-        produceParallelMessages(numThreads)
+        produceParallelMessages(numThreads, "arkivId_10")
 
-        runBlocking {
-            verify<SakClient>(sakClient, Mockito.times(1)).opprettSak(anyString(), anyString())
-        }
-        verify<BehandleInngaaendeJournalV1>(behandleInngaaendeJournalV1, Mockito.times(numThreads)).ferdigstillJournalfoering(
+        verify<SakClient>(sakClient, Mockito.times(1)).opprettSak(anyString(), anyString())
+        verify<BehandleInngaaendeJournalConsumer>(behandleInngaaendeJournalConsumer, Mockito.times(numThreads)).ferdigstillJournalpost(
             any()
         )
     }
 
     @Test
-    @Ignore
     @Throws(Exception::class)
-    fun behandlerInntektsmeldingerForFlerPersonerSamtidig() {
+    fun behandlerInntektsmeldingerForFlerPersonerSamtidig() = runBlocking {
+        `when`(inngaaendeJournalConsumer.hentDokumentId("arkivId_11")).thenReturn(inngaaendeJournal("arkivId_11"))
         val fnr = AtomicInteger()
         given(journalV2.hentDokument(Mockito.any<HentDokumentRequest>())).willAnswer {
             build(fnr)
         }
 
         val numThreads = 16
-        produceParallelMessages(numThreads)
-        runBlocking {
-            Mockito.verify<SakClient>(sakClient, Mockito.times(numThreads)).opprettSak(ArgumentMatchers.anyString(), ArgumentMatchers.anyString())
-        }
-        Mockito.verify<JournalpostService>(journalpostService).ferdigstillJournalpost(anyString(), any())
+        produceParallelMessages(numThreads, "arkivId_11")
+        verify<SakClient>(sakClient, Mockito.times(numThreads)).opprettSak(ArgumentMatchers.anyString(), ArgumentMatchers.anyString())
+        verify<BehandleInngaaendeJournalConsumer>(behandleInngaaendeJournalConsumer, Mockito.times(numThreads)).ferdigstillJournalpost(
+            any()
+        )
     }
 
     fun build(fnr: AtomicInteger): no.nav.tjeneste.virksomhet.journal.v2.meldinger.HentDokumentResponse {
@@ -359,13 +357,13 @@ open class InntektsmeldingBehandlerIntegrasjonsTest {
     }
 
     @Throws(Exception::class)
-    fun produceParallelMessages(numThreads: Int) {
+    fun produceParallelMessages(numThreads: Int, arkivId: String) {
         val countdown = CountDownLatch(numThreads)
 
         repeat(numThreads) {
             Thread {
                 try {
-                    inntektsmeldingBehandler.behandle("arkivId", "AR-123r")
+                    inntektsmeldingBehandler.behandle("arkivId", arkivId)
                 } catch (e: MessageNotWriteableException) {
                     e.printStackTrace()
                 }
