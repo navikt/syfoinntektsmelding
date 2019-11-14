@@ -12,7 +12,6 @@ import no.nav.syfo.service.JournalpostService
 import no.nav.syfo.service.SaksbehandlingService
 import no.nav.syfo.util.Metrikk
 import no.nav.syfo.util.validerInntektsmelding
-import org.springframework.stereotype.Component
 import org.springframework.stereotype.Service
 
 @Service
@@ -25,8 +24,10 @@ class InntektsmeldingBehandler (
         private val inntektsmeldingProducer: InntektsmeldingProducer
 ) {
 
+    val consumerLocks = Striped.lock(8)
+
     fun behandle(arkivId: String, arkivreferanse: String) : InntektsmeldingDto? {
-        val consumerLocks = Striped.lock(8)
+
         val log = log()
 
         val inntektsmelding = journalpostService.hentInntektsmelding(arkivId)
