@@ -5,11 +5,10 @@ import log
 import no.nav.syfo.consumer.rest.SakClient
 import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
 import no.nav.syfo.consumer.ws.OppgavebehandlingConsumer
-import no.nav.syfo.domain.InntektsmeldingMeta
 import no.nav.syfo.domain.Oppgave
-import no.nav.syfo.domain.Periode
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
-import no.nav.syfo.repository.InntektsmeldingDAO
+import no.nav.syfo.repository.InntektsmeldingService
+import no.nav.syfo.domain.Periode
 import no.nav.syfo.util.DateUtil
 import no.nav.syfo.util.Metrikk
 import no.nav.syfo.util.sammenslattPeriode
@@ -21,7 +20,7 @@ class SaksbehandlingService(
         private val oppgavebehandlingConsumer: OppgavebehandlingConsumer,
         private val behandlendeEnhetConsumer: BehandlendeEnhetConsumer,
         private val eksisterendeSakService: EksisterendeSakService,
-        private val inntektsmeldingDAO: InntektsmeldingDAO,
+        private val inntektsmeldingService: InntektsmeldingService,
         private val sakClient: SakClient,
         private val metrikk: Metrikk
 ) {
@@ -33,8 +32,8 @@ class SaksbehandlingService(
             .anyMatch { p -> DateUtil.overlapperPerioder(p, periode) }
     }
 
-    private fun finnTilhorendeInntektsmelding(inntektsmelding: Inntektsmelding, aktorId: String): InntektsmeldingMeta? {
-        return inntektsmeldingDAO.finnBehandledeInntektsmeldinger(aktorId)
+    private fun finnTilhorendeInntektsmelding(inntektsmelding: Inntektsmelding, aktorId: String): Inntektsmelding? {
+        return inntektsmeldingService.finnBehandledeInntektsmeldinger(aktorId)
             .firstOrNull { im ->
                 im.arbeidsgiverperioder
                     .stream()
@@ -42,7 +41,7 @@ class SaksbehandlingService(
             }
     }
 
-    fun behandleInntektsmelding(inntektsmelding: Inntektsmelding, aktorId: String): String {
+    fun behandleInntektsmelding(inntektsmelding: Inntektsmelding, aktorId: String, arkivReferanse: String): String {
 
         val tilhorendeInntektsmelding = finnTilhorendeInntektsmelding(inntektsmelding, aktorId)
             ?.apply {
@@ -52,16 +51,14 @@ class SaksbehandlingService(
 
         val sammenslattPeriode = sammenslattPeriode(inntektsmelding.arbeidsgiverperioder)
 
-//        TODO Endre timestamp til arkivReferanse
-        val msgId = "${inntektsmelding.id}" // inntektsmelding.arkivReferanse
-        val saksId = finnSaksId(tilhorendeInntektsmelding, inntektsmelding, aktorId, sammenslattPeriode, msgId)
+        val saksId = finnSaksId(tilhorendeInntektsmelding, inntektsmelding, aktorId, sammenslattPeriode, arkivReferanse)
 
         opprettOppgave(inntektsmelding.fnr, byggOppgave(inntektsmelding.journalpostId, saksId))
 
         return saksId
     }
 
-    private fun finnSaksId(tilhorendeInntektsmelding: InntektsmeldingMeta?, inntektsmelding: Inntektsmelding, aktorId: String, sammenslattPeriode: Periode?, msgId: String): String {
+    private fun finnSaksId(tilhorendeInntektsmelding: Inntektsmelding?, inntektsmelding: Inntektsmelding, aktorId: String, sammenslattPeriode: Periode?, msgId: String): String {
         return (tilhorendeInntektsmelding
                 ?.sakId
                 ?: inntektsmelding.arbeidsgiverOrgnummer

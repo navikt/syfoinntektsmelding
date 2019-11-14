@@ -48,13 +48,13 @@ class JournalpostServiceTest {
         journalpostService!!.ferdigstillJournalpost(
                 "saksId",
                 Inntektsmelding(
-                        arkivRefereranse = "AR123",
                         fnr = "fnr",
                         arbeidsgiverOrgnummer = "orgnummer",
-                        journalpostId = "journalpostId",
                         arbeidsforholdId = null,
+                        journalpostId = "journalpostId",
                         arsakTilInnsending = "Ny",
                         journalStatus = JournalStatus.MIDLERTIDIG,
+                        arkivRefereranse = "AR123",
                         førsteFraværsdag = LocalDate.now(),
                         mottattDato = LocalDateTime.now()
                 )
@@ -73,13 +73,13 @@ class JournalpostServiceTest {
         `when`(journalConsumer!!.hentInntektsmelding("journalpostId", journal))
                 .thenReturn(
                         Inntektsmelding(
-                                arkivRefereranse = "AR123",
+                                fnr = "fnr",
                                 arbeidsgiverOrgnummer = "orgnummer",
                                 arbeidsgiverPrivatFnr = null,
-                                fnr = "fnr",
                                 journalpostId = "journalpostId",
-                                journalStatus = JournalStatus.MIDLERTIDIG,
                                 arsakTilInnsending = "",
+                                journalStatus = JournalStatus.MIDLERTIDIG,
+                                arkivRefereranse = "AR123",
                                 førsteFraværsdag = LocalDate.now(),
                                 mottattDato = LocalDateTime.now()
                         )

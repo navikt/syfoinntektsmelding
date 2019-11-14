@@ -14,7 +14,7 @@ public class RestTemplateConfig {
                                               @Value("${srvsyfoinntektsmelding.password}") String password) {
         return new RestTemplateBuilder()
             .basicAuthentication(username, password)
-                .build();
+            .build();
     }
 
     @Bean
