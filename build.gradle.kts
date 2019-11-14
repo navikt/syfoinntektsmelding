@@ -4,7 +4,7 @@ val springBootVersion = "2.2.0.RELEASE"
 val springVersion = "5.2.0.RELEASE"
 val springKafkaVersion = "2.3.1.RELEASE"
 val micrometerVersion = "1.3.0"
-val flywayVersion = "6.0.8"
+val flywayVersion = "5.2.4"
 val cxfVersion = "3.3.3"
 val swaggerVersion = "2.7.0"
 val kotlinVersion = "1.3.50"
@@ -18,7 +18,7 @@ plugins {
     id("org.jetbrains.kotlin.jvm") version "1.3.50"
     id("org.jetbrains.kotlin.plugin.allopen") version "1.3.50"
     id("org.jetbrains.kotlin.plugin.jpa") version "1.3.50"
-    id("org.flywaydb.flyway") version "6.0.8"
+    id("org.flywaydb.flyway") version "5.2.4"
     java
 }
 
