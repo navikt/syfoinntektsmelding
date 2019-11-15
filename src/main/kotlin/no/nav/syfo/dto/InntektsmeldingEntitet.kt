@@ -11,7 +11,7 @@ data class InntektsmeldingEntitet (
 
         @Id
         @Column(name = "INNTEKTSMELDING_UUID", length = 100, updatable = false)
-        var uuid: String? = UUID.randomUUID().toString(),
+        var uuid: String = UUID.randomUUID().toString(),
 
         @Column(name = "AKTOR_ID", nullable = false)
         var aktorId: String,
@@ -37,9 +37,7 @@ data class InntektsmeldingEntitet (
         val arbeidsgiverperioder: MutableList<ArbeidsgiverperiodeEntitet> = ArrayList()
 
         fun leggtilArbeidsgiverperiode(fom: LocalDate, tom: LocalDate){
-                val periode = ArbeidsgiverperiodeEntitet()
-                periode.fom = fom
-                periode.tom = tom
+                val periode = ArbeidsgiverperiodeEntitet(fom=fom, tom =tom)
                 periode.inntektsmelding = this
                 arbeidsgiverperioder.add(periode)
         }

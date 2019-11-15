@@ -25,4 +25,9 @@ class InntektsmeldingService (
         return repository.save(dto)
     }
 
+    fun lagre(aktoerId: String, saksId: String, journalpostId:String) {
+        val dto = InntektsmeldingEntitet(aktorId=aktoerId, sakId=saksId, journalpostId=journalpostId)
+        repository.saveAndFlush(dto)
+    }
+
 }

@@ -9,17 +9,17 @@ import javax.persistence.*
 data class ArbeidsgiverperiodeEntitet (
 
     @Id
-        @Column(name = "PERIODE_UUID", nullable = false, length = 100, updatable = false)
-        var uuid: UUID = UUID.randomUUID(),
+    @Column(name = "PERIODE_UUID", nullable = false, length = 100, updatable = false)
+    var uuid: UUID = UUID.randomUUID(),
 
     @ManyToOne
-        @JoinColumn(name="INNTEKTSMELDING_UUID", nullable=false)
-        var inntektsmelding : InntektsmeldingEntitet? = null,
+    @JoinColumn(name="INNTEKTSMELDING_UUID", nullable=false)
+    var inntektsmelding : InntektsmeldingEntitet? = null,
 
     @Column(name = "FOM", nullable = false)
-        var fom: LocalDate? = null,
+    var fom: LocalDate,
 
-    @Column(name = "tom", nullable = false)
-        var tom: LocalDate? = null
+    @Column(name = "TOM", nullable = false)
+    var tom: LocalDate
 
 )

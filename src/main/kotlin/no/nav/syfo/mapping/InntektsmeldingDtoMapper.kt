@@ -53,7 +53,6 @@ fun mapPerioder(perioder : List<ArbeidsgiverperiodeEntitet>): List<Periode> {
     return perioder.map{ p -> mapPeriode(p) }
 }
 
-// TODO Fjern null sjekken Morten
 fun mapPeriode(p : ArbeidsgiverperiodeEntitet) : Periode{
-    return Periode(p.fom!!, p.tom!!)
+    return Periode(p.fom, p.tom)
 }
