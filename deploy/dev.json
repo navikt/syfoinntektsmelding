@@ -64,7 +64,7 @@
         "value": "jdbc:oracle:thin:@a01dbfl032.adeo.no:1521/syfoinntektsmeldingq1"
       },
       {
-        "name": "spring_datasource_driver-class-name",
+        "name": "SPRING_DATASOURCE_DRIVERCLASSNAME",
         "value": "oracle.jdbc.OracleDriver"
       },
       {
