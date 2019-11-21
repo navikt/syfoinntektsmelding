@@ -1,0 +1,10 @@
+version: '3.4'
+services:
+    spinn_db:
+        build:
+            context: ./
+        ports:
+            - "5433:5432"
+volumes:
+    data:
+
