@@ -37,6 +37,9 @@ class OppgaveClientTest {
     @KtorExperimentalAPI
     private lateinit var oppgaveClient: OppgaveClient
 
+    private val eksisterendeOppgaveId = 1234
+    private val eksisterendeFordelingsOppgaveId = 5678
+
     @Before
     @KtorExperimentalAPI
     fun setUp() {
@@ -53,7 +56,7 @@ class OppgaveClientTest {
 
             val resultat = oppgaveClient.opprettOppgave("sakId", "123", "tildeltEnhet", "aktoerid", false)
 
-            assertThat(resultat.oppgaveId).isEqualTo(9999)
+            assertThat(resultat.oppgaveId).isEqualTo(eksisterendeOppgaveId)
             assertThat(resultat.duplikat).isTrue()
         }
     }
@@ -68,7 +71,7 @@ class OppgaveClientTest {
             val resultat = oppgaveClient.opprettOppgave("sakId", "123", "tildeltEnhet", "aktoerid", false)
             val requestVerdier = hentRequestInnhold(client)
 
-            assertThat(resultat.oppgaveId).isNotEqualTo(9999)
+            assertThat(resultat.oppgaveId).isNotEqualTo(eksisterendeOppgaveId)
             assertThat(resultat.duplikat).isFalse()
             assertThat(requestVerdier?.journalpostId).isEqualTo("123")
             assertThat(requestVerdier?.oppgavetype).isEqualTo("JFR")
@@ -86,7 +89,7 @@ class OppgaveClientTest {
         val resultat = oppgaveClient.opprettFordelingsOppgave("journalpostId", "1", false)
         val requestVerdier = hentRequestInnhold(client)
 
-        assertThat(resultat.oppgaveId).isNotEqualTo(8888)
+        assertThat(resultat.oppgaveId).isNotEqualTo(eksisterendeFordelingsOppgaveId)
         assertThat(resultat.duplikat).isFalse()
         assertThat(requestVerdier?.oppgavetype).isEqualTo("FDR")
         assertThat(requestVerdier?.behandlingstype).isNull()
@@ -102,7 +105,7 @@ class OppgaveClientTest {
 
         val resultat = oppgaveClient.opprettFordelingsOppgave("journalpostId", "1", false)
 
-        assertThat(resultat.oppgaveId).isEqualTo(8888)
+        assertThat(resultat.oppgaveId).isEqualTo(eksisterendeFordelingsOppgaveId)
         assertThat(resultat.duplikat).isTrue()
         }
     }
@@ -179,7 +182,7 @@ class OppgaveClientTest {
 
     private fun lagOppgave(): Oppgave {
         return Oppgave(
-            id = 9999,
+            id = eksisterendeOppgaveId,
             tildeltEnhetsnr = "22",
             aktoerId = "aktoerId",
             journalpostId = "journalpostId",
@@ -191,7 +194,7 @@ class OppgaveClientTest {
 
     private fun lagFordelingsOppgave(): Oppgave {
         return Oppgave(
-            id = 8888,
+            id = eksisterendeFordelingsOppgaveId,
             tildeltEnhetsnr = "1",
             aktoerId = null,
             journalpostId = "journalpostId",
