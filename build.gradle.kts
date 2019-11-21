@@ -138,7 +138,7 @@ dependencies {
     testImplementation("org.springframework.kafka:spring-kafka-test:2.1.10.RELEASE")
 
     testImplementation("junit:junit:4.12")
-    testImplementation("org.mockito:mockito-core:2.23.4")
+    testImplementation("org.mockito:mockito-core:3.1.0")
     testImplementation("org.assertj:assertj-core:3.11.1")
 
     implementation("com.h2database:h2:1.4.199")
@@ -149,6 +149,8 @@ dependencies {
     testAnnotationProcessor("org.projectlombok:lombok:1.18.8")
 
     implementation("com.google.guava:guava:28.1-jre")
+    testImplementation("io.ktor:ktor-client-mock:1.2.3-1.3.50-eap-5")
+    testImplementation("io.ktor:ktor-client-mock-jvm:1.2.3-1.3.50-eap-5")
 }
 
 tasks.named<Jar>("jar") {

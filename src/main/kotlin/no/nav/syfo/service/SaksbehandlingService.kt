@@ -2,10 +2,9 @@ package no.nav.syfo.service
 
 import kotlinx.coroutines.runBlocking
 import log
+import no.nav.syfo.consumer.rest.OppgaveClient
 import no.nav.syfo.consumer.rest.SakClient
 import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
-import no.nav.syfo.consumer.ws.OppgavebehandlingConsumer
-import no.nav.syfo.domain.Oppgave
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.repository.InntektsmeldingService
 import no.nav.syfo.domain.Periode
@@ -13,11 +12,11 @@ import no.nav.syfo.util.DateUtil
 import no.nav.syfo.util.Metrikk
 import no.nav.syfo.util.sammenslattPeriode
 import org.springframework.stereotype.Service
-import java.time.LocalDate
 
+@io.ktor.util.KtorExperimentalAPI
 @Service
 class SaksbehandlingService(
-        private val oppgavebehandlingConsumer: OppgavebehandlingConsumer,
+        private val oppgaveClient: OppgaveClient,
         private val behandlendeEnhetConsumer: BehandlendeEnhetConsumer,
         private val eksisterendeSakService: EksisterendeSakService,
         private val inntektsmeldingService: InntektsmeldingService,
@@ -52,8 +51,7 @@ class SaksbehandlingService(
         val sammenslattPeriode = sammenslattPeriode(inntektsmelding.arbeidsgiverperioder)
 
         val saksId = finnSaksId(tilhorendeInntektsmelding, inntektsmelding, aktorId, sammenslattPeriode, arkivReferanse)
-
-        opprettOppgave(inntektsmelding.fnr, byggOppgave(inntektsmelding.journalpostId, saksId))
+        opprettOppgave(inntektsmelding.fnr, aktorId, saksId, inntektsmelding.journalpostId)
 
         return saksId
     }
@@ -66,6 +64,7 @@ class SaksbehandlingService(
                 ?: opprettSak(aktorId, msgId))
     }
 
+    @io.ktor.util.KtorExperimentalAPI
     private fun opprettSak(aktorId: String, msgId: String): String {
         var saksId = "";
         runBlocking {
@@ -74,28 +73,18 @@ class SaksbehandlingService(
         return saksId
     }
 
-    private fun opprettOppgave(fnr: String, oppgave: Oppgave) {
+    @io.ktor.util.KtorExperimentalAPI
+    private fun opprettOppgave(fnr: String, aktorId: String, saksId: String, journalpostId: String) {
         val behandlendeEnhet = behandlendeEnhetConsumer.hentBehandlendeEnhet(fnr)
-        val geografiskTilknytning = behandlendeEnhetConsumer.hentGeografiskTilknytning(fnr)
-
-        val nyOppgave = Oppgave(
-            aktivTil = oppgave.aktivTil,
-            beskrivelse = oppgave.beskrivelse,
-            saksnummer = oppgave.saksnummer,
-            dokumentId = oppgave.dokumentId,
-            geografiskTilknytning = geografiskTilknytning.geografiskTilknytning,
-            ansvarligEnhetId = behandlendeEnhet
-        )
-
-        oppgavebehandlingConsumer.opprettOppgave(fnr, nyOppgave)
-    }
-
-    private fun byggOppgave(dokumentId: String, saksnummer: String): Oppgave {
-        return Oppgave(
-            dokumentId = dokumentId,
-            saksnummer= saksnummer,
-            beskrivelse= "Det har kommet en inntektsmelding på sykepenger.",
-            aktivTil= LocalDate.now().plusDays(7)
-        )
+        val gjelderUtland = ("4474" == behandlendeEnhet)
+        runBlocking {
+        oppgaveClient.opprettOppgave(
+            sakId = saksId,
+            journalpostId = journalpostId,
+            tildeltEnhetsnr =  behandlendeEnhet,
+            aktoerId = aktorId,
+            gjelderUtland = gjelderUtland
+            )
+        }
     }
 }
