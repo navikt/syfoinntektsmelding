@@ -27,6 +27,8 @@ data class Inntektsmelding(
         val arkivRefereranse: String,
         val feriePerioder: List<Periode> = emptyList(),
         val førsteFraværsdag: LocalDate?,
-        val mottattDato: LocalDateTime
+        val mottattDato: LocalDateTime,
+        var sakId: String? = null,
+        var aktorId: String? = null
 )
 

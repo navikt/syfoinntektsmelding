@@ -1,20 +1,21 @@
-package no.nav.syfo;
+package no.nav.syfo.test;
 
-import lombok.extern.slf4j.Slf4j;
-import org.h2.tools.Server;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import lombok.extern.slf4j.*;
+import no.nav.syfo.*;
+import org.h2.tools.*;
+import org.springframework.boot.*;
+import org.springframework.boot.autoconfigure.*;
 import org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.*;
 
-import java.sql.SQLException;
+import java.sql.*;
 
 @SpringBootApplication(exclude = FlywayAutoConfiguration.class)
 @Slf4j
 public class LocalApplication {
+
     public static void main(String[] args) {
-        SpringApplication.run(LocalApplication.class, args);
+        SpringApplication.run(Application.class, args);
     }
 
     @Bean
