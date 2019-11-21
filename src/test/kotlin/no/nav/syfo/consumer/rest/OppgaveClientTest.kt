@@ -17,15 +17,13 @@ import io.ktor.http.headersOf
 import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.config.OppgaveConfig
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
-import org.mockito.MockitoAnnotations
 import org.mockito.junit.MockitoJUnitRunner
-
-import log
 
 @RunWith(MockitoJUnitRunner::class)
 class OppgaveClientTest {
@@ -40,79 +38,87 @@ class OppgaveClientTest {
     private lateinit var oppgaveClient: OppgaveClient
 
     @Before
-    @io.ktor.util.KtorExperimentalAPI
+    @KtorExperimentalAPI
     fun setUp() {
-        MockitoAnnotations.initMocks(this);
         `when`(oppgaveConfig.url).thenReturn("url")
         oppgaveClient = OppgaveClient(oppgaveConfig, tokenConsumer)
     }
 
     @Test
-    @io.ktor.util.KtorExperimentalAPI
-    fun henterEksisterendeOppgave() = runBlocking{
-        val client = lagClientMockEngine(lagOppgaveResponse())
-        oppgaveClient.setHttpClient(client)
+    @KtorExperimentalAPI
+    fun henterEksisterendeOppgave() {
+        runBlocking {
+            val client = lagClientMockEngine(lagOppgaveResponse())
+            oppgaveClient.setHttpClient(client)
 
+            val resultat = oppgaveClient.opprettOppgave("sakId", "123", "tildeltEnhet", "aktoerid", false)
 
-        val resultat = oppgaveClient.opprettOppgave("sakId", "123", "tildeltEnhet", "aktoerid", false)
-
-        assert(resultat.oppgaveId == 9999)
-        assert(resultat.duplikat)
+            assertThat(resultat.oppgaveId).isEqualTo(9999)
+            assertThat(resultat.duplikat).isTrue()
+        }
     }
 
     @Test
-    @io.ktor.util.KtorExperimentalAPI
-    fun oppretterNyOppgave() = runBlocking {
-        val client = lagClientMockEngine(lagTomOppgaveResponse())
-        oppgaveClient.setHttpClient(client)
+    @KtorExperimentalAPI
+    fun oppretterNyOppgave() {
+        runBlocking {
+            val client = lagClientMockEngine(lagTomOppgaveResponse())
+            oppgaveClient.setHttpClient(client)
 
-        val resultat = oppgaveClient.opprettOppgave("sakId", "123", "tildeltEnhet", "aktoerid", false)
-        val requestVerdier = hentRequestInnhold(client)
+            val resultat = oppgaveClient.opprettOppgave("sakId", "123", "tildeltEnhet", "aktoerid", false)
+            val requestVerdier = hentRequestInnhold(client)
 
-        assert(resultat.oppgaveId != 9999)
-        assert(!resultat.duplikat)
-        assert(requestVerdier?.journalpostId == "123")
-        assert(requestVerdier?.oppgavetype == "JFR")
-        assert(requestVerdier?.behandlingstype == null)
+            assertThat(resultat.oppgaveId).isNotEqualTo(9999)
+            assertThat(resultat.duplikat).isFalse()
+            assertThat(requestVerdier?.journalpostId).isEqualTo("123")
+            assertThat(requestVerdier?.oppgavetype).isEqualTo("JFR")
+            assertThat(requestVerdier?.behandlingstype).isNull()
+        }
     }
 
     @Test
-    @io.ktor.util.KtorExperimentalAPI
-    fun oppretterNyFordelingsOppgave() = runBlocking {
+    @KtorExperimentalAPI
+    fun oppretterNyFordelingsOppgave() {
+        runBlocking {
         val client = lagClientMockEngine(lagTomOppgaveResponse())
         oppgaveClient.setHttpClient(client)
 
         val resultat = oppgaveClient.opprettFordelingsOppgave("journalpostId", "1", false)
         val requestVerdier = hentRequestInnhold(client)
 
-        assert(resultat.oppgaveId != 8888)
-        assert(!resultat.duplikat)
-        assert(requestVerdier?.oppgavetype == "FDR")
-        assert(requestVerdier?.behandlingstype == null)
+        assertThat(resultat.oppgaveId).isNotEqualTo(8888)
+        assertThat(resultat.duplikat).isFalse()
+        assertThat(requestVerdier?.oppgavetype).isEqualTo("FDR")
+        assertThat(requestVerdier?.behandlingstype).isNull()
+        }
     }
 
     @Test
-    @io.ktor.util.KtorExperimentalAPI
-    fun henterEksisterendeFordelingsOppgave() = runBlocking {
+    @KtorExperimentalAPI
+    fun henterEksisterendeFordelingsOppgave() {
+        runBlocking {
         val client = lagClientMockEngine(lagFordelingsOppgaveResponse())
         oppgaveClient.setHttpClient(client)
 
         val resultat = oppgaveClient.opprettFordelingsOppgave("journalpostId", "1", false)
 
-        assert(resultat.oppgaveId == 8888)
-        assert(resultat.duplikat)
+        assertThat(resultat.oppgaveId).isEqualTo(8888)
+        assertThat(resultat.duplikat).isTrue()
+        }
     }
 
     @Test
-    @io.ktor.util.KtorExperimentalAPI
-    fun gjelderUtlandFårBehandlingstype() = runBlocking {
+    @KtorExperimentalAPI
+    fun gjelderUtlandFårBehandlingstype() {
+        runBlocking {
         val client = lagClientMockEngine(lagTomOppgaveResponse())
         oppgaveClient.setHttpClient(client)
 
-        val resultat = oppgaveClient.opprettOppgave("sakId", "123", "tildeltEnhet", "aktoerid", true)
+        oppgaveClient.opprettOppgave("sakId", "123", "tildeltEnhet", "aktoerid", true)
         val requestVerdier = hentRequestInnhold(client)
 
-        assert(requestVerdier?.behandlingstype == "ae0106")
+        assertThat(requestVerdier?.behandlingstype).isEqualTo("ae0106")
+        }
     }
 
     private fun hentRequestInnhold(client: HttpClient): OpprettOppgaveRequest? {

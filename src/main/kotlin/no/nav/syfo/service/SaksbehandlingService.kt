@@ -15,10 +15,11 @@ import no.nav.syfo.util.DateUtil
 import no.nav.syfo.util.Metrikk
 import no.nav.syfo.util.sammenslattPeriode
 import org.springframework.stereotype.Service
+import io.ktor.util.KtorExperimentalAPI
 import java.time.LocalDate
 
-@io.ktor.util.KtorExperimentalAPI
 @Service
+@KtorExperimentalAPI
 class SaksbehandlingService(
         private val oppgaveClient: OppgaveClient,
         private val behandlendeEnhetConsumer: BehandlendeEnhetConsumer,
@@ -71,7 +72,7 @@ class SaksbehandlingService(
                 ?: opprettSak(aktorId, msgId))
     }
 
-    @io.ktor.util.KtorExperimentalAPI
+    @KtorExperimentalAPI
     private fun opprettSak(aktorId: String, msgId: String): String {
         var saksId = "";
         runBlocking {
@@ -80,7 +81,7 @@ class SaksbehandlingService(
         return saksId
     }
 
-    @io.ktor.util.KtorExperimentalAPI
+    @KtorExperimentalAPI
     private fun opprettOppgave(fnr: String, aktorId: String, saksId: String, journalpostId: String) {
         val behandlendeEnhet = behandlendeEnhetConsumer.hentBehandlendeEnhet(fnr)
         val gjelderUtland = ("4474" == behandlendeEnhet)

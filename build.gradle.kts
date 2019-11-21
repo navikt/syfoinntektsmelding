@@ -6,6 +6,7 @@ val springKafkaVersion = "2.3.1.RELEASE"
 val micrometerVersion = "1.3.0"
 val flywayVersion = "5.1.4"
 val cxfVersion = "3.3.3"
+val clientMockVersion = "1.2.3-1.3.50-eap-5"
 
 val mainClass = "no.nav.syfo.Application"
 
@@ -150,8 +151,8 @@ dependencies {
     testAnnotationProcessor("org.projectlombok:lombok:1.18.8")
 
     implementation("com.google.guava:guava:28.1-jre")
-    testImplementation("io.ktor:ktor-client-mock:1.2.3-1.3.50-eap-5")
-    testImplementation("io.ktor:ktor-client-mock-jvm:1.2.3-1.3.50-eap-5")
+    testImplementation("io.ktor:ktor-client-mock:$clientMockVersion")
+    testImplementation("io.ktor:ktor-client-mock-jvm:$clientMockVersion")
 }
 
 tasks.named<Jar>("jar") {
