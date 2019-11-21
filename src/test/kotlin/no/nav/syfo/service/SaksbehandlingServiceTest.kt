@@ -2,11 +2,11 @@ package no.nav.syfo.service
 
 import any
 import kotlinx.coroutines.runBlocking
+import no.nav.syfo.consumer.rest.OppgaveClient
 import no.nav.syfo.consumer.rest.SakClient
 import no.nav.syfo.consumer.rest.SakResponse
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
 import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
-import no.nav.syfo.consumer.ws.OppgavebehandlingConsumer
 import no.nav.syfo.domain.*
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.repository.InntektsmeldingDAO
@@ -33,7 +33,8 @@ import java.util.Collections.emptyList
 class SaksbehandlingServiceTest {
 
     @Mock
-    private lateinit var oppgavebehandlingConsumer: OppgavebehandlingConsumer
+    private lateinit var oppgaveClient: OppgaveClient
+
     @Mock
     private lateinit var behandlendeEnhetConsumer: BehandlendeEnhetConsumer
     @Mock
@@ -50,18 +51,15 @@ class SaksbehandlingServiceTest {
     @InjectMocks
     private lateinit var saksbehandlingService: SaksbehandlingService
 
+    @io.ktor.util.KtorExperimentalAPI
     @Before
     fun setup() {
         `when`(inntektsmeldingDAO.finnBehandledeInntektsmeldinger(any())).thenReturn(emptyList())
         `when`(aktoridConsumer.getAktorId(anyString())).thenReturn("aktorid")
-        `when`(behandlendeEnhetConsumer.hentGeografiskTilknytning(anyString())).thenReturn(
-                GeografiskTilknytningData(
-                        geografiskTilknytning = "Geografisktilknytning"
-                )
-        )
         `when`(behandlendeEnhetConsumer.hentBehandlendeEnhet(anyString())).thenReturn("behandlendeenhet1234")
         given(eksisterendeSakService.finnEksisterendeSak(any(), any(), any())).willReturn("saksId")
         given(runBlocking{sakClient.opprettSak(any(), any())}).willReturn(SakResponse(id = 987, tema = "a", aktoerId = "123", applikasjon = "", fagsakNr = "123", opprettetAv = "", opprettetTidspunkt = ZonedDateTime.now(), orgnr = ""))
+        given(runBlocking{oppgaveClient.opprettOppgave(anyString(), anyString(), anyString(), anyString(), anyBoolean())}).willReturn(OppgaveResultat(oppgaveId = 1, duplikat = false))
     }
 
     private fun lagInntektsmelding(): Inntektsmelding {
@@ -101,14 +99,20 @@ class SaksbehandlingServiceTest {
         assertThat(saksId).isEqualTo("987")
     }
 
+    @io.ktor.util.KtorExperimentalAPI
     @Test
     fun oppretterOppgaveForSak() {
         saksbehandlingService.behandleInntektsmelding(lagInntektsmelding(), "aktorId")
 
-        verify<OppgavebehandlingConsumer>(oppgavebehandlingConsumer).opprettOppgave(
+        runBlocking {
+            verify<OppgaveClient>(oppgaveClient).opprettOppgave(
                 anyString(),
-                any<Oppgave>()
-        )
+                anyString(),
+                anyString(),
+                anyString(),
+                anyBoolean()
+            )
+        }
     }
 
     @Test(expected = RuntimeException::class)
