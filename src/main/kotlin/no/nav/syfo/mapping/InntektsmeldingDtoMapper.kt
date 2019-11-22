@@ -10,8 +10,8 @@ import no.nav.syfo.dto.InntektsmeldingEntitet
 import java.time.LocalDate
 
 
-fun toInntektsmeldingDTO(inntektsmelding : Inntektsmelding) : InntektsmeldingEntitet {
-    val dto = InntektsmeldingEntitet(
+fun toInntektsmeldingEntitet(inntektsmelding : Inntektsmelding) : InntektsmeldingEntitet {
+    val entitet = InntektsmeldingEntitet(
             aktorId = inntektsmelding.aktorId ?: "",
             sakId = inntektsmelding.sakId ?: "",
             journalpostId = inntektsmelding.journalpostId,
@@ -19,8 +19,8 @@ fun toInntektsmeldingDTO(inntektsmelding : Inntektsmelding) : InntektsmeldingEnt
             orgnummer = inntektsmelding.arbeidsgiverOrgnummer,
             behandlet = inntektsmelding.mottattDato
     )
-    inntektsmelding.arbeidsgiverperioder.forEach { p -> dto.leggtilArbeidsgiverperiode(p.fom, p.tom) }
-    return dto
+    inntektsmelding.arbeidsgiverperioder.forEach { p -> entitet.leggtilArbeidsgiverperiode(p.fom, p.tom) }
+    return entitet
 }
 
 fun toInntektsmelding(inntektsmeldingEntitet: InntektsmeldingEntitet) : Inntektsmelding {
@@ -33,7 +33,7 @@ fun toInntektsmelding(inntektsmeldingEntitet: InntektsmeldingEntitet) : Inntekts
             arbeidsgiverPrivatFnr = inntektsmeldingEntitet.arbeidsgiverPrivat,
             arbeidsforholdId = null,
             journalpostId = inntektsmeldingEntitet.journalpostId,
-            arsakTilInnsending = "?",
+            arsakTilInnsending = "?", // TODO - Dette feltet må populeres fra database
             journalStatus = JournalStatus.MIDLERTIDIG,
             arbeidsgiverperioder = mapPerioder(inntektsmeldingEntitet.arbeidsgiverperioder),
             beregnetInntekt = null,
@@ -42,7 +42,7 @@ fun toInntektsmelding(inntektsmeldingEntitet: InntektsmeldingEntitet) : Inntekts
             opphørAvNaturalYtelse = ArrayList(),
             gjenopptakelserNaturalYtelse = ArrayList(),
             gyldighetsStatus = Gyldighetsstatus.GYLDIG,
-            arkivRefereranse = "???",
+            arkivRefereranse = "???", // TODO - Dette feltet må populeres fra database
             feriePerioder = ArrayList(),
             førsteFraværsdag = LocalDate.now(),
             mottattDato = inntektsmeldingEntitet.behandlet!!

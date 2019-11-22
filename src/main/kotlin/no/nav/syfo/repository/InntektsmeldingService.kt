@@ -4,20 +4,16 @@ import lombok.extern.slf4j.Slf4j
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.dto.InntektsmeldingEntitet
 import no.nav.syfo.mapping.toInntektsmelding
-import no.nav.syfo.mapping.toInntektsmeldingDTO
+import no.nav.syfo.mapping.toInntektsmeldingEntitet
 import org.springframework.stereotype.Service
 import javax.transaction.Transactional
 
 @Service
 @Slf4j
-@Transactional( Transactional.TxType.NEVER)
-@org.springframework.transaction.annotation.Transactional("transactionManager")
 class InntektsmeldingService (
     private val repository: InntektsmeldingRepository
 ) {
 
-    @Transactional(Transactional.TxType.SUPPORTS)
-    @org.springframework.transaction.annotation.Transactional("transactionManager")
     fun finnBehandledeInntektsmeldinger(aktoerId: String): List<Inntektsmelding> {
         val liste = repository.findByAktorId(aktoerId)
         return liste.map{ InntektsmeldingMeta -> toInntektsmelding(InntektsmeldingMeta) }
@@ -26,17 +22,9 @@ class InntektsmeldingService (
     @Transactional(Transactional.TxType.REQUIRED)
     @org.springframework.transaction.annotation.Transactional("transactionManager")
     fun lagreBehandling(inntektsmelding: Inntektsmelding, aktorid: String, saksId: String, arkivReferanse: String): InntektsmeldingEntitet {
-        val dto = toInntektsmeldingDTO(inntektsmelding)
+        val dto = toInntektsmeldingEntitet(inntektsmelding)
         dto.aktorId = aktorid
         dto.sakId = saksId
-        return repository.save(dto)
+        return repository.saveAndFlush(dto)
     }
-
-    @Transactional(Transactional.TxType.REQUIRED)
-    @org.springframework.transaction.annotation.Transactional("transactionManager")
-    fun lagre(aktoerId: String, saksId: String, journalpostId:String) {
-        val dto = InntektsmeldingEntitet(aktorId=aktoerId, sakId=saksId, journalpostId=journalpostId)
-        repository.saveAndFlush(dto)
-    }
-
 }

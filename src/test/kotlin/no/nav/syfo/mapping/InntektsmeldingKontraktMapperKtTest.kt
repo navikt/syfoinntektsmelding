@@ -6,8 +6,7 @@ import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.inntektsmelding.Gyldighetsstatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.domain.inntektsmelding.Refusjon
-import org.assertj.core.api.Assertions
-import org.junit.Assert.assertEquals
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import testutil.FØRSTE_FEBRUAR
 import testutil.FØRSTE_JANUAR
@@ -35,14 +34,14 @@ class InntektsmeldingKontraktMapperKtTest {
                 arkivRefereranse = "ar123",
                 førsteFraværsdag = LocalDate.now()
         )
-        val dto = toInntektsmeldingDTO(inntektsmelding)
-        Assertions.assertThat(dto.journalpostId).isEqualTo("journalpostId")
-        Assertions.assertThat(dto.aktorId).isEqualTo("aktorId")
-        Assertions.assertThat(dto.sakId).isEqualTo("sakId")
-        Assertions.assertThat(dto.arbeidsgiverPrivat).isEqualTo("fnr")
-        Assertions.assertThat(dto.uuid).isNotNull()
-        Assertions.assertThat(dto.behandlet).isEqualTo(LocalDateTime.of(2019,10,1,5,18,45,0))
-        Assertions.assertThat(dto.arbeidsgiverperioder.size).isEqualTo(0)
+        val dto = toInntektsmeldingEntitet(inntektsmelding)
+        assertThat(dto.journalpostId).isEqualTo("journalpostId")
+        assertThat(dto.aktorId).isEqualTo("aktorId")
+        assertThat(dto.sakId).isEqualTo("sakId")
+        assertThat(dto.arbeidsgiverPrivat).isEqualTo("fnr")
+        assertThat(dto.uuid).isNotNull()
+        assertThat(dto.behandlet).isEqualTo(LocalDateTime.of(2019,10,1,5,18,45,0))
+        assertThat(dto.arbeidsgiverperioder.size).isEqualTo(0)
     }
 
     @Test
@@ -56,35 +55,35 @@ class InntektsmeldingKontraktMapperKtTest {
                 aktorId = "aktorId"
         )
         val i = toInntektsmelding(dto)
-        Assertions.assertThat(i.journalpostId).isEqualTo("journalpostId")
-        Assertions.assertThat(i.mottattDato).isEqualTo(LocalDateTime.of(2019,10,1,5,18,45,0))
-        Assertions.assertThat(i.sakId).isEqualTo("sakId")
-        Assertions.assertThat(i.arbeidsgiverOrgnummer).isEqualTo("orgnummer")
-        Assertions.assertThat(i.fnr).isEqualTo("arbeidsgiverPrivat")
-        Assertions.assertThat(i.aktorId).isEqualTo("aktorId")
-        Assertions.assertThat(i.arbeidsgiverperioder.size).isEqualTo(0)
+        assertThat(i.journalpostId).isEqualTo("journalpostId")
+        assertThat(i.mottattDato).isEqualTo(LocalDateTime.of(2019,10,1,5,18,45,0))
+        assertThat(i.sakId).isEqualTo("sakId")
+        assertThat(i.arbeidsgiverOrgnummer).isEqualTo("orgnummer")
+        assertThat(i.fnr).isEqualTo("arbeidsgiverPrivat")
+        assertThat(i.aktorId).isEqualTo("aktorId")
+        assertThat(i.arbeidsgiverperioder.size).isEqualTo(0)
     }
 
     @Test
     fun skal_mappe_enkel_periode() {
         val mappedePerioder = mapArbeidsgiverperioder(grunnleggendeInntektsmelding)
-        assertEquals(mappedePerioder.size, 1)
-        assertEquals(mappedePerioder[0].fom, FØRSTE_JANUAR)
-        assertEquals(mappedePerioder[0].tom, FØRSTE_FEBRUAR)
+        assertThat(mappedePerioder.size).isEqualTo(1)
+        assertThat(mappedePerioder[0].fom).isEqualTo( FØRSTE_JANUAR)
+        assertThat(mappedePerioder[0].tom).isEqualTo( FØRSTE_FEBRUAR)
     }
 
 
     @Test
     fun skal_finne_arbeidsgivertype_virksomhet() {
-        assertEquals(mapArbeidsgivertype(grunnleggendeInntektsmelding), Arbeidsgivertype.VIRKSOMHET)
+        assertThat(mapArbeidsgivertype(grunnleggendeInntektsmelding)).isEqualTo(Arbeidsgivertype.VIRKSOMHET)
     }
 
 
     @Test
     fun skal_finne_arbeidsgivertype_privat() {
-        assertEquals(
-                mapArbeidsgivertype(grunnleggendeInntektsmelding.copy(arbeidsgiverOrgnummer = null, arbeidsgiverPrivatFnr = "00")),
-                Arbeidsgivertype.PRIVAT)
+        assertThat(mapArbeidsgivertype(
+                    grunnleggendeInntektsmelding.copy(arbeidsgiverOrgnummer = null, arbeidsgiverPrivatFnr = "00"))
+        ).isEqualTo(Arbeidsgivertype.PRIVAT)
     }
 
 }

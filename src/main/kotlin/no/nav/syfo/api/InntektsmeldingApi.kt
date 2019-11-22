@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*
 @Profile("local")
 @RestController
 @RequestMapping("/api/v1/inntektsmelding")
-class InntektsmeldingAPI (
+class InntektsmeldingApi (
     val inntektsmeldingBehandler : InntektsmeldingBehandler
 ){
 

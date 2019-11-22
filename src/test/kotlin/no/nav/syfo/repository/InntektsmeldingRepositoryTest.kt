@@ -1,8 +1,7 @@
 package no.nav.syfo.repository
 
-import junit.framework.Assert.assertEquals
-import junit.framework.Assert.assertNotNull
 import no.nav.syfo.dto.InntektsmeldingEntitet
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -39,20 +38,20 @@ open class InntektsmeldingRepositoryTest {
         inntektsmelding.leggtilArbeidsgiverperiode(fom = LocalDate.of(2019, 10, 5), tom = LocalDate.of(2019, 10, 25))
         entityManager.persist<Any>(inntektsmelding)
         val inntektsmeldinger = respository.findByAktorId("aktorId1")
-        assertEquals(inntektsmeldinger.size,1)
+        assertThat(inntektsmeldinger.size).isEqualTo(1)
         val i = inntektsmeldinger[0]
-        assertNotNull(i.uuid)
-        assertEquals(i.journalpostId,"journalpostId")
-        assertEquals(i.sakId,"sakId")
-        assertEquals(i.orgnummer,"orgnummer")
-        assertEquals(i.arbeidsgiverPrivat,"arbeidsgiverPrivat")
-        assertEquals(i.aktorId,"aktorId1")
-        assertEquals(i.behandlet,LocalDateTime.of(2019,10,1,5,18,45,0))
-        assertEquals(i.arbeidsgiverperioder.size,1)
-        assertEquals(i.arbeidsgiverperioder[0].inntektsmelding, i)
-        assertNotNull(i.arbeidsgiverperioder[0].uuid)
-        assertEquals(i.arbeidsgiverperioder[0].fom, LocalDate.of(2019,10,5))
-        assertEquals(i.arbeidsgiverperioder[0].tom, LocalDate.of(2019,10,25))
+        assertThat(i.uuid).isNotNull()
+        assertThat(i.journalpostId).isEqualTo("journalpostId")
+        assertThat(i.sakId).isEqualTo("sakId")
+        assertThat(i.orgnummer).isEqualTo("orgnummer")
+        assertThat(i.arbeidsgiverPrivat).isEqualTo("arbeidsgiverPrivat")
+        assertThat(i.aktorId).isEqualTo("aktorId1")
+        assertThat(i.behandlet).isEqualTo(LocalDateTime.of(2019,10,1,5,18,45,0))
+        assertThat(i.arbeidsgiverperioder.size).isEqualTo(1)
+        assertThat(i.arbeidsgiverperioder[0].inntektsmelding).isEqualTo( i)
+        assertThat(i.arbeidsgiverperioder[0].uuid).isNotNull()
+        assertThat(i.arbeidsgiverperioder[0].fom).isEqualTo(LocalDate.of(2019,10,5))
+        assertThat(i.arbeidsgiverperioder[0].tom).isEqualTo(LocalDate.of(2019,10,25))
     }
 
     @Test
@@ -70,13 +69,13 @@ open class InntektsmeldingRepositoryTest {
         inntektsmelding.leggtilArbeidsgiverperiode(fom = LocalDate.of(2018, 10, 5), tom = LocalDate.of(2018, 10, 25))
         entityManager.persist<Any>(inntektsmelding)
         val inntektsmeldinger = respository.findByAktorId("aktorId2")
-        assertEquals(inntektsmeldinger.size,1)
+        assertThat(inntektsmeldinger.size).isEqualTo(1)
         val i = inntektsmeldinger[0]
-        assertEquals(i.arbeidsgiverperioder.size,2)
-        assertEquals(i.arbeidsgiverperioder[0].inntektsmelding, i)
-        assertNotNull(i.arbeidsgiverperioder[0].uuid)
-        assertEquals(i.arbeidsgiverperioder[0].fom, LocalDate.of(2019,10,5))
-        assertEquals(i.arbeidsgiverperioder[0].tom, LocalDate.of(2019,10,25))
+        assertThat(i.arbeidsgiverperioder.size).isEqualTo(2)
+        assertThat(i.arbeidsgiverperioder[0].inntektsmelding).isEqualTo( i)
+        assertThat(i.arbeidsgiverperioder[0].uuid).isNotNull()
+        assertThat(i.arbeidsgiverperioder[0].fom).isEqualTo( LocalDate.of(2019,10,5))
+        assertThat(i.arbeidsgiverperioder[0].tom).isEqualTo( LocalDate.of(2019,10,25))
     }
 
     @Test
@@ -93,8 +92,8 @@ open class InntektsmeldingRepositoryTest {
         entityManager.persist<Any>(inntektsmelding)
         val inntektsmeldinger = respository.findByAktorId("aktorId3")
         val i = inntektsmeldinger[0]
-        assertEquals(inntektsmeldinger.size,1)
-        assertEquals(i.arbeidsgiverperioder.size,0)
+        assertThat(inntektsmeldinger.size).isEqualTo(1)
+        assertThat(i.arbeidsgiverperioder.size).isEqualTo(0)
     }
 
 }
