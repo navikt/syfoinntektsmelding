@@ -1,12 +1,10 @@
 package no.nav.syfo.config;
 
-
 import org.flywaydb.core.Flyway;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.flyway.FlywayMigrationInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import javax.sql.DataSource;
 
 @Configuration
@@ -27,5 +25,4 @@ public class FlywayConfig {
     FlywayMigrationInitializer flywayMigrationInitializer(Flyway flyway) {
         return new FlywayMigrationInitializer(flyway, null);
     }
-
 }

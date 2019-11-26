@@ -6,6 +6,8 @@ val springKafkaVersion = "2.3.1.RELEASE"
 val micrometerVersion = "1.3.0"
 val flywayVersion = "5.1.4"
 val cxfVersion = "3.3.3"
+val swaggerVersion = "2.7.0"
+val kotlinVersion = "1.3.50"
 
 val mainClass = "no.nav.syfo.Application"
 
@@ -15,6 +17,7 @@ plugins {
     "maven-publish"
     id("org.jetbrains.kotlin.jvm") version "1.3.50"
     id("org.jetbrains.kotlin.plugin.allopen") version "1.3.50"
+    id("org.jetbrains.kotlin.plugin.jpa") version "1.3.50"
     id("org.flywaydb.flyway") version "5.1.4"
     java
 }
@@ -22,6 +25,7 @@ plugins {
 buildscript {
     dependencies {
         classpath("org.junit.platform:junit-platform-gradle-plugin:1.2.0")
+        classpath("org.jetbrains.kotlin:kotlin-noarg:1.3.50")
     }
 }
 
@@ -50,6 +54,9 @@ allOpen {
 }
 
 dependencies {
+    // Spring
+    implementation("io.springfox:springfox-swagger2:$swaggerVersion")
+    implementation("io.springfox:springfox-swagger-ui:$swaggerVersion")
     implementation("org.springframework.boot:spring-boot-starter-web:$springBootVersion")
     implementation("org.springframework.boot:spring-boot:$springBootVersion")
     implementation("org.springframework.boot:spring-boot-autoconfigure:$springBootVersion")
@@ -64,28 +71,21 @@ dependencies {
     implementation("org.springframework:spring-jdbc:$springVersion")
     implementation("org.springframework:spring-jms:$springVersion")
     implementation("org.springframework.kafka:spring-kafka:$springKafkaVersion")
-
     testImplementation("org.springframework.boot:spring-boot-starter-test:$springBootVersion")
     testImplementation("org.springframework.boot:spring-boot-starter-activemq:$springBootVersion")
     testImplementation("org.springframework.boot:spring-boot-test:$springBootVersion")
     testImplementation("org.springframework:spring-test:$springVersion")
 
     implementation("javax.inject:javax.inject:1")
-
     implementation("jakarta.activation:jakarta.activation-api:1.2.1")
     implementation("jakarta.xml.bind:jakarta.xml.bind-api:2.3.1")
     implementation("jakarta.xml.ws:jakarta.xml.ws-api:2.3.2")
     implementation("jakarta.ws.rs:jakarta.ws.rs-api:2.1.6")
-
     implementation("com.sun.activation:javax.activation:1.2.0")
     implementation("com.sun.xml.messaging.saaj:saaj-impl:1.5.1")
-
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.3.41")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.3.41")
-
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.8")
-
-
     implementation("org.apache.cxf:cxf-rt-ws-security:$cxfVersion")
     implementation("org.apache.cxf:cxf-rt-security:$cxfVersion")
     implementation("org.apache.cxf:cxf-rt-ws-policy:$cxfVersion")
@@ -96,15 +96,12 @@ dependencies {
     implementation("org.apache.cxf:cxf-rt-databinding-jaxb:$cxfVersion")
     runtime("org.apache.cxf:cxf-spring-boot-starter-jaxws:$cxfVersion")
     runtime("org.apache.cxf:cxf-rt-features-logging:$cxfVersion")
-
     runtime("com.oracle.ojdbc:ojdbc10:19.3.0.0")
-
     implementation("org.apache.neethi:neethi:3.1.0")
-
     implementation("org.flywaydb:flyway-core:$flywayVersion")
 
+    // NAV
     implementation("no.nav.sykepenger.kontrakter:inntektsmelding-kontrakt:2019.11.08-09-49-c3234")
-
     implementation("no.nav.tjenestespesifikasjoner:nav-inngaaendeJournal-v1-tjenestespesifikasjon:1.2019.08.16-13.46-35cbdfd492d4")
     implementation("no.nav.tjenestespesifikasjoner:nav-behandleInngaaendeJournal-v1-tjenestespesifikasjon:1.2019.08.16-13.46-35cbdfd492d4")
     implementation("no.nav.tjenestespesifikasjoner:behandlesak-v2-tjenestespesifikasjon:1.2019.08.16-13.46-35cbdfd492d4")
@@ -115,40 +112,30 @@ dependencies {
     implementation("no.nav.tjenestespesifikasjoner:dial-nav-tjeneste-aktoer_v2:1.2019.08.16-13.46-35cbdfd492d4")
     implementation("no.nav.tjenestespesifikasjoner:person-v3-tjenestespesifikasjon:1.2019.08.16-13.46-35cbdfd492d4")
     implementation("no.nav.tjenestespesifikasjoner:diskresjonskodev1-tjenestespesifikasjon:1.2019.08.16-13.46-35cbdfd492d4")
+    implementation("no.nav.syfo.sm:syfosm-common-rest-sts:2019.09.03-10-50-64032e3b6381665e9f9c0914cef626331399e66d")
+    implementation("no.nav.syfo.sm:syfosm-common-networking:2019.09.03-10-50-64032e3b6381665e9f9c0914cef626331399e66d")
 
     implementation("org.slf4j:slf4j-api:1.7.25")
     implementation("net.logstash.logback:logstash-logback-encoder:4.10")
-
     implementation("com.ibm.mq:com.ibm.mq.allclient:9.0.4.0")
     implementation("javax.jms:javax.jms-api:2.0.1")
     testImplementation("org.apache.activemq:activemq-client:5.15.6")
-
     implementation("org.apache.httpcomponents:httpclient:4.5.6")
-
     implementation("io.micrometer:micrometer-core:$micrometerVersion")
     runtime("io.micrometer:micrometer-registry-prometheus:$micrometerVersion")
-
     implementation("io.ktor:ktor-client-core:1.2.4")
     implementation("io.ktor:ktor:1.2.4")
     implementation("io.ktor:ktor-client-jackson:1.2.4")
     implementation("io.ktor:ktor-client-apache:1.2.4")
-
-    implementation("no.nav.syfo.sm:syfosm-common-rest-sts:2019.09.03-10-50-64032e3b6381665e9f9c0914cef626331399e66d")
-    implementation("no.nav.syfo.sm:syfosm-common-networking:2019.09.03-10-50-64032e3b6381665e9f9c0914cef626331399e66d")
-
     testImplementation("org.springframework.kafka:spring-kafka-test:2.1.10.RELEASE")
-
     testImplementation("junit:junit:4.12")
     testImplementation("org.mockito:mockito-core:2.23.4")
     testImplementation("org.assertj:assertj-core:3.11.1")
-
     implementation("com.h2database:h2:1.4.199")
-
     compileOnly("org.projectlombok:lombok:1.18.8")
     annotationProcessor("org.projectlombok:lombok:1.18.8")
     testCompileOnly("org.projectlombok:lombok:1.18.8")
     testAnnotationProcessor("org.projectlombok:lombok:1.18.8")
-
     implementation("com.google.guava:guava:28.1-jre")
 }
 
@@ -177,4 +164,8 @@ tasks.named<KotlinCompile>("compileKotlin") {
 
 tasks.named<KotlinCompile>("compileTestKotlin") {
     kotlinOptions.jvmTarget = "11"
+}
+
+tasks.withType<JavaCompile> {
+    options.encoding = "UTF-8"
 }
