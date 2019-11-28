@@ -41,6 +41,13 @@ repositories {
         }
         setUrl("https://maven.pkg.github.com/navikt/inntektsmelding-kontrakt")
     }
+    maven {
+        credentials {
+            username = "x-access-token"
+            password = githubPassword
+        }
+        setUrl("https://maven.pkg.github.com/navikt/migrator")
+    }
 }
 
 java {
@@ -57,6 +64,7 @@ allOpen {
 dependencies {
     // Spring
     implementation("io.springfox:springfox-swagger2:$swaggerVersion")
+    implementation("no.nav:migrator:0.1")
     implementation("io.springfox:springfox-swagger-ui:$swaggerVersion")
     implementation("org.springframework.boot:spring-boot-starter-web:$springBootVersion")
     implementation("org.springframework.boot:spring-boot:$springBootVersion")
@@ -98,6 +106,7 @@ dependencies {
     runtime("org.apache.cxf:cxf-spring-boot-starter-jaxws:$cxfVersion")
     runtime("org.apache.cxf:cxf-rt-features-logging:$cxfVersion")
     runtime("com.oracle.ojdbc:ojdbc10:19.3.0.0")
+    implementation("org.postgresql:postgresql:42.2.8")
     implementation("org.apache.neethi:neethi:3.1.0")
     implementation("org.flywaydb:flyway-core:$flywayVersion")
 
