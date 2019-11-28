@@ -6,8 +6,23 @@ import no.nav.migrator.Destination
 import no.nav.migrator.Migrator
 import no.nav.migrator.MigratorListener
 import no.nav.migrator.Source
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.stereotype.Component
 
-class CopyDatabase {
+@Component
+class CopyDatabase (
+    @Value("gammel.spring.datasource")
+    val oracleUrl : String,
+    @Value("gammel.spring.datasource.username")
+    val oracleUser: String,
+    @Value("gammel.spring.datasource.password")
+    val oraclePassword: String
+){
+
+    @Autowired
+    lateinit var jdbcTemplate: JdbcTemplate
 
     val INNTEKTSMELDING = "INNTEKTSMELDING"
     val ARBEIDSGIVERPERIODE = "ARBEIDSGIVERPERIODE"
@@ -15,17 +30,14 @@ class CopyDatabase {
     fun copy(){
         val oracle: Database = Database
             .build()
-            .url("jdbc:oracle:thin:@localhost:49161:XE")
+            .url(oracleUrl)
             .driver("oracle.jdbc.driver.OracleDriver")
-            .username("user")
-            .password("secret")
+            .username(oracleUser)
+            .password(oraclePassword)
 
         val postgres = Database
             .build()
-            .url("jdbc:postgresql://localhost:5433/spinn")
-            .driver("org.postgresql.Driver")
-            .username("user")
-            .password("secret")
+            .dataSource(jdbcTemplate.dataSource)
 
         val sourceInntektsmelding: Source = Source.build()
             .table(INNTEKTSMELDING)
@@ -54,9 +66,6 @@ class CopyDatabase {
             .table(ARBEIDSGIVERPERIODE)
             .database(postgres)
 
-        var maxInntektsmelding = 0
-        var maxArbeidsgiverperioder = 0
-
         var percentInntektsmelding = 0
         var percentArbeidsgiverperioder = 0
 
@@ -64,24 +73,19 @@ class CopyDatabase {
         migrator.addListener(object : MigratorListener {
             override fun starting(table: String, max: Int) {
                 println("Starting copying $max rows from $table")
-                if (table == INNTEKTSMELDING){
-                    maxInntektsmelding = max
-                } else if (table == ARBEIDSGIVERPERIODE){
-                    maxArbeidsgiverperioder = max
-                }
             }
 
-            override fun rowCopied(rowIndex: Int, table: String) {
+            override fun rowCopied(rowIndex: Int, max: Int, table: String) {
                 if (table == INNTEKTSMELDING){
-                    val percent = rowIndex / maxInntektsmelding
+                    val percent = rowIndex / max
                     if (percent > percentInntektsmelding){
-                        println("Copied $percent% from $table ($rowIndex / $maxInntektsmelding)")
+                        println("Copied $percent% from $table ($rowIndex / $max)")
                         percentInntektsmelding = percent
                     }
                 } else if (table == ARBEIDSGIVERPERIODE){
-                    val percent = rowIndex / maxArbeidsgiverperioder
+                    val percent = rowIndex / max
                     if (percent > percentArbeidsgiverperioder){
-                        println("Copied $percent% from $table ($rowIndex / $maxArbeidsgiverperioder)")
+                        println("Copied $percent% from $table ($rowIndex / $max)")
                         percentArbeidsgiverperioder = percent
                     }
                 }
