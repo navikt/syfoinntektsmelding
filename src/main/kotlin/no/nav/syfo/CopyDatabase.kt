@@ -9,6 +9,9 @@ import no.nav.migrator.Source
 
 class CopyDatabase {
 
+    val INNTEKTSMELDING = "INNTEKTSMELDING"
+    val ARBEIDSGIVERPERIODE = "ARBEIDSGIVERPERIODE"
+
     fun copy(){
         val oracle: Database = Database
             .build()
@@ -25,7 +28,7 @@ class CopyDatabase {
             .password("secret")
 
         val sourceInntektsmelding: Source = Source.build()
-            .table("inntektsmelding")
+            .table(INNTEKTSMELDING)
             .column(DataType.String)
             .column(DataType.String)
             .column(DataType.String)
@@ -36,11 +39,11 @@ class CopyDatabase {
             .database(oracle)
 
         val destinationInntektsmelding: Destination = Destination.build()
-            .table("inntektsmelding")
+            .table(INNTEKTSMELDING)
             .database(postgres)
 
         val sourceArbeidsgiverperiode: Source = Source.build()
-            .table("arbeidsgiverperiode")
+            .table(ARBEIDSGIVERPERIODE)
             .column(DataType.String)
             .column(DataType.String)
             .column(DataType.Date)
@@ -48,19 +51,40 @@ class CopyDatabase {
             .database(oracle)
 
         val destinationArbeidsgiverperiode: Destination = Destination.build()
-            .table("arbeidsgiverperiode")
+            .table(ARBEIDSGIVERPERIODE)
             .database(postgres)
 
+        var maxInntektsmelding = 0
+        var maxArbeidsgiverperioder = 0
 
+        var percentInntektsmelding = 0
+        var percentArbeidsgiverperioder = 0
 
         val migrator = Migrator()
         migrator.addListener(object : MigratorListener {
             override fun starting(table: String, max: Int) {
                 println("Starting copying $max rows from $table")
+                if (table == INNTEKTSMELDING){
+                    maxInntektsmelding = max
+                } else if (table == ARBEIDSGIVERPERIODE){
+                    maxArbeidsgiverperioder = max
+                }
             }
 
             override fun rowCopied(rowIndex: Int, table: String) {
-                println("Copied row $rowIndex from $table")
+                if (table == INNTEKTSMELDING){
+                    val percent = rowIndex / maxInntektsmelding
+                    if (percent > percentInntektsmelding){
+                        println("Copied $percent% from $table ($rowIndex / $maxInntektsmelding)")
+                        percentInntektsmelding = percent
+                    }
+                } else if (table == ARBEIDSGIVERPERIODE){
+                    val percent = rowIndex / maxArbeidsgiverperioder
+                    if (percent > percentArbeidsgiverperioder){
+                        println("Copied $percent% from $table ($rowIndex / $maxArbeidsgiverperioder)")
+                        percentArbeidsgiverperioder = percent
+                    }
+                }
             }
 
             override fun finished(table: String) {
