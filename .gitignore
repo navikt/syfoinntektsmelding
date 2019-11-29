@@ -4,8 +4,6 @@ application-local.properties
 transaction-logs
 target
 .gradle
-/build/kotlin/compileKotlin/dirty-sources.txt
-/build/kotlin/compileKotlin/build-history.bin
 /build/
 /syfoinntektsmelding.ipr
 /syfoinntektsmelding.iws
