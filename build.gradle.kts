@@ -6,6 +6,7 @@ val springKafkaVersion = "2.3.1.RELEASE"
 val micrometerVersion = "1.3.0"
 val flywayVersion = "5.1.4"
 val cxfVersion = "3.3.3"
+val clientMockVersion = "1.2.3-1.3.50-eap-5"
 val swaggerVersion = "2.7.0"
 val kotlinVersion = "1.3.50"
 
@@ -129,7 +130,7 @@ dependencies {
     implementation("io.ktor:ktor-client-apache:1.2.4")
     testImplementation("org.springframework.kafka:spring-kafka-test:2.1.10.RELEASE")
     testImplementation("junit:junit:4.12")
-    testImplementation("org.mockito:mockito-core:2.23.4")
+    testImplementation("org.mockito:mockito-core:3.1.0")
     testImplementation("org.assertj:assertj-core:3.11.1")
     implementation("com.h2database:h2:1.4.199")
     compileOnly("org.projectlombok:lombok:1.18.8")
@@ -137,6 +138,8 @@ dependencies {
     testCompileOnly("org.projectlombok:lombok:1.18.8")
     testAnnotationProcessor("org.projectlombok:lombok:1.18.8")
     implementation("com.google.guava:guava:28.1-jre")
+    testImplementation("io.ktor:ktor-client-mock:$clientMockVersion")
+    testImplementation("io.ktor:ktor-client-mock-jvm:$clientMockVersion")
 }
 
 tasks.named<Jar>("jar") {

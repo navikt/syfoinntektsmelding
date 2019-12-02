@@ -3,6 +3,7 @@ package no.nav.syfo.behandling
 import any
 import eq
 import kotlinx.coroutines.runBlocking
+import no.nav.syfo.consumer.rest.OppgaveClient
 import no.nav.syfo.consumer.rest.SakClient
 import no.nav.syfo.consumer.rest.SakResponse
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
@@ -11,7 +12,6 @@ import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
 import no.nav.syfo.consumer.ws.InngaaendeJournalConsumer
 import no.nav.syfo.consumer.ws.JournalConsumer
 import no.nav.syfo.consumer.ws.JournalConsumerTest
-import no.nav.syfo.consumer.ws.OppgavebehandlingConsumer
 import no.nav.syfo.domain.GeografiskTilknytningData
 import no.nav.syfo.domain.InngaaendeJournal
 import no.nav.syfo.domain.JournalStatus
@@ -85,7 +85,7 @@ open class InntektsmeldingBehandlerIT {
     @MockBean
     lateinit var behandlendeEnhetConsumer: BehandlendeEnhetConsumer
     @MockBean
-    lateinit var oppgavebehandlingConsumer: OppgavebehandlingConsumer
+    lateinit var oppgaveClient: OppgaveClient
 
     @MockBean
     lateinit var sakClient : SakClient
@@ -111,7 +111,7 @@ open class InntektsmeldingBehandlerIT {
         journalConsumer = JournalConsumer(journalV2, aktorConsumer)
         journalpostService = JournalpostService(inngaaendeJournalConsumer, behandleInngaaendeJournalConsumer, journalConsumer, behandlendeEnhetConsumer, metrikk)
         inntektsmeldingService = InntektsmeldingService(inntektsmeldingRepository)
-        saksbehandlingService = SaksbehandlingService(oppgavebehandlingConsumer, behandlendeEnhetConsumer, eksisterendeSakService, inntektsmeldingService, sakClient, metrikk)
+        saksbehandlingService = SaksbehandlingService(oppgaveClient, behandlendeEnhetConsumer, eksisterendeSakService, inntektsmeldingService, sakClient, metrikk)
         inntektsmeldingBehandler = InntektsmeldingBehandler(journalpostService, saksbehandlingService, metrikk, inntektsmeldingService, aktorConsumer, inntektsmeldingProducer)
         MockitoAnnotations.initMocks(inntektsmeldingBehandler)
         runBlocking {
