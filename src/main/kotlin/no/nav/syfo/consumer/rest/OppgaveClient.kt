@@ -13,7 +13,6 @@ import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
-import io.ktor.util.KtorExperimentalAPI
 import no.nav.syfo.domain.OppgaveResultat
 import no.nav.syfo.helpers.retry
 import java.time.LocalDate
@@ -22,6 +21,7 @@ import org.springframework.stereotype.Component
 import io.ktor.client.engine.apache.Apache
 import no.nav.syfo.config.OppgaveConfig
 import no.nav.syfo.util.MDCOperations
+import java.time.DayOfWeek
 
 
 @Component
@@ -106,16 +106,16 @@ class OppgaveClient constructor (
         val opprettOppgaveRequest = OpprettOppgaveRequest(
             tildeltEnhetsnr = tildeltEnhetsnr,
             aktoerId = aktoerId,
-            opprettetAvEnhetsnr = "9999",
             journalpostId = journalpostId,
             behandlesAvApplikasjon = "FS22",
             saksreferanse = sakId,
-            beskrivelse = "Papirsykmelding som må legges inn i infotrygd manuelt",
-            tema = "SYM",
-            oppgavetype = "JFR",
+            beskrivelse = "Det har kommet en inntektsmelding på sykepenger.",
+            tema = "SYK",
+            oppgavetype = "INNT",
             behandlingstype = behandlingstype,
+            behandlingstema = "ab0061",
             aktivDato = LocalDate.now(),
-            fristFerdigstillelse = LocalDate.now().plusDays(1),
+            fristFerdigstillelse = leggTilEnVirkedag(LocalDate.now()),
             prioritet = "NORM"
         )
         log.info("Oppretter journalføringsoppgave på enhet $tildeltEnhetsnr")
@@ -142,34 +142,41 @@ class OppgaveClient constructor (
         }
         val opprettOppgaveRequest = OpprettOppgaveRequest(
             tildeltEnhetsnr = tildeltEnhetsnr,
-            opprettetAvEnhetsnr = "9999",
             journalpostId = journalpostId,
             behandlesAvApplikasjon = "FS22",
-            beskrivelse = "Fordelingsoppgave for mottatt papirsykmelding som må legges inn i infotrygd manuelt",
-            tema = "SYM",
+            beskrivelse = "Fordelingsoppgave for inntektsmelding på sykepenger",
+            tema = "SYK",
             oppgavetype = "FDR",
             behandlingstype = behandlingstype,
             aktivDato = LocalDate.now(),
-            fristFerdigstillelse = LocalDate.now().plusDays(1),
+            fristFerdigstillelse = leggTilEnVirkedag(LocalDate.now()),
             prioritet = "NORM"
         )
         log.info("Oppretter fordelingsoppgave på enhet $tildeltEnhetsnr")
         return OppgaveResultat(opprettOppgave(opprettOppgaveRequest).id, false)
     }
+
+    fun leggTilEnVirkedag(dato : LocalDate) : LocalDate {
+        return when (dato.dayOfWeek) {
+            DayOfWeek.FRIDAY -> dato.plusDays(3)
+            DayOfWeek.SATURDAY -> dato.plusDays(3)
+            DayOfWeek.SUNDAY -> dato.plusDays(2)
+            else -> dato.plusDays(1)
+        }
+    }
 }
 
 data class OpprettOppgaveRequest(
         val tildeltEnhetsnr: String? = null,
-        val opprettetAvEnhetsnr: String? = null,
         val aktoerId: String? = null,
         val journalpostId: String? = null,
         val behandlesAvApplikasjon: String? = null,
         val saksreferanse: String? = null,
-        val tilordnetRessurs: String? = null,
         val beskrivelse: String? = null,
         val tema: String? = null,
         val oppgavetype: String,
         val behandlingstype: String? = null,
+        val behandlingstema: String? = null,
         val aktivDato: LocalDate,
         val fristFerdigstillelse: LocalDate? = null,
         val prioritet: String

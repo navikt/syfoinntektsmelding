@@ -18,12 +18,18 @@ import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.config.OppgaveConfig
 import org.assertj.core.api.Assertions.assertThat
+import java.time.LocalDate
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.junit.MockitoJUnitRunner
+import java.time.DayOfWeek
+import java.time.Month
+
+private const val OPPGAVE_ID = 1234
+private const val FORDELINGSOPPGAVE_ID = 5678
 
 @RunWith(MockitoJUnitRunner::class)
 class OppgaveClientTest {
@@ -36,9 +42,6 @@ class OppgaveClientTest {
 
     @KtorExperimentalAPI
     private lateinit var oppgaveClient: OppgaveClient
-
-    private val eksisterendeOppgaveId = 1234
-    private val eksisterendeFordelingsOppgaveId = 5678
 
     @Before
     @KtorExperimentalAPI
@@ -56,7 +59,7 @@ class OppgaveClientTest {
 
             val resultat = oppgaveClient.opprettOppgave("sakId", "123", "tildeltEnhet", "aktoerid", false)
 
-            assertThat(resultat.oppgaveId).isEqualTo(eksisterendeOppgaveId)
+            assertThat(resultat.oppgaveId).isEqualTo(OPPGAVE_ID)
             assertThat(resultat.duplikat).isTrue()
         }
     }
@@ -71,10 +74,10 @@ class OppgaveClientTest {
             val resultat = oppgaveClient.opprettOppgave("sakId", "123", "tildeltEnhet", "aktoerid", false)
             val requestVerdier = hentRequestInnhold(client)
 
-            assertThat(resultat.oppgaveId).isNotEqualTo(eksisterendeOppgaveId)
+            assertThat(resultat.oppgaveId).isNotEqualTo(OPPGAVE_ID)
             assertThat(resultat.duplikat).isFalse()
             assertThat(requestVerdier?.journalpostId).isEqualTo("123")
-            assertThat(requestVerdier?.oppgavetype).isEqualTo("JFR")
+            assertThat(requestVerdier?.oppgavetype).isEqualTo("INNT")
             assertThat(requestVerdier?.behandlingstype).isNull()
         }
     }
@@ -89,7 +92,7 @@ class OppgaveClientTest {
         val resultat = oppgaveClient.opprettFordelingsOppgave("journalpostId", "1", false)
         val requestVerdier = hentRequestInnhold(client)
 
-        assertThat(resultat.oppgaveId).isNotEqualTo(eksisterendeFordelingsOppgaveId)
+        assertThat(resultat.oppgaveId).isNotEqualTo(FORDELINGSOPPGAVE_ID)
         assertThat(resultat.duplikat).isFalse()
         assertThat(requestVerdier?.oppgavetype).isEqualTo("FDR")
         assertThat(requestVerdier?.behandlingstype).isNull()
@@ -105,7 +108,7 @@ class OppgaveClientTest {
 
         val resultat = oppgaveClient.opprettFordelingsOppgave("journalpostId", "1", false)
 
-        assertThat(resultat.oppgaveId).isEqualTo(eksisterendeFordelingsOppgaveId)
+        assertThat(resultat.oppgaveId).isEqualTo(FORDELINGSOPPGAVE_ID)
         assertThat(resultat.duplikat).isTrue()
         }
     }
@@ -122,6 +125,20 @@ class OppgaveClientTest {
 
         assertThat(requestVerdier?.behandlingstype).isEqualTo("ae0106")
         }
+    }
+
+    @Test
+    @KtorExperimentalAPI
+    fun henterRiktigFerdigstillelsesFrist() {
+        val onsdag = LocalDate.of(2019, Month.NOVEMBER, 27)
+        val fredag = LocalDate.of(2019, Month.NOVEMBER, 29)
+        val lørdag =  LocalDate.of(2019, Month.NOVEMBER, 30)
+        val søndag =  LocalDate.of(2019, Month.DECEMBER, 1)
+
+        assertThat(oppgaveClient.leggTilEnVirkedag(onsdag).dayOfWeek).isEqualTo(DayOfWeek.THURSDAY)
+        assertThat(oppgaveClient.leggTilEnVirkedag(fredag).dayOfWeek).isEqualTo(DayOfWeek.MONDAY)
+        assertThat(oppgaveClient.leggTilEnVirkedag(lørdag).dayOfWeek).isEqualTo(DayOfWeek.TUESDAY)
+        assertThat(oppgaveClient.leggTilEnVirkedag(søndag).dayOfWeek).isEqualTo(DayOfWeek.TUESDAY)
     }
 
     private fun hentRequestInnhold(client: HttpClient): OpprettOppgaveRequest? {
@@ -182,19 +199,19 @@ class OppgaveClientTest {
 
     private fun lagOppgave(): Oppgave {
         return Oppgave(
-            id = eksisterendeOppgaveId,
+            id = OPPGAVE_ID,
             tildeltEnhetsnr = "22",
             aktoerId = "aktoerId",
             journalpostId = "journalpostId",
             saksreferanse = "saksreferanse",
             tema = "tema",
-            oppgavetype = "JFR"
+            oppgavetype = "INNT"
         )
     }
 
     private fun lagFordelingsOppgave(): Oppgave {
         return Oppgave(
-            id = eksisterendeFordelingsOppgaveId,
+            id = FORDELINGSOPPGAVE_ID,
             tildeltEnhetsnr = "1",
             aktoerId = null,
             journalpostId = "journalpostId",
