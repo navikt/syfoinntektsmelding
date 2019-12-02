@@ -1,6 +1,6 @@
 package no.nav.syfo.config;
 
-import no.nav.syfo.LocalApplication;
+import no.nav.syfo.test.LocalApplication;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;

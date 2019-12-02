@@ -79,4 +79,9 @@ public class Metrikk {
         registry
                 .counter("syfoinntektsmelding_inntektsmelding_lagt_pa_topic").increment();
     }
+
+    public void tellInntektsmeldingUtenArkivReferanse() {
+        registry
+            .counter("syfoinntektsmelding_inntektsmelding_uten_arkivreferanse").increment();
+    }
 }

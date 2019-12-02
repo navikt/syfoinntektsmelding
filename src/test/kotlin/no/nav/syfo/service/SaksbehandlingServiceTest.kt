@@ -9,7 +9,7 @@ import no.nav.syfo.consumer.rest.aktor.AktorConsumer
 import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
 import no.nav.syfo.domain.*
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
-import no.nav.syfo.repository.InntektsmeldingDAO
+import no.nav.syfo.repository.InntektsmeldingService
 import no.nav.syfo.util.Metrikk
 import no.nav.tjeneste.virksomhet.aktoer.v2.HentAktoerIdForIdentPersonIkkeFunnet
 import org.assertj.core.api.Assertions.assertThat
@@ -40,7 +40,7 @@ class SaksbehandlingServiceTest {
     @Mock
     private lateinit var aktoridConsumer: AktorConsumer
     @Mock
-    private lateinit var inntektsmeldingDAO: InntektsmeldingDAO
+    private lateinit var inntektsmeldingService: InntektsmeldingService
     @Mock
     private lateinit var eksisterendeSakService: EksisterendeSakService
     @Mock
@@ -54,7 +54,7 @@ class SaksbehandlingServiceTest {
     @io.ktor.util.KtorExperimentalAPI
     @Before
     fun setup() {
-        `when`(inntektsmeldingDAO.finnBehandledeInntektsmeldinger(any())).thenReturn(emptyList())
+        `when`(inntektsmeldingService.finnBehandledeInntektsmeldinger(any())).thenReturn(emptyList())
         `when`(aktoridConsumer.getAktorId(anyString())).thenReturn("aktorid")
         `when`(behandlendeEnhetConsumer.hentBehandlendeEnhet(anyString())).thenReturn("behandlendeenhet1234")
         given(eksisterendeSakService.finnEksisterendeSak(any(), any(), any())).willReturn("saksId")
@@ -65,13 +65,12 @@ class SaksbehandlingServiceTest {
     private fun lagInntektsmelding(): Inntektsmelding {
         return Inntektsmelding(
                 id = "ID",
-                arkivRefereranse = "AR",
-                journalStatus = JournalStatus.MIDLERTIDIG,
                 fnr = "fnr",
                 arbeidsgiverOrgnummer = "orgnummer",
-                journalpostId = "journalpostId",
                 arbeidsforholdId = null,
+                journalpostId = "journalpostId",
                 arsakTilInnsending = "Ny",
+                journalStatus = JournalStatus.MIDLERTIDIG,
                 arbeidsgiverperioder = listOf(
                         Periode(
                                 fom = LocalDate.of(2019, 1, 4),
@@ -79,13 +78,14 @@ class SaksbehandlingServiceTest {
                         )
                 ),
                 førsteFraværsdag = LocalDate.now(),
-                mottattDato = LocalDateTime.now()
+                mottattDato = LocalDateTime.now(),
+                arkivRefereranse = "ar123"
         )
     }
 
     @Test
     fun returnererSaksIdOmSakFinnes() {
-        val saksId = saksbehandlingService.behandleInntektsmelding(lagInntektsmelding(), "aktorId")
+        val saksId = saksbehandlingService.behandleInntektsmelding(lagInntektsmelding(), "aktorId", anyString())
 
         assertThat(saksId).isEqualTo("saksId")
     }
@@ -94,7 +94,7 @@ class SaksbehandlingServiceTest {
     fun oppretterSakOmSakIkkeFinnes() {
         given(eksisterendeSakService.finnEksisterendeSak(anyString(), any(), any())).willReturn(null)
 
-        val saksId = saksbehandlingService.behandleInntektsmelding(lagInntektsmelding(), "aktorId")
+        val saksId = saksbehandlingService.behandleInntektsmelding(lagInntektsmelding(), "aktorId", anyString())
 
         assertThat(saksId).isEqualTo("987")
     }
@@ -102,7 +102,7 @@ class SaksbehandlingServiceTest {
     @io.ktor.util.KtorExperimentalAPI
     @Test
     fun oppretterOppgaveForSak() {
-        saksbehandlingService.behandleInntektsmelding(lagInntektsmelding(), "aktorId")
+        saksbehandlingService.behandleInntektsmelding(lagInntektsmelding(), "aktorId", anyString())
 
         runBlocking {
             verify<OppgaveClient>(oppgaveClient).opprettOppgave(
@@ -120,14 +120,14 @@ class SaksbehandlingServiceTest {
     fun test() {
         `when`(aktoridConsumer.getAktorId(anyString())).thenThrow(HentAktoerIdForIdentPersonIkkeFunnet::class.java)
 
-        saksbehandlingService.behandleInntektsmelding(lagInntektsmelding(), "aktorId")
+        saksbehandlingService.behandleInntektsmelding(lagInntektsmelding(), "aktorId", anyString())
     }
 
     @Test
     fun girNyInntektsmeldingEksisterendeSakIdOmTomOverlapper() {
-        `when`(inntektsmeldingDAO.finnBehandledeInntektsmeldinger("aktorId")).thenReturn(
+        `when`(inntektsmeldingService.finnBehandledeInntektsmeldinger("aktorId")).thenReturn(
                 listOf(
-                        InntektsmeldingMeta(
+                        lagInntektsmelding2(
                                 aktorId = "aktorId",
                                 journalpostId = "id",
                                 sakId = "1",
@@ -141,18 +141,36 @@ class SaksbehandlingServiceTest {
                 )
         )
 
-        val sakId = saksbehandlingService.behandleInntektsmelding(lagInntektsmelding(), "aktorId")
+        val sakId = saksbehandlingService.behandleInntektsmelding(lagInntektsmelding(), "aktorId", anyString())
         assertThat(sakId).isEqualTo("1")
         runBlocking {
             verify<SakClient>(sakClient, never()).opprettSak(ArgumentMatchers.anyString(), ArgumentMatchers.anyString())
         }
     }
 
+    private fun lagInntektsmelding2(aktorId: String, journalpostId: String, sakId: String, arbeidsgiverperioder: List<Periode>): Inntektsmelding {
+        return Inntektsmelding(
+                aktorId = aktorId,
+                id = "ID",
+                fnr = "fnr",
+                arbeidsgiverOrgnummer = "orgnummer",
+                arbeidsforholdId = null,
+                journalpostId = journalpostId,
+                arsakTilInnsending = "Ny",
+                sakId = sakId,
+                arbeidsgiverperioder = arbeidsgiverperioder,
+                arkivRefereranse = "AR",
+                mottattDato = LocalDate.of(2019, 2, 6).atStartOfDay(),
+                journalStatus = JournalStatus.MIDLERTIDIG,
+                førsteFraværsdag = LocalDate.now()
+        )
+    }
+
     @Test
     fun girNyInntektsmeldingEksisterendeSakIdOmFomOverlapper() {
-        `when`(inntektsmeldingDAO.finnBehandledeInntektsmeldinger("aktorId")).thenReturn(
+        `when`(inntektsmeldingService.finnBehandledeInntektsmeldinger("aktorId")).thenReturn(
                 listOf(
-                        InntektsmeldingMeta(
+                        lagInntektsmelding2(
                                 aktorId = "aktorId",
                                 journalpostId = "journalPostId",
                                 sakId = "1",
@@ -166,7 +184,7 @@ class SaksbehandlingServiceTest {
                 )
         )
 
-        val sakId = saksbehandlingService.behandleInntektsmelding(lagInntektsmelding(), "aktorId")
+        val sakId = saksbehandlingService.behandleInntektsmelding(lagInntektsmelding(), "aktorId", anyString())
         assertThat(sakId).isEqualTo("1")
         runBlocking {
             verify<SakClient>(sakClient, never()).opprettSak(ArgumentMatchers.anyString(), ArgumentMatchers.anyString())
@@ -175,9 +193,9 @@ class SaksbehandlingServiceTest {
 
     @Test
     fun girNyInntektsmeldingEksisterendeSakIdOmFomOgTomOverlapper() {
-        `when`(inntektsmeldingDAO.finnBehandledeInntektsmeldinger("aktorId")).thenReturn(
+        `when`(inntektsmeldingService.finnBehandledeInntektsmeldinger("aktorId")).thenReturn(
                 listOf(
-                        InntektsmeldingMeta(
+                        lagInntektsmelding2(
                                 aktorId = "aktorId",
                                 journalpostId = "journalPostId",
                                 sakId = "1",
@@ -191,7 +209,7 @@ class SaksbehandlingServiceTest {
                 )
         )
 
-        val sakId = saksbehandlingService.behandleInntektsmelding(lagInntektsmelding(), "aktorId")
+        val sakId = saksbehandlingService.behandleInntektsmelding(lagInntektsmelding(), "aktorId", anyString())
         assertThat(sakId).isEqualTo("1")
         runBlocking {
             verify<SakClient>(sakClient, never()).opprettSak(ArgumentMatchers.anyString(), ArgumentMatchers.anyString())
@@ -210,7 +228,7 @@ class SaksbehandlingServiceTest {
                                         )
                                 )
                         ), "aktor"
-        )
+                , anyString())
         verify(eksisterendeSakService).finnEksisterendeSak("aktor", LocalDate.of(2019, 6, 6), LocalDate.of(2019, 6, 10))
     }
 
@@ -233,7 +251,7 @@ class SaksbehandlingServiceTest {
                                                 tom = LocalDate.of(2019, 6, 14)
                                         )
                                 )
-                        ), "aktor"
+                        ), "aktor", anyString()
         )
         verify(eksisterendeSakService).finnEksisterendeSak("aktor", LocalDate.of(2019, 6, 1), LocalDate.of(2019, 6, 14))
     }

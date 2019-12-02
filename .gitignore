@@ -11,3 +11,4 @@ target
 /syfoinntektsmelding.iws
 out/
 gradle.properties
+.DS_Store
