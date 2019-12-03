@@ -29,6 +29,7 @@ data class Inntektsmelding(
         val førsteFraværsdag: LocalDate?,
         val mottattDato: LocalDateTime,
         var sakId: String? = null,
-        var aktorId: String? = null
+        var aktorId: String? = null,
+        val begrunnelseRedusert: String = "INGEN"
 )
 

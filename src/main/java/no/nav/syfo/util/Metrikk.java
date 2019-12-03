@@ -84,4 +84,25 @@ public class Metrikk {
         registry
             .counter("syfoinntektsmelding_inntektsmelding_uten_arkivreferanse").increment();
     }
+
+    public void tellInntektsmeldingerRedusertEllerIngenUtbetaling(String begrunnelse) {
+        registry.counter("syfoinntektsmelding_redusert_eller_ingen_utbetaling", Tags.of("type", "info", "begrunnelse", begrunnelse)).increment();
+    }
+
+    public void tellArbeidsgiverperioder(String antall){
+        registry
+            .counter("syfoinntektsmelding_arbeidsgiverperioder", Tags.of("antall", antall)).increment();
+    }
+
+    public void tellKreverRefusjon(String beløp){
+        registry
+            .counter("syfoinntektsmelding_arbeidsgiver_krever_refusjon", Tags.of("beloep", beløp)).increment();
+    }
+
+    public void tellNaturalytelse(){
+        registry
+            .counter("syfoinntektsmelding_faar_naturalytelse").increment();
+    }
+
+
 }
