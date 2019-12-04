@@ -23,14 +23,12 @@ public class Metrikk {
     }
 
     public void tellInntektsmeldingerMottatt(Inntektsmelding inntektsmelding) {
-        String arbeidsforhold = inntektsmelding.getArbeidsforholdId() == null
-            ? "N"
-            : "J";
+        boolean harArbeidsforholdId = inntektsmelding.getArbeidsforholdId() != null;
         registry.counter(
             "syfoinntektsmelding_inntektsmeldinger_mottatt",
             Tags.of(
                 "type", "info",
-                "arbeidsforhold", arbeidsforhold,
+                "harArbeidsforholdId", harArbeidsforholdId ? "J" : "N",
                 "arsakTilSending", inntektsmelding.getArsakTilInnsending()
             ))
             .increment();
