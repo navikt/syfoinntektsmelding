@@ -23,17 +23,15 @@ public class Metrikk {
     }
 
     public void tellInntektsmeldingerMottatt(Inntektsmelding inntektsmelding) {
-        String arbeidsforholdId = inntektsmelding.getArbeidsforholdId() == null
-                ? "null"
-                : inntektsmelding.getArbeidsforholdId();
+        boolean harArbeidsforholdId = inntektsmelding.getArbeidsforholdId() != null;
         registry.counter(
-                "syfoinntektsmelding_inntektsmeldinger_mottatt",
-                Tags.of(
-                        "type", "info",
-                        "arbeidsforholdId", arbeidsforholdId,
-                        "arsakTilSending", inntektsmelding.getArsakTilInnsending()
-                ))
-                .increment();
+            "syfoinntektsmelding_inntektsmeldinger_mottatt",
+            Tags.of(
+                "type", "info",
+                "harArbeidsforholdId", harArbeidsforholdId ? "J" : "N",
+                "arsakTilSending", inntektsmelding.getArsakTilInnsending()
+            ))
+            .increment();
     }
 
     public void tellInntektsmeldingerJournalfort() {
@@ -42,22 +40,22 @@ public class Metrikk {
 
     public void tellOverlappendeInntektsmelding() {
         registry.counter("syfoinntektsmelding_inntektsmeldinger_kobling", Tags.of(
-                "type", "info",
-                "kobling", OVERLAPPENDE
+            "type", "info",
+            "kobling", OVERLAPPENDE
         )).increment();
     }
 
     public void tellInntektsmeldingSaksIdFraSyfo() {
         registry.counter("syfoinntektsmelding_inntektsmeldinger_kobling", Tags.of(
-                "type", "info",
-                "kobling", SAK_FRA_SYFO
+            "type", "info",
+            "kobling", SAK_FRA_SYFO
         )).increment();
     }
 
     public void tellInntektsmeldingNySak() {
         registry.counter("syfoinntektsmelding_inntektsmeldinger_kobling", Tags.of(
-                "type", "info",
-                "kobling", NY_SAK
+            "type", "info",
+            "kobling", NY_SAK
         )).increment();
     }
 
@@ -71,13 +69,13 @@ public class Metrikk {
 
     public void tellJournalpoststatus(JournalStatus status) {
         registry
-                .counter("syfoinntektsmelding_journalpost", Tags.of("type", "info", "status", status.name()))
-                .increment();
+            .counter("syfoinntektsmelding_journalpost", Tags.of("type", "info", "status", status.name()))
+            .increment();
     }
 
     public void tellInntektsmeldingLagtPåTopic() {
         registry
-                .counter("syfoinntektsmelding_inntektsmelding_lagt_pa_topic").increment();
+            .counter("syfoinntektsmelding_inntektsmelding_lagt_pa_topic").increment();
     }
 
     public void tellInntektsmeldingUtenArkivReferanse() {
@@ -89,20 +87,22 @@ public class Metrikk {
         registry.counter("syfoinntektsmelding_redusert_eller_ingen_utbetaling", Tags.of("type", "info", "begrunnelse", begrunnelse)).increment();
     }
 
-    public void tellArbeidsgiverperioder(String antall){
+    public void tellArbeidsgiverperioder(String antall) {
         registry
             .counter("syfoinntektsmelding_arbeidsgiverperioder", Tags.of("antall", antall)).increment();
     }
 
-    public void tellKreverRefusjon(String beløp){
+    public void tellKreverRefusjon(int beløp) {
+        if (beløp <= 0)
+            return;
         registry
-            .counter("syfoinntektsmelding_arbeidsgiver_krever_refusjon", Tags.of("beloep", beløp)).increment();
+            .counter("syfoinntektsmelding_arbeidsgiver_krever_refusjon").increment();
+        registry
+            .counter("syfoinntektsmelding_arbeidsgiver_krever_refusjon_beloep").increment(beløp / 1000); // Teller beløpet i antall tusener for å unngå overflow
     }
 
-    public void tellNaturalytelse(){
+    public void tellNaturalytelse() {
         registry
             .counter("syfoinntektsmelding_faar_naturalytelse").increment();
     }
-
-
 }
