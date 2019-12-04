@@ -1,7 +1,7 @@
 package no.nav.syfo.behandling
 
-import log
 import com.google.common.util.concurrent.Striped
+import log
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
@@ -76,7 +76,7 @@ class InntektsmeldingBehandler(
     private fun tellMetrikker(inntektsmelding: Inntektsmelding) {
         metrikk.tellJournalpoststatus(inntektsmelding.journalStatus)
         metrikk.tellInntektsmeldingerRedusertEllerIngenUtbetaling(inntektsmelding.begrunnelseRedusert)
-        metrikk.tellKreverRefusjon(inntektsmelding.refusjon.beloepPrMnd.toString())
+        metrikk.tellKreverRefusjon(inntektsmelding.refusjon.beloepPrMnd?.toInt() ?: 0)
         metrikk.tellArbeidsgiverperioder(inntektsmelding.arbeidsgiverperioder.size.toString())
 
         if (inntektsmelding.opphørAvNaturalYtelse.isEmpty())
