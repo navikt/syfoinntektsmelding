@@ -21,13 +21,15 @@ import org.springframework.stereotype.Component
 import io.ktor.client.engine.apache.Apache
 import no.nav.syfo.config.OppgaveConfig
 import no.nav.syfo.util.MDCOperations
+import no.nav.syfo.util.Metrikk
 import java.time.DayOfWeek
 
 
 @Component
 class OppgaveClient constructor (
         val config: OppgaveConfig,
-        val tokenConsumer: TokenConsumer
+        val tokenConsumer: TokenConsumer,
+        val metrikk: Metrikk
 ) {
 
     private val log = log()
@@ -90,7 +92,7 @@ class OppgaveClient constructor (
         gjelderUtland: Boolean
     ): OppgaveResultat {
         val eksisterendeOppgave = hentHvisOppgaveFinnes("JFR", journalpostId)
-
+        metrikk.tellOpprettOppgave(eksisterendeOppgave != null)
         if (eksisterendeOppgave != null) {
             log.info("Det finnes allerede journalføringsoppgave for journalpost $journalpostId")
             return eksisterendeOppgave

@@ -105,4 +105,10 @@ public class Metrikk {
         registry
             .counter("syfoinntektsmelding_faar_naturalytelse").increment();
     }
+
+    public void tellOpprettOppgave(boolean eksisterer) {
+        registry
+            .counter("syfoinntektsmelding_opprett_oppgave", Tags.of("eksisterer", eksisterer ? "J" : "N")).increment();
+    }
+
 }

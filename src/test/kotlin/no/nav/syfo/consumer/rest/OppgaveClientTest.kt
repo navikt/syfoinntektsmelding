@@ -17,6 +17,7 @@ import io.ktor.http.headersOf
 import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.config.OppgaveConfig
+import no.nav.syfo.util.Metrikk
 import org.assertj.core.api.Assertions.assertThat
 import java.time.LocalDate
 import org.junit.Before
@@ -40,6 +41,9 @@ class OppgaveClientTest {
     @Mock
     private lateinit var tokenConsumer: TokenConsumer
 
+    @Mock
+    private lateinit var metrikk: Metrikk
+
     @KtorExperimentalAPI
     private lateinit var oppgaveClient: OppgaveClient
 
@@ -47,7 +51,7 @@ class OppgaveClientTest {
     @KtorExperimentalAPI
     fun setUp() {
         `when`(oppgaveConfig.url).thenReturn("url")
-        oppgaveClient = OppgaveClient(oppgaveConfig, tokenConsumer)
+        oppgaveClient = OppgaveClient(oppgaveConfig, tokenConsumer, metrikk)
     }
 
     @Test
