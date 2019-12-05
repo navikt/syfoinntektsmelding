@@ -163,10 +163,9 @@ class OppgaveClient constructor (
 
     fun leggTilEnVirkedag(dato : LocalDate) : LocalDate {
         return when (dato.dayOfWeek) {
-            DayOfWeek.FRIDAY -> dato.plusDays(3)
-            DayOfWeek.SATURDAY -> dato.plusDays(3)
-            DayOfWeek.SUNDAY -> dato.plusDays(2)
-            else -> dato.plusDays(1)
+            DayOfWeek.SATURDAY -> dato.plusDays(9)
+            DayOfWeek.SUNDAY -> dato.plusDays(8)
+            else -> dato.plusDays(7)
         }
     }
 }
