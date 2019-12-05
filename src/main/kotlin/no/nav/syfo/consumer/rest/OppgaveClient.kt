@@ -98,11 +98,14 @@ class OppgaveClient constructor (
             return eksisterendeOppgave
         }
 
-        val behandlingstype = if (gjelderUtland) {
+        var behandlingstype: String? = null
+        var behandlingstema: String? = null
+
+        if (gjelderUtland) {
             log.info("Gjelder utland")
-            "ae0106"
+            behandlingstype = "ae0106"
         } else {
-            null
+            behandlingstema = "ab0061"
         }
 
         val opprettOppgaveRequest = OpprettOppgaveRequest(
@@ -115,7 +118,7 @@ class OppgaveClient constructor (
             tema = "SYK",
             oppgavetype = "INNT",
             behandlingstype = behandlingstype,
-            behandlingstema = "ab0061",
+            behandlingstema = behandlingstema,
             aktivDato = LocalDate.now(),
             fristFerdigstillelse = leggTilEnVirkedag(LocalDate.now()),
             prioritet = "NORM"
