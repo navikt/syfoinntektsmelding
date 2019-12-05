@@ -45,6 +45,7 @@ class InntektsmeldingConsumer(
             throw RuntimeException("Feil ved lesing av melding", e)
         } catch (e: Exception) {
             log.error("Det skjedde en feil ved journalføring", e)
+            log.error(e.message)
             metrikk.tellInntektsmeldingfeil()
             throw RuntimeException("Det skjedde en feil ved journalføring", e)
         } finally {
