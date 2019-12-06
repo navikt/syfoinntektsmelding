@@ -111,4 +111,15 @@ public class Metrikk {
             .counter("syfoinntektsmelding_opprett_oppgave", Tags.of("eksisterer", eksisterer ? "J" : "N")).increment();
     }
 
+    public void tellMigreringInntektsmelding() {
+        registry
+            .counter("syfoinntektsmelding_migrering_inntektsmelding").increment();
+    }
+
+    public void tellMigreringArbeidsgiverperioder() {
+        registry
+            .counter("syfoinntektsmelding_migrering_arbeidsgiverperiode").increment();
+    }
+
+
 }
