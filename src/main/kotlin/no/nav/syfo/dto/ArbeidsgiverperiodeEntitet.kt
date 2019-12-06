@@ -10,7 +10,7 @@ data class ArbeidsgiverperiodeEntitet (
 
     @Id
     @Column(name = "PERIODE_UUID", nullable = false, length = 100, updatable = false)
-    val uuid: UUID = UUID.randomUUID(),
+    var uuid: String = UUID.randomUUID().toString(),
 
     @ManyToOne
     @JoinColumn(name="INNTEKTSMELDING_UUID", nullable=false)
