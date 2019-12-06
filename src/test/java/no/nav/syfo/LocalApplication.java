@@ -1,4 +1,4 @@
-package no.nav.syfo.test;
+package no.nav.syfo;
 
 import lombok.extern.slf4j.*;
 import org.h2.tools.*;
@@ -18,7 +18,7 @@ public class LocalApplication {
     }
 
     @Bean
-    @Profile("local")
+    @Profile({"local", "it"})
     public Server server() {
         try {
             return Server.createTcpServer("-tcp", "-tcpAllowOthers", "-tcpPort", "8081").start();

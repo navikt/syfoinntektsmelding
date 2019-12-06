@@ -21,12 +21,12 @@ class InntektsmeldingConsumer(
 ) {
     private val log = log()
 
-//    @Transactional(transactionManager = "jmsTransactionManager")
-//    @JmsListener(
-//            id = "inntektsmelding_listener",
-//            containerFactory = "jmsListenerContainerFactory",
-//            destination = "inntektsmeldingQueue"
-//    )
+    @Transactional(transactionManager = "jmsTransactionManager")
+    @JmsListener(
+            id = "inntektsmelding_listener",
+            containerFactory = "jmsListenerContainerFactory",
+            destination = "inntektsmeldingQueue"
+    )
     fun listen(message: Any) {
         try {
             val textMessage = message as TextMessage

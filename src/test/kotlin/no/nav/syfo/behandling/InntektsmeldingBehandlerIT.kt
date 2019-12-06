@@ -3,6 +3,8 @@ package no.nav.syfo.behandling
 import any
 import eq
 import kotlinx.coroutines.runBlocking
+import no.nav.syfo.CopyDatabase
+import no.nav.syfo.LocalApplication
 import no.nav.syfo.consumer.rest.OppgaveClient
 import no.nav.syfo.consumer.rest.SakClient
 import no.nav.syfo.consumer.rest.SakResponse
@@ -22,7 +24,6 @@ import no.nav.syfo.repository.InntektsmeldingService
 import no.nav.syfo.service.EksisterendeSakService
 import no.nav.syfo.service.JournalpostService
 import no.nav.syfo.service.SaksbehandlingService
-import no.nav.syfo.test.LocalApplication
 import no.nav.syfo.util.Metrikk
 import no.nav.tjeneste.virksomhet.journal.v2.binding.HentDokumentDokumentIkkeFunnet
 import no.nav.tjeneste.virksomhet.journal.v2.binding.HentDokumentSikkerhetsbegrensning
@@ -31,6 +32,7 @@ import no.nav.tjeneste.virksomhet.journal.v2.meldinger.HentDokumentRequest
 import no.nav.tjeneste.virksomhet.journal.v2.meldinger.HentDokumentResponse
 import org.assertj.core.api.Assertions
 import org.junit.Before
+import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers
@@ -42,13 +44,16 @@ import org.mockito.Mockito.verify
 import org.mockito.MockitoAnnotations
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.domain.EntityScan
+import org.springframework.boot.test.autoconfigure.OverrideAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.context.annotation.Profile
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.test.annotation.DirtiesContext
-import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.test.context.web.WebAppConfiguration
 import java.time.LocalDate
 import java.time.ZonedDateTime
 import java.util.*
@@ -58,12 +63,25 @@ import java.util.concurrent.atomic.AtomicInteger
 
 @RunWith(SpringRunner::class)
 @SpringBootTest(classes = [LocalApplication::class])
-@TestPropertySource("classpath:application-test.properties")
+@TestPropertySource(locations = ["classpath:application-it.properties"])
 @DirtiesContext
 @EnableJpaRepositories("no.nav.syfo")
 @EntityScan(basePackages = ["no.nav.syfo.dto"])
-@ActiveProfiles("test")
+@Profile("it")
+@ContextConfiguration(classes = [LocalApplication::class])
+@WebAppConfiguration
+@OverrideAutoConfiguration(enabled = true)
 open class InntektsmeldingBehandlerIT {
+
+    companion object {
+        @BeforeClass
+        @JvmStatic
+        fun beforeClass() {
+            System.setProperty("SECURITYTOKENSERVICE_URL", "joda")
+            System.setProperty("SRVSYFOINNTEKTSMELDING_USERNAME", "joda")
+            System.setProperty("SRVSYFOINNTEKTSMELDING_PASSWORD", "joda")
+        }
+    }
 
     @MockBean
     lateinit var journalV2: JournalV2
@@ -102,9 +120,8 @@ open class InntektsmeldingBehandlerIT {
 
     lateinit var inntektsmeldingBehandler: InntektsmeldingBehandler
 
-    @Before
-    fun init() {
-    }
+    @MockBean
+    lateinit var copyDatabase: CopyDatabase
 
     @Before
     fun setup() {
