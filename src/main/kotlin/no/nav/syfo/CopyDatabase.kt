@@ -7,6 +7,7 @@ import no.nav.migrator.Destination
 import no.nav.migrator.Migrator
 import no.nav.migrator.MigratorListener
 import no.nav.migrator.Source
+import no.nav.syfo.util.Metrikk
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.context.event.ApplicationReadyEvent
@@ -21,6 +22,9 @@ class CopyDatabase(
 
     @Autowired
     lateinit var jdbcTemplate: JdbcTemplate
+
+    @Autowired
+    lateinit var metrikk: Metrikk
 
     val INNTEKTSMELDING = "INNTEKTSMELDING"
     val ARBEIDSGIVERPERIODE = "ARBEIDSGIVERPERIODE"
@@ -90,12 +94,14 @@ class CopyDatabase(
                         log.info("Copied $percent% from $table ($rowIndex / $max)")
                         percentInntektsmelding = percent
                     }
+                    metrikk.tellMigreringInntektsmelding()
                 } else if (table == ARBEIDSGIVERPERIODE){
                     val percent = rowIndex * 100 / max
                     if (percent > percentArbeidsgiverperioder){
                         log.info("Copied $percent% from $table ($rowIndex / $max)")
                         percentArbeidsgiverperioder = percent
                     }
+                    metrikk.tellMigreringArbeidsgiverperioder()
                 }
             }
 
