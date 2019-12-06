@@ -1,5 +1,6 @@
 package no.nav.syfo
 
+import log
 import no.nav.migrator.DataType
 import no.nav.migrator.Database
 import no.nav.migrator.Destination
@@ -8,17 +9,14 @@ import no.nav.migrator.MigratorListener
 import no.nav.migrator.Source
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.context.event.ApplicationReadyEvent
+import org.springframework.context.event.EventListener
 import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.stereotype.Component
+import org.springframework.stereotype.Service
 
-@Component
-class CopyDatabase (
-    @Value("gammel.spring.datasource")
-    val oracleUrl : String,
-    @Value("gammel.spring.datasource.username")
-    val oracleUser: String,
-    @Value("gammel.spring.datasource.password")
-    val oraclePassword: String
+@Service
+class CopyDatabase(
+
 ){
 
     @Autowired
@@ -27,6 +25,16 @@ class CopyDatabase (
     val INNTEKTSMELDING = "INNTEKTSMELDING"
     val ARBEIDSGIVERPERIODE = "ARBEIDSGIVERPERIODE"
 
+    @Value("\${spring.gammel.datasource.url}")
+    lateinit var oracleUrl : String
+    @Value("\${spring.gammel.datasource.username}")
+    lateinit var oracleUser: String
+    @Value("\${spring.gammel.datasource.password}")
+    lateinit var oraclePassword: String
+
+    private val log = log()
+
+    @EventListener(ApplicationReadyEvent::class)
     fun copy(){
         val oracle: Database = Database
             .build()
@@ -72,31 +80,31 @@ class CopyDatabase (
         val migrator = Migrator()
         migrator.addListener(object : MigratorListener {
             override fun starting(table: String, max: Int) {
-                println("Starting copying $max rows from $table")
+                log.info("Starting copying $max rows from $table")
             }
 
             override fun rowCopied(rowIndex: Int, max: Int, table: String) {
                 if (table == INNTEKTSMELDING){
-                    val percent = rowIndex / max
+                    val percent = rowIndex * 100 / max
                     if (percent > percentInntektsmelding){
-                        println("Copied $percent% from $table ($rowIndex / $max)")
+                        log.info("Copied $percent% from $table ($rowIndex / $max)")
                         percentInntektsmelding = percent
                     }
                 } else if (table == ARBEIDSGIVERPERIODE){
-                    val percent = rowIndex / max
+                    val percent = rowIndex * 100 / max
                     if (percent > percentArbeidsgiverperioder){
-                        println("Copied $percent% from $table ($rowIndex / $max)")
+                        log.info("Copied $percent% from $table ($rowIndex / $max)")
                         percentArbeidsgiverperioder = percent
                     }
                 }
             }
 
             override fun finished(table: String) {
-                println("Finished copying from $table")
+                log.info("Finished copying from $table")
             }
 
             override fun failed(table: String, e: Exception) {
-                println("Failed copying from $table")
+                log.info("Failed copying from $table")
             }
         })
         migrator.copyTable(sourceInntektsmelding, destinationInntektsmelding)
