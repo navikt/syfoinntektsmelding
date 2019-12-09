@@ -8,11 +8,11 @@ spring:
         role: syfoinntektsmelding-preprod-admin
         backend: postgresql/preprod-fss
       authentication: KUBERNETES
-      connection-timeout: 5000
-      read-timeout: 15000
-      config:
-        order: -10
-        lifecycle.enabled: true
+#      connection-timeout: 5000
+#      read-timeout: 15000
+#      config:
+#        order: -10
+#        lifecycle.enabled: true
       kubernetes:
         role: syfoinntektsmelding #Should match application_name in terraform nais module
         kubernetes-path: kubernetes/preprod/fss #This path is cluster specific.
