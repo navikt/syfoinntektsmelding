@@ -4,50 +4,52 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.cloud.vault.config.databases.VaultDatabaseProperties;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.vault.core.lease.LeaseEndpoints;
 import org.springframework.vault.core.lease.SecretLeaseContainer;
 import org.springframework.vault.core.lease.domain.RequestedSecret;
 import org.springframework.vault.core.lease.event.SecretLeaseCreatedEvent;
 
+import java.util.Map;
+
+import static org.springframework.vault.core.lease.domain.RequestedSecret.rotating;
+
 @Configuration
-@Profile("remote")
+@ConditionalOnProperty(value = "spring.cloud.vault.database.enabled")
 public class VaultHikariConfig implements InitializingBean {
+    private static final Logger LOGGER = LoggerFactory.getLogger(VaultHikariConfig.class.getName());
     private final SecretLeaseContainer container;
-    private final HikariDataSource hikariDataSource;
+    private final HikariDataSource ds;
+    private final VaultDatabaseProperties props;
 
-    @Value("${vault.postgres.backend}")
-    private String vaultPostgresBackend;
-    @Value("${vault.postgres.role}")
-    private String vaultPostgresRole;
-
-    private static Logger LOGGER = LoggerFactory.getLogger(VaultHikariConfig.class.getName());
-
-    public VaultHikariConfig(SecretLeaseContainer container, HikariDataSource hikariDataSource) {
+    public VaultHikariConfig(SecretLeaseContainer container, HikariDataSource ds,
+                             VaultDatabaseProperties props) {
         this.container = container;
-        this.hikariDataSource = hikariDataSource;
+        this.ds = ds;
+        this.props = props;
     }
 
     @Override
     public void afterPropertiesSet() {
-        //todo Remove when https://github.com/spring-cloud/spring-cloud-vault/issues/333 has been resolved
         container.setLeaseEndpoints(LeaseEndpoints.SysLeases);
-
-        RequestedSecret secret = RequestedSecret.rotating(this.vaultPostgresBackend + "/creds/" + this.vaultPostgresRole);
+        RequestedSecret secret = rotating(props.getBackend() + "/creds/" + props.getRole());
         container.addLeaseListener(leaseEvent -> {
             if (leaseEvent.getSource() == secret && leaseEvent instanceof SecretLeaseCreatedEvent) {
-                LOGGER.info("Rotating creds for path: " + leaseEvent.getSource().getPath());
-                SecretLeaseCreatedEvent slce = (SecretLeaseCreatedEvent) leaseEvent;
-                String username = slce.getSecrets().get("username").toString();
-                String password = slce.getSecrets().get("password").toString();
-                hikariDataSource.setUsername(username);
-                hikariDataSource.setPassword(password);
-                hikariDataSource.getHikariConfigMXBean().setUsername(username);
-                hikariDataSource.getHikariConfigMXBean().setPassword(password);
+                LOGGER.info("Roterer brukernavn/passord for : {}", leaseEvent.getSource().getPath());
+                Map<String, Object> secrets = ((SecretLeaseCreatedEvent) leaseEvent).getSecrets();
+                String username = secrets.get("username").toString();
+                String password = secrets.get("password").toString();
+                ds.setUsername(username);
+                ds.setPassword(password);
             }
         });
         container.addRequestedSecret(secret);
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + " [container=" + container + ", ds=" + ds + ", props=" + props + "]";
     }
 }
