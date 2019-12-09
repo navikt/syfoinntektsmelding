@@ -33,6 +33,7 @@ public class VaultHikariConfig implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
+        LOGGER.info("afterPropertiesSet: " + props.getBackend() + "/creds/" + props.getRole() );
         container.setLeaseEndpoints(LeaseEndpoints.SysLeases);
         RequestedSecret secret = rotating(props.getBackend() + "/creds/" + props.getRole());
         container.addLeaseListener(leaseEvent -> {
