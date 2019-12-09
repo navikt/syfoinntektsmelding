@@ -7,7 +7,7 @@ spring:
         enabled: true
         role: syfoinntektsmelding-preprod-admin
         backend: postgresql/preprod-fss
-      authentication: kubernetes
+      authentication: KUBERNETES
 #      connection-timeout: 5000
 #      read-timeout: 15000
 #      config:
