@@ -5,7 +5,7 @@ spring:
       uri: https://vault.adeo.no
       database:
         enabled: true
-        role: syfoinntektsmelding-preprod-admin
+        role: syfoinntektsmelding-admin
         backend: postgresql/preprod-fss
       authentication: KUBERNETES
 #      connection-timeout: 5000
