@@ -1,6 +1,7 @@
 .idea
 *.iml
 application-local.properties
+application-local.yaml
 transaction-logs
 target
 .gradle
