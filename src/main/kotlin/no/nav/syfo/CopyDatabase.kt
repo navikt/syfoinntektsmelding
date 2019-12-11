@@ -43,7 +43,7 @@ class CopyDatabase(
         val oracle: Database = Database
             .build()
             .url(oracleUrl)
-            .driver("oracle.jdbc.driver.OracleDriver")
+            .driver("oracle.jdbc.OracleDriver")
             .username(oracleUser)
             .password(oraclePassword)
 
