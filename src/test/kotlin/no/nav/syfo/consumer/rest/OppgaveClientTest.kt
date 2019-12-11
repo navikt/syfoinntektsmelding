@@ -139,10 +139,10 @@ class OppgaveClientTest {
         val lørdag =  LocalDate.of(2019, Month.NOVEMBER, 30)
         val søndag =  LocalDate.of(2019, Month.DECEMBER, 1)
 
-        assertThat(oppgaveClient.leggTilEnVirkedag(onsdag).dayOfWeek).isEqualTo(DayOfWeek.WEDNESDAY)
-        assertThat(oppgaveClient.leggTilEnVirkedag(fredag).dayOfWeek).isEqualTo(DayOfWeek.FRIDAY)
-        assertThat(oppgaveClient.leggTilEnVirkedag(lørdag).dayOfWeek).isEqualTo(DayOfWeek.MONDAY)
-        assertThat(oppgaveClient.leggTilEnVirkedag(søndag).dayOfWeek).isEqualTo(DayOfWeek.MONDAY)
+        assertThat(oppgaveClient.leggTilEnVirkeuke(onsdag).dayOfWeek).isEqualTo(DayOfWeek.WEDNESDAY)
+        assertThat(oppgaveClient.leggTilEnVirkeuke(fredag).dayOfWeek).isEqualTo(DayOfWeek.FRIDAY)
+        assertThat(oppgaveClient.leggTilEnVirkeuke(lørdag).dayOfWeek).isEqualTo(DayOfWeek.MONDAY)
+        assertThat(oppgaveClient.leggTilEnVirkeuke(søndag).dayOfWeek).isEqualTo(DayOfWeek.MONDAY)
     }
 
     private fun hentRequestInnhold(client: HttpClient): OpprettOppgaveRequest? {
