@@ -12,10 +12,6 @@
     "cpuThresholdPercentage": 90,
     "env": [
       {
-        "name": "SPRING.CLOUD.BOOTSTRAP.NAME",
-        "value": "bootstrap-preprod"
-      },
-      {
         "name": "LOADBALANCER_FQDN",
         "value": "syfoinntektsmelding.nais.preprod.local"
       },
