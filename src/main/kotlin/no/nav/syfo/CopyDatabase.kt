@@ -93,15 +93,15 @@ class CopyDatabase(
                     if (percent > percentInntektsmelding){
                         log.info("Copied $percent% from $table ($rowIndex / $max)")
                         percentInntektsmelding = percent
+                        metrikk.tellMigreringInntektsmelding()
                     }
-                    metrikk.tellMigreringInntektsmelding()
                 } else if (table == ARBEIDSGIVERPERIODE){
                     val percent = rowIndex * 100 / max
                     if (percent > percentArbeidsgiverperioder){
                         log.info("Copied $percent% from $table ($rowIndex / $max)")
                         percentArbeidsgiverperioder = percent
+                        metrikk.tellMigreringArbeidsgiverperioder()
                     }
-                    metrikk.tellMigreringArbeidsgiverperioder()
                 }
             }
 
