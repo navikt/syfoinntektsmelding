@@ -33,12 +33,11 @@ public class VaultHikariConfig implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        LOGGER.info("afterPropertiesSet: " + props.getBackend() + "/creds/" + props.getRole() );
         container.setLeaseEndpoints(LeaseEndpoints.SysLeases);
         RequestedSecret secret = rotating(props.getBackend() + "/creds/" + props.getRole());
         container.addLeaseListener(leaseEvent -> {
             if (leaseEvent.getSource() == secret && leaseEvent instanceof SecretLeaseCreatedEvent) {
-                LOGGER.info("Roterer brukernavn/passord for : {}", leaseEvent.getSource().getPath());
+                LOGGER.debug("Roterer brukernavn/passord for : {}", leaseEvent.getSource().getPath());
                 Map<String, Object> secrets = ((SecretLeaseCreatedEvent) leaseEvent).getSecrets();
                 String username = secrets.get("username").toString();
                 String password = secrets.get("password").toString();
