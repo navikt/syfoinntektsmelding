@@ -1,6 +1,7 @@
 package no.nav.syfo.api
 
-data class InntektsmeldingRequest (
-    val arkivId: String,
-    val arkivReferanse: String
+import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
+
+data class InntektsmeldingRequest(
+    val inntektsmelding: Inntektsmelding
 )

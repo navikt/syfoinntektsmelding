@@ -28,10 +28,14 @@ class InntektsmeldingBehandler(
     val consumerLocks = Striped.lock(8)
 
     fun behandle(arkivId: String, arkivreferanse: String): InntektsmeldingEntitet? {
+        val inntektsmelding = journalpostService.hentInntektsmelding(arkivId)
+        return behandle(arkivId, arkivreferanse, inntektsmelding)
+    }
+
+    fun behandle(arkivId: String, arkivreferanse: String, inntektsmelding: Inntektsmelding): InntektsmeldingEntitet? {
 
         val log = log()
 
-        val inntektsmelding = journalpostService.hentInntektsmelding(arkivId)
         val consumerLock = consumerLocks.get(inntektsmelding.fnr)
         try {
             consumerLock.lock()
