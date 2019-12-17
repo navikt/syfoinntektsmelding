@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import javax.servlet.http.HttpServletResponse
 import javax.ws.rs.Consumes
 import javax.ws.rs.Produces
 
@@ -24,7 +25,8 @@ class InntektsmeldingApi (
 
     @ApiOperation("Behandler en inntektsmelding som ligger i journal arkiv" )
     @ApiResponses(
-        ApiResponse(code = 201, message = "Inntektsmeldingen ble behandlet")
+        ApiResponse(code = HttpServletResponse.SC_CREATED, message = "Inntektsmeldingen ble behandlet og journalført"),
+        ApiResponse(code = HttpServletResponse.SC_NO_CONTENT, message = "Inntektsmeldingen ble ikke behandlet fordi den ikke har midlertidig status")
     )
     @PostMapping("behandleJournal")
     @Produces(MediaType.TEXT_PLAIN_VALUE)
@@ -32,13 +34,17 @@ class InntektsmeldingApi (
     fun behandleInntektsmeldingJournal(
         @ApiParam("Referanser til journal arkiv og arkivreferansen", required = true)
         @RequestBody request: JournalInntektsmeldingRequest): ResponseEntity<Resultat> {
-        val entitet = inntektsmeldingBehandler.behandle( request.arkivId, request.arkivReferanse )
-        return ResponseEntity.status(HttpStatus.CREATED).body(Resultat(entitet!!.uuid))
+        val uuid = inntektsmeldingBehandler.behandle( request.arkivId, request.arkivReferanse )
+        uuid?.let{
+            return ResponseEntity.status(HttpStatus.CREATED).body(Resultat(uuid))
+        }
+        return ResponseEntity.status(HttpServletResponse.SC_NO_CONTENT).build()
     }
 
     @ApiOperation("Behandler en inntektsmelding uten å bruke journal arkiv")
     @ApiResponses(
-        ApiResponse(code = 201, message = "Inntektsmeldingen ble behandlet")
+        ApiResponse(code = HttpServletResponse.SC_CREATED, message = "Inntektsmeldingen ble behandlet og journalført"),
+        ApiResponse(code = HttpServletResponse.SC_NO_CONTENT, message = "Inntektsmeldingen ble ikke behandlet fordi den ikke har midlertidig status")
     )
     @PostMapping("behandle")
     @Produces(MediaType.TEXT_PLAIN_VALUE)
@@ -46,8 +52,11 @@ class InntektsmeldingApi (
     fun behandleInntektsmelding(
         @ApiParam("Inntektsmelding")
         @RequestBody request: InntektsmeldingRequest): ResponseEntity<Resultat> {
-        val entitet = inntektsmeldingBehandler.behandle( request.inntektsmelding.journalpostId, request.inntektsmelding.arkivRefereranse, request.inntektsmelding )
-        return ResponseEntity.status(HttpStatus.CREATED).body(Resultat(entitet!!.uuid))
+        val uuid = inntektsmeldingBehandler.behandle( request.inntektsmelding.journalpostId, request.inntektsmelding.arkivRefereranse, request.inntektsmelding )
+        uuid?.let{
+            return ResponseEntity.status(HttpStatus.CREATED).body(Resultat(uuid))
+        }
+        return ResponseEntity.status(HttpServletResponse.SC_NO_CONTENT).build()
     }
 
 }
