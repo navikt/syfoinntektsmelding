@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse
 import javax.ws.rs.Consumes
 import javax.ws.rs.Produces
 
-@Profile("local", "preprod-fss")
+@Profile("local", "preprod-fss", "remote")
 @RestController
 @RequestMapping("/api/v1/inntektsmelding")
 @Api(value="Inntektsmelding", description = "API for behandling av inntektsmelding")
