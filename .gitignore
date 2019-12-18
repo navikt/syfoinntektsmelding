@@ -1,6 +1,8 @@
 .idea
 *.iml
 application-local.properties
+application-local.yaml
+bootstrap-local.yaml
 transaction-logs
 target
 .gradle
