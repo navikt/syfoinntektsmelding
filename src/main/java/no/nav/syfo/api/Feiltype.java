@@ -6,6 +6,7 @@ public enum Feiltype {
     HENT_AKTØR_ID("hentaktor"),
     FERDIGSTILL_JOURNALPOST("ferdigstill"),
     OPPGAVE("oppgave"),
+    KAFKA("kafka"),
     LAGRE_BEHANDLING("lagrebehandling");
 
     String navn;

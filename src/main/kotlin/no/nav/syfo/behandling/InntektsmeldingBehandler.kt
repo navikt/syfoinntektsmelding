@@ -36,7 +36,7 @@ class InntektsmeldingBehandler(
             inntektsmelding = journalpostService.hentInntektsmelding(arkivId)
         } catch (ex1: Exception) {
             metrikk.tellBehandlingsfeil(Feiltype.HENT_INNTEKTSMELDING_FRA_JOURNALPOST)
-            throw BehandlingException(arkivReferanse, ex1)
+            throw BehandlingException(ex1)
         }
         return behandle(arkivId, arkivReferanse, inntektsmelding)
     }
@@ -54,7 +54,7 @@ class InntektsmeldingBehandler(
                 aktorid = aktorConsumer.getAktorId(inntektsmelding.fnr)
             } catch (ex1: Exception) {
                 metrikk.tellBehandlingsfeil(Feiltype.HENT_AKTØR_ID)
-                throw BehandlingException(arkivReferanse, ex1)
+                throw BehandlingException(ex1)
             }
 
             tellMetrikker(inntektsmelding)
@@ -67,14 +67,14 @@ class InntektsmeldingBehandler(
                     saksId = saksbehandlingService.behandleInntektsmelding(inntektsmelding, aktorid, arkivReferanse)
                 } catch (ex1: Exception) {
                     metrikk.tellBehandlingsfeil(Feiltype.OPPGAVE)
-                    throw BehandlingException(arkivReferanse, ex1)
+                    throw BehandlingException(ex1)
                 }
 
                 try {
                     journalpostService.ferdigstillJournalpost(saksId, inntektsmelding)
                 } catch (ex1: Exception) {
                     metrikk.tellBehandlingsfeil(Feiltype.FERDIGSTILL_JOURNALPOST)
-                    throw BehandlingException(arkivReferanse, ex1)
+                    throw BehandlingException(ex1)
                 }
 
                 val dto: InntektsmeldingEntitet
@@ -82,18 +82,24 @@ class InntektsmeldingBehandler(
                     dto = inntektsmeldingService.lagreBehandling(inntektsmelding, aktorid, saksId, arkivReferanse)
                 } catch (ex1: Exception) {
                     metrikk.tellBehandlingsfeil(Feiltype.LAGRE_BEHANDLING)
-                    throw BehandlingException(arkivReferanse, ex1)
+                    throw BehandlingException(ex1)
                 }
 
-                inntektsmeldingProducer.leggMottattInntektsmeldingPåTopic(
-                    mapInntektsmeldingKontrakt(
-                        inntektsmelding,
-                        aktorid,
-                        validerInntektsmelding(inntektsmelding),
-                        arkivReferanse,
-                        dto.uuid!!
+                try {
+                    inntektsmeldingProducer.leggMottattInntektsmeldingPåTopic(
+                        mapInntektsmeldingKontrakt(
+                            inntektsmelding,
+                            aktorid,
+                            validerInntektsmelding(inntektsmelding),
+                            arkivReferanse,
+                            dto.uuid!!
+                        )
                     )
-                )
+                } catch (ex1: Exception) {
+                    metrikk.tellBehandlingsfeil(Feiltype.KAFKA)
+                    throw BehandlingException(ex1)
+                }
+
 
                 log.info("Inntektsmelding {} er journalført for {}", inntektsmelding.journalpostId, arkivReferanse)
                 return dto.uuid!!
