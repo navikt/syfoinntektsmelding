@@ -11,6 +11,7 @@ import java.sql.*;
 
 @SpringBootApplication(exclude = FlywayAutoConfiguration.class)
 @Slf4j
+@ComponentScan(basePackages = {"no.nav.syfo"})
 public class LocalApplication {
 
     public static void main(String[] args) {
