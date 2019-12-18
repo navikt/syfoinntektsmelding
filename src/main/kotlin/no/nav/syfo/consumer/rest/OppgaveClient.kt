@@ -24,6 +24,9 @@ import no.nav.syfo.util.MDCOperations
 import no.nav.syfo.util.Metrikk
 import java.time.DayOfWeek
 
+const val OPPGAVETYPE_INNTEKTSMELDING = "INNT"
+const val OPPGAVETYPE_FORDELINGSOPPGAVE = "FDR"
+const val TEMA = "SYK"
 
 @Component
 class OppgaveClient constructor (
@@ -66,7 +69,7 @@ class OppgaveClient constructor (
         httpClient.get<OppgaveResponse>(config.url) {
             this.header("Authorization", "Bearer ${tokenConsumer.token}")
             this.header("X-Correlation-ID", MDCOperations.getFromMDC(MDCOperations.MDC_CALL_ID))
-            parameter("tema", "SYM")
+            parameter("tema", TEMA)
             parameter("oppgavetype", oppgavetype)
             parameter("journalpostId", journalpostId)
             parameter("statuskategori", "AAPEN")
@@ -91,7 +94,7 @@ class OppgaveClient constructor (
         aktoerId: String,
         gjelderUtland: Boolean
     ): OppgaveResultat {
-        val eksisterendeOppgave = hentHvisOppgaveFinnes("JFR", journalpostId)
+        val eksisterendeOppgave = hentHvisOppgaveFinnes(OPPGAVETYPE_INNTEKTSMELDING, journalpostId)
         metrikk.tellOpprettOppgave(eksisterendeOppgave != null)
         if (eksisterendeOppgave != null) {
             log.info("Det finnes allerede journalføringsoppgave for journalpost $journalpostId")
@@ -115,12 +118,12 @@ class OppgaveClient constructor (
             behandlesAvApplikasjon = "FS22",
             saksreferanse = sakId,
             beskrivelse = "Det har kommet en inntektsmelding på sykepenger.",
-            tema = "SYK",
-            oppgavetype = "INNT",
+            tema = TEMA,
+            oppgavetype = OPPGAVETYPE_INNTEKTSMELDING,
             behandlingstype = behandlingstype,
             behandlingstema = behandlingstema,
             aktivDato = LocalDate.now(),
-            fristFerdigstillelse = leggTilEnVirkedag(LocalDate.now()),
+            fristFerdigstillelse = leggTilEnVirkeuke(LocalDate.now()),
             prioritet = "NORM"
         )
         log.info("Oppretter journalføringsoppgave på enhet $tildeltEnhetsnr")
@@ -133,7 +136,7 @@ class OppgaveClient constructor (
         gjelderUtland: Boolean
     ): OppgaveResultat {
 
-        val eksisterendeOppgave = hentHvisOppgaveFinnes("FDR", journalpostId)
+        val eksisterendeOppgave = hentHvisOppgaveFinnes(OPPGAVETYPE_FORDELINGSOPPGAVE, journalpostId)
 
         if (eksisterendeOppgave != null) {
             log.info("Det finnes allerede fordelingsoppgave for journalpost $journalpostId")
@@ -150,18 +153,18 @@ class OppgaveClient constructor (
             journalpostId = journalpostId,
             behandlesAvApplikasjon = "FS22",
             beskrivelse = "Fordelingsoppgave for inntektsmelding på sykepenger",
-            tema = "SYK",
-            oppgavetype = "FDR",
+            tema = TEMA,
+            oppgavetype = OPPGAVETYPE_FORDELINGSOPPGAVE,
             behandlingstype = behandlingstype,
             aktivDato = LocalDate.now(),
-            fristFerdigstillelse = leggTilEnVirkedag(LocalDate.now()),
+            fristFerdigstillelse = leggTilEnVirkeuke(LocalDate.now()),
             prioritet = "NORM"
         )
         log.info("Oppretter fordelingsoppgave på enhet $tildeltEnhetsnr")
         return OppgaveResultat(opprettOppgave(opprettOppgaveRequest).id, false)
     }
 
-    fun leggTilEnVirkedag(dato : LocalDate) : LocalDate {
+    fun leggTilEnVirkeuke(dato : LocalDate) : LocalDate {
         return when (dato.dayOfWeek) {
             DayOfWeek.SATURDAY -> dato.plusDays(9)
             DayOfWeek.SUNDAY -> dato.plusDays(8)
