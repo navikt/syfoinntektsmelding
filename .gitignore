@@ -12,3 +12,4 @@ target
 out/
 gradle.properties
 .DS_Store
+application-local.yml

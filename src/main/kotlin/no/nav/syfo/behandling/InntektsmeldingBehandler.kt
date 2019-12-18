@@ -2,6 +2,8 @@ package no.nav.syfo.behandling
 
 import com.google.common.util.concurrent.Striped
 import log
+import no.nav.syfo.api.BehandlingException
+import no.nav.syfo.api.Feiltype
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
@@ -27,46 +29,78 @@ class InntektsmeldingBehandler(
 
     val consumerLocks = Striped.lock(8)
 
-    fun behandle(arkivId: String, arkivreferanse: String): String? {
-        val inntektsmelding = journalpostService.hentInntektsmelding(arkivId)
-        return behandle(arkivId, arkivreferanse, inntektsmelding)
+    @Throws(BehandlingException::class)
+    fun behandle(arkivId: String, arkivReferanse: String): String? {
+        val inntektsmelding: Inntektsmelding
+        try {
+            inntektsmelding = journalpostService.hentInntektsmelding(arkivId)
+        } catch (ex1: Exception) {
+            metrikk.tellBehandlingsfeil(Feiltype.HENT_INNTEKTSMELDING_FRA_JOURNALPOST)
+            throw BehandlingException(arkivReferanse, ex1)
+        }
+        return behandle(arkivId, arkivReferanse, inntektsmelding)
     }
 
-    fun behandle(arkivId: String, arkivreferanse: String, inntektsmelding: Inntektsmelding): String? {
+    @Throws(BehandlingException::class)
+    fun behandle(arkivId: String, arkivReferanse: String, inntektsmelding: Inntektsmelding): String? {
 
         val log = log()
 
         val consumerLock = consumerLocks.get(inntektsmelding.fnr)
         try {
             consumerLock.lock()
-            val aktorid = aktorConsumer.getAktorId(inntektsmelding.fnr)
+            val aktorid: String
+            try {
+                aktorid = aktorConsumer.getAktorId(inntektsmelding.fnr)
+            } catch (ex1: Exception) {
+                metrikk.tellBehandlingsfeil(Feiltype.HENT_AKTØR_ID)
+                throw BehandlingException(arkivReferanse, ex1)
+            }
 
             tellMetrikker(inntektsmelding)
 
-            if (JournalStatus.MIDLERTIDIG == inntektsmelding.journalStatus) {
+            if (inntektsmelding.journalStatus == JournalStatus.MIDLERTIDIG) {
                 metrikk.tellInntektsmeldingerMottatt(inntektsmelding)
 
-                val saksId = saksbehandlingService.behandleInntektsmelding(inntektsmelding, aktorid, arkivreferanse)
+                val saksId: String
+                try {
+                    saksId = saksbehandlingService.behandleInntektsmelding(inntektsmelding, aktorid, arkivReferanse)
+                } catch (ex1: Exception) {
+                    metrikk.tellBehandlingsfeil(Feiltype.OPPGAVE)
+                    throw BehandlingException(arkivReferanse, ex1)
+                }
 
-                journalpostService.ferdigstillJournalpost(saksId, inntektsmelding)
+                try {
+                    journalpostService.ferdigstillJournalpost(saksId, inntektsmelding)
+                } catch (ex1: Exception) {
+                    metrikk.tellBehandlingsfeil(Feiltype.FERDIGSTILL_JOURNALPOST)
+                    throw BehandlingException(arkivReferanse, ex1)
+                }
 
-                val dto = inntektsmeldingService.lagreBehandling(inntektsmelding, aktorid, saksId, arkivreferanse)
+                val dto: InntektsmeldingEntitet
+                try {
+                    dto = inntektsmeldingService.lagreBehandling(inntektsmelding, aktorid, saksId, arkivReferanse)
+                } catch (ex1: Exception) {
+                    metrikk.tellBehandlingsfeil(Feiltype.LAGRE_BEHANDLING)
+                    throw BehandlingException(arkivReferanse, ex1)
+                }
 
                 inntektsmeldingProducer.leggMottattInntektsmeldingPåTopic(
                     mapInntektsmeldingKontrakt(
                         inntektsmelding,
                         aktorid,
                         validerInntektsmelding(inntektsmelding),
-                        arkivreferanse,
+                        arkivReferanse,
                         dto.uuid!!
                     )
                 )
 
-                log.info("Inntektsmelding {} er journalført for {}", inntektsmelding.journalpostId, arkivreferanse)
+                log.info("Inntektsmelding {} er journalført for {}", inntektsmelding.journalpostId, arkivReferanse)
                 return dto.uuid!!
             } else {
+                metrikk.tellIkkebehandlet()
                 log.info(
-                    "Behandler ikke inntektsmelding {} da den har status: {}",
+                    "Behandler ikke inntektsmelding {} da den har status: {} med arkivreferanse $arkivReferanse",
                     inntektsmelding.journalpostId,
                     inntektsmelding.journalStatus
                 )
