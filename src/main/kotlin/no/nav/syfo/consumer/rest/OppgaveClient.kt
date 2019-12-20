@@ -19,6 +19,9 @@ import java.time.LocalDate
 import log
 import org.springframework.stereotype.Component
 import io.ktor.client.engine.apache.Apache
+import no.nav.syfo.api.HentOppgaveException
+import no.nav.syfo.api.OpprettFordelingsOppgaveException
+import no.nav.syfo.api.OpprettOppgaveException
 import no.nav.syfo.config.OppgaveConfig
 import no.nav.syfo.util.MDCOperations
 import no.nav.syfo.util.Metrikk
@@ -79,12 +82,13 @@ class OppgaveClient constructor (
         }
     }
 
-    suspend fun hentHvisOppgaveFinnes(
-        oppgavetype: String,
-        journalpostId: String
-    ): OppgaveResultat? {
-        val oppgaveResponse = hentOppgave(oppgavetype = oppgavetype, journalpostId = journalpostId)
-        return if (oppgaveResponse.antallTreffTotalt > 0) OppgaveResultat(oppgaveResponse.oppgaver.first().id, true) else null
+    suspend fun hentHvisOppgaveFinnes(oppgavetype: String, journalpostId: String): OppgaveResultat? {
+        try {
+            val oppgaveResponse = hentOppgave(oppgavetype = oppgavetype, journalpostId = journalpostId)
+            return if (oppgaveResponse.antallTreffTotalt > 0) OppgaveResultat(oppgaveResponse.oppgaver.first().id, true) else null
+        } catch (ex: Exception) {
+            throw HentOppgaveException(journalpostId, oppgavetype, ex)
+        }
     }
 
     suspend fun opprettOppgave(
@@ -127,7 +131,11 @@ class OppgaveClient constructor (
             prioritet = "NORM"
         )
         log.info("Oppretter journalføringsoppgave på enhet $tildeltEnhetsnr")
-        return OppgaveResultat(opprettOppgave(opprettOppgaveRequest).id, false)
+        try {
+            return OppgaveResultat(opprettOppgave(opprettOppgaveRequest).id, false)
+        } catch (ex : Exception) {
+            throw OpprettOppgaveException(journalpostId, ex)
+        }
     }
 
     suspend fun opprettFordelingsOppgave(
@@ -161,7 +169,11 @@ class OppgaveClient constructor (
             prioritet = "NORM"
         )
         log.info("Oppretter fordelingsoppgave på enhet $tildeltEnhetsnr")
-        return OppgaveResultat(opprettOppgave(opprettOppgaveRequest).id, false)
+        try {
+            return OppgaveResultat(opprettOppgave(opprettOppgaveRequest).id, false)
+        } catch (ex : Exception) {
+            throw OpprettFordelingsOppgaveException(journalpostId, ex)
+        }
     }
 
     fun leggTilEnVirkeuke(dato : LocalDate) : LocalDate {

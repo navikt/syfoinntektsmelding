@@ -1,5 +1,6 @@
 package no.nav.syfo.consumer.azuread
 
+import no.nav.syfo.api.AzureAdTokenConsumerException
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
@@ -33,7 +34,7 @@ class AzureAdTokenConsumer(private val restTemplateMedProxy: RestTemplate,
         val uriString = UriComponentsBuilder.fromHttpUrl(url).toUriString()
         val result = restTemplateMedProxy.exchange(uriString, POST, HttpEntity<MultiValueMap<String, String>>(body, headers), AzureAdToken::class.java)
         if (result.statusCode != OK) {
-            throw RuntimeException("Henting av token fra Azure AD feiler med HTTP-" + result.statusCode)
+            throw AzureAdTokenConsumerException(result.statusCode)
         }
         return requireNonNull<AzureAdToken>(result.body).access_token
     }

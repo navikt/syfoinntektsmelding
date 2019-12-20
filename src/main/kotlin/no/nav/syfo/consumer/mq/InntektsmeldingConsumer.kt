@@ -43,7 +43,7 @@ class InntektsmeldingConsumer(
             inntektsmeldingBehandler.behandle(info.arkivId, arkivReferanse)
         } catch (e: BehandlingException) {
             log.error("Feil ved behandling av inntektsmelding med arkivreferanse $arkivReferanse", e)
-            metrikk.tellInntektsmeldingfeil()
+            metrikk.tellBehandlingsfeil(e.feiltype)
             throw RuntimeException("Feil ved lesing av melding  med arkivreferanse $arkivReferanse", e)
         } catch (e: JMSException) {
             log.error("Feil ved parsing av inntektsmelding fra kø med arkivreferanse $arkivReferanse", e)
