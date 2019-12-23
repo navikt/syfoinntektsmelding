@@ -65,31 +65,31 @@ class SakClient constructor(
         }
     }
 
-    private suspend fun finnSak(pasientAktoerId: String, msgId: String): List<SakResponse>? = retry("finn_sak") {
-        httpClient.get<List<SakResponse>?>(config.url) {
-            contentType(ContentType.Application.Json)
-            header("X-Correlation-ID", getFromMDC(MDC_CALL_ID))
-            header("Authorization", "Bearer ${tokenConsumer.token}")
-            parameter("tema", "SYM")
-            parameter("aktoerId", pasientAktoerId)
-            parameter("applikasjon", "FS22")
-        }
-    }
+//    private suspend fun finnSak(pasientAktoerId: String, msgId: String): List<SakResponse>? = retry("finn_sak") {
+//        httpClient.get<List<SakResponse>?>(config.url) {
+//            contentType(ContentType.Application.Json)
+//            header("X-Correlation-ID", getFromMDC(MDC_CALL_ID))
+//            header("Authorization", "Bearer ${tokenConsumer.token}")
+//            parameter("tema", "SYM")
+//            parameter("aktoerId", pasientAktoerId)
+//            parameter("applikasjon", "FS22")
+//        }
+//    }
 
-    suspend fun finnEllerOpprettSak(sykmeldingsId: String, aktorId: String, loggingMeta: LoggingMeta): String {
-        val finnSakRespons = finnSak(aktorId, sykmeldingsId)
-
-        val sakIdFraRespons = finnSakRespons?.sortedBy { it.opprettetTidspunkt }?.lastOrNull()?.id?.toString()
-        return if (sakIdFraRespons == null) {
-            val opprettSakRespons = opprettSak(aktorId, sykmeldingsId)
-            log.info("Opprettet en sak med sakid {}, {}", opprettSakRespons.id.toString(), fields(loggingMeta))
-
-            opprettSakRespons.id.toString()
-        } else {
-            log.info("Fant en sak med sakid {}, {}", sakIdFraRespons, fields(loggingMeta))
-            sakIdFraRespons
-        }
-    }
+//    suspend fun finnEllerOpprettSak(sykmeldingsId: String, aktorId: String, loggingMeta: LoggingMeta): String {
+//        val finnSakRespons = finnSak(aktorId, sykmeldingsId)
+//
+//        val sakIdFraRespons = finnSakRespons?.sortedBy { it.opprettetTidspunkt }?.lastOrNull()?.id?.toString()
+//        return if (sakIdFraRespons == null) {
+//            val opprettSakRespons = opprettSak(aktorId, sykmeldingsId)
+//            log.info("Opprettet en sak med sakid {}, {}", opprettSakRespons.id.toString(), fields(loggingMeta))
+//
+//            opprettSakRespons.id.toString()
+//        } else {
+//            log.info("Fant en sak med sakid {}, {}", sakIdFraRespons, fields(loggingMeta))
+//            sakIdFraRespons
+//        }
+//    }
 }
 
 data class OpprettSakRequest(

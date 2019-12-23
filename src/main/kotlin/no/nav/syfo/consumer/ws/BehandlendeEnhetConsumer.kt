@@ -1,11 +1,11 @@
 package no.nav.syfo.consumer.ws
 
 import log
-import no.nav.syfo.api.BehandlendeEnhetFeiletException
-import no.nav.syfo.api.FinnBehandlendeEnhetListeUgyldigInputException
-import no.nav.syfo.api.HentGeografiskTilknytningPersonIkkeFunnetException
-import no.nav.syfo.api.HentGeografiskTilknytningSikkerhetsbegrensingException
-import no.nav.syfo.api.IngenAktivEnhetException
+import no.nav.syfo.behandling.BehandlendeEnhetFeiletException
+import no.nav.syfo.behandling.FinnBehandlendeEnhetListeUgyldigInputException
+import no.nav.syfo.behandling.HentGeografiskTilknytningPersonIkkeFunnetException
+import no.nav.syfo.behandling.HentGeografiskTilknytningSikkerhetsbegrensingException
+import no.nav.syfo.behandling.IngenAktivEnhetException
 import no.nav.syfo.domain.GeografiskTilknytningData
 import no.nav.syfo.util.Metrikk
 import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.binding.ArbeidsfordelingV1

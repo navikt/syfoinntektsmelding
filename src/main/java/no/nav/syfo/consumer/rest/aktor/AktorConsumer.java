@@ -1,11 +1,11 @@
 package no.nav.syfo.consumer.rest.aktor;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.syfo.api.AktørKallResponseException;
-import no.nav.syfo.api.AktørOppslagException;
-import no.nav.syfo.api.AktorConsumerException;
-import no.nav.syfo.api.FantIkkeAktørException;
-import no.nav.syfo.api.TomAktørListeException;
+import no.nav.syfo.behandling.AktørKallResponseException;
+import no.nav.syfo.behandling.AktørOppslagException;
+import no.nav.syfo.behandling.AktørException;
+import no.nav.syfo.behandling.FantIkkeAktørException;
+import no.nav.syfo.behandling.TomAktørListeException;
 import no.nav.syfo.consumer.rest.TokenConsumer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -43,11 +43,11 @@ public class AktorConsumer {
         this.restTemplate = restTemplate;
     }
 
-    public String getAktorId(String fnr) throws AktorConsumerException {
+    public String getAktorId(String fnr) throws AktørException {
         return getIdent(fnr, "AktoerId");
     }
 
-    private String getIdent(String sokeIdent, String identgruppe) throws AktorConsumerException {
+    private String getIdent(String sokeIdent, String identgruppe) throws AktørException {
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         headers.set("Authorization", "Bearer " + tokenConsumer.getToken());

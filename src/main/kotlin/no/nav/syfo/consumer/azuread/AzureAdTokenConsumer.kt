@@ -1,6 +1,6 @@
 package no.nav.syfo.consumer.azuread
 
-import no.nav.syfo.api.AzureAdTokenConsumerException
+import no.nav.syfo.behandling.AzureAdTokenException
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
@@ -34,7 +34,7 @@ class AzureAdTokenConsumer(private val restTemplateMedProxy: RestTemplate,
         val uriString = UriComponentsBuilder.fromHttpUrl(url).toUriString()
         val result = restTemplateMedProxy.exchange(uriString, POST, HttpEntity<MultiValueMap<String, String>>(body, headers), AzureAdToken::class.java)
         if (result.statusCode != OK) {
-            throw AzureAdTokenConsumerException(result.statusCode)
+            throw AzureAdTokenException(result.statusCode.value())
         }
         return requireNonNull<AzureAdToken>(result.body).access_token
     }

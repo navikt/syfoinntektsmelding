@@ -19,9 +19,9 @@ import java.time.LocalDate
 import log
 import org.springframework.stereotype.Component
 import io.ktor.client.engine.apache.Apache
-import no.nav.syfo.api.HentOppgaveException
-import no.nav.syfo.api.OpprettFordelingsOppgaveException
-import no.nav.syfo.api.OpprettOppgaveException
+import no.nav.syfo.behandling.HentOppgaveException
+import no.nav.syfo.behandling.OpprettFordelingsOppgaveException
+import no.nav.syfo.behandling.OpprettOppgaveException
 import no.nav.syfo.config.OppgaveConfig
 import no.nav.syfo.util.MDCOperations
 import no.nav.syfo.util.Metrikk

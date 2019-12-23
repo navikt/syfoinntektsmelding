@@ -1,10 +1,10 @@
 package no.nav.syfo.consumer.ws
 
 import log
-import no.nav.syfo.api.HentJournalpostJournalpostIkkeFunneteException
-import no.nav.syfo.api.HentJournalpostJournalpostIkkeInngaaendeException
-import no.nav.syfo.api.HentJournalpostSikkerhetsbegrensningException
-import no.nav.syfo.api.HentJournalpostUgyldigInputException
+import no.nav.syfo.behandling.HentJournalpostJournalpostIkkeFunneteException
+import no.nav.syfo.behandling.HentJournalpostJournalpostIkkeInngaaendeException
+import no.nav.syfo.behandling.HentJournalpostSikkerhetsbegrensningException
+import no.nav.syfo.behandling.HentJournalpostUgyldigInputException
 import no.nav.syfo.domain.InngaaendeJournal
 import no.nav.syfo.domain.JournalStatus
 import no.nav.tjeneste.virksomhet.inngaaendejournal.v1.binding.*
@@ -31,16 +31,16 @@ class InngaaendeJournalConsumer(private val inngaaendeJournalV1: InngaaendeJourn
 
         } catch (e: HentJournalpostSikkerhetsbegrensning) {
             log.error("Feil ved henting av journalpost: Sikkerhetsbegrensning!")
-            throw HentJournalpostSikkerhetsbegrensningException(e)
+            throw HentJournalpostSikkerhetsbegrensningException(journalpostId, e)
         } catch (e: HentJournalpostJournalpostIkkeInngaaende) {
             log.error("Feil ved henting av journalpost: Journalpost er ikke inngaaende!")
-            throw HentJournalpostJournalpostIkkeInngaaendeException(e)
+            throw HentJournalpostJournalpostIkkeInngaaendeException(journalpostId, e)
         } catch (e: HentJournalpostJournalpostIkkeFunnet) {
             log.error("Feil ved henting av journalpost: Journalpost ikke funnet!")
-            throw HentJournalpostJournalpostIkkeFunneteException(e)
+            throw HentJournalpostJournalpostIkkeFunneteException(journalpostId, e)
         } catch (e: HentJournalpostUgyldigInput) {
             log.error("Feil ved henting av journalpost: Journalpostid ikke gyldig!")
-            throw HentJournalpostUgyldigInputException(e)
+            throw HentJournalpostUgyldigInputException(journalpostId, e)
         }
 
     }

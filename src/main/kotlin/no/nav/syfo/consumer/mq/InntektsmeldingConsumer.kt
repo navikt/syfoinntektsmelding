@@ -2,7 +2,7 @@ package no.nav.syfo.consumer.mq
 
 import log
 import no.nav.melding.virksomhet.dokumentnotifikasjon.v1.XMLForsendelsesinformasjon
-import no.nav.syfo.api.BehandlingException
+import no.nav.syfo.behandling.BehandlingException
 import no.nav.syfo.behandling.InntektsmeldingBehandler
 import no.nav.syfo.util.JAXB
 import no.nav.syfo.util.MDCOperations.*

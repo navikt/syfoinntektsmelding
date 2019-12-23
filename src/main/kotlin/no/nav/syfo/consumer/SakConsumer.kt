@@ -1,6 +1,8 @@
 package no.nav.syfo.consumer
 
 import log
+import no.nav.syfo.behandling.SakFeilException
+import no.nav.syfo.behandling.SakResponseException
 import no.nav.syfo.consumer.azuread.AzureAdTokenConsumer
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.*
@@ -38,7 +40,7 @@ class SakConsumer(
         if (result.statusCode != HttpStatus.OK) {
             val message = "Kall mot syfonarmesteleder feiler med HTTP-" + result.statusCode
             log.error(message)
-            throw RuntimeException(message)
+            throw SakResponseException(aktorId, result.statusCode.value())
         }
 
         try {
@@ -47,7 +49,7 @@ class SakConsumer(
         } catch (exception: Exception) {
             val message = "Uventet feil ved henting av nærmeste leder"
             log.error(message)
-            throw RuntimeException(message, exception)
+            throw SakFeilException(aktorId, exception)
         }
 
     }

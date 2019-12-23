@@ -1,16 +1,16 @@
 package no.nav.syfo.consumer.ws
 
 import log
-import no.nav.syfo.api.FerdigstillJournalfoeringFerdigstillingIkkeMuligException
-import no.nav.syfo.api.FerdigstillJournalfoeringJournalpostIkkeInngaaendeException
-import no.nav.syfo.api.FerdigstillJournalfoeringObjektIkkeFunnetException
-import no.nav.syfo.api.FerdigstillJournalfoeringSikkerhetsbegrensningException
-import no.nav.syfo.api.FerdigstillJournalfoeringUgyldigInputException
-import no.nav.syfo.api.OppdaterJournalpostJournalpostIkkeInngaaendeException
-import no.nav.syfo.api.OppdaterJournalpostObjektIkkeFunnetException
-import no.nav.syfo.api.OppdaterJournalpostOppdateringIkkeMuligException
-import no.nav.syfo.api.OppdaterJournalpostSikkerhetsbegrensningException
-import no.nav.syfo.api.OppdaterJournalpostUgyldigInputException
+import no.nav.syfo.behandling.FerdigstillJournalfoeringFerdigstillingIkkeMuligException
+import no.nav.syfo.behandling.FerdigstillJournalfoeringJournalpostIkkeInngaaendeException
+import no.nav.syfo.behandling.FerdigstillJournalfoeringObjektIkkeFunnetException
+import no.nav.syfo.behandling.FerdigstillJournalfoeringSikkerhetsbegrensningException
+import no.nav.syfo.behandling.FerdigstillJournalfoeringUgyldigInputException
+import no.nav.syfo.behandling.OppdaterJournalpostJournalpostIkkeInngaaendeException
+import no.nav.syfo.behandling.OppdaterJournalpostObjektIkkeFunnetException
+import no.nav.syfo.behandling.OppdaterJournalpostOppdateringIkkeMuligException
+import no.nav.syfo.behandling.OppdaterJournalpostSikkerhetsbegrensningException
+import no.nav.syfo.behandling.OppdaterJournalpostUgyldigInputException
 import no.nav.syfo.domain.InngaendeJournalpost
 import no.nav.tjeneste.virksomhet.behandleinngaaendejournal.v1.binding.BehandleInngaaendeJournalV1
 import no.nav.tjeneste.virksomhet.behandleinngaaendejournal.v1.binding.FerdigstillJournalfoeringFerdigstillingIkkeMulig
