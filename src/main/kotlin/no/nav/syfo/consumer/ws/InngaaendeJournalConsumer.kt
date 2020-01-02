@@ -31,16 +31,16 @@ class InngaaendeJournalConsumer(private val inngaaendeJournalV1: InngaaendeJourn
 
         } catch (e: HentJournalpostSikkerhetsbegrensning) {
             log.error("Feil ved henting av journalpost: Sikkerhetsbegrensning!")
-            throw HentJournalpostSikkerhetsbegrensningException(journalpostId, e)
+            throw HentJournalpostSikkerhetsbegrensningException(journalpostId)
         } catch (e: HentJournalpostJournalpostIkkeInngaaende) {
             log.error("Feil ved henting av journalpost: Journalpost er ikke inngaaende!")
-            throw HentJournalpostJournalpostIkkeInngaaendeException(journalpostId, e)
+            throw HentJournalpostJournalpostIkkeInngaaendeException(journalpostId)
         } catch (e: HentJournalpostJournalpostIkkeFunnet) {
             log.error("Feil ved henting av journalpost: Journalpost ikke funnet!")
-            throw HentJournalpostJournalpostIkkeFunneteException(journalpostId, e)
+            throw HentJournalpostJournalpostIkkeFunneteException(journalpostId)
         } catch (e: HentJournalpostUgyldigInput) {
             log.error("Feil ved henting av journalpost: Journalpostid ikke gyldig!")
-            throw HentJournalpostUgyldigInputException(journalpostId, e)
+            throw HentJournalpostUgyldigInputException(journalpostId)
         }
 
     }

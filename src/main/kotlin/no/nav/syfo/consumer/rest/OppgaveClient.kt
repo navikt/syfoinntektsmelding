@@ -87,7 +87,7 @@ class OppgaveClient constructor (
             val oppgaveResponse = hentOppgave(oppgavetype = oppgavetype, journalpostId = journalpostId)
             return if (oppgaveResponse.antallTreffTotalt > 0) OppgaveResultat(oppgaveResponse.oppgaver.first().id, true) else null
         } catch (ex: Exception) {
-            throw HentOppgaveException(journalpostId, oppgavetype, ex)
+            throw HentOppgaveException(journalpostId, oppgavetype)
         }
     }
 
@@ -134,7 +134,7 @@ class OppgaveClient constructor (
         try {
             return OppgaveResultat(opprettOppgave(opprettOppgaveRequest).id, false)
         } catch (ex : Exception) {
-            throw OpprettOppgaveException(journalpostId, ex)
+            throw OpprettOppgaveException(journalpostId)
         }
     }
 
@@ -172,7 +172,7 @@ class OppgaveClient constructor (
         try {
             return OppgaveResultat(opprettOppgave(opprettOppgaveRequest).id, false)
         } catch (ex : Exception) {
-            throw OpprettFordelingsOppgaveException(journalpostId, ex)
+            throw OpprettFordelingsOppgaveException(journalpostId)
         }
     }
 

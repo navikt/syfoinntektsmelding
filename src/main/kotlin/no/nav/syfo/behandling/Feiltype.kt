@@ -1,53 +1,34 @@
-package no.nav.syfo.behandling;
+package no.nav.syfo.behandling
 
-public enum Feiltype {
-
+enum class Feiltype(var navn: String) {
     AZUREADTOKEN("azureadtoken"),
     TOKEN("token"),
-
-    AKTØR_IKKE_FUNNET("aktorikkefunnet"),
-    AKTØR_LISTE_TOM("aktorlistetom"),
-    AKTØR_OPPSLAG_FEILET("aktoroppslagfeil"),
-    AKTØR_FEIL("aktorfeil"),
-
-    INNGÅENDE_SIKKERHETSBEGRENSNING("innsikkerhet"),
-    INNGÅENDE_IKKE_INNGÅENDE("innikkeinn"),
-    INNGÅENDE_IKKE_FUNNET("innikkefunnet"),
-    INNGÅENDE_UGYLDIG_KALL("innugyldig"),
-
-
-    OPPDATERINNGÅENDE_UGYLDIG("oppdaterugyldig"),
-    OPPDATERINNGÅENDE_IKKE_FUNNET("oppdaterikkefunnet"),
-    OPPDATERINNGÅENDE_IKKE_MULIG("oppdaterikkemulig"),
-    OPPDATERINNGÅENDE_IKKE_INNGÅENDE("oppdaterikkeinn"),
-    OPPDATERINNGÅENDE_SIKKERHETSBEGRENSNING("oppdatersikkerhet"),
-
-    FERDIGSTILL_UGYLDIG("ferdigstillugyldig"),
-    FERDIGSTILL_IKKE_FUNNET("ferdigstillikkefunnet"),
-    FERDIGSTILL_IKKE_MULIG("ferdigstillikkemulig"),
-    FERDIGSTILL_IKKE_INNGÅENDE("ferdigstillikkeinn"),
-    FERDIGSTILL_SIKKERHETSBEGRENSNING("ferdigstillsikkerhet"),
-
-    OPPGAVE_HENT("oppgavehent"),
-    OPPGAVE_OPPRETT_VANLIG("oppgaveopprett"),
-    OPPGAVE_OPPRETT_FORDELING("oppgavefordeling"),
-
-    BEHANDLENDE_UGYLDIG_INPUT("behandledeugyldig"),
-    BEHANDLENDE_INGEN_AKTIV_ENHET("behandledeingenaktiv"),
-    BEHANDLENDE_SIKKERHETSBEGRENSNING("behandledesikkerhet"),
-    BEHANDLENDE_IKKE_FUNNET("behandledeikkefunnet"),
-    BEHANDLENDE_FEILET("behandledefeilet"),
-
-    SAK_FEILET("sakfeilet"),
-    SAK_RESPONSE("sakresponse"),
-    ;
-
-    String navn;
-    Feiltype(String navn){
-        this.navn = navn;
-    }
-
-    public String getNavn() {
-        return navn;
-    }
+    AKTØR_IKKE_FUNNET("aktor_ikkefunnet"),
+    AKTØR_LISTE_TOM("aktor_listetom"),
+    AKTØR_OPPSLAG_FEILET("aktor_oppslagfeil"),
+    AKTØR_FEIL("aktor_feil"),
+    INNGÅENDE_SIKKERHETSBEGRENSNING("inn_sikkerhet"),
+    INNGÅENDE_IKKE_INNGÅENDE("inn_ikkeinn"),
+    INNGÅENDE_IKKE_FUNNET("inn_ikkefunnet"),
+    INNGÅENDE_UGYLDIG_KALL("inn_ugyldig"),
+    OPPDATERINNGÅENDE_UGYLDIG("oppdater_ugyldig"),
+    OPPDATERINNGÅENDE_IKKE_FUNNET("oppdater_ikkefunnet"),
+    OPPDATERINNGÅENDE_IKKE_MULIG("oppdater_ikkemulig"),
+    OPPDATERINNGÅENDE_IKKE_INNGÅENDE("oppdater_ikkeinn"),
+    OPPDATERINNGÅENDE_SIKKERHETSBEGRENSNING("oppdater_sikkerhet"),
+    FERDIGSTILL_UGYLDIG("ferdigstill_ugyldig"),
+    FERDIGSTILL_IKKE_FUNNET("ferdigstill_ikkefunnet"),
+    FERDIGSTILL_IKKE_MULIG("ferdigstill_ikkemulig"),
+    FERDIGSTILL_IKKE_INNGÅENDE("ferdigstill_ikkeinn"),
+    FERDIGSTILL_SIKKERHETSBEGRENSNING("ferdigstill_sikkerhet"),
+    OPPGAVE_HENT("oppgave_hent"),
+    OPPGAVE_OPPRETT_VANLIG("oppgave_opprett"),
+    OPPGAVE_OPPRETT_FORDELING("oppgave_fordeling"),
+    BEHANDLENDE_UGYLDIG_INPUT("behandlede_ugyldig"),
+    BEHANDLENDE_INGEN_AKTIV_ENHET("behandlede_ingenaktiv"),
+    BEHANDLENDE_SIKKERHETSBEGRENSNING("behandlede_sikkerhet"),
+    BEHANDLENDE_IKKE_FUNNET("behandlede_ikkefunnet"),
+    BEHANDLENDE_FEILET("behandlede_feilet"),
+    SAK_FEILET("sak_feilet"),
+    SAK_RESPONSE("sak_response");
 }

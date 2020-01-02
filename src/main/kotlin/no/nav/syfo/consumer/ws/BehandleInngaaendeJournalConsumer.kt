@@ -65,19 +65,19 @@ class BehandleInngaaendeJournalConsumer(private val behandleInngaaendeJournalV1:
             behandleInngaaendeJournalV1.oppdaterJournalpost( request )
         } catch (e: OppdaterJournalpostUgyldigInput) {
             log.error("Feil ved oppdatering av journalpost: {} - Ugyldig input!", journalpostId, e)
-            throw OppdaterJournalpostUgyldigInputException(journalpostId, e)
+            throw OppdaterJournalpostUgyldigInputException(journalpostId)
         } catch (e: OppdaterJournalpostObjektIkkeFunnet) {
             log.error("Feil ved oppdatering av journalpost: {} - Journalpost ikke funnet!", journalpostId, e)
-            throw OppdaterJournalpostObjektIkkeFunnetException(journalpostId, e)
+            throw OppdaterJournalpostObjektIkkeFunnetException(journalpostId)
         } catch (e: OppdaterJournalpostOppdateringIkkeMulig) {
             log.error("Feil ved oppdatering av journalpost: {} - Oppdatering ikke mulig!", journalpostId, e)
-            throw OppdaterJournalpostOppdateringIkkeMuligException(journalpostId, e)
+            throw OppdaterJournalpostOppdateringIkkeMuligException(journalpostId)
         } catch (e: OppdaterJournalpostJournalpostIkkeInngaaende) {
             log.error("Feil ved oppdatering av journalpost: {} - Journalpost er ikke inngående!", journalpostId, e)
-            throw OppdaterJournalpostJournalpostIkkeInngaaendeException(journalpostId, e)
+            throw OppdaterJournalpostJournalpostIkkeInngaaendeException(journalpostId)
         } catch (e: OppdaterJournalpostSikkerhetsbegrensning) {
             log.error("Feil ved oppdatering av journalpost: {} - Sikkerhetsbegrensning!", journalpostId, e)
-            throw OppdaterJournalpostSikkerhetsbegrensningException(journalpostId, e)
+            throw OppdaterJournalpostSikkerhetsbegrensningException(journalpostId)
         }
     }
 
@@ -92,19 +92,19 @@ class BehandleInngaaendeJournalConsumer(private val behandleInngaaendeJournalV1:
             behandleInngaaendeJournalV1.ferdigstillJournalfoering(request)
         } catch (e: FerdigstillJournalfoeringUgyldigInput) {
             log.error("Feil ved ferdigstilling av journalpost: {} - Ugyldig input!", journalpostId, e)
-            throw FerdigstillJournalfoeringUgyldigInputException(journalpostId, e)
+            throw FerdigstillJournalfoeringUgyldigInputException(journalpostId)
         } catch (e: FerdigstillJournalfoeringObjektIkkeFunnet) {
             log.error("Feil ved ferdigstilling av journalpost: {} - Journalpost ikke funnet", journalpostId, e)
-            throw FerdigstillJournalfoeringObjektIkkeFunnetException(journalpostId, e)
+            throw FerdigstillJournalfoeringObjektIkkeFunnetException(journalpostId)
         } catch (e: FerdigstillJournalfoeringJournalpostIkkeInngaaende) {
             log.error("Feil ved ferdigstilling av journalpost: {} - Ikke inngående!", journalpostId, e)
-            throw FerdigstillJournalfoeringJournalpostIkkeInngaaendeException(journalpostId, e)
+            throw FerdigstillJournalfoeringJournalpostIkkeInngaaendeException(journalpostId)
         } catch (e: FerdigstillJournalfoeringSikkerhetsbegrensning) {
             log.error("Feil ved ferdigstilling av journalpost: {} - Sikkerhetsbegrensing!", journalpostId, e)
-            throw FerdigstillJournalfoeringSikkerhetsbegrensningException(journalpostId, e)
+            throw FerdigstillJournalfoeringSikkerhetsbegrensningException(journalpostId)
         } catch (e: FerdigstillJournalfoeringFerdigstillingIkkeMulig) {
             log.error("Feil ved ferdigstilling av journalpost: {} - Ikke mulig å ferdigstille!", journalpostId, e)
-            throw FerdigstillJournalfoeringFerdigstillingIkkeMuligException(journalpostId, e)
+            throw FerdigstillJournalfoeringFerdigstillingIkkeMuligException(journalpostId)
         }
 
     }

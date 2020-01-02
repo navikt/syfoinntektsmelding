@@ -84,7 +84,7 @@ public class AktorConsumer {
 
         } catch (HttpClientErrorException e) {
             log.error("Feil ved oppslag i aktørtjenesten");
-            throw new AktørOppslagException(sokeIdent, e);
+            throw new AktørOppslagException(sokeIdent);
         }
     }
 }

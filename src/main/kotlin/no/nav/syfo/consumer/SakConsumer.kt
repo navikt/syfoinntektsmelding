@@ -49,7 +49,7 @@ class SakConsumer(
         } catch (exception: Exception) {
             val message = "Uventet feil ved henting av nærmeste leder"
             log.error(message)
-            throw SakFeilException(aktorId, exception)
+            throw SakFeilException(aktorId)
         }
 
     }

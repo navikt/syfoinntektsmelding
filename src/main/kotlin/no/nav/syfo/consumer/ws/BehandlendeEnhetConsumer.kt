@@ -77,10 +77,10 @@ class BehandlendeEnhetConsumer(
 
         } catch (e: FinnBehandlendeEnhetListeUgyldigInput) {
             log.error("Feil ved henting av brukers forvaltningsenhet", e)
-            throw FinnBehandlendeEnhetListeUgyldigInputException("Feil ved henting av brukers forvaltningsenhet", e)
+            throw FinnBehandlendeEnhetListeUgyldigInputException()
         } catch (e: RuntimeException) {
             log.error("Klarte ikke å hente behandlende enhet!", e)
-            throw BehandlendeEnhetFeiletException(e)
+            throw BehandlendeEnhetFeiletException()
         }
     }
 
@@ -97,10 +97,10 @@ class BehandlendeEnhetConsumer(
             )
         } catch (e: HentGeografiskTilknytningSikkerhetsbegrensing) {
             log.error("Feil ved henting av geografisk tilknytning", e)
-            throw HentGeografiskTilknytningSikkerhetsbegrensingException("Feil ved henting av geografisk tilknytning", e)
+            throw HentGeografiskTilknytningSikkerhetsbegrensingException()
         } catch (e: HentGeografiskTilknytningPersonIkkeFunnet) {
             log.error("Feil ved henting av geografisk tilknytning", e)
-            throw HentGeografiskTilknytningPersonIkkeFunnetException(e)
+            throw HentGeografiskTilknytningPersonIkkeFunnetException()
         }
 
     }

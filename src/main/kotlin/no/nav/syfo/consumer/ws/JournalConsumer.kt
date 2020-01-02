@@ -47,10 +47,10 @@ class JournalConsumer(private val journalV2: JournalV2,
                 InntektsmeldingArbeidsgiverPrivat20181211Mapper.tilXMLInntektsmelding(jaxbInntektsmelding, journalpostId, inngaaendeJournal, aktorConsumer)
         } catch (e: HentDokumentSikkerhetsbegrensning) {
             log.error("Feil ved henting av dokument: Sikkerhetsbegrensning!")
-            throw HentDokumentSikkerhetsbegrensningException(journalpostId, e)
+            throw HentDokumentSikkerhetsbegrensningException(journalpostId)
         } catch (e: HentDokumentDokumentIkkeFunnet) {
             log.error("Feil ved henting av dokument: Dokument ikke funnet!")
-            throw HentDokumentIkkeFunnetException(journalpostId, e)
+            throw HentDokumentIkkeFunnetException(journalpostId)
         } catch (e: RuntimeException) {
             log.error(
                     "Klarte ikke å hente inntektsmelding med journalpostId: {} og dokumentId: {}",
@@ -58,7 +58,7 @@ class JournalConsumer(private val journalV2: JournalV2,
                     inngaaendeJournal.dokumentId,
                     e
             )
-            throw HentDokumentFeiletException(journalpostId, e)
+            throw HentDokumentFeiletException(journalpostId)
         }
 
     }
