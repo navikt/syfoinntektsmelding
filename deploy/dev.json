@@ -10,7 +10,7 @@
   },
   "spec": {
     "ingresses": [
-      "https://syfoinntektsmelding.nais.preprod.local"
+        "https://syfoinntektsmelding.nais.preprod.local"
     ],
     "cpuThresholdPercentage": 90,
     "env": [
