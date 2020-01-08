@@ -69,7 +69,7 @@ public class Metrikk {
     }
 
     public void tellBehandlingsfeil(Feiltype feiltype) {
-        registry.counter("syfoinntektsmelding_behandlingsfeil", Tags.of("type", "error", feiltype.getNavn())).increment();
+        registry.counter("syfoinntektsmelding_behandlingsfeil", Tags.of("type", "error", "kode", feiltype.getNavn())).increment();
     }
 
     public void tellIkkebehandlet() {
