@@ -1,6 +1,11 @@
 package no.nav.syfo.consumer.ws
 
 import log
+import no.nav.syfo.behandling.BehandlendeEnhetFeiletException
+import no.nav.syfo.behandling.FinnBehandlendeEnhetListeUgyldigInputException
+import no.nav.syfo.behandling.HentGeografiskTilknytningPersonIkkeFunnetException
+import no.nav.syfo.behandling.HentGeografiskTilknytningSikkerhetsbegrensingException
+import no.nav.syfo.behandling.IngenAktivEnhetException
 import no.nav.syfo.domain.GeografiskTilknytningData
 import no.nav.syfo.util.Metrikk
 import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.binding.ArbeidsfordelingV1
@@ -14,6 +19,8 @@ import no.nav.tjeneste.virksomhet.person.v3.informasjon.NorskIdent
 import no.nav.tjeneste.virksomhet.person.v3.informasjon.PersonIdent
 import no.nav.tjeneste.virksomhet.person.v3.meldinger.HentGeografiskTilknytningRequest
 import org.springframework.stereotype.Component
+
+const val SYKEPENGER_UTLAND = "4474"
 
 @Component
 class BehandlendeEnhetConsumer(
@@ -56,10 +63,9 @@ class BehandlendeEnhetConsumer(
                     .filter { wsOrganisasjonsenhet -> Enhetsstatus.AKTIV == wsOrganisasjonsenhet.status }
                     .map { it.enhetId }
                     .findFirst()
-                    .orElseThrow { RuntimeException("Fant ingen aktiv enhet for " + geografiskTilknytning.geografiskTilknytning) }
+                    .orElseThrow { IngenAktivEnhetException(geografiskTilknytning.geografiskTilknytning) }
 
-            // 4474 er enhetsnummeret til sykepenger utland
-            if ("4474" == behandlendeEnhet) {
+            if (SYKEPENGER_UTLAND == behandlendeEnhet) {
                 log.info(
                     "Behandlende enhet er 4474. Med geografisk tilknytning: {}",
                     geografiskTilknytning.geografiskTilknytning
@@ -71,12 +77,11 @@ class BehandlendeEnhetConsumer(
 
         } catch (e: FinnBehandlendeEnhetListeUgyldigInput) {
             log.error("Feil ved henting av brukers forvaltningsenhet", e)
-            throw RuntimeException("Feil ved henting av brukers forvaltningsenhet", e)
+            throw FinnBehandlendeEnhetListeUgyldigInputException()
         } catch (e: RuntimeException) {
             log.error("Klarte ikke å hente behandlende enhet!", e)
-            throw RuntimeException(e)
+            throw BehandlendeEnhetFeiletException()
         }
-
     }
 
     fun hentGeografiskTilknytning(fnr: String): GeografiskTilknytningData {
@@ -92,10 +97,10 @@ class BehandlendeEnhetConsumer(
             )
         } catch (e: HentGeografiskTilknytningSikkerhetsbegrensing) {
             log.error("Feil ved henting av geografisk tilknytning", e)
-            throw RuntimeException("Feil ved henting av geografisk tilknytning", e)
+            throw HentGeografiskTilknytningSikkerhetsbegrensingException()
         } catch (e: HentGeografiskTilknytningPersonIkkeFunnet) {
             log.error("Feil ved henting av geografisk tilknytning", e)
-            throw RuntimeException("Feil ved henting av geografisk tilknytning", e)
+            throw HentGeografiskTilknytningPersonIkkeFunnetException()
         }
 
     }

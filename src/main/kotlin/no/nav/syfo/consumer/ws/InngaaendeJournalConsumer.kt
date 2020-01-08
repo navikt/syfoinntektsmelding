@@ -1,6 +1,10 @@
 package no.nav.syfo.consumer.ws
 
 import log
+import no.nav.syfo.behandling.HentJournalpostJournalpostIkkeFunneteException
+import no.nav.syfo.behandling.HentJournalpostJournalpostIkkeInngaaendeException
+import no.nav.syfo.behandling.HentJournalpostSikkerhetsbegrensningException
+import no.nav.syfo.behandling.HentJournalpostUgyldigInputException
 import no.nav.syfo.domain.InngaaendeJournal
 import no.nav.syfo.domain.JournalStatus
 import no.nav.tjeneste.virksomhet.inngaaendejournal.v1.binding.*
@@ -27,16 +31,16 @@ class InngaaendeJournalConsumer(private val inngaaendeJournalV1: InngaaendeJourn
 
         } catch (e: HentJournalpostSikkerhetsbegrensning) {
             log.error("Feil ved henting av journalpost: Sikkerhetsbegrensning!")
-            throw RuntimeException("Feil ved henting av journalpost: Sikkerhetsbegrensning!", e)
+            throw HentJournalpostSikkerhetsbegrensningException(journalpostId)
         } catch (e: HentJournalpostJournalpostIkkeInngaaende) {
             log.error("Feil ved henting av journalpost: Journalpost er ikke inngaaende!")
-            throw RuntimeException("Feil ved henting av journalpost: Journalpost er ikke inngaaende!", e)
+            throw HentJournalpostJournalpostIkkeInngaaendeException(journalpostId)
         } catch (e: HentJournalpostJournalpostIkkeFunnet) {
             log.error("Feil ved henting av journalpost: Journalpost ikke funnet!")
-            throw RuntimeException("Feil ved henting av journalpost: Journalpost ikke funnet!", e)
+            throw HentJournalpostJournalpostIkkeFunneteException(journalpostId)
         } catch (e: HentJournalpostUgyldigInput) {
             log.error("Feil ved henting av journalpost: Journalpostid ikke gyldig!")
-            throw RuntimeException("Feil ved henting av journalpost: Journalpostid ikke gyldig!", e)
+            throw HentJournalpostUgyldigInputException(journalpostId)
         }
 
     }

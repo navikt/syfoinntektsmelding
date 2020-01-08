@@ -1,6 +1,7 @@
 package no.nav.syfo.consumer.rest;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.syfo.behandling.TokenException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -39,7 +40,7 @@ public class TokenConsumer {
         final ResponseEntity<Token> result = basicAuthRestTemplate.exchange(uriString, GET, new HttpEntity<>(headers), Token.class);
 
         if (result.getStatusCode() != OK) {
-            throw new RuntimeException("Henting av token feiler med HTTP-" + result.getStatusCode());
+            throw new TokenException(result.getStatusCode().value());
         }
 
         return requireNonNull(result.getBody()).getAccess_token();

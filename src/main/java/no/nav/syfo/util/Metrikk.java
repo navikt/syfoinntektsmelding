@@ -2,6 +2,7 @@ package no.nav.syfo.util;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tags;
+import no.nav.syfo.behandling.Feiltype;
 import no.nav.syfo.domain.JournalStatus;
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding;
 import org.springframework.stereotype.Controller;
@@ -65,6 +66,14 @@ public class Metrikk {
 
     public void tellInntektsmeldingfeil() {
         registry.counter("syfoinntektsmelding_inntektsmeldingfeil", Tags.of("type", "error")).increment();
+    }
+
+    public void tellBehandlingsfeil(Feiltype feiltype) {
+        registry.counter("syfoinntektsmelding_behandlingsfeil", Tags.of("feiltype", feiltype.getNavn())).increment();
+    }
+
+    public void tellIkkebehandlet() {
+        registry.counter("syfoinntektsmelding_ikkebehandlet").increment();
     }
 
     public void tellJournalpoststatus(JournalStatus status) {

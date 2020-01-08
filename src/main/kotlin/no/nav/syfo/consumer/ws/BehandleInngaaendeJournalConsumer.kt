@@ -1,6 +1,16 @@
 package no.nav.syfo.consumer.ws
 
 import log
+import no.nav.syfo.behandling.FerdigstillJournalfoeringFerdigstillingIkkeMuligException
+import no.nav.syfo.behandling.FerdigstillJournalfoeringJournalpostIkkeInngaaendeException
+import no.nav.syfo.behandling.FerdigstillJournalfoeringObjektIkkeFunnetException
+import no.nav.syfo.behandling.FerdigstillJournalfoeringSikkerhetsbegrensningException
+import no.nav.syfo.behandling.FerdigstillJournalfoeringUgyldigInputException
+import no.nav.syfo.behandling.OppdaterJournalpostJournalpostIkkeInngaaendeException
+import no.nav.syfo.behandling.OppdaterJournalpostObjektIkkeFunnetException
+import no.nav.syfo.behandling.OppdaterJournalpostOppdateringIkkeMuligException
+import no.nav.syfo.behandling.OppdaterJournalpostSikkerhetsbegrensningException
+import no.nav.syfo.behandling.OppdaterJournalpostUgyldigInputException
 import no.nav.syfo.domain.InngaendeJournalpost
 import no.nav.tjeneste.virksomhet.behandleinngaaendejournal.v1.binding.BehandleInngaaendeJournalV1
 import no.nav.tjeneste.virksomhet.behandleinngaaendejournal.v1.binding.FerdigstillJournalfoeringFerdigstillingIkkeMulig
@@ -55,24 +65,20 @@ class BehandleInngaaendeJournalConsumer(private val behandleInngaaendeJournalV1:
             behandleInngaaendeJournalV1.oppdaterJournalpost( request )
         } catch (e: OppdaterJournalpostUgyldigInput) {
             log.error("Feil ved oppdatering av journalpost: {} - Ugyldig input!", journalpostId, e)
-            throw RuntimeException("Feil ved oppdatering av journalpost: $journalpostId - Ugyldig input!", e)
+            throw OppdaterJournalpostUgyldigInputException(journalpostId)
         } catch (e: OppdaterJournalpostObjektIkkeFunnet) {
             log.error("Feil ved oppdatering av journalpost: {} - Journalpost ikke funnet!", journalpostId, e)
-            throw RuntimeException("Feil ved oppdatering av journalpost: $journalpostId Journalpost ikke funnet!", e)
+            throw OppdaterJournalpostObjektIkkeFunnetException(journalpostId)
         } catch (e: OppdaterJournalpostOppdateringIkkeMulig) {
             log.error("Feil ved oppdatering av journalpost: {} - Oppdatering ikke mulig!", journalpostId, e)
-            throw RuntimeException("Feil ved oppdatering av journalpost: $journalpostId - Oppdatering ikke mulig!", e)
+            throw OppdaterJournalpostOppdateringIkkeMuligException(journalpostId)
         } catch (e: OppdaterJournalpostJournalpostIkkeInngaaende) {
             log.error("Feil ved oppdatering av journalpost: {} - Journalpost er ikke inngående!", journalpostId, e)
-            throw RuntimeException(
-                "Feil ved oppdatering av journalpost: $journalpostId - Journalpost er ikke inngående!",
-                e
-            )
+            throw OppdaterJournalpostJournalpostIkkeInngaaendeException(journalpostId)
         } catch (e: OppdaterJournalpostSikkerhetsbegrensning) {
             log.error("Feil ved oppdatering av journalpost: {} - Sikkerhetsbegrensning!", journalpostId, e)
-            throw RuntimeException("Feil ved oppdatering av journalpost: $journalpostId - Sikkerhetsbegrensning!", e)
+            throw OppdaterJournalpostSikkerhetsbegrensningException(journalpostId)
         }
-
     }
 
     fun ferdigstillJournalpost(inngaendeJournalpost: InngaendeJournalpost) {
@@ -86,25 +92,19 @@ class BehandleInngaaendeJournalConsumer(private val behandleInngaaendeJournalV1:
             behandleInngaaendeJournalV1.ferdigstillJournalfoering(request)
         } catch (e: FerdigstillJournalfoeringUgyldigInput) {
             log.error("Feil ved ferdigstilling av journalpost: {} - Ugyldig input!", journalpostId, e)
-            throw RuntimeException("Feil ved ferdigstilling av journalpost: $journalpostId - Ugyldig innput!", e)
+            throw FerdigstillJournalfoeringUgyldigInputException(journalpostId)
         } catch (e: FerdigstillJournalfoeringObjektIkkeFunnet) {
             log.error("Feil ved ferdigstilling av journalpost: {} - Journalpost ikke funnet", journalpostId, e)
-            throw RuntimeException(
-                "Feil ved ferdigstilling av journalpost: $journalpostId - Journalpost ikke funnet!",
-                e
-            )
+            throw FerdigstillJournalfoeringObjektIkkeFunnetException(journalpostId)
         } catch (e: FerdigstillJournalfoeringJournalpostIkkeInngaaende) {
             log.error("Feil ved ferdigstilling av journalpost: {} - Ikke inngående!", journalpostId, e)
-            throw RuntimeException("Feil ved ferdigstilling av journalpost: $journalpostId - Ikke inngående!", e)
+            throw FerdigstillJournalfoeringJournalpostIkkeInngaaendeException(journalpostId)
         } catch (e: FerdigstillJournalfoeringSikkerhetsbegrensning) {
             log.error("Feil ved ferdigstilling av journalpost: {} - Sikkerhetsbegrensing!", journalpostId, e)
-            throw RuntimeException("Feil ved ferdigstilling av journalpost: $journalpostId - Sikkerhetsbegrensing!", e)
+            throw FerdigstillJournalfoeringSikkerhetsbegrensningException(journalpostId)
         } catch (e: FerdigstillJournalfoeringFerdigstillingIkkeMulig) {
             log.error("Feil ved ferdigstilling av journalpost: {} - Ikke mulig å ferdigstille!", journalpostId, e)
-            throw RuntimeException(
-                "Feil ved ferdigstilling av journalpost: $journalpostId - Ikke mulig å ferdigstille!",
-                e
-            )
+            throw FerdigstillJournalfoeringFerdigstillingIkkeMuligException(journalpostId)
         }
 
     }

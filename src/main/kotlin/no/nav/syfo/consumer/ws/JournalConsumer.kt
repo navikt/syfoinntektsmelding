@@ -1,6 +1,9 @@
 package no.nav.syfo.consumer.ws
 
 import log
+import no.nav.syfo.behandling.HentDokumentFeiletException
+import no.nav.syfo.behandling.HentDokumentIkkeFunnetException
+import no.nav.syfo.behandling.HentDokumentSikkerhetsbegrensningException
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
 import no.nav.syfo.consumer.ws.mapping.InntektsmeldingArbeidsgiver20180924Mapper
 import no.nav.syfo.consumer.ws.mapping.InntektsmeldingArbeidsgiverPrivat20181211Mapper
@@ -44,10 +47,10 @@ class JournalConsumer(private val journalV2: JournalV2,
                 InntektsmeldingArbeidsgiverPrivat20181211Mapper.tilXMLInntektsmelding(jaxbInntektsmelding, journalpostId, inngaaendeJournal, aktorConsumer)
         } catch (e: HentDokumentSikkerhetsbegrensning) {
             log.error("Feil ved henting av dokument: Sikkerhetsbegrensning!")
-            throw RuntimeException("Feil ved henting av dokument: Sikkerhetsbegrensning!", e)
+            throw HentDokumentSikkerhetsbegrensningException(journalpostId)
         } catch (e: HentDokumentDokumentIkkeFunnet) {
             log.error("Feil ved henting av dokument: Dokument ikke funnet!")
-            throw RuntimeException("Feil ved henting av journalpost: Dokument ikke funnet!", e)
+            throw HentDokumentIkkeFunnetException(journalpostId)
         } catch (e: RuntimeException) {
             log.error(
                     "Klarte ikke å hente inntektsmelding med journalpostId: {} og dokumentId: {}",
@@ -55,7 +58,7 @@ class JournalConsumer(private val journalV2: JournalV2,
                     inngaaendeJournal.dokumentId,
                     e
             )
-            throw RuntimeException(e)
+            throw HentDokumentFeiletException(journalpostId)
         }
 
     }
