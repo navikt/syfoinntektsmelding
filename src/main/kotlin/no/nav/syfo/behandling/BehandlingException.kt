@@ -52,12 +52,12 @@ open class BehandlendeEnhetFeiletException() : BehandlendeEnhetException(Feiltyp
 
 // JournalConsumer
 open class JournalException(override var feiltype: Feiltype, message: String) : BehandlingException(feiltype, message)
-open class HentDokumentSikkerhetsbegrensningException(journalpostId: String) : JournalException(Feiltype.AKTØR_IKKE_FUNNET, "Sikkerhetsbegrensning ved henting av journalpostId $journalpostId!")
-open class HentDokumentIkkeFunnetException(journalpostId: String) : JournalException(Feiltype.AKTØR_IKKE_FUNNET, "Fant ikke dokument for journalpostId $journalpostId!")
-open class HentDokumentFeiletException(journalpostId: String) : JournalException(Feiltype.AKTØR_IKKE_FUNNET, "Kall til journal feilet for journalpostId $journalpostId!")
+open class HentDokumentSikkerhetsbegrensningException(journalpostId: String) : JournalException(Feiltype.DOKUMENT_SIKKERHETSBEGRENSNING, "Sikkerhetsbegrensning ved henting av journalpostId $journalpostId!")
+open class HentDokumentIkkeFunnetException(journalpostId: String) : JournalException(Feiltype.DOKUMENT_IKKE_FUNNET, "Fant ikke dokument for journalpostId $journalpostId!")
+open class HentDokumentFeiletException(journalpostId: String) : JournalException(Feiltype.DOKUMENT_FEILET, "Kall til journal feilet for journalpostId $journalpostId!")
 
 // SakConsumer
-open class SakException(override var feiltype: Feiltype, message: String) : BehandlingException(Feiltype.AKTØR_IKKE_FUNNET, message)
+open class SakException(override var feiltype: Feiltype, message: String) : BehandlingException(feiltype, message)
 open class SakResponseException(aktørId: String, statusCode: Int) : SakException(Feiltype.SAK_RESPONSE, "Kall mot syfonarmesteleder feiler med status $statusCode for aktørId $aktørId")
 open class SakFeilException(aktørId: String) : SakException(Feiltype.SAK_FEILET, "Uventet feil ved henting av nærmeste leder for aktørId $aktørId")
 
