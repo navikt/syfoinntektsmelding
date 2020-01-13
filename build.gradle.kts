@@ -116,6 +116,8 @@ dependencies {
     implementation("no.nav.syfo.sm:syfosm-common-rest-sts:2019.09.03-10-50-64032e3b6381665e9f9c0914cef626331399e66d")
     implementation("no.nav.syfo.sm:syfosm-common-networking:2019.09.03-10-50-64032e3b6381665e9f9c0914cef626331399e66d")
 
+    implementation("no.nav.familie.felles:prosessering:1.0_20191230205149_509e1c9")
+
     implementation("org.slf4j:slf4j-api:1.7.25")
     implementation("net.logstash.logback:logstash-logback-encoder:4.10")
     implementation("com.ibm.mq:com.ibm.mq.allclient:9.0.4.0")
