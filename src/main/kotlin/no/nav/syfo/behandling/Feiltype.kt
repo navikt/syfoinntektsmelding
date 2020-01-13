@@ -1,6 +1,8 @@
 package no.nav.syfo.behandling
 
 enum class Feiltype(var navn: String) {
+    USPESIFISERT("uspesifisert"),
+    JMS("jms"),
     AZUREADTOKEN("azureadtoken"),
     TOKEN("token"),
     AKTØR_IKKE_FUNNET("aktor_ikkefunnet"),

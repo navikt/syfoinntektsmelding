@@ -3,6 +3,7 @@ package no.nav.syfo.consumer.mq
 import log
 import no.nav.melding.virksomhet.dokumentnotifikasjon.v1.XMLForsendelsesinformasjon
 import no.nav.syfo.behandling.BehandlingException
+import no.nav.syfo.behandling.Feiltype
 import no.nav.syfo.behandling.InntektsmeldingBehandler
 import no.nav.syfo.util.JAXB
 import no.nav.syfo.util.MDCOperations.*
@@ -47,11 +48,11 @@ class InntektsmeldingConsumer(
             throw RuntimeException("Feil ved lesing av melding  med arkivreferanse $arkivReferanse", e)
         } catch (e: JMSException) {
             log.error("Feil ved parsing av inntektsmelding fra kø med arkivreferanse $arkivReferanse", e)
-            metrikk.tellInntektsmeldingfeil()
+            metrikk.tellBehandlingsfeil(Feiltype.JMS)
             throw RuntimeException("Feil ved lesing av melding med arkivreferanse $arkivReferanse", e)
         } catch (e: Exception) {
             log.error("Det skjedde en feil ved journalføring med arkivreferanse $arkivReferanse", e)
-            metrikk.tellInntektsmeldingfeil()
+            metrikk.tellBehandlingsfeil(Feiltype.USPESIFISERT)
             throw RuntimeException("Det skjedde en feil ved journalføring med arkivreferanse $arkivReferanse", e)
         } finally {
             remove(MDC_CALL_ID)
