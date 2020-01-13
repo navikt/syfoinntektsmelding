@@ -6,7 +6,7 @@
   "required_contexts": [],
   "payload": {
     "version": [1, 0, 0],
-    "team": "arbeidsgiver",
+    "team": "helsearbeidsgiver",
     "kubernetes": {
       "resources": []
     }
