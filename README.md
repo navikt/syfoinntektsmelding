@@ -11,3 +11,6 @@ Oppgaven til syfoinntektsmelding er å lytte på en kø med nye inntektsmeldinge
 ## For å starte appen lokalt:
 Applikasjonen startes i LocalApplication.class Den må kjøre som en spring-boot applikasjon med local som profil. 
 Du må også ha en `application-local.properties` som peker på eksterne avhenigheter. Denne fås av en annen utvikler.
+
+## For NAV-ansatte
+Interne henvendelser kan sendes via Slack i kanalen #helse-arbeidsgiver
