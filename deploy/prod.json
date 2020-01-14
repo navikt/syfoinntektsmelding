@@ -72,11 +72,11 @@
         "value": "oracle.jdbc.OracleDriver"
       },
       {
-        "name": "GAMMEL_SPRING_DATASOURCE_URL",
+        "name": "SPRING_GAMMEL_DATASOURCE_URL",
         "value": "jdbc:oracle:thin:@a01dbfl037.adeo.no:1521/syfoinntektsmelding"
       },
       {
-        "name": "GAMMEL_SPRING_DATASOURCE_USERNAME",
+        "name": "SPRING_GAMMEL_DATASOURCE_USERNAME",
         "value": "syfoinntektsmelding"
       },
       {
