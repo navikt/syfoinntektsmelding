@@ -212,7 +212,8 @@
       }
     },
     "vault": {
-      "enabled": true
+      "enabled": true,
+      "sidecar": true
     },
     "webproxy": true
   }

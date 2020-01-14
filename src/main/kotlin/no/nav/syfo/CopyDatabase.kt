@@ -16,13 +16,12 @@ import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Service
 
 @Service
-class CopyDatabase {
+class CopyDatabase (
+    private val metrikk: Metrikk
+) {
 
     @Autowired
     lateinit var jdbcTemplate: JdbcTemplate
-
-    @Autowired
-    lateinit var metrikk: Metrikk
 
     val INNTEKTSMELDING = "INNTEKTSMELDING"
     val ARBEIDSGIVERPERIODE = "ARBEIDSGIVERPERIODE"
@@ -111,7 +110,7 @@ class CopyDatabase {
                 log.info("Failed copying from $table")
             }
         })
-        migrator.copyTable(sourceInntektsmelding, destinationInntektsmelding)
+//        migrator.copyTable(sourceInntektsmelding, destinationInntektsmelding)
         migrator.copyTable(sourceArbeidsgiverperiode, destinationArbeidsgiverperiode)
     }
 
