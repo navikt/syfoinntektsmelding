@@ -3,6 +3,7 @@ package no.nav.syfo.repository
 import no.nav.syfo.LocalApplication
 import no.nav.syfo.dto.InntektsmeldingEntitet
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -20,6 +21,7 @@ import java.time.LocalDateTime
 @OverrideAutoConfiguration(enabled = true)
 @TestPropertySource(locations = ["classpath:application-repo.properties"])
 @ContextConfiguration(classes = [LocalApplication::class])
+@Ignore
 open class InntektsmeldingRepositoryTest {
     @Autowired
     private lateinit var entityManager: TestEntityManager
