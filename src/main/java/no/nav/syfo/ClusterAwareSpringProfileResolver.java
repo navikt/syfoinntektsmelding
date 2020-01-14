@@ -26,7 +26,7 @@ public final class ClusterAwareSpringProfileResolver {
         if (cluster.equals(DEV_FSS)) {
             return new String[]{DEV_FSS, REMOTE};
         }
-        if (cluster.equals(REMOTE)) {
+        if (cluster.equals(PROD_FSS)) {
             return new String[]{PROD_FSS, REMOTE};
         }
         return new String[]{DEFAULT};
