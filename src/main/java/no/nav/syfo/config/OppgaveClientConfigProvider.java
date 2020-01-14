@@ -13,9 +13,9 @@ public class OppgaveClientConfigProvider {
         String url,
         @Value("${securitytokenservice.url}")
         String tokenUrl,
-        @Value("${srvsyfoinntektsmelding.username}")
+        @Value("${srvappserver.username}")
         String username,
-        @Value("${srvsyfoinntektsmelding.password}")
+        @Value("${srvappserver.password}")
         String password) {
         return new OppgaveConfig(url, tokenUrl, username, password);
     }
