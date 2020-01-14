@@ -37,9 +37,9 @@ public class JmsConfig {
     private String gatewayName;
     @Value("${mqgateway03.port}")
     private int gatewayPort;
-    @Value("${srvappserver.username}")
+    @Value("${srvsyfoinntektsmelding.username}")
     private String srvAppserverUsername;
-    @Value("${srvappserver.password}")
+    @Value("${srvsyfoinntektsmelding.password}")
     private String srvAppserverPassword;
 
     @Bean
