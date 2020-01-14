@@ -162,6 +162,14 @@
       {
         "name": "OPPRETT_SAK_URL",
         "value": "http://sak.default.svc.nais.local/api/v1/saker"
+      },
+      {
+        "name": "SRVAPPSERVER_USERNAME",
+        "value": "srvappserver"
+      },
+      {
+        "name": "SRVAPPSERVER_PASSWORD",
+        "value": ""
       }
     ],
     "image": "repo.adeo.no:5443/syfoinntektsmelding:RELEASE_VERSION",
