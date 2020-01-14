@@ -111,6 +111,7 @@ class CopyDatabase (
             }
         })
         // Legger til en kommentar for å få deployet
+
 //        migrator.copyTable(sourceInntektsmelding, destinationInntektsmelding)
         migrator.copyTable(sourceArbeidsgiverperiode, destinationArbeidsgiverperiode)
     }
