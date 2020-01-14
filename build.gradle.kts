@@ -41,6 +41,13 @@ repositories {
         }
         setUrl("https://maven.pkg.github.com/navikt/inntektsmelding-kontrakt")
     }
+    maven {
+        credentials {
+            username = "x-access-token"
+            password = githubPassword
+        }
+        setUrl("https://maven.pkg.github.com/navikt/migrator")
+    }
 }
 
 java {
@@ -98,8 +105,11 @@ dependencies {
     runtime("org.apache.cxf:cxf-spring-boot-starter-jaxws:$cxfVersion")
     runtime("org.apache.cxf:cxf-rt-features-logging:$cxfVersion")
     runtime("com.oracle.ojdbc:ojdbc10:19.3.0.0")
+    implementation("org.postgresql:postgresql:42.2.8")
     implementation("org.apache.neethi:neethi:3.1.0")
     implementation("org.flywaydb:flyway-core:$flywayVersion")
+    implementation("org.springframework.cloud:spring-cloud-starter-vault-config:$springBootVersion")
+    implementation("org.springframework.cloud:spring-cloud-vault-config-databases:$springBootVersion")
 
     // NAV
     implementation("no.nav.sykepenger.kontrakter:inntektsmelding-kontrakt:2019.11.08-09-49-c3234")
@@ -115,6 +125,8 @@ dependencies {
     implementation("no.nav.tjenestespesifikasjoner:diskresjonskodev1-tjenestespesifikasjon:1.2019.08.16-13.46-35cbdfd492d4")
     implementation("no.nav.syfo.sm:syfosm-common-rest-sts:2019.09.03-10-50-64032e3b6381665e9f9c0914cef626331399e66d")
     implementation("no.nav.syfo.sm:syfosm-common-networking:2019.09.03-10-50-64032e3b6381665e9f9c0914cef626331399e66d")
+    implementation("no.nav:migrator:0.2.2")
+    implementation("no.nav:vault-jdbc:1.3.1")
 
     implementation("org.slf4j:slf4j-api:1.7.25")
     implementation("net.logstash.logback:logstash-logback-encoder:4.10")

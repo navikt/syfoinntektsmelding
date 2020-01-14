@@ -3,6 +3,8 @@ package no.nav.syfo.behandling
 import any
 import eq
 import kotlinx.coroutines.runBlocking
+import no.nav.syfo.CopyDatabase
+import no.nav.syfo.LocalApplication
 import no.nav.syfo.consumer.rest.OppgaveClient
 import no.nav.syfo.consumer.rest.SakClient
 import no.nav.syfo.consumer.rest.SakResponse
@@ -22,7 +24,6 @@ import no.nav.syfo.repository.InntektsmeldingService
 import no.nav.syfo.service.EksisterendeSakService
 import no.nav.syfo.service.JournalpostService
 import no.nav.syfo.service.SaksbehandlingService
-import no.nav.syfo.test.LocalApplication
 import no.nav.syfo.util.Metrikk
 import no.nav.tjeneste.virksomhet.journal.v2.binding.HentDokumentDokumentIkkeFunnet
 import no.nav.tjeneste.virksomhet.journal.v2.binding.HentDokumentSikkerhetsbegrensning
@@ -118,6 +119,9 @@ open class InntektsmeldingBehandlerIT {
     lateinit var journalpostService: JournalpostService
 
     lateinit var inntektsmeldingBehandler: InntektsmeldingBehandler
+
+    @MockBean
+    lateinit var copyDatabase: CopyDatabase
 
     @Before
     fun setup() {

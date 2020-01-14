@@ -1,11 +1,11 @@
 .idea
 *.iml
 application-local.properties
+application-local.yaml
+bootstrap-local.yaml
 transaction-logs
 target
 .gradle
-/build/kotlin/compileKotlin/dirty-sources.txt
-/build/kotlin/compileKotlin/build-history.bin
 /build/
 /syfoinntektsmelding.ipr
 /syfoinntektsmelding.iws

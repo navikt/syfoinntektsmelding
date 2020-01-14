@@ -1,0 +1,19 @@
+spring:
+  cloud:
+    vault:
+      enabled: true
+      uri: https://vault.adeo.no
+      database:
+        enabled: true
+        role: syfoinntektsmelding-admin
+        backend: postgresql/preprod-fss
+      authentication: KUBERNETES
+      kubernetes:
+        role: syfoinntektsmelding #Should match application_name in terraform nais module
+        kubernetes-path: kubernetes/preprod/fss #This path is cluster specific.
+        service-account-token-file: /var/run/secrets/kubernetes.io/serviceaccount/token
+      generic:
+        enabled: true
+        backend: kv/preprod/fss #This path is cluster specific.
+        application-name: syfoinntektsmelding/default #Change "default to t10, q1 etc"
+        default-context: syfoinntektsmelding/default  #HACK Need the value of this property to be the same as the line above.
