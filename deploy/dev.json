@@ -59,12 +59,17 @@
         "value": "b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443"
       },
       {
-        "name": "SPRING_DATASOURCE_USERNAME",
-        "value": "SYFOINNTEKTSMELDING_Q1"
+        "name": "SPRING_DATASOURCE_URL",
+        "value": "jdbc:postgresql://b27dbvl009.preprod.local/syfoinntektsmelding"
+      },
+
+      {
+        "name": "vault.postgres.backend",
+        "value": "postgresql/preprod-fss"
       },
       {
-        "name": "SPRING_DATASOURCE_URL",
-        "value": "jdbc:oracle:thin:@a01dbfl032.adeo.no:1521/syfoinntektsmeldingq1"
+        "name": "vault.postgres.role",
+        "value": "syfoinntektsmelding-admin"
       },
       {
         "name": "spring_datasource_driver-class-name",
@@ -197,7 +202,8 @@
       }
     },
     "vault": {
-      "enabled": true
+      "enabled": true,
+      "sidecar": true
     },
     "webproxy": true
   }

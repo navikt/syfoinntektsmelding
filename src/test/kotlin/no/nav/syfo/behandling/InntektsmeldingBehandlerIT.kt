@@ -3,6 +3,7 @@ package no.nav.syfo.behandling
 import any
 import eq
 import kotlinx.coroutines.runBlocking
+import no.nav.syfo.LocalApplication
 import no.nav.syfo.consumer.rest.OppgaveClient
 import no.nav.syfo.consumer.rest.SakClient
 import no.nav.syfo.consumer.rest.SakResponse
@@ -22,7 +23,6 @@ import no.nav.syfo.repository.InntektsmeldingService
 import no.nav.syfo.service.EksisterendeSakService
 import no.nav.syfo.service.JournalpostService
 import no.nav.syfo.service.SaksbehandlingService
-import no.nav.syfo.test.LocalApplication
 import no.nav.syfo.util.Metrikk
 import no.nav.tjeneste.virksomhet.journal.v2.binding.HentDokumentDokumentIkkeFunnet
 import no.nav.tjeneste.virksomhet.journal.v2.binding.HentDokumentSikkerhetsbegrensning
@@ -62,7 +62,7 @@ import java.util.concurrent.atomic.AtomicInteger
 
 @RunWith(SpringRunner::class)
 @SpringBootTest(classes = [LocalApplication::class])
-@TestPropertySource(locations = ["classpath:application-it.properties"])
+@TestPropertySource("classpath:application-test.properties")
 @DirtiesContext
 @EnableJpaRepositories("no.nav.syfo")
 @EntityScan(basePackages = ["no.nav.syfo.dto"])
@@ -112,7 +112,6 @@ open class InntektsmeldingBehandlerIT {
     @Autowired
     lateinit var inntektsmeldingRepository: InntektsmeldingRepository
     lateinit var inntektsmeldingService: InntektsmeldingService
-
 
     @MockBean
     lateinit var journalpostService: JournalpostService

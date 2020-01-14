@@ -12,9 +12,9 @@ public class SakClientConfigProvider {
             String url,
         @Value("${securitytokenservice.url}")
             String tokenUrl,
-        @Value("${srvappserver.username}")
+        @Value("${srvsyfoinntektsmelding.username}")
             String username,
-        @Value("${srvappserver.password}")
+        @Value("${srvsyfoinntektsmelding.password}")
             String password) {
         return new SakClientConfig(url, tokenUrl, username, password);
     }
