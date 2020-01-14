@@ -110,6 +110,7 @@ class CopyDatabase (
                 log.info("Failed copying from $table")
             }
         })
+        // Legger til en kommentar for å få deployet
 //        migrator.copyTable(sourceInntektsmelding, destinationInntektsmelding)
         migrator.copyTable(sourceArbeidsgiverperiode, destinationArbeidsgiverperiode)
     }
