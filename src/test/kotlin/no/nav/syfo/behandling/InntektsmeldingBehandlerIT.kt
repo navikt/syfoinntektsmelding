@@ -3,7 +3,6 @@ package no.nav.syfo.behandling
 import any
 import eq
 import kotlinx.coroutines.runBlocking
-import no.nav.syfo.CopyDatabase
 import no.nav.syfo.LocalApplication
 import no.nav.syfo.consumer.rest.OppgaveClient
 import no.nav.syfo.consumer.rest.SakClient
@@ -114,14 +113,10 @@ open class InntektsmeldingBehandlerIT {
     lateinit var inntektsmeldingRepository: InntektsmeldingRepository
     lateinit var inntektsmeldingService: InntektsmeldingService
 
-
     @MockBean
     lateinit var journalpostService: JournalpostService
 
     lateinit var inntektsmeldingBehandler: InntektsmeldingBehandler
-
-    @MockBean
-    lateinit var copyDatabase: CopyDatabase
 
     @Before
     fun setup() {

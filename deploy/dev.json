@@ -71,16 +71,6 @@
         "name": "vault.postgres.role",
         "value": "syfoinntektsmelding-admin"
       },
-
-      {
-        "name": "SPRING_GAMMEL_DATASOURCE_USERNAME",
-        "value": "SYFOINNTEKTSMELDING_Q1"
-      },
-      {
-        "name": "SPRING_GAMMEL_DATASOURCE_URL",
-        "value": "jdbc:oracle:thin:@a01dbfl032.adeo.no:1521/syfoinntektsmeldingq1"
-      },
-
       {
         "name": "spring_datasource_driver-class-name",
         "value": "oracle.jdbc.OracleDriver"

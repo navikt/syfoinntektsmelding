@@ -1,12 +1,6 @@
 spring:
     flyway:
         enabled: true
-    gammel:
-        datasource:
-            driverClassName: oracle.jdbc.OracleDriver
-            password: ''
-            url: ''
-            username: ''
     jpa:
         database-platform: org.hibernate.dialect.H2Dialect
         hibernate:

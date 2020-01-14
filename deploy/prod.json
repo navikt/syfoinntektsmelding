@@ -72,14 +72,6 @@
         "value": "oracle.jdbc.OracleDriver"
       },
       {
-        "name": "SPRING_GAMMEL_DATASOURCE_URL",
-        "value": "jdbc:oracle:thin:@a01dbfl037.adeo.no:1521/syfoinntektsmelding"
-      },
-      {
-        "name": "SPRING_GAMMEL_DATASOURCE_USERNAME",
-        "value": "syfoinntektsmelding"
-      },
-      {
         "name": "SYFO_MOTTAK_INNTEKTSMELDING_QUEUENAME",
         "value": "QA.P_SYFO.MOTTAK_INNTEKTSMELDING"
       },
