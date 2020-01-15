@@ -10,6 +10,12 @@ jobs:
       - uses: actions/setup-java@v1
         with:
           java-version: '11.x'
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
       - name: test and build
         run: ./gradlew test build
         env:
