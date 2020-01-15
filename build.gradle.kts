@@ -9,6 +9,7 @@ val cxfVersion = "3.3.3"
 val clientMockVersion = "1.2.3-1.3.50-eap-5"
 val swaggerVersion = "2.7.0"
 val kotlinVersion = "1.3.50"
+val hikariVersion = "3.4.2"
 
 val mainClass = "no.nav.syfo.Application"
 
@@ -127,6 +128,8 @@ dependencies {
     implementation("no.nav.syfo.sm:syfosm-common-networking:2019.09.03-10-50-64032e3b6381665e9f9c0914cef626331399e66d")
     implementation("no.nav:migrator:0.2.2")
     implementation("no.nav:vault-jdbc:1.3.1")
+
+    implementation("com.zaxxer:HikariCP:$hikariVersion")
 
     implementation("org.slf4j:slf4j-api:1.7.25")
     implementation("net.logstash.logback:logstash-logback-encoder:4.10")
