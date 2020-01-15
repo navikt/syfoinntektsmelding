@@ -10,6 +10,5 @@ target
 /syfoinntektsmelding.ipr
 /syfoinntektsmelding.iws
 out/
-gradle.properties
 .DS_Store
 application-local.yml
