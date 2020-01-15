@@ -42,13 +42,6 @@ repositories {
         }
         setUrl("https://maven.pkg.github.com/navikt/inntektsmelding-kontrakt")
     }
-    maven {
-        credentials {
-            username = "x-access-token"
-            password = githubPassword
-        }
-        setUrl("https://maven.pkg.github.com/navikt/migrator")
-    }
 }
 
 java {
