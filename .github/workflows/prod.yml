@@ -3,7 +3,7 @@ name: Bygg og deploy til prod
 on:
   push:
     tags:
-    - prod
+    - prod/*
 
 jobs:
   build:
