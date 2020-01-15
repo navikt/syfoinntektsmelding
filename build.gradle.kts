@@ -34,7 +34,7 @@ buildscript {
 repositories {
     mavenCentral()
     maven("https://kotlin.bintray.com/ktor")
-    maven("http://packages.confluent.io/maven/")
+    maven("https://packages.confluent.io/maven/")
     maven {
         credentials {
             username = "x-access-token"
@@ -96,9 +96,9 @@ dependencies {
     implementation("org.apache.cxf:cxf-core:$cxfVersion")
     implementation("org.apache.cxf:cxf-rt-bindings-soap:$cxfVersion")
     implementation("org.apache.cxf:cxf-rt-databinding-jaxb:$cxfVersion")
-    runtime("org.apache.cxf:cxf-spring-boot-starter-jaxws:$cxfVersion")
-    runtime("org.apache.cxf:cxf-rt-features-logging:$cxfVersion")
-    runtime("com.oracle.ojdbc:ojdbc10:19.3.0.0")
+    runtimeOnly("org.apache.cxf:cxf-spring-boot-starter-jaxws:$cxfVersion")
+    runtimeOnly("org.apache.cxf:cxf-rt-features-logging:$cxfVersion")
+    runtimeOnly("com.oracle.ojdbc:ojdbc10:19.3.0.0")
     implementation("org.postgresql:postgresql:42.2.8")
     implementation("org.apache.neethi:neethi:3.1.0")
     implementation("org.flywaydb:flyway-core:$flywayVersion")
@@ -131,7 +131,7 @@ dependencies {
     testImplementation("org.apache.activemq:activemq-client:5.15.6")
     implementation("org.apache.httpcomponents:httpclient:4.5.6")
     implementation("io.micrometer:micrometer-core:$micrometerVersion")
-    runtime("io.micrometer:micrometer-registry-prometheus:$micrometerVersion")
+    runtimeOnly("io.micrometer:micrometer-registry-prometheus:$micrometerVersion")
     implementation("io.ktor:ktor-client-core:1.2.4")
     implementation("io.ktor:ktor:1.2.4")
     implementation("io.ktor:ktor-client-jackson:1.2.4")
@@ -151,7 +151,7 @@ dependencies {
 }
 
 tasks.named<Jar>("jar") {
-    baseName = "app"
+    archiveBaseName.set("app")
 
     manifest {
         attributes["Main-Class"] = mainClass
@@ -171,12 +171,17 @@ tasks.named<Jar>("jar") {
 
 tasks.named<KotlinCompile>("compileKotlin") {
     kotlinOptions.jvmTarget = "11"
+    kotlinOptions.suppressWarnings = true
 }
 
 tasks.named<KotlinCompile>("compileTestKotlin") {
     kotlinOptions.jvmTarget = "11"
+    kotlinOptions.suppressWarnings = true
 }
 
 tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
+    options.isWarnings = false
+    options.compilerArgs.add("-Xlint:-deprecation")
+    options.compilerArgs.add("-Xlint:-unchecked")
 }
