@@ -173,10 +173,10 @@
       "enabled": false
     },
     "liveness": {
-      "failureThreshold": 3,
+      "failureThreshold": 10,
       "initialDelay": 60,
       "path": "/internal/isAlive",
-      "periodSeconds": 10,
+      "periodSeconds": 3,
       "timeout": 1
     },
     "port": 8080,
@@ -185,10 +185,10 @@
       "path": "/internal/prometheus"
     },
     "readiness": {
-      "failureThreshold": 3,
+      "failureThreshold": 10,
       "initialDelay": 60,
       "path": "/internal/isReady",
-      "periodSeconds": 10,
+      "periodSeconds": 3,
       "timeout": 1
     },
     "replicas": {
