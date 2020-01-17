@@ -103,7 +103,7 @@ dependencies {
     implementation("org.apache.neethi:neethi:3.1.0")
     implementation("org.flywaydb:flyway-core:$flywayVersion")
     implementation("org.springframework.cloud:spring-cloud-starter-vault-config:$springBootVersion")
-    implementation("org.springframework.cloud:spring-cloud-vault-config-databases:$springBootVersion")
+//    implementation("org.springframework.cloud:spring-cloud-vault-config-databases:$springBootVersion")
 
     // NAV
     implementation("no.nav.sykepenger.kontrakter:inntektsmelding-kontrakt:2019.11.08-09-49-c3234")
@@ -120,7 +120,7 @@ dependencies {
     implementation("no.nav.syfo.sm:syfosm-common-rest-sts:2019.09.03-10-50-64032e3b6381665e9f9c0914cef626331399e66d")
     implementation("no.nav.syfo.sm:syfosm-common-networking:2019.09.03-10-50-64032e3b6381665e9f9c0914cef626331399e66d")
     implementation("no.nav:migrator:0.2.2")
-    implementation("no.nav:vault-jdbc:1.3.1")
+    implementation("no.nav:vault-jdbc:1.3.2")
 
     implementation("com.zaxxer:HikariCP:$hikariVersion")
 
