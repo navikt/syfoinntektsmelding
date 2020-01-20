@@ -29,6 +29,10 @@ public class VaultHikariConfig {
     @Bean
     public HikariDataSource dataSource(DataSourceProperties properties, VaultConfig vaultConfig) throws VaultError {
         HikariConfig config = createHikariConfig(properties);
+        log.info("enabled", vaultConfig.enabled);
+        log.info("databaseRole", vaultConfig.databaseRole);
+        log.info("databaseAdminrole", vaultConfig.databaseAdminrole);
+        log.info("databaseAdminrole", vaultConfig.databaseAdminrole);
         if (vaultConfig.enabled) {
             return HikariCPVaultUtil.createHikariDataSourceWithVaultIntegration(config, vaultConfig.databaseBackend, vaultConfig.databaseRole);
         }
