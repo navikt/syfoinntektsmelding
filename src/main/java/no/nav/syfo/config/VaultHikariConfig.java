@@ -5,10 +5,12 @@ import com.zaxxer.hikari.HikariDataSource;
 import lombok.Data;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.syfo.ClusterAwareSpringProfileResolver;
 import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil;
 import no.nav.vault.jdbc.hikaricp.VaultError;
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.flyway.FlywayMigrationStrategy;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -18,13 +20,10 @@ import org.springframework.context.annotation.Configuration;
 import javax.sql.DataSource;
 
 @Slf4j
-@Configuration
+@ConditionalOnProperty(value = "vault.enabled", matchIfMissing = true)
 public class VaultHikariConfig {
 
     private static final String APPLICATION_NAME = "syfoinntektsmelding";
-
-    @Value("${nais_cluster}")
-    private String naisCluster;
 
     @Value("${spring.datasource.url}")
     private String jdbcUrl;
@@ -35,6 +34,7 @@ public class VaultHikariConfig {
     }
 
     private String finnMountPath() {
+        String naisCluster = ClusterAwareSpringProfileResolver.profiles()[0];
         if (naisCluster == null || naisCluster.isEmpty()){
             return "postgresql/preprod-fss";
         }
