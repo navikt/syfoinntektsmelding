@@ -19,7 +19,7 @@ public class VaultHikariConfig {
 
     private static final String APPLICATION_NAME = "syfoinntektsmelding";
 
-    @Value("${spring.datasource.url}")
+    @Value("${vault.datasource.url}")
     private String jdbcUrl;
 
     @Bean
@@ -41,10 +41,10 @@ public class VaultHikariConfig {
 
     @SneakyThrows
     private HikariDataSource dataSource(String user) {
-        log.info("JdbdUrl", jdbcUrl);
-        log.info("user", user);
-        log.info("finnMountPath", finnMountPath());
-        log.info("dbRole", dbRole(user));
+        log.warn("JdbdUrl", jdbcUrl);
+        log.warn("user", user);
+        log.warn("finnMountPath", finnMountPath());
+        log.warn("dbRole", dbRole(user));
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl(jdbcUrl);
         config.setMaximumPoolSize(3);
