@@ -3,50 +3,66 @@ package no.nav.syfo.config;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.Data;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil;
 import no.nav.vault.jdbc.hikaricp.VaultError;
+import org.flywaydb.core.Flyway;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.flyway.FlywayMigrationStrategy;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.sql.DataSource;
+
 @Slf4j
 @Configuration
 public class VaultHikariConfig {
 
-    @Data
-    @Configuration
-    @ConfigurationProperties(prefix = "vault")
-    public static class VaultConfig {
+    private static final String APPLICATION_NAME = "syfoinntektsmelding";
 
-        private boolean enabled = true;
-        private String databaseBackend;
-        private String databaseRole;
-        private String databaseAdminrole;
+    @Value("${nais_cluster}")
+    private String naisCluster;
+
+    @Value("${spring.datasource.url}")
+    private String jdbcUrl;
+
+    @Bean
+    public DataSource userDataSource() {
+        return dataSource("user");
+    }
+
+    private String finnMountPath() {
+        if (naisCluster == null || naisCluster.isEmpty()){
+            return "postgresql/preprod-fss";
+        }
+        if ("dev-fss".equals(naisCluster)) {
+            return "postgresql/preprod-fss";
+        }
+        return "postgresql/" + naisCluster;
+    }
+
+    @SneakyThrows
+    private HikariDataSource dataSource(String user) {
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl(jdbcUrl);
+        config.setMaximumPoolSize(3);
+        config.setMinimumIdle(1);
+        return HikariCPVaultUtil.createHikariDataSourceWithVaultIntegration(config, finnMountPath(), dbRole(user));
     }
 
     @Bean
-    public HikariDataSource dataSource(DataSourceProperties properties, VaultConfig vaultConfig) throws VaultError {
-        HikariConfig config = createHikariConfig(properties);
-        log.info("enabled", vaultConfig.enabled);
-        log.info("databaseRole", vaultConfig.databaseRole);
-        log.info("databaseAdminrole", vaultConfig.databaseAdminrole);
-        log.info("databaseAdminrole", vaultConfig.databaseAdminrole);
-        if (vaultConfig.enabled) {
-            return HikariCPVaultUtil.createHikariDataSourceWithVaultIntegration(config, vaultConfig.databaseBackend, vaultConfig.databaseRole);
-        }
-        config.setUsername(properties.getUsername());
-        config.setPassword(properties.getPassword());
-        return new HikariDataSource(config);
+    public FlywayMigrationStrategy flywayMigrationStrategy() {
+        return flyway -> Flyway.configure()
+            .dataSource(dataSource("admin"))
+            .initSql(String.format("SET ROLE \"%s\"", dbRole("admin")))
+            .load()
+            .migrate();
     }
 
-    static HikariConfig createHikariConfig(DataSourceProperties properties) {
-        HikariConfig config = new HikariConfig();
-        config.setJdbcUrl(properties.getUrl());
-        config.setMinimumIdle(1);
-        config.setMaximumPoolSize(2);
-        return config;
+    private String dbRole(String role) {
+        return String.join("-", APPLICATION_NAME, role);
     }
-
 }

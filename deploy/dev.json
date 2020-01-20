@@ -62,23 +62,6 @@
         "name": "SPRING_DATASOURCE_URL",
         "value": "jdbc:postgresql://b27dbvl009.preprod.local/syfoinntektsmelding"
       },
-
-      {
-        "name": "vault.jdbcUrl",
-        "value": "jdbc:postgresql://b27dbvl009.preprod.local/syfoinntektsmelding"
-      },
-      {
-        "name": "vault.databaseBackend",
-        "value": "postgresql/preprod-fss"
-      },
-      {
-        "name": "vault.databaseRole",
-        "value": "syfoinntektsmelding-user"
-      },
-      {
-        "name": "vault.databaseAdminrole",
-        "value": "syfoinntektsmelding-admin"
-      },
       {
         "name": "spring_datasource_driver-class-name",
         "value": "oracle.jdbc.OracleDriver"
