@@ -59,7 +59,7 @@
         "value": "b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443"
       },
       {
-        "name": "VAULT_DATASOURCE_URL",
+        "name": "SPRING_DATASOURCE_URL",
         "value": "jdbc:postgresql://b27dbvl009.preprod.local/syfoinntektsmelding"
       },
       {
