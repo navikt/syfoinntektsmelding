@@ -8,4 +8,4 @@ spring:
         properties:
             hibernate:
                 dialect: org.hibernate.dialect.PostgreSQLDialect
-vault.enabled: true
+    vault.enabled: true
