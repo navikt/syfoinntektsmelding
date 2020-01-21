@@ -169,7 +169,7 @@
       },
       {
         "name": "VAULT_BACKEND",
-        "value": "postgresql/preprod-fss"
+        "value": "postgresql/prod-fss"
       }
     ],
     "image": "repo.adeo.no:5443/syfoinntektsmelding:RELEASE_VERSION",

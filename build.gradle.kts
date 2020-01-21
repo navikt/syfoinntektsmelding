@@ -102,8 +102,6 @@ dependencies {
     implementation("org.postgresql:postgresql:42.2.8")
     implementation("org.apache.neethi:neethi:3.1.0")
     implementation("org.flywaydb:flyway-core:$flywayVersion")
-//    implementation("org.springframework.cloud:spring-cloud-starter-vault-config:$springBootVersion")
-//    implementation("org.springframework.cloud:spring-cloud-vault-config-databases:$springBootVersion")
 
     // NAV
     implementation("no.nav.sykepenger.kontrakter:inntektsmelding-kontrakt:2019.11.08-09-49-c3234")
