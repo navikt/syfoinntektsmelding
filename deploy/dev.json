@@ -159,6 +159,10 @@
         "value": ""
       },
       {
+        "name": "VAULT_ENABLED",
+        "value": "true"
+      },
+      {
         "name": "VAULT_DATABASEBACKEND",
         "value": "postgresql/preprod-fss"
       },
