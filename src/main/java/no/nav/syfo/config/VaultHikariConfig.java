@@ -2,27 +2,25 @@ package no.nav.syfo.config;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil;
 import no.nav.vault.jdbc.hikaricp.VaultError;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @Slf4j
 @EnableJpaRepositories("no.nav.syfo.repository")
 public class VaultHikariConfig {
 
-    @Value("${vault.enabled}")
+    @Value("${vault.enabled:true}")
     public boolean enabled = true;
     @Value("${vault.databaseBackend}")
     public String databaseBackend;
-    @Value("${vault.databaseRole}")
+    @Value("${vault.role}")
     public String databaseRole;
-    @Value("${vault.databaseAdminrole}")
+    @Value("${vault.admin}")
     public String databaseAdminrole;
 
     @Bean

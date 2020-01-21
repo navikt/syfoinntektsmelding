@@ -163,15 +163,15 @@
         "value": "true"
       },
       {
-        "name": "VAULT_DATABASEBACKEND",
+        "name": "VAULT_BACKEND",
         "value": "postgresql/preprod-fss"
       },
       {
-        "name": "VAULT_DATABASEROLE",
+        "name": "VAULT_ROLE",
         "value": "syfoinntektsmelding-user"
       },
       {
-        "name": "VAULT_DATABASEADMINROLE",
+        "name": "VAULT_ADMIN",
         "value": "syfoinntektsmelding-admin"
       }
     ],
@@ -214,9 +214,6 @@
     },
     "vault": {
       "enabled": true,
-      "databaseBackend": "postgresql/preprod-fss",
-      "databaseRole": "syfoinntektsmelding-user",
-      "databaseAdminrole": "syfoinntektsmelding-admin",
       "sidecar": true
     },
     "webproxy": true
