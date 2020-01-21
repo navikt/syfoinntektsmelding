@@ -16,25 +16,20 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableJpaRepositories("no.nav.syfo.repository")
 public class VaultHikariConfig {
 
-    @Data
-    @Configuration
-    public static class VaultConfig {
-
-        @Value("${vault.enabled}")
-        public boolean enabled = true;
-        @Value("${vault.databaseBackend}")
-        public String databaseBackend;
-        @Value("${vault.databaseRole}")
-        public String databaseRole;
-        @Value("${vault.databaseAdminrole}")
-        public String databaseAdminrole;
-    }
+    @Value("${vault.enabled}")
+    public boolean enabled = true;
+    @Value("${vault.databaseBackend}")
+    public String databaseBackend;
+    @Value("${vault.databaseRole}")
+    public String databaseRole;
+    @Value("${vault.databaseAdminrole}")
+    public String databaseAdminrole;
 
     @Bean
-    public HikariDataSource dataSource(DataSourceProperties properties, VaultConfig vaultConfig) throws VaultError {
+    public HikariDataSource dataSource(DataSourceProperties properties) throws VaultError {
         HikariConfig config = createHikariConfig(properties);
-        if (vaultConfig.enabled) {
-            return HikariCPVaultUtil.createHikariDataSourceWithVaultIntegration(config, vaultConfig.databaseBackend, vaultConfig.databaseRole);
+        if (enabled) {
+            return HikariCPVaultUtil.createHikariDataSourceWithVaultIntegration(config, databaseBackend, databaseRole);
         }
         config.setUsername(properties.getUsername());
         config.setPassword(properties.getPassword());
