@@ -157,6 +157,18 @@
       {
         "name": "SRVAPPSERVER_PASSWORD",
         "value": ""
+      },
+      {
+        "name": "VAULT_DATABASEBACKEND",
+        "value": "postgresql/preprod-fss"
+      },
+      {
+        "name": "VAULT_DATABASEROLE",
+        "value": "syfoinntektsmelding-user"
+      },
+      {
+        "name": "VAULT_DATABASEADMINROLE",
+        "value": "syfoinntektsmelding-admin"
       }
     ],
     "image": "repo.adeo.no:5443/syfoinntektsmelding:RELEASE_VERSION",
