@@ -62,19 +62,6 @@
         "name": "SPRING_DATASOURCE_URL",
         "value": "jdbc:postgresql://b27dbvl009.preprod.local/syfoinntektsmelding"
       },
-
-      {
-        "name": "vault.postgres.backend",
-        "value": "postgresql/preprod-fss"
-      },
-      {
-        "name": "vault.postgres.role",
-        "value": "syfoinntektsmelding-admin"
-      },
-      {
-        "name": "spring_datasource_driver-class-name",
-        "value": "oracle.jdbc.OracleDriver"
-      },
       {
         "name": "SYFO_MOTTAK_INNTEKTSMELDING_QUEUENAME",
         "value": "QA.Q1_SYFO.MOTTAK_INNTEKTSMELDING"
@@ -170,6 +157,10 @@
       {
         "name": "SRVAPPSERVER_PASSWORD",
         "value": ""
+      },
+      {
+        "name": "VAULT_BACKEND",
+        "value": "postgresql/preprod-fss"
       }
     ],
     "image": "repo.adeo.no:5443/syfoinntektsmelding:RELEASE_VERSION",
