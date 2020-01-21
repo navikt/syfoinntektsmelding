@@ -7,6 +7,7 @@ import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil;
 import no.nav.vault.jdbc.hikaricp.VaultError;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
@@ -16,7 +17,7 @@ public class VaultHikariConfig {
 
     @Value("${vault.enabled:true}")
     public boolean enabled = true;
-    @Value("${vault.databaseBackend}")
+    @Value("${vault.backend}")
     public String databaseBackend;
     @Value("${vault.role}")
     public String databaseRole;
@@ -29,7 +30,7 @@ public class VaultHikariConfig {
         if (enabled) {
             return HikariCPVaultUtil.createHikariDataSourceWithVaultIntegration(config, databaseBackend, databaseRole);
         }
-        config.setUsername(properties.getUsername());
+        config.setUsername("tullball");
         config.setPassword(properties.getPassword());
         return new HikariDataSource(config);
     }
