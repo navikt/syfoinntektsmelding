@@ -6,25 +6,28 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil;
 import no.nav.vault.jdbc.hikaricp.VaultError;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @Slf4j
-@ConditionalOnProperty(value = "vault.enabled", matchIfMissing = true)
+@EnableJpaRepositories("no.nav.syfo.repository")
 public class VaultHikariConfig {
 
     @Data
     @Configuration
-    @ConfigurationProperties(prefix = "vault")
     public static class VaultConfig {
 
-        private boolean enabled = true;
-        private String databaseBackend;
-        private String databaseRole;
-        private String databaseAdminrole;
+        @Value("${vault.enabled}")
+        public boolean enabled = true;
+        @Value("${vault.databaseBackend}")
+        public String databaseBackend;
+        @Value("${vault.databaseRole}")
+        public String databaseRole;
+        @Value("${vault.databaseAdminrole}")
+        public String databaseAdminrole;
     }
 
     @Bean
