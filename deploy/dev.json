@@ -198,6 +198,9 @@
     },
     "vault": {
       "enabled": true,
+      "databaseBackend": "postgresql/preprod-fss",
+      "databaseRole": "syfoinntektsmelding-user",
+      "databaseAdminrole": "syfoinntektsmelding-admin",
       "sidecar": true
     },
     "webproxy": true
