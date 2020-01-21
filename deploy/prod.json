@@ -166,6 +166,10 @@
       {
         "name": "SRVAPPSERVER_PASSWORD",
         "value": ""
+      },
+      {
+        "name": "VAULT_BACKEND",
+        "value": "postgresql/preprod-fss"
       }
     ],
     "image": "repo.adeo.no:5443/syfoinntektsmelding:RELEASE_VERSION",
