@@ -13,3 +13,14 @@ spring:
         database-backend: postgresql/preprod-fss
         database-role: syfoinntektsmelding-user
         database-adminrole: syfoinntektsmelding-admin
+        databaseBackend: postgresql/preprod-fss
+        databaseRole: syfoinntektsmelding-user
+        databaseAdminrole: syfoinntektsmelding-admin
+vault:
+    enabled: true
+    database-backend: postgresql/preprod-fss
+    database-role: syfoinntektsmelding-user
+    database-adminrole: syfoinntektsmelding-admin
+    databaseBackend: postgresql/preprod-fss
+    databaseRole: syfoinntektsmelding-user
+    databaseAdminrole: syfoinntektsmelding-admin
