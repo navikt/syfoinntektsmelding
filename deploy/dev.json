@@ -159,21 +159,9 @@
         "value": ""
       },
       {
-        "name": "VAULT_ENABLED",
-        "value": "true"
-      },
-      {
         "name": "VAULT_BACKEND",
         "value": "postgresql/preprod-fss"
       },
-      {
-        "name": "VAULT_ROLE",
-        "value": "syfoinntektsmelding-user"
-      },
-      {
-        "name": "VAULT_ADMIN",
-        "value": "syfoinntektsmelding-admin"
-      }
     ],
     "image": "repo.adeo.no:5443/syfoinntektsmelding:RELEASE_VERSION",
     "istio": {
