@@ -2,10 +2,12 @@ package no.nav.syfo.config;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil;
-import no.nav.vault.jdbc.hikaricp.VaultError;
+import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.flyway.FlywayMigrationStrategy;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,19 +28,8 @@ public class VaultHikariConfig {
     public String databaseAdminrole;
 
     @Bean
-    public HikariDataSource dataSource(DataSourceProperties properties) throws VaultError {
-        System.out.println("enabled: " + enabled);
-        System.out.println("databaseBackend: " + databaseBackend);
-        System.out.println("Vault: " + databaseRole);
-        System.out.println("databaseRole: " + databaseRole);
-        System.out.println("databaseAdminrole: " + databaseAdminrole);
-        HikariConfig config = createHikariConfig(properties);
-        if (enabled) {
-            return HikariCPVaultUtil.createHikariDataSourceWithVaultIntegration(config, databaseBackend, databaseRole);
-        }
-        config.setUsername("tullball");
-        config.setPassword(properties.getPassword());
-        return new HikariDataSource(config);
+    public HikariDataSource dataSource(DataSourceProperties properties) {
+        return buildDatasource(properties);
     }
 
     static HikariConfig createHikariConfig(DataSourceProperties properties) {
@@ -47,6 +38,26 @@ public class VaultHikariConfig {
         config.setMinimumIdle(1);
         config.setMaximumPoolSize(2);
         return config;
+    }
+
+    @SneakyThrows
+    public HikariDataSource buildDatasource(DataSourceProperties properties){
+        HikariConfig config = createHikariConfig(properties);
+        if (enabled) {
+            return HikariCPVaultUtil.createHikariDataSourceWithVaultIntegration(config, databaseBackend, databaseRole);
+        }
+        config.setUsername(properties.getUsername());
+        config.setPassword(properties.getPassword());
+        return new HikariDataSource(config);
+    }
+
+    @Bean
+    public FlywayMigrationStrategy flywayMigrationStrategy(DataSourceProperties properties) {
+        return flyway -> Flyway.configure()
+            .dataSource(buildDatasource(properties))
+            .initSql(String.format("SET ROLE \"%s\"", databaseAdminrole))
+            .load()
+            .migrate();
     }
 
 }
