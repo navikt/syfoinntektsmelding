@@ -57,19 +57,7 @@
       },
       {
         "name": "SPRING_DATASOURCE_URL",
-        "value": "jdbc:postgresql://A01DBVL010.adeo.no/syfoinntektsmelding"
-      },
-      {
-        "name": "vault.postgres.backend",
-        "value": "postgresql/prod-fss"
-      },
-      {
-        "name": "vault.postgres.role",
-        "value": "syfoinntektsmelding-admin"
-      },
-      {
-        "name": "spring_datasource_driver-class-name",
-        "value": "oracle.jdbc.OracleDriver"
+        "value": "jdbc:postgresql://a01dbvl010.adeo.no/syfoinntektsmelding"
       },
       {
         "name": "SYFO_MOTTAK_INNTEKTSMELDING_QUEUENAME",
