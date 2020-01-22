@@ -48,7 +48,7 @@ public class VaultHikariConfig {
         log.info("Vault.databaseAdminrole:  {}", databaseAdminrole);
         HikariConfig config = createHikariConfig(properties);
         if (enabled) {
-            return HikariCPVaultUtil.createHikariDataSourceWithVaultIntegration(config, databaseBackend, databaseRole);
+            return HikariCPVaultUtil.createHikariDataSourceWithVaultIntegration(config, databaseBackend, databaseAdminrole);
         }
         config.setUsername(properties.getUsername());
         config.setPassword(properties.getPassword());
