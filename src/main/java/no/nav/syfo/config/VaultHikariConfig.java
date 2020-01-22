@@ -42,6 +42,10 @@ public class VaultHikariConfig {
 
     @SneakyThrows
     public HikariDataSource buildDatasource(DataSourceProperties properties){
+        log.info("Vault.enabled: ", enabled);
+        log.info("Vault.databaseBackend: ", databaseBackend);
+        log.info("Vault.databaseRole: ", databaseRole);
+        log.info("Vault.databaseAdminrole: ", databaseAdminrole);
         HikariConfig config = createHikariConfig(properties);
         if (enabled) {
             return HikariCPVaultUtil.createHikariDataSourceWithVaultIntegration(config, databaseBackend, databaseRole);
