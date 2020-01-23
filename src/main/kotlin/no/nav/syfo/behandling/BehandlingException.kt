@@ -10,10 +10,10 @@ open class TokenException(statusCode: Int) : BehandlingException(Feiltype.TOKEN,
 
 // AktorConsumer
 open class AktørException(override var feiltype: Feiltype, override var message: String) : BehandlingException(feiltype, message)
-open class TomAktørListeException(aktørId: String) : AktørException(Feiltype.AKTØR_LISTE_TOM, "Fikk tom liste for aktørId $aktørId")
-open class FantIkkeAktørException(aktørId: String) : AktørException(Feiltype.AKTØR_IKKE_FUNNET, "Fant ikke aktørId $aktørId")
-open class AktørOppslagException(aktørId: String) : AktørException(Feiltype.AKTØR_OPPSLAG_FEILET, "Feil ved oppslag i aktørtjenesten for aktørId $aktørId")
-open class AktørKallResponseException(aktørId: String, statusCode: Int) : AktørException(Feiltype.AKTØR_FEIL, "Kall mot aktørregister for aktørId $aktørId feiler med http status $statusCode")
+open class TomAktørListeException() : AktørException(Feiltype.AKTØR_LISTE_TOM, "Fikk tom liste for aktørId")
+open class FantIkkeAktørException() : AktørException(Feiltype.AKTØR_IKKE_FUNNET, "Fant ikke aktørId")
+open class AktørOppslagException() : AktørException(Feiltype.AKTØR_OPPSLAG_FEILET, "Feil ved oppslag i aktørtjenesten for aktørId")
+open class AktørKallResponseException(statusCode: Int) : AktørException(Feiltype.AKTØR_FEIL, "Kall mot aktørregister for aktørId feiler med http status $statusCode")
 
 // InngaaendeJournalConsumer
 open class InngaaendeJournalConsumerException(override var feiltype: Feiltype, override var message: String) : BehandlingException(feiltype, message)
