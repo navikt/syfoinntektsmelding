@@ -65,7 +65,7 @@ public class AktorConsumer {
             if (result.getStatusCode() != OK) {
                 final String message = "Kall mot aktørregister feiler med HTTP-" + result.getStatusCode();
                 log.error(message);
-                throw new AktørKallResponseException(sokeIdent, result.getStatusCode().value());
+                throw new AktørKallResponseException(result.getStatusCode().value());
             }
 
             return Optional.of(result)
@@ -73,18 +73,18 @@ public class AktorConsumer {
                     .map(body -> body.get(sokeIdent))
                     .map(aktor -> Optional.ofNullable(aktor.getIdenter()).orElseThrow(() -> {
                         log.error("Fant ikke aktøren: " + aktor.getFeilmelding());
-                        return new FantIkkeAktørException(sokeIdent);
+                        return new FantIkkeAktørException();
                     }))
                     .flatMap(idents -> idents.stream().map(Ident::getIdent)
                             .findFirst())
                     .orElseThrow(() -> {
                         log.error("Feil ved henting av aktorId");
-                        return new TomAktørListeException(sokeIdent);
+                        return new TomAktørListeException();
                     });
 
         } catch (HttpClientErrorException e) {
             log.error("Feil ved oppslag i aktørtjenesten");
-            throw new AktørOppslagException(sokeIdent);
+            throw new AktørOppslagException();
         }
     }
 }
