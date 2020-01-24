@@ -1,0 +1,7 @@
+create table FEILET
+(
+	FEILET_ID INT not null primary key,
+	ARKIVREFERANSE VARCHAR(50) not null,
+	BEHANDLET TIMESTAMP(6),
+    FEILTYPE VARCHAR(25)
+);
