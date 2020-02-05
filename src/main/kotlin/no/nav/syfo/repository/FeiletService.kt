@@ -14,7 +14,7 @@ class FeiletService (
 ) {
 
     fun finnHistorikk(arkivReferanse: String): Historikk{
-        return Historikk()
+        return Historikk(arkivReferanse, finnTidligereFeilet(arkivReferanse))
     }
 
     fun finnTidligereFeilet(arkivReferanse: String): List<FeiletEntitet> {
