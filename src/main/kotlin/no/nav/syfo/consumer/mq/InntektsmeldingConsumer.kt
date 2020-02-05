@@ -12,6 +12,7 @@ import no.nav.syfo.util.Metrikk
 import org.springframework.jms.annotation.JmsListener
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
 import java.util.Optional.ofNullable
 import javax.jms.JMSException
 import javax.jms.TextMessage
@@ -48,6 +49,7 @@ class InntektsmeldingConsumer(
             val historikk = feiletService.finnHistorikk(arkivReferanse)
 
             if (historikk.skalArkiveresForDato()){
+            if (historikk.skalArkiveresForDato(LocalDateTime.now())){
                 metrikk.tellUtAvKø()
             } else {
                 inntektsmeldingBehandler.behandle(info.arkivId, arkivReferanse)
