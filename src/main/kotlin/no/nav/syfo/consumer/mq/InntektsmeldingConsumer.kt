@@ -45,12 +45,9 @@ class InntektsmeldingConsumer(
                 metrikk.tellInntektsmeldingUtenArkivReferanse()
             }
 
-            // 0 < threshold < max
-            // Tidligst forsøkt? Sist forsøkt
-            // 10.12.2019 22:00 AktørFeilet
             val historikk = feiletService.finnHistorikk(arkivReferanse)
 
-            if (historikk.skalArkiveres()){
+            if (historikk.skalArkiveresForDato()){
                 metrikk.tellUtAvKø()
             } else {
                 inntektsmeldingBehandler.behandle(info.arkivId, arkivReferanse)

@@ -1,11 +1,18 @@
 package no.nav.syfo.behandling
 
-open class Historikk {
+import no.nav.syfo.dto.FeiletEntitet
+import java.time.LocalDateTime
 
+data class Historikk(val arkivReferanse: String, val feiletList: List<FeiletEntitet>) {
 
+    val ANTALL_DAGER_FØR_ARKIVERING = 7
 
-    fun skalArkiveres(): Boolean {
-        return true
+    fun skalArkiveresForDato(dato: LocalDateTime = LocalDateTime.now()): Boolean {
+        if (feiletList.isEmpty()){
+            return false
+        }
+        val fe = feiletList.sortedByDescending { feiletEntitet -> feiletEntitet.tidspunkt }.last()
+        return fe.tidspunkt.isBefore(dato.minusDays(ANTALL_DAGER_FØR_ARKIVERING.toLong()))
     }
 
 }
