@@ -34,7 +34,6 @@ class InntektsmeldingConsumer(
     )
     fun listen(message: Any) {
         var arkivReferanse = "UKJENT"
-        var feiltype = Feiltype.USPESIFISERT
         try {
             val textMessage = message as TextMessage
             putToMDC(MDC_CALL_ID, ofNullable(textMessage.getStringProperty("callId")).orElse(generateCallId()))
@@ -47,8 +46,6 @@ class InntektsmeldingConsumer(
             }
 
             val historikk = feiletService.finnHistorikk(arkivReferanse)
-
-            if (historikk.skalArkiveresForDato()){
             if (historikk.skalArkiveresForDato(LocalDateTime.now())){
                 metrikk.tellUtAvKø()
             } else {
@@ -57,24 +54,28 @@ class InntektsmeldingConsumer(
 
         } catch (e: BehandlingException) {
             log.error("Feil ved behandling av inntektsmelding med arkivreferanse $arkivReferanse", e)
-            feiltype = e.feiltype
             metrikk.tellBehandlingsfeil(e.feiltype)
+            lagreFeilet(arkivReferanse, e.feiltype)
             throw RuntimeException("Feil ved lesing av melding  med arkivreferanse $arkivReferanse", e)
         } catch (e: JMSException) {
             log.error("Feil ved parsing av inntektsmelding fra kø med arkivreferanse $arkivReferanse", e)
-            feiltype = Feiltype.JMS
             metrikk.tellBehandlingsfeil(Feiltype.JMS)
+            lagreFeilet(arkivReferanse, Feiltype.JMS)
             throw RuntimeException("Feil ved lesing av melding med arkivreferanse $arkivReferanse", e)
         } catch (e: Exception) {
             log.error("Det skjedde en feil ved journalføring med arkivreferanse $arkivReferanse", e)
             metrikk.tellBehandlingsfeil(Feiltype.USPESIFISERT)
+            lagreFeilet(arkivReferanse, Feiltype.USPESIFISERT)
             throw RuntimeException("Det skjedde en feil ved journalføring med arkivreferanse $arkivReferanse", e)
         } finally {
             remove(MDC_CALL_ID)
         }
+    }
+
+    fun lagreFeilet(arkivReferanse: String, feiltype: Feiltype){
         try{
             feiletService.lagreFeilet(arkivReferanse, feiltype)
-        } catch (e: Exception){
+        } catch (e: Exception) {
 
         }
     }
