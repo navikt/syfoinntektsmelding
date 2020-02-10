@@ -3,7 +3,7 @@ package no.nav.syfo.repository
 import no.nav.syfo.LocalApplication
 import no.nav.syfo.dto.InntektsmeldingEntitet
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Ignore
+import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -19,15 +19,24 @@ import java.time.LocalDateTime
 @RunWith(SpringRunner::class)
 @DataJpaTest
 @OverrideAutoConfiguration(enabled = true)
-@TestPropertySource(locations = ["classpath:application-repo.properties"])
+@TestPropertySource(locations = ["classpath:application-test.properties"])
 @ContextConfiguration(classes = [LocalApplication::class])
-@Ignore
 open class InntektsmeldingRepositoryTest {
     @Autowired
     private lateinit var entityManager: TestEntityManager
 
     @Autowired
     private lateinit var respository: InntektsmeldingRepository
+
+    companion object {
+        @BeforeClass
+        @JvmStatic
+        fun beforeClass() {
+            System.setProperty("SECURITYTOKENSERVICE_URL", "joda")
+            System.setProperty("SRVSYFOINNTEKTSMELDING_USERNAME", "joda")
+            System.setProperty("SRVSYFOINNTEKTSMELDING_PASSWORD", "joda")
+        }
+    }
 
     @Test
     fun findByAktorId(){
