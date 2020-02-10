@@ -56,17 +56,17 @@ class InntektsmeldingConsumer(
             log.error("Feil ved behandling av inntektsmelding med arkivreferanse $arkivReferanse", e)
             metrikk.tellBehandlingsfeil(e.feiltype)
             lagreFeilet(arkivReferanse, e.feiltype)
-            throw RuntimeException("Feil ved lesing av melding  med arkivreferanse $arkivReferanse", e)
+            throw InntektsmeldingConsumerException(arkivReferanse, e, e.feiltype)
         } catch (e: JMSException) {
             log.error("Feil ved parsing av inntektsmelding fra kø med arkivreferanse $arkivReferanse", e)
             metrikk.tellBehandlingsfeil(Feiltype.JMS)
             lagreFeilet(arkivReferanse, Feiltype.JMS)
-            throw RuntimeException("Feil ved lesing av melding med arkivreferanse $arkivReferanse", e)
+            throw InntektsmeldingConsumerException(arkivReferanse, e, Feiltype.JMS)
         } catch (e: Exception) {
             log.error("Det skjedde en feil ved journalføring med arkivreferanse $arkivReferanse", e)
             metrikk.tellBehandlingsfeil(Feiltype.USPESIFISERT)
             lagreFeilet(arkivReferanse, Feiltype.USPESIFISERT)
-            throw RuntimeException("Det skjedde en feil ved journalføring med arkivreferanse $arkivReferanse", e)
+            throw InntektsmeldingConsumerException(arkivReferanse, e, Feiltype.USPESIFISERT)
         } finally {
             remove(MDC_CALL_ID)
         }
@@ -76,7 +76,7 @@ class InntektsmeldingConsumer(
         try{
             feiletService.lagreFeilet(arkivReferanse, feiltype)
         } catch (e: Exception) {
-
+            metrikk.tellLagreFeiletMislykkes();
         }
     }
 
