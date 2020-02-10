@@ -4,6 +4,7 @@ package no.nav.syfo.repository
 import no.nav.syfo.LocalApplication
 import no.nav.syfo.dto.InntektsmeldingEntitet
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.BeforeClass
 import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -22,7 +23,6 @@ import java.time.LocalDateTime
 @OverrideAutoConfiguration(enabled = true)
 @TestPropertySource(locations = ["classpath:application-repo.properties"])
 @ContextConfiguration(classes = [LocalApplication::class])
-@Ignore
 open class FeiletRepositoryTest {
     @Autowired
     private lateinit var entityManager: TestEntityManager
@@ -30,6 +30,15 @@ open class FeiletRepositoryTest {
     @Autowired
     private lateinit var respository: FeiletRepository
 
+    companion object {
+        @BeforeClass
+        @JvmStatic
+        fun beforeClass() {
+            System.setProperty("SECURITYTOKENSERVICE_URL", "joda")
+            System.setProperty("SRVSYFOINNTEKTSMELDING_USERNAME", "joda")
+            System.setProperty("SRVSYFOINNTEKTSMELDING_PASSWORD", "joda")
+        }
+    }
 
     @Test
     fun lagre_uten_arbeidsgiverperioder(){
