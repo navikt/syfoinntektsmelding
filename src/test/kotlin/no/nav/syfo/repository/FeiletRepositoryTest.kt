@@ -2,10 +2,10 @@ package no.nav.syfo.repository
 
 
 import no.nav.syfo.LocalApplication
-import no.nav.syfo.dto.InntektsmeldingEntitet
+import no.nav.syfo.behandling.Feiltype
+import no.nav.syfo.dto.FeiletEntitet
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.BeforeClass
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -15,7 +15,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit4.SpringRunner
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 @RunWith(SpringRunner::class)
@@ -40,20 +39,60 @@ open class FeiletRepositoryTest {
         }
     }
 
+    val NOW = LocalDateTime.now()
+    val DAYS_1 = NOW.minusDays(1)
+    val DAYS_8 = NOW.minusDays(8)
+    val DAYS_14 = NOW.minusDays(14)
+
     @Test
-    fun lagre_uten_arbeidsgiverperioder(){
-        val behandlet = LocalDateTime.of(2019,10,1,5,18,45,0)
-        val inntektsmelding = InntektsmeldingEntitet(
-            journalpostId = "journalpostId",
-            behandlet = behandlet,
-            sakId = "sakId",
-            orgnummer = "orgnummer",
-            arbeidsgiverPrivat = "arbeidsgiverPrivat",
-            aktorId = "aktorId3"
-        )
-        entityManager.persist<Any>(inntektsmelding)
-        val feilet = respository.findByArkivReferanse("ar-123")
-        assertThat(feilet.size).isEqualTo(1)
+    fun `Skal finne alle entiteter med arkivReferansen og rette verdier`(){
+        val ARKIV_REFERANSE = "ar-123"
+        entityManager.persist<Any>(FeiletEntitet(
+            arkivReferanse = ARKIV_REFERANSE,
+            tidspunkt = DAYS_1,
+            feiltype = Feiltype.AKTØR_IKKE_FUNNET
+        ))
+        entityManager.persist<Any>(FeiletEntitet(
+            arkivReferanse = "ar-222",
+            tidspunkt = DAYS_1,
+            feiltype = Feiltype.JMS
+        ))
+        entityManager.persist<Any>(FeiletEntitet(
+            arkivReferanse = "ar-555",
+            tidspunkt = DAYS_1,
+            feiltype = Feiltype.USPESIFISERT
+        ))
+        entityManager.persist<Any>(FeiletEntitet(
+            arkivReferanse = ARKIV_REFERANSE,
+            tidspunkt = DAYS_8,
+            feiltype = Feiltype.BEHANDLENDE_IKKE_FUNNET
+        ))
+        val liste = respository.findByArkivReferanse(ARKIV_REFERANSE)
+        assertThat(liste.size).isEqualTo(2)
+        assertThat(liste[0].arkivReferanse).isEqualTo(ARKIV_REFERANSE)
+        assertThat(liste[0].feiltype).isEqualTo(Feiltype.AKTØR_IKKE_FUNNET)
+        assertThat(liste[0].tidspunkt).isEqualTo(DAYS_1)
+        assertThat(liste[1].arkivReferanse).isEqualTo(ARKIV_REFERANSE)
+        assertThat(liste[1].feiltype).isEqualTo(Feiltype.BEHANDLENDE_IKKE_FUNNET)
+        assertThat(liste[1].tidspunkt).isEqualTo(DAYS_8)
     }
+
+    @Test
+    fun `Skal ikke finne entitet dersom arkivReferansen ikke er lagret tidligere`(){
+        val ARKIV_REFERANSE = "ar-finnes-ikke"
+        entityManager.persist<Any>(FeiletEntitet(
+            arkivReferanse = "ar-333",
+            tidspunkt = DAYS_8,
+            feiltype = Feiltype.BEHANDLENDE_IKKE_FUNNET
+        ))
+        entityManager.persist<Any>(FeiletEntitet(
+            arkivReferanse = "ar-444",
+            tidspunkt = DAYS_14,
+            feiltype = Feiltype.BEHANDLENDE_IKKE_FUNNET
+        ))
+        val liste = respository.findByArkivReferanse(ARKIV_REFERANSE)
+        assertThat(liste.size).isEqualTo(0)
+    }
+
 
 }
