@@ -1,9 +1,7 @@
 package no.nav.syfo.consumer.mq
 
-import any
 import eq
-import no.nav.syfo.behandling.AktørException
-import no.nav.syfo.behandling.BehandlingException
+import any
 import no.nav.syfo.behandling.FantIkkeAktørException
 import no.nav.syfo.behandling.Feiltype
 import no.nav.syfo.behandling.Historikk
@@ -19,11 +17,11 @@ import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.Mockito.never
+import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.junit.MockitoJUnitRunner
+import java.lang.Exception
 import java.time.LocalDateTime
-import javax.jms.MessageNotWriteableException
-import kotlin.math.exp
 
 @RunWith(MockitoJUnitRunner::class)
 class InntektsmeldingConsumerTest {
@@ -59,6 +57,7 @@ class InntektsmeldingConsumerTest {
     val AR_EIGHT_DAYS = "AR-777"
     val AR_TWO_WEEKS = "AR-666"
     val AR_EXCEPTION = "AR-EXCEPTION"
+    val AR_AKTØR_EXCEPTION = "AR-EXCEPTION"
 
     @Before
     fun setup() {
@@ -70,20 +69,12 @@ class InntektsmeldingConsumerTest {
         Mockito.`when`(feiletService.finnHistorikk(AR_YESTERDAY)).thenReturn(Historikk(AR_YESTERDAY, listOf(days1)))
         Mockito.`when`(feiletService.finnHistorikk(AR_MISSING)).thenReturn(Historikk(AR_MISSING, emptyList()))
         Mockito.`when`(feiletService.finnHistorikk(AR_TWO_WEEKS)).thenReturn(Historikk(AR_TWO_WEEKS, listOf(days14)))
-        Mockito.`when`(feiletService.finnHistorikk(AR_EIGHT_DAYS)).thenReturn(Historikk(AR_EIGHT_DAYS, listOf(days8)))
         Mockito.`when`(feiletService.finnHistorikk(AR_EXCEPTION)).thenReturn(Historikk(AR_EXCEPTION, emptyList()))
-        Mockito.`when`(inntektsmeldingBehandler.behandle(any(), eq(AR_EXCEPTION))).thenThrow(FantIkkeAktørException())
+        Mockito.`when`(inntektsmeldingBehandler.behandle(any(), eq(AR_AKTØR_EXCEPTION))).thenThrow(FantIkkeAktørException())
     }
 
-    /**
-     * behandlingsfeil - ja eller nei
-     * ut av kø - for gammel
-     *
-     */
-
     @Test
-    @Throws(MessageNotWriteableException::class)
-    fun `Skal behandle og ta ut av kø dersom alle data er gyldig`() {
+    fun `ta ut av kø dersom alle data er gyldig`() {
         val message = ActiveMQTextMessage()
         message.text = inputPayload
         message.jmsCorrelationID = AR
@@ -93,26 +84,15 @@ class InntektsmeldingConsumerTest {
     }
 
     @Test
-    @Throws(MessageNotWriteableException::class)
-    fun `Skal behandle og ta ut av kø dersom arkivReferansen mangler`() {
+    fun `ta ut av kø dersom arkivReferansen mangler`() {
         val message = ActiveMQTextMessage()
         message.text = inputPayload
         inntektsmeldingConsumer.listen(message)
         verify(inntektsmeldingBehandler).behandle("arkivId", AR_MISSING)
     }
 
-    @Test(expected = FantIkkeAktørException::class)
-    fun `Skal lagre behandlingsfeil dersom det oppstår Exceptions`() {
-        val message = ActiveMQTextMessage()
-        message.text = inputPayload
-        message.jmsCorrelationID = AR_EXCEPTION
-        inntektsmeldingConsumer.listen(message)
-        verify(feiletService).lagreFeilet("arkivId", Feiltype.AKTØR_IKKE_FUNNET)
-    }
-
     @Test
-    @Throws(MessageNotWriteableException::class)
-    fun `Skal fjerne inntektsmeldingen fra kø dersom den har ligget for lenge`() {
+    fun `fjerne inntektsmeldingen fra kø dersom den har ligget for lenge`() {
         val message = ActiveMQTextMessage()
         message.text = inputPayload
         message.jmsCorrelationID = AR_TWO_WEEKS
@@ -122,13 +102,25 @@ class InntektsmeldingConsumerTest {
     }
 
     @Test
-    fun `Skal ikke fjerne inntektsmeldingen fra kø dersom den IKKE har ligget for lenge`() {
+    fun `ikke fjerne inntektsmeldingen fra kø dersom den IKKE har ligget for lenge`() {
         val message = ActiveMQTextMessage()
         message.text = inputPayload
         message.jmsCorrelationID = AR_YESTERDAY
         inntektsmeldingConsumer.listen(message)
         verify(inntektsmeldingBehandler, never()).behandle(any(), any())
         verify(metrikk).tellUtAvKø()
+    }
+
+    @Test
+    fun `lagre feil dersom det oppstår behandlingsfeil`() {
+        val message = ActiveMQTextMessage()
+        message.text = inputPayload
+        message.jmsCorrelationID = AR_AKTØR_EXCEPTION
+        try{
+            inntektsmeldingConsumer.listen(message)
+        } catch (ex: Exception) {
+            verify(feiletService, times(1)).lagreFeilet(eq(AR_AKTØR_EXCEPTION), eq(Feiltype.AKTØR_IKKE_FUNNET))
+        }
     }
 
 }

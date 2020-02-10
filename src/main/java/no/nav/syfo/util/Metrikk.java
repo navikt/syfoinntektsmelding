@@ -124,4 +124,10 @@ public class Metrikk {
         registry
             .counter("syfoinntektsmelding_ut_av_koe").increment();
     }
+
+    public void tellLagreFeiletMislykkes() {
+        registry
+            .counter("syfoinntektsmelding_feilet_lagring_mislykkes").increment();
+    }
+
 }
