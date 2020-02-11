@@ -20,7 +20,7 @@ import java.time.LocalDateTime
 @RunWith(SpringRunner::class)
 @DataJpaTest
 @OverrideAutoConfiguration(enabled = true)
-@TestPropertySource(locations = ["classpath:application-repo.properties"])
+@TestPropertySource(locations = ["classpath:application-test.properties"])
 @ContextConfiguration(classes = [LocalApplication::class])
 open class FeiletRepositoryTest {
     @Autowired
