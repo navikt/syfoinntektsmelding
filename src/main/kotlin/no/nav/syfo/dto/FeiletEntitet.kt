@@ -1,9 +1,7 @@
 package no.nav.syfo.dto
 
 import no.nav.syfo.behandling.Feiltype
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.*
 import javax.persistence.*
 
 @Entity
@@ -11,7 +9,7 @@ import javax.persistence.*
 data class FeiletEntitet (
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name = "FEILET_ID", nullable = false, length = 100, updatable = false)
     var id: Int = 0,
 
