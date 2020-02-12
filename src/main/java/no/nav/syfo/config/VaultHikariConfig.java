@@ -42,10 +42,6 @@ public class VaultHikariConfig {
 
     @SneakyThrows
     public HikariDataSource buildDatasource(DataSourceProperties properties){
-        log.info("Vault.enabled: {}", enabled);
-        log.info("Vault.databaseBackend: {} ", databaseBackend);
-        log.info("Vault.databaseRole:  {}", databaseRole);
-        log.info("Vault.databaseAdminrole:  {}", databaseAdminrole);
         HikariConfig config = createHikariConfig(properties);
         if (enabled) {
             return HikariCPVaultUtil.createHikariDataSourceWithVaultIntegration(config, databaseBackend, databaseAdminrole);
@@ -57,9 +53,16 @@ public class VaultHikariConfig {
 
     @Bean
     public FlywayMigrationStrategy flywayMigrationStrategy(DataSourceProperties properties) {
+        if (enabled) {
+            return flyway -> Flyway.configure()
+                .dataSource(buildDatasource(properties))
+                .initSql(String.format("SET ROLE \"%s\"", databaseAdminrole))
+                .load()
+                .migrate();
+        }
+        // Ikke kjør rolle settingen i testing. De feiler
         return flyway -> Flyway.configure()
             .dataSource(buildDatasource(properties))
-            .initSql(String.format("SET ROLE \"%s\"", databaseAdminrole))
             .load()
             .migrate();
     }
