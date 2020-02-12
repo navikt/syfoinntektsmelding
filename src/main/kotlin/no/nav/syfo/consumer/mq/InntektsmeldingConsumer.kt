@@ -54,7 +54,9 @@ class InntektsmeldingConsumer(
 
             val historikk = feiletService.finnHistorikk(arkivReferanse)
             if (historikk.skalArkiveresForDato(LocalDateTime.now())){
+                runBlocking{
                     opprettFordelingsoppgave(info.arkivId)
+                }
                     metrikk.tellUtAvKø()
             } else {
                 inntektsmeldingBehandler.behandle(info.arkivId, arkivReferanse)
@@ -80,13 +82,12 @@ class InntektsmeldingConsumer(
         }
     }
 
-    fun opprettFordelingsoppgave(journalpostId: String) {
+    suspend fun opprettFordelingsoppgave(journalpostId: String) : Boolean{
         val inntektsmelding = journalpostService.hentInntektsmelding(journalpostId)
         val behandlendeEnhet = behandlendeEnhetConsumer.hentBehandlendeEnhet(inntektsmelding.fnr)
         val gjelderUtland = ("4474" == behandlendeEnhet)
-        runBlocking {
-            oppgaveClient.opprettFordelingsOppgave(journalpostId, behandlendeEnhet, gjelderUtland)
-        }
+        oppgaveClient.opprettFordelingsOppgave(journalpostId, behandlendeEnhet, gjelderUtland)
+        return true
     }
 
     fun lagreFeilet(arkivReferanse: String, feiltype: Feiltype){

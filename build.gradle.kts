@@ -146,6 +146,8 @@ dependencies {
     implementation("com.google.guava:guava:28.1-jre")
     testImplementation("io.ktor:ktor-client-mock:$clientMockVersion")
     testImplementation("io.ktor:ktor-client-mock-jvm:$clientMockVersion")
+    testImplementation("io.mockk:mockk:1.9.3")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.3")
 }
 
 tasks.named<Jar>("jar") {
