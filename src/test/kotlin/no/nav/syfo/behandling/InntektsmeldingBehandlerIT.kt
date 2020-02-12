@@ -62,7 +62,6 @@ import java.util.concurrent.atomic.AtomicInteger
 @RunWith(SpringRunner::class)
 @SpringBootTest
 @TestPropertySource("classpath:application-test.properties")
-//@DirtiesContext
 @WebAppConfiguration
 open class InntektsmeldingBehandlerIT {
 

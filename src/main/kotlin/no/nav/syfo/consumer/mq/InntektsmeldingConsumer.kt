@@ -1,11 +1,15 @@
 package no.nav.syfo.consumer.mq
 
+import kotlinx.coroutines.runBlocking
 import log
 import no.nav.melding.virksomhet.dokumentnotifikasjon.v1.XMLForsendelsesinformasjon
 import no.nav.syfo.behandling.BehandlingException
 import no.nav.syfo.behandling.Feiltype
 import no.nav.syfo.behandling.InntektsmeldingBehandler
+import no.nav.syfo.consumer.rest.OppgaveClient
+import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
 import no.nav.syfo.repository.FeiletService
+import no.nav.syfo.service.JournalpostService
 import no.nav.syfo.util.JAXB
 import no.nav.syfo.util.MDCOperations.*
 import no.nav.syfo.util.Metrikk
@@ -20,10 +24,13 @@ import javax.xml.bind.JAXBElement
 
 @Component
 class InntektsmeldingConsumer(
-        private val metrikk: Metrikk,
-        private val inntektsmeldingBehandler: InntektsmeldingBehandler,
-        private val feiletService: FeiletService
-) {
+    private val metrikk: Metrikk,
+    private val inntektsmeldingBehandler: InntektsmeldingBehandler,
+    private val feiletService: FeiletService,
+    private val oppgaveClient: OppgaveClient,
+    private val journalpostService: JournalpostService,
+    private val behandlendeEnhetConsumer: BehandlendeEnhetConsumer
+    ) {
     private val log = log()
 
     @Transactional(transactionManager = "jmsTransactionManager")
@@ -47,7 +54,8 @@ class InntektsmeldingConsumer(
 
             val historikk = feiletService.finnHistorikk(arkivReferanse)
             if (historikk.skalArkiveresForDato(LocalDateTime.now())){
-                metrikk.tellUtAvKø()
+                    opprettFordelingsoppgave(info.arkivId)
+                    metrikk.tellUtAvKø()
             } else {
                 inntektsmeldingBehandler.behandle(info.arkivId, arkivReferanse)
             }
@@ -69,6 +77,15 @@ class InntektsmeldingConsumer(
             throw InntektsmeldingConsumerException(arkivReferanse, e, Feiltype.USPESIFISERT)
         } finally {
             remove(MDC_CALL_ID)
+        }
+    }
+
+    fun opprettFordelingsoppgave(journalpostId: String) {
+        val inntektsmelding = journalpostService.hentInntektsmelding(journalpostId)
+        val behandlendeEnhet = behandlendeEnhetConsumer.hentBehandlendeEnhet(inntektsmelding.fnr)
+        val gjelderUtland = ("4474" == behandlendeEnhet)
+        runBlocking {
+            oppgaveClient.opprettFordelingsOppgave(journalpostId, behandlendeEnhet, gjelderUtland)
         }
     }
 
