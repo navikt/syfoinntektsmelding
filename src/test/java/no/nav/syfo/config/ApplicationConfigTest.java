@@ -9,7 +9,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 @RunWith(SpringRunner.class)
 @TestPropertySource(locations = "classpath:application-test.properties")
-@DirtiesContext
+//@DirtiesContext
 @WebAppConfiguration
 public class ApplicationConfigTest {
 
