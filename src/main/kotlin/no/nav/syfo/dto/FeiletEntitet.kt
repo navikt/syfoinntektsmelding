@@ -13,7 +13,7 @@ data class FeiletEntitet (
     @Column(name = "FEILET_ID", nullable = false, length = 100, updatable = false)
     var id: Int = 0,
 
-    @Column(name = "ARKIV_REFERANSE", nullable = false, length = 100, updatable = false)
+    @Column(name = "ARKIVREFERANSE", nullable = false, length = 100, updatable = false)
     var arkivReferanse: String,
 
     @Column(name = "TIDSPUNKT", nullable = false)
