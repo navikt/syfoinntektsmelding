@@ -21,7 +21,7 @@ class HistorikkTest {
             FeiletEntitet(arkivReferanse =  AR,feiltype = Feiltype.JMS, tidspunkt = IGÅR),
             FeiletEntitet(arkivReferanse =  AR,feiltype = Feiltype.JMS, tidspunkt = ELDRE)
         )
-        val historikk = Historikk( arkivReferanse = AR, feiletList=feiletList )
+        val historikk = Historikk( arkivReferanse = AR, feiletList=feiletList, dato = IDAG )
         assertThat(historikk.skalArkiveresForDato(IDAG)).isTrue()
     }
 
@@ -29,7 +29,7 @@ class HistorikkTest {
     fun `Skal ikke arkiveres fordi det inntektsmelding kom inn akkurat nå`() {
         val AR = "AR-123"
         val feiletList: List<FeiletEntitet> = listOf(FeiletEntitet(arkivReferanse =  AR,feiltype = Feiltype.JMS, tidspunkt = IDAG.minusHours(2)))
-        val historikk = Historikk( arkivReferanse = AR, feiletList=feiletList )
+        val historikk = Historikk( arkivReferanse = AR, feiletList=feiletList, dato = IDAG )
         assertThat(historikk.skalArkiveresForDato(IDAG)).isFalse()
     }
 
@@ -37,7 +37,7 @@ class HistorikkTest {
     fun `Skal ikke arkiveres fordi det ikke har gått mer enn 1 uke siden inntektsmelding kom inn første gang`() {
         val AR = "AR-123"
         val feiletList: List<FeiletEntitet> = listOf(FeiletEntitet(arkivReferanse =  AR,feiltype = Feiltype.JMS, tidspunkt = IGÅR))
-        val historikk = Historikk( arkivReferanse = AR, feiletList=feiletList )
+        val historikk = Historikk( arkivReferanse = AR, feiletList=feiletList, dato = IDAG )
         assertThat(historikk.skalArkiveresForDato(IDAG)).isFalse()
     }
 
@@ -45,7 +45,7 @@ class HistorikkTest {
     fun `Skal ikke arkiveres fordi inntektsmeldingen ikke har kommet inn før`() {
         val AR = "AR-123"
         val feiletList: List<FeiletEntitet> = listOf()
-        val historikk = Historikk( arkivReferanse = AR, feiletList=feiletList )
+        val historikk = Historikk( arkivReferanse = AR, feiletList=feiletList, dato = IDAG )
         assertThat(historikk.skalArkiveresForDato(IDAG)).isFalse()
     }
 

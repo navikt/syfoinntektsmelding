@@ -5,8 +5,8 @@ import java.time.LocalDateTime
 
 const val ANTALL_DAGER_FØR_ARKIVERING = 7L
 
-data class Historikk(val arkivReferanse: String, val feiletList: List<FeiletEntitet>) {
-    fun skalArkiveresForDato(dato: LocalDateTime = LocalDateTime.now()): Boolean {
+data class Historikk(val arkivReferanse: String, val dato: LocalDateTime, val feiletList: List<FeiletEntitet>) {
+    fun skalArkiveresForDato(dato: LocalDateTime): Boolean {
         return skalArkiveresForDato(dato, feiletList)
     }
 }

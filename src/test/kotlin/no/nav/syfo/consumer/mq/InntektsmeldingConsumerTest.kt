@@ -29,6 +29,7 @@ import java.time.LocalDateTime
 
 class InntektsmeldingConsumerTest {
 
+    val ARKIV_ID = "arkivId-123"
     val AR = "NO_ERRORS"
     val AR_MISSING = "UKJENT"
     val AR_YESTERDAY = "AR-666"
@@ -37,9 +38,12 @@ class InntektsmeldingConsumerTest {
     val AR_EXCEPTION = "AR-EXCEPTION"
     val AR_AKTØR_EXCEPTION = "AR-EXCEPTION"
 
-    val days1 = FeiletEntitet(arkivReferanse = AR_YESTERDAY, feiltype = Feiltype.AKTØR_FEIL, tidspunkt = LocalDateTime.now().minusDays(1))
-    val days8 = FeiletEntitet(arkivReferanse = AR_EIGHT_DAYS, feiltype = Feiltype.AKTØR_FEIL, tidspunkt = LocalDateTime.now().minusDays(8))
-    val days14 = FeiletEntitet(arkivReferanse = AR_TWO_WEEKS, feiltype = Feiltype.AKTØR_FEIL, tidspunkt = LocalDateTime.now().minusDays(14))
+    val MAX_DAYS = 7L
+
+    val NOW = LocalDateTime.now()
+
+    val days1 = FeiletEntitet(arkivReferanse = AR_YESTERDAY, feiltype = Feiltype.AKTØR_FEIL, tidspunkt = NOW.minusDays(1))
+    val days14 = FeiletEntitet(arkivReferanse = AR_TWO_WEEKS, feiltype = Feiltype.AKTØR_FEIL, tidspunkt = NOW.minusDays(MAX_DAYS + 7))
 
     val im = Inntektsmelding(
         arbeidsgiverOrgnummer = "orgnummer",
@@ -50,7 +54,7 @@ class InntektsmeldingConsumerTest {
         journalStatus = JournalStatus.MIDLERTIDIG,
         arbeidsgiverperioder = emptyList(),
         arkivRefereranse = "AR-123",
-        mottattDato = LocalDate.of(2019, 2, 6).atStartOfDay(),
+        mottattDato = NOW,
         arsakTilInnsending = "",
         førsteFraværsdag = LocalDate.now()
     )
@@ -60,8 +64,11 @@ class InntektsmeldingConsumerTest {
 
     @MockK
     private var inntektsmeldingBehandler = mockk<InntektsmeldingBehandler> {
+        every { behandle(any(), eq(AR)) } returns ""
+        every { behandle(any(), eq(AR_YESTERDAY)) } returns ""
+        every { behandle(any(), eq(AR_MISSING)) } returns ""
+        every { behandle(any(), eq(AR_TWO_WEEKS)) } returns ""
         every { behandle(any(), eq(AR_AKTØR_EXCEPTION)) } throws FantIkkeAktørException()
-        every { behandle(any(), neq(AR_AKTØR_EXCEPTION)) } returns ""
     }
 
     @InjectMockKs(overrideValues = true)
@@ -69,11 +76,11 @@ class InntektsmeldingConsumerTest {
 
     @MockK
     private var feiletService =  mockk<FeiletService> {
-        every {finnHistorikk(AR)} returns Historikk(AR, emptyList())
-        every {finnHistorikk(AR_YESTERDAY)} returns Historikk(AR_YESTERDAY, listOf(days1))
-        every {finnHistorikk(AR_MISSING)} returns Historikk(AR_MISSING, emptyList())
-        every {finnHistorikk(AR_TWO_WEEKS)} returns Historikk(AR_TWO_WEEKS, listOf(days14))
-        every {finnHistorikk(AR_EXCEPTION)} returns Historikk(AR_EXCEPTION, emptyList())
+        every {finnHistorikk(AR)} returns Historikk(AR, NOW, emptyList())
+        every {finnHistorikk(AR_YESTERDAY)} returns Historikk(AR_YESTERDAY, NOW, listOf(days1))
+        every {finnHistorikk(AR_MISSING)} returns Historikk(AR_MISSING, NOW, emptyList())
+        every {finnHistorikk(AR_TWO_WEEKS)} returns Historikk(AR_TWO_WEEKS, NOW, listOf(days14))
+        every {finnHistorikk(AR_EXCEPTION)} returns Historikk(AR_EXCEPTION, NOW, emptyList())
     }
 
     @MockK
@@ -97,7 +104,7 @@ class InntektsmeldingConsumerTest {
             "    xmlns:ns2=\"http://nav.no/melding/virksomhet/dokumentforsendelse/v1\" " +
             "    xmlns:ns4=\"http://nav.no/dokmot/jms/reply\" " +
             "    xmlns:ns3=\"http://nav.no.dokmot/jms/viderebehandling\">" +
-            "  <arkivId>arkivId</arkivId>" +
+            "  <arkivId>arkivId-123</arkivId>" +
             "  <arkivsystem>JOARK</arkivsystem>" +
             "  <tema>SYK</tema>" +
             "  <behandlingstema>ab0061</behandlingstema>" +
@@ -108,45 +115,38 @@ class InntektsmeldingConsumerTest {
     fun setUp() = MockKAnnotations.init(this, relaxUnitFun = true) // turn relaxUnitFun on for all mocks
 
     @Test
-    fun `ta ut av kø dersom alle data er gyldig`() {
+    fun `behandle inntektsmeldingen dersom alle data er gyldig`() {
         val message = ActiveMQTextMessage()
         message.text = inputPayload
         message.jmsCorrelationID = AR
         inntektsmeldingConsumer.listen(message)
-        verify (exactly = 1) { inntektsmeldingBehandler.behandle("arkivId", AR) }
-        verify (exactly = 0) {
-            feiletService.lagreFeilet(any(), any())
-        }
+        verify (exactly = 1) { inntektsmeldingBehandler.behandle(eq(ARKIV_ID), AR) }
+        verify (exactly = 0) { feiletService.lagreFeilet(any(), any()) }
+        coVerify (exactly = 0) { oppgaveClient.opprettFordelingsOppgave(any(), any(), any()) }
+        verify (exactly = 0) { metrikk.tellOpprettFordelingsoppgave() }
     }
 
     @Test
-    fun `ta ut av kø dersom arkivReferansen mangler`() {
+    fun `ignorere inntektsmelding som ikke har arkivReferanse`() {
         val message = ActiveMQTextMessage()
         message.text = inputPayload
         inntektsmeldingConsumer.listen(message)
-        verify (exactly = 1) { inntektsmeldingBehandler.behandle("arkivId", AR_MISSING) }
-    }
-
-    @Test
-    fun `fjerne inntektsmeldingen fra kø dersom den har ligget for lenge`() {
-            val message = ActiveMQTextMessage()
-            message.text = inputPayload
-            message.jmsCorrelationID = AR_TWO_WEEKS
-            inntektsmeldingConsumer.listen(message)
-            verify (exactly = 0) { inntektsmeldingBehandler.behandle(any(), any()) }
-            verify (exactly = 1) { metrikk.tellUtAvKø() }
-            coVerify (exactly = 1) { oppgaveClient.opprettFordelingsOppgave(any(), any(), any()) }
-
-    }
-
-    @Test
-    fun `ikke fjerne inntektsmeldingen fra kø dersom den IKKE har ligget for lenge`() {
-        val message = ActiveMQTextMessage()
-        message.text = inputPayload
-        message.jmsCorrelationID = AR_YESTERDAY
-        inntektsmeldingConsumer.listen(message)
-        verify (exactly = 1) { metrikk.tellUtAvKø() }
         verify (exactly = 0) { inntektsmeldingBehandler.behandle(any(), any()) }
+        verify (exactly = 0) { feiletService.lagreFeilet(any(), any()) }
+        coVerify (exactly = 0) { oppgaveClient.opprettFordelingsOppgave(any(), any(), any()) }
+        verify (exactly = 0) { metrikk.tellOpprettFordelingsoppgave() }
+    }
+
+    @Test
+    fun `opprett fordelingsoppgave dersom inntektsmeldingen har ligget for lenge`() {
+        val message = ActiveMQTextMessage()
+        message.text = inputPayload
+        message.jmsCorrelationID = AR_TWO_WEEKS
+        inntektsmeldingConsumer.listen(message)
+        verify (exactly = 0) { inntektsmeldingBehandler.behandle(any(), any()) }
+        verify (exactly = 0) { feiletService.lagreFeilet(any(), any()) }
+        coVerify (exactly = 1) { oppgaveClient.opprettFordelingsOppgave(eq(ARKIV_ID), any(), any()) }
+        verify (exactly = 1) { metrikk.tellOpprettFordelingsoppgave() }
     }
 
     @Test
@@ -161,6 +161,8 @@ class InntektsmeldingConsumerTest {
                 feiletService.lagreFeilet(eq(AR_AKTØR_EXCEPTION), eq(Feiltype.AKTØR_IKKE_FUNNET))
             }
         }
+        coVerify (exactly = 0) { oppgaveClient.opprettFordelingsOppgave(any(), any(), any()) }
+        verify (exactly = 0) { metrikk.tellOpprettFordelingsoppgave() }
     }
 
 }

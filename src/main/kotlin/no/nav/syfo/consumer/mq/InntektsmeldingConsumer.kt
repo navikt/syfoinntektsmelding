@@ -8,6 +8,7 @@ import no.nav.syfo.behandling.Feiltype
 import no.nav.syfo.behandling.InntektsmeldingBehandler
 import no.nav.syfo.consumer.rest.OppgaveClient
 import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
+import no.nav.syfo.consumer.ws.SYKEPENGER_UTLAND
 import no.nav.syfo.repository.FeiletService
 import no.nav.syfo.service.JournalpostService
 import no.nav.syfo.util.JAXB
@@ -48,18 +49,20 @@ class InntektsmeldingConsumer(
                     JAXB.unmarshalForsendelsesinformasjon<JAXBElement<XMLForsendelsesinformasjon>>(textMessage.text)
             val info = xmlForsendelsesinformasjon.value
             arkivReferanse = textMessage.jmsCorrelationID ?: "UKJENT"
-            if (textMessage.jmsCorrelationID == null) {
-                metrikk.tellInntektsmeldingUtenArkivReferanse()
-            }
 
-            val historikk = feiletService.finnHistorikk(arkivReferanse)
-            if (historikk.skalArkiveresForDato(LocalDateTime.now())){
-                runBlocking{
-                    opprettFordelingsoppgave(info.arkivId)
-                }
-                    metrikk.tellUtAvKø()
+            if (arkivReferanse == "UKJENT") {
+                log.error("Mottok inntektsmelding uten arkivreferanse")
+                metrikk.tellInntektsmeldingUtenArkivReferanse()
             } else {
-                inntektsmeldingBehandler.behandle(info.arkivId, arkivReferanse)
+                val historikk = feiletService.finnHistorikk(arkivReferanse)
+                if (historikk.skalArkiveresForDato(LocalDateTime.now())){
+                    runBlocking {
+                        opprettFordelingsoppgave(info.arkivId)
+                    }
+                    metrikk.tellOpprettFordelingsoppgave()
+                } else {
+                    inntektsmeldingBehandler.behandle(info.arkivId, arkivReferanse)
+                }
             }
 
         } catch (e: BehandlingException) {
@@ -85,7 +88,7 @@ class InntektsmeldingConsumer(
     suspend fun opprettFordelingsoppgave(journalpostId: String) : Boolean{
         val inntektsmelding = journalpostService.hentInntektsmelding(journalpostId)
         val behandlendeEnhet = behandlendeEnhetConsumer.hentBehandlendeEnhet(inntektsmelding.fnr)
-        val gjelderUtland = ("4474" == behandlendeEnhet)
+        val gjelderUtland = (SYKEPENGER_UTLAND == behandlendeEnhet)
         oppgaveClient.opprettFordelingsOppgave(journalpostId, behandlendeEnhet, gjelderUtland)
         return true
     }

@@ -5,6 +5,7 @@ import no.nav.syfo.behandling.Feiltype
 import no.nav.syfo.behandling.Historikk
 import no.nav.syfo.dto.FeiletEntitet
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
 import javax.transaction.Transactional
 
 @Service
@@ -14,7 +15,7 @@ class FeiletService (
 ) {
 
     fun finnHistorikk(arkivReferanse: String): Historikk{
-        return Historikk(arkivReferanse, finnTidligereFeilet(arkivReferanse))
+        return Historikk(arkivReferanse, LocalDateTime.now(), finnTidligereFeilet(arkivReferanse))
     }
 
     fun finnTidligereFeilet(arkivReferanse: String): List<FeiletEntitet> {

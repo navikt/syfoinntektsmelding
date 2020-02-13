@@ -120,9 +120,9 @@ public class Metrikk {
             .counter("syfoinntektsmelding_opprett_oppgave", Tags.of("eksisterer", eksisterer ? "J" : "N")).increment();
     }
 
-    public void tellUtAvKø() {
+    public void tellOpprettFordelingsoppgave() {
         registry
-            .counter("syfoinntektsmelding_ut_av_koe").increment();
+            .counter("syfoinntektsmelding_opprett_fordelingsoppgave").increment();
     }
 
     public void tellLagreFeiletMislykkes() {
