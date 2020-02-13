@@ -3,7 +3,6 @@ package no.nav.syfo.behandling
 import any
 import eq
 import kotlinx.coroutines.runBlocking
-import no.nav.syfo.LocalApplication
 import no.nav.syfo.consumer.rest.OppgaveClient
 import no.nav.syfo.consumer.rest.SakClient
 import no.nav.syfo.consumer.rest.SakResponse
@@ -61,15 +60,9 @@ import java.util.concurrent.atomic.AtomicInteger
 
 
 @RunWith(SpringRunner::class)
-@SpringBootTest(classes = [LocalApplication::class])
+@SpringBootTest
 @TestPropertySource("classpath:application-test.properties")
-@DirtiesContext
-@EnableJpaRepositories("no.nav.syfo")
-@EntityScan(basePackages = ["no.nav.syfo.dto"])
-@Profile("it")
-@ContextConfiguration(classes = [LocalApplication::class])
 @WebAppConfiguration
-@OverrideAutoConfiguration(enabled = true)
 open class InntektsmeldingBehandlerIT {
 
     companion object {

@@ -120,4 +120,14 @@ public class Metrikk {
             .counter("syfoinntektsmelding_opprett_oppgave", Tags.of("eksisterer", eksisterer ? "J" : "N")).increment();
     }
 
+    public void tellOpprettFordelingsoppgave() {
+        registry
+            .counter("syfoinntektsmelding_opprett_fordelingsoppgave").increment();
+    }
+
+    public void tellLagreFeiletMislykkes() {
+        registry
+            .counter("syfoinntektsmelding_feilet_lagring_mislykkes").increment();
+    }
+
 }

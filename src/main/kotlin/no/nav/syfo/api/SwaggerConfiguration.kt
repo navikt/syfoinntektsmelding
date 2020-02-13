@@ -11,7 +11,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2
 
 @Configuration
 @EnableSwagger2
-@Profile(value = ["remote", "local"])
+@Profile(value = ["local"])
 class SwaggerConfiguration {
 
     @Bean
