@@ -22,7 +22,7 @@ class HistorikkTest {
             FeiletEntitet(arkivReferanse =  AR,feiltype = Feiltype.JMS, tidspunkt = ELDRE)
         )
         val historikk = Historikk( arkivReferanse = AR, feiletList=feiletList, dato = IDAG )
-        assertThat(historikk.skalArkiveresForDato(IDAG)).isTrue()
+        assertThat(historikk.skalArkiveresForDato()).isTrue()
     }
 
     @Test
@@ -30,7 +30,7 @@ class HistorikkTest {
         val AR = "AR-123"
         val feiletList: List<FeiletEntitet> = listOf(FeiletEntitet(arkivReferanse =  AR,feiltype = Feiltype.JMS, tidspunkt = IDAG.minusHours(2)))
         val historikk = Historikk( arkivReferanse = AR, feiletList=feiletList, dato = IDAG )
-        assertThat(historikk.skalArkiveresForDato(IDAG)).isFalse()
+        assertThat(historikk.skalArkiveresForDato()).isFalse()
     }
 
     @Test
@@ -38,7 +38,7 @@ class HistorikkTest {
         val AR = "AR-123"
         val feiletList: List<FeiletEntitet> = listOf(FeiletEntitet(arkivReferanse =  AR,feiltype = Feiltype.JMS, tidspunkt = IGÅR))
         val historikk = Historikk( arkivReferanse = AR, feiletList=feiletList, dato = IDAG )
-        assertThat(historikk.skalArkiveresForDato(IDAG)).isFalse()
+        assertThat(historikk.skalArkiveresForDato()).isFalse()
     }
 
     @Test
@@ -46,7 +46,7 @@ class HistorikkTest {
         val AR = "AR-123"
         val feiletList: List<FeiletEntitet> = listOf()
         val historikk = Historikk( arkivReferanse = AR, feiletList=feiletList, dato = IDAG )
-        assertThat(historikk.skalArkiveresForDato(IDAG)).isFalse()
+        assertThat(historikk.skalArkiveresForDato()).isFalse()
     }
 
 }

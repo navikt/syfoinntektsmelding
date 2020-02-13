@@ -17,7 +17,6 @@ import no.nav.syfo.util.Metrikk
 import org.springframework.jms.annotation.JmsListener
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
-import java.time.LocalDateTime
 import java.util.Optional.ofNullable
 import javax.jms.JMSException
 import javax.jms.TextMessage
@@ -31,14 +30,14 @@ class InntektsmeldingConsumer(
     private val oppgaveClient: OppgaveClient,
     private val journalpostService: JournalpostService,
     private val behandlendeEnhetConsumer: BehandlendeEnhetConsumer
-    ) {
+) {
     private val log = log()
 
     @Transactional(transactionManager = "jmsTransactionManager")
     @JmsListener(
-            id = "inntektsmelding_listener",
-            containerFactory = "jmsListenerContainerFactory",
-            destination = "inntektsmeldingQueue"
+        id = "inntektsmelding_listener",
+        containerFactory = "jmsListenerContainerFactory",
+        destination = "inntektsmeldingQueue"
     )
     fun listen(message: Any) {
         var arkivReferanse = "UKJENT"
@@ -46,25 +45,24 @@ class InntektsmeldingConsumer(
             val textMessage = message as TextMessage
             putToMDC(MDC_CALL_ID, ofNullable(textMessage.getStringProperty("callId")).orElse(generateCallId()))
             val xmlForsendelsesinformasjon =
-                    JAXB.unmarshalForsendelsesinformasjon<JAXBElement<XMLForsendelsesinformasjon>>(textMessage.text)
+                JAXB.unmarshalForsendelsesinformasjon<JAXBElement<XMLForsendelsesinformasjon>>(textMessage.text)
             val info = xmlForsendelsesinformasjon.value
             arkivReferanse = textMessage.jmsCorrelationID ?: "UKJENT"
 
-            if (arkivReferanse == "UKJENT") {
-                log.error("Mottok inntektsmelding uten arkivreferanse")
-                metrikk.tellInntektsmeldingUtenArkivReferanse()
-            } else {
+            if (arkivReferanse != "UKJENT") {
                 val historikk = feiletService.finnHistorikk(arkivReferanse)
-                if (historikk.skalArkiveresForDato(LocalDateTime.now())){
+                if (historikk.skalArkiveresForDato()) {
                     runBlocking {
                         opprettFordelingsoppgave(info.arkivId)
                     }
                     metrikk.tellOpprettFordelingsoppgave()
-                } else {
-                    inntektsmeldingBehandler.behandle(info.arkivId, arkivReferanse)
+                    return
                 }
+                inntektsmeldingBehandler.behandle(info.arkivId, arkivReferanse)
+                return
             }
-
+            log.error("Mottok inntektsmelding uten arkivreferanse")
+            metrikk.tellInntektsmeldingUtenArkivReferanse()
         } catch (e: BehandlingException) {
             log.error("Feil ved behandling av inntektsmelding med arkivreferanse $arkivReferanse", e)
             metrikk.tellBehandlingsfeil(e.feiltype)
@@ -85,7 +83,7 @@ class InntektsmeldingConsumer(
         }
     }
 
-    suspend fun opprettFordelingsoppgave(journalpostId: String) : Boolean{
+    suspend fun opprettFordelingsoppgave(journalpostId: String): Boolean {
         val inntektsmelding = journalpostService.hentInntektsmelding(journalpostId)
         val behandlendeEnhet = behandlendeEnhetConsumer.hentBehandlendeEnhet(inntektsmelding.fnr)
         val gjelderUtland = (SYKEPENGER_UTLAND == behandlendeEnhet)
@@ -93,8 +91,8 @@ class InntektsmeldingConsumer(
         return true
     }
 
-    fun lagreFeilet(arkivReferanse: String, feiltype: Feiltype){
-        try{
+    fun lagreFeilet(arkivReferanse: String, feiltype: Feiltype) {
+        try {
             feiletService.lagreFeilet(arkivReferanse, feiltype)
         } catch (e: Exception) {
             metrikk.tellLagreFeiletMislykkes();
