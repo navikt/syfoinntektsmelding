@@ -35,16 +35,22 @@ class InntektsmeldingProducer(@Value("\${spring.kafka.bootstrap-servers}") priva
     }
 
 
-    private val inntektsmeldingTopic = "privat-sykepenger-inntektsmelding"
+    private val inntektsmeldingTopics = listOf("privat-sykepenger-inntektsmelding", "helse-rapid-v1")
     val objectMapper = JacksonJsonConfig.objectMapperFactory.opprettObjectMapper()
 
     private val kafkaproducer = KafkaProducer<String, String>(producerProperties)
 
-    fun leggMottattInntektsmeldingPåTopic(inntektsmelding: no.nav.inntektsmeldingkontrakt.Inntektsmelding) {
-        kafkaproducer.send(ProducerRecord(inntektsmeldingTopic, serialiseringInntektsmelding(inntektsmelding)))
+    fun leggMottattInntektsmeldingPåTopics(inntektsmelding: Inntektsmelding) {
+        inntektsmeldingTopics.forEach {
+            leggMottattInntektsmeldingPåTopic(inntektsmelding, it)
+        }
         metrikk.tellInntektsmeldingLagtPåTopic()
     }
 
+    private fun leggMottattInntektsmeldingPåTopic(inntektsmelding: Inntektsmelding, topic: String) {
+        kafkaproducer.send(ProducerRecord(topic, serialiseringInntektsmelding(inntektsmelding)))
+    }
+
     fun serialiseringInntektsmelding(inntektsmelding: Inntektsmelding) =
-            objectMapper.writeValueAsString(inntektsmelding)
+        objectMapper.writeValueAsString(inntektsmelding)
 }

@@ -5,7 +5,6 @@ import log
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
-import no.nav.syfo.dto.InntektsmeldingEntitet
 import no.nav.syfo.mapping.mapInntektsmeldingKontrakt
 import no.nav.syfo.producer.InntektsmeldingProducer
 import no.nav.syfo.repository.InntektsmeldingService
@@ -52,7 +51,7 @@ class InntektsmeldingBehandler(
 
                 val dto = inntektsmeldingService.lagreBehandling(inntektsmelding, aktorid, saksId, arkivreferanse)
 
-                inntektsmeldingProducer.leggMottattInntektsmeldingPåTopic(
+                inntektsmeldingProducer.leggMottattInntektsmeldingPåTopics(
                     mapInntektsmeldingKontrakt(
                         inntektsmelding,
                         aktorid,

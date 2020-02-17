@@ -84,7 +84,7 @@ class InntektsmeldingBehandlerTest {
 
         verify(saksbehandlingService).behandleInntektsmelding(any(), anyString(), anyString())
         verify(journalpostService).ferdigstillJournalpost(matches("saksId"), any())
-        verify(inntektsmeldingProducer!!).leggMottattInntektsmeldingPåTopic(any())
+        verify(inntektsmeldingProducer!!).leggMottattInntektsmeldingPåTopics(any())
     }
 
     @Test
@@ -131,7 +131,7 @@ class InntektsmeldingBehandlerTest {
 
         verify<SaksbehandlingService>(saksbehandlingService, never()).behandleInntektsmelding(any(), anyString(), anyString())
         verify(journalpostService, never()).ferdigstillJournalpost(any(), any())
-        verify(inntektsmeldingProducer!!, never()).leggMottattInntektsmeldingPåTopic(any())
+        verify(inntektsmeldingProducer!!, never()).leggMottattInntektsmeldingPåTopics(any())
     }
 
     @Test
