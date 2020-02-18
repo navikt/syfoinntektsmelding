@@ -1,5 +1,9 @@
 package no.nav.syfo.repository
 
+import no.nav.syfo.domain.JournalStatus
+import no.nav.syfo.domain.inntektsmelding.Gyldighetsstatus
+import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
+import no.nav.syfo.domain.inntektsmelding.Refusjon
 import no.nav.syfo.dto.InntektsmeldingEntitet
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.BeforeClass
