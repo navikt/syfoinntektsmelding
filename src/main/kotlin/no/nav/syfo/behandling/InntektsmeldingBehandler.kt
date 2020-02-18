@@ -61,7 +61,7 @@ class InntektsmeldingBehandler(
                     )
                 )
 
-                log.info("Inntektsmelding {} er journalført for {}", inntektsmelding.journalpostId, arkivreferanse)
+                log.info("Inntektsmelding {} er journalført for {} refusjon {}", inntektsmelding.journalpostId, arkivreferanse, inntektsmelding.refusjon.beloepPrMnd)
                 return dto.uuid!!
             } else {
                 log.info(
