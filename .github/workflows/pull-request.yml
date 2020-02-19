@@ -19,7 +19,7 @@ jobs:
       - name: compose up
         run: cd docker/local && docker-compose up -d && sleep 10
       - name: test and build
-        run: ./gradlew test build
+        run: ./gradlew --debug test build
         env:
           ORG_GRADLE_PROJECT_githubUser: x-access-token
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
