@@ -5,3 +5,4 @@ ENV LANG nb_NO.utf8
 
 COPY initdb.sql /docker-entrypoint-initdb.d/
 RUN chmod 0755 /docker-entrypoint-initdb.d/initdb.sql
+EXPOSE 5432
