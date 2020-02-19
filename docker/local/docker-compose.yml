@@ -1,6 +1,6 @@
 version: '3.4'
 services:
-    database:
+    postgres:
         build:
             context: ./postgres
             dockerfile: postgres.Dockerfile
