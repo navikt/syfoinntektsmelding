@@ -16,6 +16,8 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - name: compose up
+        run: cd docker/local && docker-compose up -d && sleep 10
       - name: test and build
         run: ./gradlew test build
         env:
