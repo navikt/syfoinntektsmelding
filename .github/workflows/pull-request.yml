@@ -5,6 +5,7 @@ on: [pull_request]
 jobs:
   # Label of the container job
   runner-job:
+    # You must use a Linux environment when using service containers or container jobs
     runs-on: ubuntu-latest
 
     # Service containers to run with `container-job`
@@ -16,9 +17,17 @@ jobs:
         ports:
           # Maps tcp port 5432 on service container to the host
           - 5432:5432
+      env:
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: postgres
+        POSTGRES_DB: postgres
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-java@v1
+      # Downloads a copy of the code in your repository before running CI tests
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - name: Setup Java environment
+        uses: actions/setup-java@v1
         with:
           java-version: '11.x'
       - uses: actions/cache@v1
@@ -27,7 +36,7 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      - name: test and build
+      - name: Test and build
         run: ./gradlew --debug test build
         env:
           ORG_GRADLE_PROJECT_githubUser: x-access-token
