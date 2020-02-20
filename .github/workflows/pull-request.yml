@@ -37,7 +37,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Test and build
-        run: ./gradlew --debug test build
+        run: ./gradlew test build
         env:
           ORG_GRADLE_PROJECT_githubUser: x-access-token
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
