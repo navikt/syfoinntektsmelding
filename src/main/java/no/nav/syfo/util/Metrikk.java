@@ -130,4 +130,9 @@ public class Metrikk {
             .counter("syfoinntektsmelding_feilet_lagring_mislykkes").increment();
     }
 
+    public void tellRekjørerFeilet() {
+        registry
+            .counter("syfoinntektsmelding_rekjorer").increment();
+    }
+
 }
