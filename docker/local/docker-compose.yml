@@ -1,9 +1,8 @@
 version: '3.4'
 services:
-    postgres:
+    spinn_db:
         build:
-            context: ./postgres
-            dockerfile: postgres.Dockerfile
+            context: ./
         ports:
             - "5432:5432"
 volumes:
