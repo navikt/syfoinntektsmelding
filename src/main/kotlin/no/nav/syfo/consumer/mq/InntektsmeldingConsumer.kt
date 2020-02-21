@@ -51,6 +51,9 @@ class InntektsmeldingConsumer(
 
             if (arkivReferanse != "UKJENT") {
                 val historikk = feiletService.finnHistorikk(arkivReferanse)
+                if (historikk.feiletList.isNotEmpty()){
+                    metrikk.tellRekjørerFeilet()
+                }
                 if (historikk.skalArkiveresForDato()) {
                     runBlocking {
                         opprettFordelingsoppgave(info.arkivId)
