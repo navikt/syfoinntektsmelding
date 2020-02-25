@@ -2,9 +2,8 @@ package no.nav.syfo.repository
 
 import no.nav.inntektsmelding.kontrakt.serde.JacksonJsonConfig
 import no.nav.syfo.domain.JournalStatus
-import no.nav.syfo.domain.inntektsmelding.Gyldighetsstatus
-import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
-import no.nav.syfo.domain.inntektsmelding.Refusjon
+import no.nav.syfo.domain.Periode
+import no.nav.syfo.domain.inntektsmelding.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.BeforeClass
 import org.junit.Test
@@ -37,76 +36,105 @@ class InntektsmeldingServiceTest {
 
     @Test
     fun `Skal lagre hele inntektsmelding som JSON`(){
-        val id = "id-abc"
-        val fnr = "fnr-123"
-        val aktørId = "aktør-123"
-        val saksId = "sak-123"
-        val arkivReferanse = "ar-123"
-        val arsakTilInnsending = "Ingen årsak"
-        val journalpostId = "jp-123"
-        val arbeidsforholdId = "arb-123"
-        val arbeidsgiverPrivatFnr = "arb-priv-123"
-        val arbeidsgiverOrgnummer = "arb-org-123"
-        val arbeidsgiverPrivatAktørId = "arb-priv-aktør-123"
-        val refusjon = 200
-        val beregnetInntekt = 300
-
         val im = Inntektsmelding(
-            id = id,
-            fnr = fnr,
-            aktorId = aktørId,
-            refusjon = Refusjon(BigDecimal(refusjon), LocalDate.of(2020,2,20)),
+            id = "id-abc",
+            fnr = "fnr-123",
+            aktorId = "aktør-123",
+            refusjon = Refusjon(BigDecimal(333333333333), LocalDate.of(2020,2,20)),
             begrunnelseRedusert = "Grunn til reduksjon",
-            sakId = saksId,
+            sakId = "sak-123",
             mottattDato = LocalDateTime.of(2010,5,4, 3, 2, 1),
-            arkivRefereranse = arkivReferanse,
+            arkivRefereranse = "ar-123",
             førsteFraværsdag = LocalDate.of(2010,2,10),
-            arsakTilInnsending = arsakTilInnsending,
-            journalpostId = journalpostId,
-            arbeidsforholdId = arbeidsforholdId,
-            arbeidsgiverPrivatFnr = arbeidsgiverPrivatFnr,
-            arbeidsgiverOrgnummer = arbeidsgiverOrgnummer,
-            arbeidsgiverPrivatAktørId = arbeidsgiverPrivatAktørId,
-            beregnetInntekt = BigDecimal(beregnetInntekt),
+            arsakTilInnsending = "Ingen årsak",
+            journalpostId = "jp-123",
+            arbeidsforholdId = "arb-123",
+            arbeidsgiverPrivatFnr =  "arb-priv-123",
+            arbeidsgiverOrgnummer = "arb-org-123",
+            arbeidsgiverPrivatAktørId = "arb-priv-aktør-123",
+            beregnetInntekt = BigDecimal(999999999999),
             gyldighetsStatus = Gyldighetsstatus.GYLDIG,
             journalStatus = JournalStatus.MIDLERTIDIG,
 
-
-
-
-            arbeidsgiverperioder = emptyList(),
-            endringerIRefusjon = emptyList(),
-            feriePerioder = emptyList(),
-            gjenopptakelserNaturalYtelse = emptyList(),
-            opphørAvNaturalYtelse = emptyList()
+            arbeidsgiverperioder = listOf(
+                Periode(fom=LocalDate.of(2011, 11, 1), tom= LocalDate.of(2012,12,2)),
+                Periode(fom=LocalDate.of(2013, 3, 3), tom= LocalDate.of(2014,4,4))
+            ),
+            endringerIRefusjon = listOf(
+                EndringIRefusjon(LocalDate.of(2015,5,5), BigDecimal(555555555555)),
+                EndringIRefusjon(LocalDate.of(2016,6,6), BigDecimal(666666666666))
+            ),
+            feriePerioder = listOf(
+                Periode(fom=LocalDate.of(2017, 7, 7), tom= LocalDate.of(2018,8,8)),
+                Periode(fom=LocalDate.of(2019, 9, 9), tom= LocalDate.of(2020,12,20))
+            ),
+            gjenopptakelserNaturalYtelse = listOf(
+                GjenopptakelseNaturalytelse(Naturalytelse.BOLIG, LocalDate.of(2011,1,1), BigDecimal(111111111111)),
+                GjenopptakelseNaturalytelse(Naturalytelse.KOSTDAGER, LocalDate.of(2012,2,2), BigDecimal(222222222222))
+            ),
+            opphørAvNaturalYtelse = listOf(
+                OpphoerAvNaturalytelse(Naturalytelse.BIL, LocalDate.of(2015,5,5), BigDecimal(555555555555)),
+                OpphoerAvNaturalytelse(Naturalytelse.TILSKUDDBARNEHAGEPLASS, LocalDate.of(2016,6,6), BigDecimal(666666666666))
+            )
         )
         val json = inntektsmeldingService.mapString(im)
 
         val mapper = JacksonJsonConfig.objectMapperFactory.opprettObjectMapper()
         val node = mapper.readTree(json)
 
-        assertThat(node.get("id").asText()).isEqualTo(id)
-        assertThat(node.get("fnr").asText()).isEqualTo(fnr)
-        assertThat(node.get("aktorId").asText()).isEqualTo(aktørId)
-        assertThat(node.get("refusjon").get("beloepPrMnd").asInt()).isEqualTo(refusjon)
+        assertThat(node.get("id").asText()).isEqualTo("id-abc")
+        assertThat(node.get("fnr").asText()).isEqualTo("fnr-123")
+        assertThat(node.get("aktorId").asText()).isEqualTo("aktør-123")
+        assertThat(node.get("refusjon").get("beloepPrMnd").asLong()).isEqualTo(333333333333)
         assertThat(node.get("refusjon").get("opphoersdato").asText()).isEqualTo("2020-02-20")
         assertThat(node.get("begrunnelseRedusert").asText()).isEqualTo("Grunn til reduksjon")
-        assertThat(node.get("sakId").asText()).isEqualTo(saksId)
+        assertThat(node.get("sakId").asText()).isEqualTo("sak-123")
         assertThat(node.get("mottattDato").asText()).isEqualTo("2010-05-04T03:02:01")
-        assertThat(node.get("arkivRefereranse").asText()).isEqualTo(arkivReferanse)
+        assertThat(node.get("arkivRefereranse").asText()).isEqualTo("ar-123")
         assertThat(node.get("førsteFraværsdag").asText()).isEqualTo("2010-02-10")
-        assertThat(node.get("arsakTilInnsending").asText()).isEqualTo(arsakTilInnsending)
-        assertThat(node.get("journalpostId").asText()).isEqualTo(journalpostId)
-        assertThat(node.get("arbeidsforholdId").asText()).isEqualTo(arbeidsforholdId)
-        assertThat(node.get("arbeidsgiverPrivatFnr").asText()).isEqualTo(arbeidsgiverPrivatFnr)
-        assertThat(node.get("arbeidsgiverOrgnummer").asText()).isEqualTo(arbeidsgiverOrgnummer)
-        assertThat(node.get("arbeidsgiverPrivatAktørId").asText()).isEqualTo(arbeidsgiverPrivatAktørId)
-        assertThat(node.get("beregnetInntekt").asInt()).isEqualTo(beregnetInntekt)
-        assertThat(node.get("gyldighetsStatus").asText()).isEqualTo(Gyldighetsstatus.GYLDIG.toString())
-        assertThat(node.get("journalStatus").asText()).isEqualTo(JournalStatus.MIDLERTIDIG.toString())
+        assertThat(node.get("arsakTilInnsending").asText()).isEqualTo("Ingen årsak")
+        assertThat(node.get("journalpostId").asText()).isEqualTo("jp-123")
+        assertThat(node.get("arbeidsforholdId").asText()).isEqualTo("arb-123")
+        assertThat(node.get("arbeidsgiverPrivatFnr").asText()).isEqualTo( "arb-priv-123")
+        assertThat(node.get("arbeidsgiverOrgnummer").asText()).isEqualTo("arb-org-123")
+        assertThat(node.get("arbeidsgiverPrivatAktørId").asText()).isEqualTo("arb-priv-aktør-123")
+        assertThat(node.get("beregnetInntekt").asLong()).isEqualTo(999999999999)
+        assertThat(node.get("gyldighetsStatus").asText()).isEqualTo("GYLDIG")
+        assertThat(node.get("journalStatus").asText()).isEqualTo("MIDLERTIDIG")
 
+        assertThat(node.get("arbeidsgiverperioder").size()).isEqualTo(2)
+        assertThat(node.get("arbeidsgiverperioder")[0].get("fom").asText()).isEqualTo("2011-11-01")
+        assertThat(node.get("arbeidsgiverperioder")[0].get("tom").asText()).isEqualTo("2012-12-02")
+        assertThat(node.get("arbeidsgiverperioder")[1].get("fom").asText()).isEqualTo("2013-03-03")
+        assertThat(node.get("arbeidsgiverperioder")[1].get("tom").asText()).isEqualTo("2014-04-04")
 
+        assertThat(node.get("endringerIRefusjon").size()).isEqualTo(2)
+        assertThat(node.get("endringerIRefusjon")[0].get("endringsdato").asText()).isEqualTo("2015-05-05")
+        assertThat(node.get("endringerIRefusjon")[0].get("beloep").asLong()).isEqualTo(555555555555)
+        assertThat(node.get("endringerIRefusjon")[1].get("endringsdato").asText()).isEqualTo("2016-06-06")
+        assertThat(node.get("endringerIRefusjon")[1].get("beloep").asLong()).isEqualTo(666666666666)
 
+        assertThat(node.get("feriePerioder").size()).isEqualTo(2)
+        assertThat(node.get("feriePerioder")[0].get("fom").asText()).isEqualTo("2017-07-07")
+        assertThat(node.get("feriePerioder")[0].get("tom").asText()).isEqualTo("2018-08-08")
+        assertThat(node.get("feriePerioder")[1].get("fom").asText()).isEqualTo("2019-09-09")
+        assertThat(node.get("feriePerioder")[1].get("tom").asText()).isEqualTo("2020-12-20")
+
+        assertThat(node.get("gjenopptakelserNaturalYtelse").size()).isEqualTo(2)
+        assertThat(node.get("gjenopptakelserNaturalYtelse")[0].get("naturalytelse").asText()).isEqualTo("BOLIG")
+        assertThat(node.get("gjenopptakelserNaturalYtelse")[0].get("fom").asText()).isEqualTo("2011-01-01")
+        assertThat(node.get("gjenopptakelserNaturalYtelse")[0].get("beloepPrMnd").asLong()).isEqualTo(111111111111)
+        assertThat(node.get("gjenopptakelserNaturalYtelse")[1].get("naturalytelse").asText()).isEqualTo("KOSTDAGER")
+        assertThat(node.get("gjenopptakelserNaturalYtelse")[1].get("fom").asText()).isEqualTo("2012-02-02")
+        assertThat(node.get("gjenopptakelserNaturalYtelse")[1].get("beloepPrMnd").asLong()).isEqualTo(222222222222)
+
+        assertThat(node.get("opphørAvNaturalYtelse").size()).isEqualTo(2)
+        assertThat(node.get("opphørAvNaturalYtelse")[0].get("naturalytelse").asText()).isEqualTo("BIL")
+        assertThat(node.get("opphørAvNaturalYtelse")[0].get("fom").asText()).isEqualTo("2015-05-05")
+        assertThat(node.get("opphørAvNaturalYtelse")[0].get("beloepPrMnd").asLong()).isEqualTo(555555555555)
+        assertThat(node.get("opphørAvNaturalYtelse")[1].get("naturalytelse").asText()).isEqualTo("TILSKUDDBARNEHAGEPLASS")
+        assertThat(node.get("opphørAvNaturalYtelse")[1].get("fom").asText()).isEqualTo("2016-06-06")
+        assertThat(node.get("opphørAvNaturalYtelse")[1].get("beloepPrMnd").asLong()).isEqualTo(666666666666)
     }
 
 }

@@ -2,7 +2,6 @@ package no.nav.syfo.repository
 
 import lombok.extern.slf4j.Slf4j
 import no.nav.inntektsmelding.kontrakt.serde.JacksonJsonConfig
-import no.nav.inntektsmelding.kontrakt.serde.JacksonJsonConfig
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.dto.InntektsmeldingEntitet
 import no.nav.syfo.mapping.toInntektsmelding
