@@ -35,7 +35,7 @@ class InntektsmeldingServiceTest {
     private lateinit var inntektsmeldingService: InntektsmeldingService
 
     @Test
-    fun `Skal lagre hele inntektsmelding som JSON`(){
+    fun `Verifiserer at object mapper gir forventet JSON format`(){
         val im = Inntektsmelding(
             id = "id-abc",
             fnr = "fnr-123",
