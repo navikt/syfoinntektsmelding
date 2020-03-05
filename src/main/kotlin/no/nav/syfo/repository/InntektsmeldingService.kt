@@ -33,6 +33,8 @@ class InntektsmeldingService (
     }
 
     fun mapString(inntektsmelding: Inntektsmelding): String {
-        return objectMapper.writeValueAsString(inntektsmelding)
+        val im = inntektsmelding.copy()
+        im.fnr = "" // La stå! Ikke lagre fødselsnummer
+        return objectMapper.writeValueAsString(im)
     }
 }

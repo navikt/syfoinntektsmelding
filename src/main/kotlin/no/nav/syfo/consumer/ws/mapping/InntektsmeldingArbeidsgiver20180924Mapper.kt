@@ -26,7 +26,6 @@ internal object InntektsmeldingArbeidsgiver20180924Mapper {
             ?.filter { xmlPeriode -> xmlPeriode.fom != null && xmlPeriode.tom != null }
             ?.map { Periode(it.fom.value, it.tom.value) }
             ?: emptyList()
-
         return Inntektsmelding(
             fnr = skjemainnhold.arbeidstakerFnr,
             arbeidsgiverOrgnummer = skjemainnhold.arbeidsgiver?.virksomhetsnummer,
@@ -47,7 +46,8 @@ internal object InntektsmeldingArbeidsgiver20180924Mapper {
             feriePerioder = mapFerie(skjemainnhold.arbeidsforhold),
             førsteFraværsdag = mapFørsteFraværsdag(skjemainnhold.arbeidsforhold),
             mottattDato = mapXmlGregorianTilLocalDate(inngaaendeJournal.mottattDato),
-            begrunnelseRedusert = skjemainnhold.sykepengerIArbeidsgiverperioden.value.begrunnelseForReduksjonEllerIkkeUtbetalt?.value ?: "INGEN"
+            begrunnelseRedusert = skjemainnhold.sykepengerIArbeidsgiverperioden.value.begrunnelseForReduksjonEllerIkkeUtbetalt?.value ?: "",
+            avsenderSystem = AvsenderSystem(skjemainnhold.avsendersystem.systemnavn, skjemainnhold.avsendersystem.systemversjon)
         )
     }
 
