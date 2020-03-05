@@ -10,5 +10,5 @@ data class InngaaendeJournal(
 )
 
 enum class JournalStatus {
-    MIDLERTIDIG, ANNET, ENDELIG
+    MIDLERTIDIG, ANNET, ENDELIG, UTGAAR
 }
