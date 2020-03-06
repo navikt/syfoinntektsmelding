@@ -35,7 +35,7 @@ class InntektsmeldingProducer(@Value("\${spring.kafka.bootstrap-servers}") priva
     }
 
 
-    private val inntektsmeldingTopics = listOf("privat-sykepenger-inntektsmelding", "helse-rapid-v1")
+    private val inntektsmeldingTopics = listOf("privat-sykepenger-inntektsmelding")
     val objectMapper = JacksonJsonConfig.objectMapperFactory.opprettObjectMapper()
 
     private val kafkaproducer = KafkaProducer<String, String>(producerProperties)
