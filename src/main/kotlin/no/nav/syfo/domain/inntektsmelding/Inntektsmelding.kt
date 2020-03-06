@@ -31,6 +31,8 @@ data class Inntektsmelding(
     var sakId: String? = null,
     var aktorId: String? = null,
     val begrunnelseRedusert: String = "",
-    val avsenderSystem: AvsenderSystem = AvsenderSystem()
+    val avsenderSystem: AvsenderSystem = AvsenderSystem(),
+    val nærRelasjon: Boolean? = null,
+    val kontaktinformasjon: Kontaktinformasjon = Kontaktinformasjon()
 )
 

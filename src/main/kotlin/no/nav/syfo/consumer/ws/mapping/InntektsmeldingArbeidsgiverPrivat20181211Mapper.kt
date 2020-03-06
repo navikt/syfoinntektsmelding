@@ -49,7 +49,11 @@ internal object InntektsmeldingArbeidsgiverPrivat20181211Mapper {
             mottattDato = mapXmlGregorianTilLocalDate(inngaaendeJournal.mottattDato),
             begrunnelseRedusert = skjemainnhold.sykepengerIArbeidsgiverperioden.value.begrunnelseForReduksjonEllerIkkeUtbetalt?.value
                 ?: "",
-            avsenderSystem = AvsenderSystem(skjemainnhold.avsendersystem.systemnavn, skjemainnhold.avsendersystem.systemversjon)
+            avsenderSystem = AvsenderSystem(skjemainnhold.avsendersystem.systemnavn, skjemainnhold.avsendersystem.systemversjon),
+            nærRelasjon = skjemainnhold.isNaerRelasjon,
+            kontaktinformasjon = Kontaktinformasjon(
+                skjemainnhold.arbeidsgiver?.value?.kontaktinformasjon?.kontaktinformasjonNavn, skjemainnhold.arbeidsgiver?.value?.kontaktinformasjon?.telefonnummer
+            )
         )
     }
 
