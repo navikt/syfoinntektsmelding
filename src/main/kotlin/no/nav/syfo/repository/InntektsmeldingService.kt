@@ -1,6 +1,7 @@
 package no.nav.syfo.repository
 
 import lombok.extern.slf4j.Slf4j
+import no.nav.inntektsmelding.kontrakt.serde.JacksonJsonConfig
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.dto.InntektsmeldingEntitet
 import no.nav.syfo.mapping.toInntektsmelding
@@ -14,6 +15,8 @@ class InntektsmeldingService (
     private val repository: InntektsmeldingRepository
 ) {
 
+    val objectMapper = JacksonJsonConfig.objectMapperFactory.opprettObjectMapper()
+
     fun finnBehandledeInntektsmeldinger(aktoerId: String): List<Inntektsmelding> {
         val liste = repository.findByAktorId(aktoerId)
         return liste.map{ InntektsmeldingMeta -> toInntektsmelding(InntektsmeldingMeta) }
@@ -25,6 +28,13 @@ class InntektsmeldingService (
         val dto = toInntektsmeldingEntitet(inntektsmelding)
         dto.aktorId = aktorid
         dto.sakId = saksId
+        dto.data = mapString(inntektsmelding)
         return repository.saveAndFlush(dto)
+    }
+
+    fun mapString(inntektsmelding: Inntektsmelding): String {
+        val im = inntektsmelding.copy()
+        im.fnr = "" // La stå! Ikke lagre fødselsnummer
+        return objectMapper.writeValueAsString(im)
     }
 }

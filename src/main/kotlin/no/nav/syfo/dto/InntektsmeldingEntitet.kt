@@ -1,5 +1,8 @@
 package no.nav.syfo.dto
 
+import com.vladmihalcea.hibernate.type.json.JsonBinaryType
+import org.hibernate.annotations.Type
+import org.hibernate.annotations.TypeDef
 import javax.persistence.*
 import java.time.*
 import java.util.*
@@ -7,6 +10,10 @@ import javax.persistence.CascadeType.ALL
 
 @Entity
 @Table(name = "INNTEKTSMELDING")
+@TypeDef(
+    name = "jsonb",
+    typeClass = JsonBinaryType::class
+    )
 data class InntektsmeldingEntitet (
 
         @Id
@@ -29,7 +36,11 @@ data class InntektsmeldingEntitet (
         var arbeidsgiverPrivat: String? = null,
 
         @Column(name = "BEHANDLET")
-        var behandlet: LocalDateTime? = LocalDateTime.now()
+        var behandlet: LocalDateTime? = LocalDateTime.now(),
+
+        @Type(type= "jsonb")
+        @Column(columnDefinition = "jsonb", name = "DATA", nullable = true)
+        var data: String? = null
 
 ){
 

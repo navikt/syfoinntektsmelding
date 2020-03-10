@@ -48,7 +48,12 @@ internal object InntektsmeldingArbeidsgiverPrivat20181211Mapper {
             førsteFraværsdag = mapFørsteFraværsdag(skjemainnhold.arbeidsforhold),
             mottattDato = mapXmlGregorianTilLocalDate(inngaaendeJournal.mottattDato),
             begrunnelseRedusert = skjemainnhold.sykepengerIArbeidsgiverperioden.value.begrunnelseForReduksjonEllerIkkeUtbetalt?.value
-                ?: "INGEN"
+                ?: "",
+            avsenderSystem = AvsenderSystem(skjemainnhold.avsendersystem.systemnavn, skjemainnhold.avsendersystem.systemversjon),
+            nærRelasjon = skjemainnhold.isNaerRelasjon,
+            kontaktinformasjon = Kontaktinformasjon(
+                skjemainnhold.arbeidsgiver?.value?.kontaktinformasjon?.kontaktinformasjonNavn, skjemainnhold.arbeidsgiver?.value?.kontaktinformasjon?.telefonnummer
+            )
         )
     }
 
