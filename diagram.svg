@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1647px" height="520px" viewBox="0 0 1647 520" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 63.1 (92452) - https://sketch.com -->
+    <title>Page 1</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect id="Rectangle" stroke="#979797" fill="#D8D8D8" x="1" y="1" width="122" height="122" rx="8"></rect>
+        <text id="Dokmot" font-family="Arial-BoldMT, Arial" font-size="14" font-weight="bold" fill="#000000">
+            <tspan x="35.9448242" y="67">Dokmot</tspan>
+        </text>
+        <rect id="Rectangle" stroke="#979797" fill="#FFE29F" x="1" y="191" width="122" height="122" rx="8"></rect>
+        <text id="Spinn" font-family="Arial-BoldMT, Arial" font-size="14" font-weight="bold" fill="#000000">
+            <tspan x="43.0585938" y="257">Spinn</tspan>
+        </text>
+        <rect id="Rectangle" stroke="#979797" fill="#FFE29F" x="599" y="186" width="122" height="122" rx="8"></rect>
+        <text id="Hent-inntektsmelding" font-family="Arial-BoldMT, Arial" font-size="14" font-weight="bold" fill="#000000">
+            <tspan x="644.444824" y="236">Hent </tspan>
+            <tspan x="606.327637" y="252">inntektsmelding</tspan>
+            <tspan x="624.603516" y="268">fra JOARK</tspan>
+        </text>
+        <rect id="Rectangle" stroke="#979797" fill="#FFE29F" x="1361" y="188" width="122" height="122" rx="8"></rect>
+        <text id="Ferdigstill-Journalp" font-family="Arial-BoldMT, Arial" font-size="14" font-weight="bold" fill="#000000">
+            <tspan x="1389.05176" y="249">Ferdigstill</tspan>
+            <tspan x="1382.44141" y="265">Journalpost</tspan>
+        </text>
+        <rect id="Rectangle" stroke="#979797" fill="#FFE29F" x="781" y="397" width="122" height="122" rx="8"></rect>
+        <text id="Opprette-og-lagre-sa" font-family="Arial-BoldMT, Arial" font-size="14" font-weight="bold" fill="#000000">
+            <tspan x="802.834473" y="458">Opprette og</tspan>
+            <tspan x="801.648438" y="474">lagre sakdId</tspan>
+        </text>
+        <rect id="Rectangle" stroke="#979797" fill="#FFE29F" x="992" y="397" width="122" height="122" rx="8"></rect>
+        <text id="Opprette-oppgave" font-family="Arial-BoldMT, Arial" font-size="14" font-weight="bold" fill="#000000">
+            <tspan x="1024.33105" y="458">Opprette</tspan>
+            <tspan x="1024.71729" y="474">oppgave</tspan>
+        </text>
+        <rect id="Rectangle" stroke="#979797" fill="#FFE29F" x="1198" y="186" width="122" height="122" rx="8"></rect>
+        <text id="Oppdatere-oppgaven" font-family="Arial-BoldMT, Arial" font-size="14" font-weight="bold" fill="#000000">
+            <tspan x="1224.49316" y="247">Oppdatere</tspan>
+            <tspan x="1226.44141" y="263">oppgaven</tspan>
+        </text>
+        <rect id="Rectangle" stroke="#979797" fill="#FFE29F" x="196" y="397" width="122" height="122" rx="8"></rect>
+        <text id="Opprett-fordelings-" font-family="Arial-BoldMT, Arial" font-size="14" font-weight="bold" fill="#000000">
+            <tspan x="231.724121" y="447">Opprett</tspan>
+            <tspan x="220.834473" y="463">fordelings-</tspan>
+            <tspan x="228.217285" y="479">oppgave</tspan>
+        </text>
+        <rect id="Rectangle" stroke="#979797" fill="#FFE29F" transform="translate(257.267027, 252.267027) rotate(-315.000000) translate(-257.267027, -252.267027) " x="196.267027" y="191.267027" width="122" height="122"></rect>
+        <text id="Har-denne-inntektsme" font-family="Arial-BoldMT, Arial" font-size="14" font-weight="bold" fill="#000000">
+            <tspan x="222.769043" y="236">Har denne</tspan>
+            <tspan x="195.158691" y="252">inntektsmeldingen</tspan>
+            <tspan x="236.772461" y="268">feilet i </tspan>
+            <tspan x="227.837891" y="284">lang tid?</tspan>
+        </text>
+        <rect id="Rectangle" stroke="#979797" fill="#FFE29F" transform="translate(468.267027, 252.267027) rotate(-315.000000) translate(-468.267027, -252.267027) " x="407.267027" y="191.267027" width="122" height="122"></rect>
+        <text id="Journalpost-er-midle" font-family="Arial-BoldMT, Arial" font-size="14" font-weight="bold" fill="#000000">
+            <tspan x="428.208434" y="241.267027">Journalpost</tspan>
+            <tspan x="461.64984" y="257.267027">er </tspan>
+            <tspan x="428.211852" y="273.267027">midlertidig?</tspan>
+        </text>
+        <rect id="Rectangle" stroke="#979797" fill="#FFE29F" transform="translate(468.267027, 252.267027) rotate(-315.000000) translate(-468.267027, -252.267027) " x="407.267027" y="191.267027" width="122" height="122"></rect>
+        <text id="Journalpost-er-midle" font-family="Arial-BoldMT, Arial" font-size="14" font-weight="bold" fill="#000000">
+            <tspan x="428.208434" y="241.267027">Journalpost</tspan>
+            <tspan x="461.64984" y="257.267027">er </tspan>
+            <tspan x="428.211852" y="273.267027">midlertidig?</tspan>
+        </text>
+        <rect id="Rectangle" stroke="#979797" fill="#FFE29F" transform="translate(842.267027, 252.267027) rotate(-315.000000) translate(-842.267027, -252.267027) " x="781.267027" y="191.267027" width="122" height="122"></rect>
+        <text id="Journalpost-er-midle" font-family="Arial-BoldMT, Arial" font-size="14" font-weight="bold" fill="#000000">
+            <tspan x="802.208434" y="241.267027">Journalpost</tspan>
+            <tspan x="835.64984" y="257.267027">er </tspan>
+            <tspan x="802.211852" y="273.267027">midlertidig?</tspan>
+        </text>
+        <rect id="Rectangle" stroke="#979797" fill="#FFE29F" transform="translate(842.267027, 252.267027) rotate(-315.000000) translate(-842.267027, -252.267027) " x="781.267027" y="191.267027" width="122" height="122"></rect>
+        <text id="Er-det-sendt-inn-søk" font-family="Arial-BoldMT, Arial" font-size="14" font-weight="bold" fill="#000000">
+            <tspan x="803.54834" y="242">Er det sendt</tspan>
+            <tspan x="777.089844" y="258">inn søknad i samme</tspan>
+            <tspan x="814.441406" y="274">periode?</tspan>
+        </text>
+        <rect id="Rectangle" stroke="#979797" fill="#D8D8D8" x="1524" y="187" width="122" height="122" rx="8"></rect>
+        <text id="Kafka" font-family="Arial-BoldMT, Arial" font-size="14" font-weight="bold" fill="#000000">
+            <tspan x="1566.43457" y="255">Kafka</tspan>
+        </text>
+        <text id="Ja" font-family="Arial-BoldMT, Arial" font-size="14" font-weight="bold" fill="#000000">
+            <tspan x="272.213867" y="371">Ja</tspan>
+        </text>
+        <text id="Nei" font-family="Arial-BoldMT, Arial" font-size="14" font-weight="bold" fill="#000000">
+            <tspan x="857.106934" y="368">Nei</tspan>
+        </text>
+        <text id="Ja" font-family="Arial-BoldMT, Arial" font-size="14" font-weight="bold" fill="#000000">
+            <tspan x="562.213867" y="228">Ja</tspan>
+        </text>
+        <text id="Nei" font-family="Arial-BoldMT, Arial" font-size="14" font-weight="bold" fill="#000000">
+            <tspan x="344.106934" y="228">Nei</tspan>
+        </text>
+        <text id="Ja" font-family="Arial-BoldMT, Arial" font-size="14" font-weight="bold" fill="#000000">
+            <tspan x="940.213867" y="223">Ja</tspan>
+        </text>
+        <path id="Line" d="M257.87229,349.872305 L257.874993,350.372297 L257.953,364.997 L261.953989,364.9758 L257.502703,373.999993 L252.95412,365.024448 L256.953,365.002 L256.875007,350.377703 L256.872305,349.87771 L257.87229,349.872305 Z" fill="#979797" fill-rule="nonzero"></path>
+        <path id="Line" d="M844.536395,349.433184 L845.535566,349.473895 L845.51521,349.973481 L844.767,368.324 L848.76419,368.487123 L843.901519,377.29646 L839.771652,368.120721 L843.768,368.283 L844.51604,349.932769 L844.536395,349.433184 Z" fill="#979797" fill-rule="nonzero"></path>
+        <text id="Nei" font-family="Arial-BoldMT, Arial" font-size="14" font-weight="bold" fill="#000000">
+            <tspan x="1067.45312" y="373.078125">Nei</tspan>
+        </text>
+        <path id="Line" d="M1051.98952,354.511309 L1052.98869,354.55202 L1052.96834,355.051606 L1052.22,373.402 L1056.21732,373.565248 L1051.35464,382.374585 L1047.22478,373.198846 L1051.221,373.361 L1051.96916,355.010894 L1051.98952,354.511309 Z" fill="#979797" fill-rule="nonzero"></path>
+        <path id="Line" d="M1412.89356,325.03482 L1422.95269,325.287703 L1416.71491,333.183275 L1415.016,329.561 L1132.7123,461.952692 L1132.2596,462.164989 L1131.83501,461.259605 L1132.2877,461.047308 L1414.591,328.656 L1412.89356,325.03482 Z" fill="#979797" fill-rule="nonzero"></path>
+        <text id="Meldingskø" font-family="Arial-BoldMT, Arial" font-size="14" font-weight="bold" fill="#000000">
+            <tspan x="76" y="161">Meldingskø</tspan>
+        </text>
+        <path id="Line" d="M61.7534601,138.246564 L62.7534363,138.25346 L62.7499881,138.753448 L62.558,166.503 L66.5585123,166.531236 L61.9965518,175.499988 L57.5587263,166.469168 L61.558,166.497 L61.7500119,138.746552 L61.7534601,138.246564 Z" fill="#979797" fill-rule="nonzero"></path>
+        <path id="Line-2" d="M151.089852,247.83423 L159.999904,252.509802 L150.913415,256.832501 L150.991,252.833 L133.990198,252.499904 L133.490294,252.490102 L133.509898,251.490294 L134.009802,251.500096 L151.011,251.833 L151.089852,247.83423 Z" fill="#979797" fill-rule="nonzero"></path>
+        <path id="Line-2" d="M362.109521,247.798951 L370.999858,252.511901 L361.895296,256.796401 L361.99,252.797 L349.488099,252.499858 L348.98824,252.487957 L349.012043,251.48824 L349.511901,251.500142 L362.014,251.798 L362.109521,247.798951 Z" fill="#979797" fill-rule="nonzero"></path>
+        <path id="Line-2" d="M578.609521,247.548951 L587.499858,252.261901 L578.395296,256.546401 L578.49,252.547 L565.988099,252.249858 L565.48824,252.237957 L565.512043,251.23824 L566.011901,251.250142 L578.514,251.548 L578.609521,247.548951 Z" fill="#979797" fill-rule="nonzero"></path>
+        <path id="Line-2" d="M741.609521,243.548951 L750.499858,248.261901 L741.395296,252.546401 L741.49,248.547 L728.988099,248.249858 L728.48824,248.237957 L728.512043,247.23824 L729.011901,247.250142 L741.514,247.548 L741.609521,243.548951 Z" fill="#979797" fill-rule="nonzero"></path>
+        <path id="Line-2" d="M1343.60952,248.548951 L1352.49986,253.261901 L1343.3953,257.546401 L1343.49,253.547 L1330.9881,253.249858 L1330.48824,253.237957 L1330.51204,252.23824 L1331.0119,252.250142 L1343.514,252.548 L1343.60952,248.548951 Z" fill="#979797" fill-rule="nonzero"></path>
+        <path id="Line-2" d="M1505.60952,248.548951 L1514.49986,253.261901 L1505.3953,257.546401 L1505.49,253.547 L1492.9881,253.249858 L1492.48824,253.237957 L1492.51204,252.23824 L1493.0119,252.250142 L1505.514,252.548 L1505.60952,248.548951 Z" fill="#979797" fill-rule="nonzero"></path>
+        <rect id="Rectangle" stroke="#979797" fill="#FFE29F" transform="translate(1052.767027, 252.267027) rotate(-315.000000) translate(-1052.767027, -252.267027) " x="991.767027" y="191.267027" width="122" height="122"></rect>
+        <text id="Journalpost-er-midle" font-family="Arial-BoldMT, Arial" font-size="14" font-weight="bold" fill="#000000">
+            <tspan x="1012.70843" y="241.267027">Journalpost</tspan>
+            <tspan x="1046.14984" y="257.267027">er </tspan>
+            <tspan x="1012.71185" y="273.267027">midlertidig?</tspan>
+        </text>
+        <rect id="Rectangle" stroke="#979797" fill="#FFE29F" transform="translate(1052.767027, 252.267027) rotate(-315.000000) translate(-1052.767027, -252.267027) " x="991.767027" y="191.267027" width="122" height="122"></rect>
+        <text id="Er-oppgaven-åpen?" font-family="Arial-BoldMT, Arial" font-size="14" font-weight="bold" fill="#000000">
+            <tspan x="1010.10352" y="249">Er oppgaven</tspan>
+            <tspan x="1031.88623" y="265">åpen?</tspan>
+        </text>
+        <path id="Line-2" d="M952.109521,243.548951 L960.999858,248.261901 L951.895296,252.546401 L951.99,248.547 L939.488099,248.249858 L938.98824,248.237957 L939.012043,247.23824 L939.511901,247.250142 L952.014,247.548 L952.109521,243.548951 Z" fill="#979797" fill-rule="nonzero"></path>
+        <text id="Ja" font-family="Arial-BoldMT, Arial" font-size="14" font-weight="bold" fill="#000000">
+            <tspan x="1155.21387" y="227">Ja</tspan>
+        </text>
+        <path id="Line-2" d="M1167.10952,247.548951 L1175.99986,252.261901 L1166.8953,256.546401 L1166.99,252.547 L1154.4881,252.249858 L1153.98824,252.237957 L1154.01204,251.23824 L1154.5119,251.250142 L1167.014,251.548 L1167.10952,247.548951 Z" fill="#979797" fill-rule="nonzero"></path>
+    </g>
+</svg>
