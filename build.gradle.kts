@@ -22,11 +22,6 @@ plugins {
     id("org.jetbrains.kotlin.plugin.jpa") version "1.3.50"
     id("org.flywaydb.flyway") version "5.1.4"
     java
-    application
-}
-
-application {
-    mainClassName = "no.nav.syfo.Application"
 }
 
 buildscript {
@@ -59,7 +54,6 @@ allOpen {
     annotation("org.springframework.stereotype.Service")
     annotation("org.springframework.stereotype.Component")
 }
-
 
 dependencies {
     // Spring
