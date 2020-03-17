@@ -1,5 +1,6 @@
 package no.nav.syfo.consumer.ws
 
+import io.micrometer.core.annotation.Timed
 import log
 import no.nav.syfo.behandling.HentDokumentFeiletException
 import no.nav.syfo.behandling.HentDokumentIkkeFunnetException
@@ -25,6 +26,7 @@ class JournalConsumer(private val journalV2: JournalV2,
 
     var log = log()
 
+    @Timed("syfoinntektsmelding.out.hent_inntektsmelding")
     fun hentInntektsmelding(journalpostId: String, inngaaendeJournal: InngaaendeJournal): Inntektsmelding {
 
         val format = Variantformater()

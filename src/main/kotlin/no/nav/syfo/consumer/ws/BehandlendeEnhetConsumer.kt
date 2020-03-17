@@ -1,5 +1,6 @@
 package no.nav.syfo.consumer.ws
 
+import io.micrometer.core.annotation.Timed
 import log
 import no.nav.syfo.behandling.BehandlendeEnhetFeiletException
 import no.nav.syfo.behandling.FinnBehandlendeEnhetListeUgyldigInputException
@@ -31,6 +32,7 @@ class BehandlendeEnhetConsumer(
 
     var log = log()
 
+    @Timed("syfoinntektsmelding.out.hent_behandlende_enhet")
     fun hentBehandlendeEnhet(fnr: String): String {
         val geografiskTilknytning = hentGeografiskTilknytning(fnr)
 
@@ -84,6 +86,7 @@ class BehandlendeEnhetConsumer(
         }
     }
 
+    @Timed("syfoinntektsmelding.out.hent_geografisk_tilknytning")
     fun hentGeografiskTilknytning(fnr: String): GeografiskTilknytningData {
         try {
             val response = personV3.hentGeografiskTilknytning(

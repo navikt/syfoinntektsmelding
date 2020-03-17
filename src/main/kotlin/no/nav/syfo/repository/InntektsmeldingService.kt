@@ -1,5 +1,6 @@
 package no.nav.syfo.repository
 
+import io.micrometer.core.annotation.Timed
 import lombok.extern.slf4j.Slf4j
 import no.nav.inntektsmelding.kontrakt.serde.JacksonJsonConfig
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
@@ -24,6 +25,7 @@ class InntektsmeldingService (
 
     @Transactional(Transactional.TxType.REQUIRED)
     @org.springframework.transaction.annotation.Transactional("transactionManager")
+    @Timed("syfoinntektsmelding.out.lagre_behandling")
     fun lagreBehandling(inntektsmelding: Inntektsmelding, aktorid: String, saksId: String, arkivReferanse: String): InntektsmeldingEntitet {
         val dto = toInntektsmeldingEntitet(inntektsmelding)
         dto.aktorId = aktorid

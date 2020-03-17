@@ -1,5 +1,6 @@
 package no.nav.syfo.consumer.rest.aktor;
 
+import io.micrometer.core.annotation.Timed;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.syfo.behandling.AktørKallResponseException;
 import no.nav.syfo.behandling.AktørOppslagException;
@@ -47,6 +48,7 @@ public class AktorConsumer {
         return getIdent(fnr, "AktoerId");
     }
 
+    @Timed("syfoinntektsmelding.out.hent_aktoer")
     private String getIdent(String sokeIdent, String identgruppe) throws AktørException {
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);

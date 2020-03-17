@@ -1,5 +1,6 @@
 package no.nav.syfo.consumer.ws
 
+import io.micrometer.core.annotation.Timed
 import log
 import no.nav.syfo.behandling.FerdigstillJournalfoeringFerdigstillingIkkeMuligException
 import no.nav.syfo.behandling.FerdigstillJournalfoeringJournalpostIkkeInngaaendeException
@@ -36,6 +37,7 @@ class BehandleInngaaendeJournalConsumer(private val behandleInngaaendeJournalV1:
 
     var log = log()
 
+    @Timed("syfoinntektsmelding.out.journalpost_oppdater")
     fun oppdaterJournalpost(inngaendeJournalpost: InngaendeJournalpost) {
         val journalpostId = inngaendeJournalpost.journalpostId
         val avsenderNr = inngaendeJournalpost.arbeidsgiverOrgnummer
@@ -81,6 +83,7 @@ class BehandleInngaaendeJournalConsumer(private val behandleInngaaendeJournalV1:
         }
     }
 
+    @Timed("syfoinntektsmelding.out.journalpost_ferdigstill")
     fun ferdigstillJournalpost(inngaendeJournalpost: InngaendeJournalpost) {
         val journalpostId = inngaendeJournalpost.journalpostId
 

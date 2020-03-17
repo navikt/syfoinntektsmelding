@@ -1,5 +1,6 @@
 package no.nav.syfo.service
 
+import io.micrometer.core.annotation.Timed
 import log
 import no.nav.syfo.consumer.SakConsumer
 import org.springframework.stereotype.Service
@@ -12,6 +13,7 @@ class EksisterendeSakService(
 
     val log = log()
 
+    @Timed("syfoinntektsmelding.out.finn_eksisterende_sak")
     fun finnEksisterendeSak(aktorId: String, fom:LocalDate?, tom:LocalDate?): String? {
         val maybeSakFraSyfogsak = sakConsumer.finnSisteSak(aktorId, fom, tom)
             ?.also { log.info("Sak fra syfogsak: {}", it) }

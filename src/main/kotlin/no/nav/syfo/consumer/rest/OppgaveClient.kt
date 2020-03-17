@@ -19,6 +19,7 @@ import java.time.LocalDate
 import log
 import org.springframework.stereotype.Component
 import io.ktor.client.engine.apache.Apache
+import io.micrometer.core.annotation.Timed
 import no.nav.syfo.behandling.HentOppgaveException
 import no.nav.syfo.behandling.OpprettFordelingsOppgaveException
 import no.nav.syfo.behandling.OpprettOppgaveException
@@ -59,6 +60,7 @@ class OppgaveClient constructor (
         }
     }
 
+    @Timed("syfoinntektsmelding.out.opprett_oppgave")
     private suspend fun opprettOppgave(opprettOppgaveRequest: OpprettOppgaveRequest): OpprettOppgaveResponse = retry("opprett_oppgave") {
         httpClient.post<OpprettOppgaveResponse>(config.url) {
             contentType(ContentType.Application.Json)

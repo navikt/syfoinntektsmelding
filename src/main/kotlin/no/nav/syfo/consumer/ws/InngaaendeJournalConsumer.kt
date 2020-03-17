@@ -1,5 +1,6 @@
 package no.nav.syfo.consumer.ws
 
+import io.micrometer.core.annotation.Timed
 import log
 import no.nav.syfo.behandling.HentJournalpostJournalpostIkkeFunneteException
 import no.nav.syfo.behandling.HentJournalpostJournalpostIkkeInngaaendeException
@@ -16,6 +17,7 @@ class InngaaendeJournalConsumer(private val inngaaendeJournalV1: InngaaendeJourn
 
     var log = log()
 
+    @Timed("syfoinntektsmelding.out.hent_inngaande_journalpost")
     fun hentDokumentId(journalpostId: String): InngaaendeJournal {
         try {
             val request = HentJournalpostRequest()

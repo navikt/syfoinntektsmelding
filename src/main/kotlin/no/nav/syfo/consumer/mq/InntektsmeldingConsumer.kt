@@ -1,5 +1,6 @@
 package no.nav.syfo.consumer.mq
 
+import io.micrometer.core.annotation.Timed
 import kotlinx.coroutines.runBlocking
 import log
 import no.nav.melding.virksomhet.dokumentnotifikasjon.v1.XMLForsendelsesinformasjon
@@ -86,6 +87,7 @@ class InntektsmeldingConsumer(
         }
     }
 
+    @Timed("syfoinntektsmelding.out.opprett_fordelingsoppgave")
     suspend fun opprettFordelingsoppgave(journalpostId: String): Boolean {
         val inntektsmelding = journalpostService.hentInntektsmelding(journalpostId)
         val behandlendeEnhet = behandlendeEnhetConsumer.hentBehandlendeEnhet(inntektsmelding.fnr)

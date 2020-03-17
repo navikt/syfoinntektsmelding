@@ -1,6 +1,7 @@
 package no.nav.syfo.service
 
 import io.ktor.util.KtorExperimentalAPI
+import io.micrometer.core.annotation.Timed
 import kotlinx.coroutines.runBlocking
 import log
 import no.nav.syfo.consumer.rest.OppgaveClient
@@ -68,6 +69,7 @@ class SaksbehandlingService(
     }
 
     @KtorExperimentalAPI
+    @Timed("syfoinntektsmelding.out.opprett_sak")
     private fun opprettSak(aktorId: String, msgId: String): String {
         var saksId = "";
         runBlocking {
@@ -76,17 +78,18 @@ class SaksbehandlingService(
         return saksId
     }
 
+    @Timed("syfoinntektsmelding.out.opprett_oppgave")
     @KtorExperimentalAPI
     private fun opprettOppgave(fnr: String, aktorId: String, saksId: String, journalpostId: String) {
         val behandlendeEnhet = behandlendeEnhetConsumer.hentBehandlendeEnhet(fnr)
         val gjelderUtland = (SYKEPENGER_UTLAND == behandlendeEnhet)
         runBlocking {
-        oppgaveClient.opprettOppgave(
-            sakId = saksId,
-            journalpostId = journalpostId,
-            tildeltEnhetsnr =  behandlendeEnhet,
-            aktoerId = aktorId,
-            gjelderUtland = gjelderUtland
+            oppgaveClient.opprettOppgave(
+                sakId = saksId,
+                journalpostId = journalpostId,
+                tildeltEnhetsnr =  behandlendeEnhet,
+                aktoerId = aktorId,
+                gjelderUtland = gjelderUtland
             )
         }
     }
