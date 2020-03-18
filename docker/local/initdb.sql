@@ -1,3 +1,0 @@
-CREATE DATABASE spinn;
-CREATE USER spinn with PASSWORD 'spinn';
-GRANT ALL PRIVILEGES ON DATABASE spinn TO spinn;
