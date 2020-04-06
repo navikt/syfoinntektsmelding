@@ -31,14 +31,19 @@ class OppgaveService(
         }
     }
 
-    fun planleggOppgave(arkivreferanse: String, timeout: LocalDateTime) {
-        oppgaveDao.opprett(arkivreferanse, timeout)
-    }
-
-    fun slett(planlagtOppgave: PlanlagtOppgave) {
-        oppgaveDao.slett(planlagtOppgave.arkivreferanse)
+    fun planleggOppgave(oppgave: FremtidigOppgave) {
+        oppgaveDao.opprett(oppgave)
     }
 }
+
+data class FremtidigOppgave(
+    val fnr: String,
+    val saksId: String,
+    val aktørId: String,
+    val journalpostId: String,
+    val arkivreferanse: String,
+    val timeout: LocalDateTime = LocalDateTime.now().plusHours(1)
+)
 
 data class PlanlagtOppgave(val arkivreferanse: String) {
 

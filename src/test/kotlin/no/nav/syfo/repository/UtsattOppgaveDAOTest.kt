@@ -1,9 +1,11 @@
 package no.nav.syfo.repository
 
-import junit.framework.Assert.*
+import junit.framework.Assert.assertEquals
+import junit.framework.Assert.assertNotNull
+import no.nav.syfo.service.FremtidigOppgave
+import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
-import org.junit.Before
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
@@ -50,20 +52,24 @@ open class UtsattOppgaveDAOTest {
 
     @Test
     fun `kan opprette oppgave`() {
+        val fnr = "fnr"
+        val saksId = "saksId"
+        val aktørId = "aktørId"
+        val journalpostId = "journalpostId"
         val arkivreferanse = "123"
-        oppgaveDao.opprett(arkivreferanse = arkivreferanse, timeout = now())
+        oppgaveDao.opprett(
+            FremtidigOppgave(
+                fnr = fnr,
+                saksId = saksId,
+                aktørId = aktørId,
+                journalpostId = journalpostId,
+                arkivreferanse = arkivreferanse,
+                timeout = now()
+            )
+        )
         val oppgave = oppgaveDao.finn(arkivreferanse)
         assertNotNull(oppgave)
         assertEquals(arkivreferanse, oppgave!!.arkivreferanse)
-    }
-
-    @Test
-    fun `kan slette oppgave`() {
-        val arkivreferanse = "123"
-        oppgaveDao.opprett(arkivreferanse = arkivreferanse, timeout = now())
-        oppgaveDao.slett(arkivreferanse)
-        val oppgave = oppgaveDao.finn(arkivreferanse)
-        assertNull(oppgave)
     }
 
 }

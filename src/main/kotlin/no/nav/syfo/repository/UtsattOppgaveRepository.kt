@@ -6,6 +6,5 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface UtsattOppgaveRepository : JpaRepository<UtsattOppgaveEntitet, String> {
-    fun deleteByArkivreferanse(arkivreferanse: String)
     fun findByArkivreferanse(arkivreferanse: String): UtsattOppgaveEntitet?
 }

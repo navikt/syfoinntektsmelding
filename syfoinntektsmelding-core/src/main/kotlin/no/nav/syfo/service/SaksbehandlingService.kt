@@ -11,16 +11,15 @@ import no.nav.syfo.util.DateUtil
 import no.nav.syfo.util.Metrikk
 import no.nav.syfo.util.sammenslattPeriode
 import org.springframework.stereotype.Service
-import java.time.LocalDateTime.now
 
 @Service
 @KtorExperimentalAPI
 class SaksbehandlingService(
-        private val eksisterendeSakService: EksisterendeSakService,
-        private val inntektsmeldingService: InntektsmeldingService,
-        private val oppgaveService: OppgaveService,
-        private val sakClient: SakClient,
-        private val metrikk: Metrikk
+    private val eksisterendeSakService: EksisterendeSakService,
+    private val inntektsmeldingService: InntektsmeldingService,
+    private val oppgaveService: OppgaveService,
+    private val sakClient: SakClient,
+    private val metrikk: Metrikk
 ) {
 
     val log = log()
@@ -51,7 +50,15 @@ class SaksbehandlingService(
 
         val saksId = finnSaksId(tilhorendeInntektsmelding, inntektsmelding, aktorId, sammenslattPeriode, arkivReferanse)
 
-        oppgaveService.planleggOppgave(arkivReferanse, now().plusHours(1))
+        oppgaveService.planleggOppgave(
+            FremtidigOppgave(
+                fnr = inntektsmelding.fnr,
+                saksId = saksId,
+                aktørId = aktorId,
+                journalpostId = inntektsmelding.journalpostId,
+                arkivreferanse = arkivReferanse
+            )
+        )
 //        opprettOppgave(inntektsmelding.fnr, aktorId, saksId, inntektsmelding.journalpostId)
         //TODO
         // lagre nok data i en tabell til at vi på et senere tidspunkt kan gjøre dette med timeout
@@ -60,12 +67,24 @@ class SaksbehandlingService(
         return saksId
     }
 
-    private fun finnSaksId(tilhorendeInntektsmelding: Inntektsmelding?, inntektsmelding: Inntektsmelding, aktorId: String, sammenslattPeriode: Periode?, msgId: String): String {
+    private fun finnSaksId(
+        tilhorendeInntektsmelding: Inntektsmelding?,
+        inntektsmelding: Inntektsmelding,
+        aktorId: String,
+        sammenslattPeriode: Periode?,
+        msgId: String
+    ): String {
         return (tilhorendeInntektsmelding
-                ?.sakId
-                ?: inntektsmelding.arbeidsgiverOrgnummer
-                        ?.let { eksisterendeSakService.finnEksisterendeSak(aktorId, sammenslattPeriode?.fom, sammenslattPeriode?.tom) }
-                ?: opprettSak(aktorId, msgId))
+            ?.sakId
+            ?: inntektsmelding.arbeidsgiverOrgnummer
+                ?.let {
+                    eksisterendeSakService.finnEksisterendeSak(
+                        aktorId,
+                        sammenslattPeriode?.fom,
+                        sammenslattPeriode?.tom
+                    )
+                }
+            ?: opprettSak(aktorId, msgId))
     }
 
     @KtorExperimentalAPI

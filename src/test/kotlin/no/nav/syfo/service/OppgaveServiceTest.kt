@@ -16,25 +16,34 @@ class OppgaveServiceTest {
 
     @Mock
     private lateinit var oppgaveClient: OppgaveClient
+
     @Mock
     private lateinit var behandlendeEnhetConsumer: BehandlendeEnhetConsumer
+
     @Mock
     private lateinit var oppgaveDao: UtsattOppgaveDAO
 
     @InjectMocks
     private lateinit var oppgaveService: OppgaveService
 
+    private val fnr = "fnr"
+    private val saksId = "saksId"
+    private val aktørId = "aktørId"
+    private val journalpostId = "journalpostId"
+    private val arkivreferanse = "123"
+
     @Test
     fun `oppretter forsinket oppgave med timeout`() {
         val timeout = LocalDateTime.of(2020, 4, 6, 9, 0)
-        oppgaveService.planleggOppgave("123", timeout)
-        verify(oppgaveDao).opprett("123", timeout)
-    }
-
-    @Test
-    fun `sletter oppgave`() {
-        val planlagtOppgave = PlanlagtOppgave("123")
-        oppgaveService.slett(planlagtOppgave)
-        verify(oppgaveDao).slett(planlagtOppgave.arkivreferanse)
+        val oppgave = FremtidigOppgave(
+            fnr = fnr,
+            saksId = saksId,
+            aktørId = aktørId,
+            journalpostId = journalpostId,
+            arkivreferanse = arkivreferanse,
+            timeout = timeout
+        )
+        oppgaveService.planleggOppgave(oppgave)
+        verify(oppgaveDao).opprett(oppgave)
     }
 }
