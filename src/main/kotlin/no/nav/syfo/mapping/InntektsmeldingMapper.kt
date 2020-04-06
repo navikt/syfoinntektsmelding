@@ -6,25 +6,26 @@ import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 
 fun mapInntektsmeldingKontrakt(inntektsmelding: Inntektsmelding, arbeidstakerAktørId: String, gyldighetsstatus: Gyldighetsstatus, arkivreferanse: String, uuid: String): no.nav.inntektsmeldingkontrakt.Inntektsmelding {
     return no.nav.inntektsmeldingkontrakt.Inntektsmelding(
-            inntektsmeldingId = uuid,
-            arbeidstakerFnr = inntektsmelding.fnr,
-            arbeidstakerAktorId = arbeidstakerAktørId,
-            virksomhetsnummer = inntektsmelding.arbeidsgiverOrgnummer,
-            arbeidsgiverFnr = inntektsmelding.arbeidsgiverPrivatFnr,
-            arbeidsgiverAktorId = inntektsmelding.arbeidsgiverPrivatAktørId,
-            arbeidsgivertype = mapArbeidsgivertype(inntektsmelding),
-            arbeidsforholdId = inntektsmelding.arbeidsforholdId,
-            arbeidsgiverperioder = mapArbeidsgiverperioder(inntektsmelding),
-            beregnetInntekt = inntektsmelding.beregnetInntekt,
-            refusjon = mapRefusjon(inntektsmelding),
-            endringIRefusjoner = mapEndringIRefusjon(inntektsmelding),
-            opphoerAvNaturalytelser = mapOpphørAvNaturalytelser(inntektsmelding),
-            gjenopptakelseNaturalytelser = mapGjenopptakelseAvNaturalytelser(inntektsmelding),
-            status = mapStatus(gyldighetsstatus),
-            arkivreferanse = arkivreferanse,
-            ferieperioder = mapFerieperioder(inntektsmelding),
-            foersteFravaersdag = inntektsmelding.førsteFraværsdag,
-            mottattDato = inntektsmelding.mottattDato
+        inntektsmeldingId = uuid,
+        arbeidstakerFnr = inntektsmelding.fnr,
+        arbeidstakerAktorId = arbeidstakerAktørId,
+        virksomhetsnummer = inntektsmelding.arbeidsgiverOrgnummer,
+        arbeidsgiverFnr = inntektsmelding.arbeidsgiverPrivatFnr,
+        arbeidsgiverAktorId = inntektsmelding.arbeidsgiverPrivatAktørId,
+        arbeidsgivertype = mapArbeidsgivertype(inntektsmelding),
+        arbeidsforholdId = inntektsmelding.arbeidsforholdId,
+        arbeidsgiverperioder = mapArbeidsgiverperioder(inntektsmelding),
+        beregnetInntekt = inntektsmelding.beregnetInntekt,
+        refusjon = mapRefusjon(inntektsmelding),
+        endringIRefusjoner = mapEndringIRefusjon(inntektsmelding),
+        opphoerAvNaturalytelser = mapOpphørAvNaturalytelser(inntektsmelding),
+        gjenopptakelseNaturalytelser = mapGjenopptakelseAvNaturalytelser(inntektsmelding),
+        status = mapStatus(gyldighetsstatus),
+        arkivreferanse = arkivreferanse,
+        ferieperioder = mapFerieperioder(inntektsmelding),
+        foersteFravaersdag = inntektsmelding.førsteFraværsdag,
+        mottattDato = inntektsmelding.mottattDato,
+        begrunnelseForReduksjonEllerIkkeUtbetalt = inntektsmelding.begrunnelseRedusert
     )
 }
 
@@ -70,5 +71,5 @@ fun mapNaturalytelseType(naturalytelseType: no.nav.syfo.domain.inntektsmelding.N
     return naturalytelseType?.let { naturalytelse ->
         if (Naturalytelse.values().map { it.name }.contains(naturalytelse.name)) Naturalytelse.valueOf(naturalytelse.name) else Naturalytelse.ANNET
     }
-            ?: Naturalytelse.ANNET
+        ?: Naturalytelse.ANNET
 }
