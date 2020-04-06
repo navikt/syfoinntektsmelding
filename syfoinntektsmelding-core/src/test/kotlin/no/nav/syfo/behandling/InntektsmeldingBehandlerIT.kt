@@ -17,6 +17,7 @@ import no.nav.syfo.repository.InntektsmeldingRepository
 import no.nav.syfo.repository.InntektsmeldingService
 import no.nav.syfo.service.EksisterendeSakService
 import no.nav.syfo.service.JournalpostService
+import no.nav.syfo.service.OppgaveService
 import no.nav.syfo.service.SaksbehandlingService
 import no.nav.syfo.util.Metrikk
 import no.nav.tjeneste.virksomhet.journal.v2.binding.HentDokumentDokumentIkkeFunnet
@@ -44,7 +45,7 @@ import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.web.WebAppConfiguration
 import java.time.LocalDate
 import java.time.ZonedDateTime
-import java.util.*
+import java.util.ArrayList
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -67,8 +68,10 @@ open class InntektsmeldingBehandlerIT {
 
     @MockBean
     lateinit var journalV2: JournalV2
+
     @MockBean
     lateinit var aktorConsumer: AktorConsumer
+
     @MockBean
     lateinit var inngaaendeJournalConsumer: InngaaendeJournalConsumer
     lateinit var journalConsumer: JournalConsumer
@@ -80,15 +83,22 @@ open class InntektsmeldingBehandlerIT {
 
     @MockBean
     lateinit var inntektsmeldingProducer: InntektsmeldingProducer
+
     @MockBean
     lateinit var behandleInngaaendeJournalConsumer: BehandleInngaaendeJournalConsumer
+
     @MockBean
     lateinit var behandlendeEnhetConsumer: BehandlendeEnhetConsumer
+
     @MockBean
     lateinit var oppgaveClient: OppgaveClient
 
     @MockBean
-    lateinit var sakClient : SakClient
+    lateinit var oppgaveService: OppgaveService
+
+    @MockBean
+    lateinit var sakClient: SakClient
+
     @MockBean
     lateinit var eksisterendeSakService: EksisterendeSakService
 
@@ -105,15 +115,47 @@ open class InntektsmeldingBehandlerIT {
     fun setup() {
         inntektsmeldingRepository.deleteAll()
         journalConsumer = JournalConsumer(journalV2, aktorConsumer)
-        journalpostService = JournalpostService(inngaaendeJournalConsumer, behandleInngaaendeJournalConsumer, journalConsumer, behandlendeEnhetConsumer, metrikk)
-        inntektsmeldingService = InntektsmeldingService(inntektsmeldingRepository, 3)
-        saksbehandlingService = SaksbehandlingService(oppgaveClient, behandlendeEnhetConsumer, eksisterendeSakService, inntektsmeldingService, sakClient, metrikk)
-        inntektsmeldingBehandler = InntektsmeldingBehandler(journalpostService, saksbehandlingService, metrikk, inntektsmeldingService, aktorConsumer, inntektsmeldingProducer)
+        journalpostService = JournalpostService(
+            inngaaendeJournalConsumer,
+            behandleInngaaendeJournalConsumer,
+            journalConsumer,
+            behandlendeEnhetConsumer,
+            metrikk
+        )
+        inntektsmeldingService = InntektsmeldingService(inntektsmeldingRepository)
+        saksbehandlingService =
+            SaksbehandlingService(eksisterendeSakService, inntektsmeldingService, oppgaveService, sakClient, metrikk)
+        inntektsmeldingBehandler = InntektsmeldingBehandler(
+            journalpostService,
+            saksbehandlingService,
+            metrikk,
+            inntektsmeldingService,
+            aktorConsumer,
+            inntektsmeldingProducer
+        )
         MockitoAnnotations.initMocks(inntektsmeldingBehandler)
         runBlocking {
             given(sakClient.opprettSak(anyString(), anyString())).willReturn(
-                SakResponse(id = 987, tema = "SYM", aktoerId = "444", applikasjon = "", fagsakNr = "123000", opprettetAv = "meg", opprettetTidspunkt = ZonedDateTime.now(), orgnr = "999888777"),
-                SakResponse(id = 988, tema = "SYM", aktoerId = "444", applikasjon = "", fagsakNr = "123000", opprettetAv = "meg", opprettetTidspunkt = ZonedDateTime.now(), orgnr = "999888777")
+                SakResponse(
+                    id = 987,
+                    tema = "SYM",
+                    aktoerId = "444",
+                    applikasjon = "",
+                    fagsakNr = "123000",
+                    opprettetAv = "meg",
+                    opprettetTidspunkt = ZonedDateTime.now(),
+                    orgnr = "999888777"
+                ),
+                SakResponse(
+                    id = 988,
+                    tema = "SYM",
+                    aktoerId = "444",
+                    applikasjon = "",
+                    fagsakNr = "123000",
+                    opprettetAv = "meg",
+                    opprettetTidspunkt = ZonedDateTime.now(),
+                    orgnr = "999888777"
+                )
             )
         }
         `when`(inngaaendeJournalConsumer.hentDokumentId("arkivId")).thenReturn(inngaaendeJournal("arkivId"))
@@ -190,7 +232,10 @@ open class InntektsmeldingBehandlerIT {
         HentDokumentDokumentIkkeFunnet::class
     )
     fun `Bruker saksId fra sykeforløp om vi ikke har overlappende inntektsmelding`() {
-        given(eksisterendeSakService.finnEksisterendeSak(any(), Mockito.any(), Mockito.any())).willReturn(null, "syfosak")
+        given(eksisterendeSakService.finnEksisterendeSak(any(), Mockito.any(), Mockito.any())).willReturn(
+            null,
+            "syfosak"
+        )
 
         `when`(inngaaendeJournalConsumer.hentDokumentId("arkivId5")).thenReturn(inngaaendeJournal("arkivId5"))
         `when`(inngaaendeJournalConsumer.hentDokumentId("arkivId6")).thenReturn(inngaaendeJournal("arkivId6"))
@@ -244,7 +289,12 @@ open class InntektsmeldingBehandlerIT {
     )
     fun `Mottar inntektsmelding med flere perioder`() {
         given(aktorConsumer.getAktorId(anyString())).willReturn("aktorId_for_8", "aktorId_for_8")
-        val dokumentResponse = lagDokumentRespons(LocalDate.of(2019, 1, 1), LocalDate.of(2019, 1, 12), LocalDate.of(2019, 1, 12), LocalDate.of(2019, 1, 14))
+        val dokumentResponse = lagDokumentRespons(
+            LocalDate.of(2019, 1, 1),
+            LocalDate.of(2019, 1, 12),
+            LocalDate.of(2019, 1, 12),
+            LocalDate.of(2019, 1, 14)
+        )
         `when`(journalV2.hentDokument(Mockito.any())).thenReturn(
             dokumentResponse.response
         )
@@ -307,7 +357,10 @@ open class InntektsmeldingBehandlerIT {
         runBlocking {
             verify<SakClient>(sakClient, Mockito.times(1)).opprettSak(anyString(), anyString())
         }
-        verify<BehandleInngaaendeJournalConsumer>(behandleInngaaendeJournalConsumer, Mockito.times(numThreads)).ferdigstillJournalpost(
+        verify<BehandleInngaaendeJournalConsumer>(
+            behandleInngaaendeJournalConsumer,
+            Mockito.times(numThreads)
+        ).ferdigstillJournalpost(
             any()
         )
     }
@@ -322,8 +375,14 @@ open class InntektsmeldingBehandlerIT {
 
         val numThreads = 16
         produceParallelMessages(numThreads, "arkivId")
-        verify<SakClient>(sakClient, Mockito.times(numThreads)).opprettSak(ArgumentMatchers.anyString(), ArgumentMatchers.anyString())
-        verify<BehandleInngaaendeJournalConsumer>(behandleInngaaendeJournalConsumer, Mockito.times(numThreads)).ferdigstillJournalpost(
+        verify<SakClient>(sakClient, Mockito.times(numThreads)).opprettSak(
+            ArgumentMatchers.anyString(),
+            ArgumentMatchers.anyString()
+        )
+        verify<BehandleInngaaendeJournalConsumer>(
+            behandleInngaaendeJournalConsumer,
+            Mockito.times(numThreads)
+        ).ferdigstillJournalpost(
             any()
         )
     }
@@ -373,7 +432,12 @@ open class InntektsmeldingBehandlerIT {
         return dokumentResponse1
     }
 
-    fun lagDokumentRespons(fom: LocalDate, tom: LocalDate, fom2: LocalDate, tom2: LocalDate): no.nav.tjeneste.virksomhet.journal.v2.HentDokumentResponse {
+    fun lagDokumentRespons(
+        fom: LocalDate,
+        tom: LocalDate,
+        fom2: LocalDate,
+        tom2: LocalDate
+    ): no.nav.tjeneste.virksomhet.journal.v2.HentDokumentResponse {
         val dokumentResponse1 = no.nav.tjeneste.virksomhet.journal.v2.HentDokumentResponse()
         dokumentResponse1.response = HentDokumentResponse()
         dokumentResponse1.response.dokument = JournalConsumerTest.inntektsmeldingArbeidsgiver(
@@ -385,7 +449,8 @@ open class InntektsmeldingBehandlerIT {
     private fun inngaaendeJournal(arkivId: String): InngaaendeJournal {
         return InngaaendeJournal(
             dokumentId = arkivId,
-            status = JournalStatus.MIDLERTIDIG)
+            status = JournalStatus.MIDLERTIDIG
+        )
     }
 
 }

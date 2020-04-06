@@ -3,10 +3,7 @@ package no.nav.syfo.service
 import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.runBlocking
 import log
-import no.nav.syfo.consumer.rest.OppgaveClient
 import no.nav.syfo.consumer.rest.SakClient
-import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
-import no.nav.syfo.consumer.ws.SYKEPENGER_UTLAND
 import no.nav.syfo.domain.Periode
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.repository.InntektsmeldingService
@@ -14,14 +11,14 @@ import no.nav.syfo.util.DateUtil
 import no.nav.syfo.util.Metrikk
 import no.nav.syfo.util.sammenslattPeriode
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime.now
 
 @Service
 @KtorExperimentalAPI
 class SaksbehandlingService(
-        private val oppgaveClient: OppgaveClient,
-        private val behandlendeEnhetConsumer: BehandlendeEnhetConsumer,
         private val eksisterendeSakService: EksisterendeSakService,
         private val inntektsmeldingService: InntektsmeldingService,
+        private val oppgaveService: OppgaveService,
         private val sakClient: SakClient,
         private val metrikk: Metrikk
 ) {
@@ -54,7 +51,11 @@ class SaksbehandlingService(
 
         val saksId = finnSaksId(tilhorendeInntektsmelding, inntektsmelding, aktorId, sammenslattPeriode, arkivReferanse)
 
-        opprettOppgave(inntektsmelding.fnr, aktorId, saksId, inntektsmelding.journalpostId)
+        oppgaveService.planleggOppgave(arkivReferanse, now().plusHours(1))
+//        opprettOppgave(inntektsmelding.fnr, aktorId, saksId, inntektsmelding.journalpostId)
+        //TODO
+        // lagre nok data i en tabell til at vi på et senere tidspunkt kan gjøre dette med timeout
+        // fin
 
         return saksId
     }
@@ -74,20 +75,5 @@ class SaksbehandlingService(
             saksId = sakClient.opprettSak(aktorId, msgId).id.toString()
         }
         return saksId
-    }
-
-    @KtorExperimentalAPI
-    private fun opprettOppgave(fnr: String, aktorId: String, saksId: String, journalpostId: String) {
-        val behandlendeEnhet = behandlendeEnhetConsumer.hentBehandlendeEnhet(fnr)
-        val gjelderUtland = (SYKEPENGER_UTLAND == behandlendeEnhet)
-        runBlocking {
-        oppgaveClient.opprettOppgave(
-            sakId = saksId,
-            journalpostId = journalpostId,
-            tildeltEnhetsnr =  behandlendeEnhet,
-            aktoerId = aktorId,
-            gjelderUtland = gjelderUtland
-            )
-        }
     }
 }

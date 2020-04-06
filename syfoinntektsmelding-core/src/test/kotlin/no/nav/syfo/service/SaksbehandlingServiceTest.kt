@@ -34,7 +34,8 @@ class SaksbehandlingServiceTest {
 
     @Mock
     private lateinit var oppgaveClient: OppgaveClient
-
+    @Mock
+    private lateinit var oppgaveService: OppgaveService
     @Mock
     private lateinit var behandlendeEnhetConsumer: BehandlendeEnhetConsumer
     @Mock
@@ -56,10 +57,8 @@ class SaksbehandlingServiceTest {
     fun setup() {
         `when`(inntektsmeldingService.finnBehandledeInntektsmeldinger(any())).thenReturn(emptyList())
         `when`(aktoridConsumer.getAktorId(anyString())).thenReturn("aktorid")
-        `when`(behandlendeEnhetConsumer.hentBehandlendeEnhet(anyString())).thenReturn("behandlendeenhet1234")
         given(eksisterendeSakService.finnEksisterendeSak(any(), any(), any())).willReturn("saksId")
         given(runBlocking{sakClient.opprettSak(any(), any())}).willReturn(SakResponse(id = 987, tema = "a", aktoerId = "123", applikasjon = "", fagsakNr = "123", opprettetAv = "", opprettetTidspunkt = ZonedDateTime.now(), orgnr = ""))
-        given(runBlocking{oppgaveClient.opprettOppgave(anyString(), anyString(), anyString(), anyString(), anyBoolean())}).willReturn(OppgaveResultat(oppgaveId = 1, duplikat = false))
     }
 
     private fun lagInntektsmelding(): Inntektsmelding {
@@ -101,16 +100,13 @@ class SaksbehandlingServiceTest {
 
     @io.ktor.util.KtorExperimentalAPI
     @Test
-    fun oppretterOppgaveForSak() {
+    fun `oppretter utsatt oppgave for sak`() {
         saksbehandlingService.behandleInntektsmelding(lagInntektsmelding(), "aktorId", anyString())
 
         runBlocking {
-            verify<OppgaveClient>(oppgaveClient).opprettOppgave(
+            verify(oppgaveService).planleggOppgave(
                 anyString(),
-                anyString(),
-                anyString(),
-                anyString(),
-                anyBoolean()
+                any()
             )
         }
     }
