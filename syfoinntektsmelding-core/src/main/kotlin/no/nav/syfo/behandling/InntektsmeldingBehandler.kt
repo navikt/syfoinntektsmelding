@@ -6,9 +6,10 @@ import log
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
+import no.nav.syfo.dto.Tilstand
+import no.nav.syfo.dto.UtsattOppgaveEntitet
 import no.nav.syfo.mapping.mapInntektsmeldingKontrakt
 import no.nav.syfo.producer.InntektsmeldingProducer
-import no.nav.syfo.utsattoppgave.FremtidigOppgave
 import no.nav.syfo.repository.InntektsmeldingService
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import no.nav.syfo.service.JournalpostService
@@ -16,7 +17,7 @@ import no.nav.syfo.service.SaksbehandlingService
 import no.nav.syfo.util.Metrikk
 import no.nav.syfo.util.validerInntektsmelding
 import org.springframework.stereotype.Service
-import java.util.*
+import java.time.LocalDateTime
 
 @KtorExperimentalAPI
 @Service
@@ -58,13 +59,15 @@ class InntektsmeldingBehandler(
                 val dto = inntektsmeldingService.lagreBehandling(inntektsmelding, aktorid, saksId, arkivreferanse)
 
                 utsattOppgaveService.opprett(
-                    FremtidigOppgave(
+                    UtsattOppgaveEntitet(
                         fnr = inntektsmelding.fnr,
-                        saksId = saksId,
+                        sakId = saksId,
                         aktørId = dto.aktorId,
                         journalpostId = inntektsmelding.journalpostId,
                         arkivreferanse = inntektsmelding.arkivRefereranse,
-                        inntektsmeldingId = UUID.fromString(dto.uuid)
+                        inntektsmeldingId = dto.uuid,
+                        tilstand = Tilstand.Ny,
+                        timeout = LocalDateTime.now().plusHours(1)
                     )
                 )
 

@@ -33,5 +33,9 @@ data class UtsattOppgaveEntitet(
     var timeout: LocalDateTime,
 
     @Column(name = "TILSTAND", nullable = false, length = 100, updatable = false)
-    var tilstand: String
+    var tilstand: Tilstand
 )
+
+enum class Tilstand {
+    Ny, Utsatt, Forkastet, Opprettet
+}

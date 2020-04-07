@@ -5,6 +5,8 @@ import kotlinx.coroutines.runBlocking
 import no.nav.syfo.consumer.rest.OppgaveClient
 import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
 import no.nav.syfo.consumer.ws.SYKEPENGER_UTLAND
+import no.nav.syfo.dto.Tilstand
+import no.nav.syfo.dto.UtsattOppgaveEntitet
 import no.nav.syfo.helpers.log
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
@@ -18,7 +20,7 @@ class UtsattOppgaveService(
     private val behandlendeEnhetConsumer: BehandlendeEnhetConsumer
 ) {
     fun prosesser(oppdatering: OppgaveOppdatering) {
-        val oppgave = utsattOppgaveDao.finn(oppdatering.id)
+        val oppgave = utsattOppgaveDao.finn(oppdatering.id.toString())
         if (oppgave == null) {
             log.warn("Mottok oppdatering på en ukjent oppgave")
             return
@@ -45,44 +47,28 @@ class UtsattOppgaveService(
     }
 
     @KtorExperimentalAPI
-    fun opprettOppgaveIGosys(fremtidigOppgave: FremtidigOppgave) {
-        val behandlendeEnhet = behandlendeEnhetConsumer.hentBehandlendeEnhet(fremtidigOppgave.fnr)
+    fun opprettOppgaveIGosys(utsattOppgave: UtsattOppgaveEntitet) {
+        val behandlendeEnhet = behandlendeEnhetConsumer.hentBehandlendeEnhet(utsattOppgave.fnr)
         val gjelderUtland = (SYKEPENGER_UTLAND == behandlendeEnhet)
         runBlocking {
             oppgaveClient.opprettOppgave(
-                sakId = fremtidigOppgave.saksId,
-                journalpostId = fremtidigOppgave.journalpostId,
+                sakId = utsattOppgave.sakId,
+                journalpostId = utsattOppgave.journalpostId,
                 tildeltEnhetsnr = behandlendeEnhet,
-                aktoerId = fremtidigOppgave.aktørId,
+                aktoerId = utsattOppgave.aktørId,
                 gjelderUtland = gjelderUtland
             )
         }
     }
 
-    fun oppdater(oppgave: FremtidigOppgave) {
+    fun oppdater(oppgave: UtsattOppgaveEntitet) {
         log.info("Endrer oppgave: ${oppgave.inntektsmeldingId} til tilstand: ${oppgave.tilstand.name}")
+        utsattOppgaveDao.save(oppgave)
     }
 
-    fun opprett(fremtidigOppgave: FremtidigOppgave) {
-        utsattOppgaveDao.opprett(fremtidigOppgave)
+    fun opprett(utsattOppgave: UtsattOppgaveEntitet) {
+        utsattOppgaveDao.opprett(utsattOppgave)
     }
-
-}
-
-data class FremtidigOppgave(
-    val id: Int = 0,
-    val fnr: String,
-    val saksId: String,
-    val aktørId: String,
-    val journalpostId: String,
-    val arkivreferanse: String,
-    val inntektsmeldingId: UUID,
-    val tilstand: Tilstand = Tilstand.Ny,
-    val timeout: LocalDateTime = LocalDateTime.now().plusHours(1)
-)
-
-enum class Tilstand {
-    Ny, Utsatt, Forkastet, Opprettet
 }
 
 class OppgaveOppdatering(

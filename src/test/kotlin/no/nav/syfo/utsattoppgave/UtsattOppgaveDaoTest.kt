@@ -2,6 +2,8 @@ package no.nav.syfo.utsattoppgave
 
 import junit.framework.Assert.assertEquals
 import junit.framework.Assert.assertNotNull
+import no.nav.syfo.dto.Tilstand
+import no.nav.syfo.dto.UtsattOppgaveEntitet
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
@@ -14,7 +16,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit4.SpringRunner
-import java.time.LocalDateTime
 import java.time.LocalDateTime.now
 import java.util.UUID
 import javax.transaction.Transactional
@@ -51,62 +52,50 @@ open class UtsattOppgaveDaoTest {
         utsattOppgaveDao = UtsattOppgaveDao(repository)
     }
 
-    private val fnr = "fnr"
-    private val saksId = "saksId"
-    private val aktørId = "aktørId"
-    private val journalpostId = "journalpostId"
-    private val arkivreferanse = "123"
-
     @Test
     fun `kan opprette oppgave`() {
-        val uuid = UUID.randomUUID()
-        utsattOppgaveDao.opprett(
-            FremtidigOppgave(
-                fnr = fnr,
-                saksId = saksId,
-                aktørId = aktørId,
-                journalpostId = journalpostId,
-                arkivreferanse = arkivreferanse,
-                timeout = now(),
-                inntektsmeldingId = uuid
-            )
-        )
-        val oppgave = utsattOppgaveDao.finn(uuid)
+        val oppgave1 = oppgave()
+        utsattOppgaveDao.opprett(oppgave1)
+        val oppgave = utsattOppgaveDao.finn(oppgave1.inntektsmeldingId)
         assertNotNull(oppgave)
-        assertEquals(arkivreferanse, oppgave!!.arkivreferanse)
+        assertEquals(oppgave1.arkivreferanse, oppgave!!.arkivreferanse)
     }
 
     @Test
     fun `to fremtidige oppgaver har forskjellig id`() {
-        val uuid1 = UUID.randomUUID()
-        val uuid2 = UUID.randomUUID()
-        val id1 = utsattOppgaveDao.opprett(
-            FremtidigOppgave(
-                fnr = fnr,
-                saksId = saksId,
-                aktørId = aktørId,
-                journalpostId = journalpostId,
-                arkivreferanse = arkivreferanse,
-                timeout = now(),
-                inntektsmeldingId = uuid1
-            )
-        )
-        val id2 = utsattOppgaveDao.opprett(
-            FremtidigOppgave(
-                fnr = fnr,
-                saksId = saksId,
-                aktørId = aktørId,
-                journalpostId = journalpostId,
-                arkivreferanse = arkivreferanse,
-                timeout = now(),
-                inntektsmeldingId = uuid2
-            )
-        )
+        val oppgave1 = oppgave()
+        val oppgave2 = oppgave()
+        val id1 = utsattOppgaveDao.opprett(oppgave1)
+        val id2 = utsattOppgaveDao.opprett(oppgave2)
 
-        val oppgave1 = utsattOppgaveDao.finn(uuid1)!!
-        assertEquals(id1, oppgave1.id)
-        val oppgave2 = utsattOppgaveDao.finn(uuid2)!!
-        assertEquals(id2, oppgave2.id)
+        val _oppgave1 = utsattOppgaveDao.finn(oppgave1.inntektsmeldingId)!!
+        assertEquals(id1, _oppgave1.id)
+        val _oppgave2 = utsattOppgaveDao.finn(oppgave2.inntektsmeldingId)!!
+        assertEquals(id2, _oppgave2.id)
     }
 
+    @Test
+    fun `kan oppdatere tilstand til en oppgave`() {
+        val oppgave1 = oppgave()
+        val oppgave2 = oppgave()
+        utsattOppgaveDao.opprett(oppgave1)
+        utsattOppgaveDao.opprett(oppgave2)
+        utsattOppgaveDao.save(oppgave1.copy(tilstand = Tilstand.Forkastet))
+
+        val _oppgave1 = utsattOppgaveDao.finn(oppgave1.inntektsmeldingId)!!
+        assertEquals(Tilstand.Forkastet, _oppgave1.tilstand)
+        val _oppgave2 = utsattOppgaveDao.finn(oppgave2.inntektsmeldingId)!!
+        assertEquals(Tilstand.Ny, _oppgave2.tilstand)
+    }
+
+    fun oppgave() = UtsattOppgaveEntitet(
+        fnr = "fnr",
+        sakId = "saksId",
+        aktørId = "aktørId",
+        journalpostId = "journalpostId",
+        arkivreferanse = "arkivreferanse",
+        timeout = now(),
+        inntektsmeldingId = UUID.randomUUID().toString(),
+        tilstand = Tilstand.Ny
+    )
 }

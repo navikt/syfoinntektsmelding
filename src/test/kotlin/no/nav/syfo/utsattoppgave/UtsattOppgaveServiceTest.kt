@@ -4,16 +4,15 @@ import io.mockk.mockk
 import io.mockk.verify
 import no.nav.syfo.consumer.rest.OppgaveClient
 import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
+import no.nav.syfo.dto.Tilstand
+import no.nav.syfo.dto.UtsattOppgaveEntitet
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mockito
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit4.SpringRunner
@@ -60,14 +59,15 @@ open class UtsattOppgaveServiceTest {
     @Test
     fun `oppretter forsinket oppgave med timeout`() {
         val timeout = LocalDateTime.of(2020, 4, 6, 9, 0)
-        val oppgave = FremtidigOppgave(
+        val oppgave = UtsattOppgaveEntitet(
             fnr = fnr,
-            saksId = saksId,
+            sakId = saksId,
             aktørId = aktørId,
             journalpostId = journalpostId,
             arkivreferanse = arkivreferanse,
             timeout = timeout,
-            inntektsmeldingId = UUID.randomUUID()
+            inntektsmeldingId = UUID.randomUUID().toString(),
+            tilstand = Tilstand.Ny
         )
         oppgaveService.opprett(oppgave)
         verify { utsattOppgaveDao.opprett(oppgave) }

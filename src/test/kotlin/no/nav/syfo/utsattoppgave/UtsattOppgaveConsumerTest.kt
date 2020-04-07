@@ -59,5 +59,4 @@ class UtsattOppgaveConsumerTest {
         verify(exactly = 0) { utsattOppgaveService.opprett(any()) }
         verify(exactly = 0) { utsattOppgaveService.oppdater(any()) }
     }
-
 }
