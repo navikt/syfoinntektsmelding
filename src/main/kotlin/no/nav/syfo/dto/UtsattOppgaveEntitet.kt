@@ -11,6 +11,9 @@ data class UtsattOppgaveEntitet(
     @Column(name = "OPPGAVE_ID", nullable = false, length = 100, updatable = false)
     var id: Int = 0,
 
+    @Column(name = "INNTEKTSMELDING_ID", nullable = false, length = 100, updatable = false)
+    var inntektsmeldingId: String,
+
     @Column(name = "ARKIVREFERANSE", nullable = false, length = 100, updatable = false)
     var arkivreferanse: String,
 

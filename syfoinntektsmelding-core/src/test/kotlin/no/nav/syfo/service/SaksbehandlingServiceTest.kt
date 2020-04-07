@@ -27,6 +27,7 @@ import org.mockito.junit.MockitoJUnitRunner
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZonedDateTime
+import java.util.*
 import java.util.Arrays.asList
 import java.util.Collections.emptyList
 
@@ -82,7 +83,7 @@ class SaksbehandlingServiceTest {
 
     private fun lagInntektsmelding(): Inntektsmelding {
         return Inntektsmelding(
-            id = "ID",
+            id = UUID.randomUUID().toString(),
             fnr = "fnr",
             arbeidsgiverOrgnummer = "orgnummer",
             arbeidsforholdId = null,
@@ -115,18 +116,6 @@ class SaksbehandlingServiceTest {
         val saksId = saksbehandlingService.behandleInntektsmelding(lagInntektsmelding(), "aktorId", anyString())
 
         assertThat(saksId).isEqualTo("987")
-    }
-
-    @io.ktor.util.KtorExperimentalAPI
-    @Test
-    fun `oppretter utsatt oppgave for sak`() {
-        saksbehandlingService.behandleInntektsmelding(lagInntektsmelding(), "aktorId", anyString())
-
-        runBlocking {
-            verify(oppgaveService).planleggOppgave(
-                any()
-            )
-        }
     }
 
     @Test(expected = RuntimeException::class)

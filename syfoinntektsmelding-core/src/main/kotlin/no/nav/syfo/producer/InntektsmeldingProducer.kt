@@ -13,10 +13,12 @@ import org.springframework.stereotype.Component
 import java.util.*
 
 @Component
-class InntektsmeldingProducer(@Value("\${spring.kafka.bootstrap-servers}") private val bootstrapServers: String,
-                              @Value("\${srvsyfoinntektsmelding.username}") private val username: String,
-                              @Value("\${srvsyfoinntektsmelding.password}") private val password: String,
-                              private val metrikk: Metrikk) {
+class InntektsmeldingProducer(
+    @Value("\${spring.kafka.bootstrap-servers}") private val bootstrapServers: String,
+    @Value("\${srvsyfoinntektsmelding.username}") private val username: String,
+    @Value("\${srvsyfoinntektsmelding.password}") private val password: String,
+    private val metrikk: Metrikk
+) {
 
     private val producerProperties = Properties().apply {
         put(ProducerConfig.ACKS_CONFIG, "all")
@@ -29,7 +31,8 @@ class InntektsmeldingProducer(@Value("\${spring.kafka.bootstrap-servers}") priva
         put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers)
         put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_SSL")
         put(SaslConfigs.SASL_MECHANISM, "PLAIN")
-        val jaasTemplate = "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"%s\" password=\"%s\";"
+        val jaasTemplate =
+            "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"%s\" password=\"%s\";"
         val jaasCfg = String.format(jaasTemplate, username, password)
         put("sasl.jaas.config", jaasCfg)
     }
@@ -48,7 +51,13 @@ class InntektsmeldingProducer(@Value("\${spring.kafka.bootstrap-servers}") priva
     }
 
     private fun leggMottattInntektsmeldingPåTopic(inntektsmelding: Inntektsmelding, topic: String) {
-        kafkaproducer.send(ProducerRecord(topic, inntektsmelding.arbeidstakerFnr, serialiseringInntektsmelding(inntektsmelding)))
+        kafkaproducer.send(
+            ProducerRecord(
+                topic,
+                inntektsmelding.arbeidstakerFnr,
+                serialiseringInntektsmelding(inntektsmelding)
+            )
+        )
     }
 
     fun serialiseringInntektsmelding(inntektsmelding: Inntektsmelding) =

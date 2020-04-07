@@ -5,15 +5,16 @@ import kotlinx.coroutines.runBlocking
 import no.nav.syfo.consumer.rest.OppgaveClient
 import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
 import no.nav.syfo.consumer.ws.SYKEPENGER_UTLAND
-import no.nav.syfo.repository.UtsattOppgaveDAO
+import no.nav.syfo.repository.UtsattOppgaveService
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
+import java.util.*
 
 @Component
 class OppgaveService(
     private val oppgaveClient: OppgaveClient,
     private val behandlendeEnhetConsumer: BehandlendeEnhetConsumer,
-    private val oppgaveDao: UtsattOppgaveDAO
+    private val oppgaveService: UtsattOppgaveService
 ) {
 
     @KtorExperimentalAPI
@@ -32,7 +33,7 @@ class OppgaveService(
     }
 
     fun planleggOppgave(oppgave: FremtidigOppgave) {
-        oppgaveDao.opprett(oppgave)
+        oppgaveService.opprett(oppgave)
     }
 }
 
@@ -42,9 +43,6 @@ data class FremtidigOppgave(
     val aktørId: String,
     val journalpostId: String,
     val arkivreferanse: String,
+    val inntektsmeldingId: UUID,
     val timeout: LocalDateTime = LocalDateTime.now().plusHours(1)
 )
-
-data class PlanlagtOppgave(val arkivreferanse: String) {
-
-}

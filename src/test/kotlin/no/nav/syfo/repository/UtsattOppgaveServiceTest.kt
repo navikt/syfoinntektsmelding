@@ -16,6 +16,7 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit4.SpringRunner
 import java.time.LocalDateTime.now
+import java.util.*
 import javax.transaction.Transactional
 
 @RunWith(SpringRunner::class)
@@ -25,7 +26,7 @@ import javax.transaction.Transactional
 @TestPropertySource(locations = ["classpath:application-test.properties"])
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @EnableAutoConfiguration(exclude = [(AutoConfigureTestDatabase::class)])
-open class UtsattOppgaveDAOTest {
+open class UtsattOppgaveServiceTest {
 
     @Autowired
     private lateinit var entityManager: TestEntityManager
@@ -33,7 +34,7 @@ open class UtsattOppgaveDAOTest {
     @Autowired
     private lateinit var repository: UtsattOppgaveRepository
 
-    private lateinit var oppgaveDao: UtsattOppgaveDAO
+    private lateinit var oppgaveService: UtsattOppgaveService
 
     companion object {
         @BeforeClass
@@ -47,7 +48,7 @@ open class UtsattOppgaveDAOTest {
 
     @Before
     fun setup() {
-        oppgaveDao = UtsattOppgaveDAO(repository)
+        oppgaveService = UtsattOppgaveService(repository)
     }
 
     @Test
@@ -57,17 +58,19 @@ open class UtsattOppgaveDAOTest {
         val aktørId = "aktørId"
         val journalpostId = "journalpostId"
         val arkivreferanse = "123"
-        oppgaveDao.opprett(
+        val inntektsmeldingId = UUID.randomUUID()
+        oppgaveService.opprett(
             FremtidigOppgave(
                 fnr = fnr,
                 saksId = saksId,
                 aktørId = aktørId,
                 journalpostId = journalpostId,
                 arkivreferanse = arkivreferanse,
-                timeout = now()
+                timeout = now(),
+                inntektsmeldingId = inntektsmeldingId
             )
         )
-        val oppgave = oppgaveDao.finn(arkivreferanse)
+        val oppgave = oppgaveService.finn(inntektsmeldingId)
         assertNotNull(oppgave)
         assertEquals(arkivreferanse, oppgave!!.arkivreferanse)
     }

@@ -8,11 +8,14 @@ import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.mapping.mapInntektsmeldingKontrakt
 import no.nav.syfo.producer.InntektsmeldingProducer
 import no.nav.syfo.repository.InntektsmeldingService
+import no.nav.syfo.service.FremtidigOppgave
 import no.nav.syfo.service.JournalpostService
+import no.nav.syfo.service.OppgaveService
 import no.nav.syfo.service.SaksbehandlingService
 import no.nav.syfo.util.Metrikk
 import no.nav.syfo.util.validerInntektsmelding
 import org.springframework.stereotype.Service
+import java.util.*
 
 @Service
 class InntektsmeldingBehandler(
@@ -21,7 +24,8 @@ class InntektsmeldingBehandler(
     private val metrikk: Metrikk,
     private val inntektsmeldingService: InntektsmeldingService,
     private val aktorConsumer: AktorConsumer,
-    private val inntektsmeldingProducer: InntektsmeldingProducer
+    private val inntektsmeldingProducer: InntektsmeldingProducer,
+    private val oppgaveService: OppgaveService
 ) {
 
     val consumerLocks = Striped.lock(8)
@@ -50,6 +54,17 @@ class InntektsmeldingBehandler(
                 journalpostService.ferdigstillJournalpost(saksId, inntektsmelding)
 
                 val dto = inntektsmeldingService.lagreBehandling(inntektsmelding, aktorid, saksId, arkivreferanse)
+
+                oppgaveService.planleggOppgave(
+                    FremtidigOppgave(
+                        fnr = inntektsmelding.fnr,
+                        saksId = saksId,
+                        aktørId = dto.aktorId,
+                        journalpostId = inntektsmelding.journalpostId,
+                        arkivreferanse = inntektsmelding.arkivRefereranse,
+                        inntektsmeldingId = UUID.fromString(dto.uuid)
+                    )
+                )
 
                 inntektsmeldingProducer.leggMottattInntektsmeldingPåTopics(
                     mapInntektsmeldingKontrakt(

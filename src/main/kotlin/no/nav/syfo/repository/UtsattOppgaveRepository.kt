@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface UtsattOppgaveRepository : JpaRepository<UtsattOppgaveEntitet, String> {
-    fun findByArkivreferanse(arkivreferanse: String): UtsattOppgaveEntitet?
+    fun findByInntektsmeldingId(arkivreferanse: String): UtsattOppgaveEntitet?
 }

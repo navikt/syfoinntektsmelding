@@ -10,6 +10,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.kafka.test.context.EmbeddedKafka
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit4.SpringRunner
 import java.math.BigDecimal
@@ -19,6 +20,7 @@ import java.time.LocalDateTime
 @RunWith(SpringRunner::class)
 @TestPropertySource(locations = ["classpath:application-test.properties"])
 @SpringBootTest
+@EmbeddedKafka
 class InntektsmeldingServiceTest {
 
     companion object {

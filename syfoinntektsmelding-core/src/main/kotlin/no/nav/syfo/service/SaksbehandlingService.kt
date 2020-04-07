@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service
 class SaksbehandlingService(
     private val eksisterendeSakService: EksisterendeSakService,
     private val inntektsmeldingService: InntektsmeldingService,
-    private val oppgaveService: OppgaveService,
     private val sakClient: SakClient,
     private val metrikk: Metrikk
 ) {
@@ -48,23 +47,7 @@ class SaksbehandlingService(
 
         val sammenslattPeriode = sammenslattPeriode(inntektsmelding.arbeidsgiverperioder)
 
-        val saksId = finnSaksId(tilhorendeInntektsmelding, inntektsmelding, aktorId, sammenslattPeriode, arkivReferanse)
-
-        oppgaveService.planleggOppgave(
-            FremtidigOppgave(
-                fnr = inntektsmelding.fnr,
-                saksId = saksId,
-                aktørId = aktorId,
-                journalpostId = inntektsmelding.journalpostId,
-                arkivreferanse = arkivReferanse
-            )
-        )
-//        opprettOppgave(inntektsmelding.fnr, aktorId, saksId, inntektsmelding.journalpostId)
-        //TODO
-        // lagre nok data i en tabell til at vi på et senere tidspunkt kan gjøre dette med timeout
-        // fin
-
-        return saksId
+        return finnSaksId(tilhorendeInntektsmelding, inntektsmelding, aktorId, sammenslattPeriode, arkivReferanse)
     }
 
     private fun finnSaksId(

@@ -2,7 +2,7 @@ package no.nav.syfo.service
 
 import no.nav.syfo.consumer.rest.OppgaveClient
 import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
-import no.nav.syfo.repository.UtsattOppgaveDAO
+import no.nav.syfo.repository.UtsattOppgaveService
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.InjectMocks
@@ -10,6 +10,7 @@ import org.mockito.Mock
 import org.mockito.Mockito.verify
 import org.mockito.junit.MockitoJUnitRunner
 import java.time.LocalDateTime
+import java.util.*
 
 @RunWith(MockitoJUnitRunner::class)
 class OppgaveServiceTest {
@@ -21,7 +22,7 @@ class OppgaveServiceTest {
     private lateinit var behandlendeEnhetConsumer: BehandlendeEnhetConsumer
 
     @Mock
-    private lateinit var oppgaveDao: UtsattOppgaveDAO
+    private lateinit var oppgaveDao: UtsattOppgaveService
 
     @InjectMocks
     private lateinit var oppgaveService: OppgaveService
@@ -41,7 +42,8 @@ class OppgaveServiceTest {
             aktørId = aktørId,
             journalpostId = journalpostId,
             arkivreferanse = arkivreferanse,
-            timeout = timeout
+            timeout = timeout,
+            inntektsmeldingId = UUID.randomUUID()
         )
         oppgaveService.planleggOppgave(oppgave)
         verify(oppgaveDao).opprett(oppgave)

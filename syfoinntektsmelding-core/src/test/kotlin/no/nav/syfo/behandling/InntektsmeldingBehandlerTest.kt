@@ -1,6 +1,7 @@
 package no.nav.syfo.behandling
 
 import any
+import io.ktor.util.KtorExperimentalAPI
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
@@ -8,6 +9,7 @@ import no.nav.syfo.dto.InntektsmeldingEntitet
 import no.nav.syfo.producer.InntektsmeldingProducer
 import no.nav.syfo.repository.InntektsmeldingService
 import no.nav.syfo.service.JournalpostService
+import no.nav.syfo.service.OppgaveService
 import no.nav.syfo.service.SaksbehandlingService
 import no.nav.syfo.util.Metrikk
 import org.junit.Before
@@ -33,6 +35,9 @@ class InntektsmeldingBehandlerTest {
 
     @Mock
     private lateinit var saksbehandlingService: SaksbehandlingService
+
+    @Mock
+    private lateinit var oppgaveService: OppgaveService
 
     @Mock
     private lateinit var aktorConsumer: AktorConsumer
@@ -87,6 +92,7 @@ class InntektsmeldingBehandlerTest {
         verify(inntektsmeldingProducer!!).leggMottattInntektsmeldingPåTopics(any())
     }
 
+    @KtorExperimentalAPI
     @Test
     @Throws(MessageNotWriteableException::class)
     fun behandler_Ikke_ForskjelligFraMidlertidig() {
@@ -110,6 +116,7 @@ class InntektsmeldingBehandlerTest {
         verify(journalpostService, never()).ferdigstillJournalpost(any(), any())
     }
 
+    @KtorExperimentalAPI
     @Test
     @Throws(MessageNotWriteableException::class)
     fun behandler_Ikke_StatusEndelig() {
