@@ -12,6 +12,7 @@ import no.nav.syfo.domain.Periode
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.repository.InntektsmeldingService
 import no.nav.syfo.util.Metrikk
+import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import no.nav.tjeneste.virksomhet.aktoer.v2.HentAktoerIdForIdentPersonIkkeFunnet
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
@@ -38,7 +39,7 @@ class SaksbehandlingServiceTest {
     private lateinit var oppgaveClient: OppgaveClient
 
     @Mock
-    private lateinit var oppgaveService: OppgaveService
+    private lateinit var utsattOppgaveService: UtsattOppgaveService
 
     @Mock
     private lateinit var behandlendeEnhetConsumer: BehandlendeEnhetConsumer

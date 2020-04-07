@@ -1,10 +1,7 @@
-package no.nav.syfo.consumer.kafka
+package no.nav.syfo.utsattoppgave
 
 import io.mockk.mockk
 import io.mockk.verify
-import no.nav.syfo.repository.Handling
-import no.nav.syfo.repository.OppgaveOppdatering
-import no.nav.syfo.repository.UtsattOppgaveService
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.junit.Test
 import org.springframework.kafka.support.Acknowledgment
@@ -14,9 +11,9 @@ import java.util.*
 
 class UtsattOppgaveConsumerTest {
 
-    private val oppgaveService: UtsattOppgaveService = mockk(relaxed = true)
+    private val utsattOppgaveService: UtsattOppgaveService = mockk(relaxed = true)
 
-    val consumer = UtsattOppgaveConsumer(oppgaveService)
+    val consumer = UtsattOppgaveConsumer(utsattOppgaveService)
 
     private fun utsattOppgave(
         dokumentType: DokumentTypeDTO = DokumentTypeDTO.Inntektsmelding,
@@ -56,15 +53,11 @@ class UtsattOppgaveConsumerTest {
     fun `oppdatering på manglende dokument`() {
         val ack = mockk<Acknowledgment>(relaxed = true)
         val oppgave = utsattOppgave()
-        val oppdatering = OppgaveOppdatering(
-            id = UUID.randomUUID(),
-            handling = Handling.Utsett,
-            timeout = oppgave.timeout
-        )
         consumer.listen(ConsumerRecord("topic", 0, 0, "key", oppgave), ack)
+
         verify(exactly = 1) { ack.acknowledge() }
-        verify(exactly = 0) { oppgaveService.oppdater(any(), any()) }
-        verify { oppgaveService.prosesser(any()) }
+        verify(exactly = 0) { utsattOppgaveService.opprett(any()) }
+        verify(exactly = 0) { utsattOppgaveService.oppdater(any()) }
     }
 
 }

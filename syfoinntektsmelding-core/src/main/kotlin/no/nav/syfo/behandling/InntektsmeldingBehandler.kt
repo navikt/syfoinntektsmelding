@@ -1,22 +1,24 @@
 package no.nav.syfo.behandling
 
 import com.google.common.util.concurrent.Striped
+import io.ktor.util.KtorExperimentalAPI
 import log
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.mapping.mapInntektsmeldingKontrakt
 import no.nav.syfo.producer.InntektsmeldingProducer
+import no.nav.syfo.utsattoppgave.FremtidigOppgave
 import no.nav.syfo.repository.InntektsmeldingService
-import no.nav.syfo.service.FremtidigOppgave
+import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import no.nav.syfo.service.JournalpostService
-import no.nav.syfo.service.OppgaveService
 import no.nav.syfo.service.SaksbehandlingService
 import no.nav.syfo.util.Metrikk
 import no.nav.syfo.util.validerInntektsmelding
 import org.springframework.stereotype.Service
 import java.util.*
 
+@KtorExperimentalAPI
 @Service
 class InntektsmeldingBehandler(
     private val journalpostService: JournalpostService,
@@ -25,7 +27,7 @@ class InntektsmeldingBehandler(
     private val inntektsmeldingService: InntektsmeldingService,
     private val aktorConsumer: AktorConsumer,
     private val inntektsmeldingProducer: InntektsmeldingProducer,
-    private val oppgaveService: OppgaveService
+    private val utsattOppgaveService: UtsattOppgaveService
 ) {
 
     val consumerLocks = Striped.lock(8)
@@ -55,7 +57,7 @@ class InntektsmeldingBehandler(
 
                 val dto = inntektsmeldingService.lagreBehandling(inntektsmelding, aktorid, saksId, arkivreferanse)
 
-                oppgaveService.planleggOppgave(
+                utsattOppgaveService.opprett(
                     FremtidigOppgave(
                         fnr = inntektsmelding.fnr,
                         saksId = saksId,

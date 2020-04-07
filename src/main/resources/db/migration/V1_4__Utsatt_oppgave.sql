@@ -6,5 +6,6 @@ create table UTSATT_OPPGAVE (
     AKTOR_ID VARCHAR(50) not null,
     SAK_ID VARCHAR(50) not null,
     JOURNALPOST_ID VARCHAR(100) not null,
-    TIMEOUT date not null
+    TIMEOUT date not null,
+    TILSTAND VARCHAR(100) not null
 )

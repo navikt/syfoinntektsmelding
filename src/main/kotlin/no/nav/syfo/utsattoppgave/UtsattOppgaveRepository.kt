@@ -1,4 +1,4 @@
-package no.nav.syfo.repository
+package no.nav.syfo.utsattoppgave
 
 import no.nav.syfo.dto.UtsattOppgaveEntitet
 import org.springframework.data.jpa.repository.JpaRepository

@@ -1,12 +1,14 @@
-package no.nav.syfo.repository
+package no.nav.syfo.utsattoppgave
 
-import junit.framework.Assert.assertEquals
-import junit.framework.Assert.assertNotNull
-import no.nav.syfo.service.FremtidigOppgave
+import io.mockk.mockk
+import io.mockk.verify
+import no.nav.syfo.consumer.rest.OppgaveClient
+import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
@@ -15,8 +17,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit4.SpringRunner
-import java.time.LocalDateTime.now
-import java.util.*
+import java.time.LocalDateTime
+import java.util.UUID
 import javax.transaction.Transactional
 
 @RunWith(SpringRunner::class)
@@ -28,11 +30,9 @@ import javax.transaction.Transactional
 @EnableAutoConfiguration(exclude = [(AutoConfigureTestDatabase::class)])
 open class UtsattOppgaveServiceTest {
 
-    @Autowired
-    private lateinit var entityManager: TestEntityManager
-
-    @Autowired
-    private lateinit var repository: UtsattOppgaveRepository
+    private var utsattOppgaveDao: UtsattOppgaveDao = mockk(relaxed = true)
+    private var oppgaveClient: OppgaveClient = mockk()
+    private var behandlendeEnhetConsumer: BehandlendeEnhetConsumer = mockk()
 
     private lateinit var oppgaveService: UtsattOppgaveService
 
@@ -48,31 +48,28 @@ open class UtsattOppgaveServiceTest {
 
     @Before
     fun setup() {
-        oppgaveService = UtsattOppgaveService(repository)
+        oppgaveService = UtsattOppgaveService(utsattOppgaveDao, oppgaveClient, behandlendeEnhetConsumer)
     }
+
+    private val fnr = "fnr"
+    private val saksId = "saksId"
+    private val aktørId = "aktørId"
+    private val journalpostId = "journalpostId"
+    private val arkivreferanse = "123"
 
     @Test
-    fun `kan opprette oppgave`() {
-        val fnr = "fnr"
-        val saksId = "saksId"
-        val aktørId = "aktørId"
-        val journalpostId = "journalpostId"
-        val arkivreferanse = "123"
-        val inntektsmeldingId = UUID.randomUUID()
-        oppgaveService.opprett(
-            FremtidigOppgave(
-                fnr = fnr,
-                saksId = saksId,
-                aktørId = aktørId,
-                journalpostId = journalpostId,
-                arkivreferanse = arkivreferanse,
-                timeout = now(),
-                inntektsmeldingId = inntektsmeldingId
-            )
+    fun `oppretter forsinket oppgave med timeout`() {
+        val timeout = LocalDateTime.of(2020, 4, 6, 9, 0)
+        val oppgave = FremtidigOppgave(
+            fnr = fnr,
+            saksId = saksId,
+            aktørId = aktørId,
+            journalpostId = journalpostId,
+            arkivreferanse = arkivreferanse,
+            timeout = timeout,
+            inntektsmeldingId = UUID.randomUUID()
         )
-        val oppgave = oppgaveService.finn(inntektsmeldingId)
-        assertNotNull(oppgave)
-        assertEquals(arkivreferanse, oppgave!!.arkivreferanse)
+        oppgaveService.opprett(oppgave)
+        verify { utsattOppgaveDao.opprett(oppgave) }
     }
-
 }

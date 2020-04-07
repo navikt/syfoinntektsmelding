@@ -13,16 +13,15 @@ import org.springframework.stereotype.Service
 import java.time.LocalDate
 import javax.transaction.Transactional
 
+val objectMapper = JacksonJsonConfig.objectMapperFactory.opprettObjectMapper()
+
 @Service
 @Slf4j
 class InntektsmeldingService(
     private val repository: InntektsmeldingRepository,
     @Value("\${inntektsmelding.lagringstid.maneder:3}") val lagringstidMåneder: Int
 ) {
-
-    val objectMapper = JacksonJsonConfig.objectMapperFactory.opprettObjectMapper()
     val log = log()
-
 
     fun finnBehandledeInntektsmeldinger(aktoerId: String): List<Inntektsmelding> {
         val liste = repository.findByAktorId(aktoerId)
@@ -35,7 +34,7 @@ class InntektsmeldingService(
         val dto = toInntektsmeldingEntitet(inntektsmelding)
         dto.aktorId = aktorid
         dto.sakId = saksId
-        dto.data = mapString(inntektsmelding)
+        dto.data = inntektsmelding.asJsonString()
         return repository.saveAndFlush(dto)
     }
 
@@ -50,9 +49,10 @@ class InntektsmeldingService(
         log.info("Slettet $antallSlettet inntektsmeldinger")
     }
 
-    fun mapString(inntektsmelding: Inntektsmelding): String {
-        val im = inntektsmelding.copy()
-        im.fnr = "" // La stå! Ikke lagre fødselsnummer
-        return objectMapper.writeValueAsString(im)
-    }
+
+}
+
+fun Inntektsmelding.asJsonString(): String {
+    val im = this.copy(fnr = "") // La stå! Ikke lagre fødselsnummer
+    return objectMapper.writeValueAsString(im)
 }

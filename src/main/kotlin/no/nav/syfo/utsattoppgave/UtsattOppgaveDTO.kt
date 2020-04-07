@@ -1,4 +1,4 @@
-package no.nav.syfo.consumer.kafka
+package no.nav.syfo.utsattoppgave
 
 import java.time.LocalDateTime
 import java.util.UUID

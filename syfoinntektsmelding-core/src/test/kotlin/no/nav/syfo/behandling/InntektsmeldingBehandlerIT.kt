@@ -15,11 +15,12 @@ import no.nav.syfo.domain.Periode
 import no.nav.syfo.producer.InntektsmeldingProducer
 import no.nav.syfo.repository.InntektsmeldingRepository
 import no.nav.syfo.repository.InntektsmeldingService
+import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import no.nav.syfo.service.EksisterendeSakService
 import no.nav.syfo.service.JournalpostService
-import no.nav.syfo.service.OppgaveService
 import no.nav.syfo.service.SaksbehandlingService
 import no.nav.syfo.util.Metrikk
+import no.nav.syfo.utsattoppgave.UtsattOppgaveRepository
 import no.nav.tjeneste.virksomhet.journal.v2.binding.HentDokumentDokumentIkkeFunnet
 import no.nav.tjeneste.virksomhet.journal.v2.binding.HentDokumentSikkerhetsbegrensning
 import no.nav.tjeneste.virksomhet.journal.v2.binding.JournalV2
@@ -96,7 +97,10 @@ open class InntektsmeldingBehandlerIT {
     lateinit var oppgaveClient: OppgaveClient
 
     @MockBean
-    lateinit var oppgaveService: OppgaveService
+    lateinit var utsattOppgaveRepository: UtsattOppgaveRepository
+
+    @MockBean
+    lateinit var utsattOppgaveService: UtsattOppgaveService
 
     @MockBean
     lateinit var sakClient: SakClient
@@ -134,7 +138,7 @@ open class InntektsmeldingBehandlerIT {
             inntektsmeldingService,
             aktorConsumer,
             inntektsmeldingProducer,
-            oppgaveService
+            utsattOppgaveService
         )
         MockitoAnnotations.initMocks(inntektsmeldingBehandler)
         runBlocking {

@@ -30,5 +30,8 @@ data class UtsattOppgaveEntitet(
     var journalpostId: String,
 
     @Column(name = "TIMEOUT", nullable = false, updatable = false)
-    var timeout: LocalDateTime
+    var timeout: LocalDateTime,
+
+    @Column(name = "TILSTAND", nullable = false, length = 100, updatable = false)
+    var tilstand: String
 )

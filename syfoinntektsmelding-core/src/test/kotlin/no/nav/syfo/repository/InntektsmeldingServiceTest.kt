@@ -4,12 +4,14 @@ import no.nav.inntektsmelding.kontrakt.serde.JacksonJsonConfig
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
 import no.nav.syfo.domain.inntektsmelding.*
+import no.nav.syfo.utsattoppgave.UtsattOppgaveDao
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.kafka.test.context.EmbeddedKafka
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit4.SpringRunner
@@ -17,24 +19,7 @@ import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-@RunWith(SpringRunner::class)
-@TestPropertySource(locations = ["classpath:application-test.properties"])
-@SpringBootTest
-@EmbeddedKafka
 class InntektsmeldingServiceTest {
-
-    companion object {
-        @BeforeClass
-        @JvmStatic
-        fun beforeClass() {
-            System.setProperty("SECURITYTOKENSERVICE_URL", "joda")
-            System.setProperty("SRVSYFOINNTEKTSMELDING_USERNAME", "joda")
-            System.setProperty("SRVSYFOINNTEKTSMELDING_PASSWORD", "joda")
-        }
-    }
-
-    @Autowired
-    private lateinit var inntektsmeldingService: InntektsmeldingService
 
     @Test
     fun `Verifiserer at object mapper gir forventet JSON format`(){
@@ -79,7 +64,7 @@ class InntektsmeldingServiceTest {
                 OpphoerAvNaturalytelse(Naturalytelse.TILSKUDDBARNEHAGEPLASS, LocalDate.of(2016,6,6), BigDecimal(666666666666))
             )
         )
-        val json = inntektsmeldingService.mapString(im)
+        val json = im.asJsonString()
 
         val mapper = JacksonJsonConfig.objectMapperFactory.opprettObjectMapper()
         val node = mapper.readTree(json)
@@ -138,6 +123,4 @@ class InntektsmeldingServiceTest {
         assertThat(node.get("opphørAvNaturalYtelse")[1].get("fom").asText()).isEqualTo("2016-06-06")
         assertThat(node.get("opphørAvNaturalYtelse")[1].get("beloepPrMnd").asLong()).isEqualTo(666666666666)
     }
-
 }
-
