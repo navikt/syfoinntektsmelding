@@ -106,7 +106,7 @@ open class InntektsmeldingBehandlerIT {
         inntektsmeldingRepository.deleteAll()
         journalConsumer = JournalConsumer(journalV2, aktorConsumer)
         journalpostService = JournalpostService(inngaaendeJournalConsumer, behandleInngaaendeJournalConsumer, journalConsumer, behandlendeEnhetConsumer, metrikk)
-        inntektsmeldingService = InntektsmeldingService(inntektsmeldingRepository)
+        inntektsmeldingService = InntektsmeldingService(inntektsmeldingRepository, 3)
         saksbehandlingService = SaksbehandlingService(oppgaveClient, behandlendeEnhetConsumer, eksisterendeSakService, inntektsmeldingService, sakClient, metrikk)
         inntektsmeldingBehandler = InntektsmeldingBehandler(journalpostService, saksbehandlingService, metrikk, inntektsmeldingService, aktorConsumer, inntektsmeldingProducer)
         MockitoAnnotations.initMocks(inntektsmeldingBehandler)
