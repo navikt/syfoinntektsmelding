@@ -39,13 +39,14 @@ class InntektsmeldingService(
         return repository.saveAndFlush(dto)
     }
 
+    // Sekund, Minutt, Time, Dag, Måned, Ukedag
     @Scheduled(cron = "0 0 4 * * *")
     @Transactional(Transactional.TxType.REQUIRED)
     @org.springframework.transaction.annotation.Transactional("transactionManager")
-    fun slettInntektsmeldingerEldreEnnTreMåneder() {
-        val treMånederSiden = LocalDate.now().minusMonths(lagringstidMåneder.toLong()).atStartOfDay()
-        log.info("Sletter alle inntektsmeldinger før $treMånederSiden")
-        val antallSlettet = repository.deleteByBehandletBefore(treMånederSiden)
+    fun slettInntektsmeldingerEldreEnnKonfigurertMåneder() {
+        val konfigurertAntallMånederSiden = LocalDate.now().minusMonths(lagringstidMåneder.toLong()).atStartOfDay()
+        log.info("Sletter alle inntektsmeldinger før $konfigurertAntallMånederSiden")
+        val antallSlettet = repository.deleteByBehandletBefore(konfigurertAntallMånederSiden)
         log.info("Slettet $antallSlettet inntektsmeldinger")
     }
 
