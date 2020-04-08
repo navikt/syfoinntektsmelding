@@ -200,7 +200,7 @@ open class InntektsmeldingRepositoryTest {
     }
 
     @Test
-    fun `skal_finne_basert_på_dato`() {
+    fun `skal kun slette inntektsmeldinger eldre enn gitt dato`() {
         //Lagre 5 inntektsmeldinger i 2019
         entityManager.persist<Any>(lagInntektsmelding(LocalDate.of(2019, 12, 31).atStartOfDay()))
         entityManager.persist<Any>(lagInntektsmelding(LocalDate.of(2019, 12, 30).atStartOfDay()))
