@@ -77,12 +77,12 @@ class InntektsmeldingBehandler(
                         aktorid,
                         validerInntektsmelding(inntektsmelding),
                         arkivreferanse,
-                        dto.uuid!!
+                        dto.uuid
                     )
                 )
 
                 log.info("Inntektsmelding {} er journalført for {} refusjon {}", inntektsmelding.journalpostId, arkivreferanse, inntektsmelding.refusjon.beloepPrMnd)
-                return dto.uuid!!
+                return dto.uuid
             } else {
                 log.info(
                     "Behandler ikke inntektsmelding {} da den har status: {}",

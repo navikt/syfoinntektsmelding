@@ -2,6 +2,10 @@ package no.nav.syfo.behandling
 
 import any
 import eq
+import io.ktor.util.KtorExperimentalAPI
+import io.mockk.mockk
+import junit.framework.Assert.assertEquals
+import junit.framework.Assert.assertNotNull
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.consumer.rest.OppgaveClient
 import no.nav.syfo.consumer.rest.SakClient
@@ -12,20 +16,21 @@ import no.nav.syfo.domain.GeografiskTilknytningData
 import no.nav.syfo.domain.InngaaendeJournal
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
+import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.producer.InntektsmeldingProducer
 import no.nav.syfo.repository.InntektsmeldingRepository
 import no.nav.syfo.repository.InntektsmeldingService
-import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import no.nav.syfo.service.EksisterendeSakService
 import no.nav.syfo.service.JournalpostService
 import no.nav.syfo.service.SaksbehandlingService
 import no.nav.syfo.util.Metrikk
-import no.nav.syfo.utsattoppgave.UtsattOppgaveRepository
+import no.nav.syfo.utsattoppgave.*
 import no.nav.tjeneste.virksomhet.journal.v2.binding.HentDokumentDokumentIkkeFunnet
 import no.nav.tjeneste.virksomhet.journal.v2.binding.HentDokumentSikkerhetsbegrensning
 import no.nav.tjeneste.virksomhet.journal.v2.binding.JournalV2
 import no.nav.tjeneste.virksomhet.journal.v2.meldinger.HentDokumentRequest
 import no.nav.tjeneste.virksomhet.journal.v2.meldinger.HentDokumentResponse
+import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.assertj.core.api.Assertions
 import org.junit.Before
 import org.junit.BeforeClass
@@ -39,6 +44,10 @@ import org.mockito.Mockito.`when`
 import org.mockito.Mockito.verify
 import org.mockito.MockitoAnnotations
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.kafka.test.context.EmbeddedKafka
@@ -46,17 +55,21 @@ import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.web.WebAppConfiguration
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.ZonedDateTime
-import java.util.ArrayList
+import java.util.*
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.atomic.AtomicInteger
+import javax.transaction.Transactional
 
 
+@KtorExperimentalAPI
 @RunWith(SpringRunner::class)
 @SpringBootTest
 @TestPropertySource("classpath:application-test.properties")
 @WebAppConfiguration
 @EmbeddedKafka
+@Transactional
 open class InntektsmeldingBehandlerIT {
 
     companion object {
@@ -68,6 +81,9 @@ open class InntektsmeldingBehandlerIT {
             System.setProperty("SRVSYFOINNTEKTSMELDING_PASSWORD", "joda")
         }
     }
+
+    @Autowired
+    private lateinit var entityManager: TestEntityManager
 
     @MockBean
     lateinit var journalV2: JournalV2
@@ -96,11 +112,10 @@ open class InntektsmeldingBehandlerIT {
     @MockBean
     lateinit var oppgaveClient: OppgaveClient
 
-    @MockBean
-    lateinit var utsattOppgaveRepository: UtsattOppgaveRepository
-
-    @MockBean
+    @Autowired
+    lateinit var utsattOppgaveDao: UtsattOppgaveDao
     lateinit var utsattOppgaveService: UtsattOppgaveService
+    lateinit var utsattOppgaveConsumer: UtsattOppgaveConsumer
 
     @MockBean
     lateinit var sakClient: SakClient
@@ -117,6 +132,7 @@ open class InntektsmeldingBehandlerIT {
 
     lateinit var inntektsmeldingBehandler: InntektsmeldingBehandler
 
+    @KtorExperimentalAPI
     @Before
     fun setup() {
         inntektsmeldingRepository.deleteAll()
@@ -131,6 +147,8 @@ open class InntektsmeldingBehandlerIT {
         inntektsmeldingService = InntektsmeldingService(inntektsmeldingRepository)
         saksbehandlingService =
             SaksbehandlingService(eksisterendeSakService, inntektsmeldingService, sakClient, metrikk)
+        utsattOppgaveService = UtsattOppgaveService(utsattOppgaveDao, oppgaveClient, behandlendeEnhetConsumer)
+        utsattOppgaveConsumer = UtsattOppgaveConsumer(utsattOppgaveService)
         inntektsmeldingBehandler = InntektsmeldingBehandler(
             journalpostService,
             saksbehandlingService,
@@ -394,6 +412,60 @@ open class InntektsmeldingBehandlerIT {
         )
     }
 
+    @KtorExperimentalAPI
+    @Test
+    fun `utsetter og forkaster oppgave`() {
+        val dokumentResponse = dokumentRespons(
+            listOf(
+                Periode(
+                    LocalDate.of(2019, 1, 1),
+                    LocalDate.of(2019, 1, 12)
+                )
+            )
+        )
+
+        given(aktorConsumer.getAktorId(anyString())).willReturn("aktorId_for_8", "aktorId_for_8")
+        `when`(journalV2.hentDokument(Mockito.any())).thenReturn(dokumentResponse.response)
+        `when`(inngaaendeJournalConsumer.hentDokumentId("arkivId_8")).thenReturn(inngaaendeJournal("arkivId_8"))
+
+        val inntektsmeldingId = requireNotNull(inntektsmeldingBehandler.behandle("arkivId_8", "AR-8"))
+        assertNotNull(inntektsmeldingId)
+
+        val oppgave = requireNotNull(utsattOppgaveDao.finn(inntektsmeldingId))
+        assertEquals(Tilstand.Ny, oppgave.tilstand)
+
+        utsattOppgaveConsumer.listen(utsattOppgaveRecord(UUID.fromString(inntektsmeldingId)), mockk(relaxed = true))
+
+        val endretOppgave = utsattOppgaveDao.finn(inntektsmeldingId)!!
+        assertEquals(Tilstand.Utsatt, endretOppgave.tilstand)
+
+    }
+
+    @Test
+    fun `utsetter og oppretter oppgave`() {
+
+    }
+
+    private fun utsattOppgaveRecord(id: UUID) = ConsumerRecord(
+        "topic",
+        0,
+        0,
+        "key",
+        utsattOppgave(dokumentType = DokumentTypeDTO.Inntektsmelding, id = id)
+    )
+
+    private fun utsattOppgave(
+        dokumentType: DokumentTypeDTO = DokumentTypeDTO.Inntektsmelding,
+        oppdateringstype: OppdateringstypeDTO = OppdateringstypeDTO.Utsett,
+        id: UUID = UUID.randomUUID(),
+        timeout: LocalDateTime = LocalDateTime.now()
+    ) = UtsattOppgaveDTO(
+        dokumentType = dokumentType,
+        oppdateringstype = oppdateringstype,
+        dokumentId = id,
+        timeout = timeout
+    )
+
     fun build(fnr: AtomicInteger): no.nav.tjeneste.virksomhet.journal.v2.meldinger.HentDokumentResponse {
         val dokumentResponse = no.nav.tjeneste.virksomhet.journal.v2.meldinger.HentDokumentResponse()
         dokumentResponse.dokument = JournalConsumerTest.inntektsmeldingArbeidsgiver(
@@ -437,6 +509,13 @@ open class InntektsmeldingBehandlerIT {
             ArrayList()
         ).toByteArray()
         return dokumentResponse1
+    }
+
+    private fun dokumentRespons(perioder: List<Periode>): no.nav.tjeneste.virksomhet.journal.v2.HentDokumentResponse {
+        val respons = no.nav.tjeneste.virksomhet.journal.v2.HentDokumentResponse()
+        respons.response = HentDokumentResponse()
+        respons.response.dokument = JournalConsumerTest.inntektsmeldingArbeidsgiver(perioder).toByteArray()
+        return respons
     }
 
     fun lagDokumentRespons(

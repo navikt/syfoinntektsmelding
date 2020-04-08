@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import io.ktor.util.KtorExperimentalAPI
 import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.ConsumerRecord
@@ -29,6 +30,7 @@ val objectMapper: ObjectMapper = jacksonObjectMapper()
 @Component
 class UtsattOppgaveConsumer(val oppgaveService: UtsattOppgaveService) {
 
+    @KtorExperimentalAPI
     @KafkaListener(
         topics = ["aapen-helse-spre-oppgaver"],
         idIsGroup = false,

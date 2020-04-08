@@ -4,6 +4,7 @@ import junit.framework.Assert.assertEquals
 import junit.framework.Assert.assertNotNull
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.dto.UtsattOppgaveEntitet
+import no.nav.syfo.repository.UtsattOppgaveRepository
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test

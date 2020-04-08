@@ -72,4 +72,5 @@ open class UtsattOppgaveServiceTest {
         oppgaveService.opprett(oppgave)
         verify { utsattOppgaveDao.opprett(oppgave) }
     }
+
 }
