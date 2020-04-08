@@ -15,7 +15,7 @@ import java.util.UUID
 @KtorExperimentalAPI
 @Service
 class UtsattOppgaveService(
-    private val utsattOppgaveDao: UtsattOppgaveDao,
+    val utsattOppgaveDao: UtsattOppgaveDao,
     private val oppgaveClient: OppgaveClient,
     private val behandlendeEnhetConsumer: BehandlendeEnhetConsumer
 ) {
@@ -28,7 +28,9 @@ class UtsattOppgaveService(
 
         if ((oppgave.tilstand == Tilstand.Ny || oppgave.tilstand == Tilstand.Utsatt) && oppdatering.handling == Handling.Utsett) {
             oppdatering.timeout ?: error("Timeout på utsettelse mangler")
-            oppdater(oppgave.copy(tilstand = Tilstand.Utsatt, timeout = oppdatering.timeout))
+            oppgave.tilstand = Tilstand.Utsatt
+            oppgave.timeout = oppdatering.timeout
+            oppdater(oppgave)
             return
         }
 

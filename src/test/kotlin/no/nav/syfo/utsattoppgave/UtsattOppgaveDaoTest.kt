@@ -19,11 +19,9 @@ import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit4.SpringRunner
 import java.time.LocalDateTime.now
 import java.util.UUID
-import javax.transaction.Transactional
 
 @RunWith(SpringRunner::class)
 @ActiveProfiles("test")
-@Transactional
 @DataJpaTest
 @TestPropertySource(locations = ["classpath:application-test.properties"])
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -81,7 +79,9 @@ open class UtsattOppgaveDaoTest {
         val oppgave2 = oppgave()
         utsattOppgaveDao.opprett(oppgave1)
         utsattOppgaveDao.opprett(oppgave2)
-        utsattOppgaveDao.save(oppgave1.copy(tilstand = Tilstand.Forkastet))
+
+        oppgave1.tilstand = Tilstand.Forkastet
+        utsattOppgaveDao.save(oppgave1)
 
         val _oppgave1 = utsattOppgaveDao.finn(oppgave1.inntektsmeldingId)!!
         assertEquals(Tilstand.Forkastet, _oppgave1.tilstand)

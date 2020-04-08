@@ -11,7 +11,11 @@ import no.nav.syfo.consumer.rest.OppgaveClient
 import no.nav.syfo.consumer.rest.SakClient
 import no.nav.syfo.consumer.rest.SakResponse
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
-import no.nav.syfo.consumer.ws.*
+import no.nav.syfo.consumer.ws.BehandleInngaaendeJournalConsumer
+import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
+import no.nav.syfo.consumer.ws.InngaaendeJournalConsumer
+import no.nav.syfo.consumer.ws.JournalConsumer
+import no.nav.syfo.consumer.ws.JournalConsumerTest
 import no.nav.syfo.domain.GeografiskTilknytningData
 import no.nav.syfo.domain.InngaaendeJournal
 import no.nav.syfo.domain.JournalStatus
@@ -24,7 +28,13 @@ import no.nav.syfo.service.EksisterendeSakService
 import no.nav.syfo.service.JournalpostService
 import no.nav.syfo.service.SaksbehandlingService
 import no.nav.syfo.util.Metrikk
-import no.nav.syfo.utsattoppgave.*
+import no.nav.syfo.utsattoppgave.DokumentTypeDTO
+import no.nav.syfo.utsattoppgave.OppdateringstypeDTO
+import no.nav.syfo.utsattoppgave.OppdateringstypeDTO.*
+import no.nav.syfo.utsattoppgave.UtsattOppgaveConsumer
+import no.nav.syfo.utsattoppgave.UtsattOppgaveDTO
+import no.nav.syfo.utsattoppgave.UtsattOppgaveDao
+import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import no.nav.tjeneste.virksomhet.journal.v2.binding.HentDokumentDokumentIkkeFunnet
 import no.nav.tjeneste.virksomhet.journal.v2.binding.HentDokumentSikkerhetsbegrensning
 import no.nav.tjeneste.virksomhet.journal.v2.binding.JournalV2
@@ -37,31 +47,27 @@ import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.anyString
+import org.mockito.BDDMockito.anyString
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.verify
 import org.mockito.MockitoAnnotations
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.kafka.test.context.EmbeddedKafka
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.web.WebAppConfiguration
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZonedDateTime
-import java.util.*
+import java.util.ArrayList
+import java.util.UUID
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.atomic.AtomicInteger
-import javax.transaction.Transactional
-
 
 @KtorExperimentalAPI
 @RunWith(SpringRunner::class)
@@ -69,7 +75,6 @@ import javax.transaction.Transactional
 @TestPropertySource("classpath:application-test.properties")
 @WebAppConfiguration
 @EmbeddedKafka
-@Transactional
 open class InntektsmeldingBehandlerIT {
 
     companion object {
@@ -82,9 +87,6 @@ open class InntektsmeldingBehandlerIT {
         }
     }
 
-    @Autowired
-    private lateinit var entityManager: TestEntityManager
-
     @MockBean
     lateinit var journalV2: JournalV2
 
@@ -93,9 +95,6 @@ open class InntektsmeldingBehandlerIT {
 
     @MockBean
     lateinit var inngaaendeJournalConsumer: InngaaendeJournalConsumer
-    lateinit var journalConsumer: JournalConsumer
-
-    lateinit var saksbehandlingService: SaksbehandlingService
 
     @MockBean
     lateinit var metrikk: Metrikk
@@ -112,24 +111,26 @@ open class InntektsmeldingBehandlerIT {
     @MockBean
     lateinit var oppgaveClient: OppgaveClient
 
-    @Autowired
-    lateinit var utsattOppgaveDao: UtsattOppgaveDao
-    lateinit var utsattOppgaveService: UtsattOppgaveService
-    lateinit var utsattOppgaveConsumer: UtsattOppgaveConsumer
-
     @MockBean
     lateinit var sakClient: SakClient
 
     @MockBean
     lateinit var eksisterendeSakService: EksisterendeSakService
 
-    @Autowired
-    lateinit var inntektsmeldingRepository: InntektsmeldingRepository
-    lateinit var inntektsmeldingService: InntektsmeldingService
-
     @MockBean
     lateinit var journalpostService: JournalpostService
 
+    lateinit var journalConsumer: JournalConsumer
+    lateinit var saksbehandlingService: SaksbehandlingService
+
+    @Autowired
+    lateinit var utsattOppgaveDao: UtsattOppgaveDao
+    lateinit var utsattOppgaveService: UtsattOppgaveService
+    lateinit var utsattOppgaveConsumer: UtsattOppgaveConsumer
+
+    @Autowired
+    lateinit var inntektsmeldingRepository: InntektsmeldingRepository
+    lateinit var inntektsmeldingService: InntektsmeldingService
     lateinit var inntektsmeldingBehandler: InntektsmeldingBehandler
 
     @KtorExperimentalAPI
@@ -190,6 +191,11 @@ open class InntektsmeldingBehandlerIT {
         `when`(behandlendeEnhetConsumer.hentGeografiskTilknytning(anyString())).thenReturn(
             GeografiskTilknytningData(geografiskTilknytning = "tilknytning", diskresjonskode = "")
         )
+        val dokumentResponse = dokumentRespons(listOf(Periode(LocalDate.of(2019, 1, 1), LocalDate.of(2019, 1, 16))))
+
+        `when`(journalV2.hentDokument(Mockito.any())).thenReturn(dokumentResponse.response)
+        given(inngaaendeJournalConsumer.hentDokumentId(anyString())).willAnswer { inngaaendeJournal(it.getArgument(0)) }
+
     }
 
     @Test
@@ -199,8 +205,6 @@ open class InntektsmeldingBehandlerIT {
     )
     fun `Gjenbruker saksId hvis vi får to overlappende inntektsmeldinger`() {
         given(aktorConsumer.getAktorId(anyString())).willReturn("aktorId_for_1", "aktorId_for_1")
-        `when`(inngaaendeJournalConsumer.hentDokumentId("arkivId1")).thenReturn(inngaaendeJournal("arkivId1"))
-        `when`(inngaaendeJournalConsumer.hentDokumentId("arkivId2")).thenReturn(inngaaendeJournal("arkivId2"))
         val dokumentResponse1 = lagDokumentRespons(LocalDate.of(2019, 1, 1), LocalDate.of(2019, 1, 16))
         val dokumentResponse2 = lagDokumentRespons(LocalDate.of(2019, 1, 2), LocalDate.of(2019, 1, 16))
         `when`(journalV2.hentDokument(any())).thenReturn(
@@ -380,7 +384,7 @@ open class InntektsmeldingBehandlerIT {
         produceParallelMessages(numThreads, "arkivId")
 
         runBlocking {
-            verify<SakClient>(sakClient, Mockito.times(1)).opprettSak(anyString(), anyString())
+            verify(sakClient, Mockito.times(1)).opprettSak(anyString(), anyString())
         }
         verify<BehandleInngaaendeJournalConsumer>(
             behandleInngaaendeJournalConsumer,
@@ -412,51 +416,99 @@ open class InntektsmeldingBehandlerIT {
         )
     }
 
-    @KtorExperimentalAPI
     @Test
-    fun `utsetter og forkaster oppgave`() {
-        val dokumentResponse = dokumentRespons(
-            listOf(
-                Periode(
-                    LocalDate.of(2019, 1, 1),
-                    LocalDate.of(2019, 1, 12)
-                )
-            )
-        )
-
-        given(aktorConsumer.getAktorId(anyString())).willReturn("aktorId_for_8", "aktorId_for_8")
-        `when`(journalV2.hentDokument(Mockito.any())).thenReturn(dokumentResponse.response)
-        `when`(inngaaendeJournalConsumer.hentDokumentId("arkivId_8")).thenReturn(inngaaendeJournal("arkivId_8"))
-
-        val inntektsmeldingId = requireNotNull(inntektsmeldingBehandler.behandle("arkivId_8", "AR-8"))
+    @Transactional
+    open fun `utsetter og forkaster oppgave`() {
+        val inntektsmeldingId = requireNotNull(inntektsmeldingBehandler.behandle("arkivId_9", "AR-9"))
         assertNotNull(inntektsmeldingId)
 
-        val oppgave = requireNotNull(utsattOppgaveDao.finn(inntektsmeldingId))
+        var oppgave = requireNotNull(utsattOppgaveDao.finn(inntektsmeldingId))
         assertEquals(Tilstand.Ny, oppgave.tilstand)
 
-        utsattOppgaveConsumer.listen(utsattOppgaveRecord(UUID.fromString(inntektsmeldingId)), mockk(relaxed = true))
+        utsattOppgaveConsumer.listen(utsattOppgaveRecord(UUID.fromString(inntektsmeldingId), Utsett), mockk(relaxed = true))
 
-        val endretOppgave = utsattOppgaveDao.finn(inntektsmeldingId)!!
-        assertEquals(Tilstand.Utsatt, endretOppgave.tilstand)
+        oppgave = utsattOppgaveDao.finn(inntektsmeldingId)!!
+        assertEquals(Tilstand.Utsatt, oppgave.tilstand)
 
+        utsattOppgaveConsumer.listen(utsattOppgaveRecord(UUID.fromString(inntektsmeldingId), Ferdigbehandlet), mockk(relaxed = true))
+        oppgave = utsattOppgaveDao.finn(inntektsmeldingId)!!
+        assertEquals(Tilstand.Forkastet, oppgave.tilstand)
+        verifiserOppgaveOpprettet(0)
     }
 
     @Test
-    fun `utsetter og oppretter oppgave`() {
+    @Transactional
+    open fun `utsetter og oppretter oppgave`() {
+        val inntektsmeldingId = requireNotNull(inntektsmeldingBehandler.behandle("arkivId_10", "AR-10"))
+        assertNotNull(inntektsmeldingId)
 
+        var oppgave = requireNotNull(utsattOppgaveDao.finn(inntektsmeldingId))
+        assertEquals(Tilstand.Ny, oppgave.tilstand)
+
+        utsattOppgaveConsumer.listen(utsattOppgaveRecord(UUID.fromString(inntektsmeldingId), Utsett), mockk(relaxed = true))
+
+        oppgave = utsattOppgaveDao.finn(inntektsmeldingId)!!
+        assertEquals(Tilstand.Utsatt, oppgave.tilstand)
+
+        utsattOppgaveConsumer.listen(utsattOppgaveRecord(UUID.fromString(inntektsmeldingId), Opprett), mockk(relaxed = true))
+        oppgave = utsattOppgaveDao.finn(inntektsmeldingId)!!
+        assertEquals(Tilstand.Opprettet, oppgave.tilstand)
+        verifiserOppgaveOpprettet(1)
     }
 
-    private fun utsattOppgaveRecord(id: UUID) = ConsumerRecord(
+    @Test
+    @Transactional
+    open fun `oppretter oppgave direkte`() {
+        val inntektsmeldingId = requireNotNull(inntektsmeldingBehandler.behandle("arkivId_10", "AR-10"))
+        assertNotNull(inntektsmeldingId)
+
+        var oppgave = requireNotNull(utsattOppgaveDao.finn(inntektsmeldingId))
+        assertEquals(Tilstand.Ny, oppgave.tilstand)
+
+        utsattOppgaveConsumer.listen(utsattOppgaveRecord(UUID.fromString(inntektsmeldingId), Opprett), mockk(relaxed = true))
+        oppgave = utsattOppgaveDao.finn(inntektsmeldingId)!!
+        assertEquals(Tilstand.Opprettet, oppgave.tilstand)
+        verifiserOppgaveOpprettet(1)
+    }
+
+    @Test
+    @Transactional
+    open fun `forkaster oppgave direkte`() {
+        val inntektsmeldingId = requireNotNull(inntektsmeldingBehandler.behandle("arkivId_10", "AR-10"))
+        assertNotNull(inntektsmeldingId)
+
+        var oppgave = requireNotNull(utsattOppgaveDao.finn(inntektsmeldingId))
+        assertEquals(Tilstand.Ny, oppgave.tilstand)
+
+        utsattOppgaveConsumer.listen(utsattOppgaveRecord(UUID.fromString(inntektsmeldingId), Ferdigbehandlet), mockk(relaxed = true))
+        oppgave = utsattOppgaveDao.finn(inntektsmeldingId)!!
+        assertEquals(Tilstand.Forkastet, oppgave.tilstand)
+        verifiserOppgaveOpprettet(0)
+    }
+
+    private fun verifiserOppgaveOpprettet(antall: Int) {
+        runBlocking {
+            verify(oppgaveClient, Mockito.times(antall)).opprettOppgave(
+                ArgumentMatchers.anyString(),
+                ArgumentMatchers.anyString(),
+                ArgumentMatchers.anyString(),
+                ArgumentMatchers.anyString(),
+                ArgumentMatchers.anyBoolean()
+            )
+        }
+    }
+
+    private fun utsattOppgaveRecord(id: UUID, oppdateringstype: OppdateringstypeDTO) = ConsumerRecord(
         "topic",
         0,
         0,
         "key",
-        utsattOppgave(dokumentType = DokumentTypeDTO.Inntektsmelding, id = id)
+        utsattOppgave(dokumentType = DokumentTypeDTO.Inntektsmelding, id = id, oppdateringstype = oppdateringstype)
     )
 
     private fun utsattOppgave(
         dokumentType: DokumentTypeDTO = DokumentTypeDTO.Inntektsmelding,
-        oppdateringstype: OppdateringstypeDTO = OppdateringstypeDTO.Utsett,
+        oppdateringstype: OppdateringstypeDTO = Utsett,
         id: UUID = UUID.randomUUID(),
         timeout: LocalDateTime = LocalDateTime.now()
     ) = UtsattOppgaveDTO(
