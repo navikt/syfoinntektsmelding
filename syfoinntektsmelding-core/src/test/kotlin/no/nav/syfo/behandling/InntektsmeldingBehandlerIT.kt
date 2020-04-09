@@ -3,9 +3,6 @@ package no.nav.syfo.behandling
 import any
 import eq
 import io.ktor.util.KtorExperimentalAPI
-import io.mockk.mockk
-import junit.framework.Assert.assertEquals
-import junit.framework.Assert.assertNotNull
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.consumer.rest.OppgaveClient
 import no.nav.syfo.consumer.rest.SakClient
@@ -20,7 +17,6 @@ import no.nav.syfo.domain.GeografiskTilknytningData
 import no.nav.syfo.domain.InngaaendeJournal
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
-import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.producer.InntektsmeldingProducer
 import no.nav.syfo.repository.InntektsmeldingRepository
 import no.nav.syfo.repository.InntektsmeldingService
@@ -28,11 +24,7 @@ import no.nav.syfo.service.EksisterendeSakService
 import no.nav.syfo.service.JournalpostService
 import no.nav.syfo.service.SaksbehandlingService
 import no.nav.syfo.util.Metrikk
-import no.nav.syfo.utsattoppgave.DokumentTypeDTO
-import no.nav.syfo.utsattoppgave.OppdateringstypeDTO
-import no.nav.syfo.utsattoppgave.OppdateringstypeDTO.*
 import no.nav.syfo.utsattoppgave.UtsattOppgaveConsumer
-import no.nav.syfo.utsattoppgave.UtsattOppgaveDTO
 import no.nav.syfo.utsattoppgave.UtsattOppgaveDao
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import no.nav.tjeneste.virksomhet.journal.v2.binding.HentDokumentDokumentIkkeFunnet
@@ -40,7 +32,6 @@ import no.nav.tjeneste.virksomhet.journal.v2.binding.HentDokumentSikkerhetsbegre
 import no.nav.tjeneste.virksomhet.journal.v2.binding.JournalV2
 import no.nav.tjeneste.virksomhet.journal.v2.meldinger.HentDokumentRequest
 import no.nav.tjeneste.virksomhet.journal.v2.meldinger.HentDokumentResponse
-import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.assertj.core.api.Assertions
 import org.junit.Before
 import org.junit.BeforeClass
@@ -60,12 +51,9 @@ import org.springframework.kafka.test.context.EmbeddedKafka
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.web.WebAppConfiguration
-import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.ZonedDateTime
 import java.util.ArrayList
-import java.util.UUID
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -416,107 +404,6 @@ open class InntektsmeldingBehandlerIT {
         )
     }
 
-    @Test
-    @Transactional
-    open fun `utsetter og forkaster oppgave`() {
-        val inntektsmeldingId = requireNotNull(inntektsmeldingBehandler.behandle("arkivId_9", "AR-9"))
-        assertNotNull(inntektsmeldingId)
-
-        var oppgave = requireNotNull(utsattOppgaveDao.finn(inntektsmeldingId))
-        assertEquals(Tilstand.Ny, oppgave.tilstand)
-
-        utsattOppgaveConsumer.listen(utsattOppgaveRecord(UUID.fromString(inntektsmeldingId), Utsett), mockk(relaxed = true))
-
-        oppgave = utsattOppgaveDao.finn(inntektsmeldingId)!!
-        assertEquals(Tilstand.Utsatt, oppgave.tilstand)
-
-        utsattOppgaveConsumer.listen(utsattOppgaveRecord(UUID.fromString(inntektsmeldingId), Ferdigbehandlet), mockk(relaxed = true))
-        oppgave = utsattOppgaveDao.finn(inntektsmeldingId)!!
-        assertEquals(Tilstand.Forkastet, oppgave.tilstand)
-        verifiserOppgaveOpprettet(0)
-    }
-
-    @Test
-    @Transactional
-    open fun `utsetter og oppretter oppgave`() {
-        val inntektsmeldingId = requireNotNull(inntektsmeldingBehandler.behandle("arkivId_10", "AR-10"))
-        assertNotNull(inntektsmeldingId)
-
-        var oppgave = requireNotNull(utsattOppgaveDao.finn(inntektsmeldingId))
-        assertEquals(Tilstand.Ny, oppgave.tilstand)
-
-        utsattOppgaveConsumer.listen(utsattOppgaveRecord(UUID.fromString(inntektsmeldingId), Utsett), mockk(relaxed = true))
-
-        oppgave = utsattOppgaveDao.finn(inntektsmeldingId)!!
-        assertEquals(Tilstand.Utsatt, oppgave.tilstand)
-
-        utsattOppgaveConsumer.listen(utsattOppgaveRecord(UUID.fromString(inntektsmeldingId), Opprett), mockk(relaxed = true))
-        oppgave = utsattOppgaveDao.finn(inntektsmeldingId)!!
-        assertEquals(Tilstand.Opprettet, oppgave.tilstand)
-        verifiserOppgaveOpprettet(1)
-    }
-
-    @Test
-    @Transactional
-    open fun `oppretter oppgave direkte`() {
-        val inntektsmeldingId = requireNotNull(inntektsmeldingBehandler.behandle("arkivId_10", "AR-10"))
-        assertNotNull(inntektsmeldingId)
-
-        var oppgave = requireNotNull(utsattOppgaveDao.finn(inntektsmeldingId))
-        assertEquals(Tilstand.Ny, oppgave.tilstand)
-
-        utsattOppgaveConsumer.listen(utsattOppgaveRecord(UUID.fromString(inntektsmeldingId), Opprett), mockk(relaxed = true))
-        oppgave = utsattOppgaveDao.finn(inntektsmeldingId)!!
-        assertEquals(Tilstand.Opprettet, oppgave.tilstand)
-        verifiserOppgaveOpprettet(1)
-    }
-
-    @Test
-    @Transactional
-    open fun `forkaster oppgave direkte`() {
-        val inntektsmeldingId = requireNotNull(inntektsmeldingBehandler.behandle("arkivId_10", "AR-10"))
-        assertNotNull(inntektsmeldingId)
-
-        var oppgave = requireNotNull(utsattOppgaveDao.finn(inntektsmeldingId))
-        assertEquals(Tilstand.Ny, oppgave.tilstand)
-
-        utsattOppgaveConsumer.listen(utsattOppgaveRecord(UUID.fromString(inntektsmeldingId), Ferdigbehandlet), mockk(relaxed = true))
-        oppgave = utsattOppgaveDao.finn(inntektsmeldingId)!!
-        assertEquals(Tilstand.Forkastet, oppgave.tilstand)
-        verifiserOppgaveOpprettet(0)
-    }
-
-    private fun verifiserOppgaveOpprettet(antall: Int) {
-        runBlocking {
-            verify(oppgaveClient, Mockito.times(antall)).opprettOppgave(
-                ArgumentMatchers.anyString(),
-                ArgumentMatchers.anyString(),
-                ArgumentMatchers.anyString(),
-                ArgumentMatchers.anyString(),
-                ArgumentMatchers.anyBoolean()
-            )
-        }
-    }
-
-    private fun utsattOppgaveRecord(id: UUID, oppdateringstype: OppdateringstypeDTO) = ConsumerRecord(
-        "topic",
-        0,
-        0,
-        "key",
-        utsattOppgave(dokumentType = DokumentTypeDTO.Inntektsmelding, id = id, oppdateringstype = oppdateringstype)
-    )
-
-    private fun utsattOppgave(
-        dokumentType: DokumentTypeDTO = DokumentTypeDTO.Inntektsmelding,
-        oppdateringstype: OppdateringstypeDTO = Utsett,
-        id: UUID = UUID.randomUUID(),
-        timeout: LocalDateTime = LocalDateTime.now()
-    ) = UtsattOppgaveDTO(
-        dokumentType = dokumentType,
-        oppdateringstype = oppdateringstype,
-        dokumentId = id,
-        timeout = timeout
-    )
 
     fun build(fnr: AtomicInteger): no.nav.tjeneste.virksomhet.journal.v2.meldinger.HentDokumentResponse {
         val dokumentResponse = no.nav.tjeneste.virksomhet.journal.v2.meldinger.HentDokumentResponse()
