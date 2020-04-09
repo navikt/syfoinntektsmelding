@@ -3,3 +3,4 @@
  */
 
 rootProject.name = 'syfoinntektsmelding'
+include("syfoinntektsmelding-core", "syfoinntektsmelding-job")
