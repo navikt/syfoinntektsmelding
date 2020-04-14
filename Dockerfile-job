@@ -1,0 +1,3 @@
+FROM navikt/java:12
+
+COPY syfoinntektsmelding-job/build/libs/*.jar ./
