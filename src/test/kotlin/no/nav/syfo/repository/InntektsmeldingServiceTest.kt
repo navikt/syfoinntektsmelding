@@ -77,7 +77,7 @@ class InntektsmeldingServiceTest {
                 OpphoerAvNaturalytelse(Naturalytelse.TILSKUDDBARNEHAGEPLASS, LocalDate.of(2016,6,6), BigDecimal(666666666666))
             )
         )
-        val json = inntektsmeldingService.mapString(im)
+        val json = im.asJsonString()
 
         val mapper = JacksonJsonConfig.objectMapperFactory.opprettObjectMapper()
         val node = mapper.readTree(json)

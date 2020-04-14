@@ -1,8 +1,8 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val springBootVersion = "2.2.0.RELEASE"
-val springVersion = "5.2.0.RELEASE"
-val springKafkaVersion = "2.3.1.RELEASE"
+val springBootVersion = "2.2.6.RELEASE"
+val springVersion = "5.2.5.RELEASE"
+val springKafkaVersion = "2.4.5.RELEASE"
 val micrometerVersion = "1.3.0"
 val flywayVersion = "6.1.4"
 val cxfVersion = "3.3.3"

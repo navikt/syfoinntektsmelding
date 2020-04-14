@@ -10,6 +10,7 @@ import no.nav.syfo.repository.InntektsmeldingService
 import no.nav.syfo.service.JournalpostService
 import no.nav.syfo.service.SaksbehandlingService
 import no.nav.syfo.util.Metrikk
+import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -30,6 +31,9 @@ class InntektsmeldingBehandlerTest {
 
     @Mock
     private lateinit var journalpostService: JournalpostService
+
+    @Mock
+    private lateinit var utsattOppgaveService: UtsattOppgaveService
 
     @Mock
     private lateinit var saksbehandlingService: SaksbehandlingService
