@@ -18,8 +18,6 @@ import org.springframework.stereotype.Service
 @Service
 @KtorExperimentalAPI
 class SaksbehandlingService(
-        private val oppgaveClient: OppgaveClient,
-        private val behandlendeEnhetConsumer: BehandlendeEnhetConsumer,
         private val eksisterendeSakService: EksisterendeSakService,
         private val inntektsmeldingService: InntektsmeldingService,
         private val sakClient: SakClient,
@@ -52,11 +50,7 @@ class SaksbehandlingService(
 
         val sammenslattPeriode = sammenslattPeriode(inntektsmelding.arbeidsgiverperioder)
 
-        val saksId = finnSaksId(tilhorendeInntektsmelding, inntektsmelding, aktorId, sammenslattPeriode, arkivReferanse)
-
-        opprettOppgave(inntektsmelding.fnr, aktorId, saksId, inntektsmelding.journalpostId)
-
-        return saksId
+        return finnSaksId(tilhorendeInntektsmelding, inntektsmelding, aktorId, sammenslattPeriode, arkivReferanse)
     }
 
     private fun finnSaksId(tilhorendeInntektsmelding: Inntektsmelding?, inntektsmelding: Inntektsmelding, aktorId: String, sammenslattPeriode: Periode?, msgId: String): String {
@@ -74,20 +68,5 @@ class SaksbehandlingService(
             saksId = sakClient.opprettSak(aktorId, msgId).id.toString()
         }
         return saksId
-    }
-
-    @KtorExperimentalAPI
-    private fun opprettOppgave(fnr: String, aktorId: String, saksId: String, journalpostId: String) {
-        val behandlendeEnhet = behandlendeEnhetConsumer.hentBehandlendeEnhet(fnr)
-        val gjelderUtland = (SYKEPENGER_UTLAND == behandlendeEnhet)
-        runBlocking {
-        oppgaveClient.opprettOppgave(
-            sakId = saksId,
-            journalpostId = journalpostId,
-            tildeltEnhetsnr =  behandlendeEnhet,
-            aktoerId = aktorId,
-            gjelderUtland = gjelderUtland
-            )
-        }
     }
 }
