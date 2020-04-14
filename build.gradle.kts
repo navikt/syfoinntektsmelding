@@ -1,7 +1,5 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val junitJupiterVersion = "5.6.1"
-
 val githubUser: String by project
 val githubPassword: String by project
 
@@ -34,10 +32,6 @@ allprojects {
 
     dependencies {
         implementation(kotlin("stdlib-jdk8"))
-
-        testImplementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
-        testImplementation("org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion")
-        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
     }
 
     java {
@@ -75,12 +69,6 @@ subprojects {
 
     repositories {
         mavenCentral()
-    }
-
-    dependencies {
-        testImplementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
-        testImplementation("org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion")
-        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
     }
 }
 

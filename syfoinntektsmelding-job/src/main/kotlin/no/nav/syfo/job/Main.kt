@@ -1,8 +1,7 @@
 package no.nav.syfo.job
 
-import no.nav.syfo.utsattoppgave.UtsattOppgaveDTO
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.apache.kafka.clients.CommonClientConfigs
-import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.clients.producer.ProducerRecord
@@ -17,6 +16,8 @@ fun main() {
     val env = System.getenv()
     rapportJob(env)
 }
+
+val objectMapper = ObjectMapper()
 
 private fun rapportJob(env: Map<String, String>) {
     Thread.setDefaultUncaughtExceptionHandler { _, throwable -> LoggerFactory.getLogger("no.nav.syfo").error(throwable.message, throwable) }

@@ -47,7 +47,6 @@ import org.mockito.MockitoAnnotations
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
-import org.springframework.kafka.test.context.EmbeddedKafka
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.web.WebAppConfiguration
@@ -62,7 +61,6 @@ import java.util.concurrent.atomic.AtomicInteger
 @SpringBootTest
 @TestPropertySource("classpath:application-test.properties")
 @WebAppConfiguration
-@EmbeddedKafka
 open class InntektsmeldingBehandlerIT {
 
     companion object {
@@ -133,7 +131,7 @@ open class InntektsmeldingBehandlerIT {
             behandlendeEnhetConsumer,
             metrikk
         )
-        inntektsmeldingService = InntektsmeldingService(inntektsmeldingRepository)
+        inntektsmeldingService = InntektsmeldingService(inntektsmeldingRepository, 3)
         saksbehandlingService =
             SaksbehandlingService(eksisterendeSakService, inntektsmeldingService, sakClient, metrikk)
         utsattOppgaveService = UtsattOppgaveService(utsattOppgaveDao, oppgaveClient, behandlendeEnhetConsumer)

@@ -1,8 +1,5 @@
 package no.nav.syfo.job
 
-import no.nav.syfo.utsattoppgave.DokumentTypeDTO
-import no.nav.syfo.utsattoppgave.OppdateringstypeDTO
-import no.nav.syfo.utsattoppgave.UtsattOppgaveDTO
 import java.time.LocalDateTime
 import java.util.UUID
 

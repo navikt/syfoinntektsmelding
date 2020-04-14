@@ -1,7 +1,6 @@
 package no.nav.syfo.utsattoppgave
 
 import java.time.LocalDateTime
-import java.time.LocalDateTime.now
 import java.util.UUID
 
 data class UtsattOppgaveDTO(

@@ -1,13 +1,13 @@
 package no.nav.syfo.utsattoppgave
 
 import io.ktor.util.KtorExperimentalAPI
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
+import junit.framework.Assert.assertEquals
+import junit.framework.Assert.assertNotNull
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.behandling.InntektsmeldingBehandler
 import no.nav.syfo.consumer.rest.OppgaveClient
 import no.nav.syfo.consumer.rest.SakClient
+import no.nav.syfo.consumer.rest.SakResponse
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
 import no.nav.syfo.consumer.ws.BehandleInngaaendeJournalConsumer
 import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
@@ -29,80 +29,102 @@ import no.nav.syfo.util.Metrikk
 import no.nav.tjeneste.virksomhet.journal.v2.binding.JournalV2
 import no.nav.tjeneste.virksomhet.journal.v2.meldinger.HentDokumentResponse
 import org.apache.kafka.clients.consumer.ConsumerRecord
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.Before
+import org.junit.BeforeClass
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.anyBoolean
+import org.mockito.ArgumentMatchers.anyString
+import org.mockito.BDDMockito
+import org.mockito.Mockito
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.times
+import org.mockito.MockitoAnnotations
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.kafka.support.Acknowledgment
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.web.WebAppConfiguration
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.ZonedDateTime
 import java.util.UUID
-import javax.transaction.Transactional
 
 @KtorExperimentalAPI
-@ExtendWith(SpringExtension::class)
+@RunWith(SpringRunner::class)
 @SpringBootTest
 @TestPropertySource("classpath:application-test.properties")
 @WebAppConfiguration
 @Transactional
 open class UtsattOppgaveIntegrasjonsTest  {
 
-    @Autowired
-    lateinit var inntektsmeldingRepository: InntektsmeldingRepository
-    @Autowired
-    lateinit var utsattOppgaveDao: UtsattOppgaveDao
+    companion object {
+        @BeforeClass
+        @JvmStatic
+        fun beforeClass() {
+            System.setProperty("SECURITYTOKENSERVICE_URL", "joda")
+            System.setProperty("SRVSYFOINNTEKTSMELDING_USERNAME", "joda")
+            System.setProperty("SRVSYFOINNTEKTSMELDING_PASSWORD", "joda")
+        }
+    }
 
-    var journalV2: JournalV2 = mockk() {
-        every { hentDokument(any()) } returns HentDokumentResponse()
-            .apply {
-                dokument = JournalConsumerTest.inntektsmeldingArbeidsgiver(
-                    listOf(
-                        Periode(
-                            LocalDate.of(2019, 1, 1),
-                            LocalDate.of(2019, 1, 16)
-                        )
-                    )
-                ).toByteArray()
-            }
-    }
-    var aktorConsumer: AktorConsumer = mockk {
-        every { getAktorId(any()) } answers { "aktorId_for_${arg<String>(0)}" }
-    }
-    var inngaaendeJournalConsumer: InngaaendeJournalConsumer = mockk() {
-        every { hentDokumentId(any()) } answers { inngaaendeJournal(arg(0)) }
-    }
-    var metrikk: Metrikk = mockk(relaxed = true)
-    var inntektsmeldingProducer: InntektsmeldingProducer = mockk(relaxed = true)
-    var behandleInngaaendeJournalConsumer: BehandleInngaaendeJournalConsumer = mockk(relaxed = true)
-    var behandlendeEnhetConsumer: BehandlendeEnhetConsumer = mockk() {
-        every { hentBehandlendeEnhet(any()) } returns "enhet"
-        every { hentGeografiskTilknytning(any()) } returns GeografiskTilknytningData(
-            geografiskTilknytning = "tilknytning",
-            diskresjonskode = ""
-        )
-    }
-    var oppgaveClient: OppgaveClient = mockk(relaxed = true)
+    @MockBean
+    lateinit var journalV2: JournalV2
 
-    var eksisterendeSakService: EksisterendeSakService = mockk(relaxed = true)
-    val sakClient: SakClient = mockk()
+    @MockBean
+    lateinit var aktorConsumer: AktorConsumer
 
-    lateinit var journalConsumer: JournalConsumer
-    lateinit var inntektsmeldingService: InntektsmeldingService
-    lateinit var saksbehandlingService: SaksbehandlingService
-    lateinit var utsattOppgaveService: UtsattOppgaveService
-    lateinit var utsattOppgaveConsumer: UtsattOppgaveConsumer
-    lateinit var inntektsmeldingBehandler: InntektsmeldingBehandler
+    @MockBean
+    lateinit var inngaaendeJournalConsumer: InngaaendeJournalConsumer
+
+    @MockBean
+    lateinit var metrikk: Metrikk
+
+    @MockBean
+    lateinit var inntektsmeldingProducer: InntektsmeldingProducer
+
+    @MockBean
+    lateinit var behandleInngaaendeJournalConsumer: BehandleInngaaendeJournalConsumer
+
+    @MockBean
+    lateinit var behandlendeEnhetConsumer: BehandlendeEnhetConsumer
+
+    @MockBean
+    lateinit var oppgaveClient: OppgaveClient
+
+    @MockBean
+    lateinit var sakClient: SakClient
+
+    @MockBean
+    lateinit var eksisterendeSakService: EksisterendeSakService
+
+    @MockBean
     lateinit var journalpostService: JournalpostService
 
-    @BeforeAll
+    lateinit var journalConsumer: JournalConsumer
+    lateinit var saksbehandlingService: SaksbehandlingService
+
+    @Autowired
+    lateinit var utsattOppgaveDao: UtsattOppgaveDao
+    lateinit var utsattOppgaveService: UtsattOppgaveService
+    lateinit var utsattOppgaveConsumer: UtsattOppgaveConsumer
+
+    @Autowired
+    lateinit var inntektsmeldingRepository: InntektsmeldingRepository
+    lateinit var inntektsmeldingService: InntektsmeldingService
+    lateinit var inntektsmeldingBehandler: InntektsmeldingBehandler
+
+    @KtorExperimentalAPI
+    @Before
     fun setup() {
+        inntektsmeldingRepository.deleteAll()
         journalConsumer = JournalConsumer(journalV2, aktorConsumer)
-        inntektsmeldingService = InntektsmeldingService(inntektsmeldingRepository)
         journalpostService = JournalpostService(
             inngaaendeJournalConsumer,
             behandleInngaaendeJournalConsumer,
@@ -110,21 +132,57 @@ open class UtsattOppgaveIntegrasjonsTest  {
             behandlendeEnhetConsumer,
             metrikk
         )
-        saksbehandlingService = SaksbehandlingService(eksisterendeSakService, inntektsmeldingService, sakClient, metrikk)
+        inntektsmeldingService = InntektsmeldingService(inntektsmeldingRepository, 3)
+        saksbehandlingService =
+            SaksbehandlingService(eksisterendeSakService, inntektsmeldingService, sakClient, metrikk)
         utsattOppgaveService = UtsattOppgaveService(utsattOppgaveDao, oppgaveClient, behandlendeEnhetConsumer)
+        utsattOppgaveConsumer = UtsattOppgaveConsumer(utsattOppgaveService)
         inntektsmeldingBehandler = InntektsmeldingBehandler(
             journalpostService,
             saksbehandlingService,
-            mockk(relaxed = true),
+            metrikk,
             inntektsmeldingService,
             aktorConsumer,
             inntektsmeldingProducer,
             utsattOppgaveService
         )
-        utsattOppgaveConsumer = UtsattOppgaveConsumer(utsattOppgaveService)
+        MockitoAnnotations.initMocks(inntektsmeldingBehandler)
+        runBlocking {
+            BDDMockito.given(sakClient.opprettSak(BDDMockito.anyString(), BDDMockito.anyString())).willReturn(
+                SakResponse(
+                    id = 987,
+                    tema = "SYM",
+                    aktoerId = "444",
+                    applikasjon = "",
+                    fagsakNr = "123000",
+                    opprettetAv = "meg",
+                    opprettetTidspunkt = ZonedDateTime.now(),
+                    orgnr = "999888777"
+                ),
+                SakResponse(
+                    id = 988,
+                    tema = "SYM",
+                    aktoerId = "444",
+                    applikasjon = "",
+                    fagsakNr = "123000",
+                    opprettetAv = "meg",
+                    opprettetTidspunkt = ZonedDateTime.now(),
+                    orgnr = "999888777"
+                )
+            )
+        }
+        Mockito.`when`(inngaaendeJournalConsumer.hentDokumentId("arkivId")).thenReturn(inngaaendeJournal("arkivId"))
+        BDDMockito.given(aktorConsumer.getAktorId(BDDMockito.anyString())).willAnswer { "aktorId_for_" + it.getArgument(0) }
+        BDDMockito.given(eksisterendeSakService.finnEksisterendeSak(BDDMockito.anyString(), any(), any())).willReturn(null)
+        Mockito.`when`(behandlendeEnhetConsumer.hentBehandlendeEnhet(BDDMockito.anyString())).thenReturn("enhet")
+        Mockito.`when`(behandlendeEnhetConsumer.hentGeografiskTilknytning(BDDMockito.anyString())).thenReturn(
+            GeografiskTilknytningData(geografiskTilknytning = "tilknytning", diskresjonskode = "")
+        )
+        val dokumentResponse = dokumentRespons(listOf(Periode(LocalDate.of(2019, 1, 1), LocalDate.of(2019, 1, 16))))
+
+        Mockito.`when`(journalV2.hentDokument(Mockito.any())).thenReturn(dokumentResponse.response)
+        BDDMockito.given(inngaaendeJournalConsumer.hentDokumentId(BDDMockito.anyString())).willAnswer { inngaaendeJournal(it.getArgument(0)) }
     }
-
-
 
     @Test
     fun `utsetter og forkaster oppgave`() {
@@ -134,7 +192,7 @@ open class UtsattOppgaveIntegrasjonsTest  {
         var oppgave = requireNotNull(utsattOppgaveDao.finn(inntektsmeldingId))
         assertEquals(Tilstand.Ny, oppgave.tilstand)
 
-        utsattOppgaveConsumer.listen(utsattOppgaveRecord(UUID.fromString(inntektsmeldingId), OppdateringstypeDTO.Utsett), mockk(relaxed = true))
+        utsattOppgaveConsumer.listen(utsattOppgaveRecord(UUID.fromString(inntektsmeldingId), OppdateringstypeDTO.Utsett), mock(Acknowledgment::class.java))
 
         oppgave = utsattOppgaveDao.finn(inntektsmeldingId)!!
         assertEquals(Tilstand.Utsatt, oppgave.tilstand)
@@ -142,8 +200,7 @@ open class UtsattOppgaveIntegrasjonsTest  {
         utsattOppgaveConsumer.listen(utsattOppgaveRecord(
             UUID.fromString(inntektsmeldingId),
             OppdateringstypeDTO.Ferdigbehandlet
-        ), mockk(relaxed = true)
-        )
+        ), mock(Acknowledgment::class.java))
         oppgave = utsattOppgaveDao.finn(inntektsmeldingId)!!
         assertEquals(Tilstand.Forkastet, oppgave.tilstand)
         verifiserOppgaveOpprettet(0)
@@ -157,7 +214,7 @@ open class UtsattOppgaveIntegrasjonsTest  {
         var oppgave = requireNotNull(utsattOppgaveDao.finn(inntektsmeldingId))
         assertEquals(Tilstand.Ny, oppgave.tilstand)
 
-        utsattOppgaveConsumer.listen(utsattOppgaveRecord(UUID.fromString(inntektsmeldingId), OppdateringstypeDTO.Utsett), mockk(relaxed = true))
+        utsattOppgaveConsumer.listen(utsattOppgaveRecord(UUID.fromString(inntektsmeldingId), OppdateringstypeDTO.Utsett), mock(Acknowledgment::class.java))
 
         oppgave = utsattOppgaveDao.finn(inntektsmeldingId)!!
         assertEquals(Tilstand.Utsatt, oppgave.tilstand)
@@ -165,7 +222,7 @@ open class UtsattOppgaveIntegrasjonsTest  {
         utsattOppgaveConsumer.listen(utsattOppgaveRecord(
             UUID.fromString(inntektsmeldingId),
             OppdateringstypeDTO.Opprett
-        ), mockk(relaxed = true)
+        ), mock(Acknowledgment::class.java)
         )
         oppgave = utsattOppgaveDao.finn(inntektsmeldingId)!!
         assertEquals(Tilstand.Opprettet, oppgave.tilstand)
@@ -183,7 +240,7 @@ open class UtsattOppgaveIntegrasjonsTest  {
         utsattOppgaveConsumer.listen(utsattOppgaveRecord(
             UUID.fromString(inntektsmeldingId),
             OppdateringstypeDTO.Opprett
-        ), mockk(relaxed = true)
+        ), mock(Acknowledgment::class.java)
         )
         oppgave = utsattOppgaveDao.finn(inntektsmeldingId)!!
         assertEquals(Tilstand.Opprettet, oppgave.tilstand)
@@ -201,7 +258,7 @@ open class UtsattOppgaveIntegrasjonsTest  {
         utsattOppgaveConsumer.listen(utsattOppgaveRecord(
             UUID.fromString(inntektsmeldingId),
             OppdateringstypeDTO.Ferdigbehandlet
-        ), mockk(relaxed = true)
+        ), mock(Acknowledgment::class.java)
         )
         oppgave = utsattOppgaveDao.finn(inntektsmeldingId)!!
         assertEquals(Tilstand.Forkastet, oppgave.tilstand)
@@ -209,7 +266,7 @@ open class UtsattOppgaveIntegrasjonsTest  {
     }
 
     private fun verifiserOppgaveOpprettet(antall: Int) {
-        verify(exactly = antall) { runBlocking { oppgaveClient.opprettOppgave(any(),any(),any(),any(),any()) } }
+        runBlocking { Mockito.verify(oppgaveClient, times(antall)).opprettOppgave(anyString(), anyString(), anyString(), anyString(), anyBoolean()) }
     }
 
     private fun utsattOppgaveRecord(id: UUID, oppdateringstype: OppdateringstypeDTO) = ConsumerRecord(
@@ -239,13 +296,11 @@ open class UtsattOppgaveIntegrasjonsTest  {
         )
     }
 
-    companion object {
-        @JvmStatic
-        fun beforeClass() {
-            System.setProperty("SECURITYTOKENSERVICE_URL", "joda")
-            System.setProperty("SRVSYFOINNTEKTSMELDING_USERNAME", "joda")
-            System.setProperty("SRVSYFOINNTEKTSMELDING_PASSWORD", "joda")
-        }
+    private fun dokumentRespons(perioder: List<Periode>): no.nav.tjeneste.virksomhet.journal.v2.HentDokumentResponse {
+        val respons = no.nav.tjeneste.virksomhet.journal.v2.HentDokumentResponse()
+        respons.response = HentDokumentResponse()
+        respons.response.dokument = JournalConsumerTest.inntektsmeldingArbeidsgiver(perioder).toByteArray()
+        return respons
     }
 }
 

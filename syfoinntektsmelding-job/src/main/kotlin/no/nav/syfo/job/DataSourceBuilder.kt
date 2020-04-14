@@ -3,7 +3,6 @@ package no.nav.syfo.job
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil
-import org.flywaydb.core.Flyway
 import javax.sql.DataSource
 
 // Understands how to create a data source from environment variables
@@ -46,7 +45,7 @@ internal class DataSourceBuilder(env: Map<String, String>) {
         }
     }
 
-    fun getDataSource(role: Role = Role.User): DataSource {
+    fun getDataSource(role: Role = Role.ReadOnly): DataSource {
         if (!shouldGetCredentialsFromVault) return HikariDataSource(hikariConfig)
         return HikariCPVaultUtil.createHikariDataSourceWithVaultIntegration(
             hikariConfig,
@@ -55,24 +54,8 @@ internal class DataSourceBuilder(env: Map<String, String>) {
         )
     }
 
-    fun migrate() {
-        var initSql: String? = null
-        if (shouldGetCredentialsFromVault) {
-            initSql = "SET ROLE \"$databaseName-${Role.Admin}\""
-        }
-
-        runMigration(getDataSource(Role.Admin), initSql)
-    }
-
-    private fun runMigration(dataSource: DataSource, initSql: String? = null) =
-        Flyway.configure()
-            .dataSource(dataSource)
-            .initSql(initSql)
-            .load()
-            .migrate()
-
     enum class Role {
-        Admin, User, ReadOnly;
+        ReadOnly;
 
         override fun toString() = name.toLowerCase()
     }
