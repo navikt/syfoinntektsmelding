@@ -144,6 +144,10 @@
         "value": "http://oppgave.default.svc.nais.local/api/v1/oppgaver"
       },
       {
+        "name": "PDL_URL",
+        "value": "PLACEHOLDER"
+      },
+      {
         "name": "OPPRETT_SAK_URL",
         "value": "http://sak.default.svc.nais.local/api/v1/saker"
       },

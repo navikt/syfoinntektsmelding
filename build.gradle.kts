@@ -35,6 +35,7 @@ repositories {
     mavenCentral()
     maven("https://kotlin.bintray.com/ktor")
     maven("https://packages.confluent.io/maven/")
+    maven("https://dl.bintray.com/americanexpress/maven/")
     maven {
         credentials {
             username = "x-access-token"
@@ -147,6 +148,9 @@ dependencies {
     testImplementation("io.mockk:mockk:1.9.3")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.3")
     implementation("com.vladmihalcea:hibernate-types-52:2.9.3")
+
+    //GraphQL
+    implementation("io.aexp.nodes.graphql:nodes:0.5.0")
 }
 
 tasks.named<Jar>("jar") {

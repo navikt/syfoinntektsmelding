@@ -231,8 +231,8 @@ open class InntektsmeldingRepositoryTest {
         return InntektsmeldingEntitet(
             journalpostId = "journalpostId",
             behandlet = behandlet,
-            sakId = "sakId",
-            orgnummer = "orgnummer",
+            sakId = "sakId"
+                orgnummer = "orgnummer",
             arbeidsgiverPrivat = "arbeidsgiverPrivat",
             aktorId = "aktorId1"
         )
