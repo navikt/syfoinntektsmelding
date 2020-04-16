@@ -5,6 +5,7 @@ import junit.framework.Assert.assertEquals
 import junit.framework.Assert.assertNotNull
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.behandling.InntektsmeldingBehandler
+import no.nav.syfo.behandling.OpprettOppgaveException
 import no.nav.syfo.consumer.rest.OppgaveClient
 import no.nav.syfo.consumer.rest.SakClient
 import no.nav.syfo.consumer.rest.SakResponse
@@ -17,6 +18,7 @@ import no.nav.syfo.consumer.ws.JournalConsumerTest
 import no.nav.syfo.domain.GeografiskTilknytningData
 import no.nav.syfo.domain.InngaaendeJournal
 import no.nav.syfo.domain.JournalStatus
+import no.nav.syfo.domain.OppgaveResultat
 import no.nav.syfo.domain.Periode
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.dto.UtsattOppgaveEntitet
@@ -39,6 +41,7 @@ import org.mockito.ArgumentMatchers.anyBoolean
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.BDDMockito
 import org.mockito.Mockito
+import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.times
 import org.mockito.MockitoAnnotations
@@ -52,6 +55,7 @@ import org.springframework.test.context.web.WebAppConfiguration
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalDateTime.*
 import java.time.ZonedDateTime
 import java.util.UUID
 
@@ -124,6 +128,7 @@ open class UtsattOppgaveIntegrasjonsTest  {
     @Before
     fun setup() {
         inntektsmeldingRepository.deleteAll()
+        utsattOppgaveDAO.utsattOppgaveRepository.deleteAll()
         journalConsumer = JournalConsumer(journalV2, aktorConsumer)
         journalpostService = JournalpostService(
             inngaaendeJournalConsumer,
@@ -170,16 +175,16 @@ open class UtsattOppgaveIntegrasjonsTest  {
                 )
             )
         }
-        Mockito.`when`(inngaaendeJournalConsumer.hentDokumentId("arkivId")).thenReturn(inngaaendeJournal("arkivId"))
+        `when`(inngaaendeJournalConsumer.hentDokumentId("arkivId")).thenReturn(inngaaendeJournal("arkivId"))
         BDDMockito.given(aktorConsumer.getAktorId(BDDMockito.anyString())).willAnswer { "aktorId_for_" + it.getArgument(0) }
         BDDMockito.given(eksisterendeSakService.finnEksisterendeSak(BDDMockito.anyString(), any(), any())).willReturn(null)
-        Mockito.`when`(behandlendeEnhetConsumer.hentBehandlendeEnhet(BDDMockito.anyString())).thenReturn("enhet")
-        Mockito.`when`(behandlendeEnhetConsumer.hentGeografiskTilknytning(BDDMockito.anyString())).thenReturn(
+        `when`(behandlendeEnhetConsumer.hentBehandlendeEnhet(BDDMockito.anyString())).thenReturn("enhet")
+        `when`(behandlendeEnhetConsumer.hentGeografiskTilknytning(BDDMockito.anyString())).thenReturn(
             GeografiskTilknytningData(geografiskTilknytning = "tilknytning", diskresjonskode = "")
         )
         val dokumentResponse = dokumentRespons(listOf(Periode(LocalDate.of(2019, 1, 1), LocalDate.of(2019, 1, 16))))
 
-        Mockito.`when`(journalV2.hentDokument(Mockito.any())).thenReturn(dokumentResponse.response)
+        `when`(journalV2.hentDokument(Mockito.any())).thenReturn(dokumentResponse.response)
         BDDMockito.given(inngaaendeJournalConsumer.hentDokumentId(BDDMockito.anyString())).willAnswer { inngaaendeJournal(it.getArgument(0)) }
     }
 
@@ -273,9 +278,9 @@ open class UtsattOppgaveIntegrasjonsTest  {
     @Test
     fun `finner alle utgåtte oppgaver`() {
         listOf(
-            enOppgaveEntitet(LocalDateTime.now().minusHours(1)),
-            enOppgaveEntitet(LocalDateTime.now().minusHours(3)),
-            enOppgaveEntitet(LocalDateTime.now().plusHours(1))
+            enOppgaveEntitet(now().minusHours(1)),
+            enOppgaveEntitet(now().minusHours(3)),
+            enOppgaveEntitet(now().plusHours(1))
         ).forEach { utsattOppgaveService.opprett(it) }
         utsattOppgaveService.opprettOppgaverForUtgåtte()
         verifiserOppgaveOpprettet(2)
@@ -287,9 +292,9 @@ open class UtsattOppgaveIntegrasjonsTest  {
         val id2 = UUID.randomUUID().toString()
         val id3 = UUID.randomUUID().toString()
         listOf(
-            enOppgaveEntitet(LocalDateTime.now().minusHours(1), inntektsmeldingsId = id1),
-            enOppgaveEntitet(LocalDateTime.now().minusHours(3), inntektsmeldingsId = id2),
-            enOppgaveEntitet(LocalDateTime.now().plusHours(1), inntektsmeldingsId = id3)
+            enOppgaveEntitet(now().minusHours(1), inntektsmeldingsId = id1),
+            enOppgaveEntitet(now().minusHours(3), inntektsmeldingsId = id2),
+            enOppgaveEntitet(now().plusHours(1), inntektsmeldingsId = id3)
         ).forEach { utsattOppgaveService.opprett(it) }
         utsattOppgaveService.opprettOppgaverForUtgåtte()
         val oppgave1 = utsattOppgaveDAO.finn(id1)
@@ -304,20 +309,58 @@ open class UtsattOppgaveIntegrasjonsTest  {
     @Test
     fun `utgåtte oppgaver med feil tilstand opprettes ikke`() {
         listOf(
-            enOppgaveEntitet(LocalDateTime.now().minusHours(1), Tilstand.Opprettet),
-            enOppgaveEntitet(LocalDateTime.now().minusHours(3), Tilstand.Forkastet)
+            enOppgaveEntitet(now().minusHours(1), Tilstand.Opprettet),
+            enOppgaveEntitet(now().minusHours(3), Tilstand.Forkastet)
         ).forEach { utsattOppgaveService.opprett(it) }
         utsattOppgaveService.opprettOppgaverForUtgåtte()
         verifiserOppgaveOpprettet(0)
     }
 
+    @Test
+    fun `feil i behandling av en oppgave påvirker ikke andre`() {
+        val uuid1 = UUID.randomUUID().toString()
+        val uuid2 = UUID.randomUUID().toString()
+        val uuid3 = UUID.randomUUID().toString()
+        val uuid4 = UUID.randomUUID().toString()
+        `when`(
+            runBlocking { oppgaveClient.opprettOppgave(
+            sakId = "1", journalpostId = "journalpostId", tildeltEnhetsnr = "enhet", aktoerId = "aktørId", gjelderUtland = false
+        )}).thenReturn(mock(OppgaveResultat::class.java))
+        `when`(
+            runBlocking { oppgaveClient.opprettOppgave(
+                sakId = "2", journalpostId = "journalpostId", tildeltEnhetsnr = "enhet", aktoerId = "aktørId", gjelderUtland = false
+            )}).thenReturn(mock(OppgaveResultat::class.java))
+        `when`(
+            runBlocking { oppgaveClient.opprettOppgave(
+                sakId = "3", journalpostId = "journalpostId", tildeltEnhetsnr = "enhet", aktoerId = "aktørId", gjelderUtland = false
+            )}).thenThrow(OpprettOppgaveException("journalpostId"))
+        `when`(
+            runBlocking { oppgaveClient.opprettOppgave(
+                sakId = "4", journalpostId = "journalpostId", tildeltEnhetsnr = "enhet", aktoerId = "aktørId", gjelderUtland = false
+            )}).thenReturn(mock(OppgaveResultat::class.java))
+
+        listOf(
+            enOppgaveEntitet(timeout = now().minusHours(1), tilstand = Tilstand.Utsatt, sakId = "1", inntektsmeldingsId = uuid1),
+            enOppgaveEntitet(timeout = now().minusHours(1), tilstand = Tilstand.Utsatt, sakId = "2", inntektsmeldingsId = uuid2),
+            enOppgaveEntitet(timeout = now().minusHours(1), tilstand = Tilstand.Utsatt, sakId = "3", inntektsmeldingsId = uuid3),
+            enOppgaveEntitet(timeout = now().minusHours(3), tilstand = Tilstand.Utsatt, sakId = "4", inntektsmeldingsId = uuid4)
+        ).forEach { utsattOppgaveService.opprett(it) }
+        utsattOppgaveService.opprettOppgaverForUtgåtte()
+
+        assertEquals(Tilstand.Opprettet, utsattOppgaveDAO.finn(uuid1)?.tilstand)
+        assertEquals(Tilstand.Opprettet, utsattOppgaveDAO.finn(uuid2)?.tilstand)
+        assertEquals(Tilstand.Utsatt, utsattOppgaveDAO.finn(uuid3)?.tilstand)
+        assertEquals(Tilstand.Opprettet, utsattOppgaveDAO.finn(uuid4)?.tilstand)
+    }
+
     private fun enOppgaveEntitet(
         timeout: LocalDateTime,
         tilstand: Tilstand = Tilstand.Utsatt,
-        inntektsmeldingsId: String = UUID.randomUUID().toString()
+        inntektsmeldingsId: String = UUID.randomUUID().toString(),
+        sakId: String = "saksId"
     ) = UtsattOppgaveEntitet(
         fnr = "fnr",
-        sakId = "saksId",
+        sakId = sakId,
         aktørId = "aktørId",
         journalpostId = "journalpostId",
         arkivreferanse = "arkivreferanse",
@@ -342,7 +385,7 @@ open class UtsattOppgaveIntegrasjonsTest  {
         dokumentType: DokumentTypeDTO = DokumentTypeDTO.Inntektsmelding,
         oppdateringstype: OppdateringstypeDTO = OppdateringstypeDTO.Utsett,
         id: UUID = UUID.randomUUID(),
-        timeout: LocalDateTime = LocalDateTime.now()
+        timeout: LocalDateTime = now()
     ) = UtsattOppgaveDTO(
         dokumentType = dokumentType,
         oppdateringstype = oppdateringstype,
