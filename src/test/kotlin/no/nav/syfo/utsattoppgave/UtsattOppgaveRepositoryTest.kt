@@ -4,6 +4,7 @@ import junit.framework.Assert.assertEquals
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.dto.UtsattOppgaveEntitet
 import no.nav.syfo.repository.UtsattOppgaveRepository
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -34,8 +35,13 @@ open class UtsattOppgaveRepositoryTest {
     @Autowired
     private lateinit var repository: UtsattOppgaveRepository
 
+    @Before
+    fun setup() {
+        repository.deleteAll()
+    }
+
     @Test
-    fun finnOppgaverSomSkalOpprettes() {
+    fun `finner en utsatt oppgave som skal opprettes`() {
         repository.save(
             UtsattOppgaveEntitet(
                 id = 0,
@@ -57,7 +63,7 @@ open class UtsattOppgaveRepositoryTest {
     }
 
     @Test
-    fun finnOppgaverSomSkalOpprettes2() {
+    fun `ignorerer oppgaver i andre tilstander`() {
         repository.save(
             enOppgaveEntitet(
                 timeout = now().minusHours(1),
