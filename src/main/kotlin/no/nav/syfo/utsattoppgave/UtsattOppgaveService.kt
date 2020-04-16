@@ -2,6 +2,7 @@ package no.nav.syfo.utsattoppgave
 
 import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.runBlocking
+import no.nav.syfo.behandling.OpprettOppgaveException
 import no.nav.syfo.consumer.rest.OppgaveClient
 import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
 import no.nav.syfo.consumer.ws.SYKEPENGER_UTLAND
@@ -26,9 +27,13 @@ class UtsattOppgaveService(
         utsattOppgaveDAO
             .finnAlleUtgåtteOppgaver()
             .forEach {
-                opprettOppgaveIGosys(it)
-                it.tilstand = Tilstand.Opprettet
-                lagre(it)
+                try {
+                    opprettOppgaveIGosys(it)
+                    it.tilstand = Tilstand.Opprettet
+                    lagre(it)
+                } catch (e: OpprettOppgaveException) {
+                    log.error("feil ved opprettelse av oppgave i gosys. InntektsmeldingId: ${it.inntektsmeldingId}")
+                }
             }
     }
 
