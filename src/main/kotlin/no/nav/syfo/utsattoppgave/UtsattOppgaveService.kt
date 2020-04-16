@@ -2,13 +2,13 @@ package no.nav.syfo.utsattoppgave
 
 import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.runBlocking
+import log
 import no.nav.syfo.behandling.OpprettOppgaveException
 import no.nav.syfo.consumer.rest.OppgaveClient
 import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
 import no.nav.syfo.consumer.ws.SYKEPENGER_UTLAND
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.dto.UtsattOppgaveEntitet
-import no.nav.syfo.helpers.log
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
@@ -22,8 +22,11 @@ class UtsattOppgaveService(
     private val behandlendeEnhetConsumer: BehandlendeEnhetConsumer
 ) {
 
-    @Scheduled(cron = "0 0 * * * *")
+    val log = log()
+
+    @Scheduled(cron = "0 5,10,15,20,25,30,35,40,45,50,55 * * * *")
     fun opprettOppgaverForUtgåtte() {
+        log.info("Sjekker for utgåtte oppgaver")
         utsattOppgaveDAO
             .finnAlleUtgåtteOppgaver()
             .forEach {
@@ -31,6 +34,7 @@ class UtsattOppgaveService(
                     opprettOppgaveIGosys(it)
                     it.tilstand = Tilstand.Opprettet
                     lagre(it)
+                    log.info("Oppgave opprettet i gosys for inntektsmelding: ${it.inntektsmeldingId}")
                 } catch (e: OpprettOppgaveException) {
                     log.error("feil ved opprettelse av oppgave i gosys. InntektsmeldingId: ${it.inntektsmeldingId}")
                 }
