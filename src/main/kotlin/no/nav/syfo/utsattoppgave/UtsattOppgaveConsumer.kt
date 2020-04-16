@@ -20,6 +20,7 @@ import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory
 import org.springframework.kafka.core.ConsumerFactory
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory
+import org.springframework.kafka.listener.ContainerProperties
 import org.springframework.kafka.support.Acknowledgment
 import org.springframework.stereotype.Component
 
@@ -50,7 +51,6 @@ class UtsattOppgaveConsumer(val oppgaveService: UtsattOppgaveService) {
         )
 
         oppgaveService.prosesser(oppdatering)
-
         acknowledgment.acknowledge()
     }
 
@@ -67,7 +67,7 @@ class UtsattOppgaveConsumerConfig(
     fun consumerProperties(): Map<String, Any> = mapOf(
         ConsumerConfig.GROUP_ID_CONFIG to "syfoinntektsmelding-v1",
         ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
-        ConsumerConfig.MAX_POLL_RECORDS_CONFIG to "1000",
+        ConsumerConfig.MAX_POLL_RECORDS_CONFIG to "1",
         ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG to false,
         ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
         ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to UtsattOppgaveDTODeserializer::class.java,
@@ -83,7 +83,8 @@ class UtsattOppgaveConsumerConfig(
     @Bean
     fun kafkaListenerContainerFactory(): ConcurrentKafkaListenerContainerFactory<String, String> =
         ConcurrentKafkaListenerContainerFactory<String, String>().apply {
-            setConsumerFactory(consumerFactory())
+            consumerFactory = consumerFactory()
+            containerProperties.apply { ackMode = ContainerProperties.AckMode.MANUAL_IMMEDIATE }
         }
 
     class UtsattOppgaveDTODeserializer : Deserializer<UtsattOppgaveDTO> {
