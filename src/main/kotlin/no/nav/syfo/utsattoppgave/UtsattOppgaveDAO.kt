@@ -25,6 +25,6 @@ class UtsattOppgaveDAO(val utsattOppgaveRepository: UtsattOppgaveRepository) {
 
     fun finnAlleUtgåtteOppgaver(): List<UtsattOppgaveEntitet> =
         utsattOppgaveRepository.findUtsattOppgaveEntitetByTimeoutBeforeAndTilstandEquals(LocalDateTime.now(), Tilstand.Utsatt)
-            .also { log.info("fant ${it.size} oppgaver som har gått ut") }
+            .also { log.info("Fant ${it.size} utsatte oppgaver som har timet ut hvor vi skal opprette en oppgave i gosys") }
 
 }
