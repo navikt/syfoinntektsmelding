@@ -56,17 +56,20 @@ class UtsattOppgaveService(
             oppdatering.timeout ?: error("Timeout på utsettelse mangler")
             oppgave.timeout = oppdatering.timeout
             lagre(oppgave)
+            log.info("Oppdaterte timeout på inntektsmelding: ${oppgave.inntektsmeldingId} til ${oppdatering.timeout}")
             return
         }
 
         if (oppgave.tilstand == Tilstand.Utsatt && oppdatering.handling == Handling.Forkast) {
             lagre(oppgave.copy(tilstand = Tilstand.Forkastet))
+            log.info("Endret oppgave: ${oppgave.inntektsmeldingId} til tilstand: ${oppgave.tilstand.name}")
             return
         }
 
         if (oppgave.tilstand == Tilstand.Utsatt && oppdatering.handling == Handling.Opprett) {
             opprettOppgaveIGosys(oppgave)
             lagre(oppgave.copy(tilstand = Tilstand.Opprettet))
+            log.info("Endret oppgave: ${oppgave.inntektsmeldingId} til tilstand: ${oppgave.tilstand.name}")
             return
         }
 
@@ -89,7 +92,6 @@ class UtsattOppgaveService(
     }
 
     fun lagre(oppgave: UtsattOppgaveEntitet) {
-        log.info("Endrer oppgave: ${oppgave.inntektsmeldingId} til tilstand: ${oppgave.tilstand.name}")
         utsattOppgaveDAO.lagre(oppgave)
     }
 
