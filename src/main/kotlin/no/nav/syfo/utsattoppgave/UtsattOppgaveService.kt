@@ -9,6 +9,9 @@ import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
 import no.nav.syfo.consumer.ws.SYKEPENGER_UTLAND
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.dto.UtsattOppgaveEntitet
+import no.nav.syfo.util.MDCOperations.MDC_CALL_ID
+import no.nav.syfo.util.MDCOperations.putToMDC
+import no.nav.syfo.util.MDCOperations.remove
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
@@ -26,6 +29,7 @@ class UtsattOppgaveService(
 
     @Scheduled(cron = "0 5,10,15,20,25,30,35,40,45,50,55 * * * *")
     fun opprettOppgaverForUtgåtte() {
+        putToMDC(MDC_CALL_ID, UUID.randomUUID().toString())
         utsattOppgaveDAO
             .finnAlleUtgåtteOppgaver()
             .forEach {
@@ -38,6 +42,7 @@ class UtsattOppgaveService(
                     log.error("feil ved opprettelse av oppgave i gosys. InntektsmeldingId: ${it.inntektsmeldingId}")
                 }
             }
+        remove(MDC_CALL_ID)
     }
 
     fun prosesser(oppdatering: OppgaveOppdatering) {
