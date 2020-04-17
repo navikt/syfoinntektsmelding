@@ -29,11 +29,11 @@ data class UtsattOppgaveEntitet(
     @Column(name = "JOURNALPOST_ID", nullable = false, length = 100, updatable = false)
     var journalpostId: String,
 
-    @Column(name = "TIMEOUT", nullable = false, updatable = false)
+    @Column(name = "TIMEOUT", nullable = false, updatable = true)
     var timeout: LocalDateTime,
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "TILSTAND", nullable = false, length = 100, updatable = false)
+    @Column(name = "TILSTAND", nullable = false, length = 100, updatable = true)
     var tilstand: Tilstand
 )
 
