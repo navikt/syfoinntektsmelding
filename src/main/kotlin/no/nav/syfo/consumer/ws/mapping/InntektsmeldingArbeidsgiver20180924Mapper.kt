@@ -13,7 +13,7 @@ internal object InntektsmeldingArbeidsgiver20180924Mapper {
 
     val log = log()
 
-    fun tilXMLInntektsmelding(jabxInntektsmelding: JAXBElement<Any>, journalpostId: String, inngaaendeJournal: InngaaendeJournal): Inntektsmelding {
+    fun tilXMLInntektsmelding(jabxInntektsmelding: JAXBElement<Any>, journalpostId: String, inngaaendeJournal: InngaaendeJournal, arkivReferanse: String): Inntektsmelding {
         log.info("Behandling inntektsmelding på 20180924 format")
         val skjemainnhold = (jabxInntektsmelding.value as XMLInntektsmeldingM).skjemainnhold
 
@@ -42,11 +42,12 @@ internal object InntektsmeldingArbeidsgiver20180924Mapper {
             opphørAvNaturalYtelse = mapXmlOpphørNaturalytelser(skjemainnhold.opphoerAvNaturalytelseListe),
             gjenopptakelserNaturalYtelse = mapXmlGjenopptakelseNaturalytelser(skjemainnhold.gjenopptakelseNaturalytelseListe),
             gyldighetsStatus = Gyldighetsstatus.GYLDIG,
-            arkivRefereranse = "",
+            arkivRefereranse = arkivReferanse,
             feriePerioder = mapFerie(skjemainnhold.arbeidsforhold),
             førsteFraværsdag = mapFørsteFraværsdag(skjemainnhold.arbeidsforhold),
             mottattDato = mapXmlGregorianTilLocalDate(inngaaendeJournal.mottattDato),
-            begrunnelseRedusert = skjemainnhold.sykepengerIArbeidsgiverperioden.value.begrunnelseForReduksjonEllerIkkeUtbetalt?.value ?: "",
+            begrunnelseRedusert = skjemainnhold.sykepengerIArbeidsgiverperioden.value.begrunnelseForReduksjonEllerIkkeUtbetalt?.value
+                ?: "",
             avsenderSystem = AvsenderSystem(skjemainnhold.avsendersystem.systemnavn, skjemainnhold.avsendersystem.systemversjon),
             nærRelasjon = skjemainnhold.isNaerRelasjon,
             kontaktinformasjon = Kontaktinformasjon(

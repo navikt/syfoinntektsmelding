@@ -65,17 +65,17 @@ class InntektsmeldingBehandlerTest {
     @Test
     @Throws(MessageNotWriteableException::class)
     fun behandler_midlertidig() {
-        `when`(journalpostService.hentInntektsmelding("arkivId")).thenReturn(
-                Inntektsmelding(
-                        arbeidsgiverOrgnummer = "orgnummer",
-                        arbeidsgiverPrivatFnr = null,
-                        arbeidsforholdId = "",
-                        fnr = "fnr",
-                        journalpostId = "arkivId",
-                        journalStatus = JournalStatus.MIDLERTIDIG,
-                        arbeidsgiverperioder = emptyList(),
-                        arkivRefereranse = "AR-123",
-                        mottattDato = LocalDate.of(2019, 2, 6).atStartOfDay(),
+        `when`(journalpostService.hentInntektsmelding("arkivId", any())).thenReturn(
+            Inntektsmelding(
+                arbeidsgiverOrgnummer = "orgnummer",
+                arbeidsgiverPrivatFnr = null,
+                arbeidsforholdId = "",
+                fnr = "fnr",
+                journalpostId = "arkivId",
+                journalStatus = JournalStatus.MIDLERTIDIG,
+                arbeidsgiverperioder = emptyList(),
+                arkivRefereranse = "AR-123",
+                mottattDato = LocalDate.of(2019, 2, 6).atStartOfDay(),
                         arsakTilInnsending = "",
                         førsteFraværsdag = LocalDate.now()
                 )
@@ -90,17 +90,17 @@ class InntektsmeldingBehandlerTest {
     @Test
     @Throws(MessageNotWriteableException::class)
     fun behandler_Ikke_ForskjelligFraMidlertidig() {
-        `when`(journalpostService.hentInntektsmelding("arkivId")).thenReturn(
-                Inntektsmelding(
-                        arkivRefereranse = "AR-123",
-                        arbeidsforholdId = "123",
-                        arsakTilInnsending = "",
-                        arbeidsgiverperioder = emptyList(),
-                        journalStatus = JournalStatus.ANNET,
-                        journalpostId = "arkivId",
-                        mottattDato = LocalDate.of(2019, 2, 6).atStartOfDay(),
-                        fnr = "fnr",
-                        førsteFraværsdag = LocalDate.now()
+        `when`(journalpostService.hentInntektsmelding("arkivId", any())).thenReturn(
+            Inntektsmelding(
+                arkivRefereranse = "AR-123",
+                arbeidsforholdId = "123",
+                arsakTilInnsending = "",
+                arbeidsgiverperioder = emptyList(),
+                journalStatus = JournalStatus.ANNET,
+                journalpostId = "arkivId",
+                mottattDato = LocalDate.of(2019, 2, 6).atStartOfDay(),
+                fnr = "fnr",
+                førsteFraværsdag = LocalDate.now()
                 )
         )
 
@@ -113,17 +113,17 @@ class InntektsmeldingBehandlerTest {
     @Test
     @Throws(MessageNotWriteableException::class)
     fun behandler_Ikke_StatusEndelig() {
-        `when`(journalpostService.hentInntektsmelding("arkivId")).thenReturn(
-                Inntektsmelding(
-                        arkivRefereranse = "AR-123",
-                        arbeidsforholdId = "123",
-                        arsakTilInnsending = "",
-                        arbeidsgiverperioder = emptyList(),
-                        mottattDato = LocalDate.of(2019, 2, 6).atStartOfDay(),
-                        journalStatus = JournalStatus.ENDELIG,
-                        journalpostId = "arkivId",
-                        fnr = "fnr",
-                        førsteFraværsdag = LocalDate.now()
+        `when`(journalpostService.hentInntektsmelding("arkivId", any())).thenReturn(
+            Inntektsmelding(
+                arkivRefereranse = "AR-123",
+                arbeidsforholdId = "123",
+                arsakTilInnsending = "",
+                arbeidsgiverperioder = emptyList(),
+                mottattDato = LocalDate.of(2019, 2, 6).atStartOfDay(),
+                journalStatus = JournalStatus.ENDELIG,
+                journalpostId = "arkivId",
+                fnr = "fnr",
+                førsteFraværsdag = LocalDate.now()
                 )
         )
 

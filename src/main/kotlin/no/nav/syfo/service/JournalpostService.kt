@@ -20,9 +20,9 @@ class JournalpostService(
         private val metrikk: Metrikk
 ) {
 
-    fun hentInntektsmelding(journalpostId: String): Inntektsmelding {
+    fun hentInntektsmelding(journalpostId: String, arkivReferanse: String): Inntektsmelding {
         val inngaaendeJournal = inngaaendeJournalConsumer.hentDokumentId(journalpostId)
-        return journalConsumer.hentInntektsmelding(journalpostId, inngaaendeJournal)
+        return journalConsumer.hentInntektsmelding(journalpostId, inngaaendeJournal, arkivReferanse)
     }
 
     fun ferdigstillJournalpost(saksId: String, inntektsmelding: Inntektsmelding) {

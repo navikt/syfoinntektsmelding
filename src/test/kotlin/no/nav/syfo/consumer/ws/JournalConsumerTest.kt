@@ -50,8 +50,9 @@ class JournalConsumerTest {
         val captor = ArgumentCaptor.forClass(HentDokumentRequest::class.java)
 
         val (_, fnr) = journalConsumer!!.hentInntektsmelding(
-                "journalpostId",
-                InngaaendeJournal(dokumentId = "dokumentId", status = JournalStatus.MIDLERTIDIG)
+            "journalpostId",
+            InngaaendeJournal(dokumentId = "dokumentId", status = JournalStatus.MIDLERTIDIG),
+            any()
         )
 
         verify(journal).hentDokument(captor.capture())
@@ -71,8 +72,9 @@ class JournalConsumerTest {
         `when`(journal!!.hentDokument(any())).thenReturn(response.response)
 
         val (_, _, _, _, _, _, _, _, _, arbeidsgiverperioder) = journalConsumer!!.hentInntektsmelding(
-                "jounralpostID",
-                InngaaendeJournal(dokumentId = "", status = JournalStatus.ANNET)
+            "jounralpostID",
+            InngaaendeJournal(dokumentId = "", status = JournalStatus.ANNET),
+            any()
         )
 
         assertThat(arbeidsgiverperioder.isEmpty())
@@ -88,8 +90,9 @@ class JournalConsumerTest {
         `when`(journal!!.hentDokument(any())).thenReturn(response.response)
 
         val (_, _, _, arbeidsgiverPrivat, _, _, _, _, _, arbeidsgiverperioder) = journalConsumer!!.hentInntektsmelding(
-                "journalpostId",
-                InngaaendeJournal(dokumentId = "", status = JournalStatus.ANNET)
+            "journalpostId",
+            InngaaendeJournal(dokumentId = "", status = JournalStatus.ANNET),
+            any()
         )
 
         assertThat(arbeidsgiverperioder.isEmpty()).isFalse()
@@ -113,8 +116,9 @@ class JournalConsumerTest {
         `when`(journal!!.hentDokument(any())).thenReturn(response.response)
 
         val (_, _, arbeidsgiverOrgnummer, arbeidsgiverPrivat) = journalConsumer!!.hentInntektsmelding(
-                "journalpostId",
-                InngaaendeJournal(dokumentId = "", status = JournalStatus.ANNET)
+            "journalpostId",
+            InngaaendeJournal(dokumentId = "", status = JournalStatus.ANNET),
+            any()
         )
 
         assertThat(arbeidsgiverOrgnummer != null).isTrue()

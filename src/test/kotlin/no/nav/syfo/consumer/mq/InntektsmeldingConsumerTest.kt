@@ -1,13 +1,8 @@
 package no.nav.syfo.consumer.mq
 
-import io.mockk.MockKAnnotations
-import io.mockk.coEvery
-import io.mockk.coVerify
-import io.mockk.every
+import io.mockk.*
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
-import io.mockk.mockk
-import io.mockk.verify
 import no.nav.syfo.behandling.FantIkkeAktørException
 import no.nav.syfo.behandling.Feiltype
 import no.nav.syfo.behandling.Historikk
@@ -90,7 +85,7 @@ class InntektsmeldingConsumerTest {
 
     @MockK
     private var journalpostService = mockk<JournalpostService> {
-        every { hentInntektsmelding(any()) } returns im
+        every { hentInntektsmelding(any(), any()) } returns im
     }
 
     @MockK

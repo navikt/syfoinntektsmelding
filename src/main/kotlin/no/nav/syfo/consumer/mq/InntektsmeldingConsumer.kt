@@ -87,7 +87,7 @@ class InntektsmeldingConsumer(
     }
 
     suspend fun opprettFordelingsoppgave(journalpostId: String): Boolean {
-        val inntektsmelding = journalpostService.hentInntektsmelding(journalpostId)
+        val inntektsmelding = journalpostService.hentInntektsmelding(journalpostId, "AR-1234")
         val behandlendeEnhet = behandlendeEnhetConsumer.hentBehandlendeEnhet(inntektsmelding.fnr)
         val gjelderUtland = (SYKEPENGER_UTLAND == behandlendeEnhet)
         oppgaveClient.opprettFordelingsOppgave(journalpostId, behandlendeEnhet, gjelderUtland)

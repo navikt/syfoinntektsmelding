@@ -13,7 +13,7 @@ internal object InntektsmeldingArbeidsgiverPrivat20181211Mapper {
 
     val log = log()
 
-    fun tilXMLInntektsmelding(jaxbInntektsmelding: JAXBElement<Any>, journalpostId: String, inngaaendeJournal: InngaaendeJournal, aktorConsumer: AktorConsumer): Inntektsmelding {
+    fun tilXMLInntektsmelding(jaxbInntektsmelding: JAXBElement<Any>, journalpostId: String, inngaaendeJournal: InngaaendeJournal, aktorConsumer: AktorConsumer, arkivReferanse: String): Inntektsmelding {
         log.info("Behandling inntektsmelding på 20181211 format")
         val skjemainnhold = (jaxbInntektsmelding.value as XMLInntektsmeldingM).skjemainnhold
 
@@ -43,7 +43,7 @@ internal object InntektsmeldingArbeidsgiverPrivat20181211Mapper {
             opphørAvNaturalYtelse = mapXmlOpphørNaturalytelser(skjemainnhold.opphoerAvNaturalytelseListe),
             gjenopptakelserNaturalYtelse = mapXmlGjenopptakelseNaturalytelser(skjemainnhold.gjenopptakelseNaturalytelseListe),
             gyldighetsStatus = Gyldighetsstatus.GYLDIG,
-            arkivRefereranse = "",
+            arkivRefereranse = arkivReferanse,
             feriePerioder = mapFerie(skjemainnhold.arbeidsforhold),
             førsteFraværsdag = mapFørsteFraværsdag(skjemainnhold.arbeidsforhold),
             mottattDato = mapXmlGregorianTilLocalDate(inngaaendeJournal.mottattDato),
