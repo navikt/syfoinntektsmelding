@@ -65,7 +65,7 @@ class InntektsmeldingBehandlerTest {
     @Test
     @Throws(MessageNotWriteableException::class)
     fun behandler_midlertidig() {
-        `when`(journalpostService.hentInntektsmelding("arkivId", any())).thenReturn(
+        `when`(journalpostService.hentInntektsmelding("arkivId", "AR-123")).thenReturn(
             Inntektsmelding(
                 arbeidsgiverOrgnummer = "orgnummer",
                 arbeidsgiverPrivatFnr = null,
@@ -90,7 +90,7 @@ class InntektsmeldingBehandlerTest {
     @Test
     @Throws(MessageNotWriteableException::class)
     fun behandler_Ikke_ForskjelligFraMidlertidig() {
-        `when`(journalpostService.hentInntektsmelding("arkivId", any())).thenReturn(
+        `when`(journalpostService.hentInntektsmelding("arkivId", "AR-123")).thenReturn(
             Inntektsmelding(
                 arkivRefereranse = "AR-123",
                 arbeidsforholdId = "123",
@@ -113,7 +113,7 @@ class InntektsmeldingBehandlerTest {
     @Test
     @Throws(MessageNotWriteableException::class)
     fun behandler_Ikke_StatusEndelig() {
-        `when`(journalpostService.hentInntektsmelding("arkivId", any())).thenReturn(
+        `when`(journalpostService.hentInntektsmelding("arkivId", "AR-123")).thenReturn(
             Inntektsmelding(
                 arkivRefereranse = "AR-123",
                 arbeidsforholdId = "123",
