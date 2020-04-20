@@ -25,7 +25,6 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory
 import org.springframework.kafka.listener.ContainerProperties
 import org.springframework.kafka.support.Acknowledgment
 import org.springframework.stereotype.Component
-import java.time.Duration
 import java.util.UUID
 
 val objectMapper: ObjectMapper = jacksonObjectMapper()
@@ -91,7 +90,6 @@ class UtsattOppgaveConsumerConfig(
         ConcurrentKafkaListenerContainerFactory<String, String>().apply {
             setErrorHandler(kafkaErrorHandler)
             consumerFactory = consumerFactory()
-            containerProperties.authorizationExceptionRetryInterval = Duration.ofSeconds(30)
             containerProperties.apply { ackMode = ContainerProperties.AckMode.MANUAL_IMMEDIATE }
         }
 
