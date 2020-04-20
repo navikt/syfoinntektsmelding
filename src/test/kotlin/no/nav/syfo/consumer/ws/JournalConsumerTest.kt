@@ -52,7 +52,7 @@ class JournalConsumerTest {
         val (_, fnr) = journalConsumer!!.hentInntektsmelding(
             "journalpostId",
             InngaaendeJournal(dokumentId = "dokumentId", status = JournalStatus.MIDLERTIDIG),
-            any()
+            "AR-123"
         )
 
         verify(journal).hentDokument(captor.capture())
@@ -74,7 +74,7 @@ class JournalConsumerTest {
         val (_, _, _, _, _, _, _, _, _, arbeidsgiverperioder) = journalConsumer!!.hentInntektsmelding(
             "jounralpostID",
             InngaaendeJournal(dokumentId = "", status = JournalStatus.ANNET),
-            any()
+            "AR-123"
         )
 
         assertThat(arbeidsgiverperioder.isEmpty())
@@ -92,7 +92,7 @@ class JournalConsumerTest {
         val (_, _, _, arbeidsgiverPrivat, _, _, _, _, _, arbeidsgiverperioder) = journalConsumer!!.hentInntektsmelding(
             "journalpostId",
             InngaaendeJournal(dokumentId = "", status = JournalStatus.ANNET),
-            any()
+            "AR-123"
         )
 
         assertThat(arbeidsgiverperioder.isEmpty()).isFalse()
@@ -118,7 +118,7 @@ class JournalConsumerTest {
         val (_, _, arbeidsgiverOrgnummer, arbeidsgiverPrivat) = journalConsumer!!.hentInntektsmelding(
             "journalpostId",
             InngaaendeJournal(dokumentId = "", status = JournalStatus.ANNET),
-            any()
+            "AR-123"
         )
 
         assertThat(arbeidsgiverOrgnummer != null).isTrue()
