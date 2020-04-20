@@ -62,14 +62,14 @@ class UtsattOppgaveService(
 
         if (oppgave.tilstand == Tilstand.Utsatt && oppdatering.handling == Handling.Forkast) {
             lagre(oppgave.copy(tilstand = Tilstand.Forkastet))
-            log.info("Endret oppgave: ${oppgave.inntektsmeldingId} til tilstand: ${oppgave.tilstand.name}")
+            log.info("Endret oppgave: ${oppgave.inntektsmeldingId} til tilstand: ${Tilstand.Forkastet.name}")
             return
         }
 
         if (oppgave.tilstand == Tilstand.Utsatt && oppdatering.handling == Handling.Opprett) {
             opprettOppgaveIGosys(oppgave)
             lagre(oppgave.copy(tilstand = Tilstand.Opprettet))
-            log.info("Endret oppgave: ${oppgave.inntektsmeldingId} til tilstand: ${oppgave.tilstand.name}")
+            log.info("Endret oppgave: ${oppgave.inntektsmeldingId} til tilstand: ${Tilstand.Opprettet.name}")
             return
         }
 
