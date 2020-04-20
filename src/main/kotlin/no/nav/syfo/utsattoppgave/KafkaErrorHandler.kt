@@ -37,8 +37,10 @@ class KafkaErrorHandler : ContainerAwareErrorHandler {
                     throw thrownException
                 }
             }.start()
-
+            log.error("Restarter kafka-consumeren")
             STOPPING_ERROR_HANDLER.handle(thrownException, records, consumer, container)
         }
+        log.error("Uventet feil i kafka-consumeren - stopper lytteren")
+        STOPPING_ERROR_HANDLER.handle(thrownException, records, consumer, container)
     }
 }
