@@ -6,6 +6,8 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.ktor.util.KtorExperimentalAPI
+import no.nav.syfo.util.MDCOperations
+import no.nav.syfo.util.MDCOperations.MDC_CALL_ID
 import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.ConsumerRecord
@@ -24,6 +26,7 @@ import org.springframework.kafka.listener.ContainerProperties
 import org.springframework.kafka.support.Acknowledgment
 import org.springframework.stereotype.Component
 import java.time.Duration
+import java.util.UUID
 
 val objectMapper: ObjectMapper = jacksonObjectMapper()
     .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
@@ -39,6 +42,7 @@ class UtsattOppgaveConsumer(val oppgaveService: UtsattOppgaveService) {
         containerFactory = "kafkaListenerContainerFactory"
     )
     fun listen(cr: ConsumerRecord<String, UtsattOppgaveDTO>, acknowledgment: Acknowledgment) {
+        MDCOperations.putToMDC(MDC_CALL_ID, UUID.randomUUID().toString())
         if (cr.value().dokumentType != DokumentTypeDTO.Inntektsmelding) {
             acknowledgment.acknowledge()
             return
@@ -53,6 +57,7 @@ class UtsattOppgaveConsumer(val oppgaveService: UtsattOppgaveService) {
 
         oppgaveService.prosesser(oppdatering)
         acknowledgment.acknowledge()
+        MDCOperations.remove(MDC_CALL_ID)
     }
 
 }
