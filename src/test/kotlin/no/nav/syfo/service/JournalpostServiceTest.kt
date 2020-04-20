@@ -70,7 +70,7 @@ class JournalpostServiceTest {
     fun hentInntektsmelding() {
         val journal = InngaaendeJournal(dokumentId = "dokumentId", status = JournalStatus.MIDLERTIDIG)
         `when`(inngaaendeJournalConsumer!!.hentDokumentId("journalpostId")).thenReturn(journal)
-        `when`(journalConsumer!!.hentInntektsmelding("journalpostId", journal, any()))
+        `when`(journalConsumer!!.hentInntektsmelding("journalpostId", journal, "AR-1234"))
                 .thenReturn(
                         Inntektsmelding(
                                 fnr = "fnr",
