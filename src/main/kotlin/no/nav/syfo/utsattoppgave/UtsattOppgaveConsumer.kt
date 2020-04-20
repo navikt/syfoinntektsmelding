@@ -23,6 +23,7 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory
 import org.springframework.kafka.listener.ContainerProperties
 import org.springframework.kafka.support.Acknowledgment
 import org.springframework.stereotype.Component
+import java.time.Duration
 
 val objectMapper: ObjectMapper = jacksonObjectMapper()
     .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
@@ -81,9 +82,11 @@ class UtsattOppgaveConsumerConfig(
     fun consumerFactory(): ConsumerFactory<String, String> = DefaultKafkaConsumerFactory(consumerProperties())
 
     @Bean
-    fun kafkaListenerContainerFactory(): ConcurrentKafkaListenerContainerFactory<String, String> =
+    fun kafkaListenerContainerFactory(kafkaErrorHandler: KafkaErrorHandler): ConcurrentKafkaListenerContainerFactory<String, String> =
         ConcurrentKafkaListenerContainerFactory<String, String>().apply {
+            setErrorHandler(kafkaErrorHandler)
             consumerFactory = consumerFactory()
+            containerProperties.authorizationExceptionRetryInterval = Duration.ofSeconds(30)
             containerProperties.apply { ackMode = ContainerProperties.AckMode.MANUAL_IMMEDIATE }
         }
 
