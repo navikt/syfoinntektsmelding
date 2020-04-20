@@ -2,6 +2,7 @@ package no.nav.syfo.utsattoppgave
 
 import junit.framework.Assert.assertEquals
 import junit.framework.Assert.assertNotNull
+import junit.framework.Assert.assertNull
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.dto.UtsattOppgaveEntitet
 import no.nav.syfo.repository.UtsattOppgaveRepository
@@ -87,6 +88,12 @@ open class UtsattOppgaveDAOTest {
         assertEquals(Tilstand.Forkastet, _oppgave1.tilstand)
         val _oppgave2 = utsattOppgaveDAO.finn(oppgave2.inntektsmeldingId)!!
         assertEquals(Tilstand.Utsatt, _oppgave2.tilstand)
+    }
+
+    @Test
+    fun `finner ikke oppgave på manglende inntektsmelding`() {
+        val maybeOppgave = utsattOppgaveDAO.finn(UUID.randomUUID().toString())
+        assertNull(maybeOppgave)
     }
 
     fun oppgave() = UtsattOppgaveEntitet(
