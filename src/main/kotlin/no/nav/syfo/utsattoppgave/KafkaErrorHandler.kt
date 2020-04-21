@@ -23,7 +23,7 @@ class KafkaErrorHandler : ContainerAwareErrorHandler {
     ) {
         log.error("Feil i listener:", thrownException)
 
-        if (thrownException::class.java == TopicAuthorizationException::class.java) {
+        if (exceptionIsClass(thrownException, TopicAuthorizationException::class.java)) {
             log.error("Kafka infrastrukturfeil. TopicAuthorizationException ved lesing av topic")
 
             Thread {
@@ -42,5 +42,15 @@ class KafkaErrorHandler : ContainerAwareErrorHandler {
         }
         log.error("Uventet feil i kafka-consumeren - stopper lytteren")
         STOPPING_ERROR_HANDLER.handle(thrownException, records, consumer, container)
+    }
+
+    private fun exceptionIsClass(throwable: Throwable?, klazz: Class<*>): Boolean {
+        var t = throwable
+        var maxdepth = 10
+        while (maxdepth-- > 0 && t != null && !klazz.isInstance(t)) {
+            t = t.cause
+        }
+
+        return klazz.isInstance(t)
     }
 }
