@@ -27,7 +27,7 @@ class UtsattOppgaveService(
 
     val log = log()
 
-    @Scheduled(cron = "0 5,10,15,20,25,30,35,40,45,50,55 * * * *")
+    @Scheduled(cron = "0 0 * * * *")
     fun opprettOppgaverForUtgåtte() {
         putToMDC(MDC_CALL_ID, UUID.randomUUID().toString())
         utsattOppgaveDAO
