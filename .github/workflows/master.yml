@@ -3,8 +3,11 @@ name: Bygg og deploy til preprod
 on:
   push:
     branches:
-    - master
-    - 'preprod/**'
+      - master
+      - 'preprod/**'
+
+env:
+  IMAGE: docker.pkg.github.com/${{ github.repository }}/syfoinntektsmelding:${{ github.sha }}
 
 jobs:
   # Label of the container job
@@ -36,38 +39,28 @@ jobs:
         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
         restore-keys: |
           ${{ runner.os }}-gradle-
-    - name: create docker tag
-      env:
-        DOCKER_IMAGE: docker.pkg.github.com/${{ github.repository }}/syfoinntektsmelding
-      run: |
-        echo $DOCKER_IMAGE > .docker_image
-        echo $(echo $GITHUB_SHA | cut -c1-7) > .docker_tag
     - name: test and build
       run: ./gradlew test build
       env:
         ORG_GRADLE_PROJECT_githubUser: x-access-token
         ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
-    - name: build docker image
-      run: docker build . --pull -t $(cat .docker_image):$(cat .docker_tag)
-    - name: push docker image
-      run: |
-        echo "$GITHUB_ACCESS_TOKEN" | docker login --username "x-access-token" --password-stdin https://docker.pkg.github.com
-        docker push $(cat .docker_image):$(cat .docker_tag)
-      env:
-        GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_ACCESS_TOKEN }}
-    - name: deploy to preprod
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        NAV_CLUSTER: dev-fss
-        NAISERATOR_FILE: deploy/dev.json
-      run: |
-        NAISERATOR=$(jq '.spec.image = "'$(cat .docker_image)':'$(cat .docker_tag)'"' -c $NAISERATOR_FILE )
-        DEPLOY_PAYLOAD=$(jq ".payload.kubernetes.resources += [$NAISERATOR]" deploy/deployreq.json)
-        DEPLOY_PAYLOAD=$(echo $DEPLOY_PAYLOAD | jq '.environment = "'$NAV_CLUSTER'"')
-        DEPLOY_PAYLOAD=$(echo $DEPLOY_PAYLOAD | jq '.ref = "'$(cat .docker_tag)'"')
-        curl -i -n --fail \
-           -X POST \
-           -u x-access-token:$GITHUB_TOKEN \
-           -d "$DEPLOY_PAYLOAD" \
-           -H "Accept: application/vnd.github.ant-man-preview+json" \
-           https://api.github.com/repos/$GITHUB_REPOSITORY/deployments
+    - name: Build and publish Docker image
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          docker build --tag ${IMAGE} .
+          docker login docker.pkg.github.com -u ${GITHUB_REPOSITORY} -p ${GITHUB_TOKEN}
+          docker push ${IMAGE}
+
+  deploy:
+    name: Deploy to PREPROD
+    needs: build
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: nais/deploy/actions/deploy@v1
+        env:
+          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+          CLUSTER: dev-fss
+          RESOURCE: deploy/dev.yaml
