@@ -3,11 +3,14 @@ name: Bygg og deploy til prod
 on:
   push:
     tags:
-    - prod/*
+      - prod/*
+
+env:
+  IMAGE: docker.pkg.github.com/${{ github.repository }}/syfoinntektsmelding:${{ github.sha }}
 
 jobs:
   # Label of the container job
-  runner-job:
+  build:
     # You must use a Linux environment when using service containers or container jobs
     runs-on: ubuntu-latest
 
@@ -35,38 +38,27 @@ jobs:
         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
         restore-keys: |
           ${{ runner.os }}-gradle-
-    - name: create docker tag
-      env:
-        DOCKER_IMAGE: docker.pkg.github.com/${{ github.repository }}/syfoinntektsmelding
-      run: |
-        echo $DOCKER_IMAGE > .docker_image
-        echo $(echo $GITHUB_SHA | cut -c1-7) > .docker_tag
     - name: test and build
       run: ./gradlew test build
       env:
         ORG_GRADLE_PROJECT_githubUser: x-access-token
         ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
-    - name: build docker image
-      run: docker build . --pull -t $(cat .docker_image):$(cat .docker_tag)
-    - name: push docker image
-      run: |
-        echo "$GITHUB_ACCESS_TOKEN" | docker login --username "x-access-token" --password-stdin https://docker.pkg.github.com
-        docker push $(cat .docker_image):$(cat .docker_tag)
-      env:
-        GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_ACCESS_TOKEN }}
-    - name: Deploy to Prod
+    - name: Build and publish Docker image
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        NAV_CLUSTER: prod-fss
-        NAISERATOR_FILE: deploy/prod.json
       run: |
-        NAISERATOR=$(jq '.spec.image = "'$(cat .docker_image)':'$(cat .docker_tag)'"' -c $NAISERATOR_FILE )
-        DEPLOY_PAYLOAD=$(jq ".payload.kubernetes.resources += [$NAISERATOR]" deploy/deployreq.json)
-        DEPLOY_PAYLOAD=$(echo $DEPLOY_PAYLOAD | jq '.environment = "'$NAV_CLUSTER'"')
-        DEPLOY_PAYLOAD=$(echo $DEPLOY_PAYLOAD | jq '.ref = "'$(cat .docker_tag)'"')
-        curl -i -n --fail \
-           -X POST \
-           -u x-access-token:$GITHUB_TOKEN \
-           -d "$DEPLOY_PAYLOAD" \
-           -H "Accept: application/vnd.github.ant-man-preview+json" \
-           https://api.github.com/repos/$GITHUB_REPOSITORY/deployments
+        docker build --tag ${IMAGE} .
+        docker login docker.pkg.github.com -u ${GITHUB_REPOSITORY} -p ${GITHUB_TOKEN}
+        docker push ${IMAGE}
+
+  deploy:
+    name: Deploy to PROD
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: nais/deploy/actions/deploy@v1
+        env:
+          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+          CLUSTER: prod-fss
+          RESOURCE: deploy/prod.yaml
