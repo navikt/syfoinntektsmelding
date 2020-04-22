@@ -24,96 +24,96 @@ spec:
     timeout: 1
   readiness:
     failureThreshold: 3
-      initialDelay: 60
-      path: /internal/isReady
-      periodSeconds: 10
-      timeout: 1
+    initialDelay: 60
+    path: /internal/isReady
+    periodSeconds: 10
+    timeout: 1
       replicas:
         max: 1
         min: 1
-      resources:
-        limits:
-          cpu: "1000m"
-          memory: "1024Mi"
-        requests:
-          cpu: "500m"
-          memory: "386Mi"
-      vault:
-        enabled: true
-      sidecar: true
-      webproxy: true
-      env:
-        - name: LOADBALANCER_FQDN
-          value: "syfoinntektsmelding.nais.preprod.local"
-        - name: ABAC_PDP_ENDPOINT_URL
-          value: "https://wasapp-q0.adeo.no/asm-pdp/authorize"
-        - name: SECURITYTOKENSERVICE_URL
-          value: "https://sts-q1.preprod.local/SecurityTokenServiceProvider/"
-        - name: SRVSYFOINNTEKTSMELDING_USERNAME
-          value: srvsyfoinntektsmel
-        - name: OPENIDCONNECT_ISSOHOST
-          value: "https://isso-q.adeo.no:443/isso/oauth2"
-        - name: OPENIDCONNECT_ISSOISSUER
-        value: "https://isso-q.adeo.no:443/isso/oauth2"
-          - name: OPENIDCONNECT_ISSOJWKS
-        value: "https://isso-q.adeo.no:443/isso/oauth2/connect/jwk_uri"
-          - name: OPENIDCONNECT_USERNAME
-        value: "syfoinntektsmelding-q1"
-          - name: OIDC_STS_ISSUERURL
-        value: "http://security-token-service.default.svc.nais.local"
-          - name: OIDC_STS_JWKSURL
-        value: "http://security-token-service.default.svc.nais.local/rest/v1/sts/jwks"
-          - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
-        value: "b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443"
-          - name: SPRING_DATASOURCE_URL
-        value: "jdbc:postgresql://b27dbvl009.preprod.local/syfoinntektsmelding"
-          - name: SYFO_MOTTAK_INNTEKTSMELDING_QUEUENAME
-        value: "QA.Q1_SYFO.MOTTAK_INNTEKTSMELDING"
-          - name: SYFOINNTEKTSMELDING_CHANNEL_NAME
-        value: Q1_SYFOINNTEKTSMLD
-          - name: MQGATEWAY03_HOSTNAME
-        value: "b27apvl173.preprod.local"
-          - name: MQGATEWAY03_PORT
-        value: "1413"
-          - name: MQGATEWAY03_NAME
-        value: MQ1LSC03
-          - name: INNGAAENDEJOURNAL_V1_ENDPOINTURL
-        value: "https://dokarkiv-q1.nais.preprod.local/services/inngaaendejournal/v1"
-          - name: BEHANDLEINNGAAENDEJOURNAL_V1_ENDPOINTURL
-        value: "https://dokarkiv-q1.nais.preprod.local/services/behandleinngaaendejournal/v1"
-          - name: JOURNAL_V2_ENDPOINTURL
-        value: "https://wasapp-q1.adeo.no/joark/Journal/v2"
-          - name: VIRKSOMHET_PERSON_V3_ENDPOINTURL
-        value: "https://wasapp-q1.adeo.no/tpsws/ws/Person/v3"
-          - name: VIRKSOMHET_ARBEIDSFORDELING_V1_ENDPOINTURL
-        value: "https://app-q1.adeo.no/norg2/ws/Arbeidsfordeling/v1"
-          - name: SERVICEGATEWAY_URL
-        value: "https://service-gw-q1.preprod.local/"
-          - name: VIRKSOMHET_BEHANDLESAK_V2_ENDPOINTURL
-        value: "https://wasapp-q1.adeo.no/nav-gsak-ws/BehandleSakV2"
-          - name: VIRKSOMHET_OPPGAVE_V3_ENDPOINTURL
-        value: "https://wasapp-q1.adeo.no/nav-gsak-ws/OppgaveV3"
-          - name: VIRKSOMHET_OPPGAVEBEHANDLING_V3_ENDPOINTURL
-        value: "https://wasapp-q1.adeo.no/nav-gsak-ws/OppgavebehandlingV3"
-          - name: SYFOSERVICESTRANGLERAPI_URL
-        value: "http://syfoservicestrangler.default.svc.nais.local/api"
-          - name: AKTOERREGISTER_API_V1_URL
-        value: "https://app-q1.adeo.no/aktoerregister/api/v1"
-          - name: SECURITY_TOKEN_SERVICE_TOKEN_URL
-        value: "http://security-token-service.default.svc.nais.local/rest/v1/sts/token"
-          - name: AADACCESSTOKEN_URL
-        value: "https://login.microsoftonline.com/navq.onmicrosoft.com/oauth2/token"
-          - name: AAD_SYFOGSAK_CLIENTID_USERNAME
-        value: "ddbeeacd-9280-4741-a49a-45d7690b730e"
-          - name: AAD_SYFOINNTEKTSMELDING_CLIENTID_USERNAME
-        value: "56813e1b-97db-4da9-bcc1-a53d0a677ca2"
-          - name: OPPGAVEBEHANDLING_URL
-        value: "http://oppgave.default.svc.nais.local/api/v1/oppgaver"
-          - name: OPPRETT_SAK_URL
-        value: "http://sak.default.svc.nais.local/api/v1/saker"
-          - name: SRVAPPSERVER_USERNAME
-        value: srvappserver
-          - name: SRVAPPSERVER_PASSWORD
-        value: ""
-          - name: VAULT_BACKEND
-        value: "postgresql/preprod-fss"
+resources:
+  limits:
+    cpu: "1000m"
+    memory: "1024Mi"
+  requests:
+    cpu: "500m"
+    memory: "386Mi"
+vault:
+  enabled: true
+sidecar: true
+webproxy: true
+env:
+  - name: LOADBALANCER_FQDN
+    value: "syfoinntektsmelding.nais.preprod.local"
+  - name: ABAC_PDP_ENDPOINT_URL
+    value: "https://wasapp-q0.adeo.no/asm-pdp/authorize"
+  - name: SECURITYTOKENSERVICE_URL
+    value: "https://sts-q1.preprod.local/SecurityTokenServiceProvider/"
+  - name: SRVSYFOINNTEKTSMELDING_USERNAME
+    value: srvsyfoinntektsmel
+  - name: OPENIDCONNECT_ISSOHOST
+    value: "https://isso-q.adeo.no:443/isso/oauth2"
+  - name: OPENIDCONNECT_ISSOISSUER
+    value: "https://isso-q.adeo.no:443/isso/oauth2"
+  - name: OPENIDCONNECT_ISSOJWKS
+    value: "https://isso-q.adeo.no:443/isso/oauth2/connect/jwk_uri"
+  - name: OPENIDCONNECT_USERNAME
+    value: "syfoinntektsmelding-q1"
+  - name: OIDC_STS_ISSUERURL
+    value: "http://security-token-service.default.svc.nais.local"
+  - name: OIDC_STS_JWKSURL
+    value: "http://security-token-service.default.svc.nais.local/rest/v1/sts/jwks"
+  - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+    value: "b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443"
+  - name: SPRING_DATASOURCE_URL
+    value: "jdbc:postgresql://b27dbvl009.preprod.local/syfoinntektsmelding"
+  - name: SYFO_MOTTAK_INNTEKTSMELDING_QUEUENAME
+    value: "QA.Q1_SYFO.MOTTAK_INNTEKTSMELDING"
+  - name: SYFOINNTEKTSMELDING_CHANNEL_NAME
+    value: Q1_SYFOINNTEKTSMLD
+  - name: MQGATEWAY03_HOSTNAME
+    value: "b27apvl173.preprod.local"
+  - name: MQGATEWAY03_PORT
+    value: "1413"
+  - name: MQGATEWAY03_NAME
+    value: MQ1LSC03
+  - name: INNGAAENDEJOURNAL_V1_ENDPOINTURL
+    value: "https://dokarkiv-q1.nais.preprod.local/services/inngaaendejournal/v1"
+  - name: BEHANDLEINNGAAENDEJOURNAL_V1_ENDPOINTURL
+    value: "https://dokarkiv-q1.nais.preprod.local/services/behandleinngaaendejournal/v1"
+  - name: JOURNAL_V2_ENDPOINTURL
+    value: "https://wasapp-q1.adeo.no/joark/Journal/v2"
+  - name: VIRKSOMHET_PERSON_V3_ENDPOINTURL
+    value: "https://wasapp-q1.adeo.no/tpsws/ws/Person/v3"
+  - name: VIRKSOMHET_ARBEIDSFORDELING_V1_ENDPOINTURL
+    value: "https://app-q1.adeo.no/norg2/ws/Arbeidsfordeling/v1"
+  - name: SERVICEGATEWAY_URL
+    value: "https://service-gw-q1.preprod.local/"
+  - name: VIRKSOMHET_BEHANDLESAK_V2_ENDPOINTURL
+    value: "https://wasapp-q1.adeo.no/nav-gsak-ws/BehandleSakV2"
+  - name: VIRKSOMHET_OPPGAVE_V3_ENDPOINTURL
+    value: "https://wasapp-q1.adeo.no/nav-gsak-ws/OppgaveV3"
+  - name: VIRKSOMHET_OPPGAVEBEHANDLING_V3_ENDPOINTURL
+    value: "https://wasapp-q1.adeo.no/nav-gsak-ws/OppgavebehandlingV3"
+  - name: SYFOSERVICESTRANGLERAPI_URL
+    value: "http://syfoservicestrangler.default.svc.nais.local/api"
+  - name: AKTOERREGISTER_API_V1_URL
+    value: "https://app-q1.adeo.no/aktoerregister/api/v1"
+  - name: SECURITY_TOKEN_SERVICE_TOKEN_URL
+    value: "http://security-token-service.default.svc.nais.local/rest/v1/sts/token"
+  - name: AADACCESSTOKEN_URL
+    value: "https://login.microsoftonline.com/navq.onmicrosoft.com/oauth2/token"
+  - name: AAD_SYFOGSAK_CLIENTID_USERNAME
+    value: "ddbeeacd-9280-4741-a49a-45d7690b730e"
+  - name: AAD_SYFOINNTEKTSMELDING_CLIENTID_USERNAME
+    value: "56813e1b-97db-4da9-bcc1-a53d0a677ca2"
+  - name: OPPGAVEBEHANDLING_URL
+    value: "http://oppgave.default.svc.nais.local/api/v1/oppgaver"
+  - name: OPPRETT_SAK_URL
+    value: "http://sak.default.svc.nais.local/api/v1/saker"
+  - name: SRVAPPSERVER_USERNAME
+    value: srvappserver
+  - name: SRVAPPSERVER_PASSWORD
+    value: ""
+  - name: VAULT_BACKEND
+    value: "postgresql/preprod-fss"
