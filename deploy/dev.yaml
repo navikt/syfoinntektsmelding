@@ -28,9 +28,9 @@ spec:
     path: /internal/isReady
     periodSeconds: 10
     timeout: 1
-      replicas:
-        max: 1
-        min: 1
+replicas:
+  max: 1
+  min: 1
 resources:
   limits:
     cpu: "1000m"
