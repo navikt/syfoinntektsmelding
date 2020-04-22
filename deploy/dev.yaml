@@ -4,7 +4,7 @@ metadata:
   name: syfoinntektsmelding
   namespace: default
   labels:
-    team": helsearbeidsgiver
+    team: helsearbeidsgiver
 spec:
   ingresses:
     - https://syfoinntektsmelding.nais.preprod.local
