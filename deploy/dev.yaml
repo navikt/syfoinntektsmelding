@@ -22,7 +22,7 @@ spec:
     path: /internal/isAlive
     periodSeconds: 10
     timeout: 1
-  readiness": {
+  readiness:
     failureThreshold: 3
       initialDelay: 60
       path: /internal/isReady
