@@ -46,7 +46,7 @@ class InntektsmeldingService(
     fun slettInntektsmeldingerEldreEnnKonfigurertMåneder() {
         val konfigurertAntallMånederSiden = LocalDate.now().minusMonths(lagringstidMåneder.toLong()).atStartOfDay()
         log.info("Sletter alle inntektsmeldinger før $konfigurertAntallMånederSiden")
-        val antallSlettet = repository.deleteByBehandletBefore(konfigurertAntallMånederSiden).size
+        val antallSlettet = repository.deleteByBehandletBefore(konfigurertAntallMånederSiden)
         log.info("Slettet $antallSlettet inntektsmeldinger")
     }
 

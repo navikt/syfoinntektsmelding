@@ -12,6 +12,6 @@ interface InntektsmeldingRepository : JpaRepository<InntektsmeldingEntitet, Stri
 
     fun findFirst100ByBehandletBefore(førDato: LocalDateTime): List<InntektsmeldingEntitet>
 
-    fun deleteByBehandletBefore(førDato: LocalDateTime): List<InntektsmeldingEntitet>
+    fun deleteByBehandletBefore(førDato: LocalDateTime): Long
 
 }
