@@ -116,4 +116,4 @@ spec:
     - name: VAULT_BACKEND
       value: postgresql/prod-fss
     - name: VAULT_MOUNTPATH
-        value: postgresql/prod-fss/
+      value: postgresql/prod-fss/

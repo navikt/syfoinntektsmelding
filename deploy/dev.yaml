@@ -118,4 +118,4 @@ env:
   - name: VAULT_BACKEND
     value: postgresql/preprod-fss
   - name: VAULT_MOUNTPATH
-      value: postgresql/preprod-fss/
+    value: postgresql/preprod-fss/
