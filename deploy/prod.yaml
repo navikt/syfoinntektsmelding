@@ -48,7 +48,7 @@ spec:
     - name: SECURITYTOKENSERVICE_URL
       value: "https://sts.adeo.no/SecurityTokenServiceProvider/"
     - name: SRVSYFOINNTEKTSMELDING_USERNAME
-      value: "srvsyfoinntektsmel"
+      value: srvsyfoinntektsmel
     - name: OPENIDCONNECT_ISSOHOST
       value: "https://isso.adeo.no:443/isso/oauth2"
     - name: OPENIDCONNECT_ISSOISSUER
@@ -68,13 +68,13 @@ spec:
     - name: SYFO_MOTTAK_INNTEKTSMELDING_QUEUENAME
       value: "QA.P_SYFO.MOTTAK_INNTEKTSMELDING"
     - name: SYFOINNTEKTSMELDING_CHANNEL_NAME
-      value: "P_SYFOINNTEKTSMLD"
+      value: P_SYFOINNTEKTSMLD
     - name: MQGATEWAY03_HOSTNAME
       value: "a01apvl062.adeo.no"
     - name: MQGATEWAY03_PORT
       value: "1414"
     - name: MQGATEWAY03_NAME
-      value: "MPLSC03"
+      value: MPLSC03
     - name: INNGAAENDEJOURNAL_V1_ENDPOINTURL
       value: "https://dokarkiv.nais.adeo.no/services/inngaaendejournal/v1"
     - name: BEHANDLEINNGAAENDEJOURNAL_V1_ENDPOINTURL
@@ -102,9 +102,9 @@ spec:
     - name: AADACCESSTOKEN_URL
       value: "https://login.microsoftonline.com/navno.onmicrosoft.com/oauth2/token"
     - name: AAD_SYFOGSAK_CLIENTID_USERNAME
-      value: "1e05815e-2d35-4903-b304-623b4d137c23\n"
+      value: 1e05815e-2d35-4903-b304-623b4d137c23
     - name: AAD_SYFOINNTEKTSMELDING_CLIENTID_USERNAME
-      value: "e533392d-3b97-4c8c-a0d5-d4af010f1b54"
+      value: e533392d-3b97-4c8c-a0d5-d4af010f1b54
     - name: OPPGAVEBEHANDLING_URL
       value: "http://oppgave.default.svc.nais.local/api/v1/oppgaver"
     - name: OPPRETT_SAK_URL

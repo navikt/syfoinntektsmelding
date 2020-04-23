@@ -106,7 +106,7 @@ env:
   - name: AAD_SYFOGSAK_CLIENTID_USERNAME
     value: ddbeeacd-9280-4741-a49a-45d7690b730e
   - name: AAD_SYFOINNTEKTSMELDING_CLIENTID_USERNAME
-    value: "56813e1b-97db-4da9-bcc1-a53d0a677ca2"
+    value: 56813e1b-97db-4da9-bcc1-a53d0a677ca2
   - name: OPPGAVEBEHANDLING_URL
     value: "http://oppgave.default.svc.nais.local/api/v1/oppgaver"
   - name: OPPRETT_SAK_URL
