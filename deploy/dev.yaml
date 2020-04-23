@@ -104,7 +104,7 @@ env:
   - name: AADACCESSTOKEN_URL
     value: "https://login.microsoftonline.com/navq.onmicrosoft.com/oauth2/token"
   - name: AAD_SYFOGSAK_CLIENTID_USERNAME
-    value: "ddbeeacd-9280-4741-a49a-45d7690b730e"
+    value: ddbeeacd-9280-4741-a49a-45d7690b730e
   - name: AAD_SYFOINNTEKTSMELDING_CLIENTID_USERNAME
     value: "56813e1b-97db-4da9-bcc1-a53d0a677ca2"
   - name: OPPGAVEBEHANDLING_URL
@@ -116,4 +116,6 @@ env:
   - name: SRVAPPSERVER_PASSWORD
     value: ""
   - name: VAULT_BACKEND
-    value: "postgresql/preprod-fss"
+    value: postgresql/preprod-fss
+  - name: VAULT_MOUNTPATH
+      value: postgresql/preprod-fss/
