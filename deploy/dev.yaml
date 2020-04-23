@@ -40,6 +40,9 @@ resources:
     memory: "386Mi"
 vault:
   enabled: true
+  paths:
+    - kvPath: /kv/preprod/fss/syfoinntektsmelding/default
+      mountpath: /var/run/secrets/nais.io/vault
 sidecar: true
 webproxy: true
 env:
