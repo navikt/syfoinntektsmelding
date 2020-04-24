@@ -40,11 +40,12 @@ class InntektsmeldingService(
     }
 
     // Sekund, Minutt, Time, Dag, Måned, Ukedag
-    @Scheduled(cron = "0 0 4 * * *")
+    //@Scheduled(cron = "0 0 4 * * *")
+    @Scheduled(fixedRate = 1000 * 60 * 60 * 24, initialDelay = 0)
     @Transactional(Transactional.TxType.REQUIRED)
     @org.springframework.transaction.annotation.Transactional("transactionManager")
     fun slettInntektsmeldingerEldreEnnKonfigurertMåneder() {
-        val konfigurertAntallMånederSiden = LocalDate.now().minusMonths(lagringstidMåneder.toLong()).atStartOfDay()
+        val konfigurertAntallMånederSiden = LocalDate.now().minusMonths(/*lagringstidMåneder.toLong()*/12).atStartOfDay()
         log.info("Sletter alle inntektsmeldinger før $konfigurertAntallMånederSiden")
         val antallSlettet = repository.deleteByBehandletBefore(konfigurertAntallMånederSiden)
         log.info("Slettet $antallSlettet inntektsmeldinger")
