@@ -8,7 +8,7 @@ val flywayVersion = "6.1.4"
 val cxfVersion = "3.3.3"
 val clientMockVersion = "1.2.3-1.3.50-eap-5"
 val swaggerVersion = "2.7.0"
-val kotlinVersion = "1.3.50"
+val kotlinVersion = "1.3.72"
 val hikariVersion = "3.4.2"
 
 val mainClass = "no.nav.syfo.Application"
@@ -17,9 +17,9 @@ val githubPassword: String by project
 
 plugins {
     "maven-publish"
-    id("org.jetbrains.kotlin.jvm") version "1.3.50"
-    id("org.jetbrains.kotlin.plugin.allopen") version "1.3.50"
-    id("org.jetbrains.kotlin.plugin.jpa") version "1.3.50"
+    id("org.jetbrains.kotlin.jvm") version "1.3.72"
+    id("org.jetbrains.kotlin.plugin.allopen") version "1.3.72"
+    id("org.jetbrains.kotlin.plugin.jpa") version "1.3.72"
     id("org.flywaydb.flyway") version "5.1.4"
     java
 }
@@ -27,7 +27,7 @@ plugins {
 buildscript {
     dependencies {
         classpath("org.junit.platform:junit-platform-gradle-plugin:1.2.0")
-        classpath("org.jetbrains.kotlin:kotlin-noarg:1.3.50")
+        classpath("org.jetbrains.kotlin:kotlin-noarg:1.3.72")
     }
 }
 

@@ -1,8 +1,6 @@
 package no.nav.syfo.dto
 
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType
-import org.hibernate.annotations.OnDelete
-import org.hibernate.annotations.OnDeleteAction
 import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
 import java.time.LocalDate
@@ -16,45 +14,44 @@ import javax.persistence.CascadeType.ALL
 @TypeDef(
     name = "jsonb",
     typeClass = JsonBinaryType::class
-    )
-data class InntektsmeldingEntitet (
+)
+data class InntektsmeldingEntitet(
 
-        @Id
-        @Column(name = "INNTEKTSMELDING_UUID", length = 100, updatable = false)
-        var uuid: String = UUID.randomUUID().toString(),
+    @Id
+    @Column(name = "INNTEKTSMELDING_UUID", length = 100, updatable = false)
+    var uuid: String = UUID.randomUUID().toString(),
 
-        @Column(name = "AKTOR_ID", nullable = false)
-        var aktorId: String,
+    @Column(name = "AKTOR_ID", nullable = false)
+    var aktorId: String,
 
-        @Column(name = "SAK_ID", nullable = false, length = 50)
-        var sakId: String,
+    @Column(name = "SAK_ID", nullable = false, length = 50)
+    var sakId: String,
 
-        @Column(name = "JOURNALPOST_ID", length = 100)
-        var journalpostId: String,
+    @Column(name = "JOURNALPOST_ID", length = 100)
+    var journalpostId: String,
 
-        @Column(name = "ORGNUMMER", nullable = true, length = 50)
-        var orgnummer: String? = null,
+    @Column(name = "ORGNUMMER", nullable = true, length = 50)
+    var orgnummer: String? = null,
 
-        @Column(name = "ARBEIDSGIVER_PRIVAT", nullable = true, length = 50)
-        var arbeidsgiverPrivat: String? = null,
+    @Column(name = "ARBEIDSGIVER_PRIVAT", nullable = true, length = 50)
+    var arbeidsgiverPrivat: String? = null,
 
-        @Column(name = "BEHANDLET")
-        var behandlet: LocalDateTime? = LocalDateTime.now(),
+    @Column(name = "BEHANDLET")
+    var behandlet: LocalDateTime? = LocalDateTime.now(),
 
-        @Type(type= "jsonb")
-        @Column(columnDefinition = "jsonb", name = "DATA", nullable = true)
-        var data: String? = null
+    @Type(type = "jsonb")
+    @Column(columnDefinition = "jsonb", name = "DATA", nullable = true)
+    var data: String? = null
 
-){
+) {
 
     @OneToMany(mappedBy = "inntektsmelding", cascade = [ALL], orphanRemoval = true, fetch = FetchType.EAGER)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-        val arbeidsgiverperioder: MutableList<ArbeidsgiverperiodeEntitet> = ArrayList()
+    val arbeidsgiverperioder: MutableList<ArbeidsgiverperiodeEntitet> = ArrayList()
 
-        fun leggtilArbeidsgiverperiode(fom: LocalDate, tom: LocalDate){
-                val periode = ArbeidsgiverperiodeEntitet(fom=fom, tom =tom)
-                periode.inntektsmelding = this
-                arbeidsgiverperioder.add(periode)
-        }
+    fun leggtilArbeidsgiverperiode(fom: LocalDate, tom: LocalDate) {
+        val periode = ArbeidsgiverperiodeEntitet(fom = fom, tom = tom)
+        periode.inntektsmelding = this
+        arbeidsgiverperioder.add(periode)
+    }
 
 }

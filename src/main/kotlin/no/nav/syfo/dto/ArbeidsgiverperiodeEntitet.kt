@@ -1,5 +1,7 @@
 package no.nav.syfo.dto
 
+import org.hibernate.annotations.OnDelete
+import org.hibernate.annotations.OnDeleteAction
 import java.time.LocalDate
 import java.util.*
 import javax.persistence.*
@@ -13,7 +15,8 @@ data class ArbeidsgiverperiodeEntitet (
     var uuid: String = UUID.randomUUID().toString(),
 
     @ManyToOne
-    @JoinColumn(name="INNTEKTSMELDING_UUID", nullable=false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "INNTEKTSMELDING_UUID", nullable = false)
     var inntektsmelding : InntektsmeldingEntitet? = null,
 
     @Column(name = "FOM", nullable = false)

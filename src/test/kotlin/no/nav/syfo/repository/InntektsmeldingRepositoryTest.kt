@@ -202,14 +202,18 @@ open class InntektsmeldingRepositoryTest {
     @Test
     fun `skal kun slette inntektsmeldinger eldre enn gitt dato`() {
         //Lagre 5 inntektsmeldinger i 2019
-        entityManager.persist<Any>(lagInntektsmelding(LocalDate.of(2019, 12, 31).atStartOfDay()))
+        val imMedPeriodeGammel = lagInntektsmelding(LocalDate.of(2019, 12, 31).atStartOfDay())
+        imMedPeriodeGammel.leggtilArbeidsgiverperiode(LocalDate.of(2019, 1, 1), LocalDate.of(2019, 2, 1))
+        entityManager.persist<Any>(imMedPeriodeGammel)
         entityManager.persist<Any>(lagInntektsmelding(LocalDate.of(2019, 12, 30).atStartOfDay()))
         entityManager.persist<Any>(lagInntektsmelding(LocalDate.of(2019, 11, 25).atStartOfDay()))
         entityManager.persist<Any>(lagInntektsmelding(LocalDate.of(2019, 10, 14).atStartOfDay()))
         entityManager.persist<Any>(lagInntektsmelding(LocalDate.of(2019, 3, 15).atStartOfDay()))
 
         //Lagre 5 inntektsmeldinger i 2020
-        entityManager.persist<Any>(lagInntektsmelding(LocalDate.of(2020, 1, 1).atStartOfDay()))
+        val imMedPeriodeNy = lagInntektsmelding(LocalDate.of(2020, 1, 1).atStartOfDay())
+        imMedPeriodeNy.leggtilArbeidsgiverperiode(LocalDate.of(2019, 1, 1), LocalDate.of(2019, 2, 1))
+        entityManager.persist<Any>(imMedPeriodeNy)
         entityManager.persist<Any>(lagInntektsmelding(LocalDate.of(2020, 1, 5).atStartOfDay()))
         entityManager.persist<Any>(lagInntektsmelding(LocalDate.of(2020, 2, 25).atStartOfDay()))
         entityManager.persist<Any>(lagInntektsmelding(LocalDate.of(2020, 4, 14).atStartOfDay()))
