@@ -15,17 +15,15 @@ spec:
     enabled: true
     path: /internal/prometheus
   readiness:
-    failureThreshold: 1000
     initialDelay: 60
     path: internal/isReady
-    periodSeconds: 10
     timeout: 2
   liveness:
-    failureThreshold: 10
+    failureThreshold: 600
     initialDelay: 60
     path: internal/isAlive
-    periodSeconds: 3
-    timeout: 1
+    periodSeconds: 6
+    timeout: 3
   replicas:
     max: 1
     min: 1
