@@ -1,11 +1,14 @@
 package no.nav.syfo.dto
 
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType
+import org.hibernate.annotations.OnDelete
+import org.hibernate.annotations.OnDeleteAction
 import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
-import javax.persistence.*
-import java.time.*
+import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.*
+import javax.persistence.*
 import javax.persistence.CascadeType.ALL
 
 @Entity
@@ -44,7 +47,8 @@ data class InntektsmeldingEntitet (
 
 ){
 
-        @OneToMany(mappedBy = "inntektsmelding", cascade = [ALL], orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "inntektsmelding", cascade = [ALL], orphanRemoval = true, fetch = FetchType.EAGER)
+    @OnDelete(action = OnDeleteAction.CASCADE)
         val arbeidsgiverperioder: MutableList<ArbeidsgiverperiodeEntitet> = ArrayList()
 
         fun leggtilArbeidsgiverperiode(fom: LocalDate, tom: LocalDate){
