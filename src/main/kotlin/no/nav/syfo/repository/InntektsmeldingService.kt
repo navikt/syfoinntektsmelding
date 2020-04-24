@@ -45,7 +45,7 @@ class InntektsmeldingService(
     @Transactional(Transactional.TxType.REQUIRED)
     @org.springframework.transaction.annotation.Transactional("transactionManager")
     fun slettInntektsmeldingerEldreEnnKonfigurertMåneder() {
-        val konfigurertAntallMånederSiden = LocalDate.now().minusMonths(/*lagringstidMåneder.toLong()*/12).atStartOfDay()
+        val konfigurertAntallMånederSiden = LocalDate.now().minusMonths(lagringstidMåneder.toLong(())).atStartOfDay()
         log.info("Sletter alle inntektsmeldinger før $konfigurertAntallMånederSiden")
         val antallSlettet = repository.deleteByBehandletBefore(konfigurertAntallMånederSiden)
         log.info("Slettet $antallSlettet inntektsmeldinger")
