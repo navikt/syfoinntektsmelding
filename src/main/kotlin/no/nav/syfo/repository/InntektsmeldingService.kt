@@ -8,7 +8,6 @@ import no.nav.syfo.dto.InntektsmeldingEntitet
 import no.nav.syfo.mapping.toInntektsmelding
 import no.nav.syfo.mapping.toInntektsmeldingEntitet
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import javax.transaction.Transactional
@@ -41,7 +40,7 @@ class InntektsmeldingService(
 
     // Sekund, Minutt, Time, Dag, Måned, Ukedag
     //@Scheduled(cron = "0 0 4 * * *")
-    @Scheduled(fixedRate = 1000 * 60 * 60 * 24, initialDelay = 0)
+    //@Scheduled(fixedRate = 1000 * 60 * 60 * 24, initialDelay = 0)
     @Transactional(Transactional.TxType.REQUIRED)
     @org.springframework.transaction.annotation.Transactional("transactionManager")
     fun slettInntektsmeldingerEldreEnnKonfigurertMåneder() {
