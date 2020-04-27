@@ -5,6 +5,8 @@ import log
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
+import no.nav.syfo.dto.Tilstand
+import no.nav.syfo.dto.UtsattOppgaveEntitet
 import no.nav.syfo.mapping.mapInntektsmeldingKontrakt
 import no.nav.syfo.producer.InntektsmeldingProducer
 import no.nav.syfo.repository.InntektsmeldingService
@@ -12,7 +14,9 @@ import no.nav.syfo.service.JournalpostService
 import no.nav.syfo.service.SaksbehandlingService
 import no.nav.syfo.util.Metrikk
 import no.nav.syfo.util.validerInntektsmelding
+import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
 
 @Service
 class InntektsmeldingBehandler(
@@ -21,7 +25,8 @@ class InntektsmeldingBehandler(
     private val metrikk: Metrikk,
     private val inntektsmeldingService: InntektsmeldingService,
     private val aktorConsumer: AktorConsumer,
-    private val inntektsmeldingProducer: InntektsmeldingProducer
+    private val inntektsmeldingProducer: InntektsmeldingProducer,
+    private val utsattOppgaveService: UtsattOppgaveService
 ) {
 
     val consumerLocks = Striped.lock(8)
@@ -51,18 +56,31 @@ class InntektsmeldingBehandler(
 
                 val dto = inntektsmeldingService.lagreBehandling(inntektsmelding, aktorid, saksId, arkivreferanse)
 
+                utsattOppgaveService.opprett(
+                    UtsattOppgaveEntitet(
+                        fnr = inntektsmelding.fnr,
+                        sakId = saksId,
+                        aktørId = dto.aktorId,
+                        journalpostId = inntektsmelding.journalpostId,
+                        arkivreferanse = inntektsmelding.arkivRefereranse,
+                        inntektsmeldingId = dto.uuid,
+                        tilstand = Tilstand.Utsatt,
+                        timeout = LocalDateTime.now().plusHours(1)
+                    )
+                )
+
                 inntektsmeldingProducer.leggMottattInntektsmeldingPåTopics(
                     mapInntektsmeldingKontrakt(
                         inntektsmelding,
                         aktorid,
                         validerInntektsmelding(inntektsmelding),
                         arkivreferanse,
-                        dto.uuid!!
+                        dto.uuid
                     )
                 )
 
                 log.info("Inntektsmelding {} er journalført for {} refusjon {}", inntektsmelding.journalpostId, arkivreferanse, inntektsmelding.refusjon.beloepPrMnd)
-                return dto.uuid!!
+                return dto.uuid
             } else {
                 log.info(
                     "Behandler ikke inntektsmelding {} da den har status: {}",

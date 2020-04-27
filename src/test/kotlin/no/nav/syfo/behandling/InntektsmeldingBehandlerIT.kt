@@ -19,6 +19,9 @@ import no.nav.syfo.service.EksisterendeSakService
 import no.nav.syfo.service.JournalpostService
 import no.nav.syfo.service.SaksbehandlingService
 import no.nav.syfo.util.Metrikk
+import no.nav.syfo.utsattoppgave.UtsattOppgaveConsumer
+import no.nav.syfo.utsattoppgave.UtsattOppgaveDAO
+import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import no.nav.tjeneste.virksomhet.journal.v2.binding.HentDokumentDokumentIkkeFunnet
 import no.nav.tjeneste.virksomhet.journal.v2.binding.HentDokumentSikkerhetsbegrensning
 import no.nav.tjeneste.virksomhet.journal.v2.binding.JournalV2
@@ -96,6 +99,11 @@ open class InntektsmeldingBehandlerIT {
     lateinit var inntektsmeldingRepository: InntektsmeldingRepository
     lateinit var inntektsmeldingService: InntektsmeldingService
 
+    @Autowired
+    lateinit var utsattOppgaveDAO: UtsattOppgaveDAO
+    lateinit var utsattOppgaveService: UtsattOppgaveService
+    lateinit var utsattOppgaveConsumer: UtsattOppgaveConsumer
+
     @MockBean
     lateinit var journalpostService: JournalpostService
 
@@ -107,8 +115,10 @@ open class InntektsmeldingBehandlerIT {
         journalConsumer = JournalConsumer(journalV2, aktorConsumer)
         journalpostService = JournalpostService(inngaaendeJournalConsumer, behandleInngaaendeJournalConsumer, journalConsumer, behandlendeEnhetConsumer, metrikk)
         inntektsmeldingService = InntektsmeldingService(inntektsmeldingRepository, 3)
-        saksbehandlingService = SaksbehandlingService(oppgaveClient, behandlendeEnhetConsumer, eksisterendeSakService, inntektsmeldingService, sakClient, metrikk)
-        inntektsmeldingBehandler = InntektsmeldingBehandler(journalpostService, saksbehandlingService, metrikk, inntektsmeldingService, aktorConsumer, inntektsmeldingProducer)
+        saksbehandlingService = SaksbehandlingService(eksisterendeSakService, inntektsmeldingService, sakClient, metrikk)
+        utsattOppgaveService = UtsattOppgaveService(utsattOppgaveDAO, oppgaveClient, behandlendeEnhetConsumer)
+        utsattOppgaveConsumer = UtsattOppgaveConsumer(utsattOppgaveService)
+        inntektsmeldingBehandler = InntektsmeldingBehandler(journalpostService, saksbehandlingService, metrikk, inntektsmeldingService, aktorConsumer, inntektsmeldingProducer, utsattOppgaveService)
         MockitoAnnotations.initMocks(inntektsmeldingBehandler)
         runBlocking {
             given(sakClient.opprettSak(anyString(), anyString())).willReturn(

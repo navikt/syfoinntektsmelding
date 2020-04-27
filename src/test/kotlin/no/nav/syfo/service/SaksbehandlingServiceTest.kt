@@ -11,6 +11,7 @@ import no.nav.syfo.domain.*
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.repository.InntektsmeldingService
 import no.nav.syfo.util.Metrikk
+import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import no.nav.tjeneste.virksomhet.aktoer.v2.HentAktoerIdForIdentPersonIkkeFunnet
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
@@ -47,6 +48,9 @@ class SaksbehandlingServiceTest {
     private lateinit var sakClient: SakClient
     @Mock
     private val metrikk: Metrikk? = null
+    @Mock
+    private lateinit var utsattOppgaveService: UtsattOppgaveService
+
 
     @InjectMocks
     private lateinit var saksbehandlingService: SaksbehandlingService
@@ -56,10 +60,8 @@ class SaksbehandlingServiceTest {
     fun setup() {
         `when`(inntektsmeldingService.finnBehandledeInntektsmeldinger(any())).thenReturn(emptyList())
         `when`(aktoridConsumer.getAktorId(anyString())).thenReturn("aktorid")
-        `when`(behandlendeEnhetConsumer.hentBehandlendeEnhet(anyString())).thenReturn("behandlendeenhet1234")
         given(eksisterendeSakService.finnEksisterendeSak(any(), any(), any())).willReturn("saksId")
         given(runBlocking{sakClient.opprettSak(any(), any())}).willReturn(SakResponse(id = 987, tema = "a", aktoerId = "123", applikasjon = "", fagsakNr = "123", opprettetAv = "", opprettetTidspunkt = ZonedDateTime.now(), orgnr = ""))
-        given(runBlocking{oppgaveClient.opprettOppgave(anyString(), anyString(), anyString(), anyString(), anyBoolean())}).willReturn(OppgaveResultat(oppgaveId = 1, duplikat = false))
     }
 
     private fun lagInntektsmelding(): Inntektsmelding {
@@ -101,11 +103,11 @@ class SaksbehandlingServiceTest {
 
     @io.ktor.util.KtorExperimentalAPI
     @Test
-    fun oppretterOppgaveForSak() {
+    fun oppretterIkkeOppgaveForSak() {
         saksbehandlingService.behandleInntektsmelding(lagInntektsmelding(), "aktorId", anyString())
 
         runBlocking {
-            verify<OppgaveClient>(oppgaveClient).opprettOppgave(
+            verify(oppgaveClient, never()).opprettOppgave(
                 anyString(),
                 anyString(),
                 anyString(),

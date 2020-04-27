@@ -87,6 +87,7 @@ class OppgaveClient constructor (
             val oppgaveResponse = hentOppgave(oppgavetype = oppgavetype, journalpostId = journalpostId)
             return if (oppgaveResponse.antallTreffTotalt > 0) OppgaveResultat(oppgaveResponse.oppgaver.first().id, true) else null
         } catch (ex: Exception) {
+            log.error("Feil ved sjekking av eksisterende oppgave", ex)
             throw HentOppgaveException(journalpostId, oppgavetype)
         }
     }
