@@ -7,7 +7,8 @@ import no.nav.syfo.consumer.rest.SakClient
 import no.nav.syfo.consumer.rest.SakResponse
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
 import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
-import no.nav.syfo.domain.*
+import no.nav.syfo.domain.JournalStatus
+import no.nav.syfo.domain.Periode
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.repository.InntektsmeldingService
 import no.nav.syfo.util.Metrikk
@@ -66,22 +67,22 @@ class SaksbehandlingServiceTest {
 
     private fun lagInntektsmelding(): Inntektsmelding {
         return Inntektsmelding(
-                id = "ID",
-                fnr = "fnr",
-                arbeidsgiverOrgnummer = "orgnummer",
-                arbeidsforholdId = null,
-                journalpostId = "journalpostId",
-                arsakTilInnsending = "Ny",
-                journalStatus = JournalStatus.MIDLERTIDIG,
-                arbeidsgiverperioder = listOf(
-                        Periode(
-                                fom = LocalDate.of(2019, 1, 4),
-                                tom = LocalDate.of(2019, 1, 20)
-                        )
-                ),
-                førsteFraværsdag = LocalDate.now(),
-                mottattDato = LocalDateTime.now(),
-                arkivRefereranse = "ar123"
+            id = "ID",
+            fnr = "fnr",
+            arbeidsgiverOrgnummer = "orgnummer",
+            arbeidsforholdId = null,
+            journalpostId = "journalpostId",
+            arsakTilInnsending = "Ny",
+            journalStatus = JournalStatus.MIDLERTIDIG,
+            arbeidsgiverperioder = listOf(
+                Periode(
+                    fom = LocalDate.of(2019, 1, 4),
+                    tom = LocalDate.of(2019, 1, 20)
+                )
+            ),
+            arkivRefereranse = "ar123",
+            førsteFraværsdag = LocalDate.now(),
+            mottattDato = LocalDateTime.now()
         )
     }
 
@@ -152,19 +153,19 @@ class SaksbehandlingServiceTest {
 
     private fun lagInntektsmelding2(aktorId: String, journalpostId: String, sakId: String, arbeidsgiverperioder: List<Periode>): Inntektsmelding {
         return Inntektsmelding(
-                aktorId = aktorId,
-                id = "ID",
-                fnr = "fnr",
-                arbeidsgiverOrgnummer = "orgnummer",
-                arbeidsforholdId = null,
-                journalpostId = journalpostId,
-                arsakTilInnsending = "Ny",
-                sakId = sakId,
-                arbeidsgiverperioder = arbeidsgiverperioder,
-                arkivRefereranse = "AR",
-                mottattDato = LocalDate.of(2019, 2, 6).atStartOfDay(),
-                journalStatus = JournalStatus.MIDLERTIDIG,
-                førsteFraværsdag = LocalDate.now()
+            id = "ID",
+            fnr = "fnr",
+            arbeidsgiverOrgnummer = "orgnummer",
+            arbeidsforholdId = null,
+            journalpostId = journalpostId,
+            arsakTilInnsending = "Ny",
+            journalStatus = JournalStatus.MIDLERTIDIG,
+            arbeidsgiverperioder = arbeidsgiverperioder,
+            arkivRefereranse = "AR",
+            førsteFraværsdag = LocalDate.now(),
+            mottattDato = LocalDate.of(2019, 2, 6).atStartOfDay(),
+            sakId = sakId,
+            aktorId = aktorId
         )
     }
 

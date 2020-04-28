@@ -25,27 +25,30 @@ fun toInntektsmeldingEntitet(inntektsmelding : Inntektsmelding) : Inntektsmeldin
 
 fun toInntektsmelding(inntektsmeldingEntitet: InntektsmeldingEntitet) : Inntektsmelding {
     return Inntektsmelding(
-            id = inntektsmeldingEntitet.uuid!!,
-            fnr = inntektsmeldingEntitet.arbeidsgiverPrivat ?: "",
-            sakId = inntektsmeldingEntitet.sakId,
-            aktorId = inntektsmeldingEntitet.aktorId,
-            arbeidsgiverOrgnummer = inntektsmeldingEntitet.orgnummer,
-            arbeidsgiverPrivatFnr = inntektsmeldingEntitet.arbeidsgiverPrivat,
-            arbeidsforholdId = null,
-            journalpostId = inntektsmeldingEntitet.journalpostId,
-            arsakTilInnsending = "?", // TODO - Dette feltet må populeres fra database
-            journalStatus = JournalStatus.MIDLERTIDIG,
-            arbeidsgiverperioder = mapPerioder(inntektsmeldingEntitet.arbeidsgiverperioder),
-            beregnetInntekt = null,
-            refusjon = Refusjon(),
-            endringerIRefusjon = ArrayList(),
-            opphørAvNaturalYtelse = ArrayList(),
-            gjenopptakelserNaturalYtelse = ArrayList(),
-            gyldighetsStatus = Gyldighetsstatus.GYLDIG,
-            arkivRefereranse = "???", // TODO - Dette feltet må populeres fra database
-            feriePerioder = ArrayList(),
-            førsteFraværsdag = LocalDate.now(),
-            mottattDato = inntektsmeldingEntitet.behandlet!!
+        id = inntektsmeldingEntitet.uuid!!,
+        fnr = inntektsmeldingEntitet.arbeidsgiverPrivat ?: "",
+        arbeidsgiverOrgnummer = inntektsmeldingEntitet.orgnummer,
+        arbeidsgiverPrivatFnr = inntektsmeldingEntitet.arbeidsgiverPrivat,
+        arbeidsforholdId = null,
+        journalpostId = inntektsmeldingEntitet.journalpostId,
+        arsakTilInnsending = "?",
+        journalStatus = JournalStatus.MIDLERTIDIG,
+        arbeidsgiverperioder = mapPerioder(inntektsmeldingEntitet.arbeidsgiverperioder), // TODO - Dette feltet må populeres fra database
+        beregnetInntekt = null,
+        refusjon = Refusjon(),
+        endringerIRefusjon = ArrayList(),
+        opphørAvNaturalYtelse = ArrayList(),
+        gjenopptakelserNaturalYtelse = ArrayList(),
+        gyldighetsStatus = Gyldighetsstatus.GYLDIG,
+        arkivRefereranse = "???",
+        feriePerioder = ArrayList(),
+        førsteFraværsdag = LocalDate.now(), // TODO - Dette feltet må populeres fra database
+        mottattDato = inntektsmeldingEntitet.behandlet!!,
+        sakId = inntektsmeldingEntitet.sakId,
+        aktorId = inntektsmeldingEntitet.aktorId,
+        innsendingstidspunkt = null,
+        bruttoUtbetalt = null,
+        årsakEndring = null
     )
 }
 

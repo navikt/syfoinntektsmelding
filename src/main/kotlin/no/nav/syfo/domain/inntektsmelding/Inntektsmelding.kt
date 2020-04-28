@@ -33,6 +33,9 @@ data class Inntektsmelding(
     val begrunnelseRedusert: String = "",
     val avsenderSystem: AvsenderSystem = AvsenderSystem(),
     val nærRelasjon: Boolean? = null,
-    val kontaktinformasjon: Kontaktinformasjon = Kontaktinformasjon()
+    val kontaktinformasjon: Kontaktinformasjon = Kontaktinformasjon(),
+    val innsendingstidspunkt: LocalDateTime? = null,
+    val bruttoUtbetalt: BigDecimal? = null,
+    val årsakEndring: String? = null
 )
 

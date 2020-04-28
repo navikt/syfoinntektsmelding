@@ -20,12 +20,17 @@ internal object InntektsmeldingArbeidsgiver20180924Mapper {
         val arbeidsforholdId = skjemainnhold.arbeidsforhold.value.arbeidsforholdId?.value
         val beregnetInntekt = skjemainnhold.arbeidsforhold.value.beregnetInntekt?.value?.beloep?.value
 
+        val innsendingstidspunkt = skjemainnhold.avsendersystem?.innsendingstidspunkt?.value
+        val bruttoUtbetalt = skjemainnhold.sykepengerIArbeidsgiverperioden?.value?.bruttoUtbetalt?.value
+        val årsakEndring = skjemainnhold.arbeidsforhold?.value?.beregnetInntekt?.value?.aarsakVedEndring?.value
+
         val perioder = skjemainnhold.sykepengerIArbeidsgiverperioden.value.arbeidsgiverperiodeListe
             .value
             ?.arbeidsgiverperiode
             ?.filter { xmlPeriode -> xmlPeriode.fom != null && xmlPeriode.tom != null }
             ?.map { Periode(it.fom.value, it.tom.value) }
             ?: emptyList()
+
         return Inntektsmelding(
             fnr = skjemainnhold.arbeidstakerFnr,
             arbeidsgiverOrgnummer = skjemainnhold.arbeidsgiver?.virksomhetsnummer,
@@ -52,7 +57,10 @@ internal object InntektsmeldingArbeidsgiver20180924Mapper {
             nærRelasjon = skjemainnhold.isNaerRelasjon,
             kontaktinformasjon = Kontaktinformasjon(
                 skjemainnhold.arbeidsgiver?.kontaktinformasjon?.kontaktinformasjonNavn, skjemainnhold.arbeidsgiver?.kontaktinformasjon?.telefonnummer
-            )
+            ),
+            innsendingstidspunkt = innsendingstidspunkt,
+            bruttoUtbetalt = bruttoUtbetalt,
+            årsakEndring = årsakEndring
         )
     }
 

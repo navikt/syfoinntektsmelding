@@ -1,11 +1,11 @@
 package no.nav.syfo.mapping
 
 import no.nav.inntektsmeldingkontrakt.Arbeidsgivertype
-import no.nav.syfo.dto.InntektsmeldingEntitet
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.inntektsmelding.Gyldighetsstatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.domain.inntektsmelding.Refusjon
+import no.nav.syfo.dto.InntektsmeldingEntitet
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import testutil.FØRSTE_FEBRUAR
@@ -20,19 +20,19 @@ class InntektsmeldingKontraktMapperKtTest {
     @Test
     fun toInntektsmeldingDTO() {
         val inntektsmelding = Inntektsmelding(
-                journalpostId = "journalpostId",
-                mottattDato = LocalDateTime.of(2019,10,1,5,18,45,0),
-                sakId = "sakId",
-                fnr = "fnr",
-                aktorId = "aktorId",
-                arbeidsgiverPrivatFnr = "fnr",
-                arbeidsgiverperioder = ArrayList(),
-                arsakTilInnsending = "",
-                journalStatus = JournalStatus.MIDLERTIDIG,
-                refusjon = Refusjon(BigDecimal.ONE),
-                gyldighetsStatus = Gyldighetsstatus.GYLDIG,
-                arkivRefereranse = "ar123",
-                førsteFraværsdag = LocalDate.now()
+            fnr = "fnr",
+            arbeidsgiverPrivatFnr = "fnr",
+            journalpostId = "journalpostId",
+            arsakTilInnsending = "",
+            journalStatus = JournalStatus.MIDLERTIDIG,
+            arbeidsgiverperioder = ArrayList(),
+            refusjon = Refusjon(BigDecimal.ONE),
+            gyldighetsStatus = Gyldighetsstatus.GYLDIG,
+            arkivRefereranse = "ar123",
+            førsteFraværsdag = LocalDate.now(),
+            mottattDato = LocalDateTime.of(2019, 10, 1, 5, 18, 45, 0),
+            sakId = "sakId",
+            aktorId = "aktorId"
         )
         val dto = toInntektsmeldingEntitet(inntektsmelding)
         assertThat(dto.journalpostId).isEqualTo("journalpostId")

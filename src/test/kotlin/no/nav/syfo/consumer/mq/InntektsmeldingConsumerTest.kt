@@ -41,17 +41,17 @@ class InntektsmeldingConsumerTest {
     val days14 = FeiletEntitet(arkivReferanse = AR_TWO_WEEKS, feiltype = Feiltype.AKTØR_FEIL, tidspunkt = NOW.minusDays(MAX_DAYS + 7))
 
     val im = Inntektsmelding(
+        fnr = "fnr",
         arbeidsgiverOrgnummer = "orgnummer",
         arbeidsgiverPrivatFnr = null,
         arbeidsforholdId = "",
-        fnr = "fnr",
         journalpostId = "arkivId",
+        arsakTilInnsending = "",
         journalStatus = JournalStatus.MIDLERTIDIG,
         arbeidsgiverperioder = emptyList(),
         arkivRefereranse = "AR-123",
-        mottattDato = NOW,
-        arsakTilInnsending = "",
-        førsteFraværsdag = LocalDate.now()
+        førsteFraværsdag = LocalDate.now(),
+        mottattDato = NOW
     )
 
     @MockK

@@ -39,43 +39,43 @@ class InntektsmeldingServiceTest {
         val im = Inntektsmelding(
             id = "id-abc",
             fnr = "fnr-123",
-            aktorId = "aktør-123",
-            refusjon = Refusjon(BigDecimal(333333333333), LocalDate.of(2020,2,20)),
-            begrunnelseRedusert = "Grunn til reduksjon",
-            sakId = "sak-123",
-            mottattDato = LocalDateTime.of(2010,5,4, 3, 2, 1),
-            arkivRefereranse = "ar-123",
-            førsteFraværsdag = LocalDate.of(2010,2,10),
-            arsakTilInnsending = "Ingen årsak",
-            journalpostId = "jp-123",
-            arbeidsforholdId = "arb-123",
-            arbeidsgiverPrivatFnr =  "arb-priv-123",
             arbeidsgiverOrgnummer = "arb-org-123",
+            arbeidsgiverPrivatFnr = "arb-priv-123",
             arbeidsgiverPrivatAktørId = "arb-priv-aktør-123",
-            beregnetInntekt = BigDecimal(999999999999),
-            gyldighetsStatus = Gyldighetsstatus.GYLDIG,
+            arbeidsforholdId = "arb-123",
+            journalpostId = "jp-123",
+            arsakTilInnsending = "Ingen årsak",
             journalStatus = JournalStatus.MIDLERTIDIG,
-
             arbeidsgiverperioder = listOf(
-                Periode(fom=LocalDate.of(2011, 11, 1), tom= LocalDate.of(2012,12,2)),
-                Periode(fom=LocalDate.of(2013, 3, 3), tom= LocalDate.of(2014,4,4))
+                Periode(fom = LocalDate.of(2011, 11, 1), tom = LocalDate.of(2012, 12, 2)),
+                Periode(fom = LocalDate.of(2013, 3, 3), tom = LocalDate.of(2014, 4, 4))
             ),
+            beregnetInntekt = BigDecimal(999999999999),
+            refusjon = Refusjon(BigDecimal(333333333333), LocalDate.of(2020, 2, 20)),
             endringerIRefusjon = listOf(
-                EndringIRefusjon(LocalDate.of(2015,5,5), BigDecimal(555555555555)),
-                EndringIRefusjon(LocalDate.of(2016,6,6), BigDecimal(666666666666))
-            ),
-            feriePerioder = listOf(
-                Periode(fom=LocalDate.of(2017, 7, 7), tom= LocalDate.of(2018,8,8)),
-                Periode(fom=LocalDate.of(2019, 9, 9), tom= LocalDate.of(2020,12,20))
-            ),
-            gjenopptakelserNaturalYtelse = listOf(
-                GjenopptakelseNaturalytelse(Naturalytelse.BOLIG, LocalDate.of(2011,1,1), BigDecimal(111111111111)),
-                GjenopptakelseNaturalytelse(Naturalytelse.KOSTDAGER, LocalDate.of(2012,2,2), BigDecimal(222222222222))
+                EndringIRefusjon(LocalDate.of(2015, 5, 5), BigDecimal(555555555555)),
+                EndringIRefusjon(LocalDate.of(2016, 6, 6), BigDecimal(666666666666))
             ),
             opphørAvNaturalYtelse = listOf(
-                OpphoerAvNaturalytelse(Naturalytelse.BIL, LocalDate.of(2015,5,5), BigDecimal(555555555555)),
-                OpphoerAvNaturalytelse(Naturalytelse.TILSKUDDBARNEHAGEPLASS, LocalDate.of(2016,6,6), BigDecimal(666666666666))
-            )
+                OpphoerAvNaturalytelse(Naturalytelse.BIL, LocalDate.of(2015, 5, 5), BigDecimal(555555555555)),
+                OpphoerAvNaturalytelse(Naturalytelse.TILSKUDDBARNEHAGEPLASS, LocalDate.of(2016, 6, 6), BigDecimal(666666666666))
+            ),
+            gjenopptakelserNaturalYtelse = listOf(
+                GjenopptakelseNaturalytelse(Naturalytelse.BOLIG, LocalDate.of(2011, 1, 1), BigDecimal(111111111111)),
+                GjenopptakelseNaturalytelse(Naturalytelse.KOSTDAGER, LocalDate.of(2012, 2, 2), BigDecimal(222222222222))
+            ),
+            gyldighetsStatus = Gyldighetsstatus.GYLDIG,
+            arkivRefereranse = "ar-123",
+            feriePerioder = listOf(
+                Periode(fom = LocalDate.of(2017, 7, 7), tom = LocalDate.of(2018, 8, 8)),
+                Periode(fom = LocalDate.of(2019, 9, 9), tom = LocalDate.of(2020, 12, 20))
+            ),
+
+            førsteFraværsdag = LocalDate.of(2010, 2, 10),
+            mottattDato = LocalDateTime.of(2010, 5, 4, 3, 2, 1),
+            sakId = "sak-123",
+            aktorId = "aktør-123",
+            begrunnelseRedusert = "Grunn til reduksjon"
         )
         val json = im.asJsonString()
 

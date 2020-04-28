@@ -20,6 +20,11 @@ internal object InntektsmeldingArbeidsgiverPrivat20181211Mapper {
         val arbeidsforholdId = skjemainnhold.arbeidsforhold.value.arbeidsforholdId?.value
         val beregnetInntekt = skjemainnhold.arbeidsforhold.value.beregnetInntekt?.value?.beloep?.value
         val arbeidsGiverAktørId = skjemainnhold.arbeidsgiverPrivat?.value?.arbeidsgiverFnr?.let { ap -> aktorConsumer.getAktorId(ap) }
+
+        val innsendingstidspunkt = skjemainnhold.avsendersystem?.innsendingstidspunkt?.value
+        val bruttoUtbetalt = skjemainnhold.sykepengerIArbeidsgiverperioden?.value?.bruttoUtbetalt?.value
+        val årsakEndring = skjemainnhold.arbeidsforhold?.value?.beregnetInntekt?.value?.aarsakVedEndring?.value
+
         val perioder = skjemainnhold.sykepengerIArbeidsgiverperioden.value.arbeidsgiverperiodeListe
             .value
             ?.arbeidsgiverperiode
@@ -53,7 +58,10 @@ internal object InntektsmeldingArbeidsgiverPrivat20181211Mapper {
             nærRelasjon = skjemainnhold.isNaerRelasjon,
             kontaktinformasjon = Kontaktinformasjon(
                 skjemainnhold.arbeidsgiver?.value?.kontaktinformasjon?.kontaktinformasjonNavn, skjemainnhold.arbeidsgiver?.value?.kontaktinformasjon?.telefonnummer
-            )
+            ),
+            innsendingstidspunkt = innsendingstidspunkt,
+            bruttoUtbetalt = bruttoUtbetalt,
+            årsakEndring = årsakEndring
         )
     }
 

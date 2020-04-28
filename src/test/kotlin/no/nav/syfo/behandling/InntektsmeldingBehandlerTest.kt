@@ -71,18 +71,18 @@ class InntektsmeldingBehandlerTest {
     fun behandler_midlertidig() {
         `when`(journalpostService.hentInntektsmelding("arkivId", "AR-123")).thenReturn(
             Inntektsmelding(
+                fnr = "fnr",
                 arbeidsgiverOrgnummer = "orgnummer",
                 arbeidsgiverPrivatFnr = null,
                 arbeidsforholdId = "",
-                fnr = "fnr",
                 journalpostId = "arkivId",
+                arsakTilInnsending = "",
                 journalStatus = JournalStatus.MIDLERTIDIG,
                 arbeidsgiverperioder = emptyList(),
                 arkivRefereranse = "AR-123",
-                mottattDato = LocalDate.of(2019, 2, 6).atStartOfDay(),
-                        arsakTilInnsending = "",
-                        førsteFraværsdag = LocalDate.now()
-                )
+                førsteFraværsdag = LocalDate.now(),
+                mottattDato = LocalDate.of(2019, 2, 6).atStartOfDay()
+            )
         )
         inntektsmeldingBehandler.behandle("arkivId", "AR-123")
 
@@ -96,16 +96,16 @@ class InntektsmeldingBehandlerTest {
     fun behandler_Ikke_ForskjelligFraMidlertidig() {
         `when`(journalpostService.hentInntektsmelding("arkivId", "AR-123")).thenReturn(
             Inntektsmelding(
-                arkivRefereranse = "AR-123",
-                arbeidsforholdId = "123",
-                arsakTilInnsending = "",
-                arbeidsgiverperioder = emptyList(),
-                journalStatus = JournalStatus.ANNET,
-                journalpostId = "arkivId",
-                mottattDato = LocalDate.of(2019, 2, 6).atStartOfDay(),
                 fnr = "fnr",
-                førsteFraværsdag = LocalDate.now()
-                )
+                arbeidsforholdId = "123",
+                journalpostId = "arkivId",
+                arsakTilInnsending = "",
+                journalStatus = JournalStatus.ANNET,
+                arbeidsgiverperioder = emptyList(),
+                arkivRefereranse = "AR-123",
+                førsteFraværsdag = LocalDate.now(),
+                mottattDato = LocalDate.of(2019, 2, 6).atStartOfDay()
+            )
         )
 
         inntektsmeldingBehandler.behandle("arkivId", "AR-123")
@@ -119,16 +119,16 @@ class InntektsmeldingBehandlerTest {
     fun behandler_Ikke_StatusEndelig() {
         `when`(journalpostService.hentInntektsmelding("arkivId", "AR-123")).thenReturn(
             Inntektsmelding(
-                arkivRefereranse = "AR-123",
-                arbeidsforholdId = "123",
-                arsakTilInnsending = "",
-                arbeidsgiverperioder = emptyList(),
-                mottattDato = LocalDate.of(2019, 2, 6).atStartOfDay(),
-                journalStatus = JournalStatus.ENDELIG,
-                journalpostId = "arkivId",
                 fnr = "fnr",
-                førsteFraværsdag = LocalDate.now()
-                )
+                arbeidsforholdId = "123",
+                journalpostId = "arkivId",
+                arsakTilInnsending = "",
+                journalStatus = JournalStatus.ENDELIG,
+                arbeidsgiverperioder = emptyList(),
+                arkivRefereranse = "AR-123",
+                førsteFraværsdag = LocalDate.now(),
+                mottattDato = LocalDate.of(2019, 2, 6).atStartOfDay()
+            )
         )
 
         inntektsmeldingBehandler.behandle("arkivId", "AR-123")

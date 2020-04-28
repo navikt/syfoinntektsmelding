@@ -48,15 +48,15 @@ class JournalpostServiceTest {
         journalpostService!!.ferdigstillJournalpost(
                 "saksId",
                 Inntektsmelding(
-                        fnr = "fnr",
-                        arbeidsgiverOrgnummer = "orgnummer",
-                        arbeidsforholdId = null,
-                        journalpostId = "journalpostId",
-                        arsakTilInnsending = "Ny",
-                        journalStatus = JournalStatus.MIDLERTIDIG,
-                        arkivRefereranse = "AR123",
-                        førsteFraværsdag = LocalDate.now(),
-                        mottattDato = LocalDateTime.now()
+                    fnr = "fnr",
+                    arbeidsgiverOrgnummer = "orgnummer",
+                    arbeidsforholdId = null,
+                    journalpostId = "journalpostId",
+                    arsakTilInnsending = "Ny",
+                    journalStatus = JournalStatus.MIDLERTIDIG,
+                    arkivRefereranse = "AR123",
+                    førsteFraværsdag = LocalDate.now(),
+                    mottattDato = LocalDateTime.now()
                 )
         )
 
@@ -73,15 +73,15 @@ class JournalpostServiceTest {
         `when`(journalConsumer!!.hentInntektsmelding("journalpostId", journal, "AR-1234"))
                 .thenReturn(
                         Inntektsmelding(
-                                fnr = "fnr",
-                                arbeidsgiverOrgnummer = "orgnummer",
-                                arbeidsgiverPrivatFnr = null,
-                                journalpostId = "journalpostId",
-                                arsakTilInnsending = "",
-                                journalStatus = JournalStatus.MIDLERTIDIG,
-                                arkivRefereranse = "AR123",
-                                førsteFraværsdag = LocalDate.now(),
-                                mottattDato = LocalDateTime.now()
+                            fnr = "fnr",
+                            arbeidsgiverOrgnummer = "orgnummer",
+                            arbeidsgiverPrivatFnr = null,
+                            journalpostId = "journalpostId",
+                            arsakTilInnsending = "",
+                            journalStatus = JournalStatus.MIDLERTIDIG,
+                            arkivRefereranse = "AR123",
+                            førsteFraværsdag = LocalDate.now(),
+                            mottattDato = LocalDateTime.now()
                         )
                 )
 
