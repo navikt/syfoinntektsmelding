@@ -16,11 +16,6 @@ private val STOPPING_ERROR_HANDLER = ContainerStoppingErrorHandler()
 class KafkaErrorHandler : ContainerAwareErrorHandler {
     val log = log()
 
-    val retryableExceptionTypes = setOf(
-        TopicAuthorizationException::class.java,
-        OppgaveException::class.java
-    )
-
     override fun handle(
             thrownException: Exception,
             records: List<ConsumerRecord<*, *>>?,
@@ -29,22 +24,19 @@ class KafkaErrorHandler : ContainerAwareErrorHandler {
     ) {
         log.error("Feil i listener:", thrownException)
 
-        if (retryableExceptionTypes.any { exceptionIsClass(thrownException, it) }) {
-            log.error("Kafka infrastrukturfeil. ${thrownException::class.java.name} ved lesing av topic")
+        Thread {
+            try {
+                Thread.sleep(10000)
+                log.info("Starter ny kafka-consumer")
+                container.start()
+            } catch (e: Exception) {
+                // Denne kunne ha med fordel ha flippa applikasjons selftest
+                log.error("Noe gikk galt ved oppstart av kafka-consumer", e)
+                throw thrownException
+            }
+        }.start()
 
-            Thread {
-                try {
-                    Thread.sleep(10000)
-                    log.info("Starter ny kafka-consumer")
-                    container.start()
-                } catch (e: Exception) {
-                    // Denne kunne ha med fordel ha flippa applikasjons selftest
-                    log.error("Noe gikk galt ved oppstart av kafka-consumer", e)
-                    throw thrownException
-                }
-            }.start()
-            log.error("Restarter kafka-consumeren")
-        }
+        log.error("Restarter kafka-consumeren")
         log.error("Uventet feil i kafka-consumeren - stopper lytteren")
         STOPPING_ERROR_HANDLER.handle(thrownException, records, consumer, container)
     }
