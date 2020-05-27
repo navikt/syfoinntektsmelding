@@ -13,4 +13,5 @@
 	</logger>
 
 	<logger name="org.springframework" level="INFO"/>
+	<logger name="org.apache.cxf" level="ERROR"/>
 </included>
