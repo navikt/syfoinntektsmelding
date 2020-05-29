@@ -9,13 +9,11 @@ import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
 import no.nav.syfo.consumer.ws.SYKEPENGER_UTLAND
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.dto.UtsattOppgaveEntitet
-import no.nav.syfo.util.MDCOperations.MDC_CALL_ID
-import no.nav.syfo.util.MDCOperations.putToMDC
-import no.nav.syfo.util.MDCOperations.remove
+import no.nav.syfo.util.MDCOperations.*
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 
 @KtorExperimentalAPI
 @Service
@@ -27,7 +25,7 @@ class UtsattOppgaveService(
 
     val log = log()
 
-    //@Scheduled(cron = "0 0 * * * *")
+    @Scheduled(cron = "0 0 * * * *")
     fun opprettOppgaverForUtgåtte() {
         putToMDC(MDC_CALL_ID, UUID.randomUUID().toString())
         utsattOppgaveDAO
