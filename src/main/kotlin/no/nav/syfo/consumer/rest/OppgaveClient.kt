@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import io.ktor.client.HttpClient
+import io.ktor.client.engine.apache.Apache
 import io.ktor.client.features.json.JacksonSerializer
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.request.get
@@ -13,19 +14,18 @@ import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
-import no.nav.syfo.domain.OppgaveResultat
-import no.nav.syfo.helpers.retry
-import java.time.LocalDate
 import log
-import org.springframework.stereotype.Component
-import io.ktor.client.engine.apache.Apache
 import no.nav.syfo.behandling.HentOppgaveException
 import no.nav.syfo.behandling.OpprettFordelingsOppgaveException
 import no.nav.syfo.behandling.OpprettOppgaveException
 import no.nav.syfo.config.OppgaveConfig
+import no.nav.syfo.domain.OppgaveResultat
+import no.nav.syfo.helpers.retry
 import no.nav.syfo.util.MDCOperations
 import no.nav.syfo.util.Metrikk
+import org.springframework.stereotype.Component
 import java.time.DayOfWeek
+import java.time.LocalDate
 
 const val OPPGAVETYPE_INNTEKTSMELDING = "INNT"
 const val OPPGAVETYPE_FORDELINGSOPPGAVE = "FDR"
@@ -140,9 +140,7 @@ class OppgaveClient constructor (
     }
 
     suspend fun opprettFordelingsOppgave(
-        journalpostId: String,
-        tildeltEnhetsnr: String,
-        gjelderUtland: Boolean
+        journalpostId: String
     ): OppgaveResultat {
 
         val eksisterendeOppgave = hentHvisOppgaveFinnes(OPPGAVETYPE_FORDELINGSOPPGAVE, journalpostId)
@@ -153,12 +151,8 @@ class OppgaveClient constructor (
         }
 
         var behandlingstype: String? = null
-        if (gjelderUtland) {
-            log.info("Gjelder utland")
-            behandlingstype = "ae0106"
-        }
+
         val opprettOppgaveRequest = OpprettOppgaveRequest(
-            tildeltEnhetsnr = tildeltEnhetsnr,
             journalpostId = journalpostId,
             behandlesAvApplikasjon = "FS22",
             beskrivelse = "Fordelingsoppgave for inntektsmelding på sykepenger",
@@ -169,7 +163,7 @@ class OppgaveClient constructor (
             fristFerdigstillelse = leggTilEnVirkeuke(LocalDate.now()),
             prioritet = "NORM"
         )
-        log.info("Oppretter fordelingsoppgave på enhet $tildeltEnhetsnr")
+        log.info("Oppretter fordelingsoppgave")
         try {
             return OppgaveResultat(opprettOppgave(opprettOppgaveRequest).id, false)
         } catch (ex : Exception) {

@@ -90,7 +90,7 @@ class InntektsmeldingConsumerTest {
 
     @MockK
     private var oppgaveClient = mockk<OppgaveClient> {
-        coEvery { opprettFordelingsOppgave(any(), any(), any()) } returns OppgaveResultat( 1, true )
+        coEvery { opprettFordelingsOppgave(any()) } returns OppgaveResultat(1, true)
     }
 
     companion object {
@@ -116,9 +116,9 @@ class InntektsmeldingConsumerTest {
         message.jmsCorrelationID = AR
         inntektsmeldingConsumer.listen(message)
         verify (exactly = 1) { inntektsmeldingBehandler.behandle(eq(ARKIV_ID), AR) }
-        verify (exactly = 0) { feiletService.lagreFeilet(any(), any()) }
-        coVerify (exactly = 0) { oppgaveClient.opprettFordelingsOppgave(any(), any(), any()) }
-        verify (exactly = 0) { metrikk.tellOpprettFordelingsoppgave() }
+        verify(exactly = 0) { feiletService.lagreFeilet(any(), any()) }
+        coVerify(exactly = 0) { oppgaveClient.opprettFordelingsOppgave(any()) }
+        verify(exactly = 0) { metrikk.tellOpprettFordelingsoppgave() }
     }
 
     @Test
@@ -127,9 +127,9 @@ class InntektsmeldingConsumerTest {
         message.text = inputPayload
         inntektsmeldingConsumer.listen(message)
         verify (exactly = 0) { inntektsmeldingBehandler.behandle(any(), any()) }
-        verify (exactly = 0) { feiletService.lagreFeilet(any(), any()) }
-        coVerify (exactly = 0) { oppgaveClient.opprettFordelingsOppgave(any(), any(), any()) }
-        verify (exactly = 0) { metrikk.tellOpprettFordelingsoppgave() }
+        verify(exactly = 0) { feiletService.lagreFeilet(any(), any()) }
+        coVerify(exactly = 0) { oppgaveClient.opprettFordelingsOppgave(any()) }
+        verify(exactly = 0) { metrikk.tellOpprettFordelingsoppgave() }
     }
 
     @Test
@@ -139,9 +139,9 @@ class InntektsmeldingConsumerTest {
         message.jmsCorrelationID = AR_TWO_WEEKS
         inntektsmeldingConsumer.listen(message)
         verify (exactly = 0) { inntektsmeldingBehandler.behandle(any(), any()) }
-        verify (exactly = 0) { feiletService.lagreFeilet(any(), any()) }
-        coVerify (exactly = 1) { oppgaveClient.opprettFordelingsOppgave(eq(ARKIV_ID), any(), any()) }
-        verify (exactly = 1) { metrikk.tellOpprettFordelingsoppgave() }
+        verify(exactly = 0) { feiletService.lagreFeilet(any(), any()) }
+        coVerify(exactly = 1) { oppgaveClient.opprettFordelingsOppgave(eq(ARKIV_ID)) }
+        verify(exactly = 1) { metrikk.tellOpprettFordelingsoppgave() }
     }
 
     @Test
@@ -156,8 +156,8 @@ class InntektsmeldingConsumerTest {
                 feiletService.lagreFeilet(eq(AR_AKTØR_EXCEPTION), eq(Feiltype.AKTØR_IKKE_FUNNET))
             }
         }
-        coVerify (exactly = 0) { oppgaveClient.opprettFordelingsOppgave(any(), any(), any()) }
-        verify (exactly = 0) { metrikk.tellOpprettFordelingsoppgave() }
+        coVerify(exactly = 0) { oppgaveClient.opprettFordelingsOppgave(any()) }
+        verify(exactly = 0) { metrikk.tellOpprettFordelingsoppgave() }
     }
 
 }

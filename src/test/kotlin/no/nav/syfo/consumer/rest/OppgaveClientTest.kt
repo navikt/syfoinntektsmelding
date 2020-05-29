@@ -1,9 +1,9 @@
 package no.nav.syfo.consumer.rest
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import io.ktor.client.HttpClient
@@ -19,7 +19,6 @@ import kotlinx.coroutines.runBlocking
 import no.nav.syfo.config.OppgaveConfig
 import no.nav.syfo.util.Metrikk
 import org.assertj.core.api.Assertions.assertThat
-import java.time.LocalDate
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -27,6 +26,7 @@ import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.junit.MockitoJUnitRunner
 import java.time.DayOfWeek
+import java.time.LocalDate
 import java.time.Month
 
 private const val OPPGAVE_ID = 1234
@@ -93,8 +93,8 @@ class OppgaveClientTest {
         val client = lagClientMockEngine(lagTomOppgaveResponse())
         oppgaveClient.setHttpClient(client)
 
-        val resultat = oppgaveClient.opprettFordelingsOppgave("journalpostId", "1", false)
-        val requestVerdier = hentRequestInnhold(client)
+            val resultat = oppgaveClient.opprettFordelingsOppgave("journalpostId")
+            val requestVerdier = hentRequestInnhold(client)
 
         assertThat(resultat.oppgaveId).isNotEqualTo(FORDELINGSOPPGAVE_ID)
         assertThat(resultat.duplikat).isFalse()
@@ -110,7 +110,7 @@ class OppgaveClientTest {
         val client = lagClientMockEngine(lagFordelingsOppgaveResponse())
         oppgaveClient.setHttpClient(client)
 
-        val resultat = oppgaveClient.opprettFordelingsOppgave("journalpostId", "1", false)
+            val resultat = oppgaveClient.opprettFordelingsOppgave("journalpostId")
 
         assertThat(resultat.oppgaveId).isEqualTo(FORDELINGSOPPGAVE_ID)
         assertThat(resultat.duplikat).isTrue()
