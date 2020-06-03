@@ -3,15 +3,21 @@ package no.nav.syfo.bakgrunnsjobb
 import log
 import no.nav.syfo.dto.BakgrunnsjobbEntitet
 import no.nav.syfo.dto.BakgrunnsjobbStatus
+import no.nav.syfo.utsattoppgave.FeiletUtsattOppgaveMeldingProsessor
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.lang.IllegalArgumentException
 import java.time.LocalDateTime
 
 @Service
-class BakgrunnsjobbService(val bakgrunnsjobbRepository: BakgrunnsjobbRepository) {
+class BakgrunnsjobbService(val bakgrunnsjobbRepository: BakgrunnsjobbRepository, feiletUtsattOppgaveMeldingProsessor: FeiletUtsattOppgaveMeldingProsessor) {
     private val prossesserere =  HashMap<String, BakgrunnsjobbProsesserer>()
     val log = log()
+
+    init {
+        // konfigurasjon av hvilke prosessorer som er kjente for tjenesten. Dette kan puttes et annet sted om ønskelig
+        registrerJobbProsesserer(FeiletUtsattOppgaveMeldingProsessor.JOBB_TYPE, feiletUtsattOppgaveMeldingProsessor)
+    }
 
     @Scheduled(cron = "0/1 0/5 0 ? * * *")
     fun sjekkOgProsseserVentendeBakgrunnsjobber() {
@@ -26,7 +32,7 @@ class BakgrunnsjobbService(val bakgrunnsjobbRepository: BakgrunnsjobbRepository)
 
         try {
             val prossessorForType = prossesserere[jobb.type]
-                    ?: throw IllegalArgumentException("Det finnes ingen prossessor for typen '${jobb.type}'")
+                    ?: throw IllegalArgumentException("Det finnes ingen prossessor for typen '${jobb.type}'. Dette må konfigureres.")
 
             prossessorForType.prosesser(jobb.data)
 
@@ -57,7 +63,10 @@ class BakgrunnsjobbService(val bakgrunnsjobbRepository: BakgrunnsjobbRepository)
         bakgrunnsjobbRepository.findByKjoeretidBeforeAndStatusIn(LocalDateTime.now(), setOf(BakgrunnsjobbStatus.OPPRETTET, BakgrunnsjobbStatus.FEILET))
 }
 
-
+/**
+ * Interface for en klasse som kan prosessere en bakgrunnsjobbstype
+ */
 interface BakgrunnsjobbProsesserer {
     fun prosesser(jobbData: String)
+    fun nesteForsoek(forsoek: Int, forrigeForsoek: LocalDateTime): LocalDateTime
 }

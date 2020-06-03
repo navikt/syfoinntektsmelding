@@ -2,6 +2,7 @@ package no.nav.syfo.utsattoppgave
 
 import log
 import no.nav.syfo.behandling.OppgaveException
+import no.nav.syfo.web.selftest.SimpleSelfTestState
 import org.apache.kafka.clients.consumer.Consumer
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.common.errors.TopicAuthorizationException
@@ -13,7 +14,7 @@ import org.springframework.stereotype.Component
 private val STOPPING_ERROR_HANDLER = ContainerStoppingErrorHandler()
 
 @Component
-class KafkaErrorHandler : ContainerAwareErrorHandler {
+class InfiniteRetryKafkaErrorHandler(private val selfTestState: SimpleSelfTestState) : ContainerAwareErrorHandler {
     val log = log()
 
     override fun handle(
@@ -30,8 +31,8 @@ class KafkaErrorHandler : ContainerAwareErrorHandler {
                 log.info("Starter ny kafka-consumer")
                 container.start()
             } catch (e: Exception) {
-                // Denne kunne ha med fordel ha flippa applikasjons selftest
                 log.error("Noe gikk galt ved oppstart av kafka-consumer", e)
+                selfTestState.IS_ALIVE = false
                 throw thrownException
             }
         }.start()
@@ -39,15 +40,5 @@ class KafkaErrorHandler : ContainerAwareErrorHandler {
         log.error("Restarter kafka-consumeren")
         log.error("Uventet feil i kafka-consumeren - stopper lytteren")
         STOPPING_ERROR_HANDLER.handle(thrownException, records, consumer, container)
-    }
-
-    private fun exceptionIsClass(throwable: Throwable?, klazz: Class<*>): Boolean {
-        var t = throwable
-        var maxdepth = 10
-        while (maxdepth-- > 0 && t != null && !klazz.isInstance(t)) {
-            t = t.cause
-        }
-
-        return klazz.isInstance(t)
     }
 }

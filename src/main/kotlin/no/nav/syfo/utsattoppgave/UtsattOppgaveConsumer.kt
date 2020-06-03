@@ -6,6 +6,8 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.ktor.util.KtorExperimentalAPI
+import no.nav.syfo.bakgrunnsjobb.BakgrunnsjobbService
+import no.nav.syfo.dto.BakgrunnsjobbEntitet
 import no.nav.syfo.util.MDCOperations
 import no.nav.syfo.util.MDCOperations.MDC_CALL_ID
 import org.apache.kafka.clients.CommonClientConfigs
@@ -25,6 +27,7 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory
 import org.springframework.kafka.listener.ContainerProperties
 import org.springframework.kafka.support.Acknowledgment
 import org.springframework.stereotype.Component
+import java.time.LocalDateTime
 import java.util.UUID
 
 val objectMapper: ObjectMapper = jacksonObjectMapper()
@@ -32,7 +35,10 @@ val objectMapper: ObjectMapper = jacksonObjectMapper()
     .registerModule(JavaTimeModule())
 
 @Component
-class UtsattOppgaveConsumer(val oppgaveService: UtsattOppgaveService) {
+class UtsattOppgaveConsumer(
+    val oppgaveService: UtsattOppgaveService,
+    val bakgrunnsjobbService: BakgrunnsjobbService,
+    val om: ObjectMapper) {
 
     @KtorExperimentalAPI
     @KafkaListener(
@@ -54,7 +60,17 @@ class UtsattOppgaveConsumer(val oppgaveService: UtsattOppgaveService) {
             utsattOppgave.timeout
         )
 
-        oppgaveService.prosesser(oppdatering)
+        try {
+            oppgaveService.prosesser(oppdatering)
+        } catch(ex: Exception) {
+            bakgrunnsjobbService.opprett(BakgrunnsjobbEntitet(
+                data = om.writeValueAsString(utsattOppgave),
+                type = FeiletUtsattOppgaveMeldingProsessor.JOBB_TYPE,
+                kjoeretid = LocalDateTime.now().plusMinutes(30),
+                maksAntallForsoek = 10
+            ))
+        }
+
         acknowledgment.acknowledge()
         MDCOperations.remove(MDC_CALL_ID)
     }
@@ -86,9 +102,9 @@ class UtsattOppgaveConsumerConfig(
     fun consumerFactory(): ConsumerFactory<String, String> = DefaultKafkaConsumerFactory(consumerProperties())
 
     @Bean
-    fun kafkaListenerContainerFactory(kafkaErrorHandler: KafkaErrorHandler): ConcurrentKafkaListenerContainerFactory<String, String> =
+    fun kafkaListenerContainerFactory(infiniteRetryKafkaErrorHandler: InfiniteRetryKafkaErrorHandler): ConcurrentKafkaListenerContainerFactory<String, String> =
         ConcurrentKafkaListenerContainerFactory<String, String>().apply {
-            setErrorHandler(kafkaErrorHandler)
+            setErrorHandler(infiniteRetryKafkaErrorHandler)
             consumerFactory = consumerFactory()
             containerProperties.apply { ackMode = ContainerProperties.AckMode.MANUAL_IMMEDIATE }
         }
