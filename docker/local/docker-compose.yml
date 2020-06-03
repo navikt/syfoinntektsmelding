@@ -5,5 +5,12 @@ services:
             context: ./
         ports:
             - "5432:5432"
+    spinn_kafka:
+        build:
+            context: ./kafka
+            dockerfile: kafka.Dockerfile
+        ports:
+            - "2181:2181"
+            - "9092:9092"
 volumes:
     data:

@@ -1,4 +1,4 @@
-package no.nav.syfo.utsattoppgave
+package no.nav.syfo.repository
 
 import junit.framework.Assert.assertEquals
 import no.nav.syfo.dto.Tilstand

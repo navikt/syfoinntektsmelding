@@ -102,7 +102,7 @@ open class InntektsmeldingBehandlerIT {
     @Autowired
     lateinit var utsattOppgaveDAO: UtsattOppgaveDAO
     lateinit var utsattOppgaveService: UtsattOppgaveService
-    lateinit var utsattOppgaveConsumer: UtsattOppgaveConsumer
+    //lateinit var utsattOppgaveConsumer: UtsattOppgaveConsumer
 
     @MockBean
     lateinit var journalpostService: JournalpostService
@@ -117,7 +117,7 @@ open class InntektsmeldingBehandlerIT {
         inntektsmeldingService = InntektsmeldingService(inntektsmeldingRepository, 3)
         saksbehandlingService = SaksbehandlingService(eksisterendeSakService, inntektsmeldingService, sakClient, metrikk)
         utsattOppgaveService = UtsattOppgaveService(utsattOppgaveDAO, oppgaveClient, behandlendeEnhetConsumer)
-        utsattOppgaveConsumer = UtsattOppgaveConsumer(utsattOppgaveService)
+        //utsattOppgaveConsumer = UtsattOppgaveConsumer(utsattOppgaveService)
         inntektsmeldingBehandler = InntektsmeldingBehandler(journalpostService, saksbehandlingService, metrikk, inntektsmeldingService, aktorConsumer, inntektsmeldingProducer, utsattOppgaveService)
         MockitoAnnotations.initMocks(inntektsmeldingBehandler)
         runBlocking {

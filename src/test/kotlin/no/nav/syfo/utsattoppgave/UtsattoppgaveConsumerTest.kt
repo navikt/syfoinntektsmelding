@@ -1,7 +1,9 @@
 package no.nav.syfo.utsattoppgave
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.mockk.mockk
 import io.mockk.verify
+import no.nav.syfo.bakgrunnsjobb.BakgrunnsjobbService
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.junit.Test
 import org.springframework.kafka.support.Acknowledgment
@@ -12,8 +14,10 @@ import java.util.*
 class UtsattOppgaveConsumerTest {
 
     private val utsattOppgaveService: UtsattOppgaveService = mockk(relaxed = true)
+    private val bakgrunnsjobbService: BakgrunnsjobbService = mockk(relaxed = true)
+    private val om = ObjectMapper()
 
-    val consumer = UtsattOppgaveConsumer(utsattOppgaveService)
+    val consumer = UtsattOppgaveConsumer(utsattOppgaveService, bakgrunnsjobbService, om)
 
     private fun utsattOppgave(
         dokumentType: DokumentTypeDTO = DokumentTypeDTO.Inntektsmelding,
