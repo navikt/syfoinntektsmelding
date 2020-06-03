@@ -1,9 +1,11 @@
 package no.nav.syfo.utsattoppgave
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.ktor.util.KtorExperimentalAPI
 import junit.framework.Assert.assertEquals
 import junit.framework.Assert.assertNotNull
 import kotlinx.coroutines.runBlocking
+import no.nav.syfo.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.syfo.behandling.InntektsmeldingBehandler
 import no.nav.syfo.behandling.OpprettOppgaveException
 import no.nav.syfo.consumer.rest.OppgaveClient
@@ -124,6 +126,11 @@ open class UtsattOppgaveIntegrasjonsTest  {
     lateinit var inntektsmeldingService: InntektsmeldingService
     lateinit var inntektsmeldingBehandler: InntektsmeldingBehandler
 
+    @Autowired
+    lateinit var bakgrunnsjobbService: BakgrunnsjobbService
+    @Autowired
+    lateinit var om: ObjectMapper
+
     @KtorExperimentalAPI
     @Before
     fun setup() {
@@ -140,7 +147,8 @@ open class UtsattOppgaveIntegrasjonsTest  {
         inntektsmeldingService = InntektsmeldingService(inntektsmeldingRepository, 3)
         saksbehandlingService =
             SaksbehandlingService(eksisterendeSakService, inntektsmeldingService, sakClient, metrikk)
-        utsattOppgaveConsumer = UtsattOppgaveConsumer(utsattOppgaveService)
+
+        utsattOppgaveConsumer = UtsattOppgaveConsumer(utsattOppgaveService, bakgrunnsjobbService, om)
         inntektsmeldingBehandler = InntektsmeldingBehandler(
             journalpostService,
             saksbehandlingService,

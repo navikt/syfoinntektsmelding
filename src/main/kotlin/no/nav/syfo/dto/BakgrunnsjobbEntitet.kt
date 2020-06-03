@@ -23,12 +23,13 @@ data class BakgrunnsjobbEntitet(
     var type: String,
 
     @Column(name = "BEHANDLET")
-    var behandlet: LocalDateTime = LocalDateTime.now(),
+    var behandlet: LocalDateTime? = null,
 
     @Column(name = "OPPRETTET")
     var opprettet: LocalDateTime = LocalDateTime.now(),
 
     @Column(name = "STATUS")
+    @Enumerated(EnumType.STRING)
     var status: BakgrunnsjobbStatus = BakgrunnsjobbStatus.OPPRETTET,
 
     @Column(name = "KJOERETID")

@@ -1,8 +1,8 @@
 create table BAKGRUNNSJOBB (
     JOBB_ID VARCHAR(100) unique not null,
     TYPE VARCHAR(100) not null,
+    BEHANDLET timestamp,
     OPPRETTET timestamp not null,
-    BEHANDLET timestamp not null,
 
     STATUS VARCHAR(50) not null,
     KJOERETID timestamp not null,

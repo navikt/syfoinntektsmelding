@@ -1,4 +1,4 @@
-package no.nav.syfo.bakgrunnsjobb
+package no.nav.syfo.repository
 
 import no.nav.syfo.dto.BakgrunnsjobbEntitet
 import no.nav.syfo.dto.BakgrunnsjobbStatus

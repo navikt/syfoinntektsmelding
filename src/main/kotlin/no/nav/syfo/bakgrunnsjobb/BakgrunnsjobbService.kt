@@ -3,13 +3,14 @@ package no.nav.syfo.bakgrunnsjobb
 import log
 import no.nav.syfo.dto.BakgrunnsjobbEntitet
 import no.nav.syfo.dto.BakgrunnsjobbStatus
+import no.nav.syfo.repository.BakgrunnsjobbRepository
 import no.nav.syfo.utsattoppgave.FeiletUtsattOppgaveMeldingProsessor
 import org.springframework.scheduling.annotation.Scheduled
-import org.springframework.stereotype.Service
+import org.springframework.stereotype.Component
 import java.lang.IllegalArgumentException
 import java.time.LocalDateTime
 
-@Service
+@Component
 class BakgrunnsjobbService(val bakgrunnsjobbRepository: BakgrunnsjobbRepository, feiletUtsattOppgaveMeldingProsessor: FeiletUtsattOppgaveMeldingProsessor) {
     private val prossesserere =  HashMap<String, BakgrunnsjobbProsesserer>()
     val log = log()
@@ -19,7 +20,7 @@ class BakgrunnsjobbService(val bakgrunnsjobbRepository: BakgrunnsjobbRepository,
         registrerJobbProsesserer(FeiletUtsattOppgaveMeldingProsessor.JOBB_TYPE, feiletUtsattOppgaveMeldingProsessor)
     }
 
-    @Scheduled(cron = "0/1 0/5 0 ? * * *")
+    @Scheduled(fixedRate = 60000)
     fun sjekkOgProsseserVentendeBakgrunnsjobber() {
         finnVentende()
             .also { log.info("Fant ${it.size} bakgrunnsjobber å kjøre") }
