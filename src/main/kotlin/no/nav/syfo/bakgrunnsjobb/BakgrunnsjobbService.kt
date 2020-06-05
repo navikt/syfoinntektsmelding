@@ -3,6 +3,7 @@ package no.nav.syfo.bakgrunnsjobb
 import log
 import no.nav.syfo.dto.BakgrunnsjobbEntitet
 import no.nav.syfo.dto.BakgrunnsjobbStatus
+import no.nav.syfo.kafkamottak.JoarkInntektsmeldingHendelseProsessor
 import no.nav.syfo.repository.BakgrunnsjobbRepository
 import no.nav.syfo.utsattoppgave.FeiletUtsattOppgaveMeldingProsessor
 import org.springframework.scheduling.annotation.Scheduled
@@ -11,13 +12,18 @@ import java.lang.IllegalArgumentException
 import java.time.LocalDateTime
 
 @Component
-class BakgrunnsjobbService(val bakgrunnsjobbRepository: BakgrunnsjobbRepository, feiletUtsattOppgaveMeldingProsessor: FeiletUtsattOppgaveMeldingProsessor) {
+class BakgrunnsjobbService(
+    val bakgrunnsjobbRepository: BakgrunnsjobbRepository,
+    feiletUtsattOppgaveMeldingProsessor: FeiletUtsattOppgaveMeldingProsessor,
+    joarkInntektsmeldingHendelseProsessor: JoarkInntektsmeldingHendelseProsessor
+) {
     private val prossesserere =  HashMap<String, BakgrunnsjobbProsesserer>()
     val log = log()
 
     init {
         // konfigurasjon av hvilke prosessorer som er kjente for tjenesten. Dette kan puttes et annet sted om ønskelig
         registrerJobbProsesserer(FeiletUtsattOppgaveMeldingProsessor.JOBB_TYPE, feiletUtsattOppgaveMeldingProsessor)
+        registrerJobbProsesserer(JoarkInntektsmeldingHendelseProsessor.JOBB_TYPE, joarkInntektsmeldingHendelseProsessor)
     }
 
     @Scheduled(fixedRate = 60000)

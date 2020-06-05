@@ -3,11 +3,13 @@ package no.nav.syfo.utsattoppgave
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.ktor.util.KtorExperimentalAPI
 import no.nav.syfo.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.syfo.dto.BakgrunnsjobbEntitet
+import no.nav.syfo.kafkamottak.InngaaendeJournalpostDTO
 import no.nav.syfo.util.MDCOperations
 import no.nav.syfo.util.MDCOperations.MDC_CALL_ID
 import org.apache.kafka.clients.CommonClientConfigs
@@ -33,6 +35,7 @@ import java.util.UUID
 val objectMapper: ObjectMapper = jacksonObjectMapper()
     .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
     .registerModule(JavaTimeModule())
+    .registerModule(KotlinModule())
 
 @Component
 class UtsattOppgaveConsumer(
@@ -44,7 +47,7 @@ class UtsattOppgaveConsumer(
     @KafkaListener(
         topics = ["aapen-helse-spre-oppgaver"],
         idIsGroup = false,
-        containerFactory = "kafkaListenerContainerFactory"
+        containerFactory = "utsattOppgaveListenerContainerFactory"
     )
     fun listen(cr: ConsumerRecord<String, UtsattOppgaveDTO>, acknowledgment: Acknowledgment) {
         MDCOperations.putToMDC(MDC_CALL_ID, UUID.randomUUID().toString())
@@ -79,19 +82,19 @@ class UtsattOppgaveConsumer(
 
 @Configuration
 @EnableKafka
-class UtsattOppgaveConsumerConfig(
+class KafkaConsumerConfigs(
     @Value("\${spring.kafka.bootstrap-servers}") private val bootstrapServers: String,
     @Value("\${srvsyfoinntektsmelding.username}") private val username: String,
     @Value("\${srvsyfoinntektsmelding.password}") private val password: String
 ) {
 
-    fun consumerProperties(): Map<String, Any> = mapOf(
+    fun consumerProperties(deserializer: Any): Map<String, Any> = mapOf(
         ConsumerConfig.GROUP_ID_CONFIG to "syfoinntektsmelding-v1",
         ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
         ConsumerConfig.MAX_POLL_RECORDS_CONFIG to "1",
         ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG to false,
         ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
-        ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to UtsattOppgaveDTODeserializer::class.java,
+        ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to deserializer,
         CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG to bootstrapServers,
         CommonClientConfigs.SECURITY_PROTOCOL_CONFIG to "SASL_SSL",
         SaslConfigs.SASL_MECHANISM to "PLAIN",
@@ -99,18 +102,32 @@ class UtsattOppgaveConsumerConfig(
             "username=\"$username\" password=\"$password\";"
     )
 
-    fun consumerFactory(): ConsumerFactory<String, String> = DefaultKafkaConsumerFactory(consumerProperties())
+    fun consumerFactory(deserClazz: Any): ConsumerFactory<String, String> = DefaultKafkaConsumerFactory(consumerProperties(deserClazz))
 
     @Bean
-    fun kafkaListenerContainerFactory(infiniteRetryKafkaErrorHandler: InfiniteRetryKafkaErrorHandler): ConcurrentKafkaListenerContainerFactory<String, String> =
+    fun utsattOppgaveListenerContainerFactory(infiniteRetryKafkaErrorHandler: InfiniteRetryKafkaErrorHandler): ConcurrentKafkaListenerContainerFactory<String, String> =
         ConcurrentKafkaListenerContainerFactory<String, String>().apply {
             setErrorHandler(infiniteRetryKafkaErrorHandler)
-            consumerFactory = consumerFactory()
+            consumerFactory = consumerFactory(UtsattOppgaveDTODeserializer::class.java)
+            containerProperties.apply { ackMode = ContainerProperties.AckMode.MANUAL_IMMEDIATE }
+        }
+
+    @Bean
+    fun joarkhendelseListenerContainerFactory(infiniteRetryKafkaErrorHandler: InfiniteRetryKafkaErrorHandler): ConcurrentKafkaListenerContainerFactory<String, String> =
+        ConcurrentKafkaListenerContainerFactory<String, String>().apply {
+            setErrorHandler(infiniteRetryKafkaErrorHandler)
+            consumerFactory = consumerFactory(InngaaendeJournalpostDTODeserializer::class.java)
             containerProperties.apply { ackMode = ContainerProperties.AckMode.MANUAL_IMMEDIATE }
         }
 
     class UtsattOppgaveDTODeserializer : Deserializer<UtsattOppgaveDTO> {
         override fun deserialize(topic: String, data: ByteArray): UtsattOppgaveDTO {
+            return objectMapper.readValue(data)
+        }
+    }
+
+    class InngaaendeJournalpostDTODeserializer : Deserializer<InngaaendeJournalpostDTO> {
+        override fun deserialize(topic: String, data: ByteArray): InngaaendeJournalpostDTO {
             return objectMapper.readValue(data)
         }
 
