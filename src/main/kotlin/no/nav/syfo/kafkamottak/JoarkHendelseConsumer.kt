@@ -45,7 +45,7 @@ class JoarkHendelseConsumer(
     @KafkaListener(
         topics = ["aapen-dok-journalfoering-v1-p"],
         idIsGroup = false,
-        containerFactory = "kafkaListenerContainerFactory"
+        containerFactory = "joarkhendelseListenerContainerFactory"
     )
     fun listen(cr: ConsumerRecord<String, InngaaendeJournalpostDTO>, acknowledgment: Acknowledgment) {
         MDCOperations.putToMDC(MDC_CALL_ID, UUID.randomUUID().toString())
@@ -67,45 +67,5 @@ class JoarkHendelseConsumer(
 
         acknowledgment.acknowledge()
         MDCOperations.remove(MDC_CALL_ID)
-    }
-}
-
-@Configuration
-@EnableKafka
-class UtsattOppgaveConsumerConfig(
-    @Value("\${spring.kafka.bootstrap-servers}") private val bootstrapServers: String,
-    @Value("\${srvsyfoinntektsmelding.username}") private val username: String,
-    @Value("\${srvsyfoinntektsmelding.password}") private val password: String
-) {
-
-    fun consumerProperties(): Map<String, Any> = mapOf(
-        ConsumerConfig.GROUP_ID_CONFIG to "syfoinntektsmelding-v1",
-        ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
-        ConsumerConfig.MAX_POLL_RECORDS_CONFIG to "1",
-        ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG to false,
-        ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
-        ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to InngaaendeJournalpostDTODeserializer::class.java,
-        CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG to bootstrapServers,
-        CommonClientConfigs.SECURITY_PROTOCOL_CONFIG to "SASL_SSL",
-        SaslConfigs.SASL_MECHANISM to "PLAIN",
-        SaslConfigs.SASL_JAAS_CONFIG to "org.apache.kafka.common.security.plain.PlainLoginModule required " +
-            "username=\"$username\" password=\"$password\";"
-    )
-
-    fun consumerFactory(): ConsumerFactory<String, String> = DefaultKafkaConsumerFactory(consumerProperties())
-
-    @Bean
-    fun kafkaListenerContainerFactory(infiniteRetryKafkaErrorHandler: InfiniteRetryKafkaErrorHandler): ConcurrentKafkaListenerContainerFactory<String, String> =
-        ConcurrentKafkaListenerContainerFactory<String, String>().apply {
-            setErrorHandler(infiniteRetryKafkaErrorHandler)
-            consumerFactory = consumerFactory()
-            containerProperties.apply { ackMode = ContainerProperties.AckMode.MANUAL_IMMEDIATE }
-        }
-
-    class InngaaendeJournalpostDTODeserializer : Deserializer<InngaaendeJournalpostDTO> {
-        override fun deserialize(topic: String, data: ByteArray): InngaaendeJournalpostDTO {
-            return om.readValue(data)
-        }
-
     }
 }
