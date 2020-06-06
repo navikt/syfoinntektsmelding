@@ -13,6 +13,7 @@ import no.nav.syfo.util.MDCOperations
 import no.nav.syfo.util.MDCOperations.MDC_CALL_ID
 import no.nav.syfo.utsattoppgave.FeiletUtsattOppgaveMeldingProsessor
 import no.nav.syfo.utsattoppgave.InfiniteRetryKafkaErrorHandler
+import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.ConsumerRecord
@@ -47,9 +48,9 @@ class JoarkHendelseConsumer(
         idIsGroup = false,
         containerFactory = "joarkhendelseListenerContainerFactory"
     )
-    fun listen(cr: ConsumerRecord<String, InngaaendeJournalpostDTO>, acknowledgment: Acknowledgment) {
+    fun listen(cr: ConsumerRecord<String, GenericRecord>, acknowledgment: Acknowledgment) {
         MDCOperations.putToMDC(MDC_CALL_ID, UUID.randomUUID().toString())
-        val hendelse = cr.value()
+        val hendelse = om.readValue<InngaaendeJournalpostDTO>(cr.value().toString())
         // https://confluence.adeo.no/display/BOA/Tema https://confluence.adeo.no/display/BOA/Mottakskanal
         val isSyketemaOgFraAltinn = hendelse.temaNytt != "SYK" && hendelse.mottaksKanal == "ALTINN"
 

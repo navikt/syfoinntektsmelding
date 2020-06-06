@@ -147,6 +147,7 @@ dependencies {
     testImplementation("io.mockk:mockk:1.9.3")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.3")
     implementation("com.vladmihalcea:hibernate-types-52:2.9.3")
+    implementation("io.confluent:kafka-streams-avro-serde:5.0.0")
 }
 
 tasks.named<Jar>("jar") {

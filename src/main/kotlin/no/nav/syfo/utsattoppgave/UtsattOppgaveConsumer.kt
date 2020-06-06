@@ -6,6 +6,8 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig
+import io.confluent.kafka.streams.serdes.avro.GenericAvroDeserializer
 import io.ktor.util.KtorExperimentalAPI
 import no.nav.syfo.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.syfo.dto.BakgrunnsjobbEntitet
@@ -30,7 +32,7 @@ import org.springframework.kafka.listener.ContainerProperties
 import org.springframework.kafka.support.Acknowledgment
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 
 val objectMapper: ObjectMapper = jacksonObjectMapper()
     .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
@@ -88,13 +90,12 @@ class KafkaConsumerConfigs(
     @Value("\${srvsyfoinntektsmelding.password}") private val password: String
 ) {
 
-    fun consumerProperties(deserializer: Any): Map<String, Any> = mapOf(
+    fun consumerProperties(): Map<String, Any> = mapOf(
         ConsumerConfig.GROUP_ID_CONFIG to "syfoinntektsmelding-v1",
         ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
         ConsumerConfig.MAX_POLL_RECORDS_CONFIG to "1",
         ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG to false,
         ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
-        ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to deserializer,
         CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG to bootstrapServers,
         CommonClientConfigs.SECURITY_PROTOCOL_CONFIG to "SASL_SSL",
         SaslConfigs.SASL_MECHANISM to "PLAIN",
@@ -102,13 +103,15 @@ class KafkaConsumerConfigs(
             "username=\"$username\" password=\"$password\";"
     )
 
-    fun consumerFactory(deserClazz: Any): ConsumerFactory<String, String> = DefaultKafkaConsumerFactory(consumerProperties(deserClazz))
+    fun consumerFactory(propOverrides: Map<String, Any> ): ConsumerFactory<String, String> = DefaultKafkaConsumerFactory(consumerProperties().plus(propOverrides))
 
     @Bean
     fun utsattOppgaveListenerContainerFactory(infiniteRetryKafkaErrorHandler: InfiniteRetryKafkaErrorHandler): ConcurrentKafkaListenerContainerFactory<String, String> =
         ConcurrentKafkaListenerContainerFactory<String, String>().apply {
             setErrorHandler(infiniteRetryKafkaErrorHandler)
-            consumerFactory = consumerFactory(UtsattOppgaveDTODeserializer::class.java)
+            consumerFactory = consumerFactory(mapOf(
+                ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to UtsattOppgaveDTODeserializer::class.java
+            ))
             containerProperties.apply { ackMode = ContainerProperties.AckMode.MANUAL_IMMEDIATE }
         }
 
@@ -116,7 +119,11 @@ class KafkaConsumerConfigs(
     fun joarkhendelseListenerContainerFactory(infiniteRetryKafkaErrorHandler: InfiniteRetryKafkaErrorHandler): ConcurrentKafkaListenerContainerFactory<String, String> =
         ConcurrentKafkaListenerContainerFactory<String, String>().apply {
             setErrorHandler(infiniteRetryKafkaErrorHandler)
-            consumerFactory = consumerFactory(InngaaendeJournalpostDTODeserializer::class.java)
+            consumerFactory = consumerFactory(mapOf(
+                ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to GenericAvroDeserializer::class.java,
+                AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG to "http://kafka-schema-registry.tpa:8081"
+
+            ))
             containerProperties.apply { ackMode = ContainerProperties.AckMode.MANUAL_IMMEDIATE }
         }
 
@@ -125,14 +132,6 @@ class KafkaConsumerConfigs(
             return objectMapper.readValue(data)
         }
     }
-
-    class InngaaendeJournalpostDTODeserializer : Deserializer<InngaaendeJournalpostDTO> {
-        override fun deserialize(topic: String, data: ByteArray): InngaaendeJournalpostDTO {
-            return objectMapper.readValue(data)
-        }
-
-    }
-
 }
 
 fun OppdateringstypeDTO.tilHandling() = when (this) {
