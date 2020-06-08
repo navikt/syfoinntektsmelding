@@ -52,7 +52,7 @@ class JoarkHendelseConsumer(
         MDCOperations.putToMDC(MDC_CALL_ID, UUID.randomUUID().toString())
         val hendelse = om.readValue<InngaaendeJournalpostDTO>(cr.value().toString())
         // https://confluence.adeo.no/display/BOA/Tema https://confluence.adeo.no/display/BOA/Mottakskanal
-        val isSyketemaOgFraAltinn = hendelse.temaNytt != "SYK" && hendelse.mottaksKanal == "ALTINN"
+        val isSyketemaOgFraAltinn = hendelse.temaNytt == "SYK" && hendelse.mottaksKanal == "ALTINN"
 
         if (!isSyketemaOgFraAltinn) {
             acknowledgment.acknowledge()
