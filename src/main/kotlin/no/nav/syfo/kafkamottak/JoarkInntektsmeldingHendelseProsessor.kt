@@ -36,10 +36,6 @@ class JoarkInntektsmeldingHendelseProsessor(
     }
 
     override fun prosesser(jobbOpprettet: LocalDateTime, forsoek: Int, jobbData: String) {
-
-        // TODO: fjern for å skru på
-        if (forsoek != 999999) return
-
         var arkivReferanse = "UKJENT"
         try {
 
@@ -52,6 +48,7 @@ class JoarkInntektsmeldingHendelseProsessor(
                 throw IllegalArgumentException("Mottok inntektsmelding uten arkivreferanse")
             }
 
+            log.info("Bakgrunnsbehandler $arkivReferanse")
             val historikk = feiletService.finnHistorikk(arkivReferanse)
 
             if (historikk.feiletList.isNotEmpty()){
