@@ -97,5 +97,4 @@ class InntektsmeldingConsumer(
             metrikk.tellLagreFeiletMislykkes();
         }
     }
-
 }

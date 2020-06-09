@@ -1,7 +1,6 @@
 package no.nav.syfo.kafkamottak
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -11,24 +10,9 @@ import no.nav.syfo.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.syfo.dto.BakgrunnsjobbEntitet
 import no.nav.syfo.util.MDCOperations
 import no.nav.syfo.util.MDCOperations.MDC_CALL_ID
-import no.nav.syfo.utsattoppgave.FeiletUtsattOppgaveMeldingProsessor
-import no.nav.syfo.utsattoppgave.InfiniteRetryKafkaErrorHandler
 import org.apache.avro.generic.GenericRecord
-import org.apache.kafka.clients.CommonClientConfigs
-import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.ConsumerRecord
-import org.apache.kafka.common.config.SaslConfigs
-import org.apache.kafka.common.serialization.Deserializer
-import org.apache.kafka.common.serialization.StringDeserializer
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
-import org.springframework.kafka.annotation.EnableKafka
 import org.springframework.kafka.annotation.KafkaListener
-import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory
-import org.springframework.kafka.core.ConsumerFactory
-import org.springframework.kafka.core.DefaultKafkaConsumerFactory
-import org.springframework.kafka.listener.ContainerProperties
 import org.springframework.kafka.support.Acknowledgment
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
@@ -51,10 +35,14 @@ class JoarkHendelseConsumer(
     fun listen(cr: ConsumerRecord<String, GenericRecord>, acknowledgment: Acknowledgment) {
         MDCOperations.putToMDC(MDC_CALL_ID, UUID.randomUUID().toString())
         val hendelse = om.readValue<InngaaendeJournalpostDTO>(cr.value().toString())
-        // https://confluence.adeo.no/display/BOA/Tema https://confluence.adeo.no/display/BOA/Mottakskanal
-        val isSyketemaOgFraAltinn = hendelse.temaNytt == "SYK" && hendelse.mottaksKanal == "ALTINN"
 
-        if (!isSyketemaOgFraAltinn) {
+        // https://confluence.adeo.no/display/BOA/Tema https://confluence.adeo.no/display/BOA/Mottakskanal
+        val isSyketemaOgFraAltinnMidlertidig =
+                hendelse.temaNytt == "SYK" &&
+                hendelse.mottaksKanal == "ALTINN" &&
+                hendelse.journalpostStatus == "M"
+
+        if (!isSyketemaOgFraAltinnMidlertidig) {
             acknowledgment.acknowledge()
             return
         }

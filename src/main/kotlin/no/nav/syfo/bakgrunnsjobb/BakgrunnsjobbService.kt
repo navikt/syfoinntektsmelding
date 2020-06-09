@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.lang.IllegalArgumentException
 import java.time.LocalDateTime
+import java.time.LocalDateTime.now
 
 @Component
 class BakgrunnsjobbService(
@@ -34,18 +35,25 @@ class BakgrunnsjobbService(
     }
 
     private fun prosesser(jobb: BakgrunnsjobbEntitet) {
-        jobb.behandlet = LocalDateTime.now()
+        jobb.behandlet = now()
         jobb.forsoek++
 
         try {
             val prossessorForType = prossesserere[jobb.type]
                     ?: throw IllegalArgumentException("Det finnes ingen prossessor for typen '${jobb.type}'. Dette må konfigureres.")
 
-            prossessorForType.prosesser(jobb.data)
+            jobb.kjoeretid = prossessorForType.nesteForsoek(jobb.forsoek, now())
+            prossessorForType.prosesser(jobb.opprettet, jobb.forsoek, jobb.data)
 
             jobb.status = BakgrunnsjobbStatus.OK
         } catch (ex: Exception) {
             jobb.status = if (jobb.forsoek >= jobb.maksAntallForsoek) BakgrunnsjobbStatus.STOPPET else BakgrunnsjobbStatus.FEILET
+
+            if (jobb.status == BakgrunnsjobbStatus.STOPPET) {
+                log.error("Jobb ${jobb.uuid} feilet permanent", ex)
+            } else {
+                log.error("Jobb ${jobb.uuid} feilet, forsøker igjen ${jobb.kjoeretid}", ex)
+            }
         } finally {
             lagre(jobb)
         }
@@ -67,13 +75,13 @@ class BakgrunnsjobbService(
     }
 
     fun finnVentende(): List<BakgrunnsjobbEntitet> =
-        bakgrunnsjobbRepository.findByKjoeretidBeforeAndStatusIn(LocalDateTime.now(), setOf(BakgrunnsjobbStatus.OPPRETTET, BakgrunnsjobbStatus.FEILET))
+        bakgrunnsjobbRepository.findByKjoeretidBeforeAndStatusIn(now(), setOf(BakgrunnsjobbStatus.OPPRETTET, BakgrunnsjobbStatus.FEILET))
 }
 
 /**
  * Interface for en klasse som kan prosessere en bakgrunnsjobbstype
  */
 interface BakgrunnsjobbProsesserer {
-    fun prosesser(jobbData: String)
+    fun prosesser(jobbOpprettet: LocalDateTime, forsoek: Int, jobbData: String)
     fun nesteForsoek(forsoek: Int, forrigeForsoek: LocalDateTime): LocalDateTime
 }

@@ -12,6 +12,7 @@ enum class Feiltype(var navn: String) {
     DOKUMENT_SIKKERHETSBEGRENSNING("dokument_sikkerhet"),
     DOKUMENT_IKKE_FUNNET("dokument_ikkefunnet"),
     DOKUMENT_FEILET("dokument_feilet"),
+    INNGÅENDE_MANGLER_KANALREFERANSE("mangler_kanalreferanse"),
     INNGÅENDE_SIKKERHETSBEGRENSNING("inn_sikkerhet"),
     INNGÅENDE_IKKE_INNGÅENDE("inn_ikkeinn"),
     INNGÅENDE_IKKE_FUNNET("inn_ikkefunnet"),

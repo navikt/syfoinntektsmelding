@@ -18,7 +18,7 @@ class FeiletUtsattOppgaveMeldingProsessor(private val om: ObjectMapper, val oppg
         val JOBB_TYPE = "feilet-utsatt-oppgave"
     }
 
-    override fun prosesser(jobbData: String) {
+    override fun prosesser(jobbOpprettet: LocalDateTime, forsoek: Int, jobbData: String) {
         val utsattOppgaveOppdatering = om.readValue<UtsattOppgaveDTO>(jobbData)
         val oppdatering = OppgaveOppdatering(
             utsattOppgaveOppdatering.dokumentId,
