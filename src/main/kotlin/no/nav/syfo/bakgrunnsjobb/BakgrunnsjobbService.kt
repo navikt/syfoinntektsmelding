@@ -5,6 +5,7 @@ import no.nav.syfo.dto.BakgrunnsjobbEntitet
 import no.nav.syfo.dto.BakgrunnsjobbStatus
 import no.nav.syfo.kafkamottak.JoarkInntektsmeldingHendelseProsessor
 import no.nav.syfo.repository.BakgrunnsjobbRepository
+import no.nav.syfo.util.Metrikk
 import no.nav.syfo.utsattoppgave.FeiletUtsattOppgaveMeldingProsessor
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
@@ -16,8 +17,10 @@ import java.time.LocalDateTime.now
 class BakgrunnsjobbService(
     val bakgrunnsjobbRepository: BakgrunnsjobbRepository,
     feiletUtsattOppgaveMeldingProsessor: FeiletUtsattOppgaveMeldingProsessor,
-    joarkInntektsmeldingHendelseProsessor: JoarkInntektsmeldingHendelseProsessor
-) {
+    joarkInntektsmeldingHendelseProsessor: JoarkInntektsmeldingHendelseProsessor,
+    private val metrikk: Metrikk
+
+    ) {
     private val prossesserere =  HashMap<String, BakgrunnsjobbProsesserer>()
     val log = log()
 
@@ -51,8 +54,10 @@ class BakgrunnsjobbService(
 
             if (jobb.status == BakgrunnsjobbStatus.STOPPET) {
                 log.error("Jobb ${jobb.uuid} feilet permanent", ex)
+                metrikk.tellStoppetBakgrunnsjobb()
             } else {
                 log.error("Jobb ${jobb.uuid} feilet, forsøker igjen ${jobb.kjoeretid}", ex)
+                metrikk.tellFeiletBakgrunnsjobb()
             }
         } finally {
             lagre(jobb)

@@ -64,6 +64,14 @@ public class Metrikk {
         registry.counter("syfoinntektsmelding_sykepenger_utland").increment();
     }
 
+    public void tellFeiletBakgrunnsjobb() {
+        registry.counter("syfoinntektsmelding_bakgrunnsjobb_feilet").increment();
+    }
+
+    public void tellStoppetBakgrunnsjobb() {
+        registry.counter("syfoinntektsmelding_bakgrunnsjobb_stoppet").increment();
+    }
+
     public void tellInntektsmeldingfeil() {
         registry.counter("syfoinntektsmelding_inntektsmeldingfeil", Tags.of("type", "error")).increment();
     }
