@@ -21,7 +21,6 @@ import org.mockito.Mockito.*
 import org.mockito.junit.MockitoJUnitRunner
 import java.time.LocalDate
 import java.time.LocalDateTime
-import javax.jms.MessageNotWriteableException
 
 @RunWith(MockitoJUnitRunner::class)
 class InntektsmeldingBehandlerTest {
@@ -67,7 +66,6 @@ class InntektsmeldingBehandlerTest {
     }
 
     @Test
-    @Throws(MessageNotWriteableException::class)
     fun behandler_midlertidig() {
         `when`(journalpostService.hentInntektsmelding("arkivId", "AR-123")).thenReturn(
             Inntektsmelding(
@@ -92,7 +90,6 @@ class InntektsmeldingBehandlerTest {
     }
 
     @Test
-    @Throws(MessageNotWriteableException::class)
     fun behandler_Ikke_ForskjelligFraMidlertidig() {
         `when`(journalpostService.hentInntektsmelding("arkivId", "AR-123")).thenReturn(
             Inntektsmelding(
@@ -115,7 +112,6 @@ class InntektsmeldingBehandlerTest {
     }
 
     @Test
-    @Throws(MessageNotWriteableException::class)
     fun behandler_Ikke_StatusEndelig() {
         `when`(journalpostService.hentInntektsmelding("arkivId", "AR-123")).thenReturn(
             Inntektsmelding(
@@ -137,12 +133,5 @@ class InntektsmeldingBehandlerTest {
         verify(journalpostService, never()).ferdigstillJournalpost(any(), any())
         verify(inntektsmeldingProducer!!, never()).leggMottattInntektsmeldingPåTopics(any())
     }
-
-    @Test
-    @Throws(MessageNotWriteableException::class)
-    fun behandler_paralellt() {
-
-    }
-
 }
 

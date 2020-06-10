@@ -9,7 +9,6 @@ import no.nav.syfo.bakgrunnsjobb.BakgrunnsjobbProsesserer
 import no.nav.syfo.behandling.BehandlingException
 import no.nav.syfo.behandling.Feiltype
 import no.nav.syfo.behandling.InntektsmeldingBehandler
-import no.nav.syfo.consumer.mq.InntektsmeldingConsumerException
 import no.nav.syfo.consumer.rest.OppgaveClient
 import no.nav.syfo.repository.FeiletService
 import no.nav.syfo.util.MDCOperations

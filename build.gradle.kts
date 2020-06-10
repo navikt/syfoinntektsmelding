@@ -74,7 +74,6 @@ dependencies {
     implementation("org.springframework:spring-jms:$springVersion")
     implementation("org.springframework.kafka:spring-kafka:$springKafkaVersion")
     testImplementation("org.springframework.boot:spring-boot-starter-test:$springBootVersion")
-    testImplementation("org.springframework.boot:spring-boot-starter-activemq:$springBootVersion")
     testImplementation("org.springframework.boot:spring-boot-test:$springBootVersion")
     testImplementation("org.springframework:spring-test:$springVersion")
 
@@ -123,9 +122,6 @@ dependencies {
 
     implementation("org.slf4j:slf4j-api:1.7.25")
     implementation("net.logstash.logback:logstash-logback-encoder:4.10")
-    implementation("com.ibm.mq:com.ibm.mq.allclient:9.0.4.0")
-    implementation("javax.jms:javax.jms-api:2.0.1")
-    testImplementation("org.apache.activemq:activemq-client:5.15.6")
     implementation("org.apache.httpcomponents:httpclient:4.5.6")
     implementation("io.micrometer:micrometer-core:$micrometerVersion")
     runtimeOnly("io.micrometer:micrometer-registry-prometheus:$micrometerVersion")

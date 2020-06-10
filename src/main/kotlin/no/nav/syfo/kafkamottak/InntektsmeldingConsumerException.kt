@@ -1,4 +1,4 @@
-package no.nav.syfo.consumer.mq
+package no.nav.syfo.kafkamottak
 
 import no.nav.syfo.behandling.Feiltype
 
