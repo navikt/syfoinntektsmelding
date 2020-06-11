@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.ktor.util.KtorExperimentalAPI
 import no.nav.syfo.bakgrunnsjobb.BakgrunnsjobbProsesserer
+import no.nav.syfo.util.MDCOperations
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 
@@ -19,14 +20,19 @@ class FeiletUtsattOppgaveMeldingProsessor(private val om: ObjectMapper, val oppg
     }
 
     override fun prosesser(jobbOpprettet: LocalDateTime, forsoek: Int, jobbData: String) {
-        val utsattOppgaveOppdatering = om.readValue<UtsattOppgaveDTO>(jobbData)
-        val oppdatering = OppgaveOppdatering(
-            utsattOppgaveOppdatering.dokumentId,
-            utsattOppgaveOppdatering.oppdateringstype.tilHandling(),
-            utsattOppgaveOppdatering.timeout
-        )
+        try {
+            val utsattOppgaveOppdatering = om.readValue<UtsattOppgaveDTO>(jobbData)
+            val oppdatering = OppgaveOppdatering(
+                utsattOppgaveOppdatering.dokumentId,
+                utsattOppgaveOppdatering.oppdateringstype.tilHandling(),
+                utsattOppgaveOppdatering.timeout
+            )
 
-        oppgaveService.prosesser(oppdatering)
+            MDCOperations.putToMDC(MDCOperations.MDC_CALL_ID, MDCOperations.generateCallId())
+            oppgaveService.prosesser(oppdatering)
+        } finally {
+            MDCOperations.remove(MDCOperations.MDC_CALL_ID)
+        }
     }
 
     override fun nesteForsoek(forsoek: Int, forrigeForsoek: LocalDateTime): LocalDateTime {
