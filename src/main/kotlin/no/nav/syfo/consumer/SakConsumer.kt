@@ -40,7 +40,7 @@ class SakConsumer(
         if (result.statusCode != HttpStatus.OK) {
             val message = "Kall mot syfonarmesteleder feiler med HTTP-" + result.statusCode
             log.error(message)
-            throw SakResponseException(aktorId, result.statusCode.value())
+            throw SakResponseException(aktorId, result.statusCode.value(), null)
         }
 
         try {
@@ -49,7 +49,7 @@ class SakConsumer(
         } catch (exception: Exception) {
             val message = "Uventet feil ved henting av nærmeste leder"
             log.error(message)
-            throw SakFeilException(aktorId)
+            throw SakFeilException(aktorId, exception)
         }
 
     }

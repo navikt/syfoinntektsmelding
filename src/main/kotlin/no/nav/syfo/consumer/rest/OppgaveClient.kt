@@ -68,17 +68,21 @@ class OppgaveClient constructor (
         }
     }
 
-    private suspend fun hentOppgave(oppgavetype: String, journalpostId: String): OppgaveResponse = retry("hent_oppgave") {
-        httpClient.get<OppgaveResponse>(config.url) {
-            this.header("Authorization", "Bearer ${tokenConsumer.token}")
-            this.header("X-Correlation-ID", MDCOperations.getFromMDC(MDCOperations.MDC_CALL_ID))
-            parameter("tema", TEMA)
-            parameter("oppgavetype", oppgavetype)
-            parameter("journalpostId", journalpostId)
-            parameter("statuskategori", "AAPEN")
-            parameter("sorteringsrekkefolge", "ASC")
-            parameter("sorteringsfelt", "FRIST")
-            parameter("limit", "10")
+    private suspend fun hentOppgave(oppgavetype: String, journalpostId: String): OppgaveResponse {
+        return retry("hent_oppgave") {
+            val callId = MDCOperations.getFromMDC(MDCOperations.MDC_CALL_ID)
+            log.info("Henter oppgave med CallId $callId")
+            httpClient.get<OppgaveResponse>(config.url) {
+                this.header("Authorization", "Bearer ${tokenConsumer.token}")
+                this.header("X-Correlation-ID", callId)
+                parameter("tema", TEMA)
+                parameter("oppgavetype", oppgavetype)
+                parameter("journalpostId", journalpostId)
+                parameter("statuskategori", "AAPEN")
+                parameter("sorteringsrekkefolge", "ASC")
+                parameter("sorteringsfelt", "FRIST")
+                parameter("limit", "10")
+            }
         }
     }
 
@@ -88,7 +92,7 @@ class OppgaveClient constructor (
             return if (oppgaveResponse.antallTreffTotalt > 0) OppgaveResultat(oppgaveResponse.oppgaver.first().id, true) else null
         } catch (ex: Exception) {
             log.error("Feil ved sjekking av eksisterende oppgave", ex)
-            throw HentOppgaveException(journalpostId, oppgavetype)
+            throw HentOppgaveException(journalpostId, oppgavetype, ex)
         }
     }
 
@@ -135,7 +139,7 @@ class OppgaveClient constructor (
         try {
             return OppgaveResultat(opprettOppgave(opprettOppgaveRequest).id, false)
         } catch (ex : Exception) {
-            throw OpprettOppgaveException(journalpostId)
+            throw OpprettOppgaveException(journalpostId, ex)
         }
     }
 
@@ -167,7 +171,7 @@ class OppgaveClient constructor (
         try {
             return OppgaveResultat(opprettOppgave(opprettOppgaveRequest).id, false)
         } catch (ex : Exception) {
-            throw OpprettFordelingsOppgaveException(journalpostId)
+            throw OpprettFordelingsOppgaveException(journalpostId, ex)
         }
     }
 

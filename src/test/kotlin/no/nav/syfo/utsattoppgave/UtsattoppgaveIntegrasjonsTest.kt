@@ -341,7 +341,7 @@ open class UtsattOppgaveIntegrasjonsTest  {
         `when`(
             runBlocking { oppgaveClient.opprettOppgave(
                 sakId = "3", journalpostId = "journalpostId", tildeltEnhetsnr = "enhet", aktoerId = "aktørId", gjelderUtland = false
-            )}).thenThrow(OpprettOppgaveException("journalpostId"))
+            )}).thenThrow(OpprettOppgaveException("journalpostId", null))
         `when`(
             runBlocking { oppgaveClient.opprettOppgave(
                 sakId = "4", journalpostId = "journalpostId", tildeltEnhetsnr = "enhet", aktoerId = "aktørId", gjelderUtland = false

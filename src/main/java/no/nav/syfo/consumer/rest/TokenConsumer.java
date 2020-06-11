@@ -40,7 +40,7 @@ public class TokenConsumer {
         final ResponseEntity<Token> result = basicAuthRestTemplate.exchange(uriString, GET, new HttpEntity<>(headers), Token.class);
 
         if (result.getStatusCode() != OK) {
-            throw new TokenException(result.getStatusCode().value());
+            throw new TokenException(result.getStatusCode().value(), null);
         }
 
         return requireNonNull(result.getBody()).getAccess_token();

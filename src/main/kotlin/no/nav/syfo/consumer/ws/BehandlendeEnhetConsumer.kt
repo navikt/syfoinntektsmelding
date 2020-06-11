@@ -63,7 +63,7 @@ class BehandlendeEnhetConsumer(
                     .filter { wsOrganisasjonsenhet -> Enhetsstatus.AKTIV == wsOrganisasjonsenhet.status }
                     .map { it.enhetId }
                     .findFirst()
-                    .orElseThrow { IngenAktivEnhetException(geografiskTilknytning.geografiskTilknytning) }
+                    .orElseThrow { IngenAktivEnhetException(geografiskTilknytning.geografiskTilknytning, null) }
 
             if (SYKEPENGER_UTLAND == behandlendeEnhet) {
                 log.info(
@@ -77,10 +77,10 @@ class BehandlendeEnhetConsumer(
 
         } catch (e: FinnBehandlendeEnhetListeUgyldigInput) {
             log.error("Feil ved henting av brukers forvaltningsenhet", e)
-            throw FinnBehandlendeEnhetListeUgyldigInputException()
+            throw FinnBehandlendeEnhetListeUgyldigInputException(e)
         } catch (e: RuntimeException) {
             log.error("Klarte ikke å hente behandlende enhet!", e)
-            throw BehandlendeEnhetFeiletException()
+            throw BehandlendeEnhetFeiletException(e)
         }
     }
 
@@ -97,10 +97,10 @@ class BehandlendeEnhetConsumer(
             )
         } catch (e: HentGeografiskTilknytningSikkerhetsbegrensing) {
             log.error("Feil ved henting av geografisk tilknytning", e)
-            throw HentGeografiskTilknytningSikkerhetsbegrensingException()
+            throw HentGeografiskTilknytningSikkerhetsbegrensingException(e)
         } catch (e: HentGeografiskTilknytningPersonIkkeFunnet) {
             log.error("Feil ved henting av geografisk tilknytning", e)
-            throw HentGeografiskTilknytningPersonIkkeFunnetException()
+            throw HentGeografiskTilknytningPersonIkkeFunnetException(e)
         }
 
     }
