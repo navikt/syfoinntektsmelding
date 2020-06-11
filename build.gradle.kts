@@ -71,7 +71,6 @@ dependencies {
     implementation("org.springframework:spring-core:$springVersion")
     implementation("org.springframework:spring-context:$springVersion")
     implementation("org.springframework:spring-jdbc:$springVersion")
-    implementation("org.springframework:spring-jms:$springVersion")
     implementation("org.springframework.kafka:spring-kafka:$springKafkaVersion")
     testImplementation("org.springframework.boot:spring-boot-starter-test:$springBootVersion")
     testImplementation("org.springframework.boot:spring-boot-test:$springBootVersion")

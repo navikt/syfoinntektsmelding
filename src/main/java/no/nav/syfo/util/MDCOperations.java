@@ -28,17 +28,17 @@ public final class MDCOperations {
 
     public static String getFromMDC(String key) {
         String value = MDC.get(key);
-        log.debug("Getting key: " + key + " from MDC with value: " + value);
+        log.info("Getting key: " + key + " from MDC with value: " + value);
         return value;
     }
 
     public static void putToMDC(String key, String value) {
-        log.debug("Putting value: " + value + " on MDC with key: " + key);
+        log.info("Putting value: " + value + " on MDC with key: " + key);
         MDC.put(key, value);
     }
 
     public static void remove(String key) {
-        log.debug("Removing key: " + key);
+        log.info("Removing key: " + key);
         MDC.remove(key);
     }
 
