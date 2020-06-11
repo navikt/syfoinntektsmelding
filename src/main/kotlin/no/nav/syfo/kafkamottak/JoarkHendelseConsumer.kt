@@ -8,15 +8,12 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import io.ktor.util.KtorExperimentalAPI
 import no.nav.syfo.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.syfo.dto.BakgrunnsjobbEntitet
-import no.nav.syfo.util.MDCOperations
-import no.nav.syfo.util.MDCOperations.MDC_CALL_ID
 import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.kafka.support.Acknowledgment
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
-import java.util.UUID
 
 private val om: ObjectMapper = jacksonObjectMapper()
     .registerModule(KotlinModule())
@@ -33,7 +30,6 @@ class JoarkHendelseConsumer(
         containerFactory = "joarkhendelseListenerContainerFactory"
     )
     fun listen(cr: ConsumerRecord<String, GenericRecord>, acknowledgment: Acknowledgment) {
-        MDCOperations.putToMDC(MDC_CALL_ID, UUID.randomUUID().toString())
         val hendelse = om.readValue<InngaaendeJournalpostDTO>(cr.value().toString())
 
         // https://confluence.adeo.no/display/BOA/Tema https://confluence.adeo.no/display/BOA/Mottakskanal
@@ -55,6 +51,5 @@ class JoarkHendelseConsumer(
         ))
 
         acknowledgment.acknowledge()
-        MDCOperations.remove(MDC_CALL_ID)
     }
 }
