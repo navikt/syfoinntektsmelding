@@ -120,4 +120,4 @@ spec:
     - name: VAULT_MOUNTPATH
       value: postgresql/preprod-fss/
     - name: KAFKA_JOARK_HENDELSE_TOPIC
-      value: "aapen-dok-journalfoering-v1-q"
+      value: "aapen-dok-journalfoering-v1-q1"
