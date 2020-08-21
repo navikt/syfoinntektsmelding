@@ -25,7 +25,7 @@ class JoarkHendelseConsumer(
 
     @KtorExperimentalAPI
     @KafkaListener(
-        topics = ["aapen-dok-journalfoering-v1-p"],
+        topics = ["#{'\${kafka_joark_hendelse_topic:dummy_for_test}'}"],
         idIsGroup = false,
         containerFactory = "joarkhendelseListenerContainerFactory"
     )
