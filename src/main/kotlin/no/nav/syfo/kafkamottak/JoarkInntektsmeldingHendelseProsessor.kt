@@ -82,7 +82,7 @@ class JoarkInntektsmeldingHendelseProsessor(
     }
 
     override fun nesteForsoek(forsoek: Int, forrigeForsoek: LocalDateTime): LocalDateTime {
-        return LocalDateTime.now().plusHours((forsoek * forsoek).toLong())
+        return LocalDateTime.now().plusHours((3).toLong())
     }
 
     suspend fun opprettFordelingsoppgave(journalpostId: String): Boolean {
