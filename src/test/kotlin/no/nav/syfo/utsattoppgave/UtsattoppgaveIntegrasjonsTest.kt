@@ -186,7 +186,7 @@ open class UtsattOppgaveIntegrasjonsTest  {
         `when`(inngaaendeJournalConsumer.hentDokumentId("arkivId")).thenReturn(inngaaendeJournal("arkivId"))
         BDDMockito.given(aktorConsumer.getAktorId(BDDMockito.anyString())).willAnswer { "aktorId_for_" + it.getArgument(0) }
         BDDMockito.given(eksisterendeSakService.finnEksisterendeSak(BDDMockito.anyString(), any(), any())).willReturn(null)
-        `when`(behandlendeEnhetConsumer.hentBehandlendeEnhet(BDDMockito.anyString())).thenReturn("enhet")
+        `when`(behandlendeEnhetConsumer.hentBehandlendeEnhet(BDDMockito.anyString(),BDDMockito.anyString())).thenReturn("enhet")
         `when`(behandlendeEnhetConsumer.hentGeografiskTilknytning(BDDMockito.anyString())).thenReturn(
             GeografiskTilknytningData(geografiskTilknytning = "tilknytning", diskresjonskode = "")
         )

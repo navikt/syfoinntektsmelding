@@ -129,7 +129,7 @@ open class InntektsmeldingBehandlerIT {
         `when`(inngaaendeJournalConsumer.hentDokumentId("arkivId")).thenReturn(inngaaendeJournal("arkivId"))
         given(aktorConsumer.getAktorId(anyString())).willAnswer { "aktorId_for_" + it.getArgument(0) }
         given(eksisterendeSakService.finnEksisterendeSak(anyString(), any(), any())).willReturn(null)
-        `when`(behandlendeEnhetConsumer.hentBehandlendeEnhet(anyString())).thenReturn("enhet")
+        `when`(behandlendeEnhetConsumer.hentBehandlendeEnhet(anyString(),anyString())).thenReturn("enhet")
         `when`(behandlendeEnhetConsumer.hentGeografiskTilknytning(anyString())).thenReturn(
             GeografiskTilknytningData(geografiskTilknytning = "tilknytning", diskresjonskode = "")
         )

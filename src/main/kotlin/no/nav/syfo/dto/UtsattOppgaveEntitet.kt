@@ -34,7 +34,10 @@ data class UtsattOppgaveEntitet(
 
     @Enumerated(EnumType.STRING)
     @Column(name = "TILSTAND", nullable = false, length = 100, updatable = true)
-    var tilstand: Tilstand
+    var tilstand: Tilstand,
+
+    @Column(name = "ENHET", length = 20)
+    var enhet: String = ""
 )
 
 enum class Tilstand {
