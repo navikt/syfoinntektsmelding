@@ -43,7 +43,7 @@ class JournalpostServiceTest {
     fun ferdigstillJournalpost() {
         val journal = InngaaendeJournal(dokumentId = "dokumentId", status = JournalStatus.MIDLERTIDIG)
         `when`(inngaaendeJournalConsumer!!.hentDokumentId("journalpostId")).thenReturn(journal)
-        given(behandlendeEnhetConsumer.hentBehandlendeEnhet(anyString())).willReturn("enhet")
+        given(behandlendeEnhetConsumer.hentBehandlendeEnhet(anyString(),anyString())).willReturn("enhet")
 
         journalpostService!!.ferdigstillJournalpost(
                 "saksId",
@@ -60,7 +60,7 @@ class JournalpostServiceTest {
                 )
         )
 
-        verify<BehandlendeEnhetConsumer>(behandlendeEnhetConsumer).hentBehandlendeEnhet("fnr")
+        verify<BehandlendeEnhetConsumer>(behandlendeEnhetConsumer).hentBehandlendeEnhet("fnr", "")
         verify(inngaaendeJournalConsumer).hentDokumentId("journalpostId")
         verify<BehandleInngaaendeJournalConsumer>(behandleInngaaendeJournalConsumer).oppdaterJournalpost(any())
         verify<BehandleInngaaendeJournalConsumer>(behandleInngaaendeJournalConsumer).ferdigstillJournalpost(any())

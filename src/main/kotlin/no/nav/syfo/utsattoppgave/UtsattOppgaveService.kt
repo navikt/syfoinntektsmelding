@@ -76,7 +76,7 @@ class UtsattOppgaveService(
 
     @KtorExperimentalAPI
     fun opprettOppgaveIGosys(utsattOppgave: UtsattOppgaveEntitet) {
-        val behandlendeEnhet = behandlendeEnhetConsumer.hentBehandlendeEnhet(utsattOppgave.fnr)
+        val behandlendeEnhet = behandlendeEnhetConsumer.hentBehandlendeEnhet(utsattOppgave.fnr, utsattOppgave.inntektsmeldingId)
         val gjelderUtland = (SYKEPENGER_UTLAND == behandlendeEnhet)
         runBlocking {
             oppgaveClient.opprettOppgave(
@@ -87,6 +87,8 @@ class UtsattOppgaveService(
                 gjelderUtland = gjelderUtland
             )
         }
+        utsattOppgave.enhet = behandlendeEnhet;
+        utsattOppgaveDAO.lagre(utsattOppgave);
     }
 
     fun lagre(oppgave: UtsattOppgaveEntitet) {

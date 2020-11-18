@@ -31,7 +31,7 @@ class BehandlendeEnhetConsumer(
 
     var log = log()
 
-    fun hentBehandlendeEnhet(fnr: String): String {
+    fun hentBehandlendeEnhet(fnr: String, uuid: String): String {
         val geografiskTilknytning = hentGeografiskTilknytning(fnr)
 
         val tema = Tema()
@@ -66,13 +66,9 @@ class BehandlendeEnhetConsumer(
                     .orElseThrow { IngenAktivEnhetException(geografiskTilknytning.geografiskTilknytning, null) }
 
             if (SYKEPENGER_UTLAND == behandlendeEnhet) {
-                log.info(
-                    "Behandlende enhet er 4474. Med geografisk tilknytning: {}",
-                    geografiskTilknytning.geografiskTilknytning
-                )
                 metrikk.tellInntektsmeldingSykepengerUtland()
             }
-
+            log.info("Fant geografiskTilknytning $geografiskTilknytning med behandlendeEnhet $behandlendeEnhet for inntektsmelding $uuid");
             return behandlendeEnhet
 
         } catch (e: FinnBehandlendeEnhetListeUgyldigInput) {
