@@ -23,6 +23,36 @@ create or replace view gruppert_admin2 as
 	a.data ->> 'førsteFraværsdag' != b.data ->> 'førsteFraværsdag' and
 	a.data ->> 'beregnetInntekt' != b.data ->> 'beregnetInntekt';
 
+	-- - som grupperer forskjellig refusjonsbeløp på differanse
+
+select count(*) as antall_refusjon,
+       case when (ABS((a.data -> 'refusjon' ->> 'beloepPrMnd')::float -  (b.data -> 'refusjon' ->> 'beloepPrMnd')::float) between 0 and 1) then '0-1'
+            when (ABS((a.data -> 'refusjon' ->> 'beloepPrMnd')::float -  (b.data -> 'refusjon' ->> 'beloepPrMnd')::float) between 1 and 10) then '1-10'
+            when (ABS((a.data -> 'refusjon' ->> 'beloepPrMnd')::float -  (b.data -> 'refusjon' ->> 'beloepPrMnd')::float) between 10 and 100) then '10-100'
+            when (ABS((a.data -> 'refusjon' ->> 'beloepPrMnd')::float -  (b.data -> 'refusjon' ->> 'beloepPrMnd')::float) between 100 and 1000) then '100-1000'
+            when (ABS((a.data -> 'refusjon' ->> 'beloepPrMnd')::float -  (b.data -> 'refusjon' ->> 'beloepPrMnd')::float) between 1000 and 10000) then '1000-10000'
+            when (ABS((a.data -> 'refusjon' ->> 'beloepPrMnd')::float -  (b.data -> 'refusjon' ->> 'beloepPrMnd')::float) > 10000) then '>10000' end
+           as differanse
+from gruppert_admin2 a inner join gruppert_admin2 b on a.gruppering = b.gruppering where
+            a.data ->> 'førsteFraværsdag' != b.data ->> 'førsteFraværsdag' and
+                a.data -> 'refusjon' ->> 'beloepPrMnd' != b.data -> 'refusjon' ->> 'beloepPrMnd'
+group by differanse;
+
+-- - som grupperer forskjellig beregnet inntekt på differanse
+
+select count(*) as antall_beregnetInntekt,
+       case when (ABS((a.data ->> 'beregnetInntekt')::float -  (b.data ->> 'beregnetInntekt')::float) between 0 and 1) then '0-1'
+            when (ABS((a.data ->> 'beregnetInntekt')::float -  (b.data ->> 'beregnetInntekt')::float) between 1 and 10) then '1-10'
+            when (ABS((a.data ->> 'beregnetInntekt')::float -  (b.data ->> 'beregnetInntekt')::float) between 10 and 100) then '10-100'
+            when (ABS((a.data ->> 'beregnetInntekt')::float -  (b.data ->> 'beregnetInntekt')::float) between 100 and 1000) then '100-1000'
+            when (ABS((a.data ->> 'beregnetInntekt')::float -  (b.data ->> 'beregnetInntekt')::float) between 1000 and 10000) then '1000-10000'
+            when (ABS((a.data ->> 'beregnetInntekt')::float -  (b.data ->> 'beregnetInntekt')::float) > 10000) then '>10000' end
+           as differanse
+from gruppert_admin2 a inner join gruppert_admin2 b on a.gruppering = b.gruppering where
+            a.data ->> 'førsteFraværsdag' != b.data ->> 'førsteFraværsdag' and
+                a.data ->> 'beregnetInntekt' != b.data ->> 'beregnetInntekt'
+group by differanse;
+
 -- - som har både forskjellig refusjonsbeløp og beregnet inntekt
 
 select count(*) from gruppert_admin2 a inner join gruppert_admin2 b on a.gruppering = b.gruppering where
