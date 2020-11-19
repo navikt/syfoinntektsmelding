@@ -68,7 +68,7 @@ class BehandlendeEnhetConsumer(
             if (SYKEPENGER_UTLAND == behandlendeEnhet) {
                 metrikk.tellInntektsmeldingSykepengerUtland()
             }
-            log.info("Fant geografiskTilknytning $geografiskTilknytning med behandlendeEnhet $behandlendeEnhet for inntektsmelding $uuid");
+            log.info("Fant geografiskTilknytning ${geografiskTilknytning.geografiskTilknytning} med behandlendeEnhet $behandlendeEnhet for inntektsmelding $uuid");
             return behandlendeEnhet
 
         } catch (e: FinnBehandlendeEnhetListeUgyldigInput) {
