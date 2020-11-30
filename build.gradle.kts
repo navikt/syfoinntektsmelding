@@ -116,6 +116,8 @@ dependencies {
     implementation("no.nav.syfo.sm:syfosm-common-networking:2019.09.03-10-50-64032e3b6381665e9f9c0914cef626331399e66d")
     implementation("no.nav:migrator:0.2.2")
     implementation("no.nav:vault-jdbc:1.3.1")
+    implementation("no.nav.common:log:2.2020.10.15_11.43-b1f02e7bd6ae")
+
 
     implementation("com.zaxxer:HikariCP:$hikariVersion")
 
