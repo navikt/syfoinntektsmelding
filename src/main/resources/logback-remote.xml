@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <included>
-	<appender name="stdout_json" class="ch.qos.logback.core.ConsoleAppender">
-		<encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+	<appender name="stdout_json" class="no.nav.common.log.MaskingAppender">
+		<appender name="stdout_json_masked" class="ch.qos.logback.core.ConsoleAppender">
+			<encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+		</appender>
 	</appender>
 
 	<root level="WARN">
