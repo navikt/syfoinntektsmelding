@@ -7,6 +7,11 @@ Applikasjonen tar imot innkommende inntektsmeldinger for sykepenger, journalfør
 Gosys for behandlende enhet. Dersom behandlede enhet ikke er funnet blir det opprettet en fordelingsoppgave istedet.
 Andre applikasjoner kan be om utsettelse eller ignorering av opprettelser av disse oppgavene.
 
+### Oversikt
+
+![image](docs/hovedflyt.svg)
+
+
 ## Robusthet
 Applikasjonen er laget med tanke på aldri miste noen inntektsmeldinger. Dette er løst med disse tiltakene:
 
@@ -54,26 +59,6 @@ SECURITYTOKENSERVICE_URL=dummy
 SRVSYFOINNTEKTSMELDING_USERNAME=dummy
 SRVSYFOINNTEKTSMELDING_PASSWORD=dummy
 ```
-
-## Diagram
-![image](docs/diagram.svg)
-
-Applikasjonen
-
-
-Hovedflyt
-
-hent saksId
-fer
-
-
-
-
-Bakgrunnsjobber
-- BakgrunnsjobbService
-
-- FeiletUtsattOppgaveMeldingProsessor
-- JoarkInntektsmeldingHendelseProsessor
 
 
 ## Database
