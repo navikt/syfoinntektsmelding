@@ -65,7 +65,7 @@ class InntektsmeldingBehandler(
                         arkivreferanse = inntektsmelding.arkivRefereranse,
                         inntektsmeldingId = dto.uuid,
                         tilstand = Tilstand.Utsatt,
-                        timeout = LocalDateTime.now().plusHours(1)
+                        timeout = LocalDateTime.now().plusHours(6)
                     )
                 )
 
