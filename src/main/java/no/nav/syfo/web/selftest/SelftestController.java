@@ -34,6 +34,5 @@ public class SelftestController {
 
     private void checkDatabase(){
         template.execute("select now();");
-        log.error("Klarte å koble mot databasen");
     }
 }
