@@ -30,6 +30,7 @@ class InntektsmeldingBehandler(
 ) {
 
     val consumerLocks = Striped.lock(8)
+    val OPPRETT_OPPGAVE_FORSINKELSE = 12L;
 
     fun behandle(arkivId: String, arkivreferanse: String): String? {
         val inntektsmelding = journalpostService.hentInntektsmelding(arkivId, arkivreferanse)
@@ -65,7 +66,7 @@ class InntektsmeldingBehandler(
                         arkivreferanse = inntektsmelding.arkivRefereranse,
                         inntektsmeldingId = dto.uuid,
                         tilstand = Tilstand.Utsatt,
-                        timeout = LocalDateTime.now().plusHours(6)
+                        timeout = LocalDateTime.now().plusHours(OPPRETT_OPPGAVE_FORSINKELSE)
                     )
                 )
 
