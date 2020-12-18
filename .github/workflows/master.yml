@@ -48,10 +48,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-cache-
       - name: test and build
-        run: ./gradlew test build
+        run: ./gradlew test build jacocoTestReport sonarqube
         env:
           ORG_GRADLE_PROJECT_githubUser: x-access-token
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       - name: Build and publish Docker image
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
