@@ -29,7 +29,7 @@ class KafkaConsumerConfigs(
     @Value("\${srvsyfoinntektsmelding.password}") private val password: String
 ) {
 
-    val RETRY_INTERVAL = 30000L;
+    val RETRY_INTERVAL = 1000L;
 
     fun consumerProperties(): Map<String, Any> = mapOf(
         ConsumerConfig.GROUP_ID_CONFIG to "syfoinntektsmelding-v1",
