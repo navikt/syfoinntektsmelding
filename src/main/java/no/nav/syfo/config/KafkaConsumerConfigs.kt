@@ -19,6 +19,7 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory
 import org.springframework.kafka.core.ConsumerFactory
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory
 import org.springframework.kafka.listener.ContainerProperties
+import java.time.Duration
 
 @Configuration
 @EnableKafka
@@ -27,6 +28,8 @@ class KafkaConsumerConfigs(
     @Value("\${srvsyfoinntektsmelding.username}") private val username: String,
     @Value("\${srvsyfoinntektsmelding.password}") private val password: String
 ) {
+
+    val RETRY_INTERVAL = 1000L;
 
     fun consumerProperties(): Map<String, Any> = mapOf(
         ConsumerConfig.GROUP_ID_CONFIG to "syfoinntektsmelding-v1",
@@ -50,7 +53,10 @@ class KafkaConsumerConfigs(
             consumerFactory = consumerFactory(mapOf(
                 ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to UtsattOppgaveDTODeserializer::class.java
             ))
-            containerProperties.apply { ackMode = ContainerProperties.AckMode.MANUAL_IMMEDIATE }
+            containerProperties.apply {
+                ackMode = ContainerProperties.AckMode.MANUAL_IMMEDIATE
+                authorizationExceptionRetryInterval = Duration.ofMillis(RETRY_INTERVAL)
+            }
         }
 
     @Bean
@@ -63,7 +69,10 @@ class KafkaConsumerConfigs(
                 ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "latest",
                 ConsumerConfig.GROUP_ID_CONFIG to "syfoinntektsmelding-v2"
             ))
-            containerProperties.apply { ackMode = ContainerProperties.AckMode.MANUAL_IMMEDIATE }
+            containerProperties.apply {
+                ackMode = ContainerProperties.AckMode.MANUAL_IMMEDIATE
+                authorizationExceptionRetryInterval = Duration.ofMillis(RETRY_INTERVAL)
+            }
         }
 
     class UtsattOppgaveDTODeserializer : Deserializer<UtsattOppgaveDTO> {
