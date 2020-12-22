@@ -21,8 +21,37 @@ plugins {
     id("org.jetbrains.kotlin.plugin.allopen") version "1.3.72"
     id("org.jetbrains.kotlin.plugin.jpa") version "1.3.72"
     id("org.flywaydb.flyway") version "5.1.4"
+    id("org.sonarqube") version "3.0"
     java
+    jacoco
 }
+
+sonarqube {
+    properties {
+        property("sonar.projectKey", "navikt_syfoinntektsmelding")
+        property("sonar.organization", "navit")
+        property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.login", System.getenv("SONAR_TOKEN"))
+        property("sonar.exclusions", "**/Koin*,**Mock**,**/App**")
+    }
+}
+
+tasks.jacocoTestReport {
+    executionData("build/jacoco/test.exec")
+    reports {
+        xml.isEnabled = true
+        html.isEnabled = true
+    }
+}
+
+tasks.withType<JacocoReport> {
+    classDirectories.setFrom(
+            sourceSets.main.get().output.asFileTree.matching {
+                exclude( "**/App**", "**Mock**")
+            }
+    )
+}
+
 
 buildscript {
     dependencies {
@@ -54,6 +83,8 @@ allOpen {
     annotation("org.springframework.stereotype.Service")
     annotation("org.springframework.stereotype.Component")
 }
+
+
 
 dependencies {
     // Spring
