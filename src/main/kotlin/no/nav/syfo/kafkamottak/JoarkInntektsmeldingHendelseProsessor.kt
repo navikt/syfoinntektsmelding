@@ -82,7 +82,9 @@ class JoarkInntektsmeldingHendelseProsessor(
     }
 
     override fun nesteForsoek(forsoek: Int, forrigeForsoek: LocalDateTime): LocalDateTime {
-        return LocalDateTime.now().plusHours((3).toLong())
+        // fib-ish backoff, ment for bruk med 10 forsøk, feiler permanent etter 230 timer = 9,5 dager
+        val backoffWaitInHours = if (forsoek == 1) 1 else forsoek-1 + forsoek
+        return LocalDateTime.now().plusHours(backoffWaitInHours.toLong())
     }
 
     suspend fun opprettFordelingsoppgave(journalpostId: String): Boolean {
