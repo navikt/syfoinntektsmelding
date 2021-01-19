@@ -24,7 +24,7 @@
 	</root>
 
 	<logger name="no.nav.syfo" level="INFO" additivity="false">
-		<appender-ref ref="stdout_json"/>
+		<appender-ref ref="secureLog"/>
 	</logger>
 
 	<logger name="org.springframework" level="INFO"/>
