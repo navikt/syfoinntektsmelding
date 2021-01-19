@@ -36,6 +36,6 @@ class FeiletUtsattOppgaveMeldingProsessor(private val om: ObjectMapper, val oppg
     }
 
     override fun nesteForsoek(forsoek: Int, forrigeForsoek: LocalDateTime): LocalDateTime {
-        return LocalDateTime.now().plusHours((forsoek * forsoek).toLong())
+        return LocalDateTime.now().plusHours((forsoek).toLong())
     }
 }

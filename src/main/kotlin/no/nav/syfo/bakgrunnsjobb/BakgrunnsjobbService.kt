@@ -56,7 +56,7 @@ class BakgrunnsjobbService(
                 log.error("Jobb ${jobb.uuid} feilet permanent", ex)
                 metrikk.tellStoppetBakgrunnsjobb()
             } else {
-                log.error("Jobb ${jobb.uuid} feilet, forsøker igjen ${jobb.kjoeretid}", ex)
+                log.warn("Jobb ${jobb.uuid} feilet, forsøker igjen ${jobb.kjoeretid}", ex)
                 metrikk.tellFeiletBakgrunnsjobb()
             }
         } finally {

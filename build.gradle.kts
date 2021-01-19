@@ -1,13 +1,13 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val springBootVersion = "2.2.6.RELEASE"
+val springBootVersion = "2.3.8.RELEASE"
 val springVersion = "5.2.5.RELEASE"
 val springKafkaVersion = "2.4.5.RELEASE"
 val micrometerVersion = "1.3.0"
 val flywayVersion = "6.1.4"
 val cxfVersion = "3.4.2"
 val clientMockVersion = "1.2.3-1.3.50-eap-5"
-val swaggerVersion = "2.7.0"
+val swaggerVersion = "2.10.0"
 val kotlinVersion = "1.3.72"
 val hikariVersion = "3.4.2"
 
@@ -88,8 +88,14 @@ allOpen {
 
 dependencies {
 
-    //
+
+    
+
+
+    // SNYK overrides
     implementation("org.apache.avro:avro:1.9.0") //io.confluent:kafka-streams-avro-serde
+    implementation("commons-collections:commons-collections:3.2.2")
+    // - end SNYK overrides
 
 
     // Spring
@@ -132,7 +138,7 @@ dependencies {
     implementation("org.apache.cxf:cxf-rt-databinding-jaxb:$cxfVersion")
     runtimeOnly("org.apache.cxf:cxf-spring-boot-starter-jaxws:$cxfVersion")
     runtimeOnly("org.apache.cxf:cxf-rt-features-logging:$cxfVersion")
-    implementation("org.postgresql:postgresql:42.2.8")
+    implementation("org.postgresql:postgresql:42.2.13")
     implementation("org.apache.neethi:neethi:3.1.0")
     implementation("org.flywaydb:flyway-core:$flywayVersion")
 
@@ -163,6 +169,7 @@ dependencies {
     implementation("io.micrometer:micrometer-core:$micrometerVersion")
     runtimeOnly("io.micrometer:micrometer-registry-prometheus:$micrometerVersion")
     implementation("io.ktor:ktor-client-core:1.3.0")
+
     implementation("io.ktor:ktor:1.3.0")
     implementation("io.ktor:ktor-client-jackson:1.3.0")
     implementation("io.ktor:ktor-client-apache:1.3.0")

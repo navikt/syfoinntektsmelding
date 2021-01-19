@@ -1,0 +1,29 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.14.1
+# ignores vulnerabilities until expiry date; change duration by modifying expiry date
+ignore:
+  SNYK-JAVA-IOKTOR-543495:
+    - '*':
+        reason: Mangler upgrade path
+        expires: 2021-02-18T11:38:33.953Z
+  SNYK-JAVA-IONETTY-473694:
+    - '*':
+        reason: Mangler upgrade path
+        expires: 2021-02-18T11:39:23.794Z
+  SNYK-JAVA-IOSPRINGFOX-674160:
+    - '*':
+        reason: None Given
+        expires: 2021-02-18T11:40:06.062Z
+  SNYK-JAVA-LOG4J-572732:
+    - '*':
+        reason: None Given
+        expires: 2021-02-18T11:40:54.802Z
+  SNYK-JAVA-ORGAPACHECOMMONS-32473:
+    - '*':
+        reason: Fix er kun release candidate enn så lenge
+        expires: 2021-02-18T11:41:41.327Z
+  SNYK-JAVA-ORGCODEHAUSJACKSON-534878:
+    - '*':
+        reason: "Ingen fix tilgjengelig"
+        expires: 2021-02-18T11:42:25.874Z
+patch: {}
