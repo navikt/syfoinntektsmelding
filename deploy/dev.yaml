@@ -42,6 +42,8 @@ spec:
     enabled: true
   sidecar: true
   webproxy: true
+  secureLogs:
+    enabled: true
   env:
     - name: LOADBALANCER_FQDN
       value: "syfoinntektsmelding.nais.preprod.local"
