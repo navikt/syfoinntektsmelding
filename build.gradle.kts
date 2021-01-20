@@ -3,12 +3,12 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 val springBootVersion = "2.4.2"
 val springVersion = "5.3.3"
 val springKafkaVersion = "2.6.5"
-val micrometerVersion = "1.3.0"
+val micrometerVersion = "1.6.3"
 val flywayVersion = "6.1.4"
 val cxfVersion = "3.4.2"
 val swaggerVersion = "2.10.0"
 val kotlinVersion = "1.4.10"
-val hikariVersion = "3.4.2"
+val hikariVersion = "3.4.5"
 val ktorVersion = "1.4.3"
 
 val mainClass = "no.nav.syfo.Application"
@@ -124,8 +124,10 @@ dependencies {
     implementation("jakarta.ws.rs:jakarta.ws.rs-api:2.1.6")
     implementation("com.sun.activation:javax.activation:1.2.0")
     implementation("com.sun.xml.messaging.saaj:saaj-impl:1.5.1")
+
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.4.10")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.4.10")
+
     implementation("org.apache.cxf:cxf-rt-ws-security:$cxfVersion")
     implementation("org.apache.cxf:cxf-rt-security:$cxfVersion")
     implementation("org.apache.cxf:cxf-rt-ws-policy:$cxfVersion")
