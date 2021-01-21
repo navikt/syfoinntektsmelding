@@ -24,8 +24,9 @@ internal object InntektsmeldingArbeidsgiver20180924Mapper {
         val bruttoUtbetalt = skjemainnhold.sykepengerIArbeidsgiverperioden?.value?.bruttoUtbetalt?.value
         val årsakEndring = skjemainnhold.arbeidsforhold?.value?.beregnetInntekt?.value?.aarsakVedEndring?.value
 
-        val perioder = skjemainnhold.sykepengerIArbeidsgiverperioden.value.arbeidsgiverperiodeListe
-            .value
+        val perioder = skjemainnhold
+            ?.sykepengerIArbeidsgiverperioden?.value
+            ?.arbeidsgiverperiodeListe?.value
             ?.arbeidsgiverperiode
             ?.filter { xmlPeriode -> xmlPeriode.fom != null && xmlPeriode.tom != null }
             ?.map { Periode(it.fom.value, it.tom.value) }
