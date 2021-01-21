@@ -33,7 +33,7 @@ class BakgrunnsjobbService(
     @Scheduled(fixedRate = 60000)
     fun sjekkOgProsseserVentendeBakgrunnsjobber() {
         finnVentende()
-            .also { log.info("Fant ${it.size} bakgrunnsjobber å kjøre") }
+            .also { log.debug("Fant ${it.size} bakgrunnsjobber å kjøre") }
             .forEach(this::prosesser)
     }
 
