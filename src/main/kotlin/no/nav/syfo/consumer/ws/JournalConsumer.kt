@@ -39,8 +39,6 @@ class JournalConsumer(private val journalV2: JournalV2,
             val inntektsmeldingRAW = journalV2.hentDokument(request).dokument
             val inntektsmelding = String(inntektsmeldingRAW)
 
-            log.info(inntektsmelding)
-
             val jaxbInntektsmelding = JAXB.unmarshalInntektsmelding<JAXBElement<Any>>(inntektsmelding)
 
             return if (jaxbInntektsmelding.value is XMLInntektsmeldingM)
