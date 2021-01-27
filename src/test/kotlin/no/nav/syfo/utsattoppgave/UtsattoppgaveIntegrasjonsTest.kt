@@ -1,7 +1,7 @@
 package no.nav.syfo.utsattoppgave
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.ktor.util.KtorExperimentalAPI
+import io.ktor.util.*
 import junit.framework.Assert.assertEquals
 import junit.framework.Assert.assertNotNull
 import kotlinx.coroutines.runBlocking
@@ -12,16 +12,8 @@ import no.nav.syfo.consumer.rest.OppgaveClient
 import no.nav.syfo.consumer.rest.SakClient
 import no.nav.syfo.consumer.rest.SakResponse
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
-import no.nav.syfo.consumer.ws.BehandleInngaaendeJournalConsumer
-import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
-import no.nav.syfo.consumer.ws.InngaaendeJournalConsumer
-import no.nav.syfo.consumer.ws.JournalConsumer
-import no.nav.syfo.consumer.ws.JournalConsumerTest
-import no.nav.syfo.domain.GeografiskTilknytningData
-import no.nav.syfo.domain.InngaaendeJournal
-import no.nav.syfo.domain.JournalStatus
-import no.nav.syfo.domain.OppgaveResultat
-import no.nav.syfo.domain.Periode
+import no.nav.syfo.consumer.ws.*
+import no.nav.syfo.domain.*
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.dto.UtsattOppgaveEntitet
 import no.nav.syfo.producer.InntektsmeldingProducer
@@ -57,9 +49,9 @@ import org.springframework.test.context.web.WebAppConfiguration
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalDateTime.*
+import java.time.LocalDateTime.now
 import java.time.ZonedDateTime
-import java.util.UUID
+import java.util.*
 
 @KtorExperimentalAPI
 @RunWith(SpringRunner::class)
@@ -267,14 +259,49 @@ open class UtsattOppgaveIntegrasjonsTest  {
         var oppgave = requireNotNull(utsattOppgaveDAO.finn(inntektsmeldingId))
         assertEquals(Tilstand.Utsatt, oppgave.tilstand)
 
-        utsattOppgaveConsumer.listen(utsattOppgaveRecord(
-            UUID.fromString(inntektsmeldingId),
-            OppdateringstypeDTO.Ferdigbehandlet
-        ), mock(Acknowledgment::class.java)
+        utsattOppgaveConsumer.listen(
+            utsattOppgaveRecord(
+                UUID.fromString(inntektsmeldingId),
+                OppdateringstypeDTO.Ferdigbehandlet
+            ), mock(Acknowledgment::class.java)
         )
         oppgave = utsattOppgaveDAO.finn(inntektsmeldingId)!!
         assertEquals(Tilstand.Forkastet, oppgave.tilstand)
         verifiserOppgaveOpprettet(0)
+    }
+
+    @Test
+    fun `Oppretter oppgave for allerede forkastet`() {
+        val inntektsmeldingId = requireNotNull(inntektsmeldingBehandler.behandle("arkivId_10", "AR-10"))
+        assertNotNull(inntektsmeldingId)
+
+        var oppgave = requireNotNull(utsattOppgaveDAO.finn(inntektsmeldingId))
+        assertEquals(Tilstand.Utsatt, oppgave.tilstand)
+
+        utsattOppgaveConsumer.listen(
+            utsattOppgaveRecord(
+                UUID.fromString(inntektsmeldingId),
+                OppdateringstypeDTO.Ferdigbehandlet
+            ), mock(Acknowledgment::class.java)
+        )
+
+        utsattOppgaveConsumer.listen(
+            utsattOppgaveRecord(
+                UUID.fromString(inntektsmeldingId),
+                OppdateringstypeDTO.Opprett
+            ), mock(Acknowledgment::class.java)
+        )
+        oppgave = utsattOppgaveDAO.finn(inntektsmeldingId)!!
+        assertEquals(Tilstand.Opprettet, oppgave.tilstand)
+        verifiserOppgaveOpprettet(1)
+
+        utsattOppgaveConsumer.listen(
+            utsattOppgaveRecord(
+                UUID.fromString(inntektsmeldingId),
+                OppdateringstypeDTO.Opprett
+            ), mock(Acknowledgment::class.java)
+        )
+        verifiserOppgaveOpprettet(1)
     }
 
     @Test
