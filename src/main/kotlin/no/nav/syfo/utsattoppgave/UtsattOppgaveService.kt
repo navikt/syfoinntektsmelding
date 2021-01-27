@@ -1,6 +1,6 @@
 package no.nav.syfo.utsattoppgave
 
-import io.ktor.util.KtorExperimentalAPI
+import io.ktor.util.*
 import kotlinx.coroutines.runBlocking
 import log
 import no.nav.syfo.behandling.OpprettOppgaveException
@@ -64,7 +64,7 @@ class UtsattOppgaveService(
             return
         }
 
-        if (oppgave.tilstand == Tilstand.Utsatt && oppdatering.handling == Handling.Opprett) {
+        if ((oppgave.tilstand == Tilstand.Utsatt || oppgave.tilstand == Tilstand.Forkastet) && oppdatering.handling == Handling.Opprett) {
             opprettOppgaveIGosys(oppgave)
             lagre(oppgave.copy(tilstand = Tilstand.Opprettet))
             log.info("Endret oppgave: ${oppgave.inntektsmeldingId} til tilstand: ${Tilstand.Opprettet.name}")
