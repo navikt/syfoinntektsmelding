@@ -156,7 +156,6 @@ dependencies {
     implementation("no.nav.tjenestespesifikasjoner:diskresjonskodev1-tjenestespesifikasjon:1.2019.08.16-13.46-35cbdfd492d4")
     implementation("no.nav.syfo.sm:syfosm-common-rest-sts:2019.09.03-10-50-64032e3b6381665e9f9c0914cef626331399e66d")
     implementation("no.nav.syfo.sm:syfosm-common-networking:2019.09.03-10-50-64032e3b6381665e9f9c0914cef626331399e66d")
-    implementation("no.nav:migrator:0.2.2")
     implementation("no.nav:vault-jdbc:1.3.1")
     implementation("no.nav.common:log:2.2021.01.05_08.07-2c586ccadf95")
 
