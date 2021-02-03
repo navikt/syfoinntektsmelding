@@ -19,4 +19,4 @@ jobs:
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
         with:
           command: monitor
-          args: --configuration-matching=runtimeClasspath --fail-on=all --org=helsearbeidsgiver
+          args: --org=helsearbeidsgiver --project-name=Syfoinntektsmelding
