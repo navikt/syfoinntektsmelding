@@ -82,7 +82,7 @@ spec:
     - name: JOURNAL_V2_ENDPOINTURL
       value: "https://wasapp.adeo.no/joark/Journal/v2"
     - name: VIRKSOMHET_PERSON_V3_ENDPOINTURL
-      value: "https://wasapp.adeo.no/tpsws/ws/Person/v3"
+      value: "https://app.adeo.no/tpsws-aura/ws/Person/v3"
     - name: VIRKSOMHET_ARBEIDSFORDELING_V1_ENDPOINTURL
       value: "https://app.adeo.no/norg2/ws/Arbeidsfordeling/v1"
     - name: SERVICEGATEWAY_URL
