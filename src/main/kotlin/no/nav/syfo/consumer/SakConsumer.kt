@@ -25,7 +25,7 @@ class SakConsumer(
         headers.contentType = MediaType.APPLICATION_JSON
         headers.set("Authorization", "Bearer " + azureAdTokenConsumer.getAccessToken(syfogsakClientId))
 
-        val uriBuilder = UriComponentsBuilder.fromHttpUrl("http://syfogsak.default.svc.nais.local/$aktorId/sisteSak")
+        val uriBuilder = UriComponentsBuilder.fromHttpUrl("http://syfogsak.flex.svc.nais.local/$aktorId/sisteSak")
 
         if (fom != null && tom != null) {
             uriBuilder
