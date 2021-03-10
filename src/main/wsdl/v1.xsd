@@ -23,7 +23,7 @@
         <xsd:restriction base="xsd:string"/>
     </xsd:simpleType>
     <xsd:element name="forsendelsesinformasjon" type="dokumentnotifikasjon:Forsendelsesinformasjon"/>
-    <xsd:complexType name="Forsendelsesinformasjon">
+    <xsd:complexType name="XMLForsendelsesinformasjon">
         <xsd:sequence>
             <xsd:element name="arkivId" type="dokumentnotifikasjon:Identifikator">
                 <xsd:annotation>
