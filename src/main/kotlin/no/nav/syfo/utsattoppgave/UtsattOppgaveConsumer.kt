@@ -9,7 +9,7 @@ import io.ktor.util.KtorExperimentalAPI
 import no.nav.syfo.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.syfo.dto.BakgrunnsjobbEntitet
 import no.nav.syfo.util.MDCOperations
-import no.nav.syfo.util.MDCOperations.MDC_CALL_ID
+import no.nav.syfo.util.MDCOperations.Companion.MDC_CALL_ID
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.kafka.support.Acknowledgment

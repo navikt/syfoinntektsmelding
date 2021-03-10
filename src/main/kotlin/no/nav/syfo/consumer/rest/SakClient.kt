@@ -21,8 +21,8 @@ import no.nav.syfo.helpers.retry
 import log
 import no.nav.syfo.client.StsOidcClient
 import no.nav.syfo.config.SakClientConfig
-import no.nav.syfo.util.MDCOperations.MDC_CALL_ID
-import no.nav.syfo.util.MDCOperations.getFromMDC
+import no.nav.syfo.util.MDCOperations.Companion.MDC_CALL_ID
+import no.nav.syfo.util.MDCOperations.Companion.getFromMDC
 import org.springframework.stereotype.Component
 import java.time.ZonedDateTime
 

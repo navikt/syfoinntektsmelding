@@ -28,8 +28,8 @@ public class CallIdHeader extends AbstractPhaseInterceptor<Message> {
     public void handleMessage(Message message) throws Fault {
         try {
             QName qName = new QName("uri:no.nav.applikasjonsrammeverk", "callId");
-            String callId = Optional.ofNullable(getFromMDC(MDC_CALL_ID))
-                    .orElse(generateCallId());
+            String callId = Optional.ofNullable(Companion.getFromMDC(Companion.getMDC_CALL_ID()))
+                    .orElse(Companion.generateCallId());
             SoapHeader header = new SoapHeader(qName, callId, new JAXBDataBinding(String.class));
             ((SoapMessage) message).getHeaders().add(header);
         } catch (JAXBException ex) {

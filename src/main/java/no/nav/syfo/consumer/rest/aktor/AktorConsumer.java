@@ -7,6 +7,7 @@ import no.nav.syfo.behandling.AktørException;
 import no.nav.syfo.behandling.FantIkkeAktørException;
 import no.nav.syfo.behandling.TomAktørListeException;
 import no.nav.syfo.consumer.rest.TokenConsumer;
+import no.nav.syfo.util.MDCOperations;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -19,8 +20,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Optional;
 
-import static no.nav.syfo.util.MDCOperations.MDC_CALL_ID;
-import static no.nav.syfo.util.MDCOperations.getFromMDC;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpStatus.OK;
 
@@ -51,7 +50,7 @@ public class AktorConsumer {
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         headers.set("Authorization", "Bearer " + tokenConsumer.getToken());
-        headers.set("Nav-Call-Id", getFromMDC(MDC_CALL_ID));
+        headers.set("Nav-Call-Id", MDCOperations.Companion.getFromMDC(MDCOperations.Companion.getMDC_CALL_ID()));
         headers.set("Nav-Consumer-Id", username);
         headers.set("Nav-Personidenter", sokeIdent);
 
