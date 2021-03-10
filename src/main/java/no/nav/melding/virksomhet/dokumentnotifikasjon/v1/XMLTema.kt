@@ -8,9 +8,7 @@ import javax.xml.bind.annotation.*
 
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Tema", namespace = "", propOrder = arrayOf(
-    "value"
-))
+@XmlType(name = "Tema")
 class XMLTema: XMLKodeverdi {
     @XmlAttribute(name = "kodeverksRef")
     @XmlSchemaType(name = "anyURI")
