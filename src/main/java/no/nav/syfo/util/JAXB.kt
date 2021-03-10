@@ -1,66 +1,60 @@
-package no.nav.syfo.util;
+package no.nav.syfo.util
 
-import no.nav.melding.virksomhet.dokumentnotifikasjon.v1.ObjectFactory;
+import no.nav.melding.virksomhet.dokumentnotifikasjon.v1.ObjectFactory
+import java.io.StringReader
+import java.io.StringWriter
+import javax.xml.bind.JAXBContext
+import javax.xml.transform.stream.StreamResult
+import javax.xml.bind.JAXBException
+import java.lang.RuntimeException
+import javax.xml.bind.Marshaller
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.transform.stream.StreamResult;
-import java.io.StringReader;
-import java.io.StringWriter;
+object JAXB {
+    private var FORSENDELSESINFORMASJON: JAXBContext? = null
+    private var INNTEKTSMELDING: JAXBContext? = null
 
-import static java.lang.Boolean.TRUE;
-import static javax.xml.bind.JAXBContext.newInstance;
-import static javax.xml.bind.Marshaller.*;
-
-public final class JAXB {
-
-    private static final JAXBContext FORSENDELSESINFORMASJON;
-    private static final JAXBContext INNTEKTSMELDING;
-
-    static {
+    init {
         try {
-            FORSENDELSESINFORMASJON = newInstance(
-                    ObjectFactory.class
-            );
-            INNTEKTSMELDING = newInstance(
-                    no.seres.xsd.nav.inntektsmelding_m._20180924.ObjectFactory.class,
-                    no.seres.xsd.nav.inntektsmelding_m._20181211.ObjectFactory.class
-            );
-        } catch (JAXBException e) {
-            throw new RuntimeException(e);
+            FORSENDELSESINFORMASJON = JAXBContext.newInstance(
+                ObjectFactory::class.java
+            )
+            INNTEKTSMELDING = JAXBContext.newInstance(
+                no.seres.xsd.nav.inntektsmelding_m._20180924.ObjectFactory::class.java,
+                no.seres.xsd.nav.inntektsmelding_m._20181211.ObjectFactory::class.java
+            )
+        } catch (e: JAXBException) {
+            throw RuntimeException(e)
         }
     }
 
-    public static String marshallForsendelsesinformasjon(Object element) {
-        try {
-            StringWriter writer = new StringWriter();
-            Marshaller marshaller = FORSENDELSESINFORMASJON.createMarshaller();
-            marshaller.setProperty(JAXB_FORMATTED_OUTPUT, TRUE);
-            marshaller.setProperty(JAXB_ENCODING, "UTF-8");
-            marshaller.setProperty(JAXB_FRAGMENT, true);
-            marshaller.marshal(element, new StreamResult(writer));
-            return writer.toString();
-        } catch (JAXBException e) {
-            throw new RuntimeException(e);
+    fun marshallForsendelsesinformasjon(element: Any?): String {
+        return try {
+            val writer = StringWriter()
+            val marshaller = FORSENDELSESINFORMASJON!!.createMarshaller()
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true)
+            marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8")
+            marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true)
+            marshaller.marshal(element, StreamResult(writer))
+            writer.toString()
+        } catch (e: JAXBException) {
+            throw RuntimeException(e)
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public static <T> T unmarshalForsendelsesinformasjon(String melding) {
-        try {
-            return (T) FORSENDELSESINFORMASJON.createUnmarshaller().unmarshal(new StringReader(melding));
-        } catch (JAXBException e) {
-            throw new RuntimeException(e);
+    fun <T> unmarshalForsendelsesinformasjon(melding: String?): T {
+        return try {
+            FORSENDELSESINFORMASJON!!.createUnmarshaller().unmarshal(StringReader(melding)) as T
+        } catch (e: JAXBException) {
+            throw RuntimeException(e)
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public static <T> T unmarshalInntektsmelding(String melding) {
-        try {
-            return (T) INNTEKTSMELDING.createUnmarshaller().unmarshal(new StringReader(melding));
-        } catch (JAXBException e) {
-            throw new RuntimeException(e);
+    @JvmStatic
+    fun <T> unmarshalInntektsmelding(melding: String?): T {
+        return try {
+            INNTEKTSMELDING!!.createUnmarshaller().unmarshal(StringReader(melding)) as T
+        } catch (e: JAXBException) {
+            throw RuntimeException(e)
         }
     }
 }
