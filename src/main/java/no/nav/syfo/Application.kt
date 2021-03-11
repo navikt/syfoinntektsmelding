@@ -1,14 +1,11 @@
-package no.nav.syfo;
+package no.nav.syfo
 
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.runApplication
 
 @SpringBootApplication
-public class Application {
-    public static void main(String[] args) {
-        new SpringApplicationBuilder(Application.class)
-            .main(Application.class)
-            .run(args);
-    }
+class Application
 
+fun main(args: Array<String>) {
+    runApplication<Application>(*args)
 }
