@@ -14,27 +14,35 @@ class ObjectFactory {
      * Create an instance of {@link Tema }
      *
      */
-    fun createXMLTema(): XMLTema { return XMLTema(emptyString, emptyString, null) }
+    fun createXMLTema(): XMLTema { return XMLTema(emptyString, emptyString, null)
+    }
 
     /**
      * Create an instance of {@link Kodeverdi }
      *
      */
-    fun createXMLKodeverdi(): XMLKodeverdi { return XMLKodeverdi(emptyString,emptyString) }
+    fun createXMLKodeverdi(): XMLKodeverdi { return XMLKodeverdi(emptyString, emptyString)
+    }
 
     /**
      * Create an instance of {@link Behandlingstema }
      *
      */
-    fun createXMLBehandlingstema(): XMLBehandlingstema { return XMLBehandlingstema(emptyString, emptyString, null) }
+    fun createXMLBehandlingstema(): XMLBehandlingstema { return XMLBehandlingstema(emptyString, emptyString, null)
+    }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link forsendelsesinformasjon }{@code >}}
      *
      */
     @XmlElementDecl(namespace = "", name = "forsendelsesinformasjon")
-    fun createforsendelsesinformasjon(value: XMLForsendelsesinformasjon) : JAXBElement<XMLForsendelsesinformasjon>  {
-        return JAXBElement<XMLForsendelsesinformasjon>(_forsendelsesinformasjon_QNAME, XMLForsendelsesinformasjon::class.java,null, value);
+    fun createforsendelsesinformasjon(value: XMLForsendelsesinformasjon) : JAXBElement<XMLForsendelsesinformasjon> {
+        return JAXBElement<XMLForsendelsesinformasjon>(
+            _forsendelsesinformasjon_QNAME,
+            XMLForsendelsesinformasjon::class.java,
+            null,
+            value
+        );
     }
 
     fun createXMLForsendelsesinformasjon() : XMLForsendelsesinformasjon {

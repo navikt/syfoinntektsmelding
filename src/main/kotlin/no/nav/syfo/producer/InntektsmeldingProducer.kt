@@ -16,7 +16,8 @@ import java.util.*
 class InntektsmeldingProducer(@Value("\${spring.kafka.bootstrap-servers}") private val bootstrapServers: String,
                               @Value("\${srvsyfoinntektsmelding.username}") private val username: String,
                               @Value("\${srvsyfoinntektsmelding.password}") private val password: String,
-                              private val metrikk: Metrikk) {
+                              private val metrikk: Metrikk
+) {
 
     private val producerProperties = Properties().apply {
         put(ProducerConfig.ACKS_CONFIG, "all")

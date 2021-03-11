@@ -1,11 +1,10 @@
 package no.nav.syfo.utsattoppgave
 
 import log
-import no.nav.syfo.behandling.OppgaveException
 import no.nav.syfo.web.selftest.SimpleSelfTestState
+
 import org.apache.kafka.clients.consumer.Consumer
 import org.apache.kafka.clients.consumer.ConsumerRecord
-import org.apache.kafka.common.errors.TopicAuthorizationException
 import org.springframework.kafka.listener.ContainerAwareErrorHandler
 import org.springframework.kafka.listener.ContainerStoppingErrorHandler
 import org.springframework.kafka.listener.MessageListenerContainer

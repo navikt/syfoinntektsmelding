@@ -1,5 +1,4 @@
 package no.nav.syfo.util
-
 import no.nav.melding.virksomhet.dokumentnotifikasjon.v1.ObjectFactory
 import java.io.StringReader
 import java.io.StringWriter

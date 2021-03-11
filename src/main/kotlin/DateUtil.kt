@@ -1,5 +1,4 @@
 package no.nav.syfo.util
-
 import no.nav.syfo.domain.Periode
 import java.time.LocalDate
 
