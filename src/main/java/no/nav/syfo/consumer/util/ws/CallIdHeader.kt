@@ -1,40 +1,42 @@
-package no.nav.syfo.consumer.util.ws;
+package no.nav.syfo.consumer.util.ws
 
-import org.apache.cxf.binding.soap.SoapHeader;
-import org.apache.cxf.binding.soap.SoapMessage;
-import org.apache.cxf.interceptor.Fault;
-import org.apache.cxf.jaxb.JAXBDataBinding;
-import org.apache.cxf.message.Message;
-import org.apache.cxf.phase.AbstractPhaseInterceptor;
-import org.apache.cxf.phase.Phase;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import no.nav.syfo.util.MDCOperations.Companion.getFromMDC
+import no.nav.syfo.util.MDCOperations.Companion.MDC_CALL_ID
+import no.nav.syfo.util.MDCOperations.Companion.generateCallId
+import org.apache.cxf.phase.AbstractPhaseInterceptor
+import kotlin.Throws
+import org.apache.cxf.jaxb.JAXBDataBinding
+import org.apache.cxf.binding.soap.SoapMessage
+import javax.xml.bind.JAXBException
+import no.nav.syfo.consumer.util.ws.CallIdHeader
+import org.apache.cxf.binding.soap.SoapHeader
+import org.apache.cxf.interceptor.Fault
+import org.apache.cxf.message.Message
+import org.apache.cxf.phase.Phase
+import org.slf4j.LoggerFactory
+import java.util.*
+import javax.xml.namespace.QName
 
-import javax.xml.bind.JAXBException;
-import javax.xml.namespace.QName;
-import java.util.Optional;
-
-import static no.nav.syfo.util.MDCOperations.*;
-
-public class CallIdHeader extends AbstractPhaseInterceptor<Message> {
-
-    private static final Logger logger = LoggerFactory.getLogger(CallIdHeader.class);
-
-    CallIdHeader() {
-        super(Phase.PRE_STREAM);
-    }
-
-    @Override
-    public void handleMessage(Message message) throws Fault {
+class CallIdHeader internal constructor() : AbstractPhaseInterceptor<Message?>(Phase.PRE_STREAM) {
+    @Throws(Fault::class)
+    override fun handleMessage(message: Message?) {
         try {
-            QName qName = new QName("uri:no.nav.applikasjonsrammeverk", "callId");
-            String callId = Optional.ofNullable(Companion.getFromMDC(Companion.getMDC_CALL_ID()))
-                    .orElse(Companion.generateCallId());
-            SoapHeader header = new SoapHeader(qName, callId, new JAXBDataBinding(String.class));
-            ((SoapMessage) message).getHeaders().add(header);
-        } catch (JAXBException ex) {
-            logger.warn("Error while setting CallId header", ex);
+            val qName = QName("uri:no.nav.applikasjonsrammeverk", "callId")
+           /* val callId = Optional.ofNullable(getFromMDC(MDC_CALL_ID))
+                .orElse(generateCallId())*/
+            val callId = getFromMDC(MDC_CALL_ID) ?: generateCallId()
+            val header = SoapHeader(
+                qName, callId, JAXBDataBinding(
+                    String::class.java
+                )
+            )
+            (message as SoapMessage).headers.add(header)
+        } catch (ex: JAXBException) {
+            logger.warn("Error while setting CallId header", ex)
         }
     }
 
+    companion object {
+        private val logger = LoggerFactory.getLogger(CallIdHeader::class.java)
+    }
 }
