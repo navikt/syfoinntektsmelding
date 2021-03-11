@@ -1,12 +1,4 @@
-package no.nav.syfo.consumer.rest;
+package no.nav.syfo.consumer.rest
 
-import lombok.Getter;
-import lombok.Value;
+data class Token (val access_token: String, val token_type: String, var expires_in :Int = 0)
 
-@Value
-@Getter
-class Token {
-    private String access_token;
-    private String token_type;
-    private int expires_in;
-}

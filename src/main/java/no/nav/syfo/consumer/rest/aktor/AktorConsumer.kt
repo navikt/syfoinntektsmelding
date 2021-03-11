@@ -1,90 +1,72 @@
-package no.nav.syfo.consumer.rest.aktor;
+package no.nav.syfo.consumer.rest.aktor
 
-import lombok.extern.slf4j.Slf4j;
-import no.nav.syfo.behandling.AktørKallResponseException;
-import no.nav.syfo.behandling.AktørOppslagException;
-import no.nav.syfo.behandling.AktørException;
-import no.nav.syfo.behandling.FantIkkeAktørException;
-import no.nav.syfo.behandling.TomAktørListeException;
-import no.nav.syfo.consumer.rest.TokenConsumer;
-import no.nav.syfo.util.MDCOperations;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
-
-import java.util.Optional;
-
-import static org.springframework.http.HttpMethod.GET;
-import static org.springframework.http.HttpStatus.OK;
+import lombok.extern.slf4j.Slf4j
+import no.nav.syfo.behandling.*
+import no.nav.syfo.consumer.rest.TokenConsumer
+import no.nav.syfo.util.MDCOperations.Companion.MDC_CALL_ID
+import no.nav.syfo.util.MDCOperations.Companion.getFromMDC
+import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.*
+import org.springframework.stereotype.Component
+import org.springframework.web.client.HttpClientErrorException
+import org.springframework.web.client.RestTemplate
+import org.springframework.web.util.UriComponentsBuilder
 
 @Slf4j
 @Component
-public class AktorConsumer {
+class AktorConsumer(
+    private val tokenConsumer: TokenConsumer,
+    @param:Value("\${srvsyfoinntektsmelding.username}") private val username: String,
+    @param:Value("\${aktoerregister.api.v1.url}") private val url: String,
+    private val restTemplate: RestTemplate
+) {
+    private val log = LoggerFactory.getLogger(AktorConsumer::class.java)
 
-    private TokenConsumer tokenConsumer;
-    private String username;
-    private String url;
-    private final RestTemplate restTemplate;
-
-    public AktorConsumer(TokenConsumer tokenConsumer,
-                         @Value("${srvsyfoinntektsmelding.username}") String username,
-                         @Value("${aktoerregister.api.v1.url}") String url,
-                         RestTemplate restTemplate) {
-        this.tokenConsumer = tokenConsumer;
-        this.username = username;
-        this.url = url;
-        this.restTemplate = restTemplate;
+    @Throws(AktørException::class)
+    fun getAktorId(fnr: String): String {
+        return getIdent(fnr, "AktoerId")
     }
 
-    public String getAktorId(String fnr) throws AktørException {
-        return getIdent(fnr, "AktoerId");
-    }
+    @Throws(AktørException::class)
+    private fun getIdent(sokeIdent: String, identgruppe: String): String {
+        val headers = HttpHeaders()
+        headers.contentType = MediaType.APPLICATION_FORM_URLENCODED
+        headers["Authorization"] = "Bearer " + tokenConsumer.token
+        headers["Nav-Call-Id"] = getFromMDC(MDC_CALL_ID)
+        headers["Nav-Consumer-Id"] = username
+        headers["Nav-Personidenter"] = sokeIdent
 
-    private String getIdent(String sokeIdent, String identgruppe) throws AktørException {
-        final HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        headers.set("Authorization", "Bearer " + tokenConsumer.getToken());
-        headers.set("Nav-Call-Id", MDCOperations.Companion.getFromMDC(MDCOperations.Companion.getMDC_CALL_ID()));
-        headers.set("Nav-Consumer-Id", username);
-        headers.set("Nav-Personidenter", sokeIdent);
+        val uriString = UriComponentsBuilder.fromHttpUrl("$url/identer")
+            .queryParam("gjeldende", "true")
+            .queryParam("identgruppe", identgruppe)
+            .toUriString()
 
-        final String uriString = UriComponentsBuilder.fromHttpUrl(url + "/identer")
-                .queryParam("gjeldende", "true")
-                .queryParam("identgruppe", identgruppe)
-                .toUriString();
-        try {
-            final ResponseEntity<AktorResponse> result = restTemplate.exchange(uriString, GET, new HttpEntity<>(headers), AktorResponse.class);
-
-            if (result.getStatusCode() != OK) {
-                final String message = "Kall mot aktørregister feiler med HTTP-" + result.getStatusCode();
-                log.error(message);
-                throw new AktørKallResponseException(result.getStatusCode().value(), null);
+        return try {
+            val result =
+                restTemplate.exchange(uriString, HttpMethod.GET, HttpEntity<Any>(headers), AktorResponse::class.java)
+            if (result.statusCode != HttpStatus.OK) {
+                val message = "Kall mot aktørregister feiler med HTTP-" + result.statusCode
+                log.error(message)
+                throw AktørKallResponseException(result.statusCode.value(), null)
             }
 
-            return Optional.of(result)
-                    .map(HttpEntity::getBody)
-                    .map(body -> body.get(sokeIdent))
-                    .map(aktor -> Optional.ofNullable(aktor.getIdenter()).orElseThrow(() -> {
-                        log.error("Fant ikke aktøren: " + aktor.getFeilmelding());
-                        return new FantIkkeAktørException(null);
-                    }))
-                    .flatMap(idents -> idents.stream().map(Ident::getIdent)
-                            .findFirst())
-                    .orElseThrow(() -> {
-                        log.error("Feil ved henting av aktorId");
-                        return new TomAktørListeException(null);
-                    });
+            if (result == null) {
+                log.error("Feil ved henting av aktorId")
+                throw TomAktørListeException(null)
+            }
 
-        } catch (HttpClientErrorException e) {
-            log.error("Feil ved oppslag i aktørtjenesten");
-            throw new AktørOppslagException(e);
+            val aktor : Aktor? = result!!.body?.get(sokeIdent)
+            if(aktor?.identer == null) {
+                log.error("Fant ikke aktøren: " + aktor?.feilmelding);
+                throw FantIkkeAktørException(null);
+            }
+
+            result?.body?.get(sokeIdent)?.identer?.firstOrNull()?.ident.toString()
+
+        } catch (e: HttpClientErrorException) {
+            log.error("Feil ved oppslag i aktørtjenesten")
+            throw AktørOppslagException(e)
         }
     }
 }
-

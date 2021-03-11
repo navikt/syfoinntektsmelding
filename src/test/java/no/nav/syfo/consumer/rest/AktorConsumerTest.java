@@ -15,7 +15,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+import java.util.Arrays;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -44,16 +47,9 @@ public class AktorConsumerTest {
     @Test
     public void finnerAktorId() {
         AktorResponse response = new AktorResponse();
-        response.put("fnr", Aktor.builder()
-            .identer(asList(Ident.builder()
-                .ident("aktorId")
-                .identgruppe("AktoerId")
-                .gjeldende(true)
-                .build()
-            ))
-            .feilmelding(null)
-            .build());
-
+        response.put("fnr", new Aktor(Arrays.asList(
+            new Ident("aktorId","AktoerId", true )),
+            null));
         when(restTemplate.exchange(
             anyString(),
             any(HttpMethod.class),
@@ -68,10 +64,7 @@ public class AktorConsumerTest {
     @Test(expected = RuntimeException.class)
     public void finnerIkkeIdent() {
         AktorResponse response = new AktorResponse();
-        response.put("fnr", Aktor.builder()
-            .identer(null)
-            .feilmelding("Fant ikke aktør")
-            .build());
+        response.put("fnr",  new Aktor(null, "Fant ikke aktør"));
 
         when(restTemplate.exchange(
             anyString(),
@@ -85,16 +78,9 @@ public class AktorConsumerTest {
     @Test(expected = RuntimeException.class)
     public void manglendeFnrIResponsGirFeilmelding() {
         AktorResponse response = new AktorResponse();
-        response.put("etAnnetFnr", Aktor.builder()
-            .identer(asList(Ident.builder()
-                .ident("aktorId")
-                .identgruppe("AktoerId")
-                .gjeldende(true)
-                .build()
-            ))
-            .feilmelding(null)
-            .build());
-
+        response.put("etAnnetFnr", new Aktor(Arrays.asList(
+            new Ident("aktorId","AktoerId", true )),
+            null));
 
         when(restTemplate.exchange(
             anyString(),
@@ -108,10 +94,7 @@ public class AktorConsumerTest {
     @Test(expected = RuntimeException.class)
     public void manglendeIdentGirFeilmelding() {
         AktorResponse response = new AktorResponse();
-        response.put("fnr", Aktor.builder()
-            .identer(Collections.emptyList())
-            .feilmelding(null)
-            .build());
+        response.put("fnr", new Aktor(null, null));
 
         when(restTemplate.exchange(
             anyString(),

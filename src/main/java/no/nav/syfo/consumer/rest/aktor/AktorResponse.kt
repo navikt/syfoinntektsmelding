@@ -1,6 +1,5 @@
-package no.nav.syfo.consumer.rest.aktor;
+package no.nav.syfo.consumer.rest.aktor
 
-import java.util.HashMap;
+import java.util.*
 
-public class AktorResponse extends HashMap<String, Aktor> {
-}
+class AktorResponse : HashMap<String?, Aktor?>()
