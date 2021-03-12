@@ -1,6 +1,5 @@
 package no.nav.syfo.rest
 
-import com.fasterxml.jackson.databind.util.ClassUtil.createInstance
 import no.nav.syfo.consumer.rest.TokenConsumer
 import no.nav.syfo.consumer.rest.aktor.Aktor
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
@@ -15,21 +14,18 @@ import org.mockito.ArgumentMatchers
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.MockitoJUnitRunner
-import org.springframework.http.HttpEntity
-import org.springframework.http.HttpMethod
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
+import org.springframework.http.*
 import org.springframework.web.client.RestTemplate
-
 import java.util.*
+import org.mockito.ArgumentMatchers.*
 
-@RunWith(MockitoJUnitRunner::class)
-class AktorConsumerTest {
+//@RunWith(MockitoJUnitRunner::class)
+class NOT_USED_AktorConsumerTest {
     @Mock
     private val tokenConsumer: TokenConsumer? = null
 
     @Mock
-    private val restTemplate: RestTemplate? = null
+    private lateinit var restTemplate: RestTemplate
     private var aktorConsumer: AktorConsumer? = null
     @Before
     fun setup() {
@@ -37,47 +33,46 @@ class AktorConsumerTest {
         Mockito.`when`(tokenConsumer.token).thenReturn("token")
     }
 
-    @Ignore
-    @Test
+    //@Ignore
+    //@Test
     fun finnerAktorId() {
         val response = AktorResponse()
         response["fnr"] = Aktor(
-            Arrays.asList(
+            listOf(
                 Ident("aktorId", "AktoerId", true)
             ),
             null
         )
         Mockito.`when`(
-            restTemplate!!.exchange(
-                ArgumentMatchers.anyString(),
-                ArgumentMatchers.any(HttpMethod::class.java),
-                ArgumentMatchers.any(HttpEntity::class.java),
-                ArgumentMatchers.any<Any>() as Class<AktorResponse>
+            restTemplate.exchange(
+                eq(anyString()),
+                any(HttpMethod::class.java),
+                any(HttpEntity::class.java),
+                AktorResponse::class.java
             )
-        )
-            .thenReturn(ResponseEntity(response, HttpStatus.OK))
-        val aktorId = aktorConsumer!!.getAktorId("fnr")
+        ).thenReturn(ResponseEntity(response, HttpStatus.OK))
+
+        val aktorId = aktorConsumer?.getAktorId("fnr")
         Assertions.assertThat(aktorId).isEqualTo("aktorId")
     }
-
-    @Ignore
-    @Test(expected = RuntimeException::class)
+   /* @Ignore
+    @Test(expected = RuntimeException::class)*/
     fun finnerIkkeIdent() {
         val response = AktorResponse()
         response["fnr"] = Aktor(null, "Fant ikke aktør")
         Mockito.`when`(
             restTemplate!!.exchange(
-                ArgumentMatchers.anyString(),
-                ArgumentMatchers.any(HttpMethod::class.java),
-                ArgumentMatchers.any(HttpEntity::class.java),
-                ArgumentMatchers.any<Any>() as Class<AktorResponse>
+                "",
+                HttpMethod.GET,
+                HttpEntity.EMPTY,
+                AktorResponse::class.java
             )
         ).thenReturn(ResponseEntity(response, HttpStatus.OK))
         aktorConsumer!!.getAktorId("fnr")
     }
 
-    @Ignore
-    @Test(expected = RuntimeException::class)
+   /* @Ignore
+    @Test(expected = RuntimeException::class)*/
     fun manglendeFnrIResponsGirFeilmelding() {
         val response = AktorResponse()
         response["etAnnetFnr"] = Aktor(
@@ -88,26 +83,26 @@ class AktorConsumerTest {
         )
         Mockito.`when`(
             restTemplate!!.exchange(
-                ArgumentMatchers.anyString(),
-                ArgumentMatchers.any(HttpMethod::class.java),
-                ArgumentMatchers.any(HttpEntity::class.java),
-                ArgumentMatchers.any<Any>() as Class<AktorResponse>
+                "",
+                HttpMethod.GET,
+                HttpEntity.EMPTY,
+                AktorResponse::class.java
             )
         ).thenReturn(ResponseEntity(response, HttpStatus.OK))
         aktorConsumer!!.getAktorId("fnr")
     }
 
-    @Ignore
-    @Test(expected = RuntimeException::class)
+   /* @Ignore
+    @Test(expected = RuntimeException::class)*/
     fun manglendeIdentGirFeilmelding() {
         val response = AktorResponse()
         response["fnr"] = Aktor(null, null)
         Mockito.`when`(
             restTemplate!!.exchange(
-                ArgumentMatchers.anyString(),
-                ArgumentMatchers.any(HttpMethod::class.java),
-                ArgumentMatchers.any(HttpEntity::class.java),
-                ArgumentMatchers.any<Any>() as Class<AktorResponse>
+                "",
+                HttpMethod.GET,
+                HttpEntity.EMPTY,
+                AktorResponse::class.java
             )
         ).thenReturn(ResponseEntity(response, HttpStatus.OK))
         aktorConsumer!!.getAktorId("fnr")
