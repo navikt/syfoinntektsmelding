@@ -1,23 +1,18 @@
-package no.nav.syfo.config;
+package no.nav.syfo.config
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
 
 @Configuration
-public class OppgaveClientConfigProvider {
-
+class OppgaveClientConfigProvider {
     @Bean
-    public OppgaveConfig getOppgaveClientConfig(
-        @Value("${oppgavebehandling.url}")
-        String url,
-        @Value("${securitytokenservice.url}")
-        String tokenUrl,
-        @Value("${srvappserver.username}")
-        String username,
-        @Value("${srvappserver.password}")
-        String password) {
-        return new OppgaveConfig(url, tokenUrl, username, password);
+    fun getOppgaveClientConfig(
+        @Value("\${oppgavebehandling.url}") url: String,
+        @Value("\${securitytokenservice.url}") tokenUrl: String,
+        @Value("\${srvappserver.username}") username: String,
+        @Value("\${srvappserver.password}") password: String
+    ): OppgaveConfig {
+        return OppgaveConfig(url, tokenUrl, username, password)
     }
-
 }

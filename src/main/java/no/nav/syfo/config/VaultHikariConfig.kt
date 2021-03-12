@@ -1,70 +1,80 @@
-package no.nav.syfo.config;
+package no.nav.syfo.config
 
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil;
-import org.flywaydb.core.Flyway;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.flyway.FlywayMigrationStrategy;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import lombok.extern.slf4j.Slf4j
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories
+import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties
+import com.zaxxer.hikari.HikariDataSource
+import lombok.SneakyThrows
+import com.zaxxer.hikari.HikariConfig
+import no.nav.syfo.config.VaultHikariConfig
+import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil
+import org.springframework.boot.autoconfigure.flyway.FlywayMigrationStrategy
+import org.flywaydb.core.Flyway
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
 
 @Slf4j
 @EnableJpaRepositories("no.nav.syfo.repository")
 @Configuration
-public class VaultHikariConfig {
+class VaultHikariConfig {
+    @Value("\${vault.enabled:true}")
+    var enabled = true
 
-    @Value("${vault.enabled:true}")
-    public boolean enabled = true;
-    @Value("${vault.backend}")
-    public String databaseBackend;
-    @Value("${vault.role:syfoinntektsmelding-user}")
-    public String databaseRole;
-    @Value("${vault.admin:syfoinntektsmelding-admin}")
-    public String databaseAdminrole;
+    @Value("\${vault.backend}")
+    var databaseBackend: String? = null
 
+    @Value("\${vault.role:syfoinntektsmelding-user}")
+    var databaseRole: String? = null
+
+    @Value("\${vault.admin:syfoinntektsmelding-admin}")
+    var databaseAdminrole: String? = null
     @Bean
-    public HikariDataSource dataSource(DataSourceProperties properties) {
-        return buildDatasource(properties);
-    }
-
-    static HikariConfig createHikariConfig(DataSourceProperties properties) {
-        HikariConfig config = new HikariConfig();
-        config.setJdbcUrl(properties.getUrl());
-        config.setMinimumIdle(1);
-        config.setMaximumPoolSize(2);
-        return config;
+    fun dataSource(properties: DataSourceProperties): HikariDataSource {
+        return buildDatasource(properties)
     }
 
     @SneakyThrows
-    public HikariDataSource buildDatasource(DataSourceProperties properties){
-        HikariConfig config = createHikariConfig(properties);
+    fun buildDatasource(properties: DataSourceProperties): HikariDataSource {
+        val config = createHikariConfig(properties)
         if (enabled) {
-            return HikariCPVaultUtil.createHikariDataSourceWithVaultIntegration(config, databaseBackend, databaseAdminrole);
+            return HikariCPVaultUtil.createHikariDataSourceWithVaultIntegration(
+                config,
+                databaseBackend,
+                databaseAdminrole
+            )
         }
-        config.setUsername(properties.getUsername());
-        config.setPassword(properties.getPassword());
-        return new HikariDataSource(config);
+        config.username = properties.username
+        config.password = properties.password
+        return HikariDataSource(config)
     }
 
     @Bean
-    public FlywayMigrationStrategy flywayMigrationStrategy(DataSourceProperties properties) {
-        if (enabled) {
-            return flyway -> Flyway.configure()
+    fun flywayMigrationStrategy(properties: DataSourceProperties): FlywayMigrationStrategy {
+        return if (enabled) {
+            FlywayMigrationStrategy {
+                Flyway.configure()
+                    .dataSource(buildDatasource(properties))
+                    .initSql(String.format("SET ROLE \"%s\"", databaseAdminrole))
+                    .load()
+                    .migrate()
+            }
+        } else FlywayMigrationStrategy {
+            Flyway.configure()
                 .dataSource(buildDatasource(properties))
-                .initSql(String.format("SET ROLE \"%s\"", databaseAdminrole))
                 .load()
-                .migrate();
+                .migrate()
         }
         // Ikke kjør rolle settingen i testing. De feiler
-        return flyway -> Flyway.configure()
-            .dataSource(buildDatasource(properties))
-            .load()
-            .migrate();
     }
 
+    companion object {
+        fun createHikariConfig(properties: DataSourceProperties): HikariConfig {
+            val config = HikariConfig()
+            config.jdbcUrl = properties.url
+            config.minimumIdle = 1
+            config.maximumPoolSize = 2
+            return config
+        }
+    }
 }
