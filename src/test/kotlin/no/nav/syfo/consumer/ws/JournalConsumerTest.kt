@@ -4,7 +4,7 @@ import no.nav.syfo.consumer.rest.aktor.AktorConsumer
 import no.nav.syfo.domain.InngaaendeJournal
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
-import no.nav.syfo.util.JAXBTest.getInntektsmelding
+import no.nav.syfo.util.JAXBTest.Companion.inntektsmelding
 import no.nav.tjeneste.virksomhet.journal.v2.HentDokumentResponse
 import no.nav.tjeneste.virksomhet.journal.v2.binding.HentDokumentDokumentIkkeFunnet
 import no.nav.tjeneste.virksomhet.journal.v2.binding.HentDokumentSikkerhetsbegrensning
@@ -44,7 +44,7 @@ class JournalConsumerTest {
         val r = no.nav.tjeneste.virksomhet.journal.v2.meldinger.HentDokumentResponse()
         val response = HentDokumentResponse()
         response.response = r
-        r.dokument = getInntektsmelding().toByteArray()
+        r.dokument = inntektsmelding.toByteArray()
 
         `when`(journal!!.hentDokument(any())).thenReturn(r)
         val captor = ArgumentCaptor.forClass(HentDokumentRequest::class.java)
