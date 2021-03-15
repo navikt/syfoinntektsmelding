@@ -182,6 +182,9 @@ dependencies {
     testImplementation("io.mockk:mockk:1.9.3")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.3")
     implementation("io.confluent:kafka-streams-avro-serde:5.5.2")
+
+
+    testImplementation("io.mockk:mockk:1.10.6")
 }
 
 tasks.named<Jar>("jar") {
