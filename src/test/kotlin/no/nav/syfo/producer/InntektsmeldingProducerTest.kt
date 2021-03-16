@@ -1,12 +1,11 @@
 package no.nav.syfo.producer
 
+import io.mockk.mockk
 import junit.framework.Assert.assertEquals
 import no.nav.inntektsmeldingkontrakt.Inntektsmelding
 import no.nav.syfo.domain.inntektsmelding.Gyldighetsstatus
 import no.nav.syfo.mapping.mapInntektsmeldingKontrakt
-import no.nav.syfo.util.Metrikk
 import org.junit.Test
-import org.mockito.Mockito
 import testutil.grunnleggendeInntektsmelding
 
 class InntektsmeldingProducerTest {
@@ -17,7 +16,7 @@ class InntektsmeldingProducerTest {
             "localhost:9092",
             "user",
             "pass",
-            Mockito.mock(Metrikk::class.java))
+            mockk())
 
     @Test
     fun skal_serialisere_og_deserialisere_inntektsmelding() {

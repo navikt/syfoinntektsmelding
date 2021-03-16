@@ -1,27 +1,20 @@
 package no.nav.syfo.service
 
+import io.mockk.every
+import io.mockk.mockk
 import no.nav.syfo.consumer.SakConsumer
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.mockito.BDDMockito.given
-import org.mockito.InjectMocks
-import org.mockito.Mock
-import org.mockito.junit.MockitoJUnitRunner
-import java.util.Optional
 
-@RunWith(MockitoJUnitRunner::class)
+
 class EksisterendeSakServiceTest {
 
-    @Mock
-    private lateinit var sakConsumer: SakConsumer
-
-    @InjectMocks
-    private lateinit var eksisterendeSakService: EksisterendeSakService
+    var sakConsumer = mockk<SakConsumer>(relaxed = true)
+    var eksisterendeSakService = EksisterendeSakService(sakConsumer)
 
     @Test
     fun tarSisteSaksnr() {
-        given(sakConsumer.finnSisteSak("aktor", null, null)).willReturn("137662644")
+        every { sakConsumer.finnSisteSak("aktor", null, null) } returns "137662644"
 
         val sak = eksisterendeSakService.finnEksisterendeSak("aktor", null, null)
         assertThat(sak).isEqualTo("137662644")

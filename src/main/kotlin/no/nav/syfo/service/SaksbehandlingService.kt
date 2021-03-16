@@ -32,8 +32,7 @@ class SaksbehandlingService(
         return inntektsmeldingService.finnBehandledeInntektsmeldinger(aktorId)
             .firstOrNull { im ->
                 im.arbeidsgiverperioder
-                    .stream()
-                    .anyMatch { p -> helper(inntektsmelding.arbeidsgiverperioder, p) }
+                    .any { p -> helper(inntektsmelding.arbeidsgiverperioder, p) }
             }
     }
 
