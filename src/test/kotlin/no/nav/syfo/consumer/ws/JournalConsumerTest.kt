@@ -1,5 +1,9 @@
 package no.nav.syfo.consumer.ws
 
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.slot
+import io.mockk.verify
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
 import no.nav.syfo.domain.InngaaendeJournal
 import no.nav.syfo.domain.JournalStatus
@@ -12,31 +16,18 @@ import no.nav.tjeneste.virksomhet.journal.v2.binding.JournalV2
 import no.nav.tjeneste.virksomhet.journal.v2.meldinger.HentDokumentRequest
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.any
-import org.mockito.InjectMocks
-import org.mockito.Mock
-import org.mockito.Mockito.`when`
-import org.mockito.Mockito.verify
-import org.mockito.junit.MockitoJUnitRunner
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Arrays.asList
 import java.util.function.BinaryOperator
 
 
-@RunWith(MockitoJUnitRunner::class)
 class JournalConsumerTest {
 
-    @Mock
-    private val journal: JournalV2? = null
+    val journal = mockk<JournalV2>(relaxed = true)
+    val aktør = mockk<AktorConsumer>(relaxed = true)
 
-    @Mock
-    private val aktør: AktorConsumer? = null
-
-    @InjectMocks
-    private val journalConsumer: JournalConsumer? = null
+    private val journalConsumer = JournalConsumer(journal,aktør)
 
     @Test
     @Throws(Exception::class)
@@ -46,20 +37,20 @@ class JournalConsumerTest {
         response.response = r
         r.dokument = inntektsmelding.toByteArray()
 
-        `when`(journal!!.hentDokument(any())).thenReturn(r)
-        val captor = ArgumentCaptor.forClass(HentDokumentRequest::class.java)
+        every { journal.hentDokument(any()) } returns r
+        val captor = slot<HentDokumentRequest>()
 
-        val (_, fnr) = journalConsumer!!.hentInntektsmelding(
+        val (_, fnr) = journalConsumer.hentInntektsmelding(
             "journalpostId",
             InngaaendeJournal(dokumentId = "dokumentId", status = JournalStatus.MIDLERTIDIG),
             "AR-123"
         )
 
-        verify(journal).hentDokument(captor.capture())
+        verify { journal.hentDokument( capture(captor)) }
 
         assertThat(fnr).isEqualTo("18018522868")
-        assertThat(captor.value.journalpostId).isEqualTo("journalpostId")
-        assertThat(captor.value.dokumentId).isEqualTo("dokumentId")
+        assertThat(captor.captured.journalpostId).isEqualTo("journalpostId")
+        assertThat(captor.captured.dokumentId).isEqualTo("dokumentId")
     }
 
     @Test
@@ -69,9 +60,9 @@ class JournalConsumerTest {
         response.response = no.nav.tjeneste.virksomhet.journal.v2.meldinger.HentDokumentResponse()
         response.response.dokument = inntektsmeldingArbeidsgiver(emptyList()).toByteArray()
 
-        `when`(journal!!.hentDokument(any())).thenReturn(response.response)
+        every { journal.hentDokument(any()) } returns response.response
 
-        val (_, _, _, _, _, _, _, _, _, arbeidsgiverperioder) = journalConsumer!!.hentInntektsmelding(
+        val (_, _, _, _, _, _, _, _, _, arbeidsgiverperioder) = journalConsumer.hentInntektsmelding(
             "jounralpostID",
             InngaaendeJournal(dokumentId = "", status = JournalStatus.ANNET),
             "AR-123"
@@ -87,16 +78,16 @@ class JournalConsumerTest {
         response.response = no.nav.tjeneste.virksomhet.journal.v2.meldinger.HentDokumentResponse()
         response.response.dokument = inntektsmeldingArbeidsgiverPrivat().toByteArray()
 
-        `when`(journal!!.hentDokument(any())).thenReturn(response.response)
+        every { journal.hentDokument(any()) } returns response.response
 
-        val (_, _, _, arbeidsgiverPrivat, _, _, _, _, _, arbeidsgiverperioder) = journalConsumer!!.hentInntektsmelding(
+        val (_, _, _, arbeidsgiverPrivat, _, _, _, _, _, arbeidsgiverperioder) = journalConsumer.hentInntektsmelding(
             "journalpostId",
             InngaaendeJournal(dokumentId = "", status = JournalStatus.ANNET),
             "AR-123"
         )
 
-        assertThat(arbeidsgiverperioder.isEmpty()).isFalse()
-        assertThat(arbeidsgiverPrivat != null).isTrue()
+        assertThat(arbeidsgiverperioder.isEmpty()).isFalse
+        assertThat(arbeidsgiverPrivat != null).isTrue
     }
 
     @Test
@@ -105,7 +96,7 @@ class JournalConsumerTest {
         val response = HentDokumentResponse()
         response.response = no.nav.tjeneste.virksomhet.journal.v2.meldinger.HentDokumentResponse()
         response.response.dokument = inntektsmeldingArbeidsgiver(
-                asList(
+                listOf(
                         Periode(
                                 LocalDate.of(2019, 2, 1),
                                 LocalDate.of(2019, 2, 16)
@@ -113,16 +104,16 @@ class JournalConsumerTest {
                 )
         ).toByteArray()
 
-        `when`(journal!!.hentDokument(any())).thenReturn(response.response)
+        every { journal.hentDokument(any()) } returns response.response
 
-        val (_, _, arbeidsgiverOrgnummer, arbeidsgiverPrivat) = journalConsumer!!.hentInntektsmelding(
+        val (_, _, arbeidsgiverOrgnummer, arbeidsgiverPrivat) = journalConsumer.hentInntektsmelding(
             "journalpostId",
             InngaaendeJournal(dokumentId = "", status = JournalStatus.ANNET),
             "AR-123"
         )
 
-        assertThat(arbeidsgiverOrgnummer != null).isTrue()
-        assertThat(arbeidsgiverPrivat != null).isFalse()
+        assertThat(arbeidsgiverOrgnummer != null).isTrue
+        assertThat(arbeidsgiverPrivat != null).isFalse
     }
 
     companion object {

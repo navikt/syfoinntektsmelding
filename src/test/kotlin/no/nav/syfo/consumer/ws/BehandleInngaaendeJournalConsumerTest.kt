@@ -1,30 +1,20 @@
 package no.nav.syfo.consumer.ws
 
+import io.mockk.mockk
+import io.mockk.slot
+import io.mockk.verify
 import no.nav.syfo.domain.InngaendeJournalpost
 import no.nav.tjeneste.virksomhet.behandleinngaaendejournal.v1.binding.*
 import no.nav.tjeneste.virksomhet.behandleinngaaendejournal.v1.meldinger.FerdigstillJournalfoeringRequest
 import no.nav.tjeneste.virksomhet.behandleinngaaendejournal.v1.meldinger.OppdaterJournalpostRequest
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.mockito.ArgumentCaptor
-import org.mockito.InjectMocks
-import org.mockito.Mock
-import org.mockito.junit.MockitoJUnitRunner
-
-import java.util.Optional
-
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
-import org.mockito.Mockito.verify
+import org.junit.Test
 
-
-@RunWith(MockitoJUnitRunner::class)
 class BehandleInngaaendeJournalConsumerTest {
 
-    @Mock
-    private val behandleInngaaendeJournalV1: BehandleInngaaendeJournalV1? = null
+    val behandleInngaaendeJournalV1 = mockk<BehandleInngaaendeJournalV1>(relaxed = true)
 
-    @InjectMocks
-    private val behandleInngaaendeJournalConsumer: BehandleInngaaendeJournalConsumer? = null
+    val behandleInngaaendeJournalConsumer = BehandleInngaaendeJournalConsumer(behandleInngaaendeJournalV1)
 
     @Test
     @Throws(Exception::class)
@@ -32,15 +22,15 @@ class BehandleInngaaendeJournalConsumerTest {
         val behandlendeEngetId = "behandlendeEngetId"
         val journalpostId = "journalpostId"
 
-        val captor = ArgumentCaptor.forClass(FerdigstillJournalfoeringRequest::class.java)
+        val captor = slot<FerdigstillJournalfoeringRequest>()
 
         behandleInngaaendeJournalConsumer!!.ferdigstillJournalpost(
                 InngaendeJournalpost(behandlendeEnhetId = behandlendeEngetId, journalpostId = journalpostId, dokumentId = "dokumentId", fnr = "fnr", gsakId = "id")
         )
-        verify<BehandleInngaaendeJournalV1>(behandleInngaaendeJournalV1).ferdigstillJournalfoering(captor.capture())
+        verify { behandleInngaaendeJournalV1.ferdigstillJournalfoering( capture(captor)) }
 
-        assertThat(captor.value.enhetId).isEqualTo(behandlendeEngetId)
-        assertThat(captor.value.journalpostId).isEqualTo(journalpostId)
+        assertThat(captor.captured.enhetId).isEqualTo(behandlendeEngetId)
+        assertThat(captor.captured.journalpostId).isEqualTo(journalpostId)
     }
 
     @Test
@@ -61,11 +51,11 @@ class BehandleInngaaendeJournalConsumerTest {
                 arbeidsgiverPrivat = "10101033333"
         )
 
-        val captor = ArgumentCaptor.forClass(OppdaterJournalpostRequest::class.java)
+        val captor = slot<OppdaterJournalpostRequest>()
 
         behandleInngaaendeJournalConsumer!!.oppdaterJournalpost(inngaendeJournalpost)
 
-        verify<BehandleInngaaendeJournalV1>(behandleInngaaendeJournalV1).oppdaterJournalpost(captor.capture())
-        assertThat(captor.value.inngaaendeJournalpost.avsender.avsenderId).isEqualTo("10101033333")
+        verify { behandleInngaaendeJournalV1.oppdaterJournalpost( capture(captor)) }
+        assertThat(captor.captured.inngaaendeJournalpost.avsender.avsenderId).isEqualTo("10101033333")
     }
 }
