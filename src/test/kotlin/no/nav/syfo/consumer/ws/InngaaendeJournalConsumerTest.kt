@@ -1,6 +1,10 @@
 package no.nav.syfo.consumer.ws
 
 
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.slot
+import io.mockk.verify
 import no.nav.tjeneste.virksomhet.inngaaendejournal.v1.binding.InngaaendeJournalV1
 import no.nav.tjeneste.virksomhet.inngaaendejournal.v1.informasjon.Dokumentinformasjon
 import no.nav.tjeneste.virksomhet.inngaaendejournal.v1.informasjon.InngaaendeJournalpost
@@ -9,24 +13,14 @@ import no.nav.tjeneste.virksomhet.inngaaendejournal.v1.meldinger.HentJournalpost
 import no.nav.tjeneste.virksomhet.inngaaendejournal.v1.meldinger.HentJournalpostResponse
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.any
-import org.mockito.InjectMocks
-import org.mockito.Mock
-import org.mockito.Mockito.`when`
-import org.mockito.Mockito.verify
-import org.mockito.junit.MockitoJUnitRunner
 import javax.xml.datatype.DatatypeFactory
 
-@RunWith(MockitoJUnitRunner::class)
+
 class InngaaendeJournalConsumerTest {
 
-    @Mock
-    private val inngaaendeJournalV1: InngaaendeJournalV1? = null
+    val inngaaendeJournalV1 = mockk<InngaaendeJournalV1>(relaxed = true)
 
-    @InjectMocks
-    private val inngaaendeJournalConsumer: InngaaendeJournalConsumer? = null
+    val inngaaendeJournalConsumer = InngaaendeJournalConsumer(inngaaendeJournalV1)
 
     @Test
     @Throws(Exception::class)
@@ -39,22 +33,19 @@ class InngaaendeJournalConsumerTest {
         ijp.hoveddokument.dokumentId = dokumentId1
         ijp.journaltilstand = Journaltilstand.MIDLERTIDIG
         ijp.forsendelseMottatt = DatatypeFactory.newInstance().newXMLGregorianCalendar()
-        // JournalStatus.MIDLERTIDIG
 
         val journalpostResponse = HentJournalpostResponse()
         journalpostResponse.inngaaendeJournalpost = ijp
 
-        `when`(inngaaendeJournalV1!!.hentJournalpost(any())).thenReturn(
-                journalpostResponse
-        )
-        val captor = ArgumentCaptor.forClass(HentJournalpostRequest::class.java)
+        every { inngaaendeJournalV1.hentJournalpost(any()) } returns journalpostResponse
+        val captor = slot<HentJournalpostRequest>()
 
-        val inngaaendeJournal = inngaaendeJournalConsumer!!.hentDokumentId(journalpostId)
+        val inngaaendeJournal = inngaaendeJournalConsumer.hentDokumentId(journalpostId)
 
-        verify(inngaaendeJournalV1).hentJournalpost(captor.capture())
+        verify { inngaaendeJournalV1.hentJournalpost( capture(captor)) }
 
         assertThat(inngaaendeJournal.dokumentId).isEqualTo(dokumentId1)
-        assertThat(captor.value.journalpostId).isEqualTo(journalpostId)
+        assertThat(captor.captured.journalpostId).isEqualTo(journalpostId)
     }
 
 }

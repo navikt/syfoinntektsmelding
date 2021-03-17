@@ -6,25 +6,20 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import io.ktor.client.HttpClient
-import io.ktor.client.engine.mock.MockEngine
-import io.ktor.client.engine.mock.respond
-import io.ktor.client.features.json.JacksonSerializer
-import io.ktor.client.features.json.JsonFeature
-import io.ktor.http.ContentType
-import io.ktor.http.content.TextContent
-import io.ktor.http.headersOf
-import io.ktor.util.KtorExperimentalAPI
+import io.ktor.client.*
+import io.ktor.client.engine.mock.*
+import io.ktor.client.features.json.*
+import io.ktor.http.*
+import io.ktor.http.content.*
+import io.ktor.util.*
+import io.mockk.every
+import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.config.OppgaveConfig
 import no.nav.syfo.util.Metrikk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.mockito.Mock
-import org.mockito.Mockito.`when`
-import org.mockito.junit.MockitoJUnitRunner
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.Month
@@ -32,17 +27,11 @@ import java.time.Month
 private const val OPPGAVE_ID = 1234
 private const val FORDELINGSOPPGAVE_ID = 5678
 
-@RunWith(MockitoJUnitRunner::class)
 class OppgaveClientTest {
 
-    @Mock
-    private lateinit var oppgaveConfig: OppgaveConfig
-
-    @Mock
-    private lateinit var tokenConsumer: TokenConsumer
-
-    @Mock
-    private lateinit var metrikk: Metrikk
+    var oppgaveConfig = mockk<OppgaveConfig>(relaxed = true)
+    var tokenConsumer = mockk<TokenConsumer>(relaxed = true)
+    var metrikk = mockk<Metrikk>(relaxed = true)
 
     @KtorExperimentalAPI
     private lateinit var oppgaveClient: OppgaveClient
@@ -50,7 +39,7 @@ class OppgaveClientTest {
     @Before
     @KtorExperimentalAPI
     fun setUp() {
-        `when`(oppgaveConfig.url).thenReturn("url")
+        every { oppgaveConfig.url } returns "url"
         oppgaveClient = OppgaveClient(oppgaveConfig, tokenConsumer, metrikk)
     }
 
@@ -64,7 +53,7 @@ class OppgaveClientTest {
             val resultat = oppgaveClient.opprettOppgave("sakId", "123", "tildeltEnhet", "aktoerid", false)
 
             assertThat(resultat.oppgaveId).isEqualTo(OPPGAVE_ID)
-            assertThat(resultat.duplikat).isTrue()
+            assertThat(resultat.duplikat).isTrue
         }
     }
 
@@ -79,7 +68,7 @@ class OppgaveClientTest {
             val requestVerdier = hentRequestInnhold(client)
 
             assertThat(resultat.oppgaveId).isNotEqualTo(OPPGAVE_ID)
-            assertThat(resultat.duplikat).isFalse()
+            assertThat(resultat.duplikat).isFalse
             assertThat(requestVerdier?.journalpostId).isEqualTo("123")
             assertThat(requestVerdier?.oppgavetype).isEqualTo("INNT")
             assertThat(requestVerdier?.behandlingstype).isNull()
@@ -97,7 +86,7 @@ class OppgaveClientTest {
             val requestVerdier = hentRequestInnhold(client)
 
         assertThat(resultat.oppgaveId).isNotEqualTo(FORDELINGSOPPGAVE_ID)
-        assertThat(resultat.duplikat).isFalse()
+        assertThat(resultat.duplikat).isFalse
         assertThat(requestVerdier?.oppgavetype).isEqualTo("FDR")
         assertThat(requestVerdier?.behandlingstype).isNull()
         }
@@ -113,7 +102,7 @@ class OppgaveClientTest {
             val resultat = oppgaveClient.opprettFordelingsOppgave("journalpostId")
 
         assertThat(resultat.oppgaveId).isEqualTo(FORDELINGSOPPGAVE_ID)
-        assertThat(resultat.duplikat).isTrue()
+        assertThat(resultat.duplikat).isTrue
         }
     }
 

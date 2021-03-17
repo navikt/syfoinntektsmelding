@@ -24,7 +24,7 @@ class DateUtilTest {
                         )
                 )
         )
-                .isFalse()
+                .isFalse
 
         assertThat(
                 DateUtil.overlapperPerioder(
@@ -38,7 +38,7 @@ class DateUtilTest {
                         )
                 )
         )
-                .isTrue()
+                .isTrue
 
         assertThat(
                 DateUtil.overlapperPerioder(
@@ -52,7 +52,7 @@ class DateUtilTest {
                         )
                 )
         )
-                .isTrue()
+                .isTrue
 
         assertThat(
                 DateUtil.overlapperPerioder(
@@ -66,7 +66,7 @@ class DateUtilTest {
                         )
                 )
         )
-                .isTrue()
+                .isTrue
 
         assertThat(
                 DateUtil.overlapperPerioder(
@@ -80,7 +80,7 @@ class DateUtilTest {
                         )
                 )
         )
-                .isTrue()
+                .isTrue
 
         assertThat(
                 DateUtil.overlapperPerioder(
@@ -94,7 +94,7 @@ class DateUtilTest {
                         )
                 )
         )
-                .isTrue()
+                .isTrue
 
         assertThat(
                 DateUtil.overlapperPerioder(
@@ -108,7 +108,7 @@ class DateUtilTest {
                         )
                 )
         )
-                .isTrue()
+                .isTrue
 
         assertThat(
                 DateUtil.overlapperPerioder(
@@ -122,6 +122,6 @@ class DateUtilTest {
                         )
                 )
         )
-                .isFalse()
+                .isFalse
     }
 }
