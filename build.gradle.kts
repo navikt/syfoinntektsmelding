@@ -94,6 +94,19 @@ dependencies {
     implementation("com.vladmihalcea:hibernate-types-52:2.10.2") {
 
     }
+    implementation("io.ktor:ktor-server-netty:$ktorVersion")
+    implementation("io.ktor:ktor-jackson:$ktorVersion")
+    implementation("io.ktor:ktor-client-core:$ktorVersion")
+    implementation("io.ktor:ktor-auth:$ktorVersion")
+    implementation("io.ktor:ktor-client-core-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-client-apache:$ktorVersion")
+    implementation("io.ktor:ktor-client-json:$ktorVersion")
+    implementation("io.ktor:ktor-client-jackson:$ktorVersion")
+    implementation("io.ktor:ktor-locations:$ktorVersion")
+
+
+
+    implementation("io.ktor:ktor-locations:$ktorVersion")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.11.0")
 
