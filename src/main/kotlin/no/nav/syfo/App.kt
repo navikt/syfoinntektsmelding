@@ -12,11 +12,12 @@ import no.nav.helse.arbeidsgiver.system.getEnvironment
 import no.nav.helse.fritakagp.koin.getAllOfType
 import no.nav.helse.fritakagp.koin.selectModuleBasedOnProfile
 import org.flywaydb.core.Flyway
-import org.koin.core.KoinComponent
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.koin.core.context.GlobalContext
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
-import org.koin.core.get
+import org.koin.core.component.get
 import org.slf4j.LoggerFactory
 
 class SpinnApplication(val port: Int = 8080) : KoinComponent {
@@ -33,11 +34,11 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
         }
 
         startKoin { modules(selectModuleBasedOnProfile(appConfig)) }
-        migrateDatabase()
+       // migrateDatabase()
 
-        configAndStartBackgroundWorker()
-        autoDetectProbeableComponents()
-        configAndStartWebserver()
+        //configAndStartBackgroundWorker()
+        //autoDetectProbeableComponents()
+        //configAndStartWebserver()
     }
 
     fun shutdown() {
@@ -92,7 +93,7 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
         }*/
     }
 
-    private fun migrateDatabase() {
+/*    private fun migrateDatabase() {
         logger.info("Starter databasemigrering")
 
         Flyway.configure().baselineOnMigrate(true)
@@ -113,7 +114,7 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
             .forEach { kubernetesProbeManager.registerReadynessComponent(it) }
 
         logger.debug("La til probeable komponenter")
-    }
+    }*/
 }
 
 

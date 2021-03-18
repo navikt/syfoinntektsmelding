@@ -1,33 +1,34 @@
 package no.nav.syfo.consumer.rest
 
-import lombok.extern.slf4j.Slf4j
-import org.springframework.web.client.RestTemplate
-import org.springframework.web.util.UriComponentsBuilder
-import no.nav.syfo.behandling.TokenException
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.http.*
-import org.springframework.stereotype.Component
-import java.util.*
 
-@Slf4j
-@Component
-class TokenConsumer(
-    private val basicAuthRestTemplate: RestTemplate,
-    @param:Value("\${security-token-service-token.url}") private val url: String
-) {
+import io.ktor.client.*
+import io.ktor.client.features.*
+import io.ktor.client.request.*
+import io.ktor.http.*
+import io.ktor.util.*
+import kotlinx.coroutines.runBlocking
+import no.nav.syfo.behandling.TokenException
+
+class TokenConsumer(private val httpClient: HttpClient, private val url: String) {
     val token: String
         get() {
-            val headers = HttpHeaders()
-            headers.contentType = MediaType.APPLICATION_FORM_URLENCODED
-            val uriString = UriComponentsBuilder.fromHttpUrl(url)
-                .queryParam("grant_type", "client_credentials")
-                .queryParam("scope", "openid")
-                .toUriString()
-            val result =
-                basicAuthRestTemplate.exchange(uriString, HttpMethod.GET, HttpEntity<Any>(headers), Token::class.java)
-            if (result.statusCode != HttpStatus.OK) {
-                throw TokenException(result.statusCode.value(), null)
+            var result = ""
+            val params = ParametersBuilder()
+            params.append("grant_type", "client_credentials")
+            params.append("scope", "openid")
+            val genUrl = URLBuilder(URLProtocol.HTTPS, url, parameters = params).toString()
+            runBlocking {
+                try {
+                    result = httpClient.get<Token>(
+                        url {
+                            protocol = URLProtocol.HTTPS
+                            host = genUrl
+                        }
+                    ).access_token
+                } catch (cause: Throwable) {
+                    throw TokenException((cause as ClientRequestException).response?.status?.value, null)
+                }
             }
-            return Objects.requireNonNull(result.body).access_token
+            return result
         }
 }
