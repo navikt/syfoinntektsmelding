@@ -112,21 +112,6 @@ dependencies {
     implementation("com.vladmihalcea:hibernate-types-52:2.10.2") {
 
     }
-    implementation("no.nav.helsearbeidsgiver:helse-arbeidsgiver-felles-backend:2021.03.02-15-19-eb0ee")
-    implementation("org.koin:koin-core:$koinVersion")
-    implementation("org.koin:koin-ktor:$koinVersion")
-    implementation("io.ktor:ktor-server-netty:$ktorVersion")
-    implementation("io.ktor:ktor-jackson:$ktorVersion")
-    implementation("io.ktor:ktor-client-core:$ktorVersion")
-    implementation("io.ktor:ktor-auth:$ktorVersion")
-    implementation("io.ktor:ktor-client-core-jvm:$ktorVersion")
-    implementation("io.ktor:ktor-client-apache:$ktorVersion")
-    implementation("io.ktor:ktor-client-json:$ktorVersion")
-    implementation("io.ktor:ktor-client-jackson:$ktorVersion")
-    implementation("io.ktor:ktor-locations:$ktorVersion")
-    implementation("no.nav.security:token-client-core:$tokenSupportVersion")
-    implementation("no.nav.security:token-validation-ktor:$tokenSupportVersion")
-
 
     implementation("io.ktor:ktor-locations:$ktorVersion")
 
@@ -219,6 +204,18 @@ dependencies {
 
 
     testImplementation("io.mockk:mockk:1.10.6")
+
+    implementation("no.nav.helsearbeidsgiver:helse-arbeidsgiver-felles-backend:2021.03.02-15-19-eb0ee")
+    implementation("org.koin:koin-core:$koinVersion")
+    implementation("org.koin:koin-ktor:$koinVersion")
+    implementation("io.ktor:ktor-server-netty:$ktorVersion")
+    implementation("io.ktor:ktor-jackson:$ktorVersion")
+    implementation("io.ktor:ktor-auth:$ktorVersion")
+    implementation("io.ktor:ktor-client-core-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-client-json:$ktorVersion")
+    implementation("no.nav.security:token-client-core:$tokenSupportVersion")
+    implementation("no.nav.security:token-validation-ktor:$tokenSupportVersion")
+
 }
 
 tasks.named<Jar>("jar") {
