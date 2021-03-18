@@ -10,7 +10,8 @@ val swaggerVersion = "2.10.0"
 val kotlinVersion = "1.4.10"
 val hikariVersion = "3.4.5"
 val ktorVersion = "1.4.3"
-val koinVersion = "2.0.1"
+val koinVersion = "2.2.2"
+val tokenSupportVersion = "1.3.1"
 
 val mainClass = "no.nav.syfo.Application"
 
@@ -47,9 +48,9 @@ tasks.jacocoTestReport {
 
 tasks.withType<JacocoReport> {
     classDirectories.setFrom(
-            sourceSets.main.get().output.asFileTree.matching {
-                exclude( "**/App**", "**Mock**")
-            }
+        sourceSets.main.get().output.asFileTree.matching {
+            exclude("**/App**", "**Mock**")
+        }
     )
 }
 
@@ -62,12 +63,12 @@ buildscript {
 }
 
 repositories {
-    jcenter{
+    jcenter {
         content {
             excludeGroup("no.nav.helsearbeidsgiver")
         }
     }
-    mavenCentral{
+    mavenCentral {
         content {
             excludeGroup("no.nav.helsearbeidsgiver")
         }
@@ -111,6 +112,23 @@ dependencies {
     implementation("com.vladmihalcea:hibernate-types-52:2.10.2") {
 
     }
+    implementation("no.nav.helsearbeidsgiver:helse-arbeidsgiver-felles-backend:2021.03.02-15-19-eb0ee")
+    implementation("org.koin:koin-core:$koinVersion")
+    implementation("org.koin:koin-ktor:$koinVersion")
+    implementation("io.ktor:ktor-server-netty:$ktorVersion")
+    implementation("io.ktor:ktor-jackson:$ktorVersion")
+    implementation("io.ktor:ktor-client-core:$ktorVersion")
+    implementation("io.ktor:ktor-auth:$ktorVersion")
+    implementation("io.ktor:ktor-client-core-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-client-apache:$ktorVersion")
+    implementation("io.ktor:ktor-client-json:$ktorVersion")
+    implementation("io.ktor:ktor-client-jackson:$ktorVersion")
+    implementation("io.ktor:ktor-locations:$ktorVersion")
+    implementation("no.nav.security:token-client-core:$tokenSupportVersion")
+    implementation("no.nav.security:token-validation-ktor:$tokenSupportVersion")
+
+
+    implementation("io.ktor:ktor-locations:$ktorVersion")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.11.0")
 
@@ -201,10 +219,6 @@ dependencies {
 
 
     testImplementation("io.mockk:mockk:1.10.6")
-    implementation("org.koin:koin-core:$koinVersion")
-    implementation("org.koin:koin-ktor:$koinVersion")
-    implementation("no.nav.helsearbeidsgiver:helse-arbeidsgiver-felles-backend:2021.03.02-15-19-eb0ee")
-
 }
 
 tasks.named<Jar>("jar") {
