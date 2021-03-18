@@ -10,6 +10,8 @@ val swaggerVersion = "2.10.0"
 val kotlinVersion = "1.4.10"
 val hikariVersion = "3.4.5"
 val ktorVersion = "1.4.3"
+val koinVersion = "2.2.2"
+val tokenSupportVersion = "1.3.1"
 
 val mainClass = "no.nav.syfo.Application"
 
@@ -61,17 +63,50 @@ buildscript {
 }
 
 repositories {
-    mavenCentral()
-    maven("https://kotlin.bintray.com/ktor")
-    maven("https://packages.confluent.io/maven/")
     maven {
         credentials {
             username = "x-access-token"
             password = githubPassword
         }
-        setUrl("https://maven.pkg.github.com/navikt/inntektsmelding-kontrakt")
+        setUrl("https://maven.pkg.github.com/navikt/helse-arbeidsgiver-felles-backend")
+    }
+
+    jcenter{
+        content {
+            excludeGroup("no.nav.helsearbeidsgiver")
+        }
+    }
+    mavenCentral{
+        content {
+            excludeGroup("no.nav.helsearbeidsgiver")
+        }
+    }
+    maven("https://kotlin.bintray.com/ktor")
+    maven(url = "https://packages.confluent.io/maven/")
+
+    maven(url = "https://jitpack.io") {
+        content {
+            excludeGroup("no.nav.helsearbeidsgiver")
+        }
     }
 }
+
+
+
+
+
+//repositories {
+//    mavenCentral()
+//    maven("https://kotlin.bintray.com/ktor")
+//    maven("https://packages.confluent.io/maven/")
+//    maven {
+//        credentials {
+//            username = "x-access-token"
+//            password = githubPassword
+//        }
+//        setUrl("https://maven.pkg.github.com/navikt/inntektsmelding-kontrakt")
+//    }
+//}
 
 java {
     sourceCompatibility = JavaVersion.VERSION_11
@@ -94,6 +129,9 @@ dependencies {
     implementation("com.vladmihalcea:hibernate-types-52:2.10.2") {
 
     }
+    implementation("no.nav.helsearbeidsgiver:helse-arbeidsgiver-felles-backend:2021.03.02-15-19-eb0ee")
+    implementation("org.koin:koin-core:$koinVersion")
+    implementation("org.koin:koin-ktor:$koinVersion")
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
     implementation("io.ktor:ktor-jackson:$ktorVersion")
     implementation("io.ktor:ktor-client-core:$ktorVersion")
@@ -103,7 +141,8 @@ dependencies {
     implementation("io.ktor:ktor-client-json:$ktorVersion")
     implementation("io.ktor:ktor-client-jackson:$ktorVersion")
     implementation("io.ktor:ktor-locations:$ktorVersion")
-
+    implementation("no.nav.security:token-client-core:$tokenSupportVersion")
+    implementation("no.nav.security:token-validation-ktor:$tokenSupportVersion")
 
 
     implementation("io.ktor:ktor-locations:$ktorVersion")
