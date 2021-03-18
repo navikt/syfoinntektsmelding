@@ -10,6 +10,7 @@ val swaggerVersion = "2.10.0"
 val kotlinVersion = "1.4.10"
 val hikariVersion = "3.4.5"
 val ktorVersion = "1.4.3"
+val koinVersion = "2.0.1"
 
 val mainClass = "no.nav.syfo.Application"
 
@@ -61,9 +62,23 @@ buildscript {
 }
 
 repositories {
-    mavenCentral()
-    maven("https://kotlin.bintray.com/ktor")
-    maven("https://packages.confluent.io/maven/")
+    jcenter{
+        content {
+            excludeGroup("no.nav.helsearbeidsgiver")
+        }
+    }
+    mavenCentral{
+        content {
+            excludeGroup("no.nav.helsearbeidsgiver")
+        }
+    }
+    maven {
+        credentials {
+            username = "x-access-token"
+            password = githubPassword
+        }
+        setUrl("https://maven.pkg.github.com/navikt/helse-arbeidsgiver-felles-backend")
+    }
     maven {
         credentials {
             username = "x-access-token"
@@ -71,6 +86,8 @@ repositories {
         }
         setUrl("https://maven.pkg.github.com/navikt/inntektsmelding-kontrakt")
     }
+    maven("https://kotlin.bintray.com/ktor")
+    maven("https://packages.confluent.io/maven/")
 }
 
 java {
@@ -179,12 +196,15 @@ dependencies {
     implementation("com.google.guava:guava:30.0-jre")
     testImplementation("io.ktor:ktor-client-mock:$ktorVersion")
     testImplementation("io.ktor:ktor-client-mock-jvm:$ktorVersion")
-    testImplementation("io.mockk:mockk:1.9.3")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.3")
     implementation("io.confluent:kafka-streams-avro-serde:5.5.2")
 
 
     testImplementation("io.mockk:mockk:1.10.6")
+    implementation("org.koin:koin-core:$koinVersion")
+    implementation("org.koin:koin-ktor:$koinVersion")
+    implementation("no.nav.helsearbeidsgiver:helse-arbeidsgiver-felles-backend:2021.03.02-15-19-eb0ee")
+
 }
 
 tasks.named<Jar>("jar") {
