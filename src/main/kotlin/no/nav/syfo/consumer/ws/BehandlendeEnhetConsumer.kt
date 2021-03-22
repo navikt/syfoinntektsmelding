@@ -18,11 +18,9 @@ import no.nav.tjeneste.virksomhet.person.v3.binding.PersonV3
 import no.nav.tjeneste.virksomhet.person.v3.informasjon.NorskIdent
 import no.nav.tjeneste.virksomhet.person.v3.informasjon.PersonIdent
 import no.nav.tjeneste.virksomhet.person.v3.meldinger.HentGeografiskTilknytningRequest
-import org.springframework.stereotype.Component
 
 const val SYKEPENGER_UTLAND = "4474"
 
-@Component
 class BehandlendeEnhetConsumer(
     private val personV3: PersonV3,
     private val arbeidsfordelingV1: ArbeidsfordelingV1,

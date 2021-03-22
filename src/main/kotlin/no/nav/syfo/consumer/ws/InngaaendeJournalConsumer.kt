@@ -9,9 +9,7 @@ import no.nav.syfo.domain.InngaaendeJournal
 import no.nav.syfo.domain.JournalStatus
 import no.nav.tjeneste.virksomhet.inngaaendejournal.v1.binding.*
 import no.nav.tjeneste.virksomhet.inngaaendejournal.v1.meldinger.HentJournalpostRequest
-import org.springframework.stereotype.Component
 
-@Component
 class InngaaendeJournalConsumer(private val inngaaendeJournalV1: InngaaendeJournalV1) {
 
     var log = log()

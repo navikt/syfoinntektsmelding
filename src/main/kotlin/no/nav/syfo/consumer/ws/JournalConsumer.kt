@@ -16,10 +16,8 @@ import no.nav.tjeneste.virksomhet.journal.v2.binding.JournalV2
 import no.nav.tjeneste.virksomhet.journal.v2.informasjon.Variantformater
 import no.nav.tjeneste.virksomhet.journal.v2.meldinger.HentDokumentRequest
 import no.seres.xsd.nav.inntektsmelding_m._20180924.XMLInntektsmeldingM
-import org.springframework.stereotype.Component
 import javax.xml.bind.JAXBElement
 
-@Component
 class JournalConsumer(private val journalV2: JournalV2,
                       private val aktorConsumer: AktorConsumer) {
 

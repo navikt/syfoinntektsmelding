@@ -15,10 +15,8 @@ import no.nav.syfo.service.SaksbehandlingService
 import no.nav.syfo.util.Metrikk
 import no.nav.syfo.util.validerInntektsmelding
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
-import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 
-@Service
 class InntektsmeldingBehandler(
     private val journalpostService: JournalpostService,
     private val saksbehandlingService: SaksbehandlingService,

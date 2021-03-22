@@ -1,57 +1,54 @@
 package no.nav.syfo.consumer
 
+import io.ktor.client.*
+import io.ktor.client.features.*
+import io.ktor.client.request.*
+import io.ktor.http.*
+import io.ktor.util.*
+import kotlinx.coroutines.runBlocking
 import log
 import no.nav.syfo.behandling.SakFeilException
 import no.nav.syfo.behandling.SakResponseException
 import no.nav.syfo.consumer.azuread.AzureAdTokenConsumer
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.http.*
-import org.springframework.stereotype.Component
-import org.springframework.web.client.RestTemplate
-import org.springframework.web.util.UriComponentsBuilder
 import java.time.LocalDate
 
-@Component
 class SakConsumer(
-    val restTemplate: RestTemplate,
+    val httpClient : HttpClient,
     val azureAdTokenConsumer: AzureAdTokenConsumer,
-    @Value("\${aad.syfogsak.clientid.username}") val syfogsakClientId: String
+    val syfogsakClientId: String,
+    val hostUrl: String
 ) {
-
     val log = log()
 
     fun finnSisteSak(aktorId: String, fom: LocalDate?, tom: LocalDate?): String? {
-        val headers = HttpHeaders()
-        headers.contentType = MediaType.APPLICATION_JSON
-        headers.set("Authorization", "Bearer " + azureAdTokenConsumer.getAccessToken(syfogsakClientId))
-
-        val uriBuilder = UriComponentsBuilder.fromHttpUrl("http://syfogsak.default.svc.nais.local/$aktorId/sisteSak")
-
-        if (fom != null && tom != null) {
-            uriBuilder
-                .queryParam("fom", fom)
-                .queryParam("tom", tom)
+        var result: String? = null
+        runBlocking {
+            try {
+                result = httpClient.get<SisteSakRespons>(
+                    url {
+                        protocol = URLProtocol.HTTPS
+                        host = hostUrl
+                        path("$aktorId","sisteSak")
+                        parameters.append("fom", fom.toString())
+                        parameters.append("tom", tom.toString())
+                    }
+                ) {
+                    header("Authorization", "Bearer ${azureAdTokenConsumer.getAccessToken(syfogsakClientId)}")
+                }.sisteSak
+            } catch (cause: Throwable) {
+                when(cause) {
+                    is ClientRequestException -> if (HttpStatusCode.OK.value != cause.response.status.value) {
+                        log.error("Kall mot syfonarmesteleder feiler med HTTP-${cause.response.status.value}")
+                        throw SakResponseException(aktorId, cause.response.status.value, null)
+                        }
+                    else -> {
+                        log.error("Uventet feil ved henting av nærmeste leder")
+                        throw SakFeilException(aktorId, Exception(cause.message))
+                    }
+                }
+            }
         }
-
-        val result: ResponseEntity<SisteSakRespons>
-        result =
-            restTemplate.exchange(uriBuilder.toUriString(), HttpMethod.GET, HttpEntity<Any>(headers), SisteSakRespons::class.java)
-
-        if (result.statusCode != HttpStatus.OK) {
-            val message = "Kall mot syfonarmesteleder feiler med HTTP-" + result.statusCode
-            log.error(message)
-            throw SakResponseException(aktorId, result.statusCode.value(), null)
-        }
-
-        try {
-            return result.body?.sisteSak
-
-        } catch (exception: Exception) {
-            val message = "Uventet feil ved henting av nærmeste leder"
-            log.error(message)
-            throw SakFeilException(aktorId, exception)
-        }
-
+        return result
     }
 }
 

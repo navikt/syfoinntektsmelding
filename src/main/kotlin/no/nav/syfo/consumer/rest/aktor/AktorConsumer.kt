@@ -6,14 +6,14 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.util.*
 import kotlinx.coroutines.runBlocking
-import lombok.extern.slf4j.Slf4j
-import no.nav.syfo.behandling.*
+import no.nav.syfo.behandling.AktørException
+import no.nav.syfo.behandling.AktørKallResponseException
+import no.nav.syfo.behandling.FantIkkeAktørException
 import no.nav.syfo.consumer.rest.TokenConsumer
 import no.nav.syfo.util.MDCOperations.Companion.MDC_CALL_ID
 import no.nav.syfo.util.MDCOperations.Companion.getFromMDC
 import org.slf4j.LoggerFactory
 
-@Slf4j
 class AktorConsumer(
     private val tokenConsumer: TokenConsumer,
     private val username: String,

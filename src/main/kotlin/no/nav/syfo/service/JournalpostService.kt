@@ -1,6 +1,5 @@
 package no.nav.syfo.service
 
-import lombok.extern.slf4j.Slf4j
 import no.nav.syfo.consumer.ws.BehandleInngaaendeJournalConsumer
 import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
 import no.nav.syfo.consumer.ws.InngaaendeJournalConsumer
@@ -8,10 +7,7 @@ import no.nav.syfo.consumer.ws.JournalConsumer
 import no.nav.syfo.domain.InngaendeJournalpost
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.util.Metrikk
-import org.springframework.stereotype.Component
 
-@Component
-@Slf4j
 class JournalpostService(
         private val inngaaendeJournalConsumer: InngaaendeJournalConsumer,
         private val behandleInngaaendeJournalConsumer: BehandleInngaaendeJournalConsumer,

@@ -10,9 +10,7 @@ import no.nav.syfo.repository.InntektsmeldingService
 import no.nav.syfo.util.DateUtil
 import no.nav.syfo.util.Metrikk
 import no.nav.syfo.util.sammenslattPeriode
-import org.springframework.stereotype.Service
 
-@Service
 @KtorExperimentalAPI
 class SaksbehandlingService(
         private val eksisterendeSakService: EksisterendeSakService,

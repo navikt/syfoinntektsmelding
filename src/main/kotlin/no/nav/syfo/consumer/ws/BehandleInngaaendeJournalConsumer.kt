@@ -29,9 +29,7 @@ import no.nav.tjeneste.virksomhet.behandleinngaaendejournal.v1.meldinger.Ferdigs
 import no.nav.tjeneste.virksomhet.behandleinngaaendejournal.v1.informasjon.InngaaendeJournalpost
 import no.nav.tjeneste.virksomhet.behandleinngaaendejournal.v1.meldinger.OppdaterJournalpostRequest
 import no.nav.tjeneste.virksomhet.behandleinngaaendejournal.v1.informasjon.Person
-import org.springframework.stereotype.Component
 
-@Component
 class BehandleInngaaendeJournalConsumer(private val behandleInngaaendeJournalV1: BehandleInngaaendeJournalV1) {
 
     var log = log()
