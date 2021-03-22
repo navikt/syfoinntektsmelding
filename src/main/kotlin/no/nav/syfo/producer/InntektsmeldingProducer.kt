@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.util.*
 
-@Component
+
 class InntektsmeldingProducer(@Value("\${spring.kafka.bootstrap-servers}") private val bootstrapServers: String,
                               @Value("\${srvsyfoinntektsmelding.username}") private val username: String,
                               @Value("\${srvsyfoinntektsmelding.password}") private val password: String,
