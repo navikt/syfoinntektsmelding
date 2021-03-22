@@ -1,11 +1,12 @@
-package no.nav.syfo.kafkamottak
+package no.nav.syfo.prosesser
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.runBlocking
 import log
-import no.nav.syfo.bakgrunnsjobb.BakgrunnsjobbProsesserer
+import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
+import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbProsesserer
 import no.nav.syfo.behandling.BehandlingException
 import no.nav.syfo.behandling.Feiltype
 import no.nav.syfo.behandling.InntektsmeldingBehandler
@@ -20,7 +21,7 @@ import java.time.LocalDateTime
 /**
  * En bakgrunnsjobb som kan prosessere bakgrunnsjobber med inntektsmeldinger fra Joark
  */
-@Component
+
 @KtorExperimentalAPI
 class JoarkInntektsmeldingHendelseProsessor(
     private val om: ObjectMapper,
@@ -34,11 +35,14 @@ class JoarkInntektsmeldingHendelseProsessor(
         val JOBB_TYPE = "joark-ny-inntektsmelding"
     }
 
-    override fun prosesser(jobbOpprettet: LocalDateTime, forsoek: Int, jobbData: String) {
+    override val type: String
+        get() = TODO("Not yet implemented")
+
+    override fun prosesser(jobb: Bakgrunnsjobb) {
         var arkivReferanse = "UKJENT"
         try {
 
-            val journalpostDTO = om.readValue<InngaaendeJournalpostDTO>(jobbData)
+            val journalpostDTO = om.readValue<InngaaendeJournalpostDTO>(jobb.data)
             MDCOperations.putToMDC(MDCOperations.MDC_CALL_ID, MDCOperations.generateCallId())
 
             arkivReferanse = if (journalpostDTO.kanalReferanseId.isEmpty()) "UKJENT" else journalpostDTO.kanalReferanseId
