@@ -21,12 +21,8 @@ private val om: ObjectMapper = jacksonObjectMapper()
 
 
 class JoarkHendelseConsumer() {
-    private val bakgrunnsjobbRepo: BakgrunnsjobbRepository
-//    @KafkaListener(
-//        topics = ["#{'\${kafka_joark_hendelse_topic:dummy_for_test}'}"],
-//        idIsGroup = false,
-//        containerFactory = "joarkhendelseListenerContainerFactory"
-//)
+    private val bakgrunnsjobbRepo: BakgrunnsjobbRepository = TODO()
+
     @KtorExperimentalAPI
     fun listen(cr: ConsumerRecord<String, GenericRecord>, acknowledgment: Acknowledgment) {
         val hendelse = om.readValue<InngaaendeJournalpostDTO>(cr.value().toString())
