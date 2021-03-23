@@ -1,48 +1,43 @@
 package no.nav.syfo.utsattoppgave
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.ktor.util.*
 import kotlinx.coroutines.runBlocking
 import log
-import no.nav.syfo.behandling.OpprettOppgaveException
+import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
+import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.syfo.consumer.rest.OppgaveClient
 import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
 import no.nav.syfo.consumer.ws.SYKEPENGER_UTLAND
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.dto.UtsattOppgaveEntitet
-import no.nav.syfo.util.MDCOperations.Companion.MDC_CALL_ID
-import no.nav.syfo.util.MDCOperations.Companion.putToMDC
-import no.nav.syfo.util.MDCOperations.Companion.remove
+import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
 import org.springframework.scheduling.annotation.Scheduled
-import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.util.*
 
 @KtorExperimentalAPI
-@Service
 class UtsattOppgaveService(
     val utsattOppgaveDAO: UtsattOppgaveDAO,
     private val oppgaveClient: OppgaveClient,
-    private val behandlendeEnhetConsumer: BehandlendeEnhetConsumer
+    private val behandlendeEnhetConsumer: BehandlendeEnhetConsumer,
+    private val bakgrunnsjobbRepo: BakgrunnsjobbRepository,
+    private val objectMapper : ObjectMapper
 ) {
 
     val log = log()
 
     @Scheduled(cron = "0 0 * * * *")
     fun opprettOppgaverForUtgåtte() {
-        putToMDC(MDC_CALL_ID, UUID.randomUUID().toString())
-        utsattOppgaveDAO
-            .finnAlleUtgåtteOppgaver()
-            .forEach {
-                try {
-                    opprettOppgaveIGosys(it)
-                    it.tilstand = Tilstand.Opprettet
-                    lagre(it)
-                    log.info("Oppgave opprettet i gosys for inntektsmelding: ${it.inntektsmeldingId}")
-                } catch (e: OpprettOppgaveException) {
-                    log.error("feil ved opprettelse av oppgave i gosys. InntektsmeldingId: ${it.inntektsmeldingId}")
-                }
-            }
-        remove(MDC_CALL_ID)
+        bakgrunnsjobbRepo.save(
+            Bakgrunnsjobb(
+                type = FinnAlleUtgaandeOppgaverProcessor.JOB_TYPE,
+                kjoeretid = LocalDateTime.now().plusHours(1),
+                maksAntallForsoek = 10,
+                data = objectMapper.writeValueAsString(FinnAlleUtgaandeOppgaverProcessor.JobbData(UUID.randomUUID()))
+            )
+        )
+
     }
 
     fun prosesser(oppdatering: OppgaveOppdatering) {

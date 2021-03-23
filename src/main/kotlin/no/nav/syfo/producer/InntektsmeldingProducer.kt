@@ -8,14 +8,13 @@ import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.config.SaslConfigs
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.stereotype.Component
+
 import java.util.*
 
 
-class InntektsmeldingProducer(@Value("\${spring.kafka.bootstrap-servers}") private val bootstrapServers: String,
-                              @Value("\${srvsyfoinntektsmelding.username}") private val username: String,
-                              @Value("\${srvsyfoinntektsmelding.password}") private val password: String,
+class InntektsmeldingProducer(private val bootstrapServers: String,
+                              private val username: String,
+                              private val password: String,
                               private val metrikk: Metrikk
 ) {
 

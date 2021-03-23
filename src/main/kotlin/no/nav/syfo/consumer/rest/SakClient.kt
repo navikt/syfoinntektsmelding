@@ -15,16 +15,13 @@ import io.ktor.http.contentType
 import io.ktor.util.KtorExperimentalAPI
 import no.nav.syfo.helpers.retry
 import log
-import no.nav.syfo.config.SakClientConfig
 import no.nav.syfo.util.MDCOperations.Companion.MDC_CALL_ID
 import no.nav.syfo.util.MDCOperations.Companion.getFromMDC
-import org.springframework.stereotype.Component
 import java.time.ZonedDateTime
 
 @KtorExperimentalAPI
-@Component
 class SakClient constructor(
-        val config: SakClientConfig,
+        val opprettsakUrl: String,
         val tokenConsumer: TokenConsumer
 ) {
 
@@ -46,7 +43,7 @@ class SakClient constructor(
     }
 
     suspend fun opprettSak(pasientAktoerId: String, msgId: String): SakResponse = retry("opprett_sak") {
-        httpClient.post<SakResponse>(config.url) {
+        httpClient.post<SakResponse>(opprettsakUrl) {
             contentType(ContentType.Application.Json)
             header("X-Correlation-ID", getFromMDC(MDC_CALL_ID))
             header("Authorization", "Bearer ${tokenConsumer.token}")

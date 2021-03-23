@@ -18,12 +18,10 @@ import log
 import no.nav.syfo.behandling.HentOppgaveException
 import no.nav.syfo.behandling.OpprettFordelingsOppgaveException
 import no.nav.syfo.behandling.OpprettOppgaveException
-import no.nav.syfo.config.OppgaveConfig
 import no.nav.syfo.domain.OppgaveResultat
 import no.nav.syfo.helpers.retry
 import no.nav.syfo.util.MDCOperations
 import no.nav.syfo.util.Metrikk
-import org.springframework.stereotype.Component
 import java.time.DayOfWeek
 import java.time.LocalDate
 
@@ -31,9 +29,8 @@ const val OPPGAVETYPE_INNTEKTSMELDING = "INNT"
 const val OPPGAVETYPE_FORDELINGSOPPGAVE = "FDR"
 const val TEMA = "SYK"
 
-@Component
 class OppgaveClient constructor (
-        val config: OppgaveConfig,
+        val oppgavebehndlingUrl: String,
         val tokenConsumer: TokenConsumer,
         val metrikk: Metrikk
 ) {
@@ -60,7 +57,7 @@ class OppgaveClient constructor (
     }
 
     private suspend fun opprettOppgave(opprettOppgaveRequest: OpprettOppgaveRequest): OpprettOppgaveResponse = retry("opprett_oppgave") {
-        httpClient.post<OpprettOppgaveResponse>(config.url) {
+        httpClient.post<OpprettOppgaveResponse>(oppgavebehndlingUrl) {
             contentType(ContentType.Application.Json)
             this.header("Authorization", "Bearer ${tokenConsumer.token}")
             this.header("X-Correlation-ID", MDCOperations.getFromMDC(MDCOperations.MDC_CALL_ID))
@@ -72,7 +69,7 @@ class OppgaveClient constructor (
         return retry("hent_oppgave") {
             val callId = MDCOperations.getFromMDC(MDCOperations.MDC_CALL_ID)
             log.info("Henter oppgave med CallId $callId")
-            httpClient.get<OppgaveResponse>(config.url) {
+            httpClient.get<OppgaveResponse>(oppgavebehndlingUrl) {
                 this.header("Authorization", "Bearer ${tokenConsumer.token}")
                 this.header("X-Correlation-ID", callId)
                 parameter("tema", TEMA)

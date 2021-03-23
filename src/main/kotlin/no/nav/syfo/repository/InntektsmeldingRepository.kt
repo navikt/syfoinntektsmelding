@@ -1,6 +1,5 @@
 package no.nav.syfo.repository
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import no.nav.syfo.dto.InntektsmeldingEntitet
 import java.sql.ResultSet
 
@@ -13,13 +12,12 @@ interface InntektsmeldingRepository  {
     fun findByAktorId(aktoerId: String): List<InntektsmeldingEntitet>
     fun findFirst100ByBehandletBefore(førDato: LocalDateTime): List<InntektsmeldingEntitet>
     fun deleteByBehandletBefore(førDato: LocalDateTime): Long
-    fun lagreInnteksmelding(innteksmelding : InntektsmeldingEntitet): InntektsmeldingEntitet?
+    fun lagreInnteksmelding(innteksmelding : InntektsmeldingEntitet): InntektsmeldingEntitet
 }
 
 
 class InntektsmeldingRepositoryImp(
-    val ds: DataSource,
-    val mapper: ObjectMapper
+    val ds: DataSource
 ) : InntektsmeldingRepository {
 
     override fun findByAktorId(id: String): List<InntektsmeldingEntitet> {
@@ -49,14 +47,14 @@ class InntektsmeldingRepositoryImp(
         }
     }
 
-    override fun lagreInnteksmelding(innteksmelding : InntektsmeldingEntitet): InntektsmeldingEntitet? {
+    override fun lagreInnteksmelding(innteksmelding : InntektsmeldingEntitet): InntektsmeldingEntitet {
     val insertStatement = """INSERT INTO INNTEKTSMELDING (INNTEKTSMELDING_UUID, AKTOR_ID, ORGNUMMER, SAK_ID, JOURNALPOST_ID, BEHANDLET, ARBEIDSGIVER_PRIVAT, DATA)
         VALUES (${innteksmelding.uuid}, ${innteksmelding.aktorId}, ${innteksmelding.orgnummer}, ${innteksmelding.sakId}, ${innteksmelding.journalpostId}, ${innteksmelding.behandlet}, ${innteksmelding.arbeidsgiverPrivat}, ${innteksmelding.data}
         RETURNING *;""".trimMargin()
         val inntektsmeldinger = ArrayList<InntektsmeldingEntitet>()
         ds.connection.use {
             val res = it.prepareStatement(insertStatement).executeQuery()
-            return resultLoop(res, inntektsmeldinger).firstOrNull()
+            return resultLoop(res, inntektsmeldinger).first()
         }
     }
 
