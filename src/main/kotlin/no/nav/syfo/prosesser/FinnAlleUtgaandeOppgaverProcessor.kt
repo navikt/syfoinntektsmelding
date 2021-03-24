@@ -10,12 +10,9 @@ import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
 import no.nav.syfo.consumer.ws.SYKEPENGER_UTLAND
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.dto.UtsattOppgaveEntitet
-import no.nav.syfo.repository.InntektsmeldingRepository
-import no.nav.syfo.repository.UtsattOppgaveRepository
 import no.nav.syfo.util.MDCOperations
 import no.nav.syfo.utsattoppgave.UtsattOppgaveDAO
 import org.slf4j.LoggerFactory
-import java.time.LocalDate
 import java.util.*
 
 class FinnAlleUtgaandeOppgaverProcessor(

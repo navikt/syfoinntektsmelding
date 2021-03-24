@@ -1,14 +1,11 @@
 package no.nav.syfo.web.auth
 
-import io.ktor.application.*
 import io.ktor.config.*
 import io.ktor.request.*
 import io.ktor.util.*
-import io.ktor.util.pipeline.*
 import no.nav.security.token.support.core.jwt.JwtToken
 import java.time.Instant
 import java.util.*
-import javax.ws.rs.ForbiddenException
 
 //TODO: Sjekk om dette er noe vi trenger, kopiert fra fritakagp
 @KtorExperimentalAPI

@@ -9,15 +9,14 @@ import io.ktor.http.*
 import io.ktor.jackson.*
 import io.ktor.locations.*
 import io.ktor.routing.*
-import io.ktor.routing.get
 import io.ktor.util.*
-import no.nav.syfo.api.InnteksmeldingRoute
-import no.nav.syfo.api.systemRoutes
-import org.slf4j.event.Level
-import org.koin.ktor.ext.get
-import no.nav.security.token.support.ktor.tokenValidationSupport
 import no.nav.helse.arbeidsgiver.system.AppEnv
 import no.nav.helse.arbeidsgiver.system.getEnvironment
+import no.nav.security.token.support.ktor.tokenValidationSupport
+import no.nav.syfo.api.InnteksmeldingRoute
+import no.nav.syfo.api.systemRoutes
+import org.koin.ktor.ext.get
+import org.slf4j.event.Level
 
 @KtorExperimentalLocationsAPI
 @KtorExperimentalAPI

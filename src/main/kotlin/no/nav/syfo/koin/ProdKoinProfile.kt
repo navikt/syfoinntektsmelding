@@ -70,7 +70,6 @@ fun prodConfig(config: ApplicationConfig) = module {
     single { FjernInnteksmeldingByBehandletProcessor(InntektsmeldingRepositoryImp(get()), config.getString("lagringstidMåneder").toInt() )} bind FjernInnteksmeldingByBehandletProcessor::class
     single { FinnAlleUtgaandeOppgaverProcessor(get(), get(), get()) } bind FinnAlleUtgaandeOppgaverProcessor::class
 
-    single { SimpleSelfTestState() } bind SimpleSelfTestState::class
     single { InfiniteRetryKafkaErrorHandler(get()) } bind InfiniteRetryKafkaErrorHandler::class
     single { OppgavebehandlingConsumer(get()) } bind OppgavebehandlingConsumer::class
 

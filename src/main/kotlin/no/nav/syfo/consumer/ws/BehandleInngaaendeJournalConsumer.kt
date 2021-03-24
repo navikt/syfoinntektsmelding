@@ -61,24 +61,30 @@ class BehandleInngaaendeJournalConsumer(private val behandleInngaaendeJournalV1:
         request.inngaaendeJournalpost = inn
         try {
             behandleInngaaendeJournalV1.oppdaterJournalpost( request )
-        } catch (e: OppdaterJournalpostUgyldigInput) {
-            log.error("Feil ved oppdatering av journalpost: {} - Ugyldig input!", journalpostId, e)
-            throw OppdaterJournalpostUgyldigInputException(journalpostId, e)
-        } catch (e: OppdaterJournalpostObjektIkkeFunnet) {
-            log.error("Feil ved oppdatering av journalpost: {} - Journalpost ikke funnet!", journalpostId, e)
-            throw OppdaterJournalpostObjektIkkeFunnetException(journalpostId, e)
-        } catch (e: OppdaterJournalpostOppdateringIkkeMulig) {
-            log.error("Feil ved oppdatering av journalpost: {} - Oppdatering ikke mulig!", journalpostId, e)
-            throw OppdaterJournalpostOppdateringIkkeMuligException(journalpostId, e)
-        } catch (e: OppdaterJournalpostJournalpostIkkeInngaaende) {
-            log.error("Feil ved oppdatering av journalpost: {} - Journalpost er ikke inngående!", journalpostId, e)
-            throw OppdaterJournalpostJournalpostIkkeInngaaendeException(journalpostId, e)
-        } catch (e: OppdaterJournalpostSikkerhetsbegrensning) {
-            log.error("Feil ved oppdatering av journalpost: {} - Sikkerhetsbegrensning!", journalpostId, e)
-            throw OppdaterJournalpostSikkerhetsbegrensningException(journalpostId, e)
+        } catch (e: Exception) {
+            when(e) {
+                is OppdaterJournalpostUgyldigInput -> {
+                    log.error("Feil ved oppdatering av journalpost: {} - Ugyldig input!", journalpostId, e)
+                    throw OppdaterJournalpostUgyldigInputException(journalpostId, e)}
+                is OppdaterJournalpostObjektIkkeFunnet -> {
+                    log.error("Feil ved oppdatering av journalpost: {} - Journalpost ikke funnet!", journalpostId, e)
+                    throw OppdaterJournalpostObjektIkkeFunnetException(journalpostId, e)
+                }
+                is OppdaterJournalpostOppdateringIkkeMulig -> {
+                    log.error("Feil ved oppdatering av journalpost: {} - Oppdatering ikke mulig!", journalpostId, e)
+                    throw OppdaterJournalpostOppdateringIkkeMuligException(journalpostId, e)
+                }
+                is OppdaterJournalpostJournalpostIkkeInngaaende -> {
+                    log.error("Feil ved oppdatering av journalpost: {} - Journalpost er ikke inngående!", journalpostId, e)
+                    throw OppdaterJournalpostJournalpostIkkeInngaaendeException(journalpostId, e)
+                }
+                is OppdaterJournalpostSikkerhetsbegrensning -> {
+                    log.error("Feil ved oppdatering av journalpost: {} - Sikkerhetsbegrensning!", journalpostId, e)
+                    throw OppdaterJournalpostSikkerhetsbegrensningException(journalpostId, e)
+                }
+            }
         }
     }
-
     fun ferdigstillJournalpost(inngaendeJournalpost: InngaendeJournalpost) {
         val journalpostId = inngaendeJournalpost.journalpostId
 
