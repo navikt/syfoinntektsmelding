@@ -40,7 +40,7 @@ class OppgaveClientTest {
     @KtorExperimentalAPI
     fun setUp() {
         every { oppgaveConfig.url } returns "url"
-        oppgaveClient = OppgaveClient(oppgaveConfig, tokenConsumer, metrikk)
+        oppgaveClient = OppgaveClient(oppgaveConfig.url, tokenConsumer, metrikk)
     }
 
     @Test

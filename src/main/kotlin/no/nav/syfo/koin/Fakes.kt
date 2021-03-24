@@ -1,4 +1,4 @@
-package no.nav.helse.fritakagp.koin
+package no.nav.syfo.koin
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
@@ -12,20 +12,15 @@ import no.nav.helse.arbeidsgiver.integrasjoner.oppgave.OpprettOppgaveResponse
 import no.nav.helse.arbeidsgiver.integrasjoner.pdl.*
 import no.nav.helse.arbeidsgiver.utils.loadFromResources
 import no.nav.helse.arbeidsgiver.web.auth.AltinnOrganisationsRepository
-import no.nav.helse.fritakagp.integration.brreg.BrregClient
-import no.nav.helse.fritakagp.integration.brreg.MockBrregClient
-import no.nav.helse.fritakagp.integration.gcp.BucketStorage
-import no.nav.helse.fritakagp.integration.gcp.MockBucketStorage
-import no.nav.helse.fritakagp.integration.kafka.BrukernotifikasjonBeskjedSender
-import no.nav.helse.fritakagp.integration.kafka.MockBrukernotifikasjonBeskjedSender
-import no.nav.helse.fritakagp.integration.virusscan.MockVirusScanner
-import no.nav.helse.fritakagp.integration.virusscan.VirusScanner
+import no.nav.syfo.repository.InntektsmeldingRepository
+import no.nav.syfo.repository.InntektsmeldingRepositoryImp
+import no.nav.syfo.repository.InntektsmeldingRepositoryMock
+import no.nav.syfo.repository.InntektsmeldingService
 import org.koin.core.module.Module
 import org.koin.dsl.bind
 
 fun Module.mockExternalDependecies() {
     single { MockAltinnRepo(get()) } bind AltinnOrganisationsRepository::class
-    single { MockBrukernotifikasjonBeskjedSender() } bind BrukernotifikasjonBeskjedSender::class
 
     single {
         object : DokarkivKlient {
@@ -84,10 +79,7 @@ fun Module.mockExternalDependecies() {
             ): OpprettOppgaveResponse = OpprettOppgaveResponse(1234)
         }
     } bind OppgaveKlient::class
-
-    single { MockVirusScanner() } bind VirusScanner::class
-    single { MockBucketStorage() } bind BucketStorage::class
-    single { MockBrregClient() } bind BrregClient::class
+    single { InntektsmeldingService(InntektsmeldingRepositoryMock(), get(), get()) } bind InntektsmeldingRepository::class
 }
 
 class MockAltinnRepo(om: ObjectMapper) : AltinnOrganisationsRepository {

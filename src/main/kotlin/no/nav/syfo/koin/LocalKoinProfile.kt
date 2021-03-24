@@ -5,6 +5,7 @@ import io.ktor.util.*
 import no.nav.helse.arbeidsgiver.system.getString
 import no.nav.syfo.consumer.rest.TokenConsumer
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
+import no.nav.syfo.koin.mockExternalDependecies
 import org.koin.dsl.module
 
 

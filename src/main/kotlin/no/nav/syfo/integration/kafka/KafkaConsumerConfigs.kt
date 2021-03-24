@@ -1,11 +1,10 @@
-package no.nav.syfo.config
+package no.nav.syfo.integration.kafka
 
-import com.fasterxml.jackson.module.kotlin.readValue
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig
 import io.confluent.kafka.streams.serdes.avro.GenericAvroDeserializer
 import no.nav.syfo.utsattoppgave.InfiniteRetryKafkaErrorHandler
 import no.nav.syfo.utsattoppgave.UtsattOppgaveDTO
-import no.nav.syfo.utsattoppgave.objectMapper
 import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.common.config.SaslConfigs
@@ -20,13 +19,15 @@ import org.springframework.kafka.core.ConsumerFactory
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory
 import org.springframework.kafka.listener.ContainerProperties
 import java.time.Duration
+/*
 
 @Configuration
 @EnableKafka
 class KafkaConsumerConfigs(
     @Value("\${spring.kafka.bootstrap-servers}") private val bootstrapServers: String,
     @Value("\${srvsyfoinntektsmelding.username}") private val username: String,
-    @Value("\${srvsyfoinntektsmelding.password}") private val password: String
+    @Value("\${srvsyfoinntektsmelding.password}") private val password: String,
+    objectMapper : ObjectMapper
 ) {
 
     val RETRY_INTERVAL = 1000L;
@@ -81,3 +82,4 @@ class KafkaConsumerConfigs(
         }
     }
 }
+*/

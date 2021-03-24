@@ -1,11 +1,10 @@
 package no.nav.syfo.repository
 
-import no.nav.syfo.dto.InntektsmeldingEntitet
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.dto.UtsattOppgaveEntitet
 import java.sql.ResultSet
 import java.time.LocalDateTime
-import java.util.ArrayList
+import java.util.*
 import javax.sql.DataSource
 
 
@@ -13,6 +12,32 @@ interface UtsattOppgaveRepository  {
     fun findByInntektsmeldingId(inntektsmeldingId: String): UtsattOppgaveEntitet?
     fun findUtsattOppgaveEntitetByTimeoutBeforeAndTilstandEquals(timeout: LocalDateTime, tilstand: Tilstand): List<UtsattOppgaveEntitet>
     fun lagreInnteksmelding(innteksmelding : UtsattOppgaveEntitet): UtsattOppgaveEntitet
+    fun deleteAll()
+    fun findAll(): List<UtsattOppgaveEntitet>
+}
+class UtsattOppgaveRepositoryMockk : UtsattOppgaveRepository {
+    override fun findByInntektsmeldingId(inntektsmeldingId: String): UtsattOppgaveEntitet? {
+        TODO("Not yet implemented")
+    }
+
+    override fun findUtsattOppgaveEntitetByTimeoutBeforeAndTilstandEquals(
+        timeout: LocalDateTime,
+        tilstand: Tilstand
+    ): List<UtsattOppgaveEntitet> {
+        TODO("Not yet implemented")
+    }
+
+    override fun lagreInnteksmelding(innteksmelding: UtsattOppgaveEntitet): UtsattOppgaveEntitet {
+        TODO("Not yet implemented")
+    }
+
+    override fun deleteAll() {
+        TODO("Not yet implemented")
+    }
+
+    override fun findAll(): List<UtsattOppgaveEntitet> {
+        TODO("Not yet implemented")
+    }
 }
 
 class UtsattOppgaveRepositoryImp(  val ds: DataSource) : UtsattOppgaveRepository {
@@ -50,6 +75,21 @@ class UtsattOppgaveRepositoryImp(  val ds: DataSource) : UtsattOppgaveRepository
         }
     }
 
+    override fun deleteAll() {
+        val deleteStatememnt = "DELETE FROM UTSATT_OPPGAVE;"
+        ds.connection.use {
+            it.prepareStatement(deleteStatememnt).executeUpdate()
+        }
+    }
+
+    override fun findAll(): List<UtsattOppgaveEntitet> {
+        val findall = " SELECT * FROM UTSATT_OPPGAVE;"
+        val utsattOppgaver = ArrayList<UtsattOppgaveEntitet>()
+        ds.connection.use {
+            val res = it.prepareStatement(findall).executeQuery()
+            return resultLoop(res, utsattOppgaver)
+        }
+    }
 
     private fun resultLoop(res : ResultSet, returnValue :ArrayList<UtsattOppgaveEntitet>): ArrayList<UtsattOppgaveEntitet> {
         while(res.next()) {

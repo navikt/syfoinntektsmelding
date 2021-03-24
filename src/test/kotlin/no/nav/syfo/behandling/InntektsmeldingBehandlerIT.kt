@@ -70,11 +70,9 @@ open class InntektsmeldingBehandlerIT {
     var journalpostService = mockk<JournalpostService>(relaxed = true)
 
 
-    @Autowired
     lateinit var inntektsmeldingRepository: InntektsmeldingRepository
     lateinit var inntektsmeldingService: InntektsmeldingService
 
-    @Autowired
     lateinit var utsattOppgaveDAO: UtsattOppgaveDAO
     lateinit var utsattOppgaveService: UtsattOppgaveService
     //lateinit var utsattOppgaveConsumer: UtsattOppgaveConsumer
@@ -89,10 +87,7 @@ open class InntektsmeldingBehandlerIT {
         inntektsmeldingRepository.deleteAll()
         journalConsumer = JournalConsumer(journalV2, aktorConsumer)
         journalpostService = JournalpostService(inngaaendeJournalConsumer, behandleInngaaendeJournalConsumer, journalConsumer, behandlendeEnhetConsumer, metrikk)
-        inntektsmeldingService = InntektsmeldingService(inntektsmeldingRepository, 3)
         saksbehandlingService = SaksbehandlingService(eksisterendeSakService, inntektsmeldingService, sakClient, metrikk)
-        utsattOppgaveService = UtsattOppgaveService(utsattOppgaveDAO, oppgaveClient, behandlendeEnhetConsumer)
-        //utsattOppgaveConsumer = UtsattOppgaveConsumer(utsattOppgaveService)
         inntektsmeldingBehandler = InntektsmeldingBehandler(journalpostService, saksbehandlingService, metrikk, inntektsmeldingService, aktorConsumer, inntektsmeldingProducer, utsattOppgaveService)
         MockKAnnotations.init(inntektsmeldingBehandler)
         runBlocking {

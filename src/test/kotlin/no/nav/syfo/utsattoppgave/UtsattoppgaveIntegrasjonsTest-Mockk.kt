@@ -1,59 +1,22 @@
 package no.nav.syfo.utsattoppgave
-
-import com.fasterxml.jackson.databind.ObjectMapper
+/*
 import io.ktor.util.*
-import io.mockk.*
-import junit.framework.Assert.assertEquals
-import junit.framework.Assert.assertNotNull
-import kotlinx.coroutines.runBlocking
-import no.nav.syfo.bakgrunnsjobb.BakgrunnsjobbService
-import no.nav.syfo.behandling.InntektsmeldingBehandler
-import no.nav.syfo.behandling.OpprettOppgaveException
-import no.nav.syfo.consumer.rest.OppgaveClient
-import no.nav.syfo.consumer.rest.SakClient
-import no.nav.syfo.consumer.rest.SakResponse
-import no.nav.syfo.consumer.rest.aktor.AktorConsumer
-import no.nav.syfo.consumer.ws.*
-import no.nav.syfo.domain.*
-import no.nav.syfo.dto.Tilstand
-import no.nav.syfo.dto.UtsattOppgaveEntitet
-import no.nav.syfo.producer.InntektsmeldingProducer
-import no.nav.syfo.repository.InntektsmeldingRepository
-import no.nav.syfo.repository.InntektsmeldingService
-import no.nav.syfo.service.EksisterendeSakService
-import no.nav.syfo.service.JournalpostService
-import no.nav.syfo.service.SaksbehandlingService
-import no.nav.syfo.util.Metrikk
-import no.nav.tjeneste.virksomhet.journal.v2.binding.JournalV2
-import no.nav.tjeneste.virksomhet.journal.v2.meldinger.HentDokumentResponse
-import org.apache.kafka.clients.consumer.ConsumerRecord
-import org.junit.Before
-import org.junit.BeforeClass
-import org.junit.Test
 import org.junit.runner.RunWith
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
-import org.springframework.kafka.support.Acknowledgment
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.web.WebAppConfiguration
 import org.springframework.transaction.annotation.Transactional
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalDateTime.now
-import java.time.ZonedDateTime
-import java.util.*
 
 @KtorExperimentalAPI
 @RunWith(SpringRunner::class)
 @SpringBootTest
 @TestPropertySource("classpath:application-test.properties")
 @WebAppConfiguration
-@Transactional
+@Transactional*/
 open class UtsattOppgaveIntegrasjonsTestWithMockkNotWorking {
 
-    companion object {
+  /*  companion object {
         @BeforeClass
         @JvmStatic
         fun beforeClass() {
@@ -500,7 +463,7 @@ open class UtsattOppgaveIntegrasjonsTestWithMockkNotWorking {
         respons.response = HentDokumentResponse()
         respons.response.dokument = JournalConsumerTest.inntektsmeldingArbeidsgiver(perioder).toByteArray()
         return respons
-    }
+    }*/
 }
 
 

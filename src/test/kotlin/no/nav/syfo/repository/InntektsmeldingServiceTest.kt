@@ -1,5 +1,8 @@
 package no.nav.syfo.repository
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import no.nav.inntektsmelding.kontrakt.serde.JacksonJsonConfig
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
@@ -7,18 +10,11 @@ import no.nav.syfo.domain.inntektsmelding.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.BeforeClass
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.TestPropertySource
-import org.springframework.test.context.junit4.SpringRunner
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-@RunWith(SpringRunner::class)
-@TestPropertySource(locations = ["classpath:application-test.properties"])
-@SpringBootTest
+
 class InntektsmeldingServiceTest {
 
     companion object {
@@ -31,8 +27,8 @@ class InntektsmeldingServiceTest {
         }
     }
 
-    @Autowired
     private lateinit var inntektsmeldingService: InntektsmeldingService
+    val objectMapper = ObjectMapper().registerModules(KotlinModule(), JavaTimeModule())
 
     @Test
     fun `Verifiserer at object mapper gir forventet JSON format`(){
@@ -77,7 +73,7 @@ class InntektsmeldingServiceTest {
             aktorId = "aktør-123",
             begrunnelseRedusert = "Grunn til reduksjon"
         )
-        val json = im.asJsonString()
+        val json = im.asJsonString(objectMapper)
 
         val mapper = JacksonJsonConfig.objectMapperFactory.opprettObjectMapper()
         val node = mapper.readTree(json)

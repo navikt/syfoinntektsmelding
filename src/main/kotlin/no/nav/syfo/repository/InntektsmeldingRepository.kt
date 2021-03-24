@@ -2,19 +2,43 @@ package no.nav.syfo.repository
 
 import no.nav.syfo.dto.InntektsmeldingEntitet
 import java.sql.ResultSet
-
 import java.time.LocalDateTime
 import java.util.*
 import javax.sql.DataSource
-
 
 interface InntektsmeldingRepository  {
     fun findByAktorId(aktoerId: String): List<InntektsmeldingEntitet>
     fun findFirst100ByBehandletBefore(førDato: LocalDateTime): List<InntektsmeldingEntitet>
     fun deleteByBehandletBefore(førDato: LocalDateTime): Long
     fun lagreInnteksmelding(innteksmelding : InntektsmeldingEntitet): InntektsmeldingEntitet
+    fun deleteAll()
+    fun findAll(): List<InntektsmeldingEntitet>
 }
 
+class InntektsmeldingRepositoryMock : InntektsmeldingRepository {
+    override fun findByAktorId(aktoerId: String): List<InntektsmeldingEntitet> {
+        return listOf(inntektsmeldingEntitet)
+    }
+
+    override fun findFirst100ByBehandletBefore(førDato: LocalDateTime): List<InntektsmeldingEntitet> {
+        return listOf(inntektsmeldingEntitet)
+    }
+
+    override fun deleteByBehandletBefore(førDato: LocalDateTime): Long {
+      return 1L
+    }
+
+    override fun lagreInnteksmelding(innteksmelding: InntektsmeldingEntitet): InntektsmeldingEntitet {
+        return inntektsmeldingEntitet
+    }
+
+    override fun deleteAll() {
+    }
+
+    override fun findAll(): List<InntektsmeldingEntitet> {
+        return listOf(inntektsmeldingEntitet)
+    }
+}
 
 class InntektsmeldingRepositoryImp(
     val ds: DataSource
@@ -58,6 +82,22 @@ class InntektsmeldingRepositoryImp(
         }
     }
 
+    override fun deleteAll() {
+       val deleteStatememnt = "DELETE FROM INNTEKTSMELDING;"
+        ds.connection.use {
+            it.prepareStatement(deleteStatememnt).executeUpdate()
+        }
+    }
+
+    override fun findAll(): List<InntektsmeldingEntitet> {
+        val findall = " SELECT * FROM INNTEKTSMELDING;"
+        val inntektsmeldinger = ArrayList<InntektsmeldingEntitet>()
+        ds.connection.use {
+            val res = it.prepareStatement(findall).executeQuery()
+            return resultLoop(res, inntektsmeldinger)
+        }
+    }
+
     private fun resultLoop(res : ResultSet, returnValue :ArrayList<InntektsmeldingEntitet>): ArrayList<InntektsmeldingEntitet> {
         while(res.next()) {
             returnValue.add(InntektsmeldingEntitet(
@@ -74,3 +114,17 @@ class InntektsmeldingRepositoryImp(
         return returnValue
     }
 }
+val validIdentitetsnummer = "20015001543"
+val validOrgNr = "917404437"
+val BEHANDLET_DATO = LocalDateTime.of(2021, 6, 23, 12, 0,0)
+
+val inntektsmeldingEntitet = InntektsmeldingEntitet(
+    uuid =  "UUID",
+    aktorId =  validIdentitetsnummer,
+    sakId =  "987",
+    journalpostId =  "",
+    orgnummer = validOrgNr,
+    arbeidsgiverPrivat = null,
+    behandlet = BEHANDLET_DATO,
+    data = null
+)

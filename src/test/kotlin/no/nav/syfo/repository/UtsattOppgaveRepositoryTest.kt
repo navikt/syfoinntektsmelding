@@ -32,7 +32,6 @@ open class UtsattOppgaveRepositoryTest {
     @Autowired
     private lateinit var entityManager: TestEntityManager
 
-    @Autowired
     private lateinit var repository: UtsattOppgaveRepository
 
     @Before
@@ -42,7 +41,7 @@ open class UtsattOppgaveRepositoryTest {
 
     @Test
     fun `finner en utsatt oppgave som skal opprettes`() {
-        repository.save(
+        repository.lagreInnteksmelding(
             UtsattOppgaveEntitet(
                 id = 0,
                 inntektsmeldingId = "id",
@@ -64,7 +63,7 @@ open class UtsattOppgaveRepositoryTest {
 
     @Test
     fun `ignorerer oppgaver i andre tilstander`() {
-        repository.save(
+        repository.lagreInnteksmelding(
             enOppgaveEntitet(
                 timeout = now().minusHours(1),
                 tilstand = Tilstand.Utsatt,
@@ -72,14 +71,14 @@ open class UtsattOppgaveRepositoryTest {
             )
         )
 
-        repository.save(
+        repository.lagreInnteksmelding(
             enOppgaveEntitet(
                 timeout = now().minusHours(1),
                 tilstand = Tilstand.Forkastet,
                 inntektsmeldingsId = "id2"
             )
         )
-        repository.save(
+        repository.lagreInnteksmelding(
             enOppgaveEntitet(
                 timeout = now().plusHours(1),
                 tilstand = Tilstand.Utsatt,
@@ -87,7 +86,7 @@ open class UtsattOppgaveRepositoryTest {
             )
         )
 
-        repository.save(
+        repository.lagreInnteksmelding(
             enOppgaveEntitet(
                 timeout = now().minusHours(1),
                 tilstand = Tilstand.Opprettet,

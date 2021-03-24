@@ -1,8 +1,12 @@
 package no.nav.syfo.utsattoppgave
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.ktor.util.KtorExperimentalAPI
 import io.mockk.mockk
 import io.mockk.verify
+import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.syfo.consumer.rest.OppgaveClient
 import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
 import no.nav.syfo.dto.Tilstand
@@ -34,8 +38,9 @@ open class UtsattOppgaveServiceTest {
     private var utsattOppgaveDAO: UtsattOppgaveDAO = mockk(relaxed = true)
     private var oppgaveClient: OppgaveClient = mockk()
     private var behandlendeEnhetConsumer: BehandlendeEnhetConsumer = mockk()
-
+    val bakgrunnsjobbRepomock = mockk<BakgrunnsjobbRepository>(relaxed = true)
     private lateinit var oppgaveService: UtsattOppgaveService
+    val objectMapper = ObjectMapper().registerModules(KotlinModule(), JavaTimeModule())
 
     companion object {
         @BeforeClass
@@ -49,7 +54,7 @@ open class UtsattOppgaveServiceTest {
 
     @Before
     fun setup() {
-        oppgaveService = UtsattOppgaveService(utsattOppgaveDAO, oppgaveClient, behandlendeEnhetConsumer)
+        oppgaveService = UtsattOppgaveService(utsattOppgaveDAO, oppgaveClient, behandlendeEnhetConsumer,bakgrunnsjobbRepomock,objectMapper)
     }
 
     private val fnr = "fnr"

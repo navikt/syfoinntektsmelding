@@ -4,20 +4,13 @@ import com.typesafe.config.ConfigFactory
 import io.ktor.config.*
 import io.ktor.util.*
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
-import no.nav.helse.arbeidsgiver.kubernetes.KubernetesProbeManager
-import no.nav.helse.arbeidsgiver.kubernetes.LivenessComponent
-import no.nav.helse.arbeidsgiver.kubernetes.ReadynessComponent
 import no.nav.helse.arbeidsgiver.system.AppEnv
 import no.nav.helse.arbeidsgiver.system.getEnvironment
-import no.nav.helse.fritakagp.koin.getAllOfType
-import no.nav.helse.fritakagp.koin.selectModuleBasedOnProfile
-import org.flywaydb.core.Flyway
+import no.nav.syfo.koin.selectModuleBasedOnProfile
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import org.koin.core.context.GlobalContext
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
-import org.koin.core.component.get
 import org.slf4j.LoggerFactory
 
 class SpinnApplication(val port: Int = 8080) : KoinComponent {
@@ -34,11 +27,6 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
         }
 
         startKoin { modules(selectModuleBasedOnProfile(appConfig)) }
-       // migrateDatabase()
-
-        //configAndStartBackgroundWorker()
-        //autoDetectProbeableComponents()
-        //configAndStartWebserver()
     }
 
     fun shutdown() {
