@@ -49,7 +49,7 @@ class InntektsmeldingRepositoryImp(
 
     override fun lagreInnteksmelding(innteksmelding : InntektsmeldingEntitet): InntektsmeldingEntitet {
     val insertStatement = """INSERT INTO INNTEKTSMELDING (INNTEKTSMELDING_UUID, AKTOR_ID, ORGNUMMER, SAK_ID, JOURNALPOST_ID, BEHANDLET, ARBEIDSGIVER_PRIVAT, DATA)
-        VALUES (${innteksmelding.uuid}, ${innteksmelding.aktorId}, ${innteksmelding.orgnummer}, ${innteksmelding.sakId}, ${innteksmelding.journalpostId}, ${innteksmelding.behandlet}, ${innteksmelding.arbeidsgiverPrivat}, ${innteksmelding.data}
+        VALUES (${innteksmelding.uuid}, ${innteksmelding.aktorId}, ${innteksmelding.orgnummer}, ${innteksmelding.sakId}, ${innteksmelding.journalpostId}, ${innteksmelding.behandlet}, ${innteksmelding.arbeidsgiverPrivat}, ${innteksmelding.data})
         RETURNING *;""".trimMargin()
         val inntektsmeldinger = ArrayList<InntektsmeldingEntitet>()
         ds.connection.use {

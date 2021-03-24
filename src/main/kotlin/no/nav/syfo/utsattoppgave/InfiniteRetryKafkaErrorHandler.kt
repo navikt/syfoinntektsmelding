@@ -8,11 +8,10 @@ import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.springframework.kafka.listener.ContainerAwareErrorHandler
 import org.springframework.kafka.listener.ContainerStoppingErrorHandler
 import org.springframework.kafka.listener.MessageListenerContainer
-import org.springframework.stereotype.Component
+
 
 private val STOPPING_ERROR_HANDLER = ContainerStoppingErrorHandler()
 
-@Component
 class InfiniteRetryKafkaErrorHandler(private val selfTestState: SimpleSelfTestState) : ContainerAwareErrorHandler {
     val log = log()
 

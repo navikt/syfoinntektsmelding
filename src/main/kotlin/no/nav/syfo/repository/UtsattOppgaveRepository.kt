@@ -41,7 +41,7 @@ class UtsattOppgaveRepositoryImp(  val ds: DataSource) : UtsattOppgaveRepository
 
     override fun lagreInnteksmelding(utsattOppgave : UtsattOppgaveEntitet): UtsattOppgaveEntitet {
         val insertStatement = """INSERT INTO UTSATT_OPPGAVE (OPPGAVE_ID, INNTEKTSMELDING_ID, ARKIVREFERANSE, FNR, AKTOR_ID, SAK_ID, JOURNALPOST_ID, TIMEOUT, TILSTAND)
-        VALUES (${utsattOppgave.id}, ${utsattOppgave.inntektsmeldingId}, ${utsattOppgave.arkivreferanse}, ${utsattOppgave.fnr}, ${utsattOppgave.aktørId}, ${utsattOppgave.sakId}, ${utsattOppgave.journalpostId}, ${utsattOppgave.timeout}, ${utsattOppgave.tilstand.name}
+        VALUES (${utsattOppgave.id}, ${utsattOppgave.inntektsmeldingId}, ${utsattOppgave.arkivreferanse}, ${utsattOppgave.fnr}, ${utsattOppgave.aktørId}, ${utsattOppgave.sakId}, ${utsattOppgave.journalpostId}, ${utsattOppgave.timeout}, ${utsattOppgave.tilstand.name})
         RETURNING *;""".trimMargin()
         val utsattOppgaver = ArrayList<UtsattOppgaveEntitet>()
         ds.connection.use {

@@ -10,23 +10,19 @@ import no.nav.syfo.consumer.rest.OppgaveClient
 import no.nav.syfo.consumer.rest.SakClient
 import no.nav.syfo.consumer.rest.TokenConsumer
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
-import no.nav.syfo.consumer.ws.BehandleInngaaendeJournalConsumer
-import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
-import no.nav.syfo.consumer.ws.InngaaendeJournalConsumer
-import no.nav.syfo.consumer.ws.JournalConsumer
+import no.nav.syfo.consumer.ws.*
 import no.nav.syfo.producer.InntektsmeldingProducer
 import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
 import no.nav.syfo.prosesser.FjernInnteksmeldingByBehandletProcessor
-import no.nav.syfo.repository.InntektsmeldingRepository
-import no.nav.syfo.repository.InntektsmeldingRepositoryImp
-import no.nav.syfo.repository.InntektsmeldingService
-import no.nav.syfo.repository.UtsattOppgaveRepositoryImp
+import no.nav.syfo.repository.*
 import no.nav.syfo.service.EksisterendeSakService
 import no.nav.syfo.service.JournalpostService
 import no.nav.syfo.service.SaksbehandlingService
 import no.nav.syfo.util.Metrikk
+import no.nav.syfo.utsattoppgave.InfiniteRetryKafkaErrorHandler
 import no.nav.syfo.utsattoppgave.UtsattOppgaveDAO
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
+import no.nav.syfo.web.selftest.SimpleSelfTestState
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
@@ -72,6 +68,12 @@ fun prodConfig(config: ApplicationConfig) = module {
 
     single { FjernInnteksmeldingByBehandletProcessor(InntektsmeldingRepositoryImp(get()), config.getString("lagringstidMåneder").toInt() )} bind FjernInnteksmeldingByBehandletProcessor::class
     single { FinnAlleUtgaandeOppgaverProcessor(get(), get(), get()) } bind FinnAlleUtgaandeOppgaverProcessor::class
+
+    single { SimpleSelfTestState() } bind SimpleSelfTestState::class
+    single { InfiniteRetryKafkaErrorHandler(get()) } bind InfiniteRetryKafkaErrorHandler::class
+    single { OppgavebehandlingConsumer(get()) } bind OppgavebehandlingConsumer::class
+
+    single { FeiletService(FeiletRepositoryImp(get())) } bind FeiletService::class
 
 
 }

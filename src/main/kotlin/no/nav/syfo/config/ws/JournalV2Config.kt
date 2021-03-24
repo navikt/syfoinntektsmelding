@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 class JournalV2Config {
     @Bean
-    fun journalV2(@Value("\${journal.v2.endpointurl}") serviceUrl: String?): JournalV2 {
+    fun ç(@Value("\${journal.v2.endpointurl}") serviceUrl: String?): JournalV2 {
         return WsClient<JournalV2>().createPort(serviceUrl!!, JournalV2::class.java, listOf(LogErrorHandler()))
     }
 }

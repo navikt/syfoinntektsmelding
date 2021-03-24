@@ -5,7 +5,6 @@ import no.nav.syfo.domain.Oppgave
 import no.nav.tjeneste.virksomhet.oppgavebehandling.v3.binding.OppgavebehandlingV3
 import no.nav.tjeneste.virksomhet.oppgavebehandling.v3.meldinger.OpprettOppgave
 import no.nav.tjeneste.virksomhet.oppgavebehandling.v3.meldinger.OpprettOppgaveRequest
-import org.springframework.stereotype.Component
 import java.time.LocalDate
 import java.time.LocalDate.now
 import javax.xml.datatype.DatatypeFactory
@@ -13,7 +12,6 @@ import javax.xml.datatype.XMLGregorianCalendar
 import java.time.ZoneId
 import java.util.GregorianCalendar
 
-@Component
 class OppgavebehandlingConsumer(private val oppgavebehandlingV3: OppgavebehandlingV3) {
 
     var log = log()

@@ -2,7 +2,7 @@ package no.nav.syfo.prosesser
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import io.ktor.util.KtorExperimentalAPI
+import io.ktor.util.*
 import kotlinx.coroutines.runBlocking
 import log
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
@@ -11,11 +11,11 @@ import no.nav.syfo.behandling.BehandlingException
 import no.nav.syfo.behandling.Feiltype
 import no.nav.syfo.behandling.InntektsmeldingBehandler
 import no.nav.syfo.consumer.rest.OppgaveClient
+import no.nav.syfo.kafkamottak.InngaaendeJournalpostDTO
+import no.nav.syfo.kafkamottak.InntektsmeldingConsumerException
 import no.nav.syfo.repository.FeiletService
 import no.nav.syfo.util.MDCOperations
 import no.nav.syfo.util.Metrikk
-import org.springframework.stereotype.Component
-import java.lang.IllegalArgumentException
 import java.time.LocalDateTime
 
 /**
