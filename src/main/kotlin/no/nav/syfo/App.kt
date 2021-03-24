@@ -2,11 +2,16 @@ package no.nav.syfo
 
 import com.typesafe.config.ConfigFactory
 import io.ktor.config.*
+import io.ktor.server.netty.*
+import io.ktor.server.engine.*
 import io.ktor.util.*
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.helse.arbeidsgiver.system.AppEnv
 import no.nav.helse.arbeidsgiver.system.getEnvironment
+import no.nav.syfo.web.auth.localCookieDispenser
 import no.nav.syfo.koin.selectModuleBasedOnProfile
+import no.nav.syfo.web.innteksmeldingModule
+import no.nav.syfo.web.nais.nais
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.context.startKoin
@@ -15,7 +20,7 @@ import org.slf4j.LoggerFactory
 
 class SpinnApplication(val port: Int = 8080) : KoinComponent {
     private val logger = LoggerFactory.getLogger(SpinnApplication::class.simpleName)
-    //private var webserver: NettyApplicationEngine? = null
+    private var webserver: NettyApplicationEngine? = null
     private var appConfig: HoconApplicationConfig = HoconApplicationConfig(ConfigFactory.load())
     private val runtimeEnvironment = appConfig.getEnvironment()
 
@@ -30,16 +35,16 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
     }
 
     fun shutdown() {
-        //webserver?.stop(1000, 1000)
+        webserver?.stop(1000, 1000)
         get<BakgrunnsjobbService>().stop()
         stopKoin()
     }
 
     private fun configAndStartWebserver() {
-      /*  webserver = embeddedServer(Netty, applicationEngineEnvironment {
+        webserver = embeddedServer(Netty, applicationEngineEnvironment {
             config = appConfig
             connector {
-                port = this@FritakAgpApplication.port
+                port = this@SpinnApplication.port
             }
 
             module {
@@ -48,33 +53,20 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
                 }
 
                 nais()
-                fritakModule(config)
+                innteksmeldingModule(config)
             }
         })
 
-        webserver!!.start(wait = false)*/
+        webserver!!.start(wait = false)
     }
 
     private fun configAndStartBackgroundWorker() {
       /*  if (appConfig.getString("run_background_workers") == "true") {
             get<BakgrunnsjobbService>().apply {
-                registrer(get<GravidSoeknadProcessor>())
-                registrer(get<GravidSoeknadKafkaProcessor>())
-                registrer(get<GravidSoeknadKvitteringProcessor>())
 
                 registrer(get<GravidKravProcessor>())
                 registrer(get<GravidKravKafkaProcessor>())
                 registrer(get<GravidKravKvitteringProcessor>())
-
-                registrer(get<KroniskSoeknadProcessor>())
-                registrer(get<KroniskSoeknadKafkaProcessor>())
-                registrer(get<KroniskSoeknadKvitteringProcessor>())
-
-                registrer(get<KroniskKravProcessor>())
-                registrer(get<KroniskKravKafkaProcessor>())
-                registrer(get<KroniskKravKvitteringProcessor>())
-
-                registrer(get<BrukernotifikasjonProcessor>())
 
                 startAsync(true)
             }

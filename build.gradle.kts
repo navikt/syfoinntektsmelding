@@ -12,6 +12,7 @@ val hikariVersion = "3.4.5"
 val ktorVersion = "1.4.3"
 val koinVersion = "2.2.2"
 val tokenSupportVersion = "1.3.1"
+val mockOAuth2ServerVersion = "0.2.1"
 
 val mainClass = "no.nav.syfo.Application"
 
@@ -215,6 +216,7 @@ dependencies {
     implementation("io.ktor:ktor-client-json:$ktorVersion")
     implementation("no.nav.security:token-client-core:$tokenSupportVersion")
     implementation("no.nav.security:token-validation-ktor:$tokenSupportVersion")
+    implementation("no.nav.security:mock-oauth2-server:$mockOAuth2ServerVersion")
 
 }
 

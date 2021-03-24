@@ -7,7 +7,6 @@ import no.nav.security.token.support.core.jwt.JwtToken
 import java.time.Instant
 import java.util.*
 
-//TODO: Sjekk om dette er noe vi trenger, kopiert fra fritakagp
 @KtorExperimentalAPI
 fun hentIdentitetsnummerFraLoginToken(config: ApplicationConfig, request: ApplicationRequest): String {
     val tokenString = getTokenString(config, request)
