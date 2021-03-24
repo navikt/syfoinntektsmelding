@@ -15,7 +15,6 @@ import io.ktor.util.*
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
-import no.nav.syfo.config.OppgaveConfig
 import no.nav.syfo.util.Metrikk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
@@ -29,7 +28,6 @@ private const val FORDELINGSOPPGAVE_ID = 5678
 
 class OppgaveClientTest {
 
-    var oppgaveConfig = mockk<OppgaveConfig>(relaxed = true)
     var tokenConsumer = mockk<TokenConsumer>(relaxed = true)
     var metrikk = mockk<Metrikk>(relaxed = true)
 
@@ -39,8 +37,7 @@ class OppgaveClientTest {
     @Before
     @KtorExperimentalAPI
     fun setUp() {
-        every { oppgaveConfig.url } returns "url"
-        oppgaveClient = OppgaveClient(oppgaveConfig.url, tokenConsumer, metrikk)
+        oppgaveClient = OppgaveClient("url", tokenConsumer, metrikk)
     }
 
     @Test
