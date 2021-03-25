@@ -68,7 +68,7 @@ spec:
       value: "http://security-token-service.default.svc.nais.local"
     - name: OIDC_STS_JWKSURL
       value: "http://security-token-service.default.svc.nais.local/rest/v1/sts/jwks"
-    - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+    - name: KAFKA_BOOTSTRAP_SERVERS
       value: "b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443"
     - name: SPRING_DATASOURCE_URL
       value: "jdbc:postgresql://b27dbvl009.preprod.local/syfoinntektsmelding"
@@ -126,3 +126,8 @@ spec:
       value: postgresql/preprod-fss/
     - name: KAFKA_JOARK_HENDELSE_TOPIC
       value: "aapen-dok-journalfoering-v1-q1"
+    - name: KAFKA_UTSATT_OPPGAVE_TOPIC
+      value: "aapen-helse-spre-oppgaver"
+    - name: KAFKA_SCHEMA_REGISTRY_URL_CONFIG
+      value: "http://kafka-schema-registry.tpa.svc.nais.local:8081"
+

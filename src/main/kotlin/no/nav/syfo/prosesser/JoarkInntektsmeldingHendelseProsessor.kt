@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.ktor.util.*
 import kotlinx.coroutines.runBlocking
-import log
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbProsesserer
 import no.nav.syfo.behandling.BehandlingException
@@ -16,7 +15,8 @@ import no.nav.syfo.kafkamottak.InntektsmeldingConsumerException
 import no.nav.syfo.repository.FeiletService
 import no.nav.syfo.util.MDCOperations
 import no.nav.syfo.util.Metrikk
-import java.time.LocalDateTime
+import org.slf4j.LoggerFactory
+import java.util.*
 
 /**
  * En bakgrunnsjobb som kan prosessere bakgrunnsjobber med inntektsmeldinger fra Joark
@@ -29,14 +29,13 @@ class JoarkInntektsmeldingHendelseProsessor(
     private val inntektsmeldingBehandler: InntektsmeldingBehandler,
     private val feiletService: FeiletService,
     private val oppgaveClient: OppgaveClient): BakgrunnsjobbProsesserer {
-    private val log = log()
 
+    val log = LoggerFactory.getLogger(JoarkInntektsmeldingHendelseProsessor::class.java)
     companion object {
-        val JOBB_TYPE = "joark-ny-inntektsmelding"
+        val JOB_TYPE = "joark-ny-inntektsmelding"
     }
 
-    override val type: String
-        get() = TODO("Not yet implemented")
+    override val type: String get() = JOB_TYPE
 
     override fun prosesser(jobb: Bakgrunnsjobb) {
         var arkivReferanse = "UKJENT"
@@ -85,11 +84,6 @@ class JoarkInntektsmeldingHendelseProsessor(
         }
     }
 
-    override fun nesteForsoek(forsoek: Int, forrigeForsoek: LocalDateTime): LocalDateTime {
-        // fib-ish backoff, ment for bruk med 10 forsøk, feiler permanent etter 230 timer = 9,5 dager
-        val backoffWaitInHours = if (forsoek == 1) 1 else forsoek-1 + forsoek
-        return LocalDateTime.now().plusHours(backoffWaitInHours.toLong())
-    }
 
     suspend fun opprettFordelingsoppgave(journalpostId: String): Boolean {
         oppgaveClient.opprettFordelingsOppgave(journalpostId)
@@ -103,4 +97,6 @@ class JoarkInntektsmeldingHendelseProsessor(
             metrikk.tellLagreFeiletMislykkes();
         }
     }
+
+    data class JobbData(val id: UUID, val data: String)
 }

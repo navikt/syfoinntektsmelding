@@ -61,7 +61,7 @@ spec:
       value: "http://security-token-service.default.svc.nais.local/rest/v1/sts/token"
     - name: OIDC_STS_JWKSURL
       value: "http://security-token-service.default.svc.nais.local/rest/v1/sts/jwks"
-    - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+    - name: KAFKA_BOOTSTRAP_SERVERS
       value: "a01apvl00145.adeo.no:8443,a01apvl00146.adeo.no:8443,a01apvl00147.adeo.no:8443,a01apvl00148.adeo.no:8443,a01apvl00149.adeo.no:8443,a01apvl00150.adeo.no:8443\n"
     - name: SPRING_DATASOURCE_URL
       value: "jdbc:postgresql://a01dbvl010.adeo.no/syfoinntektsmelding"
@@ -119,3 +119,7 @@ spec:
       value: postgresql/prod-fss/
     - name: KAFKA_JOARK_HENDELSE_TOPIC
       value: "aapen-dok-journalfoering-v1-p"
+    - name: KAFKA_UTSATT_OPPGAVE_TOPIC
+      value: "aapen-helse-spre-oppgaver"
+    - name: KAFKA_SCHEMA_REGISTRY_URL_CONFIG
+      value: "http://kafka-schema-registry.tpa.svc.nais.local:8081"

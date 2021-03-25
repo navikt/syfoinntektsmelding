@@ -13,6 +13,7 @@ val ktorVersion = "1.4.3"
 val koinVersion = "2.2.2"
 val tokenSupportVersion = "1.3.1"
 val mockOAuth2ServerVersion = "0.2.1"
+val brukernotifikasjonSchemasVersion = "1.2021.01.18-11.12-b9c8c40b98d1"
 
 val mainClass = "no.nav.syfo.Application"
 
@@ -90,6 +91,11 @@ repositories {
     }
     maven("https://kotlin.bintray.com/ktor")
     maven("https://packages.confluent.io/maven/")
+    maven(url = "https://jitpack.io") {
+        content {
+            excludeGroup("no.nav.helsearbeidsgiver")
+        }
+    }
 }
 
 java {
@@ -217,6 +223,7 @@ dependencies {
     implementation("no.nav.security:token-client-core:$tokenSupportVersion")
     implementation("no.nav.security:token-validation-ktor:$tokenSupportVersion")
     implementation("no.nav.security:mock-oauth2-server:$mockOAuth2ServerVersion")
+    implementation("com.github.navikt:brukernotifikasjon-schemas:$brukernotifikasjonSchemasVersion")
 
 }
 

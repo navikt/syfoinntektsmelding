@@ -11,6 +11,7 @@ import no.nav.syfo.consumer.rest.SakClient
 import no.nav.syfo.consumer.rest.TokenConsumer
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
 import no.nav.syfo.consumer.ws.*
+import no.nav.syfo.integration.kafka.UtsattOppgaveKafkaConsumer
 import no.nav.syfo.koin.externalSystemClients
 import no.nav.syfo.producer.InntektsmeldingProducer
 import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
@@ -74,6 +75,8 @@ fun prodConfig(config: ApplicationConfig) = module {
     single { OppgavebehandlingConsumer(get()) } bind OppgavebehandlingConsumer::class
 
     single { FeiletService(FeiletRepositoryImp(get())) } bind FeiletService::class
+
+
 
 
 }
