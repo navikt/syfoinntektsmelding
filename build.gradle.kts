@@ -14,6 +14,7 @@ val koinVersion = "2.2.2"
 val tokenSupportVersion = "1.3.1"
 val mockOAuth2ServerVersion = "0.2.1"
 val brukernotifikasjonSchemasVersion = "1.2021.01.18-11.12-b9c8c40b98d1"
+val jacksonVersion = "2.10.3"
 
 val mainClass = "no.nav.syfo.Application"
 
@@ -122,7 +123,7 @@ dependencies {
 
     implementation("io.ktor:ktor-locations:$ktorVersion")
 
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.11.0")
+
 
     // Spring
     implementation("io.springfox:springfox-swagger2:$swaggerVersion")
@@ -194,7 +195,7 @@ dependencies {
     implementation("io.micrometer:micrometer-core:$micrometerVersion")
     runtimeOnly("io.micrometer:micrometer-registry-prometheus:$micrometerVersion")
     implementation("io.ktor:ktor-client-core:$ktorVersion")
-    implementation("io.ktor:ktor-client-jackson:$ktorVersion")
+
     implementation("io.ktor:ktor-client-apache:$ktorVersion")
     testImplementation("junit:junit:4.13.1")
     testImplementation("org.mockito:mockito-core:3.1.0")
@@ -216,7 +217,7 @@ dependencies {
     implementation("org.koin:koin-core:$koinVersion")
     implementation("org.koin:koin-ktor:$koinVersion")
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
-    implementation("io.ktor:ktor-jackson:$ktorVersion")
+
     implementation("io.ktor:ktor-auth:$ktorVersion")
     implementation("io.ktor:ktor-client-core-jvm:$ktorVersion")
     implementation("io.ktor:ktor-client-json:$ktorVersion")
@@ -225,6 +226,11 @@ dependencies {
     implementation("no.nav.security:mock-oauth2-server:$mockOAuth2ServerVersion")
     implementation("com.github.navikt:brukernotifikasjon-schemas:$brukernotifikasjonSchemasVersion")
 
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.11.0")
+    implementation("io.ktor:ktor-client-jackson:$ktorVersion")
+    implementation("io.ktor:ktor-jackson:$ktorVersion")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$jacksonVersion")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
 }
 
 tasks.named<Jar>("jar") {
