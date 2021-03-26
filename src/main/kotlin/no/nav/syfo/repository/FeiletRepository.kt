@@ -2,7 +2,9 @@ package no.nav.syfo.repository
 
 import no.nav.syfo.behandling.Feiltype
 import no.nav.syfo.dto.FeiletEntitet
+import no.nav.syfo.dto.Tilstand
 import java.sql.ResultSet
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
 import javax.sql.DataSource
@@ -11,8 +13,23 @@ interface FeiletRepository {
     fun findByArkivReferanse(arkivReferanse: String): List<FeiletEntitet>
     fun lagreInnteksmelding(utsattOppgave : FeiletEntitet): FeiletEntitet
 }
+class FeiletRepositoryMock : FeiletRepository {
+    override fun findByArkivReferanse(arkivReferanse: String): List<FeiletEntitet> {
+        return listOf(
+            FeiletEntitet(
+                id = getRandomNumber(1,100),
+                arkivReferanse = arkivReferanse,
+                tidspunkt = LocalDateTime.now(),
+                feiltype = getRandomFeiltype()
+        ))
+    }
 
-class FeiletRepositoryImp(private val ds : DataSource ) : FeiletRepository{
+    override fun lagreInnteksmelding(utsattOppgave: FeiletEntitet): FeiletEntitet {
+        return utsattOppgave
+    }
+}
+
+    class FeiletRepositoryImp(private val ds : DataSource ) : FeiletRepository{
     override fun findByArkivReferanse(arkivReferanse: String): List<FeiletEntitet> {
         val queryString = "SELECT * FROM FEILET WHERE ARKIVREFERANSE = $arkivReferanse;"
         ds.connection.use {
@@ -44,3 +61,4 @@ class FeiletRepositoryImp(private val ds : DataSource ) : FeiletRepository{
         return returnValue
     }
 }
+

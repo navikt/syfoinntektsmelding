@@ -17,26 +17,33 @@ interface UtsattOppgaveRepository  {
 }
 class UtsattOppgaveRepositoryMockk : UtsattOppgaveRepository {
     override fun findByInntektsmeldingId(inntektsmeldingId: String): UtsattOppgaveEntitet? {
-        TODO("Not yet implemented")
+        return getRandonUtsattOppgaveEntitet(inntektsmeldingId = inntektsmeldingId)
     }
 
     override fun findUtsattOppgaveEntitetByTimeoutBeforeAndTilstandEquals(
         timeout: LocalDateTime,
         tilstand: Tilstand
     ): List<UtsattOppgaveEntitet> {
-        TODO("Not yet implemented")
+      return listOf(
+          getRandonUtsattOppgaveEntitet(timeout =  timeout,tilstand = tilstand),
+          getRandonUtsattOppgaveEntitet(timeout =  timeout,tilstand = tilstand),
+          getRandonUtsattOppgaveEntitet(timeout =  timeout,tilstand = tilstand)
+      )
     }
 
     override fun lagreInnteksmelding(innteksmelding: UtsattOppgaveEntitet): UtsattOppgaveEntitet {
-        TODO("Not yet implemented")
+        return innteksmelding
     }
 
-    override fun deleteAll() {
-        TODO("Not yet implemented")
-    }
+    override fun deleteAll() {}
 
     override fun findAll(): List<UtsattOppgaveEntitet> {
-        TODO("Not yet implemented")
+        return listOf(
+            getRandonUtsattOppgaveEntitet(),
+            getRandonUtsattOppgaveEntitet(),
+            getRandonUtsattOppgaveEntitet(),
+            getRandonUtsattOppgaveEntitet()
+        )
     }
 }
 
@@ -108,3 +115,4 @@ class UtsattOppgaveRepositoryImp(  val ds: DataSource) : UtsattOppgaveRepository
         return returnValue
     }
 }
+

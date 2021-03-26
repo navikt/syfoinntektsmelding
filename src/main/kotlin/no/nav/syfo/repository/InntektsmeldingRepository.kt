@@ -1,47 +1,57 @@
 package no.nav.syfo.repository
 
 import no.nav.syfo.dto.InntektsmeldingEntitet
+import no.nav.syfo.dto.Tilstand
+import no.nav.syfo.dto.UtsattOppgaveEntitet
 import java.sql.ResultSet
 import java.time.LocalDateTime
 import java.util.*
 import javax.sql.DataSource
 
-interface InntektsmeldingRepository  {
+interface InntektsmeldingRepository {
     fun findByAktorId(aktoerId: String): List<InntektsmeldingEntitet>
     fun findFirst100ByBehandletBefore(førDato: LocalDateTime): List<InntektsmeldingEntitet>
     fun deleteByBehandletBefore(førDato: LocalDateTime): Long
-    fun lagreInnteksmelding(innteksmelding : InntektsmeldingEntitet): InntektsmeldingEntitet
+    fun lagreInnteksmelding(innteksmelding: InntektsmeldingEntitet): InntektsmeldingEntitet
     fun deleteAll()
     fun findAll(): List<InntektsmeldingEntitet>
 }
 
 class InntektsmeldingRepositoryMock : InntektsmeldingRepository {
     override fun findByAktorId(aktoerId: String): List<InntektsmeldingEntitet> {
-        return listOf(inntektsmeldingEntitet)
+        return listOf(getRandonInntektsmeldingEntitet(aktorId = aktoerId))
     }
 
     override fun findFirst100ByBehandletBefore(førDato: LocalDateTime): List<InntektsmeldingEntitet> {
-        return listOf(inntektsmeldingEntitet)
+        return listOf(
+            getRandonInntektsmeldingEntitet( behandlet = LocalDateTime.parse(getRandonDateTime(førDato))),
+            getRandonInntektsmeldingEntitet( behandlet = LocalDateTime.parse(getRandonDateTime(førDato))),
+            getRandonInntektsmeldingEntitet( behandlet = LocalDateTime.parse(getRandonDateTime(førDato)))
+        )
     }
 
     override fun deleteByBehandletBefore(førDato: LocalDateTime): Long {
-      return 1L
+        return 1L
     }
 
     override fun lagreInnteksmelding(innteksmelding: InntektsmeldingEntitet): InntektsmeldingEntitet {
-        return inntektsmeldingEntitet
+        return innteksmelding
     }
 
-    override fun deleteAll() {
-    }
+    override fun deleteAll() {}
 
     override fun findAll(): List<InntektsmeldingEntitet> {
-        return listOf(inntektsmeldingEntitet)
+        return listOf(
+            getRandonInntektsmeldingEntitet(),
+            getRandonInntektsmeldingEntitet(),
+            getRandonInntektsmeldingEntitet(),
+            getRandonInntektsmeldingEntitet()
+        )
     }
 }
 
 class InntektsmeldingRepositoryImp(
-    val ds: DataSource
+    private val ds: DataSource
 ) : InntektsmeldingRepository {
 
     override fun findByAktorId(id: String): List<InntektsmeldingEntitet> {
@@ -67,12 +77,13 @@ class InntektsmeldingRepositoryImp(
     override fun deleteByBehandletBefore(førDato: LocalDateTime): Long {
         val deleteFirst100ByBehandletBefore = "DELETE FROM INNTEKTSMELDING WHERE BEHANDLET < $førDato;"
         ds.connection.use {
-            return  it.prepareStatement(deleteFirst100ByBehandletBefore).executeUpdate() as Long
+            return it.prepareStatement(deleteFirst100ByBehandletBefore).executeUpdate() as Long
         }
     }
 
-    override fun lagreInnteksmelding(innteksmelding : InntektsmeldingEntitet): InntektsmeldingEntitet {
-    val insertStatement = """INSERT INTO INNTEKTSMELDING (INNTEKTSMELDING_UUID, AKTOR_ID, ORGNUMMER, SAK_ID, JOURNALPOST_ID, BEHANDLET, ARBEIDSGIVER_PRIVAT, DATA)
+    override fun lagreInnteksmelding(innteksmelding: InntektsmeldingEntitet): InntektsmeldingEntitet {
+        val insertStatement =
+            """INSERT INTO INNTEKTSMELDING (INNTEKTSMELDING_UUID, AKTOR_ID, ORGNUMMER, SAK_ID, JOURNALPOST_ID, BEHANDLET, ARBEIDSGIVER_PRIVAT, DATA)
         VALUES (${innteksmelding.uuid}, ${innteksmelding.aktorId}, ${innteksmelding.orgnummer}, ${innteksmelding.sakId}, ${innteksmelding.journalpostId}, ${innteksmelding.behandlet}, ${innteksmelding.arbeidsgiverPrivat}, ${innteksmelding.data})
         RETURNING *;""".trimMargin()
         val inntektsmeldinger = ArrayList<InntektsmeldingEntitet>()
@@ -83,7 +94,7 @@ class InntektsmeldingRepositoryImp(
     }
 
     override fun deleteAll() {
-       val deleteStatememnt = "DELETE FROM INNTEKTSMELDING;"
+        val deleteStatememnt = "DELETE FROM INNTEKTSMELDING;"
         ds.connection.use {
             it.prepareStatement(deleteStatememnt).executeUpdate()
         }
@@ -98,33 +109,26 @@ class InntektsmeldingRepositoryImp(
         }
     }
 
-    private fun resultLoop(res : ResultSet, returnValue :ArrayList<InntektsmeldingEntitet>): ArrayList<InntektsmeldingEntitet> {
-        while(res.next()) {
-            returnValue.add(InntektsmeldingEntitet(
-                uuid = res.getString("INNTEKTSMELDING_UUID"),
-                aktorId = res.getString("AKTOR_ID"),
-                orgnummer = res.getString("ORGNUMMER"),
-                sakId = res.getString("SAK_ID"),
-                journalpostId = res.getString("JOURNALPOST_ID"),
-                behandlet = LocalDateTime.parse(res.getString("BEHANDLET")),
-                arbeidsgiverPrivat = res.getString("ARBEIDSGIVER_PRIVAT"),
-                data = res.getString("DATA")))
+    private fun resultLoop(
+        res: ResultSet,
+        returnValue: ArrayList<InntektsmeldingEntitet>
+    ): ArrayList<InntektsmeldingEntitet> {
+        while (res.next()) {
+            returnValue.add(
+                InntektsmeldingEntitet(
+                    uuid = res.getString("INNTEKTSMELDING_UUID"),
+                    aktorId = res.getString("AKTOR_ID"),
+                    orgnummer = res.getString("ORGNUMMER"),
+                    sakId = res.getString("SAK_ID"),
+                    journalpostId = res.getString("JOURNALPOST_ID"),
+                    behandlet = LocalDateTime.parse(res.getString("BEHANDLET")),
+                    arbeidsgiverPrivat = res.getString("ARBEIDSGIVER_PRIVAT"),
+                    data = res.getString("DATA")
+                )
+            )
         }
 
         return returnValue
     }
 }
-val validIdentitetsnummer = "20015001543"
-val validOrgNr = "917404437"
-val BEHANDLET_DATO = LocalDateTime.of(2021, 6, 23, 12, 0,0)
 
-val inntektsmeldingEntitet = InntektsmeldingEntitet(
-    uuid =  "UUID",
-    aktorId =  validIdentitetsnummer,
-    sakId =  "987",
-    journalpostId =  "",
-    orgnummer = validOrgNr,
-    arbeidsgiverPrivat = null,
-    behandlet = BEHANDLET_DATO,
-    data = null
-)

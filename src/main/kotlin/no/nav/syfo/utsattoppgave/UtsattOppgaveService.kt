@@ -14,6 +14,7 @@ import no.nav.syfo.dto.UtsattOppgaveEntitet
 import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.util.*
 
 @KtorExperimentalAPI
