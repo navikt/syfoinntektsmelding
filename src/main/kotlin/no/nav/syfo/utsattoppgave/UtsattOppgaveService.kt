@@ -14,6 +14,7 @@ import no.nav.syfo.dto.UtsattOppgaveEntitet
 import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.util.*
 
 @KtorExperimentalAPI
@@ -31,7 +32,7 @@ class UtsattOppgaveService(
         bakgrunnsjobbRepo.save(
             Bakgrunnsjobb(
                 type = FinnAlleUtgaandeOppgaverProcessor.JOB_TYPE,
-                kjoeretid = LocalDate.now().atStartOfDay(),
+                kjoeretid = LocalDate.now().plusDays(1).atStartOfDay(),
                 maksAntallForsoek = 10,
                 data = objectMapper.writeValueAsString(FinnAlleUtgaandeOppgaverProcessor.JobbData(UUID.randomUUID()))
             )
