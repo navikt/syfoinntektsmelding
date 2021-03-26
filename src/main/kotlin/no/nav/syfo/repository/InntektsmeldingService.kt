@@ -9,6 +9,7 @@ import no.nav.syfo.dto.InntektsmeldingEntitet
 import no.nav.syfo.mapping.toInntektsmelding
 import no.nav.syfo.mapping.toInntektsmeldingEntitet
 import no.nav.syfo.prosesser.FjernInnteksmeldingByBehandletProcessor
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
 
@@ -36,7 +37,7 @@ class InntektsmeldingService(
         bakgrunnsjobbRepo.save(
             Bakgrunnsjobb(
                 type = FjernInnteksmeldingByBehandletProcessor.JOB_TYPE,
-                kjoeretid = LocalDateTime.now().withHour(4).plusDays(1),
+                kjoeretid = LocalDate.now().atStartOfDay().plusHours(4),
                 maksAntallForsoek = 10,
                 data = objectMapper.writeValueAsString(FjernInnteksmeldingByBehandletProcessor.JobbData(UUID.randomUUID()))
             )

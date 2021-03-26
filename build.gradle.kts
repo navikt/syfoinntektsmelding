@@ -126,7 +126,7 @@ dependencies {
 
 
     // Spring
-    implementation("io.springfox:springfox-swagger2:$swaggerVersion")
+   /* implementation("io.springfox:springfox-swagger2:$swaggerVersion")
     implementation("io.springfox:springfox-swagger-ui:$swaggerVersion")
     implementation("org.springframework.boot:spring-boot-starter-web:$springBootVersion")
     implementation("org.springframework.boot:spring-boot:$springBootVersion")
@@ -140,7 +140,7 @@ dependencies {
     implementation("org.springframework:spring-core:$springVersion")
     implementation("org.springframework:spring-context:$springVersion")
     implementation("org.springframework:spring-jdbc:$springVersion")
-    implementation("org.springframework.kafka:spring-kafka:$springKafkaVersion")
+    implementation("org.springframework.kafka:spring-kafka:$springKafkaVersion")*/
     testImplementation("org.springframework.boot:spring-boot-starter-test:$springBootVersion")
     testImplementation("org.springframework.boot:spring-boot-test:$springBootVersion")
     testImplementation("org.springframework:spring-test:$springVersion")

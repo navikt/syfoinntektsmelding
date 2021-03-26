@@ -12,7 +12,7 @@ import no.nav.syfo.consumer.ws.SYKEPENGER_UTLAND
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.dto.UtsattOppgaveEntitet
 import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
-import org.springframework.scheduling.annotation.Scheduled
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
 
@@ -27,12 +27,11 @@ class UtsattOppgaveService(
 
     val log = log()
 
-    @Scheduled(cron = "0 0 * * * *")
     fun opprettOppgaverForUtgåtte() {
         bakgrunnsjobbRepo.save(
             Bakgrunnsjobb(
                 type = FinnAlleUtgaandeOppgaverProcessor.JOB_TYPE,
-                kjoeretid = LocalDateTime.now().plusHours(1),
+                kjoeretid = LocalDate.now().atStartOfDay(),
                 maksAntallForsoek = 10,
                 data = objectMapper.writeValueAsString(FinnAlleUtgaandeOppgaverProcessor.JobbData(UUID.randomUUID()))
             )

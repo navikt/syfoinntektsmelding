@@ -11,7 +11,6 @@ import no.nav.syfo.consumer.rest.SakClient
 import no.nav.syfo.consumer.rest.TokenConsumer
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
 import no.nav.syfo.consumer.ws.*
-import no.nav.syfo.integration.kafka.UtsattOppgaveKafkaConsumer
 import no.nav.syfo.koin.externalSystemClients
 import no.nav.syfo.producer.InntektsmeldingProducer
 import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
@@ -21,10 +20,8 @@ import no.nav.syfo.service.EksisterendeSakService
 import no.nav.syfo.service.JournalpostService
 import no.nav.syfo.service.SaksbehandlingService
 import no.nav.syfo.util.Metrikk
-import no.nav.syfo.utsattoppgave.InfiniteRetryKafkaErrorHandler
 import no.nav.syfo.utsattoppgave.UtsattOppgaveDAO
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
-import no.nav.syfo.web.selftest.SimpleSelfTestState
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
@@ -71,7 +68,6 @@ fun prodConfig(config: ApplicationConfig) = module {
     single { FjernInnteksmeldingByBehandletProcessor(InntektsmeldingRepositoryImp(get()), config.getString("lagringstidMåneder").toInt() )} bind FjernInnteksmeldingByBehandletProcessor::class
     single { FinnAlleUtgaandeOppgaverProcessor(get(), get(), get()) } bind FinnAlleUtgaandeOppgaverProcessor::class
 
-    single { InfiniteRetryKafkaErrorHandler(get()) } bind InfiniteRetryKafkaErrorHandler::class
     single { OppgavebehandlingConsumer(get()) } bind OppgavebehandlingConsumer::class
 
     single { FeiletService(FeiletRepositoryImp(get())) } bind FeiletService::class
