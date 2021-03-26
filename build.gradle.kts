@@ -126,7 +126,7 @@ dependencies {
 
 
     // Spring
-   /* implementation("io.springfox:springfox-swagger2:$swaggerVersion")
+   implementation("io.springfox:springfox-swagger2:$swaggerVersion")
     implementation("io.springfox:springfox-swagger-ui:$swaggerVersion")
     implementation("org.springframework.boot:spring-boot-starter-web:$springBootVersion")
     implementation("org.springframework.boot:spring-boot:$springBootVersion")
@@ -140,7 +140,7 @@ dependencies {
     implementation("org.springframework:spring-core:$springVersion")
     implementation("org.springframework:spring-context:$springVersion")
     implementation("org.springframework:spring-jdbc:$springVersion")
-    implementation("org.springframework.kafka:spring-kafka:$springKafkaVersion")*/
+    implementation("org.springframework.kafka:spring-kafka:$springKafkaVersion")
     testImplementation("org.springframework.boot:spring-boot-starter-test:$springBootVersion")
     testImplementation("org.springframework.boot:spring-boot-test:$springBootVersion")
     testImplementation("org.springframework:spring-test:$springVersion")
@@ -209,7 +209,7 @@ dependencies {
     testImplementation("io.ktor:ktor-client-mock-jvm:$ktorVersion")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.3")
     implementation("io.confluent:kafka-streams-avro-serde:5.5.2")
-
+    testImplementation("org.koin:koin-test:$koinVersion")
 
     testImplementation("io.mockk:mockk:1.10.6")
 
