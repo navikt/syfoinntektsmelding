@@ -37,7 +37,7 @@ class InntektsmeldingService(
         bakgrunnsjobbRepo.save(
             Bakgrunnsjobb(
                 type = FjernInnteksmeldingByBehandletProcessor.JOB_TYPE,
-                kjoeretid = LocalDate.now().atStartOfDay().plusHours(4),
+                kjoeretid = LocalDate.now().plusDays(1).atStartOfDay().plusHours(4),
                 maksAntallForsoek = 10,
                 data = objectMapper.writeValueAsString(FjernInnteksmeldingByBehandletProcessor.JobbData(UUID.randomUUID()))
             )

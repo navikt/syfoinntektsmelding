@@ -31,7 +31,7 @@ class UtsattOppgaveService(
         bakgrunnsjobbRepo.save(
             Bakgrunnsjobb(
                 type = FinnAlleUtgaandeOppgaverProcessor.JOB_TYPE,
-                kjoeretid = LocalDate.now().atStartOfDay(),
+                kjoeretid = LocalDate.now().plusDays(1).atStartOfDay(),
                 maksAntallForsoek = 10,
                 data = objectMapper.writeValueAsString(FinnAlleUtgaandeOppgaverProcessor.JobbData(UUID.randomUUID()))
             )
