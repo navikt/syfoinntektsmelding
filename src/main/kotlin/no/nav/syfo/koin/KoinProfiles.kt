@@ -15,8 +15,6 @@ import io.ktor.client.features.json.*
 import io.ktor.config.*
 import io.ktor.util.*
 import no.nav.helse.arbeidsgiver.kubernetes.KubernetesProbeManager
-import no.nav.helse.fritakagp.koin.localDevConfig
-import no.nav.helse.fritakagp.koin.prodConfig
 import org.koin.core.module.Module
 import org.koin.dsl.module
 

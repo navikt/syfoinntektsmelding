@@ -1,4 +1,4 @@
-package no.nav.helse.fritakagp.koin
+package no.nav.syfo.koin
 
 import io.ktor.config.*
 import io.ktor.util.*
@@ -11,7 +11,6 @@ import no.nav.syfo.consumer.rest.SakClient
 import no.nav.syfo.consumer.rest.TokenConsumer
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
 import no.nav.syfo.consumer.ws.*
-import no.nav.syfo.koin.externalSystemClients
 import no.nav.syfo.producer.InntektsmeldingProducer
 import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
 import no.nav.syfo.prosesser.FjernInnteksmeldingByBehandletProcessor

@@ -1,4 +1,4 @@
-package no.nav.helse.fritakagp.koin
+package no.nav.syfo.koin
 
 import io.ktor.config.*
 import io.ktor.util.*
