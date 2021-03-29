@@ -1,4 +1,4 @@
-package no.nav.syfo.repository
+package slowtests.repository
 
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.dto.UtsattOppgaveEntitet

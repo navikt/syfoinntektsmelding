@@ -13,7 +13,7 @@ import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
-import no.nav.syfo.repository.InntektsmeldingService
+import slowtests.repository.InntektsmeldingService
 import no.nav.syfo.util.Metrikk
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import no.nav.tjeneste.virksomhet.aktoer.v2.HentAktoerIdForIdentPersonIkkeFunnet

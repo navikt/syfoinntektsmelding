@@ -1,4 +1,4 @@
-package no.nav.syfo.repository
+package slowtests.repository
 
 import no.nav.syfo.behandling.Feiltype
 import no.nav.syfo.behandling.Historikk

@@ -1,9 +1,8 @@
-package no.nav.syfo.repository
+package slowtests.repository
 
 import junit.framework.Assert.assertEquals
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.dto.UtsattOppgaveEntitet
-import no.nav.syfo.repository.UtsattOppgaveRepository
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith

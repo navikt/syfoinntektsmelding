@@ -31,6 +31,11 @@ open class SystemTestBase : KoinTest {
     companion object {
         val testServerPort = 8989
         var app: SpinnApplication? = null
+        init{
+            System.setProperty("SECURITYTOKENSERVICE_URL", "joda")
+            System.setProperty("SRVSYFOINNTEKTSMELDING_USERNAME", "joda")
+            System.setProperty("SRVSYFOINNTEKTSMELDING_PASSWORD", "joda")
+        }
     }
 
     @BeforeAll

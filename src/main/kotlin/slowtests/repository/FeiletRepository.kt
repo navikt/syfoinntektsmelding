@@ -1,10 +1,8 @@
-package no.nav.syfo.repository
+package slowtests.repository
 
 import no.nav.syfo.behandling.Feiltype
 import no.nav.syfo.dto.FeiletEntitet
-import no.nav.syfo.dto.Tilstand
 import java.sql.ResultSet
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
 import javax.sql.DataSource

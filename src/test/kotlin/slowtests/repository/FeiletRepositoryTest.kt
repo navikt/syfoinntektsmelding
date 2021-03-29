@@ -1,4 +1,4 @@
-package no.nav.syfo.repository
+package slowtests.repository
 
 
 import no.nav.syfo.behandling.Feiltype
@@ -7,14 +7,14 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
-//import org.springframework.beans.factory.annotation.Autowired
-//import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-//import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
-//import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
-//import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
-//import org.springframework.test.context.ActiveProfiles
-//import org.springframework.test.context.TestPropertySource
-//import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.TestPropertySource
+import org.springframework.test.context.junit4.SpringRunner
 import java.time.LocalDateTime
 import javax.transaction.Transactional
 

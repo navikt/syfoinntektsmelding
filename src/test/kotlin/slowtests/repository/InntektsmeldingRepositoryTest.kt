@@ -1,4 +1,4 @@
-package no.nav.syfo.repository
+package slowtests.repository
 
 import no.nav.inntektsmelding.kontrakt.serde.JacksonJsonConfig
 import no.nav.syfo.domain.JournalStatus

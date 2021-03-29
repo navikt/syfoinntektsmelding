@@ -1,4 +1,4 @@
-package no.nav.syfo.repository
+package slowtests.repository
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import log
@@ -10,7 +10,6 @@ import no.nav.syfo.mapping.toInntektsmelding
 import no.nav.syfo.mapping.toInntektsmeldingEntitet
 import no.nav.syfo.prosesser.FjernInnteksmeldingByBehandletProcessor
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.util.*
 
 class InntektsmeldingService(

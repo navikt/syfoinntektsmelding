@@ -5,28 +5,19 @@ import junit.framework.Assert.assertNotNull
 import junit.framework.Assert.assertNull
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.dto.UtsattOppgaveEntitet
-import no.nav.syfo.repository.UtsattOppgaveRepository
+import slowtests.repository.UtsattOppgaveRepository
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
-import org.junit.runner.RunWith
+
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
-import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.TestPropertySource
-import org.springframework.test.context.junit4.SpringRunner
+
 import java.time.LocalDateTime.now
 import java.util.UUID
 
-@RunWith(SpringRunner::class)
-@ActiveProfiles("test")
-@DataJpaTest
-@TestPropertySource(locations = ["classpath:application-test.properties"])
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@EnableAutoConfiguration(exclude = [(AutoConfigureTestDatabase::class)])
+
 open class UtsattOppgaveDAOTest {
 
     @Autowired

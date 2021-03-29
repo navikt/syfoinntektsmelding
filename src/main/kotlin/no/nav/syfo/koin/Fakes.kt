@@ -12,10 +12,9 @@ import no.nav.helse.arbeidsgiver.integrasjoner.oppgave.OpprettOppgaveResponse
 import no.nav.helse.arbeidsgiver.integrasjoner.pdl.*
 import no.nav.helse.arbeidsgiver.utils.loadFromResources
 import no.nav.helse.arbeidsgiver.web.auth.AltinnOrganisationsRepository
-import no.nav.syfo.repository.InntektsmeldingRepository
-import no.nav.syfo.repository.InntektsmeldingRepositoryImp
-import no.nav.syfo.repository.InntektsmeldingRepositoryMock
-import no.nav.syfo.repository.InntektsmeldingService
+import slowtests.repository.InntektsmeldingRepository
+import slowtests.repository.InntektsmeldingRepositoryMock
+import slowtests.repository.InntektsmeldingService
 import org.koin.core.module.Module
 import org.koin.dsl.bind
 

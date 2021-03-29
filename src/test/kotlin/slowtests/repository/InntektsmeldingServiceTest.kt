@@ -1,4 +1,4 @@
-package no.nav.syfo.repository
+package slowtests.repository
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule

@@ -12,7 +12,7 @@ import no.nav.syfo.behandling.InntektsmeldingBehandler
 import no.nav.syfo.consumer.rest.OppgaveClient
 import no.nav.syfo.kafkamottak.InngaaendeJournalpostDTO
 import no.nav.syfo.kafkamottak.InntektsmeldingConsumerException
-import no.nav.syfo.repository.FeiletService
+import slowtests.repository.FeiletService
 import no.nav.syfo.util.MDCOperations
 import no.nav.syfo.util.Metrikk
 import org.slf4j.LoggerFactory

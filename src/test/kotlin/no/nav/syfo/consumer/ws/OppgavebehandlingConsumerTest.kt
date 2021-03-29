@@ -10,10 +10,9 @@ import no.nav.tjeneste.virksomhet.oppgavebehandling.v3.meldinger.OpprettOppgaveR
 import no.nav.tjeneste.virksomhet.oppgavebehandling.v3.meldinger.OpprettOppgaveResponse
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import org.springframework.test.context.TestPropertySource
 import java.time.LocalDate
 
-@TestPropertySource(locations = ["classpath:application-test.properties"])
+
 class OppgavebehandlingConsumerTest {
     val oppgavebehandlingV3 = mockk<OppgavebehandlingV3>(relaxed = true)
 

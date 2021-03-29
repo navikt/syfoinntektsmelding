@@ -3,7 +3,7 @@ package no.nav.syfo.utsattoppgave
 import log
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.dto.UtsattOppgaveEntitet
-import no.nav.syfo.repository.UtsattOppgaveRepository
+import slowtests.repository.UtsattOppgaveRepository
 import java.time.LocalDateTime
 
 class UtsattOppgaveDAO(val utsattOppgaveRepository: UtsattOppgaveRepository) {

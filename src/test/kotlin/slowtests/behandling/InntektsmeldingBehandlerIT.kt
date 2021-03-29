@@ -1,7 +1,8 @@
-package no.nav.syfo.behandling
+package slowtests.behandling
 
 import io.mockk.*
 import kotlinx.coroutines.runBlocking
+import no.nav.syfo.behandling.InntektsmeldingBehandler
 import no.nav.syfo.consumer.rest.OppgaveClient
 import no.nav.syfo.consumer.rest.SakClient
 import no.nav.syfo.consumer.rest.SakResponse
@@ -12,8 +13,8 @@ import no.nav.syfo.domain.InngaaendeJournal
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
 import no.nav.syfo.producer.InntektsmeldingProducer
-import no.nav.syfo.repository.InntektsmeldingRepository
-import no.nav.syfo.repository.InntektsmeldingService
+import slowtests.repository.InntektsmeldingRepository
+import slowtests.repository.InntektsmeldingService
 import no.nav.syfo.service.EksisterendeSakService
 import no.nav.syfo.service.JournalpostService
 import no.nav.syfo.service.SaksbehandlingService
@@ -28,12 +29,11 @@ import org.assertj.core.api.Assertions
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.TestPropertySource
-import org.springframework.test.context.junit4.SpringRunner
-import org.springframework.test.context.web.WebAppConfiguration
+//import org.springframework.beans.factory.annotation.Autowired
+//import org.springframework.boot.test.context.SpringBootTest
+//import org.springframework.test.context.TestPropertySource
+//import org.springframework.test.context.junit4.SpringRunner
+//import org.springframework.test.context.web.WebAppConfiguration
 import java.time.LocalDate
 import java.time.ZonedDateTime
 import java.util.*
@@ -41,10 +41,7 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.atomic.AtomicInteger
 
 
-@RunWith(SpringRunner::class)
-@SpringBootTest
-@TestPropertySource("classpath:application-test.properties")
-@WebAppConfiguration
+
 open class InntektsmeldingBehandlerIT {
 
     companion object {
