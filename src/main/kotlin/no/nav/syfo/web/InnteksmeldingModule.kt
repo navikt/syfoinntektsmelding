@@ -12,6 +12,7 @@ import io.ktor.routing.*
 import io.ktor.util.*
 import no.nav.helse.arbeidsgiver.system.AppEnv
 import no.nav.helse.arbeidsgiver.system.getEnvironment
+import no.nav.helse.arbeidsgiver.system.getString
 import no.nav.security.token.support.ktor.tokenValidationSupport
 import no.nav.syfo.api.InnteksmeldingRoute
 import no.nav.syfo.api.systemRoutes
@@ -26,7 +27,7 @@ fun Application.innteksmeldingModule(config: ApplicationConfig = environment.con
     }
 
     install(Authentication) {
-        tokenValidationSupport(config = config)
+      //  tokenValidationSupport(config = config)
     }
 
     configureCORSAccess(config)
@@ -38,8 +39,8 @@ fun Application.innteksmeldingModule(config: ApplicationConfig = environment.con
     }
 
     routing {
-
-        route("/api/v1") {
+        val apiBasePath = config.getString("ktor.application.basepath")
+        route("$apiBasePath/api/v1") {
             systemRoutes()
             authenticate {
                 InnteksmeldingRoute()

@@ -1,4 +1,5 @@
 package no.nav.syfo.utsattoppgave
+/*
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
@@ -83,3 +84,4 @@ open class UtsattOppgaveServiceTest {
     )
 
 }
+*/

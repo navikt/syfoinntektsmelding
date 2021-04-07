@@ -29,30 +29,28 @@ class AktorConsumer(
 
     @Throws(AktørException::class)
     private fun getIdent(sokeIdent: String, identgruppe: String): String {
-        var aktor : Aktor? = null
-        val params = ParametersBuilder()
-        params.append("gjeldende", "true")
-        params.append("identgruppe", identgruppe)
-        val genUrl = URLBuilder(URLProtocol.HTTPS, "$url/identer", parameters = params).toString()
+        var aktor: Aktor? = null
+
         runBlocking {
             try {
                 aktor = httpClient.get<AktorResponse>(
                     url {
                         protocol = URLProtocol.HTTPS
-                        host = genUrl
-                    }
-                ) {
+                        host = "$url/identer"
+                        parameters.append("gjeldende", "true")
+                        parameters.append("identgruppe", identgruppe)
+                    }) {
                     header("Authorization", "Bearer ${tokenConsumer.token}")
                     header("Nav-Call-Id", "${getFromMDC(MDC_CALL_ID)}")
                     header("Nav-Consumer-Id", "$username")
                     header("Nav-Personidenter", "$sokeIdent")
                 }[sokeIdent]
-            } catch (cause: Throwable) {
+            } catch (cause: Exception) {
                 val status = (cause as ClientRequestException).response?.status?.value
                 log.error("Kall mot aktørregister feiler med HTTP-$status")
                 throw AktørKallResponseException(status, null)
             }
-            if ( aktor?.identer == null) {
+            if (aktor?.identer == null) {
                 log.error("Fant ikke aktøren: ${aktor?.feilmelding}")
                 throw FantIkkeAktørException(null);
             }

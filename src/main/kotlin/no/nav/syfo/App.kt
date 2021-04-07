@@ -2,21 +2,31 @@ package no.nav.syfo
 
 import com.typesafe.config.ConfigFactory
 import io.ktor.config.*
-import io.ktor.server.netty.*
 import io.ktor.server.engine.*
+import io.ktor.server.netty.*
 import io.ktor.util.*
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
+import no.nav.helse.arbeidsgiver.kubernetes.KubernetesProbeManager
+import no.nav.helse.arbeidsgiver.kubernetes.LivenessComponent
+import no.nav.helse.arbeidsgiver.kubernetes.ReadynessComponent
 import no.nav.helse.arbeidsgiver.system.AppEnv
 import no.nav.helse.arbeidsgiver.system.getEnvironment
-import no.nav.syfo.web.auth.localCookieDispenser
+import no.nav.helse.arbeidsgiver.system.getString
+import no.nav.syfo.koin.getAllOfType
 import no.nav.syfo.koin.selectModuleBasedOnProfile
+import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
+import no.nav.syfo.prosesser.FjernInnteksmeldingByBehandletProcessor
+import no.nav.syfo.utsattoppgave.FeiletUtsattOppgaveMeldingProsessor
 import no.nav.syfo.web.innteksmeldingModule
 import no.nav.syfo.web.nais.nais
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.get
+import org.flywaydb.core.Flyway
+import org.koin.core.KoinComponent
+import org.koin.core.context.GlobalContext
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
+import org.koin.core.get
 import org.slf4j.LoggerFactory
+
 
 class SpinnApplication(val port: Int = 8080) : KoinComponent {
     private val logger = LoggerFactory.getLogger(SpinnApplication::class.simpleName)
@@ -32,6 +42,9 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
         }
 
         startKoin { modules(selectModuleBasedOnProfile(appConfig)) }
+        configAndStartBackgroundWorker()
+        autoDetectProbeableComponents()
+        configAndStartWebserver()
     }
 
     fun shutdown() {
@@ -49,7 +62,7 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
 
             module {
                 if (runtimeEnvironment != AppEnv.PROD) {
-                    localCookieDispenser(config)
+                   // localCookieDispenser(config)
                 }
 
                 nais()
@@ -61,19 +74,20 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
     }
 
     private fun configAndStartBackgroundWorker() {
-      /*  if (appConfig.getString("run_background_workers") == "true") {
+        if (appConfig.getString("run_background_workers") == "true") {
             get<BakgrunnsjobbService>().apply {
 
-                registrer(get<GravidKravProcessor>())
-                registrer(get<GravidKravKafkaProcessor>())
-                registrer(get<GravidKravKvitteringProcessor>())
+                registrer(get<FeiletUtsattOppgaveMeldingProsessor>())
+                registrer(get<FinnAlleUtgaandeOppgaverProcessor>())
+                registrer(get<FeiletUtsattOppgaveMeldingProsessor>())
+                registrer(get<FjernInnteksmeldingByBehandletProcessor>())
 
                 startAsync(true)
             }
-        }*/
+        }
     }
 
-/*    private fun migrateDatabase() {
+    private fun migrateDatabase() {
         logger.info("Starter databasemigrering")
 
         Flyway.configure().baselineOnMigrate(true)
@@ -94,7 +108,7 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
             .forEach { kubernetesProbeManager.registerReadynessComponent(it) }
 
         logger.debug("La til probeable komponenter")
-    }*/
+    }
 }
 
 

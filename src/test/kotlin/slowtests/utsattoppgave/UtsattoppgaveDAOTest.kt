@@ -1,4 +1,5 @@
 package no.nav.syfo.utsattoppgave
+/*
 
 import junit.framework.Assert.assertEquals
 import junit.framework.Assert.assertNotNull
@@ -98,3 +99,4 @@ open class UtsattOppgaveDAOTest {
         tilstand = Tilstand.Utsatt
     )
 }
+*/

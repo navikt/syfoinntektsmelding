@@ -1,4 +1,5 @@
 package slowtests.repository
+/*
 
 import junit.framework.Assert.assertEquals
 import no.nav.syfo.dto.Tilstand
@@ -113,3 +114,4 @@ open class UtsattOppgaveRepositoryTest {
         tilstand = tilstand
     )
 }
+*/

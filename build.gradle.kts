@@ -1,8 +1,8 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val springBootVersion = "2.4.2"
+/*val springBootVersion = "2.4.2"
 val springVersion = "5.3.3"
-val springKafkaVersion = "2.6.5"
+val springKafkaVersion = "2.6.5"*/
 val micrometerVersion = "1.6.3"
 val flywayVersion = "6.1.4"
 val cxfVersion = "3.4.2"
@@ -10,25 +10,28 @@ val swaggerVersion = "2.10.0"
 val kotlinVersion = "1.4.10"
 val hikariVersion = "3.4.5"
 val ktorVersion = "1.4.3"
-val koinVersion = "2.2.2"
+val koinVersion = "2.0.1"
 val tokenSupportVersion = "1.3.1"
 val mockOAuth2ServerVersion = "0.2.1"
 val brukernotifikasjonSchemasVersion = "1.2021.01.18-11.12-b9c8c40b98d1"
 val jacksonVersion = "2.10.3"
+val junitJupiterVersion = "5.7.0"
+val assertJVersion = "3.12.2"
 
-val mainClass = "no.nav.syfo.Application"
+val mainClass = "no.nav.syfo.AppKt"
+
 
 val githubPassword: String by project
 
 plugins {
-    "maven-publish"
-    id("org.jetbrains.kotlin.jvm") version "1.4.10"
-    id("org.jetbrains.kotlin.plugin.allopen") version "1.4.10"
-    id("org.jetbrains.kotlin.plugin.jpa") version "1.4.10"
+    application
+    kotlin("jvm") version "1.4.20"
     id("org.flywaydb.flyway") version "5.1.4"
     id("org.sonarqube") version "3.0"
-    java
     jacoco
+}
+application {
+    mainClassName = mainClass
 }
 
 sonarqube {
@@ -61,7 +64,6 @@ tasks.withType<JacocoReport> {
 buildscript {
     dependencies {
         classpath("org.junit.platform:junit-platform-gradle-plugin:1.2.0")
-        classpath("org.jetbrains.kotlin:kotlin-noarg:1.4.10")
     }
 }
 
@@ -104,11 +106,11 @@ java {
     targetCompatibility = JavaVersion.VERSION_11
 }
 
-allOpen {
+/*allOpen {
     annotation("org.springframework.context.annotation.Configuration")
     annotation("org.springframework.stereotype.Service")
     annotation("org.springframework.stereotype.Component")
-}
+}*/
 
 
 
@@ -117,33 +119,6 @@ dependencies {
     // SNYK overrides
     implementation("commons-collections:commons-collections:3.2.2")
     // - end SNYK overrides
-    implementation("com.vladmihalcea:hibernate-types-52:2.10.2") {
-
-    }
-
-    implementation("io.ktor:ktor-locations:$ktorVersion")
-
-
-
-    // Spring
-   implementation("io.springfox:springfox-swagger2:$swaggerVersion")
-    implementation("io.springfox:springfox-swagger-ui:$swaggerVersion")
-    implementation("org.springframework.boot:spring-boot-starter-web:$springBootVersion")
-    implementation("org.springframework.boot:spring-boot:$springBootVersion")
-    implementation("org.springframework.boot:spring-boot-autoconfigure:$springBootVersion")
-    implementation("org.springframework.boot:spring-boot-starter-actuator:$springBootVersion")
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa:$springBootVersion")
-    implementation("org.springframework.boot:spring-boot-starter-logging:$springBootVersion")
-    implementation("org.springframework:spring-tx:$springVersion")
-    implementation("org.springframework:spring-beans:$springVersion")
-    implementation("org.springframework:spring-web:$springVersion")
-    implementation("org.springframework:spring-core:$springVersion")
-    implementation("org.springframework:spring-context:$springVersion")
-    implementation("org.springframework:spring-jdbc:$springVersion")
-    implementation("org.springframework.kafka:spring-kafka:$springKafkaVersion")
-    testImplementation("org.springframework.boot:spring-boot-starter-test:$springBootVersion")
-    testImplementation("org.springframework.boot:spring-boot-test:$springBootVersion")
-    testImplementation("org.springframework:spring-test:$springVersion")
 
     implementation("javax.inject:javax.inject:1")
     implementation("jakarta.activation:jakarta.activation-api:1.2.1")
@@ -166,6 +141,7 @@ dependencies {
     implementation("org.apache.cxf:cxf-rt-databinding-jaxb:$cxfVersion")
     runtimeOnly("org.apache.cxf:cxf-spring-boot-starter-jaxws:$cxfVersion")
     runtimeOnly("org.apache.cxf:cxf-rt-features-logging:$cxfVersion")
+
     implementation("org.postgresql:postgresql:42.2.13")
     implementation("org.apache.neethi:neethi:3.1.0")
     implementation("org.flywaydb:flyway-core:$flywayVersion")
@@ -194,43 +170,53 @@ dependencies {
     implementation("org.apache.httpcomponents:httpclient:4.5.13")
     implementation("io.micrometer:micrometer-core:$micrometerVersion")
     runtimeOnly("io.micrometer:micrometer-registry-prometheus:$micrometerVersion")
-    implementation("io.ktor:ktor-client-core:$ktorVersion")
 
-    implementation("io.ktor:ktor-client-apache:$ktorVersion")
-    testImplementation("junit:junit:4.13.1")
-    testImplementation("org.mockito:mockito-core:3.1.0")
-    testImplementation("org.assertj:assertj-core:3.11.1")
     compileOnly("org.projectlombok:lombok:1.18.18")
     annotationProcessor("org.projectlombok:lombok:1.18.18")
     testCompileOnly("org.projectlombok:lombok:1.18.18")
     testAnnotationProcessor("org.projectlombok:lombok:1.18.18")
     implementation("com.google.guava:guava:30.0-jre")
-    testImplementation("io.ktor:ktor-client-mock:$ktorVersion")
-    testImplementation("io.ktor:ktor-client-mock-jvm:$ktorVersion")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.3")
     implementation("io.confluent:kafka-streams-avro-serde:5.5.2")
-    testImplementation("org.koin:koin-test:$koinVersion")
 
-    testImplementation("io.mockk:mockk:1.10.6")
 
-    implementation("no.nav.helsearbeidsgiver:helse-arbeidsgiver-felles-backend:2021.03.02-15-19-eb0ee")
-    implementation("org.koin:koin-core:$koinVersion")
-    implementation("org.koin:koin-ktor:$koinVersion")
+    testImplementation("io.mockk:mockk:1.11.0")
+
+    implementation("io.ktor:ktor-client-core:$ktorVersion")
+    implementation("io.ktor:ktor-client-apache:$ktorVersion")
+    testImplementation("io.ktor:ktor-client-mock:$ktorVersion")
+    testImplementation("io.ktor:ktor-client-mock-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
-
     implementation("io.ktor:ktor-auth:$ktorVersion")
     implementation("io.ktor:ktor-client-core-jvm:$ktorVersion")
     implementation("io.ktor:ktor-client-json:$ktorVersion")
+    implementation("io.ktor:ktor-client-jackson:$ktorVersion")
+    implementation("io.ktor:ktor-jackson:$ktorVersion")
+    implementation("io.ktor:ktor-locations:$ktorVersion")
+    testImplementation("io.ktor:ktor-server-tests:$ktorVersion")
+
+    implementation("org.koin:koin-core:$koinVersion")
+    implementation("org.koin:koin-ktor:$koinVersion")
+    testImplementation("org.koin:koin-test:$koinVersion")
+
+    implementation("no.nav.helsearbeidsgiver:helse-arbeidsgiver-felles-backend:2021.03.02-15-19-eb0ee")
+
     implementation("no.nav.security:token-client-core:$tokenSupportVersion")
     implementation("no.nav.security:token-validation-ktor:$tokenSupportVersion")
     implementation("no.nav.security:mock-oauth2-server:$mockOAuth2ServerVersion")
     implementation("com.github.navikt:brukernotifikasjon-schemas:$brukernotifikasjonSchemasVersion")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.11.0")
-    implementation("io.ktor:ktor-client-jackson:$ktorVersion")
-    implementation("io.ktor:ktor-jackson:$ktorVersion")
+
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$jacksonVersion")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
+
+    testImplementation ("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
+    testImplementation ("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion")
+    testImplementation("org.assertj:assertj-core:$assertJVersion")
+
 }
 
 tasks.named<Jar>("jar") {
@@ -262,9 +248,36 @@ tasks.named<KotlinCompile>("compileTestKotlin") {
     kotlinOptions.suppressWarnings = true
 }
 
+/*
 tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
     options.isWarnings = false
     options.compilerArgs.add("-Xlint:-deprecation")
     options.compilerArgs.add("-Xlint:-unchecked")
 }
+*/
+/*
+tasks.withType<Test> {
+    useJUnitPlatform()
+    testLogging {
+        events("passed", "skipped", "failed")
+        showStackTraces = true
+        exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+    }
+}
+
+tasks.named<Test>("test") {
+    include("no/nav/syfo/**")
+    exclude("no/nav/syfo/slowtests/**")
+}
+
+task<Test>("slowTests") {
+    include("no/nav/syfo/slowtests/**")
+    outputs.upToDateWhen { false }
+    group = "verification"
+
+}
+
+tasks.withType<Wrapper> {
+    gradleVersion = "6.8.2"
+}*/

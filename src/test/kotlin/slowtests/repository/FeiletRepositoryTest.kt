@@ -1,5 +1,6 @@
 package slowtests.repository
 
+/*
 
 import no.nav.syfo.behandling.Feiltype
 import no.nav.syfo.dto.FeiletEntitet
@@ -99,3 +100,4 @@ open class FeiletRepositoryTest {
 
 
 }
+*/

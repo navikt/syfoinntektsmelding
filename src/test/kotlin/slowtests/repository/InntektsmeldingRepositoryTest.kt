@@ -1,4 +1,5 @@
 package slowtests.repository
+/*
 
 import no.nav.inntektsmelding.kontrakt.serde.JacksonJsonConfig
 import no.nav.syfo.domain.JournalStatus
@@ -243,3 +244,4 @@ open class InntektsmeldingRepositoryTest {
     }
 
 }
+*/
