@@ -1,9 +1,5 @@
 package no.nav.syfo.domain
 
-import lombok.Builder
-import lombok.Getter
-import lombok.Value
-
 import java.time.LocalDate
 
 data class Sykepengesoknad (

@@ -1,8 +1,5 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-/*val springBootVersion = "2.4.2"
-val springVersion = "5.3.3"
-val springKafkaVersion = "2.6.5"*/
 val micrometerVersion = "1.6.3"
 val flywayVersion = "6.1.4"
 val cxfVersion = "3.4.2"
@@ -26,6 +23,7 @@ val githubPassword: String by project
 plugins {
     application
     kotlin("jvm") version "1.4.20"
+    id("com.github.ben-manes.versions") version "0.27.0"
     id("org.flywaydb.flyway") version "5.1.4"
     id("org.sonarqube") version "3.0"
     jacoco
@@ -106,21 +104,13 @@ java {
     targetCompatibility = JavaVersion.VERSION_11
 }
 
-/*allOpen {
-    annotation("org.springframework.context.annotation.Configuration")
-    annotation("org.springframework.stereotype.Service")
-    annotation("org.springframework.stereotype.Component")
-}*/
-
-
-
 dependencies {
 
     // SNYK overrides
     implementation("commons-collections:commons-collections:3.2.2")
     // - end SNYK overrides
 
-    implementation("javax.inject:javax.inject:1")
+   // implementation("javax.inject:javax.inject:1")
     implementation("jakarta.activation:jakarta.activation-api:1.2.1")
     implementation("jakarta.xml.bind:jakarta.xml.bind-api:2.3.1")
     implementation("jakarta.xml.ws:jakarta.xml.ws-api:2.3.2")
@@ -139,7 +129,7 @@ dependencies {
     implementation("org.apache.cxf:cxf-core:$cxfVersion")
     implementation("org.apache.cxf:cxf-rt-bindings-soap:$cxfVersion")
     implementation("org.apache.cxf:cxf-rt-databinding-jaxb:$cxfVersion")
-    runtimeOnly("org.apache.cxf:cxf-spring-boot-starter-jaxws:$cxfVersion")
+    //runtimeOnly("org.apache.cxf:cxf-spring-boot-starter-jaxws:$cxfVersion")
     runtimeOnly("org.apache.cxf:cxf-rt-features-logging:$cxfVersion")
 
     implementation("org.postgresql:postgresql:42.2.13")
@@ -162,6 +152,12 @@ dependencies {
     implementation("no.nav.syfo.sm:syfosm-common-networking:2019.09.03-10-50-64032e3b6381665e9f9c0914cef626331399e66d")
     implementation("no.nav:vault-jdbc:1.3.1")
     implementation("no.nav.common:log:2.2021.01.05_08.07-2c586ccadf95")
+    implementation("no.nav.helsearbeidsgiver:helse-arbeidsgiver-felles-backend:2021.03.02-15-19-eb0ee")
+    implementation("no.nav.security:token-client-core:$tokenSupportVersion")
+    implementation("no.nav.security:token-validation-ktor:$tokenSupportVersion")
+    implementation("no.nav.security:mock-oauth2-server:$mockOAuth2ServerVersion")
+    implementation("com.github.navikt:brukernotifikasjon-schemas:$brukernotifikasjonSchemasVersion")
+    //NAV
 
     implementation("com.zaxxer:HikariCP:$hikariVersion")
 
@@ -171,10 +167,10 @@ dependencies {
     implementation("io.micrometer:micrometer-core:$micrometerVersion")
     runtimeOnly("io.micrometer:micrometer-registry-prometheus:$micrometerVersion")
 
-    compileOnly("org.projectlombok:lombok:1.18.18")
+   /* compileOnly("org.projectlombok:lombok:1.18.18")
     annotationProcessor("org.projectlombok:lombok:1.18.18")
     testCompileOnly("org.projectlombok:lombok:1.18.18")
-    testAnnotationProcessor("org.projectlombok:lombok:1.18.18")
+    testAnnotationProcessor("org.projectlombok:lombok:1.18.18")*/
     implementation("com.google.guava:guava:30.0-jre")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.3")
     implementation("io.confluent:kafka-streams-avro-serde:5.5.2")
@@ -199,24 +195,19 @@ dependencies {
     implementation("org.koin:koin-ktor:$koinVersion")
     testImplementation("org.koin:koin-test:$koinVersion")
 
-    implementation("no.nav.helsearbeidsgiver:helse-arbeidsgiver-felles-backend:2021.03.02-15-19-eb0ee")
 
-    implementation("no.nav.security:token-client-core:$tokenSupportVersion")
-    implementation("no.nav.security:token-validation-ktor:$tokenSupportVersion")
-    implementation("no.nav.security:mock-oauth2-server:$mockOAuth2ServerVersion")
-    implementation("com.github.navikt:brukernotifikasjon-schemas:$brukernotifikasjonSchemasVersion")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.11.0")
 
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$jacksonVersion")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
 
-    testImplementation ("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
-    testImplementation ("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
+   /* testImplementation ("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion")*/
     testImplementation("org.assertj:assertj-core:$assertJVersion")
-
+    testImplementation(platform("org.junit:junit-bom:$junitJupiterVersion"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
 }
 
 tasks.named<Jar>("jar") {
@@ -237,6 +228,7 @@ tasks.named<Jar>("jar") {
         }
     }
 }
+tasks.named<KotlinCompile>("compileKotlin")
 
 tasks.named<KotlinCompile>("compileKotlin") {
     kotlinOptions.jvmTarget = "11"
@@ -248,15 +240,8 @@ tasks.named<KotlinCompile>("compileTestKotlin") {
     kotlinOptions.suppressWarnings = true
 }
 
-/*
-tasks.withType<JavaCompile> {
-    options.encoding = "UTF-8"
-    options.isWarnings = false
-    options.compilerArgs.add("-Xlint:-deprecation")
-    options.compilerArgs.add("-Xlint:-unchecked")
-}
-*/
-/*
+
+
 tasks.withType<Test> {
     useJUnitPlatform()
     testLogging {
@@ -280,4 +265,5 @@ task<Test>("slowTests") {
 
 tasks.withType<Wrapper> {
     gradleVersion = "6.8.2"
-}*/
+}
+

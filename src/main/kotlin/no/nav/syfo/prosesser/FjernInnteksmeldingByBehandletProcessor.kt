@@ -2,7 +2,7 @@ package no.nav.syfo.prosesser
 
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbProsesserer
-import slowtests.repository.InntektsmeldingRepository
+import no.nav.syfo.repository.InntektsmeldingRepository
 import org.slf4j.LoggerFactory
 import java.time.LocalDate
 import java.util.*
