@@ -1,44 +1,24 @@
 package no.nav.syfo.utsattoppgave
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.ktor.util.*
 import kotlinx.coroutines.runBlocking
-import log
-import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
-import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.syfo.consumer.rest.OppgaveClient
 import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
 import no.nav.syfo.consumer.ws.SYKEPENGER_UTLAND
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.dto.UtsattOppgaveEntitet
-import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
-import java.time.LocalDate
+import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
-import java.time.LocalTime
 import java.util.*
 
 @KtorExperimentalAPI
 class UtsattOppgaveService(
     val utsattOppgaveDAO: UtsattOppgaveDAO,
     private val oppgaveClient: OppgaveClient,
-    private val behandlendeEnhetConsumer: BehandlendeEnhetConsumer,
-    private val bakgrunnsjobbRepo: BakgrunnsjobbRepository,
-    private val objectMapper : ObjectMapper
+    private val behandlendeEnhetConsumer: BehandlendeEnhetConsumer
 ) {
 
-    val log = log()
-
-    fun opprettOppgaverForUtgåtte() {
-        bakgrunnsjobbRepo.save(
-            Bakgrunnsjobb(
-                type = FinnAlleUtgaandeOppgaverProcessor.JOB_TYPE,
-                kjoeretid = LocalDate.now().plusDays(1).atStartOfDay(),
-                maksAntallForsoek = 10,
-                data = objectMapper.writeValueAsString(FinnAlleUtgaandeOppgaverProcessor.JobbData(UUID.randomUUID()))
-            )
-        )
-
-    }
+    val log = LoggerFactory.getLogger(UtsattOppgaveService::class.java)
 
     fun prosesser(oppdatering: OppgaveOppdatering) {
         val oppgave = utsattOppgaveDAO.finn(oppdatering.id.toString())

@@ -1,4 +1,4 @@
-package no.nav.syfo.slowtests.repository
+package no.nav.syfo.syfoinnteksmelding.repository
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
@@ -7,9 +7,7 @@ import no.nav.inntektsmelding.kontrakt.serde.JacksonJsonConfig
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
 import no.nav.syfo.domain.inntektsmelding.*
-import no.nav.syfo.repository.InntektsmeldingService
 import no.nav.syfo.repository.asJsonString
-import no.nav.syfo.slowtests.SystemTestBase
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal
@@ -17,10 +15,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 
-class InntektsmeldingServiceTest: SystemTestBase() {
-
-
-    private lateinit var inntektsmeldingService: InntektsmeldingService
+class InntektsmeldingServiceTest {
     val objectMapper = ObjectMapper().registerModules(KotlinModule(), JavaTimeModule())
 
     @Test

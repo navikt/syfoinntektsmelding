@@ -8,6 +8,8 @@ import no.nav.syfo.domain.inntektsmelding.Refusjon
 import no.nav.syfo.dto.ArbeidsgiverperiodeEntitet
 import no.nav.syfo.dto.InntektsmeldingEntitet
 import java.time.LocalDate
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 fun toInntektsmeldingEntitet(inntektsmelding : Inntektsmelding) : InntektsmeldingEntitet {
@@ -25,7 +27,7 @@ fun toInntektsmeldingEntitet(inntektsmelding : Inntektsmelding) : Inntektsmeldin
 
 fun toInntektsmelding(inntektsmeldingEntitet: InntektsmeldingEntitet) : Inntektsmelding {
     return Inntektsmelding(
-        id = inntektsmeldingEntitet.uuid!!,
+        id = inntektsmeldingEntitet.uuid,
         fnr = inntektsmeldingEntitet.arbeidsgiverPrivat ?: "",
         arbeidsgiverOrgnummer = inntektsmeldingEntitet.orgnummer,
         arbeidsgiverPrivatFnr = inntektsmeldingEntitet.arbeidsgiverPrivat,

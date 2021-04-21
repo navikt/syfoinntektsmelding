@@ -1,4 +1,4 @@
-package no.nav.syfo.api
+package no.nav.syfo.web.api
 
 data class JournalInntektsmeldingRequest (
     val arkivId: String,

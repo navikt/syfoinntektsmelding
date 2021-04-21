@@ -52,7 +52,7 @@ fun prodConfig(config: ApplicationConfig) = module {
         config.getString("sakconsumer_host_url"))} bind SakConsumer::class
 
     single { EksisterendeSakService(get()) } bind EksisterendeSakService::class
-    single { InntektsmeldingService(InntektsmeldingRepositoryImp(get()),get(), get()) } bind InntektsmeldingRepository::class
+    single { InntektsmeldingService(InntektsmeldingRepositoryImp(get()),get()) } bind InntektsmeldingRepository::class
     single { SakClient(config.getString("opprett_sak_url"), get()) } bind SakClient::class
     single { SaksbehandlingService(get(), get(), get(), get()) } bind SaksbehandlingService::class
     single { InntektsmeldingProducer(
@@ -62,7 +62,7 @@ fun prodConfig(config: ApplicationConfig) = module {
 
     single { UtsattOppgaveDAO(UtsattOppgaveRepositoryImp(get()))} bind UtsattOppgaveDAO::class
     single { OppgaveClient(config.getString("oppgavebehandling_url"), get(), get())} bind OppgaveClient::class
-    single { UtsattOppgaveService(get(), get(), get(), get(), get()) } bind UtsattOppgaveService::class
+    single { UtsattOppgaveService(get(), get(), get()) } bind UtsattOppgaveService::class
 
     single { FjernInnteksmeldingByBehandletProcessor(InntektsmeldingRepositoryImp(get()), config.getString("lagringstidMåneder").toInt() )} bind FjernInnteksmeldingByBehandletProcessor::class
     single { FinnAlleUtgaandeOppgaverProcessor(get(), get(), get()) } bind FinnAlleUtgaandeOppgaverProcessor::class

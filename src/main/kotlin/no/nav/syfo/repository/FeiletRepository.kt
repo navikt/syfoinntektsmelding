@@ -9,17 +9,19 @@ import javax.sql.DataSource
 
 interface FeiletRepository {
     fun findByArkivReferanse(arkivReferanse: String): List<FeiletEntitet>
-    fun lagreInnteksmelding(utsattOppgave : FeiletEntitet): FeiletEntitet
+    fun lagreInnteksmelding(utsattOppgave: FeiletEntitet): FeiletEntitet
 }
+
 class FeiletRepositoryMock : FeiletRepository {
     override fun findByArkivReferanse(arkivReferanse: String): List<FeiletEntitet> {
         return listOf(
             FeiletEntitet(
-                id = getRandomNumber(1,100),
+                id = getRandomNumber(1, 100),
                 arkivReferanse = arkivReferanse,
                 tidspunkt = LocalDateTime.now(),
                 feiltype = getRandomFeiltype()
-        ))
+            )
+        )
     }
 
     override fun lagreInnteksmelding(utsattOppgave: FeiletEntitet): FeiletEntitet {
@@ -27,7 +29,7 @@ class FeiletRepositoryMock : FeiletRepository {
     }
 }
 
-    class FeiletRepositoryImp(private val ds : DataSource ) : FeiletRepository {
+class FeiletRepositoryImp(private val ds: DataSource) : FeiletRepository {
     override fun findByArkivReferanse(arkivReferanse: String): List<FeiletEntitet> {
         val queryString = "SELECT * FROM FEILET WHERE ARKIVREFERANSE = $arkivReferanse;"
         ds.connection.use {
@@ -36,7 +38,7 @@ class FeiletRepositoryMock : FeiletRepository {
         }
     }
 
-    override fun lagreInnteksmelding(feil : FeiletEntitet): FeiletEntitet {
+    override fun lagreInnteksmelding(feil: FeiletEntitet): FeiletEntitet {
         val insertStatement = """INSERT INTO FEILET (FEILET_ID, ARKIVREFERANSE, TIDSPUNKT, FEILTYPE)
         VALUES (${feil.id}, ${feil.arkivReferanse}, ${feil.tidspunkt}, ${feil.feiltype.name})
         RETURNING *;""".trimMargin()
@@ -46,14 +48,17 @@ class FeiletRepositoryMock : FeiletRepository {
         }
     }
 
-    private fun resultLoop(res : ResultSet ): ArrayList<FeiletEntitet> {
+    private fun resultLoop(res: ResultSet): ArrayList<FeiletEntitet> {
         val returnValue = ArrayList<FeiletEntitet>()
-        while(res.next()) {
-            returnValue.add(FeiletEntitet(
-                id = res.getInt("FEILET_ID"),
-                arkivReferanse = res.getString("ARKIVREFERANSE"),
-                tidspunkt = LocalDateTime.parse(res.getString("TIDSPUNKT")),
-                feiltype = Feiltype.valueOf(res.getString("FEILTYPE"))))
+        while (res.next()) {
+            returnValue.add(
+                FeiletEntitet(
+                    id = res.getInt("FEILET_ID"),
+                    arkivReferanse = res.getString("ARKIVREFERANSE"),
+                    tidspunkt = LocalDateTime.parse(res.getString("TIDSPUNKT")),
+                    feiltype = Feiltype.valueOf(res.getString("FEILTYPE"))
+                )
+            )
         }
 
         return returnValue

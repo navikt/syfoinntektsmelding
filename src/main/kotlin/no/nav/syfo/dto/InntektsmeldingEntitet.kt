@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 import java.util.*
 
 data class InntektsmeldingEntitet(
-    var uuid: String = UUID.randomUUID().toString(),
+    val uuid: String = UUID.randomUUID().toString(),
     var aktorId: String,
     var sakId: String,
     var journalpostId: String,

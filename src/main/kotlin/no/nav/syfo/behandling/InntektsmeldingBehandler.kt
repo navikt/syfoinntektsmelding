@@ -38,7 +38,7 @@ class InntektsmeldingBehandler(
     fun behandle(arkivId: String, arkivreferanse: String, inntektsmelding: Inntektsmelding): String? {
 
         val log = log()
-
+        var ret : String? = null
         val consumerLock = consumerLocks.get(inntektsmelding.fnr)
         try {
             consumerLock.lock()
@@ -79,7 +79,7 @@ class InntektsmeldingBehandler(
                 )
 
                 log.info("Inntektsmelding {} er journalført for {} refusjon {}", inntektsmelding.journalpostId, arkivreferanse, inntektsmelding.refusjon.beloepPrMnd)
-                return dto.uuid
+                ret = dto.uuid
             } else {
                 log.info(
                     "Behandler ikke inntektsmelding {} da den har status: {}",
@@ -90,7 +90,7 @@ class InntektsmeldingBehandler(
         } finally {
             consumerLock.unlock()
         }
-        return null
+        return ret
     }
 
     private fun tellMetrikker(inntektsmelding: Inntektsmelding) {

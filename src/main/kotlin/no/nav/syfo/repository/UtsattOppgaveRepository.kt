@@ -8,13 +8,18 @@ import java.util.*
 import javax.sql.DataSource
 
 
-interface UtsattOppgaveRepository  {
+interface UtsattOppgaveRepository {
     fun findByInntektsmeldingId(inntektsmeldingId: String): UtsattOppgaveEntitet?
-    fun findUtsattOppgaveEntitetByTimeoutBeforeAndTilstandEquals(timeout: LocalDateTime, tilstand: Tilstand): List<UtsattOppgaveEntitet>
-    fun lagreInnteksmelding(innteksmelding : UtsattOppgaveEntitet): UtsattOppgaveEntitet
+    fun findUtsattOppgaveEntitetByTimeoutBeforeAndTilstandEquals(
+        timeout: LocalDateTime,
+        tilstand: Tilstand
+    ): List<UtsattOppgaveEntitet>
+
+    fun lagreInnteksmelding(innteksmelding: UtsattOppgaveEntitet): UtsattOppgaveEntitet
     fun deleteAll()
     fun findAll(): List<UtsattOppgaveEntitet>
 }
+
 class UtsattOppgaveRepositoryMockk : UtsattOppgaveRepository {
     override fun findByInntektsmeldingId(inntektsmeldingId: String): UtsattOppgaveEntitet? {
         return getRandonUtsattOppgaveEntitet(inntektsmeldingId = inntektsmeldingId)
@@ -24,11 +29,11 @@ class UtsattOppgaveRepositoryMockk : UtsattOppgaveRepository {
         timeout: LocalDateTime,
         tilstand: Tilstand
     ): List<UtsattOppgaveEntitet> {
-      return listOf(
-          getRandonUtsattOppgaveEntitet(timeout =  timeout,tilstand = tilstand),
-          getRandonUtsattOppgaveEntitet(timeout =  timeout,tilstand = tilstand),
-          getRandonUtsattOppgaveEntitet(timeout =  timeout,tilstand = tilstand)
-      )
+        return listOf(
+            getRandonUtsattOppgaveEntitet(timeout = timeout, tilstand = tilstand),
+            getRandonUtsattOppgaveEntitet(timeout = timeout, tilstand = tilstand),
+            getRandonUtsattOppgaveEntitet(timeout = timeout, tilstand = tilstand)
+        )
     }
 
     override fun lagreInnteksmelding(innteksmelding: UtsattOppgaveEntitet): UtsattOppgaveEntitet {
@@ -47,7 +52,7 @@ class UtsattOppgaveRepositoryMockk : UtsattOppgaveRepository {
     }
 }
 
-class UtsattOppgaveRepositoryImp(  val ds: DataSource) : UtsattOppgaveRepository {
+class UtsattOppgaveRepositoryImp(val ds: DataSource) : UtsattOppgaveRepository {
     override fun findByInntektsmeldingId(inntektsmeldingId: String): UtsattOppgaveEntitet? {
         val findByInnteksmeldingId = "SELECT * FROM UTSATT_OPPGAVE WHERE INNTEKTSMELDING_ID = ?;"
         val inntektsmeldinger = ArrayList<UtsattOppgaveEntitet>()
@@ -71,8 +76,9 @@ class UtsattOppgaveRepositoryImp(  val ds: DataSource) : UtsattOppgaveRepository
         }
     }
 
-    override fun lagreInnteksmelding(utsattOppgave : UtsattOppgaveEntitet): UtsattOppgaveEntitet {
-        val insertStatement = """INSERT INTO UTSATT_OPPGAVE (OPPGAVE_ID, INNTEKTSMELDING_ID, ARKIVREFERANSE, FNR, AKTOR_ID, SAK_ID, JOURNALPOST_ID, TIMEOUT, TILSTAND)
+    override fun lagreInnteksmelding(utsattOppgave: UtsattOppgaveEntitet): UtsattOppgaveEntitet {
+        val insertStatement =
+            """INSERT INTO UTSATT_OPPGAVE (OPPGAVE_ID, INNTEKTSMELDING_ID, ARKIVREFERANSE, FNR, AKTOR_ID, SAK_ID, JOURNALPOST_ID, TIMEOUT, TILSTAND)
         VALUES (${utsattOppgave.id}, ${utsattOppgave.inntektsmeldingId}, ${utsattOppgave.arkivreferanse}, ${utsattOppgave.fnr}, ${utsattOppgave.aktørId}, ${utsattOppgave.sakId}, ${utsattOppgave.journalpostId}, ${utsattOppgave.timeout}, ${utsattOppgave.tilstand.name})
         RETURNING *;""".trimMargin()
         val utsattOppgaver = ArrayList<UtsattOppgaveEntitet>()
@@ -98,18 +104,24 @@ class UtsattOppgaveRepositoryImp(  val ds: DataSource) : UtsattOppgaveRepository
         }
     }
 
-    private fun resultLoop(res : ResultSet, returnValue :ArrayList<UtsattOppgaveEntitet>): ArrayList<UtsattOppgaveEntitet> {
-        while(res.next()) {
-            returnValue.add(UtsattOppgaveEntitet(
-                id = res.getInt("OPPGAVE_ID"),
-                inntektsmeldingId = res.getString("INNTEKTSMELDING_ID"),
-                arkivreferanse = res.getString("ARKIVREFERANSE"),
-                fnr = res.getString("FNR"),
-                aktørId = res.getString("AKTOR_ID"),
-                sakId = res.getString("SAK_ID"),
-                journalpostId = res.getString("JOURNALPOST_ID"),
-                timeout = LocalDateTime.parse(res.getString("TIMEOUT")),
-                tilstand = Tilstand.valueOf(res.getString("TILSTAND"))))
+    private fun resultLoop(
+        res: ResultSet,
+        returnValue: ArrayList<UtsattOppgaveEntitet>
+    ): ArrayList<UtsattOppgaveEntitet> {
+        while (res.next()) {
+            returnValue.add(
+                UtsattOppgaveEntitet(
+                    id = res.getInt("OPPGAVE_ID"),
+                    inntektsmeldingId = res.getString("INNTEKTSMELDING_ID"),
+                    arkivreferanse = res.getString("ARKIVREFERANSE"),
+                    fnr = res.getString("FNR"),
+                    aktørId = res.getString("AKTOR_ID"),
+                    sakId = res.getString("SAK_ID"),
+                    journalpostId = res.getString("JOURNALPOST_ID"),
+                    timeout = LocalDateTime.parse(res.getString("TIMEOUT")),
+                    tilstand = Tilstand.valueOf(res.getString("TILSTAND"))
+                )
+            )
         }
 
         return returnValue

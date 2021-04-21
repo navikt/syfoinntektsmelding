@@ -1,4 +1,4 @@
-package no.nav.syfo.api
+package no.nav.syfo.web.api
 
 import io.ktor.application.*
 import io.ktor.http.*

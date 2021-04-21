@@ -32,7 +32,7 @@ class FinnAlleUtgaandeOppgaverProcessor(
                 try {
                     opprettOppgaveIGosys(it)
                     it.tilstand = Tilstand.Opprettet
-                    lagre(it)
+                    utsattOppgaveDAO.lagre(it)
                     log.info("Oppgave opprettet i gosys for inntektsmelding: ${it.inntektsmeldingId}")
                 } catch (e: OpprettOppgaveException) {
                     log.error("feil ved opprettelse av oppgave i gosys. InntektsmeldingId: ${it.inntektsmeldingId}")
@@ -58,13 +58,6 @@ class FinnAlleUtgaandeOppgaverProcessor(
         utsattOppgaveDAO.lagre(utsattOppgave);
     }
 
-    fun lagre(oppgave: UtsattOppgaveEntitet) {
-        utsattOppgaveDAO.lagre(oppgave)
-    }
-
-    fun opprett(utsattOppgave: UtsattOppgaveEntitet) {
-        utsattOppgaveDAO.opprett(utsattOppgave)
-    }
     data class JobbData(val id: UUID)
 
 }

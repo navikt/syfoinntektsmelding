@@ -78,7 +78,8 @@ fun Module.mockExternalDependecies() {
             ): OpprettOppgaveResponse = OpprettOppgaveResponse(1234)
         }
     } bind OppgaveKlient::class
-    single { InntektsmeldingService(InntektsmeldingRepositoryMock(), get(), get()) } bind InntektsmeldingRepository::class
+    single { InntektsmeldingService(InntektsmeldingRepositoryMock(), get()) } bind InntektsmeldingRepository::class
+
 }
 
 class MockAltinnRepo(om: ObjectMapper) : AltinnOrganisationsRepository {

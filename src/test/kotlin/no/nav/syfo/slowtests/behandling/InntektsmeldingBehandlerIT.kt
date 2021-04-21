@@ -1,47 +1,53 @@
 package no.nav.syfo.slowtests.behandling
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import io.ktor.util.*
 import io.mockk.*
 import kotlinx.coroutines.runBlocking
+import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.syfo.behandling.InntektsmeldingBehandler
 import no.nav.syfo.consumer.rest.OppgaveClient
 import no.nav.syfo.consumer.rest.SakClient
 import no.nav.syfo.consumer.rest.SakResponse
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
-import no.nav.syfo.consumer.ws.*
+import no.nav.syfo.consumer.ws.BehandleInngaaendeJournalConsumer
+import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
+import no.nav.syfo.consumer.ws.InngaaendeJournalConsumer
+import no.nav.syfo.consumer.ws.JournalConsumer
 import no.nav.syfo.domain.GeografiskTilknytningData
 import no.nav.syfo.domain.InngaaendeJournal
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
 import no.nav.syfo.producer.InntektsmeldingProducer
+import no.nav.syfo.repository.InntektsmeldingRepository
+import no.nav.syfo.repository.InntektsmeldingRepositoryMock
+import no.nav.syfo.repository.InntektsmeldingService
 import no.nav.syfo.service.EksisterendeSakService
 import no.nav.syfo.service.JournalpostService
 import no.nav.syfo.service.SaksbehandlingService
+import no.nav.syfo.syfoinnteksmelding.consumer.ws.JournalConsumerTest
 import no.nav.syfo.util.Metrikk
+import no.nav.syfo.utsattoppgave.FeiletUtsattOppgaveMeldingProsessor
 import no.nav.syfo.utsattoppgave.UtsattOppgaveDAO
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import no.nav.tjeneste.virksomhet.journal.v2.binding.JournalV2
 import no.nav.tjeneste.virksomhet.journal.v2.meldinger.HentDokumentResponse
 import org.assertj.core.api.Assertions
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.BeforeEach
-import no.nav.syfo.slowtests.SystemTestBase
-import no.nav.syfo.repository.InntektsmeldingRepository
-import no.nav.syfo.repository.InntektsmeldingService
-import no.nav.syfo.syfoinnteksmelding.consumer.ws.JournalConsumerTest
-import testutil.*
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
+import testutil.grunnleggendeInntektsmelding
 import java.time.LocalDate
 import java.time.ZonedDateTime
-import java.util.*
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.atomic.AtomicInteger
 
 
 /*@TestPropertySource("classpath:application-test.properties")
 @WebAppConfiguration*/
-class InntektsmeldingBehandlerIT : SystemTestBase() {
+class InntektsmeldingBehandlerIT { //: SystemTestBase() {
 
-
+    var objectMapper = ObjectMapper()
     var journalV2 = mockk<JournalV2>(relaxed = true)
     var aktorConsumer = mockk<AktorConsumer>(relaxed = true)
     var inngaaendeJournalConsumer = mockk<InngaaendeJournalConsumer>(relaxed = true)
@@ -56,7 +62,8 @@ class InntektsmeldingBehandlerIT : SystemTestBase() {
 
 
     var inntektsmeldingRepository = mockk<InntektsmeldingRepository>(relaxed = true)
-    var inntektsmeldingService = mockk<InntektsmeldingService>(relaxed = true)
+    var mockInnteksmeldingRepo = InntektsmeldingRepositoryMock()
+    var inntektsmeldingService = InntektsmeldingService(mockInnteksmeldingRepo, objectMapper)  //mockk<InntektsmeldingService>(relaxed = true)
 
     lateinit var utsattOppgaveDAO: UtsattOppgaveDAO
     var utsattOppgaveService = mockk<UtsattOppgaveService>(relaxed = true)
@@ -66,6 +73,7 @@ class InntektsmeldingBehandlerIT : SystemTestBase() {
     var journalConsumer = mockk<JournalConsumer>(relaxed = true)
     var saksbehandlingService = mockk<SaksbehandlingService>(relaxed = true)
     var inntektsmeldingBehandler = mockk<InntektsmeldingBehandler>(relaxed = true)
+    var feiletUtsattOppgaveMeldingProsessor = mockk<FeiletUtsattOppgaveMeldingProsessor>(relaxed = true)
 
     @BeforeEach
     fun setup() {
@@ -124,6 +132,7 @@ class InntektsmeldingBehandlerIT : SystemTestBase() {
             GeografiskTilknytningData(geografiskTilknytning = "tilknytning", diskresjonskode = "")
     }
 
+    @OptIn(KtorExperimentalAPI::class)
     @Test
     fun `Gjenbruker saksId hvis vi får to overlappende inntektsmeldinger`() {
         every { aktorConsumer.getAktorId(any()) } returnsMany listOf("aktorId_for_1", "aktorId_for_1")
@@ -137,14 +146,6 @@ class InntektsmeldingBehandlerIT : SystemTestBase() {
         )
         inntektsmeldingBehandler.behandle("arkivId1", "AR-1")
         inntektsmeldingBehandler.behandle("arkivId2", "AR-2")
-
-        val innteksmeldingOne = grunnleggendeInntektsmelding.copy(sakId = "988")
-        val innteksmeldingTwo = innteksmeldingOne//grunnleggendeInntektsmelding.copy(sakId = "988")
-
-        every { inntektsmeldingService.finnBehandledeInntektsmeldinger(any()) } returns listOf(
-            innteksmeldingOne,
-            innteksmeldingOne
-        )
 
         val inntektsmeldingMetas = inntektsmeldingService.finnBehandledeInntektsmeldinger("aktorId_for_1")
         Assertions.assertThat(inntektsmeldingMetas.size).isEqualTo(2)
@@ -171,14 +172,6 @@ class InntektsmeldingBehandlerIT : SystemTestBase() {
 
         inntektsmeldingBehandler.behandle("arkivId3", "AR-3")
         inntektsmeldingBehandler.behandle("arkivId4", "AR-4")
-
-        val innteksmeldingOne = grunnleggendeInntektsmelding.copy(sakId = "987")
-        val innteksmeldingTwo = grunnleggendeInntektsmelding.copy(sakId = "988")
-
-        every { inntektsmeldingService.finnBehandledeInntektsmeldinger(any()) } returns listOf(
-            innteksmeldingOne,
-            innteksmeldingTwo
-        )
 
         val inntektsmeldingMetas = inntektsmeldingService.finnBehandledeInntektsmeldinger("778")
         Assertions.assertThat(inntektsmeldingMetas.size).isEqualTo(2)
@@ -211,13 +204,6 @@ class InntektsmeldingBehandlerIT : SystemTestBase() {
         inntektsmeldingBehandler.behandle("arkivId5", "AR-5")
         inntektsmeldingBehandler.behandle("arkivId6", "AR-6")
 
-        val innteksmeldingOne = grunnleggendeInntektsmelding.copy(sakId = "987")
-        val innteksmeldingTwo = grunnleggendeInntektsmelding.copy(sakId = "syfosak")
-
-        every { inntektsmeldingService.finnBehandledeInntektsmeldinger(any()) } returns listOf(
-            innteksmeldingOne,
-            innteksmeldingTwo
-        )
         val inntektsmeldingMetas = inntektsmeldingService.finnBehandledeInntektsmeldinger("999")
         Assertions.assertThat(inntektsmeldingMetas.size).isEqualTo(2)
         Assertions.assertThat(inntektsmeldingMetas[0].sakId).isNotEqualTo(inntektsmeldingMetas[1].sakId)
@@ -234,8 +220,6 @@ class InntektsmeldingBehandlerIT : SystemTestBase() {
     fun `Mottar inntektsmelding uten arbeidsgiverperioder`() {
         every { aktorConsumer.getAktorId(any()) } returnsMany listOf("aktorId_for_7", "aktorId_for_7")
         every { inngaaendeJournalConsumer.hentDokumentId("arkivId7") } returns inngaaendeJournal("arkivId7")
-        val innteksmeldingOne = grunnleggendeInntektsmelding.copy(arbeidsgiverperioder = emptyList())
-        every { inntektsmeldingService.finnBehandledeInntektsmeldinger(any()) } returns listOf(innteksmeldingOne)
 
         val dokumentResponse = lagDokumentRespons()
         every { journalV2.hentDokument(any()) } returns dokumentResponse.response
@@ -248,26 +232,6 @@ class InntektsmeldingBehandlerIT : SystemTestBase() {
     @Test
     fun `Mottar inntektsmelding med flere perioder`() {
         every { aktorConsumer.getAktorId(any()) } returnsMany listOf("aktorId_for_8", "aktorId_for_8")
-        val innteksmeldingOne = grunnleggendeInntektsmelding.copy(
-            arbeidsgiverperioder =
-            listOf(
-                Periode(
-                    LocalDate.of(2019, 1, 1),
-                    LocalDate.of(2019, 1, 12)
-                ),
-                Periode(
-                    LocalDate.of(2019, 1, 12),
-                    LocalDate.of(2019, 1, 14)
-                )
-            )
-        )
-        val innteksmeldingTwo = grunnleggendeInntektsmelding.copy()
-
-        every { inntektsmeldingService.finnBehandledeInntektsmeldinger(any()) } returns listOf(
-            innteksmeldingOne,
-            innteksmeldingTwo
-        )
-
         val dokumentResponse = lagDokumentRespons(
             LocalDate.of(2019, 1, 1),
             LocalDate.of(2019, 1, 12),
@@ -296,16 +260,6 @@ class InntektsmeldingBehandlerIT : SystemTestBase() {
         dokumentResponse.response.dokument = JournalConsumerTest.inntektsmeldingArbeidsgiverPrivat().toByteArray()
         every { journalV2.hentDokument(any()) } returns dokumentResponse.response
         every { inngaaendeJournalConsumer.hentDokumentId("arkivId_9") } returns inngaaendeJournal("arkivId_9")
-        val innteksmeldingOne = grunnleggendeInntektsmelding.copy(
-            arbeidsgiverPrivatFnr = "arbeidsgiverPrivat",
-            arbeidsgiverOrgnummer = null, aktorId = "aktorId_for_9"
-        )
-        val innteksmeldingTwo = grunnleggendeInntektsmelding.copy()
-
-        every { inntektsmeldingService.finnBehandledeInntektsmeldinger(any()) } returns listOf(
-            innteksmeldingOne,
-            innteksmeldingTwo
-        )
 
         inntektsmeldingBehandler.behandle("arkivId_9", "AR-9")
 
@@ -317,7 +271,6 @@ class InntektsmeldingBehandlerIT : SystemTestBase() {
     }
 
     @Test
-    @Disabled
     fun `Behandler inntektsmelding som en sak ved lik periode`() {
         val dokumentResponse = no.nav.tjeneste.virksomhet.journal.v2.HentDokumentResponse()
         dokumentResponse.response = HentDokumentResponse()

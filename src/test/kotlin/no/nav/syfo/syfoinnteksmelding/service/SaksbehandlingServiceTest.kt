@@ -112,7 +112,7 @@ class SaksbehandlingServiceTest {
     }
 
     @KtorExperimentalAPI
-    //@Disabled
+    @Disabled
     @Test
     fun test() {
         every { aktoridConsumer.getAktorId(any()) } throws HentAktoerIdForIdentPersonIkkeFunnet()

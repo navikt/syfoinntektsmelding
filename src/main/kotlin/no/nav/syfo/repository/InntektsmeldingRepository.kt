@@ -16,16 +16,13 @@ interface InntektsmeldingRepository {
 }
 
 class InntektsmeldingRepositoryMock : InntektsmeldingRepository {
+    private val mockrepo = mutableListOf<InntektsmeldingEntitet>()
     override fun findByAktorId(aktoerId: String): List<InntektsmeldingEntitet> {
-        return listOf(getRandonInntektsmeldingEntitet(aktorId = aktoerId))
+        return mockrepo.filter { it.aktorId == aktoerId }
     }
 
     override fun findFirst100ByBehandletBefore(førDato: LocalDateTime): List<InntektsmeldingEntitet> {
-        return listOf(
-            getRandonInntektsmeldingEntitet( behandlet = LocalDateTime.parse(getRandonDateTime(førDato))),
-            getRandonInntektsmeldingEntitet( behandlet = LocalDateTime.parse(getRandonDateTime(førDato))),
-            getRandonInntektsmeldingEntitet( behandlet = LocalDateTime.parse(getRandonDateTime(førDato)))
-        )
+        return mockrepo.sortedBy { it.behandlet?.isBefore(førDato)  }.take(100)
     }
 
     override fun deleteByBehandletBefore(førDato: LocalDateTime): Long {
@@ -33,18 +30,14 @@ class InntektsmeldingRepositoryMock : InntektsmeldingRepository {
     }
 
     override fun lagreInnteksmelding(innteksmelding: InntektsmeldingEntitet): InntektsmeldingEntitet {
+        mockrepo.add(innteksmelding)
         return innteksmelding
     }
 
     override fun deleteAll() {}
 
     override fun findAll(): List<InntektsmeldingEntitet> {
-        return listOf(
-            getRandonInntektsmeldingEntitet(),
-            getRandonInntektsmeldingEntitet(),
-            getRandonInntektsmeldingEntitet(),
-            getRandonInntektsmeldingEntitet()
-        )
+        return mockrepo
     }
 }
 
