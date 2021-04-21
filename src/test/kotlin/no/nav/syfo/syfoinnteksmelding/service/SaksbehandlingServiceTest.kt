@@ -1,6 +1,5 @@
 package no.nav.syfo.syfoinnteksmelding.service
 
-import io.ktor.util.*
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
@@ -18,10 +17,9 @@ import no.nav.syfo.repository.InntektsmeldingService
 import no.nav.syfo.service.EksisterendeSakService
 import no.nav.syfo.service.SaksbehandlingService
 import no.nav.syfo.util.Metrikk
-import no.nav.syfo.utsattoppgave.UtsattOppgaveService
-import no.nav.tjeneste.virksomhet.aktoer.v2.HentAktoerIdForIdentPersonIkkeFunnet
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZonedDateTime
@@ -108,16 +106,6 @@ class SaksbehandlingServiceTest {
 
         runBlocking {
             coVerify(exactly = 0) { oppgaveClient.opprettOppgave(any(), any(), any(), any(), any()) }
-        }
-    }
-
-    @KtorExperimentalAPI
-    @Disabled
-    @Test
-    fun test() {
-        every { aktoridConsumer.getAktorId(any()) } throws HentAktoerIdForIdentPersonIkkeFunnet()
-        Assertions.assertThrows(HentAktoerIdForIdentPersonIkkeFunnet::class.java) {
-            saksbehandlingService.behandleInntektsmelding(lagInntektsmelding(), "aktorId", "")
         }
     }
 
