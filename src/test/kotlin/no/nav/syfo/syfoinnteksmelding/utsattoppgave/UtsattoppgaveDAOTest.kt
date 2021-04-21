@@ -1,19 +1,15 @@
 package no.nav.syfo.utsattoppgave
-/*
+
 
 import junit.framework.Assert.assertEquals
 import junit.framework.Assert.assertNotNull
-import junit.framework.Assert.assertNull
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.dto.UtsattOppgaveEntitet
 import no.nav.syfo.repository.UtsattOppgaveRepository
-import org.junit.Before
-import org.junit.BeforeClass
-import org.junit.Test
-
-import org.springframework.beans.factory.annotation.Autowired
-
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
+import no.nav.syfo.repository.UtsattOppgaveRepositoryMockk
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 import java.time.LocalDateTime.now
 import java.util.UUID
@@ -21,25 +17,12 @@ import java.util.UUID
 
 open class UtsattOppgaveDAOTest {
 
-    @Autowired
-    private lateinit var repository: UtsattOppgaveRepository
-
-    @Autowired
-    private lateinit var entityManager: TestEntityManager
+    private var repository: UtsattOppgaveRepository = UtsattOppgaveRepositoryMockk()
 
     private lateinit var utsattOppgaveDAO: UtsattOppgaveDAO
 
-    companion object {
-        @BeforeClass
-        @JvmStatic
-        fun beforeClass() {
-            System.setProperty("SECURITYTOKENSERVICE_URL", "joda")
-            System.setProperty("SRVSYFOINNTEKTSMELDING_USERNAME", "joda")
-            System.setProperty("SRVSYFOINNTEKTSMELDING_PASSWORD", "joda")
-        }
-    }
 
-    @Before
+    @BeforeEach
     fun setup() {
         utsattOppgaveDAO = UtsattOppgaveDAO(repository)
     }
@@ -85,7 +68,7 @@ open class UtsattOppgaveDAOTest {
     @Test
     fun `finner ikke oppgave på manglende inntektsmelding`() {
         val maybeOppgave = utsattOppgaveDAO.finn(UUID.randomUUID().toString())
-        assertNull(maybeOppgave)
+        Assertions.assertNull(maybeOppgave)
     }
 
     fun oppgave() = UtsattOppgaveEntitet(
@@ -99,4 +82,4 @@ open class UtsattOppgaveDAOTest {
         tilstand = Tilstand.Utsatt
     )
 }
-*/
+

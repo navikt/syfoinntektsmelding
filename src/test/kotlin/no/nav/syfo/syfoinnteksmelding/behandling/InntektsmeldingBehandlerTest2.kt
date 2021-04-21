@@ -1,10 +1,9 @@
-package no.nav.syfo.slowtests.behandling
+package no.nav.syfo.syfoinnteksmelding.behandling
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.ktor.util.*
 import io.mockk.*
 import kotlinx.coroutines.runBlocking
-import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.syfo.behandling.InntektsmeldingBehandler
 import no.nav.syfo.consumer.rest.OppgaveClient
 import no.nav.syfo.consumer.rest.SakClient
@@ -34,18 +33,14 @@ import no.nav.tjeneste.virksomhet.journal.v2.binding.JournalV2
 import no.nav.tjeneste.virksomhet.journal.v2.meldinger.HentDokumentResponse
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import testutil.grunnleggendeInntektsmelding
 import java.time.LocalDate
 import java.time.ZonedDateTime
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.atomic.AtomicInteger
 
 
-/*@TestPropertySource("classpath:application-test.properties")
-@WebAppConfiguration*/
-class InntektsmeldingBehandlerIT { //: SystemTestBase() {
+class InntektsmeldingBehandlerTest2 {
 
     var objectMapper = ObjectMapper()
     var journalV2 = mockk<JournalV2>(relaxed = true)

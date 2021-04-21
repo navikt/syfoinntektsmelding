@@ -1,40 +1,20 @@
-package no.nav.syfo.slowtests.repository
-/*
+package no.nav.syfo.syfoinnteksmelding.repository
 
-import junit.framework.Assert.assertEquals
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.dto.UtsattOppgaveEntitet
-import org.junit.jupiter.api.BeforeAll
+import no.nav.syfo.repository.UtsattOppgaveRepositoryMockk
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.runner.RunWith
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
-import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.TestPropertySource
-import org.springframework.test.context.junit4.SpringRunner
 import java.time.LocalDateTime
 import java.time.LocalDateTime.now
 import java.util.UUID
-import javax.transaction.Transactional
 
-@RunWith(SpringRunner::class)
-@ActiveProfiles("test")
-@Transactional
-@DataJpaTest
-@TestPropertySource(locations = ["classpath:application-test.properties"])
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@EnableAutoConfiguration(exclude = arrayOf((AutoConfigureTestDatabase::class)))
 open class UtsattOppgaveRepositoryTest {
 
-    @Autowired
-    private lateinit var entityManager: TestEntityManager
+    private var repository = UtsattOppgaveRepositoryMockk()
 
-    private lateinit var repository: UtsattOppgaveRepository
-
-    @BeforeAll
+    @BeforeEach
     fun setup() {
         repository.deleteAll()
     }
@@ -58,7 +38,7 @@ open class UtsattOppgaveRepositoryTest {
         val oppgaver =
             repository.findUtsattOppgaveEntitetByTimeoutBeforeAndTilstandEquals(now(), Tilstand.Utsatt)
 
-        assertEquals(1, oppgaver.size)
+       Assertions.assertEquals(1, oppgaver.size)
     }
 
     @Test
@@ -96,7 +76,7 @@ open class UtsattOppgaveRepositoryTest {
             val oppgaver =
         repository.findUtsattOppgaveEntitetByTimeoutBeforeAndTilstandEquals(now(), Tilstand.Utsatt)
 
-        assertEquals(1, oppgaver.size)
+        Assertions.assertEquals(1, oppgaver.size)
     }
 
     private fun enOppgaveEntitet(
@@ -114,4 +94,4 @@ open class UtsattOppgaveRepositoryTest {
         tilstand = tilstand
     )
 }
-*/
+

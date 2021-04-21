@@ -1,54 +1,23 @@
-package no.nav.syfo.slowtests.repository
-/*
+package no.nav.syfo.syfoinnteksmelding.repository
 
 import no.nav.inntektsmelding.kontrakt.serde.JacksonJsonConfig
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
 import no.nav.syfo.domain.inntektsmelding.*
 import no.nav.syfo.dto.InntektsmeldingEntitet
+import no.nav.syfo.repository.InntektsmeldingRepositoryMock
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Before
-import org.junit.BeforeClass
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
-import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.TestPropertySource
-import org.springframework.test.context.junit4.SpringRunner
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
-import javax.transaction.Transactional
 
-@RunWith(SpringRunner::class)
-@ActiveProfiles("test")
-@Transactional
-@DataJpaTest
-@TestPropertySource(locations = ["classpath:application-test.properties"])
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@EnableAutoConfiguration(exclude = arrayOf((AutoConfigureTestDatabase::class)))
 open class InntektsmeldingRepositoryTest {
-    @Autowired
-    private lateinit var entityManager: TestEntityManager
 
-    @Autowired
-    private lateinit var repository: InntektsmeldingRepository
+    private var repository = InntektsmeldingRepositoryMock()
 
-    companion object {
-        @BeforeClass
-        @JvmStatic
-        fun beforeClass() {
-            System.setProperty("SECURITYTOKENSERVICE_URL", "joda")
-            System.setProperty("SRVSYFOINNTEKTSMELDING_USERNAME", "joda")
-            System.setProperty("SRVSYFOINNTEKTSMELDING_PASSWORD", "joda")
-        }
-    }
-
-    @Before
+    @BeforeEach
     fun setup() {
         repository.deleteAll()
     }
@@ -65,7 +34,7 @@ open class InntektsmeldingRepositoryTest {
             aktorId = "aktorId1"
         )
         inntektsmelding.leggtilArbeidsgiverperiode(fom = LocalDate.of(2019, 10, 5), tom = LocalDate.of(2019, 10, 25))
-        entityManager.persist<Any>(inntektsmelding)
+        repository.lagreInnteksmelding(inntektsmelding)
         val inntektsmeldinger = repository.findByAktorId("aktorId1")
         assertThat(inntektsmeldinger.size).isEqualTo(1)
         val i = inntektsmeldinger[0]
@@ -96,7 +65,7 @@ open class InntektsmeldingRepositoryTest {
         )
         inntektsmelding.leggtilArbeidsgiverperiode(fom = LocalDate.of(2019, 10, 5), tom = LocalDate.of(2019, 10, 25))
         inntektsmelding.leggtilArbeidsgiverperiode(fom = LocalDate.of(2018, 10, 5), tom = LocalDate.of(2018, 10, 25))
-        entityManager.persist<Any>(inntektsmelding)
+        repository.lagreInnteksmelding(inntektsmelding)
         val inntektsmeldinger = repository.findByAktorId("aktorId2")
         assertThat(inntektsmeldinger.size).isEqualTo(1)
         val i = inntektsmeldinger[0]
@@ -118,7 +87,7 @@ open class InntektsmeldingRepositoryTest {
             arbeidsgiverPrivat = "arbeidsgiverPrivat",
             aktorId = "aktorId3"
         )
-        entityManager.persist<Any>(inntektsmelding)
+        repository.lagreInnteksmelding(inntektsmelding)
         val inntektsmeldinger = repository.findByAktorId("aktorId3")
         val i = inntektsmeldinger[0]
         assertThat(inntektsmeldinger.size).isEqualTo(1)
@@ -178,7 +147,7 @@ open class InntektsmeldingRepositoryTest {
             aktorId = "aktorId-repo-test",
             data = mapper.writeValueAsString(im)
         )
-        entityManager.persist<Any>(inntektsmelding)
+        repository.lagreInnteksmelding(inntektsmelding)
         val inntektsmeldinger = repository.findByAktorId("aktorId-repo-test")
         val i = inntektsmeldinger[0]
         assertThat(inntektsmeldinger.size).isEqualTo(1)
@@ -205,20 +174,20 @@ open class InntektsmeldingRepositoryTest {
         //Lagre 5 inntektsmeldinger i 2019
         val imMedPeriodeGammel = lagInntektsmelding(LocalDate.of(2019, 12, 31).atStartOfDay())
         imMedPeriodeGammel.leggtilArbeidsgiverperiode(LocalDate.of(2019, 1, 1), LocalDate.of(2019, 2, 1))
-        entityManager.persist<Any>(imMedPeriodeGammel)
-        entityManager.persist<Any>(lagInntektsmelding(LocalDate.of(2019, 12, 30).atStartOfDay()))
-        entityManager.persist<Any>(lagInntektsmelding(LocalDate.of(2019, 11, 25).atStartOfDay()))
-        entityManager.persist<Any>(lagInntektsmelding(LocalDate.of(2019, 10, 14).atStartOfDay()))
-        entityManager.persist<Any>(lagInntektsmelding(LocalDate.of(2019, 3, 15).atStartOfDay()))
+        repository.lagreInnteksmelding(imMedPeriodeGammel)
+        repository.lagreInnteksmelding(lagInntektsmelding(LocalDate.of(2019, 12, 30).atStartOfDay()))
+        repository.lagreInnteksmelding(lagInntektsmelding(LocalDate.of(2019, 11, 25).atStartOfDay()))
+        repository.lagreInnteksmelding(lagInntektsmelding(LocalDate.of(2019, 10, 14).atStartOfDay()))
+        repository.lagreInnteksmelding(lagInntektsmelding(LocalDate.of(2019, 3, 15).atStartOfDay()))
 
         //Lagre 5 inntektsmeldinger i 2020
         val imMedPeriodeNy = lagInntektsmelding(LocalDate.of(2020, 1, 1).atStartOfDay())
         imMedPeriodeNy.leggtilArbeidsgiverperiode(LocalDate.of(2019, 1, 1), LocalDate.of(2019, 2, 1))
-        entityManager.persist<Any>(imMedPeriodeNy)
-        entityManager.persist<Any>(lagInntektsmelding(LocalDate.of(2020, 1, 5).atStartOfDay()))
-        entityManager.persist<Any>(lagInntektsmelding(LocalDate.of(2020, 2, 25).atStartOfDay()))
-        entityManager.persist<Any>(lagInntektsmelding(LocalDate.of(2020, 4, 14).atStartOfDay()))
-        entityManager.persist<Any>(lagInntektsmelding(LocalDate.of(2020, 5, 15).atStartOfDay()))
+        repository.lagreInnteksmelding(imMedPeriodeNy)
+        repository.lagreInnteksmelding(lagInntektsmelding(LocalDate.of(2020, 1, 5).atStartOfDay()))
+        repository.lagreInnteksmelding(lagInntektsmelding(LocalDate.of(2020, 2, 25).atStartOfDay()))
+        repository.lagreInnteksmelding(lagInntektsmelding(LocalDate.of(2020, 4, 14).atStartOfDay()))
+        repository.lagreInnteksmelding(lagInntektsmelding(LocalDate.of(2020, 5, 15).atStartOfDay()))
 
         //10 tilsammen
         assertThat(repository.findAll().size).isEqualTo(10)
@@ -244,4 +213,4 @@ open class InntektsmeldingRepositoryTest {
     }
 
 }
-*/
+

@@ -16,17 +16,19 @@ interface InntektsmeldingRepository {
 }
 
 class InntektsmeldingRepositoryMock : InntektsmeldingRepository {
-    private val mockrepo = mutableListOf<InntektsmeldingEntitet>()
+    private val mockrepo = mutableSetOf<InntektsmeldingEntitet>()
     override fun findByAktorId(aktoerId: String): List<InntektsmeldingEntitet> {
         return mockrepo.filter { it.aktorId == aktoerId }
     }
 
     override fun findFirst100ByBehandletBefore(førDato: LocalDateTime): List<InntektsmeldingEntitet> {
-        return mockrepo.sortedBy { it.behandlet?.isBefore(førDato)  }.take(100)
+        return mockrepo.filter { it.behandlet!!.isBefore(førDato)  }.take(100)
     }
 
     override fun deleteByBehandletBefore(førDato: LocalDateTime): Long {
-        return 1L
+        mockrepo.filter { it.behandlet!!.isBefore(førDato) }
+            .forEach { mockrepo.remove(it)}
+        return (mockrepo.size).toLong()
     }
 
     override fun lagreInnteksmelding(innteksmelding: InntektsmeldingEntitet): InntektsmeldingEntitet {
@@ -37,7 +39,7 @@ class InntektsmeldingRepositoryMock : InntektsmeldingRepository {
     override fun deleteAll() {}
 
     override fun findAll(): List<InntektsmeldingEntitet> {
-        return mockrepo
+        return mockrepo.toList()
     }
 }
 

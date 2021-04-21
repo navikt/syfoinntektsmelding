@@ -21,34 +21,30 @@ interface UtsattOppgaveRepository {
 }
 
 class UtsattOppgaveRepositoryMockk : UtsattOppgaveRepository {
+    private val mockrepo = mutableSetOf<UtsattOppgaveEntitet>()
+
     override fun findByInntektsmeldingId(inntektsmeldingId: String): UtsattOppgaveEntitet? {
-        return getRandonUtsattOppgaveEntitet(inntektsmeldingId = inntektsmeldingId)
+        return mockrepo.firstOrNull { it.inntektsmeldingId == inntektsmeldingId }
     }
 
     override fun findUtsattOppgaveEntitetByTimeoutBeforeAndTilstandEquals(
         timeout: LocalDateTime,
         tilstand: Tilstand
     ): List<UtsattOppgaveEntitet> {
-        return listOf(
-            getRandonUtsattOppgaveEntitet(timeout = timeout, tilstand = tilstand),
-            getRandonUtsattOppgaveEntitet(timeout = timeout, tilstand = tilstand),
-            getRandonUtsattOppgaveEntitet(timeout = timeout, tilstand = tilstand)
-        )
+        return mockrepo.filter { it.timeout < timeout && it.tilstand == tilstand }
     }
 
     override fun lagreInnteksmelding(innteksmelding: UtsattOppgaveEntitet): UtsattOppgaveEntitet {
+        mockrepo.add(innteksmelding)
         return innteksmelding
     }
 
-    override fun deleteAll() {}
+    override fun deleteAll() {
+        mockrepo.forEach { mockrepo.remove(it)}
+    }
 
     override fun findAll(): List<UtsattOppgaveEntitet> {
-        return listOf(
-            getRandonUtsattOppgaveEntitet(),
-            getRandonUtsattOppgaveEntitet(),
-            getRandonUtsattOppgaveEntitet(),
-            getRandonUtsattOppgaveEntitet()
-        )
+        return mockrepo.toList()
     }
 }
 

@@ -1,47 +1,16 @@
-package no.nav.syfo.slowtests.repository
-
-/*
+package no.nav.syfo.syfoinnteksmelding.repository
 
 import no.nav.syfo.behandling.Feiltype
 import no.nav.syfo.dto.FeiletEntitet
+import no.nav.syfo.repository.FeiletRepository
+import no.nav.syfo.repository.FeiletRepositoryMock
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-//import org.junit.runner.RunWith
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
-import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.TestPropertySource
-import org.springframework.test.context.junit4.SpringRunner
 import java.time.LocalDateTime
-import javax.transaction.Transactional
 
-@RunWith(SpringRunner::class)
-@ActiveProfiles("test")
-@Transactional
-@DataJpaTest
-@TestPropertySource(locations = ["classpath:application-test.properties"])
-@AutoConfigureTestDatabase(replace= AutoConfigureTestDatabase.Replace.NONE)
-@EnableAutoConfiguration(exclude = arrayOf((AutoConfigureTestDatabase::class)))
 open class FeiletRepositoryTest {
-    @Autowired
-    private lateinit var entityManager: TestEntityManager
 
-    @Autowired
-    private lateinit var respository: FeiletRepository
-
-    companion object {
-        @BeforeAll
-        @JvmStatic
-        fun beforeClass() {
-            System.setProperty("SECURITYTOKENSERVICE_URL", "joda")
-            System.setProperty("SRVSYFOINNTEKTSMELDING_USERNAME", "joda")
-            System.setProperty("SRVSYFOINNTEKTSMELDING_PASSWORD", "joda")
-        }
-    }
+    private var respository: FeiletRepository = FeiletRepositoryMock()
 
     val NOW = LocalDateTime.now()
     val DAYS_1 = NOW.minusDays(1)
@@ -51,22 +20,27 @@ open class FeiletRepositoryTest {
     @Test
     fun `Skal finne alle entiteter med arkivReferansen og rette verdier`(){
         val ARKIV_REFERANSE = "ar-123"
-        entityManager.persist<Any>(FeiletEntitet(
+        respository.lagreInnteksmelding(FeiletEntitet(
             arkivReferanse = ARKIV_REFERANSE,
             tidspunkt = DAYS_1,
             feiltype = Feiltype.AKTØR_IKKE_FUNNET
         ))
-        entityManager.persist<Any>(FeiletEntitet(
+        respository.lagreInnteksmelding(FeiletEntitet(
+            arkivReferanse = ARKIV_REFERANSE,
+            tidspunkt = DAYS_1,
+            feiltype = Feiltype.AKTØR_IKKE_FUNNET
+        ))
+        respository.lagreInnteksmelding(FeiletEntitet(
             arkivReferanse = "ar-222",
             tidspunkt = DAYS_1,
             feiltype = Feiltype.JMS
         ))
-        entityManager.persist<Any>(FeiletEntitet(
+        respository.lagreInnteksmelding(FeiletEntitet(
             arkivReferanse = "ar-555",
             tidspunkt = DAYS_1,
             feiltype = Feiltype.USPESIFISERT
         ))
-        entityManager.persist<Any>(FeiletEntitet(
+        respository.lagreInnteksmelding(FeiletEntitet(
             arkivReferanse = ARKIV_REFERANSE,
             tidspunkt = DAYS_8,
             feiltype = Feiltype.BEHANDLENDE_IKKE_FUNNET
@@ -84,12 +58,12 @@ open class FeiletRepositoryTest {
     @Test
     fun `Skal ikke finne entitet dersom arkivReferansen ikke er lagret tidligere`(){
         val ARKIV_REFERANSE = "ar-finnes-ikke"
-        entityManager.persist<Any>(FeiletEntitet(
+        respository.lagreInnteksmelding(FeiletEntitet(
             arkivReferanse = "ar-333",
             tidspunkt = DAYS_8,
             feiltype = Feiltype.BEHANDLENDE_IKKE_FUNNET
         ))
-        entityManager.persist<Any>(FeiletEntitet(
+        respository.lagreInnteksmelding(FeiletEntitet(
             arkivReferanse = "ar-444",
             tidspunkt = DAYS_14,
             feiltype = Feiltype.BEHANDLENDE_IKKE_FUNNET
@@ -100,4 +74,4 @@ open class FeiletRepositoryTest {
 
 
 }
-*/
+

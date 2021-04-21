@@ -13,18 +13,13 @@ interface FeiletRepository {
 }
 
 class FeiletRepositoryMock : FeiletRepository {
+    private val mockrep = mutableSetOf<FeiletEntitet>()
     override fun findByArkivReferanse(arkivReferanse: String): List<FeiletEntitet> {
-        return listOf(
-            FeiletEntitet(
-                id = getRandomNumber(1, 100),
-                arkivReferanse = arkivReferanse,
-                tidspunkt = LocalDateTime.now(),
-                feiltype = getRandomFeiltype()
-            )
-        )
+        return mockrep.filter { it.arkivReferanse == arkivReferanse }
     }
 
     override fun lagreInnteksmelding(utsattOppgave: FeiletEntitet): FeiletEntitet {
+        mockrep.add(utsattOppgave)
         return utsattOppgave
     }
 }
