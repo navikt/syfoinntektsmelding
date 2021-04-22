@@ -30,7 +30,7 @@ class JoarkInntektsmeldingHendelseProsessor(
     private val feiletService: FeiletService,
     private val oppgaveClient: OppgaveClient): BakgrunnsjobbProsesserer {
 
-    val log = LoggerFactory.getLogger(JoarkInntektsmeldingHendelseProsessor::class.java)
+    val log = LoggerFactory.getLogger(JoarkInntektsmeldingHendelseProsessor::class.java)!!
     companion object {
         val JOB_TYPE = "joark-ny-inntektsmelding"
     }

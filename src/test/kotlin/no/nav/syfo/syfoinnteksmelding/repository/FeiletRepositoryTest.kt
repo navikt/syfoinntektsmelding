@@ -12,10 +12,10 @@ open class FeiletRepositoryTest {
 
     private var respository: FeiletRepository = FeiletRepositoryMock()
 
-    val NOW = LocalDateTime.now()
-    val DAYS_1 = NOW.minusDays(1)
-    val DAYS_8 = NOW.minusDays(8)
-    val DAYS_14 = NOW.minusDays(14)
+    val NOW: LocalDateTime = LocalDateTime.now()
+    val DAYS_1: LocalDateTime = NOW.minusDays(1)
+    val DAYS_8: LocalDateTime = NOW.minusDays(8)
+    val DAYS_14: LocalDateTime = NOW.minusDays(14)
 
     @Test
     fun `Skal finne alle entiteter med arkivReferansen og rette verdier`(){

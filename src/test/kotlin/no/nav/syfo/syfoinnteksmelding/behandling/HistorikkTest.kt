@@ -10,10 +10,10 @@ import java.time.LocalDateTime
 
 class HistorikkTest {
 
-    val IDAG = LocalDateTime.of(2019,12,24,18,0)
-    val ELDRE = IDAG.minusDays(8)
-    val IGÅR = IDAG.minusDays(1)
-    val EN_TIME_SIDEN = IDAG.minusDays(0)
+    val IDAG: LocalDateTime = LocalDateTime.of(2019,12,24,18,0)
+    val ELDRE: LocalDateTime = IDAG.minusDays(8)
+    val IGÅR: LocalDateTime = IDAG.minusDays(1)
+    val EN_TIME_SIDEN: LocalDateTime = IDAG.minusDays(0)
 
     @Test
     fun `Skal arkiveres dersom inntektsmeldingen kom inn før 1 uke siden`() {

@@ -6,6 +6,7 @@ import io.ktor.util.*
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbProsesserer
 import no.nav.syfo.util.MDCOperations
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.util.*
 
@@ -17,7 +18,7 @@ class FeiletUtsattOppgaveMeldingProsessor(
     private val om: ObjectMapper,
     val oppgaveService: UtsattOppgaveService):
     BakgrunnsjobbProsesserer {
-    val log = LoggerFactory.getLogger(FeiletUtsattOppgaveMeldingProsessor::class.java)
+    val log: Logger = LoggerFactory.getLogger(FeiletUtsattOppgaveMeldingProsessor::class.java)
     override val type: String get() = JOB_TYPE
     companion object {
         val JOB_TYPE = "feilet-utsatt-oppgave"

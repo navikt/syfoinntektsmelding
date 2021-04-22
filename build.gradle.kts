@@ -129,7 +129,6 @@ dependencies {
     implementation("org.apache.cxf:cxf-core:$cxfVersion")
     implementation("org.apache.cxf:cxf-rt-bindings-soap:$cxfVersion")
     implementation("org.apache.cxf:cxf-rt-databinding-jaxb:$cxfVersion")
-    //runtimeOnly("org.apache.cxf:cxf-spring-boot-starter-jaxws:$cxfVersion")
     runtimeOnly("org.apache.cxf:cxf-rt-features-logging:$cxfVersion")
 
     implementation("org.postgresql:postgresql:42.2.13")

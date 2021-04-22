@@ -18,7 +18,7 @@ class UtsattOppgaveService(
     private val behandlendeEnhetConsumer: BehandlendeEnhetConsumer
 ) {
 
-    val log = LoggerFactory.getLogger(UtsattOppgaveService::class.java)
+    val log = LoggerFactory.getLogger(UtsattOppgaveService::class.java)!!
 
     fun prosesser(oppdatering: OppgaveOppdatering) {
         val oppgave = utsattOppgaveDAO.finn(oppdatering.id.toString())

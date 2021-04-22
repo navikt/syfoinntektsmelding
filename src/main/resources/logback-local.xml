@@ -13,5 +13,4 @@
 	</root>
 
 	<logger name="no.nav.syfo" level="INFO"/>
-	<logger name="org.springframework" level="INFO"/>
 </included>

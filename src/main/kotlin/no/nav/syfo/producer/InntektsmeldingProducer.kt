@@ -51,6 +51,6 @@ class InntektsmeldingProducer(private val bootstrapServers: String,
         kafkaproducer.send(ProducerRecord(topic, inntektsmelding.arbeidstakerFnr, serialiseringInntektsmelding(inntektsmelding)))
     }
 
-    fun serialiseringInntektsmelding(inntektsmelding: Inntektsmelding) =
+    fun serialiseringInntektsmelding(inntektsmelding: Inntektsmelding): String =
         objectMapper.writeValueAsString(inntektsmelding)
 }
