@@ -3,6 +3,7 @@ package no.nav.syfo.prosesser
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbProsesserer
 import no.nav.syfo.repository.InntektsmeldingRepository
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.time.LocalDate
 import java.util.*
@@ -11,7 +12,7 @@ class FjernInnteksmeldingByBehandletProcessor(
     private val repository: InntektsmeldingRepository,
     val lagringstidMåneder: Int
 ) : BakgrunnsjobbProsesserer {
-    val log = LoggerFactory.getLogger(FjernInnteksmeldingByBehandletProcessor::class.java)
+    val log: Logger = LoggerFactory.getLogger(FjernInnteksmeldingByBehandletProcessor::class.java)
     companion object { val JOB_TYPE = "fjern-inntektsmelding-via-behnadling"}
     override val type: String get() = JOB_TYPE
 
