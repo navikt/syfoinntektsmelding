@@ -1,17 +1,14 @@
 package no.nav.syfo.prosesser
 
-import io.ktor.util.*
-import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbProsesserer
 import no.nav.syfo.behandling.OpprettOppgaveException
 import no.nav.syfo.consumer.rest.OppgaveClient
 import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
-import no.nav.syfo.consumer.ws.SYKEPENGER_UTLAND
 import no.nav.syfo.dto.Tilstand
-import no.nav.syfo.dto.UtsattOppgaveEntitet
 import no.nav.syfo.util.MDCOperations
 import no.nav.syfo.utsattoppgave.UtsattOppgaveDAO
+import no.nav.syfo.utsattoppgave.opprettOppgaveIGosys
 import org.slf4j.LoggerFactory
 import java.util.*
 
@@ -30,7 +27,7 @@ class FinnAlleUtgaandeOppgaverProcessor(
             .finnAlleUtgåtteOppgaver()
             .forEach {
                 try {
-                    opprettOppgaveIGosys(it)
+                    opprettOppgaveIGosys(it, oppgaveClient, utsattOppgaveDAO, behandlendeEnhetConsumer)
                     it.tilstand = Tilstand.Opprettet
                     utsattOppgaveDAO.lagre(it)
                     log.info("Oppgave opprettet i gosys for inntektsmelding: ${it.inntektsmeldingId}")
@@ -41,22 +38,7 @@ class FinnAlleUtgaandeOppgaverProcessor(
         MDCOperations.remove(MDCOperations.MDC_CALL_ID)
     }
 
-    @KtorExperimentalAPI
-    fun opprettOppgaveIGosys(utsattOppgave: UtsattOppgaveEntitet) {
-        val behandlendeEnhet = behandlendeEnhetConsumer.hentBehandlendeEnhet(utsattOppgave.fnr, utsattOppgave.inntektsmeldingId)
-        val gjelderUtland = (SYKEPENGER_UTLAND == behandlendeEnhet)
-        runBlocking {
-            oppgaveClient.opprettOppgave(
-                sakId = utsattOppgave.sakId,
-                journalpostId = utsattOppgave.journalpostId,
-                tildeltEnhetsnr = behandlendeEnhet,
-                aktoerId = utsattOppgave.aktørId,
-                gjelderUtland = gjelderUtland
-            )
-        }
-        utsattOppgave.enhet = behandlendeEnhet;
-        utsattOppgaveDAO.lagre(utsattOppgave);
-    }
+
 
     data class JobbData(val id: UUID)
 

@@ -42,7 +42,7 @@ class UtsattOppgaveService(
         }
 
         if ((oppgave.tilstand == Tilstand.Utsatt || oppgave.tilstand == Tilstand.Forkastet) && oppdatering.handling == Handling.Opprett) {
-            opprettOppgaveIGosys(oppgave)
+            opprettOppgaveIGosys(oppgave, oppgaveClient, utsattOppgaveDAO, behandlendeEnhetConsumer)
             lagre(oppgave.copy(tilstand = Tilstand.Opprettet))
             log.info("Endret oppgave: ${oppgave.inntektsmeldingId} til tilstand: ${Tilstand.Opprettet.name}")
             return
@@ -51,22 +51,7 @@ class UtsattOppgaveService(
         log.info("Oppdatering på dokumentId: ${oppdatering.id} ikke relevant")
     }
 
-    @KtorExperimentalAPI
-    fun opprettOppgaveIGosys(utsattOppgave: UtsattOppgaveEntitet) {
-        val behandlendeEnhet = behandlendeEnhetConsumer.hentBehandlendeEnhet(utsattOppgave.fnr, utsattOppgave.inntektsmeldingId)
-        val gjelderUtland = (SYKEPENGER_UTLAND == behandlendeEnhet)
-        runBlocking {
-            oppgaveClient.opprettOppgave(
-                sakId = utsattOppgave.sakId,
-                journalpostId = utsattOppgave.journalpostId,
-                tildeltEnhetsnr = behandlendeEnhet,
-                aktoerId = utsattOppgave.aktørId,
-                gjelderUtland = gjelderUtland
-            )
-        }
-        utsattOppgave.enhet = behandlendeEnhet;
-        utsattOppgaveDAO.lagre(utsattOppgave);
-    }
+
 
     fun lagre(oppgave: UtsattOppgaveEntitet) {
         utsattOppgaveDAO.lagre(oppgave)
@@ -75,6 +60,26 @@ class UtsattOppgaveService(
     fun opprett(utsattOppgave: UtsattOppgaveEntitet) {
         utsattOppgaveDAO.opprett(utsattOppgave)
     }
+}
+
+@KtorExperimentalAPI
+fun opprettOppgaveIGosys(utsattOppgave: UtsattOppgaveEntitet,
+                         oppgaveClient: OppgaveClient,
+                         utsattOppgaveDAO: UtsattOppgaveDAO,
+                         behandlendeEnhetConsumer: BehandlendeEnhetConsumer) {
+    val behandlendeEnhet = behandlendeEnhetConsumer.hentBehandlendeEnhet(utsattOppgave.fnr, utsattOppgave.inntektsmeldingId)
+    val gjelderUtland = (SYKEPENGER_UTLAND == behandlendeEnhet)
+    runBlocking {
+        oppgaveClient.opprettOppgave(
+            sakId = utsattOppgave.sakId,
+            journalpostId = utsattOppgave.journalpostId,
+            tildeltEnhetsnr = behandlendeEnhet,
+            aktoerId = utsattOppgave.aktørId,
+            gjelderUtland = gjelderUtland
+        )
+    }
+    utsattOppgave.enhet = behandlendeEnhet;
+    utsattOppgaveDAO.lagre(utsattOppgave);
 }
 
 class OppgaveOppdatering(

@@ -11,7 +11,7 @@ create or replace view gruppert_admin2 as
 
 -- men har forskjellig første fraværsdag
  select count(*) from gruppert_admin2 a inner join gruppert_admin2 b on a.gruppering = b.gruppering where
-	a.data ->> 'førsteFraværsdag' != b.data ->> 'førsteFraværsdag'
+	a.data ->> 'førsteFraværsdag' != b.data ->> 'førsteFraværsdag';
 
 -- - som har forskjellig refusjonsbeløp
  select count(*) from gruppert_admin2 a inner join gruppert_admin2 b on a.gruppering = b.gruppering where
