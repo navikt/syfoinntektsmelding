@@ -1,3 +1,4 @@
+
 package no.nav.syfo.koin
 
 import com.zaxxer.hikari.HikariDataSource
@@ -16,6 +17,7 @@ import no.nav.syfo.util.Metrikk
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import javax.sql.DataSource
+import no.nav.syfo.config.*
 
 @KtorExperimentalAPI
 fun localDevConfig(config: ApplicationConfig) = module {
@@ -31,8 +33,10 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single { UtsattOppgaveRepositoryImp(get()) } bind UtsattOppgaveRepository::class
     single { PostgresBakgrunnsjobbRepository(get()) } bind BakgrunnsjobbRepository::class
 
-    //mock? single { Metrikk } bind Metrikk::class
-    //mock? single { OppgaveClient(config.getString("oppgavebehandling_url"), get(), get())} bind OppgaveClient::class
-    single { FinnAlleUtgaandeOppgaverProcessor(get(), get(), get()) } bind FinnAlleUtgaandeOppgaverProcessor::class
+    //single { FinnAlleUtgaandeOppgaverProcessor(get(), get(), get()) } bind FinnAlleUtgaandeOppgaverProcessor::class
 
+    single { KafkaConsumerConfigs(config.getString("kafka_bootstrap_servers"), config.getString("srvsyfoinntektsmelding.username"), config.getString("srvsyfoinntektsmelding.password"))} bind KafkaConsumerConfigs::class
+    single { OppgaveClientConfigProvider(config.getString("oppgavebehandling.url"), config.getString("securitytokenservice.url"), config.getString("srvappserver.username"), config.getString("srvappserver.password")) }
+    single { SakClientConfigProvider(config.getString("opprett_sak_url"), config.getString("securitytokenservice.url"), config.getString("srvappserver.username"), config.getString("srvappserver.password")) }
+    single { VaultHikariConfig(config.getString("vault.enabled:true").toBoolean(), config.getString("vault.backend"), config.getString("vault.role:syfoinntektsmelding-user"), config.getString("vault.admin:syfoinntektsmelding-admin") ) }
 }

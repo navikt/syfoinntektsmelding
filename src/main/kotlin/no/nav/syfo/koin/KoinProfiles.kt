@@ -20,7 +20,6 @@ import org.koin.core.definition.Kind
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
-
 @KtorExperimentalAPI
 fun selectModuleBasedOnProfile(config: ApplicationConfig): List<Module> {
     val envModule = when (config.property("koin.profile").getString()) {
