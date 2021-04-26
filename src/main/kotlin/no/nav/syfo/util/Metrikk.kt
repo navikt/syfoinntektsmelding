@@ -1,127 +1,157 @@
 package no.nav.syfo.util
 
-import io.micrometer.core.instrument.MeterRegistry
-import io.micrometer.core.instrument.Tags
+import io.prometheus.client.Counter
 import no.nav.syfo.behandling.Feiltype
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 
-class Metrikk(private val registry: MeterRegistry) {
+
+
+class Metrikk {
+
+    val METRICS_NS = "spinn"
+
+    private fun proseseringsMetrikker(metricName: String, metricHelpText: String): Counter {
+        return Counter.build()
+            .namespace(METRICS_NS)
+            .name(metricName)
+            .labelNames("hendelse")
+            .help(metricHelpText)
+            .register()
+    }
+
     fun tellInntektsmeldingerMottatt(inntektsmelding: Inntektsmelding) {
         val harArbeidsforholdId = inntektsmelding.arbeidsforholdId != null
-        registry.counter(
-            "syfoinntektsmelding_inntektsmeldinger_mottatt",
-            Tags.of(
-                "type", "info",
-                "harArbeidsforholdId", if (harArbeidsforholdId) "J" else "N",
-                "arsakTilSending", inntektsmelding.arsakTilInnsending
-            ))
-            .increment()
+        val metricHelpText = """
+                "harArbeidsforholdId", ${if (harArbeidsforholdId) "J" else "N"},
+                "arsakTilSending", ${inntektsmelding.arsakTilInnsending}
+        """.trimIndent()
+        proseseringsMetrikker("syfoinntektsmelding_inntektsmeldinger_mottatt", metricHelpText).labels("info").inc()
     }
 
     fun tellInntektsmeldingerJournalfort() {
-        registry.counter("syfoinntektsmelding_inntektsmeldinger_journalfort", Tags.of("type", "info")).increment()
+        val metricHelpText = ""
+        proseseringsMetrikker("syfoinntektsmelding_inntektsmeldinger_journalfort", metricHelpText).labels("info").inc()
+
     }
 
     fun tellOverlappendeInntektsmelding() {
-        registry.counter(
-            "syfoinntektsmelding_inntektsmeldinger_kobling", Tags.of(
-                "type", "info",
-                "kobling", OVERLAPPENDE
-            )).increment()
+        val metricHelpText = """
+               "kobling", $OVERLAPPENDE
+        """.trimIndent()
+        proseseringsMetrikker("syfoinntektsmelding_inntektsmeldinger_kobling", metricHelpText).labels("info").inc()
     }
 
     fun tellInntektsmeldingSaksIdFraSyfo() {
-        registry.counter(
-            "syfoinntektsmelding_inntektsmeldinger_kobling", Tags.of(
-                "type", "info",
-                "kobling", SAK_FRA_SYFO
-            )).increment()
+        val metricHelpText = """
+                "kobling", $SAK_FRA_SYFO
+        """.trimIndent()
+        proseseringsMetrikker( "syfoinntektsmelding_inntektsmeldinger_kobling", metricHelpText).labels("info").inc()
     }
 
     fun tellInntektsmeldingNySak() {
-        registry.counter(
-            "syfoinntektsmelding_inntektsmeldinger_kobling", Tags.of(
-                "type", "info",
-                "kobling", NY_SAK
-            )
-        ).increment()
+        val metricHelpText = """
+                  "kobling", $NY_SAK
+        """.trimIndent()
+        proseseringsMetrikker( "syfoinntektsmelding_inntektsmeldinger_kobling", metricHelpText).labels("info").inc()
     }
 
     fun tellInntektsmeldingSykepengerUtland() {
-        registry.counter("syfoinntektsmelding_sykepenger_utland").increment()
+        val metricHelpText = ""
+        proseseringsMetrikker("syfoinntektsmelding_sykepenger_utland", metricHelpText).labels("info").inc()
     }
 
     fun tellFeiletBakgrunnsjobb() {
-        registry.counter("syfoinntektsmelding_bakgrunnsjobb_feilet").increment()
+        val metricHelpText = ""
+        proseseringsMetrikker("syfoinntektsmelding_bakgrunnsjobb_feilet", metricHelpText).labels("info").inc()
     }
 
     fun tellStoppetBakgrunnsjobb() {
-        registry.counter("syfoinntektsmelding_bakgrunnsjobb_stoppet").increment()
+        val metricHelpText = ""
+        proseseringsMetrikker("syfoinntektsmelding_bakgrunnsjobb_stoppet", metricHelpText).labels("info").inc()
     }
 
     fun tellInntektsmeldingfeil() {
-        registry.counter("syfoinntektsmelding_inntektsmeldingfeil", Tags.of("type", "error")).increment()
+        val metricHelpText = ""
+        proseseringsMetrikker("syfoinntektsmelding_inntektsmeldingfeil", metricHelpText).labels("error").inc()
     }
 
     fun tellBehandlingsfeil(feiltype: Feiltype) {
-        registry.counter("syfoinntektsmelding_behandlingsfeil", Tags.of("feiltype", feiltype.navn)).increment()
+        val metricHelpText = """
+                "feiltype", ${feiltype.navn}
+        """.trimIndent()
+        proseseringsMetrikker("syfoinntektsmelding_behandlingsfeil", metricHelpText).labels("error").inc()
     }
 
     fun tellIkkebehandlet() {
-        registry.counter("syfoinntektsmelding_ikkebehandlet").increment()
+        val metricHelpText = ""
+        proseseringsMetrikker("syfoinntektsmelding_ikkebehandlet", metricHelpText).labels("info").inc()
     }
 
     fun tellJournalpoststatus(status: JournalStatus) {
-        registry.counter("syfoinntektsmelding_journalpost", Tags.of("type", "info", "status", status.name))
-            .increment()
+        val metricHelpText = """
+                "status", ${status.name}
+        """.trimIndent()
+        proseseringsMetrikker("syfoinntektsmelding_journalpost", metricHelpText).labels("info").inc()
     }
 
     fun tellInntektsmeldingLagtPåTopic() {
-        registry.counter("syfoinntektsmelding_inntektsmelding_lagt_pa_topic").increment()
+        val metricHelpText = ""
+        proseseringsMetrikker("syfoinntektsmelding_inntektsmelding_lagt_pa_topic", metricHelpText).labels("info").inc()
     }
 
     fun tellInntektsmeldingUtenArkivReferanse() {
-        registry.counter("syfoinntektsmelding_inntektsmelding_uten_arkivreferanse").increment()
+        val metricHelpText = ""
+        proseseringsMetrikker("syfoinntektsmelding_inntektsmelding_uten_arkivreferanse", metricHelpText).labels("info").inc()
     }
 
     fun tellInntektsmeldingerRedusertEllerIngenUtbetaling(begrunnelse: String?) {
-        registry.counter(
-            "syfoinntektsmelding_redusert_eller_ingen_utbetaling",
-            Tags.of("type", "info", "begrunnelse", begrunnelse)
-        ).increment()
+        val metricHelpText = """
+               "begrunnelse", $begrunnelse
+        """.trimIndent()
+        proseseringsMetrikker("syfoinntektsmelding_redusert_eller_ingen_utbetaling", metricHelpText).labels("info").inc()
     }
 
     fun tellArbeidsgiverperioder(antall: String?) {
-        registry.counter("syfoinntektsmelding_arbeidsgiverperioder", Tags.of("antall", antall)).increment()
+        val metricHelpText = """
+              "antall", $antall
+        """.trimIndent()
+        proseseringsMetrikker("syfoinntektsmelding_arbeidsgiverperioder", metricHelpText).labels("info").inc()
     }
 
     fun tellKreverRefusjon(beløp: Int) {
+        val metricHelpText = ""
         if (beløp <= 0) return
-        registry.counter("syfoinntektsmelding_arbeidsgiver_krever_refusjon").increment()
-        registry.counter("syfoinntektsmelding_arbeidsgiver_krever_refusjon_beloep")
-            .increment((beløp / 1000).toDouble()) // Teller beløpet i antall tusener for å unngå overflow
+        proseseringsMetrikker("syfoinntektsmelding_arbeidsgiver_krever_refusjon", metricHelpText).labels("info").inc()
+        proseseringsMetrikker("syfoinntektsmelding_arbeidsgiver_krever_refusjon_beloep", metricHelpText).labels("info")
+            .inc((beløp / 1000).toDouble()) // Teller beløpet i antall tusener for å unngå overflow
     }
 
     fun tellNaturalytelse() {
-        registry.counter("syfoinntektsmelding_faar_naturalytelse").increment()
+        val metricHelpText = ""
+        proseseringsMetrikker("syfoinntektsmelding_faar_naturalytelse", metricHelpText).labels("info").inc()
     }
 
     fun tellOpprettOppgave(eksisterer: Boolean) {
-        registry.counter("syfoinntektsmelding_opprett_oppgave", Tags.of("eksisterer", if (eksisterer) "J" else "N"))
-            .increment()
+        val metricHelpText = """
+            "eksisterer", ${if (eksisterer) "J" else "N"}
+        """.trimIndent()
+        proseseringsMetrikker("syfoinntektsmelding_opprett_oppgave", metricHelpText).labels("info").inc()
     }
 
     fun tellOpprettFordelingsoppgave() {
-        registry.counter("syfoinntektsmelding_opprett_fordelingsoppgave").increment()
+        val metricHelpText = ""
+        proseseringsMetrikker("syfoinntektsmelding_opprett_fordelingsoppgave", metricHelpText).labels("info").inc()
     }
 
     fun tellLagreFeiletMislykkes() {
-        registry.counter("syfoinntektsmelding_feilet_lagring_mislykkes").increment()
+        val metricHelpText = ""
+        proseseringsMetrikker("syfoinntektsmelding_feilet_lagring_mislykkes", metricHelpText).labels("info").inc()
     }
 
     fun tellRekjørerFeilet() {
-        registry.counter("syfoinntektsmelding_rekjorer").increment()
+        val metricHelpText = ""
+        proseseringsMetrikker("syfoinntektsmelding_rekjorer", metricHelpText).labels("info").inc()
     }
 
     companion object {

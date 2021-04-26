@@ -14,6 +14,7 @@ val brukernotifikasjonSchemasVersion = "1.2021.01.18-11.12-b9c8c40b98d1"
 val jacksonVersion = "2.10.3"
 val junitJupiterVersion = "5.7.0"
 val assertJVersion = "3.12.2"
+val prometheusVersion = "0.6.0"
 
 val mainClass = "no.nav.syfo.AppKt"
 
@@ -207,6 +208,9 @@ dependencies {
     testImplementation("org.assertj:assertj-core:$assertJVersion")
     testImplementation(platform("org.junit:junit-bom:$junitJupiterVersion"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+
+    implementation("io.prometheus:simpleclient_common:$prometheusVersion")
+    implementation("io.prometheus:simpleclient_hotspot:$prometheusVersion")
 }
 
 tasks.named<Jar>("jar") {

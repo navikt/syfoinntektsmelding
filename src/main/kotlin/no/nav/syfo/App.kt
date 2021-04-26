@@ -75,7 +75,6 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
 
                 registrer(get<FeiletUtsattOppgaveMeldingProsessor>())
                 registrer(get<FinnAlleUtgaandeOppgaverProcessor>())
-                registrer(get<FeiletUtsattOppgaveMeldingProsessor>())
                 registrer(get<FjernInnteksmeldingByBehandletProcessor>())
 
                 startAsync(true)

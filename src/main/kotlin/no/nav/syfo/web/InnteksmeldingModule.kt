@@ -13,6 +13,7 @@ import io.ktor.util.*
 import no.nav.helse.arbeidsgiver.system.AppEnv
 import no.nav.helse.arbeidsgiver.system.getEnvironment
 import no.nav.helse.arbeidsgiver.system.getString
+import no.nav.security.token.support.ktor.tokenValidationSupport
 import no.nav.syfo.web.api.syfoinntektsmelding
 import no.nav.syfo.web.api.systemRoutes
 import org.koin.ktor.ext.get
@@ -26,7 +27,7 @@ fun Application.innteksmeldingModule(config: ApplicationConfig = environment.con
     }
 
     install(Authentication) {
-      //  tokenValidationSupport(config = config)
+        tokenValidationSupport(config = config) //??
     }
 
     configureCORSAccess(config)

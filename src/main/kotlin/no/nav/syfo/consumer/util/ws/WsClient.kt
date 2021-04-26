@@ -30,3 +30,25 @@ class WsClient<T> {
         return port
     }
 }
+
+class WsClientMock<T> {
+    fun createPort(
+        serviceUrl: String,
+        portType: Class<*>?,
+        handlers: List<Handler<*>?>?,
+        vararg interceptors: PhaseInterceptor<out Message?>?
+    ): T {
+        val jaxWsProxyFactoryBean = JaxWsProxyFactoryBean()
+        jaxWsProxyFactoryBean.serviceClass = portType
+        jaxWsProxyFactoryBean.address = Objects.requireNonNull(serviceUrl)
+        jaxWsProxyFactoryBean.features.add(WSAddressingFeature())
+        val port = jaxWsProxyFactoryBean.create() as T
+        (port as BindingProvider).binding.handlerChain = handlers
+        val client = ClientProxy.getClient(port)
+        Arrays.stream(interceptors)
+            .forEach { e: PhaseInterceptor<out Message?>? -> client.outInterceptors.add(e) }
+        client.outInterceptors.add(CallIdHeader())
+        STSClientConfigMock.configureRequestSamlToken(port)
+        return port
+    }
+}

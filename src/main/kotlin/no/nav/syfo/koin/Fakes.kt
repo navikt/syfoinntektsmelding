@@ -19,7 +19,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.bind
 
 fun Module.mockExternalDependecies() {
-    single { MockAltinnRepo(get()) } bind AltinnOrganisationsRepository::class
+    //single { MockAltinnRepo(get()) } bind AltinnOrganisationsRepository::class
 
     single {
         object : DokarkivKlient {
@@ -78,7 +78,7 @@ fun Module.mockExternalDependecies() {
             ): OpprettOppgaveResponse = OpprettOppgaveResponse(1234)
         }
     } bind OppgaveKlient::class
-    single { InntektsmeldingService(InntektsmeldingRepositoryMock(), get()) } bind InntektsmeldingRepository::class
+
 
 }
 

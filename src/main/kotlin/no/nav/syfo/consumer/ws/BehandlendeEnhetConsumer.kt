@@ -18,6 +18,7 @@ import no.nav.tjeneste.virksomhet.person.v3.binding.PersonV3
 import no.nav.tjeneste.virksomhet.person.v3.informasjon.NorskIdent
 import no.nav.tjeneste.virksomhet.person.v3.informasjon.PersonIdent
 import no.nav.tjeneste.virksomhet.person.v3.meldinger.HentGeografiskTilknytningRequest
+import org.koin.core.KoinComponent
 
 const val SYKEPENGER_UTLAND = "4474"
 
@@ -25,7 +26,7 @@ class BehandlendeEnhetConsumer(
     private val personV3: PersonV3,
     private val arbeidsfordelingV1: ArbeidsfordelingV1,
     private val metrikk: Metrikk
-) {
+)  {
 
     var log = log()
 

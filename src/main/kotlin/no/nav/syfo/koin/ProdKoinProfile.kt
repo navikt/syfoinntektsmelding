@@ -2,7 +2,11 @@ package no.nav.syfo.koin
 
 import io.ktor.config.*
 import io.ktor.util.*
+import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
+import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
+import no.nav.helse.arbeidsgiver.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.system.getString
+import no.nav.syfo.MetrikkVarsler
 import no.nav.syfo.behandling.InntektsmeldingBehandler
 import no.nav.syfo.consumer.SakConsumer
 import no.nav.syfo.consumer.azuread.AzureAdTokenConsumer
@@ -19,6 +23,7 @@ import no.nav.syfo.service.EksisterendeSakService
 import no.nav.syfo.service.JournalpostService
 import no.nav.syfo.service.SaksbehandlingService
 import no.nav.syfo.util.Metrikk
+import no.nav.syfo.utsattoppgave.FeiletUtsattOppgaveMeldingProsessor
 import no.nav.syfo.utsattoppgave.UtsattOppgaveDAO
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import org.koin.dsl.bind
@@ -37,7 +42,7 @@ fun prodConfig(config: ApplicationConfig) = module {
     single { InngaaendeJournalConsumer(get()) } bind InngaaendeJournalConsumer::class
     single { BehandleInngaaendeJournalConsumer(get()) } bind BehandleInngaaendeJournalConsumer::class
     single { JournalConsumer(get(), get()) } bind JournalConsumer::class
-    single { Metrikk(get()) } bind Metrikk::class
+    single { Metrikk() } bind Metrikk::class
     single { BehandlendeEnhetConsumer(get(), get(), get()) } bind BehandlendeEnhetConsumer::class
     single { JournalpostService(get(), get(), get(), get(), get()) } bind JournalpostService::class
 
@@ -60,9 +65,10 @@ fun prodConfig(config: ApplicationConfig) = module {
         config.getString("srvsyfoinntektsmelding.username"),
         config.getString("srvsyfoinntektsmelding.password"), get()) } bind InntektsmeldingProducer::class
 
-    single { UtsattOppgaveDAO(UtsattOppgaveRepositoryImp(get()))} bind UtsattOppgaveDAO::class
+    single { UtsattOppgaveDAO(UtsattOppgaveRepositoryImp(get()))}
     single { OppgaveClient(config.getString("oppgavebehandling_url"), get(), get())} bind OppgaveClient::class
     single { UtsattOppgaveService(get(), get(), get()) } bind UtsattOppgaveService::class
+    single { FeiletUtsattOppgaveMeldingProsessor(get(), get() ) }
 
     single { FjernInnteksmeldingByBehandletProcessor(InntektsmeldingRepositoryImp(get()), config.getString("lagringstidMåneder").toInt() )} bind FjernInnteksmeldingByBehandletProcessor::class
     single { FinnAlleUtgaandeOppgaverProcessor(get(), get(), get()) } bind FinnAlleUtgaandeOppgaverProcessor::class
@@ -71,7 +77,8 @@ fun prodConfig(config: ApplicationConfig) = module {
 
     single { FeiletService(FeiletRepositoryImp(get())) } bind FeiletService::class
 
-
+    single { PostgresBakgrunnsjobbRepository(get()) } bind BakgrunnsjobbRepository::class
+    single { BakgrunnsjobbService(get(), bakgrunnsvarsler = MetrikkVarsler()) }
 
 
 }

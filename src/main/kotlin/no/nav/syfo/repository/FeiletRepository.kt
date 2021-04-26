@@ -7,6 +7,7 @@ import java.time.LocalDateTime
 import java.util.*
 import javax.sql.DataSource
 
+
 interface FeiletRepository {
     fun findByArkivReferanse(arkivReferanse: String): List<FeiletEntitet>
     fun lagreInnteksmelding(utsattOppgave: FeiletEntitet): FeiletEntitet
