@@ -1,51 +1,50 @@
 
 package no.nav.syfo.koin
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.config.*
 import io.ktor.util.*
-import io.micrometer.core.instrument.MeterRegistry
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.system.getString
+import no.nav.syfo.behandling.InntektsmeldingBehandler
+import no.nav.syfo.config.KafkaConsumerConfigs
+import no.nav.syfo.config.OppgaveClientConfigProvider
+import no.nav.syfo.config.SakClientConfigProvider
+import no.nav.syfo.consumer.SakConsumer
+import no.nav.syfo.consumer.azuread.AzureAdTokenConsumer
 import no.nav.syfo.consumer.rest.OppgaveClient
+import no.nav.syfo.consumer.rest.SakClient
 import no.nav.syfo.consumer.rest.TokenConsumer
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
+import no.nav.syfo.consumer.util.ws.LogErrorHandler
+import no.nav.syfo.consumer.util.ws.WsClientMock
+import no.nav.syfo.consumer.ws.BehandleInngaaendeJournalConsumer
+import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
+import no.nav.syfo.consumer.ws.InngaaendeJournalConsumer
+import no.nav.syfo.consumer.ws.JournalConsumer
+import no.nav.syfo.producer.InntektsmeldingProducer
 import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
+import no.nav.syfo.prosesser.FjernInnteksmeldingByBehandletProcessor
 import no.nav.syfo.repository.*
+import no.nav.syfo.service.EksisterendeSakService
+import no.nav.syfo.service.JournalpostService
+import no.nav.syfo.service.SaksbehandlingService
 import no.nav.syfo.util.Metrikk
+import no.nav.syfo.utsattoppgave.FeiletUtsattOppgaveMeldingProsessor
+import no.nav.syfo.utsattoppgave.UtsattOppgaveDAO
+import no.nav.syfo.utsattoppgave.UtsattOppgaveService
+import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.binding.ArbeidsfordelingV1
+import no.nav.tjeneste.virksomhet.behandleinngaaendejournal.v1.binding.BehandleInngaaendeJournalV1
+import no.nav.tjeneste.virksomhet.behandlesak.v2.BehandleSakV2
+import no.nav.tjeneste.virksomhet.inngaaendejournal.v1.binding.InngaaendeJournalV1
+import no.nav.tjeneste.virksomhet.journal.v2.binding.JournalV2
+import no.nav.tjeneste.virksomhet.oppgavebehandling.v3.binding.OppgavebehandlingV3
+import no.nav.tjeneste.virksomhet.person.v3.binding.PersonV3
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import javax.sql.DataSource
-import no.nav.syfo.config.*
-import no.nav.syfo.utsattoppgave.UtsattOppgaveService
-import no.nav.syfo.utsattoppgave.UtsattOppgaveDAO
-import no.nav.syfo.utsattoppgave.FeiletUtsattOppgaveMeldingProsessor
-import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
-import no.nav.tjeneste.virksomhet.person.v3.binding.PersonV3
-import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.binding.ArbeidsfordelingV1
-import no.nav.tjeneste.virksomhet.oppgavebehandling.v3.binding.OppgavebehandlingV3
-import no.nav.tjeneste.virksomhet.journal.v2.binding.JournalV2
-import no.nav.tjeneste.virksomhet.inngaaendejournal.v1.binding.InngaaendeJournalV1
-import no.nav.tjeneste.virksomhet.behandlesak.v2.BehandleSakV2
-import no.nav.tjeneste.virksomhet.behandleinngaaendejournal.v1.binding.BehandleInngaaendeJournalV1
-
-import no.nav.syfo.consumer.util.ws.WsClientMock
-import no.nav.syfo.consumer.util.ws.LogErrorHandler
-import no.nav.syfo.prosesser.FjernInnteksmeldingByBehandletProcessor
-import no.nav.syfo.behandling.InntektsmeldingBehandler
-import no.nav.syfo.consumer.ws.InngaaendeJournalConsumer
-import no.nav.syfo.consumer.ws.BehandleInngaaendeJournalConsumer
-import no.nav.syfo.consumer.ws.JournalConsumer
-import no.nav.syfo.service.JournalpostService
-import no.nav.syfo.service.EksisterendeSakService
-import no.nav.syfo.service.SaksbehandlingService
-import no.nav.syfo.consumer.rest.SakClient
-import no.nav.syfo.producer.InntektsmeldingProducer
-import no.nav.syfo.consumer.SakConsumer
-import no.nav.syfo.consumer.azuread.AzureAdTokenConsumer
 
 @KtorExperimentalAPI
 fun localDevConfig(config: ApplicationConfig) = module {
@@ -77,7 +76,7 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single { WsClientMock<BehandleInngaaendeJournalV1>().createPort(config.getString("behandleinngaaendejournal_v1_endpointurl"),BehandleInngaaendeJournalV1::class.java,listOf(LogErrorHandler())) } bind BehandleInngaaendeJournalV1::class
 
     single { BehandlendeEnhetConsumer(get(),get(), get()) } bind BehandlendeEnhetConsumer::class
-    single { UtsattOppgaveDAO(UtsattOppgaveRepositoryImp(get()))}
+    single { UtsattOppgaveDAO(UtsattOppgaveRepositoryMockk())}
     single { OppgaveClient(config.getString("oppgavebehandling_url"), get(), get())} bind OppgaveClient::class
     single { UtsattOppgaveService(get(), get(), get()) } bind UtsattOppgaveService::class
     single { FeiletUtsattOppgaveMeldingProsessor(get(), get() )}
