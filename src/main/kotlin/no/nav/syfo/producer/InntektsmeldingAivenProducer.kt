@@ -16,15 +16,15 @@ import java.util.*
 
 @Component
 class InntektsmeldingAivenProducer(
-    @Value("KAFKA.BROKERS")
+    @Value("\${KAFKA.BROKERS}")
     val brokers: String,
-    @Value("KAFKA.TRUSTSTORE.PATH")
+    @Value("\${KAFKA.TRUSTSTORE.PATH}")
     val trustStorePath: String,
-    @Value("KAFKA.CREDSTORE.PASSWORD")
+    @Value("\${KAFKA.CREDSTORE.PASSWORD}")
     val credstorePass: String,
-    @Value("KAFKA.KEYSTORE.PATH")
+    @Value("\${KAFKA.KEYSTORE.PATH}")
     val keyStorePath: String,
-    @Value("KAFKA.CREDSTORE.PASSWORD")
+    @Value("\${KAFKA.CREDSTORE.PASSWORD}")
     val credStorePass: String) {
 
     private val JAVA_KEYSTORE = "jks"
