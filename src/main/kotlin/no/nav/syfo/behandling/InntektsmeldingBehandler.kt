@@ -8,6 +8,7 @@ import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.dto.UtsattOppgaveEntitet
 import no.nav.syfo.mapping.mapInntektsmeldingKontrakt
+import no.nav.syfo.producer.InntektsmeldingAivenProducer
 import no.nav.syfo.producer.InntektsmeldingProducer
 import no.nav.syfo.repository.InntektsmeldingService
 import no.nav.syfo.service.JournalpostService
@@ -28,6 +29,8 @@ class InntektsmeldingBehandler(
     private val inntektsmeldingProducer: InntektsmeldingProducer,
     private val utsattOppgaveService: UtsattOppgaveService
 ) {
+
+    val aivenIMProducer = InntektsmeldingAivenProducer()
 
     val consumerLocks = Striped.lock(8)
     val OPPRETT_OPPGAVE_FORSINKELSE = 12L;
@@ -70,15 +73,16 @@ class InntektsmeldingBehandler(
                     )
                 )
 
-                inntektsmeldingProducer.leggMottattInntektsmeldingPåTopics(
-                    mapInntektsmeldingKontrakt(
-                        inntektsmelding,
-                        aktorid,
-                        validerInntektsmelding(inntektsmelding),
-                        arkivreferanse,
-                        dto.uuid
-                    )
+                val mappedIM = mapInntektsmeldingKontrakt(
+                    inntektsmelding,
+                    aktorid,
+                    validerInntektsmelding(inntektsmelding),
+                    arkivreferanse,
+                    dto.uuid
                 )
+
+                inntektsmeldingProducer.leggMottattInntektsmeldingPåTopics(mappedIM)
+                aivenIMProducer.leggMottattInntektsmeldingPåTopics(mappedIM)
 
                 log.info("Inntektsmelding {} er journalført for {} refusjon {}", inntektsmelding.journalpostId, arkivreferanse, inntektsmelding.refusjon.beloepPrMnd)
                 return dto.uuid

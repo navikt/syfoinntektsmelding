@@ -40,6 +40,9 @@ spec:
   webproxy: true
   secureLogs:
     enabled: true
+  kafka:
+    pool: nav-prod
+
   env:
     - name: LOADBALANCER_FQDN
       value: "syfoinntektsmelding.nais.adeo.no"

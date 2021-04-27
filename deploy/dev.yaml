@@ -44,6 +44,9 @@ spec:
   webproxy: true
   secureLogs:
     enabled: true
+  kafka:
+    pool: nav-dev
+
   env:
     - name: LOADBALANCER_FQDN
       value: "syfoinntektsmelding.nais.preprod.local"
