@@ -16,6 +16,7 @@ import no.nav.syfo.koin.getAllOfType
 import no.nav.syfo.koin.selectModuleBasedOnProfile
 import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
 import no.nav.syfo.prosesser.FjernInnteksmeldingByBehandletProcessor
+import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
 import no.nav.syfo.utsattoppgave.FeiletUtsattOppgaveMeldingProsessor
 import no.nav.syfo.web.auth.localCookieDispenser
 import no.nav.syfo.web.innteksmeldingModule
@@ -80,6 +81,7 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
                 registrer(get<FeiletUtsattOppgaveMeldingProsessor>())
                 registrer(get<FinnAlleUtgaandeOppgaverProcessor>())
                 registrer(get<FjernInnteksmeldingByBehandletProcessor>())
+                registrer(get<JoarkInntektsmeldingHendelseProsessor>())
 
                 startAsync(true)
             }
