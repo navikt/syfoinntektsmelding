@@ -12,6 +12,7 @@ import no.nav.syfo.domain.GeografiskTilknytningData
 import no.nav.syfo.domain.InngaaendeJournal
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
+import no.nav.syfo.producer.InntektsmeldingAivenProducer
 import no.nav.syfo.producer.InntektsmeldingProducer
 import no.nav.syfo.repository.InntektsmeldingRepository
 import no.nav.syfo.repository.InntektsmeldingService
@@ -84,6 +85,8 @@ open class InntektsmeldingBehandlerIT {
     @MockBean
     lateinit var inntektsmeldingProducer: InntektsmeldingProducer
     @MockBean
+    lateinit var inntektsmeldingAivenProducer: InntektsmeldingAivenProducer
+    @MockBean
     lateinit var behandleInngaaendeJournalConsumer: BehandleInngaaendeJournalConsumer
     @MockBean
     lateinit var behandlendeEnhetConsumer: BehandlendeEnhetConsumer
@@ -118,7 +121,7 @@ open class InntektsmeldingBehandlerIT {
         saksbehandlingService = SaksbehandlingService(eksisterendeSakService, inntektsmeldingService, sakClient, metrikk)
         utsattOppgaveService = UtsattOppgaveService(utsattOppgaveDAO, oppgaveClient, behandlendeEnhetConsumer)
         //utsattOppgaveConsumer = UtsattOppgaveConsumer(utsattOppgaveService)
-        inntektsmeldingBehandler = InntektsmeldingBehandler(journalpostService, saksbehandlingService, metrikk, inntektsmeldingService, aktorConsumer, inntektsmeldingProducer, utsattOppgaveService)
+        inntektsmeldingBehandler = InntektsmeldingBehandler(journalpostService, saksbehandlingService, metrikk, inntektsmeldingService, aktorConsumer, inntektsmeldingProducer, inntektsmeldingAivenProducer, utsattOppgaveService)
         MockitoAnnotations.initMocks(inntektsmeldingBehandler)
         runBlocking {
             given(sakClient.opprettSak(anyString(), anyString())).willReturn(

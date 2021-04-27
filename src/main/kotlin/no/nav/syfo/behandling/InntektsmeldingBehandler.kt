@@ -27,10 +27,9 @@ class InntektsmeldingBehandler(
     private val inntektsmeldingService: InntektsmeldingService,
     private val aktorConsumer: AktorConsumer,
     private val inntektsmeldingProducer: InntektsmeldingProducer,
+    private val aivenIMProducer: InntektsmeldingAivenProducer,
     private val utsattOppgaveService: UtsattOppgaveService
 ) {
-
-    val aivenIMProducer = InntektsmeldingAivenProducer()
 
     val consumerLocks = Striped.lock(8)
     val OPPRETT_OPPGAVE_FORSINKELSE = 12L;

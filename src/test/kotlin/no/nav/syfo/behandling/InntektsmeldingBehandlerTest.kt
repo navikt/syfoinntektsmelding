@@ -5,6 +5,7 @@ import no.nav.syfo.consumer.rest.aktor.AktorConsumer
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.dto.InntektsmeldingEntitet
+import no.nav.syfo.producer.InntektsmeldingAivenProducer
 import no.nav.syfo.producer.InntektsmeldingProducer
 import no.nav.syfo.repository.InntektsmeldingService
 import no.nav.syfo.service.JournalpostService
@@ -45,6 +46,9 @@ class InntektsmeldingBehandlerTest {
 
     @Mock
     private val inntektsmeldingProducer: InntektsmeldingProducer? = null
+
+    @Mock
+    private val inntektsmeldingAivenProducer: InntektsmeldingAivenProducer? = null
 
     @InjectMocks
     private lateinit var inntektsmeldingBehandler: InntektsmeldingBehandler
@@ -87,6 +91,7 @@ class InntektsmeldingBehandlerTest {
         verify(saksbehandlingService).behandleInntektsmelding(any(), anyString(), anyString())
         verify(journalpostService).ferdigstillJournalpost(matches("saksId"), any())
         verify(inntektsmeldingProducer!!).leggMottattInntektsmeldingPåTopics(any())
+        verify(inntektsmeldingAivenProducer!!).leggMottattInntektsmeldingPåTopics(any())
     }
 
     @Test

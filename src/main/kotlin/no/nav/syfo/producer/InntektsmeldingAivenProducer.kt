@@ -15,7 +15,17 @@ import org.springframework.stereotype.Component
 import java.util.*
 
 @Component
-class InntektsmeldingAivenProducer() {
+class InntektsmeldingAivenProducer(
+    @Value("KAFKA.BROKERS")
+    val brokers: String,
+    @Value("KAFKA.TRUSTSTORE.PATH")
+    val trustStorePath: String,
+    @Value("KAFKA.CREDSTORE.PASSWORD")
+    val credstorePass: String,
+    @Value("KAFKA.KEYSTORE.PATH")
+    val keyStorePath: String,
+    @Value("KAFKA.CREDSTORE.PASSWORD")
+    val credStorePass: String) {
 
     private val JAVA_KEYSTORE = "jks"
     private val PKCS12 = "PKCS12"
@@ -30,17 +40,17 @@ class InntektsmeldingAivenProducer() {
         put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer")
 
 
-        put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, envOrThrow("KAFKA_BROKERS"))
+        put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, brokers)
         put(ProducerConfig.ACKS_CONFIG, "all")
         put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, SecurityProtocol.SSL.name)
         put(SslConfigs.SSL_ENDPOINT_IDENTIFICATION_ALGORITHM_CONFIG, "")
         put(SslConfigs.SSL_TRUSTSTORE_TYPE_CONFIG, JAVA_KEYSTORE)
         put(SslConfigs.SSL_KEYSTORE_TYPE_CONFIG, PKCS12)
-        put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, envOrThrow("KAFKA_TRUSTSTORE_PATH"))
-        put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, envOrThrow("KAFKA_CREDSTORE_PASSWORD"))
-        put(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, envOrThrow("KAFKA_KEYSTORE_PATH"))
-        put(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, envOrThrow("KAFKA_CREDSTORE_PASSWORD"))
-        put(SslConfigs.SSL_KEY_PASSWORD_CONFIG, envOrThrow("KAFKA_CREDSTORE_PASSWORD"))
+        put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, trustStorePath)
+        put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, credStorePass)
+        put(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, keyStorePath)
+        put(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, credStorePass)
+        put(SslConfigs.SSL_KEY_PASSWORD_CONFIG, credStorePass)
 
     }
 
@@ -56,11 +66,18 @@ class InntektsmeldingAivenProducer() {
     }
 
     private fun leggMottattInntektsmeldingPåTopic(inntektsmelding: Inntektsmelding, topic: String) {
-        kafkaproducer.send(ProducerRecord(topic, inntektsmelding.arbeidstakerFnr, serialiseringInntektsmelding(inntektsmelding)))
+        kafkaproducer.send(
+            ProducerRecord(
+                topic,
+                inntektsmelding.arbeidstakerFnr,
+                serialiseringInntektsmelding(inntektsmelding)
+            )
+        )
     }
 
     fun serialiseringInntektsmelding(inntektsmelding: Inntektsmelding) =
         objectMapper.writeValueAsString(inntektsmelding)
 }
 
-private fun envOrThrow(envVar: String) = System.getenv()[envVar] ?: throw IllegalStateException("$envVar er påkrevd miljøvariabel")
+private fun envOrThrow(envVar: String) =
+    System.getenv()[envVar] ?: throw IllegalStateException("$envVar er påkrevd miljøvariabel")

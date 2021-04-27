@@ -16,23 +16,7 @@ import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-@RunWith(SpringRunner::class)
-@TestPropertySource(locations = ["classpath:application-test.properties"])
-@SpringBootTest
 class InntektsmeldingServiceTest {
-
-    companion object {
-        @BeforeClass
-        @JvmStatic
-        fun beforeClass() {
-            System.setProperty("SECURITYTOKENSERVICE_URL", "joda")
-            System.setProperty("SRVSYFOINNTEKTSMELDING_USERNAME", "joda")
-            System.setProperty("SRVSYFOINNTEKTSMELDING_PASSWORD", "joda")
-        }
-    }
-
-    @Autowired
-    private lateinit var inntektsmeldingService: InntektsmeldingService
 
     @Test
     fun `Verifiserer at object mapper gir forventet JSON format`(){

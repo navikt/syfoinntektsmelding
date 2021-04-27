@@ -16,6 +16,7 @@ import no.nav.syfo.consumer.ws.*
 import no.nav.syfo.domain.*
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.dto.UtsattOppgaveEntitet
+import no.nav.syfo.producer.InntektsmeldingAivenProducer
 import no.nav.syfo.producer.InntektsmeldingProducer
 import no.nav.syfo.repository.InntektsmeldingRepository
 import no.nav.syfo.repository.InntektsmeldingService
@@ -87,6 +88,9 @@ open class UtsattOppgaveIntegrasjonsTest  {
     lateinit var inntektsmeldingProducer: InntektsmeldingProducer
 
     @MockBean
+    lateinit var inntektsmeldingAivenProducer: InntektsmeldingAivenProducer
+
+    @MockBean
     lateinit var behandleInngaaendeJournalConsumer: BehandleInngaaendeJournalConsumer
 
     @MockBean
@@ -148,6 +152,7 @@ open class UtsattOppgaveIntegrasjonsTest  {
             inntektsmeldingService,
             aktorConsumer,
             inntektsmeldingProducer,
+            inntektsmeldingAivenProducer,
             utsattOppgaveService
         )
         MockitoAnnotations.initMocks(inntektsmeldingBehandler)
