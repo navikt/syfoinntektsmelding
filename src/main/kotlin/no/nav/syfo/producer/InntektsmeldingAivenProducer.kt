@@ -17,8 +17,8 @@ import java.util.*
 @Component
 class InntektsmeldingAivenProducer() {
 
-    private const val JAVA_KEYSTORE = "jks"
-    private const val PKCS12 = "PKCS12"
+    private val JAVA_KEYSTORE = "jks"
+    private val PKCS12 = "PKCS12"
 
 
     private val producerProperties = Properties().apply {
@@ -30,18 +30,17 @@ class InntektsmeldingAivenProducer() {
         put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer")
 
 
-        ProducerConfig.BOOTSTRAP_SERVERS_CONFIG to envOrThrow("KAFKA_BROKERS"),
-        ProducerConfig.ACKS_CONFIG to "all",
-
-        CommonClientConfigs.SECURITY_PROTOCOL_CONFIG to SecurityProtocol.SSL.name,
-        SslConfigs.SSL_ENDPOINT_IDENTIFICATION_ALGORITHM_CONFIG to "", //Disable server host name verification
-        SslConfigs.SSL_TRUSTSTORE_TYPE_CONFIG to JAVA_KEYSTORE,
-        SslConfigs.SSL_KEYSTORE_TYPE_CONFIG to PKCS12,
-        SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG to envOrThrow("KAFKA_TRUSTSTORE_PATH"),
-        SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG to envOrThrow("KAFKA_CREDSTORE_PASSWORD"),
-        SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG to envOrThrow("KAFKA_KEYSTORE_PATH"),
-        SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG to envOrThrow("KAFKA_CREDSTORE_PASSWORD"),
-        SslConfigs.SSL_KEY_PASSWORD_CONFIG to envOrThrow("KAFKA_CREDSTORE_PASSWORD")
+        put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, envOrThrow("KAFKA_BROKERS"))
+        put(ProducerConfig.ACKS_CONFIG, "all")
+        put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, SecurityProtocol.SSL.name)
+        put(SslConfigs.SSL_ENDPOINT_IDENTIFICATION_ALGORITHM_CONFIG, "")
+        put(SslConfigs.SSL_TRUSTSTORE_TYPE_CONFIG, JAVA_KEYSTORE)
+        put(SslConfigs.SSL_KEYSTORE_TYPE_CONFIG, PKCS12)
+        put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, envOrThrow("KAFKA_TRUSTSTORE_PATH"))
+        put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, envOrThrow("KAFKA_CREDSTORE_PASSWORD"))
+        put(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, envOrThrow("KAFKA_KEYSTORE_PATH"))
+        put(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, envOrThrow("KAFKA_CREDSTORE_PASSWORD"))
+        put(SslConfigs.SSL_KEY_PASSWORD_CONFIG, envOrThrow("KAFKA_CREDSTORE_PASSWORD"))
 
     }
 
