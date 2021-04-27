@@ -27,8 +27,9 @@ fun Application.innteksmeldingModule(config: ApplicationConfig = environment.con
     }
 
     install(Authentication) {
-        tokenValidationSupport(config = config) //??
+        tokenValidationSupport(config = config)
     }
+
 
     configureCORSAccess(config)
  //   configureExceptionHandling() TODO: Har dette bare med altinn å gjøre i fritak AGP, er dette noe vi trenger.

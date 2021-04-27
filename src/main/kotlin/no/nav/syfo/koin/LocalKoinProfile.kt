@@ -35,6 +35,17 @@ import no.nav.tjeneste.virksomhet.behandleinngaaendejournal.v1.binding.BehandleI
 import no.nav.syfo.consumer.util.ws.WsClientMock
 import no.nav.syfo.consumer.util.ws.LogErrorHandler
 import no.nav.syfo.prosesser.FjernInnteksmeldingByBehandletProcessor
+import no.nav.syfo.behandling.InntektsmeldingBehandler
+import no.nav.syfo.consumer.ws.InngaaendeJournalConsumer
+import no.nav.syfo.consumer.ws.BehandleInngaaendeJournalConsumer
+import no.nav.syfo.consumer.ws.JournalConsumer
+import no.nav.syfo.service.JournalpostService
+import no.nav.syfo.service.EksisterendeSakService
+import no.nav.syfo.service.SaksbehandlingService
+import no.nav.syfo.consumer.rest.SakClient
+import no.nav.syfo.producer.InntektsmeldingProducer
+import no.nav.syfo.consumer.SakConsumer
+import no.nav.syfo.consumer.azuread.AzureAdTokenConsumer
 
 @KtorExperimentalAPI
 fun localDevConfig(config: ApplicationConfig) = module {
@@ -57,8 +68,6 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single { PostgresBakgrunnsjobbRepository(get()) } bind BakgrunnsjobbRepository::class
     single { BakgrunnsjobbService(get()) }
 
-    single { Metrikk() } bind Metrikk::class
-
     single { WsClientMock<PersonV3>().createPort(config.getString("virksomhet_person_3_endpointurl"), PersonV3::class.java, listOf(LogErrorHandler()))} bind PersonV3::class
     single { WsClientMock<ArbeidsfordelingV1>().createPort(config.getString("virksomhet_arbeidsfordeling_v1_endpointurl"),ArbeidsfordelingV1::class.java,listOf(LogErrorHandler())) } bind ArbeidsfordelingV1::class
     single { WsClientMock<OppgavebehandlingV3>().createPort(config.getString("servicegateway_url"),OppgavebehandlingV3::class.java,listOf(LogErrorHandler()))} bind OppgavebehandlingV3::class
@@ -75,4 +84,27 @@ fun localDevConfig(config: ApplicationConfig) = module {
 
     single { FjernInnteksmeldingByBehandletProcessor(get(), 1)} bind FjernInnteksmeldingByBehandletProcessor::class
 
+    single { InntektsmeldingBehandler(get(), get(),get(), get(), get(), get(), get()) } bind InntektsmeldingBehandler::class
+    single { InngaaendeJournalConsumer(get()) } bind InngaaendeJournalConsumer::class
+    single { BehandleInngaaendeJournalConsumer(get()) } bind BehandleInngaaendeJournalConsumer::class
+    single { JournalConsumer(get(), get()) } bind JournalConsumer::class
+    single { Metrikk() } bind Metrikk::class
+    single { JournalpostService(get(), get(), get(), get(), get()) } bind JournalpostService::class
+    single { EksisterendeSakService(get()) } bind EksisterendeSakService::class
+    single { InntektsmeldingService(InntektsmeldingRepositoryImp(get()),get()) } bind InntektsmeldingService::class
+    single { SakClient(config.getString("opprett_sak_url"), get()) } bind SakClient::class
+    single { SaksbehandlingService(get(), get(), get(), get()) } bind SaksbehandlingService::class
+    single { InntektsmeldingProducer(
+        config.getString("kafka_bootstrap_servers"),
+        config.getString("srvsyfoinntektsmelding.username"),
+        config.getString("srvsyfoinntektsmelding.password"), get()) } bind InntektsmeldingProducer::class
+    single { SakConsumer(get(),
+        get(),
+        config.getString("aad_syfoinntektsmelding_clientid_username"),
+        config.getString("sakconsumer_host_url"))} bind SakConsumer::class
+
+    single { AzureAdTokenConsumer(get(),
+        config.getString("aadaccesstoken_url"),
+        config.getString("aad_syfogsak_clientid_username"),
+        config.getString("aad_syfoinntektsmelding_clientid_password")) } bind AzureAdTokenConsumer::class
 }

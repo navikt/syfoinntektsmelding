@@ -28,6 +28,9 @@ import no.nav.syfo.utsattoppgave.UtsattOppgaveDAO
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import org.koin.dsl.bind
 import org.koin.dsl.module
+import no.nav.syfo.consumer.ws.InngaaendeJournalConsumer
+import no.nav.syfo.consumer.ws.BehandleInngaaendeJournalConsumer
+import no.nav.syfo.consumer.ws.JournalConsumer
 
 @KtorExperimentalAPI
 fun prodConfig(config: ApplicationConfig) = module {
@@ -57,11 +60,11 @@ fun prodConfig(config: ApplicationConfig) = module {
         config.getString("sakconsumer_host_url"))} bind SakConsumer::class
 
     single { EksisterendeSakService(get()) } bind EksisterendeSakService::class
-    single { InntektsmeldingService(InntektsmeldingRepositoryImp(get()),get()) } bind InntektsmeldingRepository::class
+    single { InntektsmeldingService(InntektsmeldingRepositoryImp(get()),get()) } bind InntektsmeldingService::class
     single { SakClient(config.getString("opprett_sak_url"), get()) } bind SakClient::class
     single { SaksbehandlingService(get(), get(), get(), get()) } bind SaksbehandlingService::class
     single { InntektsmeldingProducer(
-        config.getString("spring_kafka_bootstrap_servers"),
+        config.getString("kafka_bootstrap_servers"),
         config.getString("srvsyfoinntektsmelding.username"),
         config.getString("srvsyfoinntektsmelding.password"), get()) } bind InntektsmeldingProducer::class
 

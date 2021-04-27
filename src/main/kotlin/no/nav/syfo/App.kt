@@ -17,6 +17,7 @@ import no.nav.syfo.koin.selectModuleBasedOnProfile
 import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
 import no.nav.syfo.prosesser.FjernInnteksmeldingByBehandletProcessor
 import no.nav.syfo.utsattoppgave.FeiletUtsattOppgaveMeldingProsessor
+import no.nav.syfo.web.auth.localCookieDispenser
 import no.nav.syfo.web.innteksmeldingModule
 import no.nav.syfo.web.nais.nais
 import org.flywaydb.core.Flyway
@@ -61,6 +62,9 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
             }
 
             module {
+                if (runtimeEnvironment != AppEnv.PROD) {
+                    localCookieDispenser(config)
+                }
                 nais()
                 innteksmeldingModule(config)
             }

@@ -14,6 +14,7 @@ import no.nav.syfo.prosesser.FjernInnteksmeldingByBehandletProcessor
 import java.time.LocalDate
 import java.util.*
 import javax.sql.DataSource
+import no.nav.syfo.web.api.Resultat
 
 @KtorExperimentalAPI
 fun Route.syfoinntektsmelding(
