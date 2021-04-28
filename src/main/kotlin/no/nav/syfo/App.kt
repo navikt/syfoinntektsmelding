@@ -74,6 +74,7 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
         webserver!!.start(wait = false)
     }
 
+    @KtorExperimentalAPI
     private fun configAndStartBackgroundWorker() {
         if (appConfig.getString("run_background_workers") == "true") {
             get<BakgrunnsjobbService>().apply {

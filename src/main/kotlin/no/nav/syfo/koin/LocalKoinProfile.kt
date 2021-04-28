@@ -27,6 +27,7 @@ import no.nav.syfo.consumer.ws.JournalConsumer
 import no.nav.syfo.producer.InntektsmeldingProducer
 import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
 import no.nav.syfo.prosesser.FjernInnteksmeldingByBehandletProcessor
+import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
 import no.nav.syfo.repository.*
 import no.nav.syfo.service.EksisterendeSakService
 import no.nav.syfo.service.JournalpostService
@@ -93,6 +94,8 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single { InntektsmeldingService(InntektsmeldingRepositoryImp(get()),get()) } bind InntektsmeldingService::class
     single { SakClient(config.getString("opprett_sak_url"), get()) } bind SakClient::class
     single { SaksbehandlingService(get(), get(), get(), get()) } bind SaksbehandlingService::class
+    single { FeiletService(get())} bind FeiletService::class
+    single { JoarkInntektsmeldingHendelseProsessor(get(),get(),get(),get(),get()) } bind JoarkInntektsmeldingHendelseProsessor::class
     single { InntektsmeldingProducer(
         config.getString("kafka_bootstrap_servers"),
         config.getString("srvsyfoinntektsmelding.username"),
