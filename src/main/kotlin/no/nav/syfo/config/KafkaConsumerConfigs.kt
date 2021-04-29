@@ -23,7 +23,7 @@ class KafkaConsumerConfigs(
 
     val RETRY_INTERVAL = 1000L;
 
-    fun consumerProperties(): Map<String, Any> = mapOf(
+    fun consumerProperties() = mutableMapOf<String, Any>(
         ConsumerConfig.GROUP_ID_CONFIG to "syfoinntektsmelding-v1",
         ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
         ConsumerConfig.MAX_POLL_RECORDS_CONFIG to "1",

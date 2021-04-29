@@ -17,7 +17,7 @@ class JoarkHendelseConsumer(
     props: Map<String, Any>,
     private val topicName: String,
     private val om: ObjectMapper,
-    consumerFactory: ConsumerFactory<Nokkel, Beskjed>,
+    consumerFactory: ConsumerFactory<String, String>,
     private val bakgrunnsjobbRepo: BakgrunnsjobbRepository,
 ) {
     private val consumer = consumerFactory.createConsumer(props)
@@ -25,7 +25,7 @@ class JoarkHendelseConsumer(
     fun consumeMessage() {
         consumer.subscribe(listOf(topicName))
         while (true) {
-            val records: ConsumerRecords<Nokkel, Beskjed>? = consumer.poll(Duration.ofMillis(100))
+            val records: ConsumerRecords<String, String>? = consumer.poll(Duration.ofMillis(100))
             records?.forEach { record ->
                 val hendelse = om.readValue<InngaaendeJournalpostDTO>(record.value().toString())
                 // https://confluence.adeo.no/display/BOA/Tema https://confluence.adeo.no/display/BOA/Mottakskanal

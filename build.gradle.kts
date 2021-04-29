@@ -172,7 +172,7 @@ dependencies {
     testCompileOnly("org.projectlombok:lombok:1.18.18")
     testAnnotationProcessor("org.projectlombok:lombok:1.18.18")*/
     implementation("com.google.guava:guava:30.0-jre")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3")
     implementation("io.confluent:kafka-streams-avro-serde:5.5.2")
 
 
