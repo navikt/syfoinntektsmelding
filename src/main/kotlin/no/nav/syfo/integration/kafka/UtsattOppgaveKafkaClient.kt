@@ -1,11 +1,14 @@
 package no.nav.syfo.integration.kafka
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.kubernetes.LivenessComponent
 import no.nav.syfo.kafkamottak.InngaaendeJournalpostDTO
 import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
+import no.nav.syfo.util.MDCOperations
+import no.nav.syfo.utsattoppgave.*
 import org.apache.kafka.clients.consumer.ConsumerRecords
 //import no.nav.helse.inntektsmeldingsvarsel.ANTALL_INNKOMMENDE_MELDINGER
 import org.apache.kafka.clients.consumer.KafkaConsumer
@@ -18,7 +21,7 @@ import java.util.*
 
 
 class UtsattOppgaveKafkaClient(props: MutableMap<String, Any>, topicName: String,
-                               private val om : ObjectMapper, private val bakgrunnsjobbRepo: BakgrunnsjobbRepository) :
+                               private val om : ObjectMapper, val oppgaveService: UtsattOppgaveService, private val bakgrunnsjobbRepo: BakgrunnsjobbRepository) :
         ManglendeInntektsmeldingMeldingProvider,
         LivenessComponent {
 
@@ -30,12 +33,6 @@ class UtsattOppgaveKafkaClient(props: MutableMap<String, Any>, topicName: String
     private val log = LoggerFactory.getLogger(UtsattOppgaveKafkaClient::class.java)
 
     init {
-        props.apply {
-            put("enable.auto.commit", false)
-            put("group.id", "helsearbeidsgiver-im-varsel-grace-period")
-            put("max.poll.interval.ms", Duration.ofMinutes(60).toMillis().toInt())
-            put("auto.offset.reset", "latest")
-        }
 
         consumer = KafkaConsumer<String, String>(props, StringDeserializer(), StringDeserializer())
         consumer.assign(Collections.singletonList(topicPartition))
@@ -59,30 +56,36 @@ class UtsattOppgaveKafkaClient(props: MutableMap<String, Any>, topicName: String
             val payloads = records?.map { it.value() }
             payloads.let {  currentBatch = it!! }
             records?.forEach { record ->
-                val hendelse = om.readValue(record.value().toString(),InngaaendeJournalpostDTO::class.java)
-
-                val isSyketemaOgFraAltinnMidlertidig =
-                    hendelse.temaNytt == "SYK" &&
-                        hendelse.mottaksKanal == "ALTINN" &&
-                        hendelse.journalpostStatus == "M"
-
-                if (!isSyketemaOgFraAltinnMidlertidig) {
+                MDCOperations.putToMDC(MDCOperations.MDC_CALL_ID, UUID.randomUUID().toString())
+                val hendelse = om.readValue<UtsattOppgaveDTO>(record.value().toString())
+                if (DokumentTypeDTO.Inntektsmelding != hendelse.dokumentType) {
                     return@forEach
                 }
 
-                bakgrunnsjobbRepo.save(
-                    Bakgrunnsjobb(
-                        type = JoarkInntektsmeldingHendelseProsessor.JOB_TYPE,
-                        kjoeretid = LocalDateTime.now(),
-                        maksAntallForsoek = 10,
-                        data = om.writeValueAsString(
-                            JoarkInntektsmeldingHendelseProsessor.JobbData(
-                                UUID.randomUUID(),
-                                om.writeValueAsString(hendelse)
+                try {
+                    oppgaveService.prosesser(
+                        OppgaveOppdatering(
+                            hendelse.dokumentId,
+                            hendelse.oppdateringstype.tilHandling(),
+                            hendelse.timeout
+                        )
+                    )
+                } catch (ex: Exception) {
+                    bakgrunnsjobbRepo.save(
+                        Bakgrunnsjobb(
+                            type = FeiletUtsattOppgaveMeldingProsessor.JOB_TYPE,
+                            kjoeretid = LocalDateTime.now().plusMinutes(30),
+                            maksAntallForsoek = 10,
+                            data = om.writeValueAsString(
+                                FeiletUtsattOppgaveMeldingProsessor.JobbData(
+                                    UUID.randomUUID(),
+                                    om.writeValueAsString(hendelse)
+                                )
                             )
                         )
                     )
-                )
+                }
+                MDCOperations.remove(MDCOperations.MDC_CALL_ID)
             }
 
             lastThrown = null

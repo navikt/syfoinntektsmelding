@@ -49,21 +49,4 @@ fun Module.externalSystemClients(config: ApplicationConfig) {
         val azureAdConfig = clientConfig.clientConfig["azure_ad"] ?: error("Fant ikke config i application.conf")
         OAuth2TokenProvider(accessTokenService, azureAdConfig)
     } bind AccessTokenProvider::class
-
-
-
-    single { UtsattOppgaveKafkaConsumer(
-        onPremCommonKafkaProps(config),
-        config.getString("kafka_utsatt_oppgave_topic"),
-        get(),
-        UtsattOppgaveConsumerFactory(),get(), get()) }
-    single { JoarkHendelseConsumer(
-        onPremCommonKafkaProps(config),
-        config.getString("kafka_joark_hendelse_topics"),
-        get(),
-        JoarchhendlseConsumerFactory(config.getString("kafka_schema_registry_url_config")), get()) }
-
-
-
-
 }

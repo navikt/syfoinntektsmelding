@@ -24,6 +24,9 @@ import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
 import no.nav.syfo.consumer.ws.InngaaendeJournalConsumer
 import no.nav.syfo.consumer.ws.JournalConsumer
 import no.nav.syfo.integration.kafka.JoarkHendelseKafkaClient
+import no.nav.syfo.integration.kafka.UtsattOppgaveKafkaClient
+import no.nav.syfo.integration.kafka.joarkProperties
+import no.nav.syfo.integration.kafka.utsattOppgaveProperties
 import no.nav.syfo.kafkamottak.JoarkHendelseConsumer
 import no.nav.syfo.producer.InntektsmeldingProducer
 import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
@@ -79,11 +82,14 @@ fun localDevConfig(config: ApplicationConfig) = module {
 
     single {
         JoarkHendelseKafkaClient(
-            KafkaConsumerConfigs(
-                config.getString("kafka_bootstrap_servers"),
-                config.getString("srvsyfoinntektsmelding.username"),
-                config.getString("srvsyfoinntektsmelding.password")
-            ).consumerProperties(), "kafka_joark_hendelse_topic:dummy_for_test", get(), get()
+        joarkProperties(config).toMutableMap(),
+ "kafka_joark_hendelse_topic:dummy_for_test", get(), get()
+        )
+    }
+    single {
+        UtsattOppgaveKafkaClient(
+            utsattOppgaveProperties(config).toMutableMap(),
+            "aapen-helse-spre-oppgaver", get(), get(), get()
         )
     }
 
