@@ -109,7 +109,7 @@ dependencies {
     constraints {
         implementation("io.netty:netty-codec-http2") {
             version {
-                strictly("4.1.59.Final")
+                strictly("4.1.61.Final")
             }
             because("snyk control")
         }
