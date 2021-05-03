@@ -132,6 +132,12 @@ dependencies {
             }
             because("snyk control")
         }
+        implementation("org.glassfish.jersey.core:jersey-common") {
+            version {
+                strictly("3.0.2")
+            }
+            because("snyk control")
+        }
     }
     implementation("io.netty:netty-codec:4.1.59.Final") // overstyrer transiente 4.1.44
     implementation("io.netty:netty-codec-http:4.1.59.Final") // overstyrer transiente 4.1.51.Final gjennom ktor-server-netty
@@ -240,6 +246,7 @@ dependencies {
     implementation("io.prometheus:simpleclient_common:$prometheusVersion")
     implementation("io.prometheus:simpleclient_hotspot:$prometheusVersion")
     implementation("no.nav.tjenestespesifikasjoner:altinn-correspondence-agency-external-basic:1.2019.09.25-00.21-49b69f0625e0")
+    implementation("javax.annotation:javax.annotation-api:1.3.2")
 }
 
 tasks.named<Jar>("jar") {
