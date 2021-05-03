@@ -106,7 +106,24 @@ java {
 }
 
 dependencies {
+    constraints {
+        implementation("io.netty:netty-codec-http2") {
+            version {
+                strictly("4.1.59.Final")
+            }
+            because("snyk control")
+        }
 
+        implementation("io.netty:netty-transport-native-epoll") {
+            version {
+                strictly("4.1.59.Final")
+            }
+            because("snyk control")
+        }
+
+    }
+    implementation("io.netty:netty-codec:4.1.59.Final") // overstyrer transiente 4.1.44
+    implementation("io.netty:netty-codec-http:4.1.59.Final") // overstyrer transiente 4.1.51.Final gjennom ktor-server-netty
     // SNYK overrides
     implementation("commons-collections:commons-collections:3.2.2")
     // - end SNYK overrides

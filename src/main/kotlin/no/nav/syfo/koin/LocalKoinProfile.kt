@@ -8,7 +8,6 @@ import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.system.getString
 import no.nav.syfo.behandling.InntektsmeldingBehandler
-import no.nav.syfo.config.KafkaConsumerConfigs
 import no.nav.syfo.config.OppgaveClientConfigProvider
 import no.nav.syfo.config.SakClientConfigProvider
 import no.nav.syfo.consumer.SakConsumer
@@ -24,8 +23,8 @@ import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
 import no.nav.syfo.consumer.ws.InngaaendeJournalConsumer
 import no.nav.syfo.consumer.ws.JournalConsumer
 import no.nav.syfo.integration.kafka.*
-import no.nav.syfo.kafkamottak.JoarkHendelseConsumer
 import no.nav.syfo.producer.InntektsmeldingProducer
+import no.nav.syfo.producer.producerLocalProperties
 import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
 import no.nav.syfo.prosesser.FjernInnteksmeldingByBehandletProcessor
 import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
@@ -77,20 +76,18 @@ fun localDevConfig(config: ApplicationConfig) = module {
 
     single { FinnAlleUtgaandeOppgaverProcessor(get(), get(), get()) } bind FinnAlleUtgaandeOppgaverProcessor::class
 
-    single {
-        PollForJoarkVarslingsmeldingJob(        JoarkHendelseKafkaClient(
-            joarkProperties(config).toMutableMap(),
-            "kafka_joark_hendelse_topic:dummy_for_test", get(), get()
-        ),JoarkHendelseKafkaClient)
-
-    }
+    single { JoarkHendelseKafkaClient(
+         joarkLocalProperties(config).toMutableMap(),
+        config.getString("kafka_joark_hendelse_topic"), get(), get()
+    ) }
+    single { JoarkHendelseVarslingService(get()) }
     single {
         UtsattOppgaveKafkaClient(
-            utsattOppgaveProperties(config).toMutableMap(),
-            "aapen-helse-spre-oppgaver", get(), get(), get()
+            utsattOppgaveLocalProperties(config).toMutableMap(),
+            config.getString("kafka_utsatt_oppgave_topic"), get(), get(), get()
         )
     }
-
+    single { UtsattOppgaveVarslingService(get())}
     single {
         OppgaveClientConfigProvider(
             config.getString("oppgavebehandling_url"),
@@ -201,12 +198,9 @@ fun localDevConfig(config: ApplicationConfig) = module {
     } bind JoarkInntektsmeldingHendelseProsessor::class
 
     single {
-        InntektsmeldingProducer(
-            config.getString("kafka_bootstrap_servers"),
-            config.getString("srvsyfoinntektsmelding.username"),
-            config.getString("srvsyfoinntektsmelding.password"), get()
-        )
+        InntektsmeldingProducer(producerLocalProperties(config.getString("kafka_bootstrap_servers")), get())
     } bind InntektsmeldingProducer::class
+
     single {
         SakConsumer(
             get(),

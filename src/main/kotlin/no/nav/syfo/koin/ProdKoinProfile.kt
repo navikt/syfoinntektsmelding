@@ -31,6 +31,8 @@ import org.koin.dsl.module
 import no.nav.syfo.consumer.ws.InngaaendeJournalConsumer
 import no.nav.syfo.consumer.ws.BehandleInngaaendeJournalConsumer
 import no.nav.syfo.consumer.ws.JournalConsumer
+import no.nav.syfo.integration.kafka.*
+import no.nav.syfo.producer.producerOnPremProperties
 
 @KtorExperimentalAPI
 fun prodConfig(config: ApplicationConfig) = module {
@@ -63,10 +65,26 @@ fun prodConfig(config: ApplicationConfig) = module {
     single { InntektsmeldingService(InntektsmeldingRepositoryImp(get()),get()) } bind InntektsmeldingService::class
     single { SakClient(config.getString("opprett_sak_url"), get()) } bind SakClient::class
     single { SaksbehandlingService(get(), get(), get(), get()) } bind SaksbehandlingService::class
-    single { InntektsmeldingProducer(
+
+    single { JoarkHendelseKafkaClient(
+        joarkOnPremProperties(config).toMutableMap(),
+        config.getString("kafka_joark_hendelse_topic"), get(), get()
+    ) }
+    single { JoarkHendelseVarslingService(get()) }
+    single {
+        UtsattOppgaveKafkaClient(
+            utsattOppgaveOnPremProperties(config).toMutableMap(),
+            config.getString("kafka_utsatt_oppgave_topic"), get(), get(), get()
+        )
+    }
+    single { UtsattOppgaveVarslingService(get()) }
+
+
+    single { InntektsmeldingProducer(producerOnPremProperties(
         config.getString("kafka_bootstrap_servers"),
         config.getString("srvsyfoinntektsmelding.username"),
-        config.getString("srvsyfoinntektsmelding.password"), get()) } bind InntektsmeldingProducer::class
+        config.getString("srvsyfoinntektsmelding.password"))
+        , get()) } bind InntektsmeldingProducer::class
 
     single { UtsattOppgaveDAO(UtsattOppgaveRepositoryImp(get()))}
     single { OppgaveClient(config.getString("oppgavebehandling_url"), get(), get())} bind OppgaveClient::class

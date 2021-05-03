@@ -1,13 +1,14 @@
-create table BAKGRUNNSJOBB (
-    JOBB_ID VARCHAR(100) unique not null,
-    TYPE VARCHAR(100) not null,
-    BEHANDLET timestamp,
-    OPPRETTET timestamp not null,
+create table bakgrunnsjobb
+(
+    jobb_id      uuid unique  not null,
+    type         VARCHAR(100) not null,
+    behandlet    timestamp,
+    opprettet    timestamp    not null,
 
-    STATUS VARCHAR(50) not null,
-    KJOERETID timestamp not null,
+    status       VARCHAR(50)  not null,
+    kjoeretid    timestamp    not null,
 
-    FORSOEK int not null default 0,
-    MAKS_FORSOEK int not null,
-    DATA jsonb
-)
+    forsoek      int          not null default 0,
+    maks_forsoek int          not null,
+    data         jsonb
+);

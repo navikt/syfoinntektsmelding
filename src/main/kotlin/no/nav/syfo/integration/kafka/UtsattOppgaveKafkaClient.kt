@@ -5,8 +5,6 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.kubernetes.LivenessComponent
-import no.nav.syfo.kafkamottak.InngaaendeJournalpostDTO
-import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
 import no.nav.syfo.util.MDCOperations
 import no.nav.syfo.utsattoppgave.*
 import org.apache.kafka.clients.consumer.ConsumerRecords
@@ -22,7 +20,7 @@ import java.util.*
 
 class UtsattOppgaveKafkaClient(props: MutableMap<String, Any>, topicName: String,
                                private val om : ObjectMapper, val oppgaveService: UtsattOppgaveService, private val bakgrunnsjobbRepo: BakgrunnsjobbRepository) :
-        ManglendeInntektsmeldingMeldingProvider,
+        MeldingProvider,
         LivenessComponent {
 
     private var currentBatch: List<String> = emptyList()

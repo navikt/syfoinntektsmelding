@@ -13,7 +13,7 @@ import no.nav.helse.arbeidsgiver.kubernetes.ReadynessComponent
 import no.nav.helse.arbeidsgiver.system.AppEnv
 import no.nav.helse.arbeidsgiver.system.getEnvironment
 import no.nav.helse.arbeidsgiver.system.getString
-import no.nav.syfo.integration.kafka.JoarkHendelseKafkaClient
+import no.nav.syfo.integration.kafka.PollForJoarkVarslingsmeldingJob
 import no.nav.syfo.integration.kafka.PollForUtsattOppgaveVarslingsmeldingJob
 import no.nav.syfo.koin.getAllOfType
 import no.nav.syfo.koin.selectModuleBasedOnProfile
@@ -49,6 +49,7 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
         }
 
         startKoin { modules(selectModuleBasedOnProfile(appConfig)) }
+        migrateDatabase()
         configAndStartBackgroundWorker()
         autoDetectProbeableComponents()
         configAndStartWebserver()
@@ -56,9 +57,10 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
     }
 
     private fun startKafkaConsumer() {
-        val hendelse = JoarkHendelseKafkaClient()
-        val pollForVarslingsmeldingJob = PollForUtsattOppgaveVarslingsmeldingJob()
-
+        val utsattOppgavePoll = PollForUtsattOppgaveVarslingsmeldingJob(get(), get())
+        utsattOppgavePoll.doJob()
+        val joarkPoll = PollForJoarkVarslingsmeldingJob(get(), get())
+        joarkPoll.doJob()
     }
 
     fun shutdown() {

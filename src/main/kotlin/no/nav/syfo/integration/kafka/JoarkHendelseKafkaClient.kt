@@ -1,14 +1,11 @@
 package no.nav.syfo.integration.kafka
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig
-import io.confluent.kafka.streams.serdes.avro.GenericAvroDeserializer
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.kubernetes.LivenessComponent
 import no.nav.syfo.kafkamottak.InngaaendeJournalpostDTO
 import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
-import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.ConsumerRecords
 //import no.nav.helse.inntektsmeldingsvarsel.ANTALL_INNKOMMENDE_MELDINGER
 import org.apache.kafka.clients.consumer.KafkaConsumer
@@ -19,14 +16,14 @@ import java.time.Duration
 import java.time.LocalDateTime
 import java.util.*
 
-interface ManglendeInntektsmeldingMeldingProvider {
+interface MeldingProvider {
     fun getMessagesToProcess(): List<String>
     fun confirmProcessingDone()
 }
 
 class JoarkHendelseKafkaClient(props: MutableMap<String, Any>, topicName: String,
                                private val om : ObjectMapper, private val bakgrunnsjobbRepo: BakgrunnsjobbRepository) :
-        ManglendeInntektsmeldingMeldingProvider,
+        MeldingProvider,
         LivenessComponent {
 
     private var currentBatch: List<String> = emptyList()
@@ -37,14 +34,6 @@ class JoarkHendelseKafkaClient(props: MutableMap<String, Any>, topicName: String
     private val log = LoggerFactory.getLogger(JoarkHendelseKafkaClient::class.java)
 
     init {
-//        props.apply {
-//            put("enable.auto.commit", false)
-//            put("group.id", "helsearbeidsgiver-im-varsel-grace-period")
-//            put("max.poll.interval.ms", Duration.ofMinutes(60).toMillis().toInt())
-//            put("auto.offset.reset", "latest")
-//        }
-
-
         consumer = KafkaConsumer<String, String>(props, StringDeserializer(), StringDeserializer())
         consumer.assign(Collections.singletonList(topicPartition))
 

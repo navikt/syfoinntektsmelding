@@ -5,8 +5,8 @@ import kotlinx.coroutines.Dispatchers
 import java.time.Duration
 
 class PollForJoarkVarslingsmeldingJob(
-        private val kafkaProvider: ManglendeInntektsmeldingMeldingProvider,
-        private val service: VarslingService,
+        private val kafkaProvider: JoarkHendelseKafkaClient,
+        private val service: JoarkHendelseVarslingService,
         coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO),
         waitTimeWhenEmptyQueue: Duration = Duration.ofSeconds(30)
 ) : RecurringJob(coroutineScope, waitTimeWhenEmptyQueue) {

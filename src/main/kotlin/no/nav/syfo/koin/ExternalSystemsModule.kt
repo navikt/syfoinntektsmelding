@@ -10,11 +10,6 @@ import no.nav.security.token.support.client.core.oauth2.ClientCredentialsTokenCl
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.core.oauth2.OnBehalfOfTokenClient
 import no.nav.security.token.support.client.core.oauth2.TokenExchangeClient
-import no.nav.syfo.integration.kafka.JoarchhendlseConsumerFactory
-import no.nav.syfo.integration.kafka.UtsattOppgaveConsumerFactory
-import no.nav.syfo.integration.kafka.UtsattOppgaveKafkaConsumer
-import no.nav.syfo.integration.kafka.onPremCommonKafkaProps
-import no.nav.syfo.kafkamottak.JoarkHendelseConsumer
 import org.koin.core.module.Module
 import org.koin.dsl.bind
 import no.nav.syfo.integration.altinn.CachedAuthRepo
