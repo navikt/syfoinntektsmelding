@@ -14,6 +14,8 @@ import no.nav.syfo.consumer.rest.OppgaveClient
 import no.nav.syfo.consumer.rest.SakClient
 import no.nav.syfo.consumer.rest.TokenConsumer
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
+import no.nav.syfo.consumer.util.ws.LogErrorHandler
+import no.nav.syfo.consumer.util.ws.WsClient
 import no.nav.syfo.consumer.ws.*
 import no.nav.syfo.producer.InntektsmeldingProducer
 import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
@@ -33,6 +35,13 @@ import no.nav.syfo.consumer.ws.BehandleInngaaendeJournalConsumer
 import no.nav.syfo.consumer.ws.JournalConsumer
 import no.nav.syfo.integration.kafka.*
 import no.nav.syfo.producer.producerOnPremProperties
+import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.binding.ArbeidsfordelingV1
+import no.nav.tjeneste.virksomhet.behandleinngaaendejournal.v1.binding.BehandleInngaaendeJournalV1
+import no.nav.tjeneste.virksomhet.behandlesak.v2.BehandleSakV2
+import no.nav.tjeneste.virksomhet.inngaaendejournal.v1.binding.InngaaendeJournalV1
+import no.nav.tjeneste.virksomhet.journal.v2.binding.JournalV2
+import no.nav.tjeneste.virksomhet.oppgavebehandling.v3.binding.OppgavebehandlingV3
+import no.nav.tjeneste.virksomhet.person.v3.binding.PersonV3
 
 @KtorExperimentalAPI
 fun prodConfig(config: ApplicationConfig) = module {
@@ -101,5 +110,53 @@ fun prodConfig(config: ApplicationConfig) = module {
     single { PostgresBakgrunnsjobbRepository(get()) } bind BakgrunnsjobbRepository::class
     single { BakgrunnsjobbService(get(), bakgrunnsvarsler = MetrikkVarsler()) }
 
-
+    single {
+        WsClient<PersonV3>().createPort(
+            config.getString("virksomhet_person_3_endpointurl"),
+            PersonV3::class.java,
+            listOf(LogErrorHandler())
+        )
+    } bind PersonV3::class
+    single {
+        WsClient<ArbeidsfordelingV1>().createPort(
+            config.getString("virksomhet_arbeidsfordeling_v1_endpointurl"),
+            ArbeidsfordelingV1::class.java,
+            listOf(LogErrorHandler())
+        )
+    } bind ArbeidsfordelingV1::class
+    single {
+        WsClient<OppgavebehandlingV3>().createPort(
+            config.getString("servicegateway_url"),
+            OppgavebehandlingV3::class.java,
+            listOf(LogErrorHandler())
+        )
+    } bind OppgavebehandlingV3::class
+    single {
+        WsClient<JournalV2>().createPort(
+            config.getString("journal_v2_endpointurl"),
+            JournalV2::class.java,
+            listOf(LogErrorHandler())
+        )
+    } bind JournalV2::class
+    single {
+        WsClient<InngaaendeJournalV1>().createPort(
+            config.getString("inngaaendejournal_v1_endpointurl"),
+            InngaaendeJournalV1::class.java,
+            listOf(LogErrorHandler())
+        )
+    } bind InngaaendeJournalV1::class
+    single {
+        WsClient<BehandleSakV2>().createPort(
+            config.getString("virksomhet_behandlesak_v2_endpointurl"),
+            BehandleSakV2::class.java,
+            listOf(LogErrorHandler())
+        )
+    } bind BehandleSakV2::class
+    single {
+        WsClient<BehandleInngaaendeJournalV1>().createPort(
+            config.getString("behandleinngaaendejournal_v1_endpointurl"),
+            BehandleInngaaendeJournalV1::class.java,
+            listOf(LogErrorHandler())
+        )
+    } bind BehandleInngaaendeJournalV1::class
 }

@@ -17,6 +17,7 @@ import no.nav.syfo.consumer.rest.SakClient
 import no.nav.syfo.consumer.rest.TokenConsumer
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
 import no.nav.syfo.consumer.util.ws.LogErrorHandler
+import no.nav.syfo.consumer.util.ws.WsClient
 import no.nav.syfo.consumer.util.ws.WsClientMock
 import no.nav.syfo.consumer.ws.BehandleInngaaendeJournalConsumer
 import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
