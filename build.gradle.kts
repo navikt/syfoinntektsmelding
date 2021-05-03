@@ -126,7 +126,12 @@ dependencies {
             }
             because("snyk control")
         }
-
+        implementation("io.ktor:ktor-client-cio") {
+            version {
+                strictly("1.3.0")
+            }
+            because("snyk control")
+        }
     }
     implementation("io.netty:netty-codec:4.1.59.Final") // overstyrer transiente 4.1.44
     implementation("io.netty:netty-codec-http:4.1.59.Final") // overstyrer transiente 4.1.51.Final gjennom ktor-server-netty
