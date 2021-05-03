@@ -33,7 +33,6 @@ class UtsattOppgaveKafkaClient(props: MutableMap<String, Any>, topicName: String
     private val log = LoggerFactory.getLogger(UtsattOppgaveKafkaClient::class.java)
 
     init {
-
         consumer = KafkaConsumer<String, String>(props, StringDeserializer(), StringDeserializer())
         consumer.assign(Collections.singletonList(topicPartition))
 

@@ -2,6 +2,7 @@ package no.nav.syfo
 
 import com.typesafe.config.ConfigFactory
 import io.ktor.config.*
+import io.ktor.locations.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.util.*
@@ -12,6 +13,8 @@ import no.nav.helse.arbeidsgiver.kubernetes.ReadynessComponent
 import no.nav.helse.arbeidsgiver.system.AppEnv
 import no.nav.helse.arbeidsgiver.system.getEnvironment
 import no.nav.helse.arbeidsgiver.system.getString
+import no.nav.syfo.integration.kafka.JoarkHendelseKafkaClient
+import no.nav.syfo.integration.kafka.PollForUtsattOppgaveVarslingsmeldingJob
 import no.nav.syfo.koin.getAllOfType
 import no.nav.syfo.koin.selectModuleBasedOnProfile
 import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
@@ -34,8 +37,10 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
     private val logger = LoggerFactory.getLogger(SpinnApplication::class.simpleName)
     private var webserver: NettyApplicationEngine? = null
     private var appConfig: HoconApplicationConfig = HoconApplicationConfig(ConfigFactory.load())
+    @KtorExperimentalAPI
     private val runtimeEnvironment = appConfig.getEnvironment()
 
+    @KtorExperimentalLocationsAPI
     @KtorExperimentalAPI
     fun start() {
         if (runtimeEnvironment == AppEnv.PREPROD || runtimeEnvironment == AppEnv.PROD) {
@@ -47,6 +52,13 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
         configAndStartBackgroundWorker()
         autoDetectProbeableComponents()
         configAndStartWebserver()
+        startKafkaConsumer()
+    }
+
+    private fun startKafkaConsumer() {
+        val hendelse = JoarkHendelseKafkaClient()
+        val pollForVarslingsmeldingJob = PollForUtsattOppgaveVarslingsmeldingJob()
+
     }
 
     fun shutdown() {
@@ -55,6 +67,8 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
         stopKoin()
     }
 
+    @KtorExperimentalAPI
+    @KtorExperimentalLocationsAPI
     private fun configAndStartWebserver() {
         webserver = embeddedServer(Netty, applicationEngineEnvironment {
             config = appConfig
@@ -114,6 +128,7 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
 }
 
 
+@KtorExperimentalLocationsAPI
 @KtorExperimentalAPI
 fun main() {
     val logger = LoggerFactory.getLogger("main")

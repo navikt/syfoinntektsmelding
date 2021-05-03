@@ -4,7 +4,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import java.time.Duration
 
-class PollForVarslingsmeldingJob(
+class PollForJoarkVarslingsmeldingJob(
         private val kafkaProvider: ManglendeInntektsmeldingMeldingProvider,
         private val service: VarslingService,
         coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO),
