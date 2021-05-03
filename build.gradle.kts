@@ -120,6 +120,12 @@ dependencies {
             }
             because("snyk control")
         }
+        testImplementation("org.eclipse.jetty:jetty-io") {
+            version {
+                strictly("11.0.2")
+            }
+            because("snyk control")
+        }
 
     }
     implementation("io.netty:netty-codec:4.1.59.Final") // overstyrer transiente 4.1.44
