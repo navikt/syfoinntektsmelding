@@ -1,6 +1,7 @@
 package no.nav.syfo.integration.kafka
 
 import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig
+import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig
 import io.confluent.kafka.streams.serdes.avro.GenericAvroDeserializer
 import io.ktor.config.*
 import no.nav.helse.arbeidsgiver.system.getString
@@ -32,13 +33,13 @@ private fun consumerLocalProperties(config: ApplicationConfig) = mutableMapOf<St
 
 fun joarkLocalProperties(config: ApplicationConfig) = consumerLocalProperties(config) +  mapOf(
     ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to GenericAvroDeserializer::class.java,
-    AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG to "http://kafka-schema-registry.tpa.svc.nais.local:8081",
+    AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG to "http://kafka-schema-registry.tpa.svc.nais.local:8081",
     ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "none",
     ConsumerConfig.GROUP_ID_CONFIG to "syfoinntektsmelding-v2")
 
 fun joarkOnPremProperties(config: ApplicationConfig) = consumerOnPremProperties(config) +  mapOf(
     ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to GenericAvroDeserializer::class.java,
-    AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG to "http://kafka-schema-registry.tpa.svc.nais.local:8081",
+    AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG to "http://kafka-schema-registry.tpa.svc.nais.local:8081",
     ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "none",
     ConsumerConfig.GROUP_ID_CONFIG to "syfoinntektsmelding-v2")
 
