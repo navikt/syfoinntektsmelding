@@ -11,9 +11,9 @@ import no.nav.syfo.mapping.mapArbeidsgivertype
 import no.nav.syfo.mapping.toInntektsmeldingEntitet
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import testutil.FØRSTE_FEBRUAR
-import testutil.FØRSTE_JANUAR
-import testutil.grunnleggendeInntektsmelding
+import no.nav.syfo.FØRSTE_JANUAR
+import no.nav.syfo.FØRSTE_FEBRUAR
+import no.nav.syfo.grunnleggendeInntektsmelding
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime

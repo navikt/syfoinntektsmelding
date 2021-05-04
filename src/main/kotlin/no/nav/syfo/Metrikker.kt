@@ -3,7 +3,7 @@ package no.nav.syfo
 import io.prometheus.client.Counter
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsvarsler
 
-const val METRICS_NS = "fritakagp"
+const val METRICS_NS = "spinn"
 
 
 class MetrikkVarsler : Bakgrunnsvarsler {

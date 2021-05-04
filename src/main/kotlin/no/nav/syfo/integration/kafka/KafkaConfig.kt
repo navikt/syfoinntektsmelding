@@ -34,7 +34,7 @@ private fun consumerLocalProperties(config: ApplicationConfig) = mutableMapOf<St
 fun joarkLocalProperties(config: ApplicationConfig) = consumerLocalProperties(config) +  mapOf(
     ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to GenericAvroDeserializer::class.java,
     AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG to "http://kafka-schema-registry.tpa.svc.nais.local:8081",
-    ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "none",
+    ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
     ConsumerConfig.GROUP_ID_CONFIG to "syfoinntektsmelding-v2")
 
 fun joarkOnPremProperties(config: ApplicationConfig) = consumerOnPremProperties(config) +  mapOf(

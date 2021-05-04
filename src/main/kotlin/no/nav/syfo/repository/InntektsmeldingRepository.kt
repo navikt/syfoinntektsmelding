@@ -2,11 +2,13 @@ package no.nav.syfo.repository
 
 import no.nav.syfo.dto.InntektsmeldingEntitet
 import java.sql.ResultSet
+import java.sql.Timestamp
 import java.time.LocalDateTime
 import java.util.*
 import javax.sql.DataSource
 
 interface InntektsmeldingRepository {
+    fun findByUuid(uuid: String): InntektsmeldingEntitet
     fun findByAktorId(aktoerId: String): List<InntektsmeldingEntitet>
     fun findFirst100ByBehandletBefore(førDato: LocalDateTime): List<InntektsmeldingEntitet>
     fun deleteByBehandletBefore(førDato: LocalDateTime): Long
@@ -41,11 +43,25 @@ class InntektsmeldingRepositoryMock : InntektsmeldingRepository {
     override fun findAll(): List<InntektsmeldingEntitet> {
         return mockrepo.toList()
     }
+
+    override fun findByUuid(uuid: String): InntektsmeldingEntitet {
+        TODO("Not yet implemented")
+    }
 }
 
 class InntektsmeldingRepositoryImp(
     private val ds: DataSource
 ) : InntektsmeldingRepository {
+    override fun findByUuid(uuid: String): InntektsmeldingEntitet {
+        val findByAktorId = "SELECT * FROM INNTEKTSMELDING WHERE INNTEKTSMELDING_UUID = ?;"
+        val inntektsmeldinger = ArrayList<InntektsmeldingEntitet>()
+        ds.connection.use {
+            val res = it.prepareStatement(findByAktorId).apply {
+                setString(1, uuid)
+            }.executeQuery()
+            return resultLoop(res, inntektsmeldinger).first()
+        }
+    }
 
     override fun findByAktorId(id: String): List<InntektsmeldingEntitet> {
         val findByAktorId = "SELECT * FROM INNTEKTSMELDING WHERE AKTOR_ID = ?;"
@@ -77,7 +93,7 @@ class InntektsmeldingRepositoryImp(
     override fun lagreInnteksmelding(innteksmelding: InntektsmeldingEntitet): InntektsmeldingEntitet {
         val insertStatement =
             """INSERT INTO INNTEKTSMELDING (INNTEKTSMELDING_UUID, AKTOR_ID, ORGNUMMER, SAK_ID, JOURNALPOST_ID, BEHANDLET, ARBEIDSGIVER_PRIVAT, DATA)
-        VALUES (${innteksmelding.uuid}, ${innteksmelding.aktorId}, ${innteksmelding.orgnummer}, ${innteksmelding.sakId}, ${innteksmelding.journalpostId}, ${innteksmelding.behandlet}, ${innteksmelding.arbeidsgiverPrivat}, ${innteksmelding.data})
+        VALUES ('${innteksmelding.uuid}', '${innteksmelding.aktorId}', '${innteksmelding.orgnummer}', '${innteksmelding.sakId}', '${innteksmelding.journalpostId}', '${Timestamp.valueOf(innteksmelding.behandlet)}', '${innteksmelding.arbeidsgiverPrivat}','${innteksmelding.data}')
         RETURNING *;""".trimMargin()
         val inntektsmeldinger = ArrayList<InntektsmeldingEntitet>()
         ds.connection.use {
@@ -114,9 +130,8 @@ class InntektsmeldingRepositoryImp(
                     orgnummer = res.getString("ORGNUMMER"),
                     sakId = res.getString("SAK_ID"),
                     journalpostId = res.getString("JOURNALPOST_ID"),
-                    behandlet = LocalDateTime.parse(res.getString("BEHANDLET")),
-                    arbeidsgiverPrivat = res.getString("ARBEIDSGIVER_PRIVAT"),
-                    data = res.getString("DATA")
+                    behandlet = res.getTimestamp("BEHANDLET").toLocalDateTime(),
+                    arbeidsgiverPrivat = res.getString("ARBEIDSGIVER_PRIVAT")
                 )
             )
         }

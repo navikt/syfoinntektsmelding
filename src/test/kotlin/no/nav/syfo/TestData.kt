@@ -1,4 +1,4 @@
-package testutil
+package no.nav.syfo
 
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode

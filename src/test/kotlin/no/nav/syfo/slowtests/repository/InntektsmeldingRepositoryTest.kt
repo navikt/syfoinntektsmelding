@@ -1,26 +1,40 @@
-package no.nav.syfo.syfoinnteksmelding.repository
+package no.nav.syfo.slowtests.repository
 
+import com.zaxxer.hikari.HikariDataSource
 import no.nav.inntektsmelding.kontrakt.serde.JacksonJsonConfig
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
 import no.nav.syfo.domain.inntektsmelding.*
 import no.nav.syfo.dto.InntektsmeldingEntitet
-import no.nav.syfo.repository.InntektsmeldingRepositoryMock
+import no.nav.syfo.grunnleggendeInntektsmelding
+import no.nav.syfo.repository.InntektsmeldingRepositoryImp
+import no.nav.syfo.repository.createTestHikariConfig
+import no.nav.syfo.slowtests.SystemTestBase
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-open class InntektsmeldingRepositoryTest {
+open class InntektsmeldingRepositoryTest : SystemTestBase(){
 
-    private var repository = InntektsmeldingRepositoryMock()
+    lateinit var repository: InntektsmeldingRepositoryImp
+    val testKrav = grunnleggendeInntektsmelding
 
-    @BeforeEach
-    fun setup() {
+    @BeforeAll
+    internal fun setUp() {
+        val ds = HikariDataSource(createTestHikariConfig())
+        repository = InntektsmeldingRepositoryImp(ds)
         repository.deleteAll()
     }
+
+    @AfterEach
+    internal fun tearDown() {
+        repository.deleteAll()
+    }
+
 
     @Test
     fun findByAktorId() {

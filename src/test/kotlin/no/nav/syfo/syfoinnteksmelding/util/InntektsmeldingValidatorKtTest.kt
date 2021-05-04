@@ -4,7 +4,7 @@ import no.nav.syfo.domain.inntektsmelding.Gyldighetsstatus
 import no.nav.syfo.util.validerInntektsmelding
 import org.junit.Assert.assertEquals
 import org.junit.jupiter.api.Test
-import testutil.grunnleggendeInntektsmelding
+import no.nav.syfo.grunnleggendeInntektsmelding
 
 class InntektsmeldingValidatorKtTest {
 

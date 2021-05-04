@@ -8,7 +8,7 @@ import no.nav.syfo.mapping.mapInntektsmeldingKontrakt
 import no.nav.syfo.producer.InntektsmeldingProducer
 import no.nav.syfo.producer.producerLocalProperties
 import org.junit.jupiter.api.Test
-import testutil.grunnleggendeInntektsmelding
+import no.nav.syfo.grunnleggendeInntektsmelding
 
 class InntektsmeldingProducerTest {
 

@@ -25,4 +25,4 @@ enum class Role {
 }
 
 fun createTestHikariConfig() =
-        createHikariConfig("jdbc:postgresql://localhost:5432/fritakagp_db", "fritakagp", "fritakagp", null)
+        createHikariConfig("jdbc:postgresql://localhost:5432/postgres", "spinn", "spinn", null)

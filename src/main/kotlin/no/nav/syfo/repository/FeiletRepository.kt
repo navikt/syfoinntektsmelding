@@ -3,14 +3,17 @@ package no.nav.syfo.repository
 import no.nav.syfo.behandling.Feiltype
 import no.nav.syfo.dto.FeiletEntitet
 import java.sql.ResultSet
+import java.sql.Timestamp
 import java.time.LocalDateTime
 import java.util.*
 import javax.sql.DataSource
+import java.time.format.DateTimeFormatter
 
 
 interface FeiletRepository {
     fun findByArkivReferanse(arkivReferanse: String): List<FeiletEntitet>
     fun lagreInnteksmelding(utsattOppgave: FeiletEntitet): FeiletEntitet
+    fun deleteAll()
 }
 
 class FeiletRepositoryMock : FeiletRepository {
@@ -23,11 +26,14 @@ class FeiletRepositoryMock : FeiletRepository {
         mockrep.add(utsattOppgave)
         return utsattOppgave
     }
+
+    override fun deleteAll() {
+    }
 }
 
 class FeiletRepositoryImp(private val ds: DataSource) : FeiletRepository {
     override fun findByArkivReferanse(arkivReferanse: String): List<FeiletEntitet> {
-        val queryString = "SELECT * FROM FEILET WHERE ARKIVREFERANSE = $arkivReferanse;"
+        val queryString = "SELECT * FROM FEILET WHERE ARKIVREFERANSE = '$arkivReferanse';"
         ds.connection.use {
             val res = it.prepareStatement(queryString).executeQuery()
             return resultLoop(res)
@@ -36,11 +42,18 @@ class FeiletRepositoryImp(private val ds: DataSource) : FeiletRepository {
 
     override fun lagreInnteksmelding(feil: FeiletEntitet): FeiletEntitet {
         val insertStatement = """INSERT INTO FEILET (FEILET_ID, ARKIVREFERANSE, TIDSPUNKT, FEILTYPE)
-        VALUES (${feil.id}, ${feil.arkivReferanse}, ${feil.tidspunkt}, ${feil.feiltype.name})
+        VALUES (${feil.id}, '${feil.arkivReferanse}', '${Timestamp.valueOf(feil.tidspunkt)}', '${feil.feiltype.name}')
         RETURNING *;""".trimMargin()
         ds.connection.use {
             val res = it.prepareStatement(insertStatement).executeQuery()
             return resultLoop(res).first()
+        }
+    }
+
+    override fun deleteAll() {
+        val deleteStatement = "DELETE FROM FEILET"
+        ds.connection.use {
+            it.prepareStatement(deleteStatement).executeUpdate()
         }
     }
 
@@ -51,7 +64,7 @@ class FeiletRepositoryImp(private val ds: DataSource) : FeiletRepository {
                 FeiletEntitet(
                     id = res.getInt("FEILET_ID"),
                     arkivReferanse = res.getString("ARKIVREFERANSE"),
-                    tidspunkt = LocalDateTime.parse(res.getString("TIDSPUNKT")),
+                    tidspunkt = res.getTimestamp("TIDSPUNKT").toLocalDateTime(),
                     feiltype = Feiltype.valueOf(res.getString("FEILTYPE"))
                 )
             )
