@@ -7,8 +7,7 @@ import no.nav.syfo.domain.Periode
 import no.nav.syfo.domain.inntektsmelding.*
 import no.nav.syfo.dto.InntektsmeldingEntitet
 import no.nav.syfo.grunnleggendeInntektsmelding
-import no.nav.syfo.repository.InntektsmeldingRepositoryImp
-import no.nav.syfo.repository.createTestHikariConfig
+import no.nav.syfo.repository.*
 import no.nav.syfo.slowtests.SystemTestBase
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
@@ -20,14 +19,18 @@ import java.time.LocalDateTime
 
 open class InntektsmeldingRepositoryTest : SystemTestBase(){
 
-    lateinit var repository: InntektsmeldingRepositoryImp
+    lateinit var repository: InntektsmeldingRepository
+    lateinit var arbeidsRepository: ArbeidsgiverperiodeRepository
+
     val testKrav = grunnleggendeInntektsmelding
 
     @BeforeAll
     internal fun setUp() {
         val ds = HikariDataSource(createTestHikariConfig())
         repository = InntektsmeldingRepositoryImp(ds)
+        arbeidsRepository = ArbeidsgiverperiodeRepositoryImp(ds, repository)
         repository.deleteAll()
+        arbeidsRepository.deleteAll()
     }
 
     @AfterEach

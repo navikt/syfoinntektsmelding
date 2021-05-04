@@ -1,22 +1,33 @@
 package no.nav.syfo.slowtests.repository
 
+import com.zaxxer.hikari.HikariDataSource
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.dto.UtsattOppgaveEntitet
-import no.nav.syfo.repository.UtsattOppgaveRepositoryMockk
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
+import no.nav.syfo.grunnleggendeInntektsmelding
+import no.nav.syfo.repository.*
+import no.nav.syfo.slowtests.SystemTestBase
+import org.junit.jupiter.api.*
 import java.time.LocalDateTime
 import java.time.LocalDateTime.now
 import java.util.UUID
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
 
-open class UtsattOppgaveRepositoryTest {
+open class UtsattOppgaveRepositoryTest : SystemTestBase(){
 
-    private var repository = UtsattOppgaveRepositoryMockk()
+    lateinit var repository: UtsattOppgaveRepository
+
+    val testKrav = grunnleggendeInntektsmelding
+
+    @BeforeAll
+    fun setUp() {
+        val ds = HikariDataSource(createTestHikariConfig())
+        repository = UtsattOppgaveRepositoryImp(ds)
+    }
 
     @BeforeEach
     fun setup() {
-        repository.deleteAll()
+     //   repository.deleteAll()
     }
 
     @Test

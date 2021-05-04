@@ -4,22 +4,20 @@ import com.zaxxer.hikari.HikariDataSource
 import no.nav.syfo.behandling.Feiltype
 import no.nav.syfo.dto.FeiletEntitet
 import no.nav.syfo.grunnleggendeInntektsmelding
+import no.nav.syfo.repository.FeiletRepository
 import no.nav.syfo.repository.FeiletRepositoryImp
 import no.nav.syfo.repository.createTestHikariConfig
 import no.nav.syfo.slowtests.SystemTestBase
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.sql.Timestamp
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 
 open class FeiletRepositoryTest : SystemTestBase(){
 
-    lateinit var respository: FeiletRepositoryImp
+    lateinit var respository: FeiletRepository
     val testKrav = grunnleggendeInntektsmelding
 
     @BeforeAll

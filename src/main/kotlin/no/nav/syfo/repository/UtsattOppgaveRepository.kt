@@ -3,6 +3,7 @@ package no.nav.syfo.repository
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.dto.UtsattOppgaveEntitet
 import java.sql.ResultSet
+import java.sql.Timestamp
 import java.time.LocalDateTime
 import java.util.*
 import javax.sql.DataSource
@@ -64,7 +65,7 @@ class UtsattOppgaveRepositoryImp(val ds: DataSource) : UtsattOppgaveRepository {
         timeout: LocalDateTime,
         tilstand: Tilstand
     ): List<UtsattOppgaveEntitet> {
-        val queryString = " SELECT * FROM UTSATT_OPPGAVE WHERE TIMEOUT < $timeout AND TILSTAND = ${tilstand.name};"
+        val queryString = " SELECT * FROM UTSATT_OPPGAVE WHERE TIMEOUT < $timeout AND TILSTAND = '${tilstand.name}';"
         val utsattoppgaver = ArrayList<UtsattOppgaveEntitet>()
         ds.connection.use {
             val res = it.prepareStatement(queryString).executeQuery()
@@ -75,7 +76,7 @@ class UtsattOppgaveRepositoryImp(val ds: DataSource) : UtsattOppgaveRepository {
     override fun lagreInnteksmelding(utsattOppgave: UtsattOppgaveEntitet): UtsattOppgaveEntitet {
         val insertStatement =
             """INSERT INTO UTSATT_OPPGAVE (OPPGAVE_ID, INNTEKTSMELDING_ID, ARKIVREFERANSE, FNR, AKTOR_ID, SAK_ID, JOURNALPOST_ID, TIMEOUT, TILSTAND)
-        VALUES (${utsattOppgave.id}, ${utsattOppgave.inntektsmeldingId}, ${utsattOppgave.arkivreferanse}, ${utsattOppgave.fnr}, ${utsattOppgave.aktørId}, ${utsattOppgave.sakId}, ${utsattOppgave.journalpostId}, ${utsattOppgave.timeout}, ${utsattOppgave.tilstand.name})
+        VALUES ('${utsattOppgave.id}', '${utsattOppgave.inntektsmeldingId}', '${utsattOppgave.arkivreferanse}', '${utsattOppgave.fnr}', '${utsattOppgave.aktørId}', '${utsattOppgave.sakId}', '${utsattOppgave.journalpostId}', '${Timestamp.valueOf(utsattOppgave.timeout)}', '${utsattOppgave.tilstand.name}')
         RETURNING *;""".trimMargin()
         val utsattOppgaver = ArrayList<UtsattOppgaveEntitet>()
         ds.connection.use {
@@ -114,7 +115,7 @@ class UtsattOppgaveRepositoryImp(val ds: DataSource) : UtsattOppgaveRepository {
                     aktørId = res.getString("AKTOR_ID"),
                     sakId = res.getString("SAK_ID"),
                     journalpostId = res.getString("JOURNALPOST_ID"),
-                    timeout = LocalDateTime.parse(res.getString("TIMEOUT")),
+                    timeout = res.getTimestamp("TIMEOUT").toLocalDateTime(),
                     tilstand = Tilstand.valueOf(res.getString("TILSTAND"))
                 )
             )

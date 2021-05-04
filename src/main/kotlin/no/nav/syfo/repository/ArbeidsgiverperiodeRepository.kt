@@ -28,7 +28,10 @@ class ArbeidsgiverperiodeRepositoryImp(private val ds: DataSource, private val i
     }
 
     override fun deleteAll() {
-        TODO("Not yet implemented")
+        val deleteStatememnt = "DELETE FROM ARBEIDSGIVERPERIODE;"
+        ds.connection.use {
+            it.prepareStatement(deleteStatememnt).executeUpdate()
+        }
     }
 
     private fun resultLoop(
