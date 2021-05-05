@@ -23,7 +23,6 @@ import no.nav.syfo.consumer.ws.BehandleInngaaendeJournalConsumer
 import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
 import no.nav.syfo.consumer.ws.InngaaendeJournalConsumer
 import no.nav.syfo.consumer.ws.JournalConsumer
-import no.nav.syfo.dto.ArbeidsgiverperiodeRepUtil
 import no.nav.syfo.integration.kafka.*
 import no.nav.syfo.producer.InntektsmeldingProducer
 import no.nav.syfo.producer.producerLocalProperties
@@ -221,5 +220,4 @@ fun localDevConfig(config: ApplicationConfig) = module {
         )
     } bind AzureAdTokenConsumer::class
     single { ArbeidsgiverperiodeRepositoryImp(get(), get())} bind ArbeidsgiverperiodeRepository::class
-    single { ArbeidsgiverperiodeRepUtil(get())}
 }
