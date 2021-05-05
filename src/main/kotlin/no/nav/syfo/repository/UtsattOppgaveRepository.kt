@@ -65,7 +65,7 @@ class UtsattOppgaveRepositoryImp(val ds: DataSource) : UtsattOppgaveRepository {
         timeout: LocalDateTime,
         tilstand: Tilstand
     ): List<UtsattOppgaveEntitet> {
-        val queryString = " SELECT * FROM UTSATT_OPPGAVE WHERE TIMEOUT < $timeout AND TILSTAND = '${tilstand.name}';"
+        val queryString = " SELECT * FROM UTSATT_OPPGAVE WHERE TIMEOUT < '${Timestamp.valueOf(timeout)}' AND TILSTAND = '${tilstand.name}';"
         val utsattoppgaver = ArrayList<UtsattOppgaveEntitet>()
         ds.connection.use {
             val res = it.prepareStatement(queryString).executeQuery()

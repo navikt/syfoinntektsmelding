@@ -27,7 +27,7 @@ open class UtsattOppgaveRepositoryTest : SystemTestBase(){
 
     @BeforeEach
     fun setup() {
-     //   repository.deleteAll()
+        repository.deleteAll()
     }
 
     @Test
@@ -56,6 +56,7 @@ open class UtsattOppgaveRepositoryTest : SystemTestBase(){
     fun `ignorerer oppgaver i andre tilstander`() {
         repository.lagreInnteksmelding(
             enOppgaveEntitet(
+                id= 0,
                 timeout = now().minusHours(1),
                 tilstand = Tilstand.Utsatt,
                 inntektsmeldingsId = "id1"
@@ -64,6 +65,7 @@ open class UtsattOppgaveRepositoryTest : SystemTestBase(){
 
         repository.lagreInnteksmelding(
             enOppgaveEntitet(
+                id= 1,
                 timeout = now().minusHours(1),
                 tilstand = Tilstand.Forkastet,
                 inntektsmeldingsId = "id2"
@@ -71,6 +73,7 @@ open class UtsattOppgaveRepositoryTest : SystemTestBase(){
         )
         repository.lagreInnteksmelding(
             enOppgaveEntitet(
+                id= 2,
                 timeout = now().plusHours(1),
                 tilstand = Tilstand.Utsatt,
                 inntektsmeldingsId = "id3"
@@ -79,6 +82,7 @@ open class UtsattOppgaveRepositoryTest : SystemTestBase(){
 
         repository.lagreInnteksmelding(
             enOppgaveEntitet(
+                id= 3,
                 timeout = now().minusHours(1),
                 tilstand = Tilstand.Opprettet,
                 inntektsmeldingsId = "id4"
@@ -91,10 +95,12 @@ open class UtsattOppgaveRepositoryTest : SystemTestBase(){
     }
 
     private fun enOppgaveEntitet(
+        id: Int,
         timeout: LocalDateTime,
         tilstand: Tilstand = Tilstand.Utsatt,
         inntektsmeldingsId: String = UUID.randomUUID().toString()
     ) = UtsattOppgaveEntitet(
+        id = id,
         fnr = "fnr",
         sakId = "saksId",
         aktørId = "aktørId",
