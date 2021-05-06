@@ -18,8 +18,11 @@ import java.time.LocalDateTime
 import java.util.*
 
 
-class UtsattOppgaveKafkaClient(props: MutableMap<String, Any>, topicName: String,
-                               private val om : ObjectMapper, val oppgaveService: UtsattOppgaveService, private val bakgrunnsjobbRepo: BakgrunnsjobbRepository) :
+class UtsattOppgaveKafkaClient(props: MutableMap<String, Any>,
+                               topicName: String,
+                               private val om : ObjectMapper,
+                               val oppgaveService: UtsattOppgaveService,
+                               private val bakgrunnsjobbRepo: BakgrunnsjobbRepository) :
         MeldingProvider,
         LivenessComponent {
 

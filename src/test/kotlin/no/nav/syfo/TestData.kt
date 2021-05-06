@@ -69,7 +69,7 @@ val journalPostKafkaFeilData =  InngaaendeJournalpostDTO(
      behandlingstema = ""
 )
 
-val uttsattOpgaveKakaData =  UtsattOppgaveDTO(
+val utsattOppgaveKakaData =  UtsattOppgaveDTO(
     dokumentType = DokumentTypeDTO.Inntektsmelding,
     oppdateringstype = OppdateringstypeDTO.Opprett,
     dokumentId = UUID.randomUUID(),

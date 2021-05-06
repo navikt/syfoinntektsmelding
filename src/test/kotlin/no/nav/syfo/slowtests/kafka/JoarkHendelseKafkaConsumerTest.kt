@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test
 
 class JoarkHendelseKafkaConsumerTest : SystemTestBase(){
     private lateinit var kafkaProdusent: KafkaAdminForTests
-    private val topicName = "kafka_joark_hendelse_topic"
+    private val topicName = "aapen-dok-journalfoering-v1-q1"
 
     private val objectMapper = ObjectMapper()
     .registerModule(KotlinModule())
@@ -44,10 +44,6 @@ class JoarkHendelseKafkaConsumerTest : SystemTestBase(){
         kafkaProdusent.addRecordeToKafka(objectMapper.writeValueAsString(journalPostKafkaData),
             topicName,
             producerLocalProperties( "localhost:9092"))
-      /*  kafkaProdusent.addRecordeToKafka(objectMapper.writeValueAsString(journalPostKafkaFeilData),
-            topicName,
-            producerLocalProperties( "localhost:9092"))*/
-
     }
 
     @AfterAll
@@ -57,10 +53,9 @@ class JoarkHendelseKafkaConsumerTest : SystemTestBase(){
 
     @Test
     fun `Skal lese joark hendelse`() {
-        val meldinger = joarkHendleseConsumer.getMessagesToProcess()
+        var meldinger = joarkHendleseConsumer.getMessagesToProcess()
         Assertions.assertThat(meldinger.size).isEqualTo(1)
         Assertions.assertThat(meldinger[0]).isEqualTo(objectMapper.writeValueAsString(journalPostKafkaData))
-        //bakrepo.
     }
 
 
