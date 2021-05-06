@@ -6,9 +6,12 @@ import io.ktor.config.*
 import no.nav.helse.arbeidsgiver.system.getString
 import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.consumer.ConsumerConfig
+import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.common.config.SaslConfigs
 import org.apache.kafka.common.serialization.StringDeserializer
+import java.util.*
 
+private val LOCALHOSTBOOTSTRAPSERVER = "localhost:9092"
 private fun envOrThrow(envVar: String) =
     System.getenv()[envVar] ?: throw IllegalStateException("$envVar er påkrevd miljøvariabel")
 
@@ -28,7 +31,7 @@ private fun consumerLocalProperties() = mutableMapOf<String, Any>(
     ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG to false,
     ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG to "30000",
     ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
-    CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG to "localhost:9092",
+    CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG to LOCALHOSTBOOTSTRAPSERVER,
 )
 
 fun joarkLocalProperties() = consumerLocalProperties() +  mapOf(
@@ -54,3 +57,30 @@ fun utsattOppgaveOnPremProperties(config: ApplicationConfig) = consumerOnPremPro
     ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
     ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to UtsattOppgaveDTODeserializer::class.java
 )
+
+fun producerLocalProperties(bootstrapServers: String) =  Properties().apply {
+    put(ProducerConfig.ACKS_CONFIG, "all")
+    put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "true")
+    put(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, "1")
+    put(ProducerConfig.MAX_BLOCK_MS_CONFIG, "15000")
+    put(ProducerConfig.RETRIES_CONFIG, "2")
+    put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer")
+    put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer")
+    put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers)
+}
+
+fun producerOnPremProperties(bootstrapServers: String, username: String, password: String) = Properties().apply {
+    put(ProducerConfig.ACKS_CONFIG, "all")
+    put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "true")
+    put(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, "1")
+    put(ProducerConfig.MAX_BLOCK_MS_CONFIG, "15000")
+    put(ProducerConfig.RETRIES_CONFIG, "2")
+    put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer")
+    put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer")
+    put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers)
+    put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_SSL")
+    put(SaslConfigs.SASL_MECHANISM, "PLAIN")
+    val jaasTemplate = "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"%s\" password=\"%s\";"
+    val jaasCfg = String.format(jaasTemplate, username, password)
+    put("sasl.jaas.config", jaasCfg)
+}

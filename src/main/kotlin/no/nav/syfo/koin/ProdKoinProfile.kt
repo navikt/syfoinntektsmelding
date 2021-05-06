@@ -34,7 +34,6 @@ import no.nav.syfo.consumer.ws.InngaaendeJournalConsumer
 import no.nav.syfo.consumer.ws.BehandleInngaaendeJournalConsumer
 import no.nav.syfo.consumer.ws.JournalConsumer
 import no.nav.syfo.integration.kafka.*
-import no.nav.syfo.producer.producerOnPremProperties
 import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.binding.ArbeidsfordelingV1
 import no.nav.tjeneste.virksomhet.behandleinngaaendejournal.v1.binding.BehandleInngaaendeJournalV1
 import no.nav.tjeneste.virksomhet.behandlesak.v2.BehandleSakV2

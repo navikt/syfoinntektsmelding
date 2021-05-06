@@ -1,25 +1,23 @@
 package no.nav.syfo.slowtests.kafka
 
+import no.nav.inntektsmelding.kontrakt.serde.JacksonJsonConfig
+import no.nav.inntektsmeldingkontrakt.Inntektsmelding
 import org.apache.kafka.clients.admin.AdminClient
 import org.apache.kafka.clients.admin.KafkaAdminClient
 import org.apache.kafka.clients.admin.NewTopic
-import org.apache.kafka.clients.consumer.KafkaConsumer
-import org.apache.kafka.common.TopicPartition
+import org.apache.kafka.clients.producer.KafkaProducer
+import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.errors.TopicExistsException
-import org.apache.kafka.common.serialization.StringDeserializer
-import org.slf4j.LoggerFactory
-import java.time.Duration
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-class KafkaAdminForTests {
-    companion object {
-        const val topicName = "spinn-test"
-    }
+class KafkaAdminForTests(private val props : MutableMap<String, Any>, private val topicName: String) {
 
-    private val adminClient: AdminClient = KafkaAdminClient.create(consumerFakeConfig())
+    private lateinit var adminClient: AdminClient
+
     fun createTopicIfNotExists() {
         try {
+            adminClient = KafkaAdminClient.create(props)
             adminClient
                     .createTopics(mutableListOf(NewTopic(topicName, 1, 1)))
                     .all()
@@ -44,52 +42,12 @@ class KafkaAdminForTests {
         }
         adminClient.close()
     }
-}
 
-
-class SoeknadsmeldingKafkaConsumer(props: MutableMap<String, Any>, private val topicName: String) {
-    private var currentBatch: List<String> = emptyList()
-    private var lastThrown: Exception? = null
-    private val consumer: KafkaConsumer<String, String> =
-        KafkaConsumer(props, StringDeserializer(), StringDeserializer())
-    private val  topicPartition = TopicPartition(topicName, 0)
-
-    private val log = LoggerFactory.getLogger(this::class.java)
-
-    init {
-        consumer.assign(Collections.singletonList(topicPartition))
-
-        Runtime.getRuntime().addShutdownHook(Thread {
-            log.debug("Got shutdown message, closing Kafka connection...")
-            consumer.close()
-            log.debug("Kafka connection closed")
-        })
-    }
-
-    fun stop() = consumer.close()
-
-    fun getMessagesToProcess(): List<String> {
-        if (currentBatch.isNotEmpty()) {
-            return currentBatch
-        }
-
-        try {
-            val kafkaMessages = consumer.poll(Duration.ofSeconds(10))
-            val payloads = kafkaMessages.map {it.value() }
-            lastThrown = null
-            currentBatch = payloads
-
-            log.debug("Fikk ${kafkaMessages.count()} meldinger med offsets ${kafkaMessages.map { it.offset() }.joinToString(", ")}")
-            return payloads
-        } catch (e: Exception) {
-            lastThrown = e
-            throw e
-        }
-    }
-
-    fun confirmProcessingDone() {
-        consumer.commitSync()
-        currentBatch = emptyList()
+    fun addRecordeToKafka(record : String, topicName : String, props : Properties) {
+        val kafkaproducer = KafkaProducer<String, String>(props)
+        val res = kafkaproducer.send(ProducerRecord(topicName, record)).get()
+        kafkaproducer.flush()
+        kafkaproducer.close()
     }
 }
 

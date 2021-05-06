@@ -21,9 +21,10 @@ interface MeldingProvider {
     fun confirmProcessingDone()
 }
 
-class JoarkHendelseKafkaClient(props: MutableMap<String, Any>, topicName: String,
-                               private val om : ObjectMapper, private val bakgrunnsjobbRepo: BakgrunnsjobbRepository) :
-        MeldingProvider,
+class JoarkHendelseKafkaClient(props: MutableMap<String, Any>,
+                               topicName: String,
+                               private val om : ObjectMapper,
+                               private val bakgrunnsjobbRepo: BakgrunnsjobbRepository) : MeldingProvider,
         LivenessComponent {
 
     private var currentBatch: List<String> = emptyList()
@@ -58,6 +59,7 @@ class JoarkHendelseKafkaClient(props: MutableMap<String, Any>, topicName: String
             records?.forEach { record ->
                 val hendelse = om.readValue(record.value().toString(),InngaaendeJournalpostDTO::class.java)
 
+                // https://confluence.adeo.no/display/BOA/Tema https://confluence.adeo.no/display/BOA/Mottakskanal
                 val isSyketemaOgFraAltinnMidlertidig =
                     hendelse.temaNytt == "SYK" &&
                         hendelse.mottaksKanal == "ALTINN" &&

@@ -6,9 +6,9 @@ import no.nav.inntektsmeldingkontrakt.Inntektsmelding
 import no.nav.syfo.domain.inntektsmelding.Gyldighetsstatus
 import no.nav.syfo.mapping.mapInntektsmeldingKontrakt
 import no.nav.syfo.producer.InntektsmeldingProducer
-import no.nav.syfo.producer.producerLocalProperties
 import org.junit.jupiter.api.Test
 import no.nav.syfo.grunnleggendeInntektsmelding
+import no.nav.syfo.integration.kafka.producerLocalProperties
 
 class InntektsmeldingProducerTest {
 

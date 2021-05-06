@@ -24,7 +24,6 @@ import no.nav.syfo.consumer.ws.InngaaendeJournalConsumer
 import no.nav.syfo.consumer.ws.JournalConsumer
 import no.nav.syfo.integration.kafka.*
 import no.nav.syfo.producer.InntektsmeldingProducer
-import no.nav.syfo.producer.producerLocalProperties
 import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
 import no.nav.syfo.prosesser.FjernInntektsmeldingByBehandletProcessor
 import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
@@ -77,13 +76,13 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single { FinnAlleUtgaandeOppgaverProcessor(get(), get(), get()) } bind FinnAlleUtgaandeOppgaverProcessor::class
 
     single { JoarkHendelseKafkaClient(
-         joarkLocalProperties(config).toMutableMap(),
+         joarkLocalProperties().toMutableMap(),
         config.getString("kafka_joark_hendelse_topic"), get(), get()
     ) }
     single { JoarkHendelseVarslingService(get()) }
     single {
         UtsattOppgaveKafkaClient(
-            utsattOppgaveLocalProperties(config).toMutableMap(),
+            utsattOppgaveLocalProperties().toMutableMap(),
             config.getString("kafka_utsatt_oppgave_topic"), get(), get(), get()
         )
     }
