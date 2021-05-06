@@ -1,4 +1,4 @@
-package no.nav.syfo.syfoinnteksmelding.behandling
+package no.nav.syfo.syfoinntektsmelding.behandling
 
 import io.mockk.every
 import io.mockk.mockk

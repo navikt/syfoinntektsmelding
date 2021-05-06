@@ -1,4 +1,4 @@
-package no.nav.syfo.syfoinnteksmelding.producer
+package no.nav.syfo.syfoinntektsmelding.producer
 
 import io.mockk.mockk
 import junit.framework.Assert.assertEquals

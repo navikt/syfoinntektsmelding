@@ -8,11 +8,11 @@ import org.slf4j.LoggerFactory
 import java.time.LocalDate
 import java.util.*
 
-class FjernInnteksmeldingByBehandletProcessor(
+class FjernInntektsmeldingByBehandletProcessor(
     private val repository: InntektsmeldingRepository,
     val lagringstidMåneder: Int
 ) : BakgrunnsjobbProsesserer {
-    val log: Logger = LoggerFactory.getLogger(FjernInnteksmeldingByBehandletProcessor::class.java)
+    val log: Logger = LoggerFactory.getLogger(FjernInntektsmeldingByBehandletProcessor::class.java)
     companion object { val JOB_TYPE = "fjern-inntektsmelding-via-behnadling"}
     override val type: String get() = JOB_TYPE
 

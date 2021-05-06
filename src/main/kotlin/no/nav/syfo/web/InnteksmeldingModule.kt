@@ -21,7 +21,7 @@ import org.slf4j.event.Level
 
 @KtorExperimentalLocationsAPI
 @KtorExperimentalAPI
-fun Application.innteksmeldingModule(config: ApplicationConfig = environment.config) {
+fun Application.inntektsmeldingModule(config: ApplicationConfig = environment.config) {
     install(CallLogging) {
         level = Level.INFO
     }

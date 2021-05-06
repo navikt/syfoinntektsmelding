@@ -1,4 +1,4 @@
-package no.nav.syfo.syfoinnteksmelding.utsattoppgave
+package no.nav.syfo.syfoinntektsmelding.utsattoppgave
 
 import io.ktor.util.*
 import io.mockk.mockk

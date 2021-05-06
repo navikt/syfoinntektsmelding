@@ -17,7 +17,6 @@ import no.nav.syfo.consumer.rest.SakClient
 import no.nav.syfo.consumer.rest.TokenConsumer
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
 import no.nav.syfo.consumer.util.ws.LogErrorHandler
-import no.nav.syfo.consumer.util.ws.WsClient
 import no.nav.syfo.consumer.util.ws.WsClientMock
 import no.nav.syfo.consumer.ws.BehandleInngaaendeJournalConsumer
 import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
@@ -27,7 +26,7 @@ import no.nav.syfo.integration.kafka.*
 import no.nav.syfo.producer.InntektsmeldingProducer
 import no.nav.syfo.producer.producerLocalProperties
 import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
-import no.nav.syfo.prosesser.FjernInnteksmeldingByBehandletProcessor
+import no.nav.syfo.prosesser.FjernInntektsmeldingByBehandletProcessor
 import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
 import no.nav.syfo.repository.*
 import no.nav.syfo.service.EksisterendeSakService
@@ -165,7 +164,7 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single { UtsattOppgaveService(get(), get(), get()) } bind UtsattOppgaveService::class
     single { FeiletUtsattOppgaveMeldingProsessor(get(), get()) }
 
-    single { FjernInnteksmeldingByBehandletProcessor(get(), 1) } bind FjernInnteksmeldingByBehandletProcessor::class
+    single { FjernInntektsmeldingByBehandletProcessor(get(), 1) } bind FjernInntektsmeldingByBehandletProcessor::class
 
     single {
         InntektsmeldingBehandler(

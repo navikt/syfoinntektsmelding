@@ -66,7 +66,7 @@ class ArbeidsgiverperiodeRepositoryImp(private val ds: DataSource, private val i
                     inntektsmelding = null, //inntektsmeldingRepository.findByUuid(res.getString("INNTEKTSMELDING_UUID") ),
                     fom = res.getDate("FOM").toLocalDate(),
                     tom = res.getDate("TOM").toLocalDate(),
-                    innteksmelding_uuid = res.getString("INNTEKTSMELDING_UUID")))
+                    inntektsmelding_uuid = res.getString("INNTEKTSMELDING_UUID")))
         }
         return returnValue
     }

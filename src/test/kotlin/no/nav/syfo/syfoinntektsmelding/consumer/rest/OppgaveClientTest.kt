@@ -1,4 +1,4 @@
-package no.nav.syfo.syfoinnteksmelding.consumer.rest
+package no.nav.syfo.syfoinntektsmelding.consumer.rest
 
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.SerializationFeature

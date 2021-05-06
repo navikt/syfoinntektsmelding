@@ -1,4 +1,4 @@
-package no.nav.syfo.syfoinnteksmelding.consumer.ws
+package no.nav.syfo.syfoinntektsmelding.consumer.ws
 
 import io.mockk.mockk
 import io.mockk.slot

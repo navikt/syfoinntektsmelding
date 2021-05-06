@@ -1,18 +1,11 @@
 package no.nav.syfo.repository
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import log
-import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
-import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.dto.InntektsmeldingEntitet
 import no.nav.syfo.mapping.toInntektsmelding
 import no.nav.syfo.mapping.toInntektsmeldingEntitet
-import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
-import no.nav.syfo.prosesser.FjernInnteksmeldingByBehandletProcessor
 import org.slf4j.LoggerFactory
-import java.time.LocalDate
-import java.util.*
 
 class InntektsmeldingService(
     private val repository: InntektsmeldingRepository,

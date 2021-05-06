@@ -1,4 +1,4 @@
-package no.nav.syfo.syfoinnteksmelding.consumer.ws
+package no.nav.syfo.syfoinntektsmelding.consumer.ws
 
 import io.mockk.every
 import io.mockk.mockk
@@ -9,7 +9,7 @@ import no.nav.syfo.consumer.ws.JournalConsumer
 import no.nav.syfo.domain.InngaaendeJournal
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
-import no.nav.syfo.syfoinnteksmelding.util.JAXBTest.Companion.inntektsmelding
+import no.nav.syfo.syfoinntektsmelding.util.JAXBTest.Companion.inntektsmelding
 import no.nav.tjeneste.virksomhet.journal.v2.HentDokumentResponse
 import no.nav.tjeneste.virksomhet.journal.v2.binding.HentDokumentDokumentIkkeFunnet
 import no.nav.tjeneste.virksomhet.journal.v2.binding.HentDokumentSikkerhetsbegrensning

@@ -1,4 +1,4 @@
-package no.nav.syfo.syfoinnteksmelding.behandling
+package no.nav.syfo.syfoinntektsmelding.behandling
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.ktor.util.*
@@ -24,7 +24,7 @@ import no.nav.syfo.repository.InntektsmeldingService
 import no.nav.syfo.service.EksisterendeSakService
 import no.nav.syfo.service.JournalpostService
 import no.nav.syfo.service.SaksbehandlingService
-import no.nav.syfo.syfoinnteksmelding.consumer.ws.JournalConsumerTest
+import no.nav.syfo.syfoinntektsmelding.consumer.ws.JournalConsumerTest
 import no.nav.syfo.util.Metrikk
 import no.nav.syfo.utsattoppgave.FeiletUtsattOppgaveMeldingProsessor
 import no.nav.syfo.utsattoppgave.UtsattOppgaveDAO

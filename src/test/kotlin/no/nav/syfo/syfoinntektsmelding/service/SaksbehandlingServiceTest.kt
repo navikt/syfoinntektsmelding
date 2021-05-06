@@ -1,4 +1,4 @@
-package no.nav.syfo.syfoinnteksmelding.service
+package no.nav.syfo.syfoinntektsmelding.service
 
 import io.mockk.coVerify
 import io.mockk.every

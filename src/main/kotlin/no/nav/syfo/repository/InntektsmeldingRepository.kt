@@ -63,7 +63,7 @@ class InntektsmeldingRepositoryImp(
             }.executeQuery()
             result = resultLoop(res, inntektsmeldinger).first()
         }
-        result.arbeidsgiverperioder = findAllArbeidsgiverperioder().filter { it.innteksmelding_uuid == result.uuid }.toMutableList()
+        result.arbeidsgiverperioder = findAllArbeidsgiverperioder().filter { it.inntektsmelding_uuid == result.uuid }.toMutableList()
         return result
     }
 
@@ -111,14 +111,14 @@ class InntektsmeldingRepositoryImp(
             result = resultLoop(res, inntektsmeldinger).first()
         }
         lagreArbeidsgiverperioder(innteksmelding.arbeidsgiverperioder, innteksmelding.uuid)
-        result.arbeidsgiverperioder = findAllArbeidsgiverperioder().filter { it.innteksmelding_uuid == result.uuid }.toMutableList()
+        result.arbeidsgiverperioder = findAllArbeidsgiverperioder().filter { it.inntektsmelding_uuid == result.uuid }.toMutableList()
         return result
     }
 
     private fun addArbeidsgiverperioderTilInnteksmelding(results : ArrayList<InntektsmeldingEntitet>) : ArrayList<InntektsmeldingEntitet>{
         val aperioder = findAllArbeidsgiverperioder()
         results.forEach{ inntek ->
-            inntek.arbeidsgiverperioder = aperioder.filter { it.innteksmelding_uuid == inntek.uuid }.toMutableList()
+            inntek.arbeidsgiverperioder = aperioder.filter { it.inntektsmelding_uuid == inntek.uuid }.toMutableList()
         }
         return results
     }

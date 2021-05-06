@@ -19,7 +19,7 @@ import no.nav.syfo.consumer.util.ws.WsClient
 import no.nav.syfo.consumer.ws.*
 import no.nav.syfo.producer.InntektsmeldingProducer
 import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
-import no.nav.syfo.prosesser.FjernInnteksmeldingByBehandletProcessor
+import no.nav.syfo.prosesser.FjernInntektsmeldingByBehandletProcessor
 import no.nav.syfo.repository.*
 import no.nav.syfo.service.EksisterendeSakService
 import no.nav.syfo.service.JournalpostService
@@ -100,7 +100,7 @@ fun prodConfig(config: ApplicationConfig) = module {
     single { UtsattOppgaveService(get(), get(), get()) } bind UtsattOppgaveService::class
     single { FeiletUtsattOppgaveMeldingProsessor(get(), get() ) }
 
-    single { FjernInnteksmeldingByBehandletProcessor(InntektsmeldingRepositoryImp(get()), config.getString("lagringstidMåneder").toInt() )} bind FjernInnteksmeldingByBehandletProcessor::class
+    single { FjernInntektsmeldingByBehandletProcessor(InntektsmeldingRepositoryImp(get()), config.getString("lagringstidMåneder").toInt() )} bind FjernInntektsmeldingByBehandletProcessor::class
     single { FinnAlleUtgaandeOppgaverProcessor(get(), get(), get()) } bind FinnAlleUtgaandeOppgaverProcessor::class
 
     single { OppgavebehandlingConsumer(get()) } bind OppgavebehandlingConsumer::class

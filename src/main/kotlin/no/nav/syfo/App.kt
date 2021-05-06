@@ -18,11 +18,11 @@ import no.nav.syfo.integration.kafka.PollForUtsattOppgaveVarslingsmeldingJob
 import no.nav.syfo.koin.getAllOfType
 import no.nav.syfo.koin.selectModuleBasedOnProfile
 import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
-import no.nav.syfo.prosesser.FjernInnteksmeldingByBehandletProcessor
+import no.nav.syfo.prosesser.FjernInntektsmeldingByBehandletProcessor
 import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
 import no.nav.syfo.utsattoppgave.FeiletUtsattOppgaveMeldingProsessor
 import no.nav.syfo.web.auth.localCookieDispenser
-import no.nav.syfo.web.innteksmeldingModule
+import no.nav.syfo.web.inntektsmeldingModule
 import no.nav.syfo.web.nais.nais
 import org.flywaydb.core.Flyway
 import org.koin.core.KoinComponent
@@ -83,7 +83,7 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
                     localCookieDispenser(config)
                 }
                 nais()
-                innteksmeldingModule(config)
+                inntektsmeldingModule(config)
             }
         })
 
@@ -97,7 +97,7 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
 
                 registrer(get<FeiletUtsattOppgaveMeldingProsessor>())
                 registrer(get<FinnAlleUtgaandeOppgaverProcessor>())
-                registrer(get<FjernInnteksmeldingByBehandletProcessor>())
+                registrer(get<FjernInntektsmeldingByBehandletProcessor>())
                 registrer(get<JoarkInntektsmeldingHendelseProsessor>())
 
                 startAsync(true)

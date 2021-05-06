@@ -1,4 +1,4 @@
-package no.nav.syfo.syfoinnteksmelding.consumer.ws
+package no.nav.syfo.syfoinntektsmelding.consumer.ws
 
 
 import io.mockk.every

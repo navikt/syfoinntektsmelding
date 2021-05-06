@@ -1,4 +1,4 @@
-package no.nav.syfo.syfoinnteksmelding.util
+package no.nav.syfo.syfoinntektsmelding.util
 
 import no.nav.syfo.util.JAXB.unmarshalInntektsmelding
 import no.seres.xsd.nav.inntektsmelding_m._20180924.XMLInntektsmeldingM

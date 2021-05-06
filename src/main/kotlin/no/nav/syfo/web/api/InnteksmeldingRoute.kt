@@ -10,11 +10,10 @@ import io.ktor.util.*
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.syfo.behandling.InntektsmeldingBehandler
 import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
-import no.nav.syfo.prosesser.FjernInnteksmeldingByBehandletProcessor
+import no.nav.syfo.prosesser.FjernInntektsmeldingByBehandletProcessor
 import java.time.LocalDate
 import java.util.*
 import javax.sql.DataSource
-import no.nav.syfo.web.api.Resultat
 
 @KtorExperimentalAPI
 fun Route.syfoinntektsmelding(
@@ -43,10 +42,10 @@ fun Route.syfoinntektsmelding(
                 call.respond(HttpStatusCode.Created, Resultat(uuid))
             }
             datasource.connection.use { connection ->
-                bakgunnsjobbService.opprettJobb<FjernInnteksmeldingByBehandletProcessor>(
+                bakgunnsjobbService.opprettJobb<FjernInntektsmeldingByBehandletProcessor>(
                     kjoeretid = LocalDate.now().plusDays(1).atStartOfDay().plusHours(4),
                     maksAntallForsoek = 10,
-                    data = om.writeValueAsString(FjernInnteksmeldingByBehandletProcessor.JobbData(UUID.randomUUID())),
+                    data = om.writeValueAsString(FjernInntektsmeldingByBehandletProcessor.JobbData(UUID.randomUUID())),
                     connection = connection
                 )
                 bakgunnsjobbService.opprettJobb<FinnAlleUtgaandeOppgaverProcessor>(

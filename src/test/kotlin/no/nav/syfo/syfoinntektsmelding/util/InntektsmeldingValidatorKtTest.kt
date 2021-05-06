@@ -1,4 +1,4 @@
-package no.nav.syfo.syfoinnteksmelding.util
+package no.nav.syfo.syfoinntektsmelding.util
 
 import no.nav.syfo.domain.inntektsmelding.Gyldighetsstatus
 import no.nav.syfo.util.validerInntektsmelding

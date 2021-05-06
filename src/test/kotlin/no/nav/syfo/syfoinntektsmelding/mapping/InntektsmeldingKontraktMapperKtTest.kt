@@ -1,4 +1,4 @@
-package no.nav.syfo.syfoinnteksmelding.mapping
+package no.nav.syfo.syfoinntektsmelding.mapping
 
 import no.nav.inntektsmeldingkontrakt.Arbeidsgivertype
 import no.nav.syfo.domain.JournalStatus

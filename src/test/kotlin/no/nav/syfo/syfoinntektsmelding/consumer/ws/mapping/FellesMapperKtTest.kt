@@ -1,4 +1,4 @@
-package no.nav.syfo.syfoinnteksmelding.consumer.ws.mapping
+package no.nav.syfo.syfoinntektsmelding.consumer.ws.mapping
 
 import junit.framework.Assert.assertEquals
 import no.nav.syfo.consumer.ws.mapping.mapNaturalytelseType

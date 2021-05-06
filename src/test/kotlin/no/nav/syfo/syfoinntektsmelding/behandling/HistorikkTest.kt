@@ -1,4 +1,4 @@
-package no.nav.syfo.syfoinnteksmelding.behandling
+package no.nav.syfo.syfoinntektsmelding.behandling
 
 import no.nav.syfo.behandling.Feiltype
 import no.nav.syfo.behandling.Historikk
