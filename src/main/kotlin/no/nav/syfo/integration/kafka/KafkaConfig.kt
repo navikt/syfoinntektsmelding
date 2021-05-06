@@ -1,6 +1,5 @@
 package no.nav.syfo.integration.kafka
 
-import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig
 import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig
 import io.confluent.kafka.streams.serdes.avro.GenericAvroDeserializer
 import io.ktor.config.*
@@ -24,14 +23,15 @@ private fun consumerOnPremProperties(config: ApplicationConfig) = mutableMapOf<S
         "username=\"${config.getString("srvsyfoinntektsmelding.username")}\" password=\"${config.getString("srvsyfoinntektsmelding.password")}\";"
 )
 
-private fun consumerLocalProperties(config: ApplicationConfig) = mutableMapOf<String, Any>(
+private fun consumerLocalProperties() = mutableMapOf<String, Any>(
     ConsumerConfig.MAX_POLL_RECORDS_CONFIG to "1",
     ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG to false,
+    ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG to "30000",
     ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
-    CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG to config.getString("kafka_bootstrap_servers"),
+    CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG to "localhost:9092",
 )
 
-fun joarkLocalProperties(config: ApplicationConfig) = consumerLocalProperties(config) +  mapOf(
+fun joarkLocalProperties() = consumerLocalProperties() +  mapOf(
     ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to GenericAvroDeserializer::class.java,
     AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG to "http://kafka-schema-registry.tpa.svc.nais.local:8081",
     ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
@@ -43,7 +43,7 @@ fun joarkOnPremProperties(config: ApplicationConfig) = consumerOnPremProperties(
     ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "none",
     ConsumerConfig.GROUP_ID_CONFIG to "syfoinntektsmelding-v2")
 
-fun utsattOppgaveLocalProperties(config: ApplicationConfig) = consumerLocalProperties(config) + mapOf(
+fun utsattOppgaveLocalProperties() = consumerLocalProperties() + mapOf(
     ConsumerConfig.GROUP_ID_CONFIG to "syfoinntektsmelding-v1",
     ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
     ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to UtsattOppgaveDTODeserializer::class.java
