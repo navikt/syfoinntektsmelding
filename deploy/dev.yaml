@@ -58,6 +58,8 @@ spec:
       value: "https://wasapp-q0.adeo.no/asm-pdp/authorize"
     - name: SECURITYTOKENSERVICE_URL
       value: "https://sts-q1.preprod.local/SecurityTokenServiceProvider/"
+    - name: SRVSYFOINNTEKTSMELDING_USERNAME
+      value: srvsyfoinntektsmel
     - name: OPENIDCONNECT_ISSOHOST
       value: "https://isso-q.adeo.no:443/isso/oauth2"
     - name: OPENIDCONNECT_ISSOISSUER
