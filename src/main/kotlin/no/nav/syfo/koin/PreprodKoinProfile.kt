@@ -161,11 +161,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
 
     single {
         InntektsmeldingProducer(
-            producerOnPremProperties(
-                config.getString("kafka_bootstrap_servers"),
-                config.getString("srvsyfoinntektsmelding.username"),
-                config.getString("srvsyfoinntektsmelding.password")
-            ), get()
+            producerOnPremProperties(config), get()
         )
     } bind InntektsmeldingProducer::class
 

@@ -101,11 +101,7 @@ fun prodConfig(config: ApplicationConfig) = module {
     single { UtsattOppgaveVarslingService(get()) }
 
 
-    single { InntektsmeldingProducer(producerOnPremProperties(
-        config.getString("kafka_bootstrap_servers"),
-        config.getString("srvsyfoinntektsmelding.username"),
-        config.getString("srvsyfoinntektsmelding.password"))
-        , get()) } bind InntektsmeldingProducer::class
+    single { InntektsmeldingProducer(producerOnPremProperties(config), get()) } bind InntektsmeldingProducer::class
 
     single { UtsattOppgaveDAO(UtsattOppgaveRepositoryImp(get()))}
     single { OppgaveClient(config.getString("oppgavebehandling_url"), get(), get())} bind OppgaveClient::class
