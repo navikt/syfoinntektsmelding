@@ -10,6 +10,8 @@ import no.nav.helse.arbeidsgiver.web.auth.AltinnAuthorizer
 import no.nav.helse.arbeidsgiver.web.auth.DefaultAltinnAuthorizer
 import no.nav.syfo.MetrikkVarsler
 import no.nav.syfo.behandling.InntektsmeldingBehandler
+import no.nav.syfo.config.OppgaveClientConfigProvider
+import no.nav.syfo.config.SakClientConfigProvider
 import no.nav.syfo.consumer.SakConsumer
 import no.nav.syfo.consumer.azuread.AzureAdTokenConsumer
 import no.nav.syfo.consumer.rest.OppgaveClient
@@ -23,6 +25,7 @@ import no.nav.syfo.integration.kafka.*
 import no.nav.syfo.producer.InntektsmeldingProducer
 import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
 import no.nav.syfo.prosesser.FjernInntektsmeldingByBehandletProcessor
+import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
 import no.nav.syfo.repository.*
 import no.nav.syfo.service.EksisterendeSakService
 import no.nav.syfo.service.JournalpostService
@@ -45,6 +48,32 @@ import org.koin.dsl.module
 fun preprodConfig(config: ApplicationConfig) = module {
     externalSystemClients(config)
 
+    single {
+        OppgaveClientConfigProvider(
+            config.getString("oppgavebehandling_url"),
+            config.getString("security_token_service_token_url"),
+            config.getString("service_user.username"),
+            config.getString("service_user.password")
+        )
+    }
+    single {
+        SakClientConfigProvider(
+            config.getString("opprett_sak_url"),
+            config.getString("security_token_service_token_url"),
+            config.getString("service_user.username"),
+            config.getString("service_user.password")
+        )
+    }
+    single {
+        JoarkInntektsmeldingHendelseProsessor(
+            get(),
+            get(),
+            get(),
+            get(),
+            get()
+        )
+    } bind JoarkInntektsmeldingHendelseProsessor::class
+    single { ArbeidsgiverperiodeRepositoryImp(get(), get())} bind ArbeidsgiverperiodeRepository::class
 
     single {
         AktorConsumer(
