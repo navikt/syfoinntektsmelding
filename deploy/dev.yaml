@@ -67,8 +67,15 @@ spec:
       value: "http://security-token-service.default.svc.nais.local/rest/v1/sts/jwks"
     - name: KAFKA_BOOTSTRAP_SERVERS
       value: "b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443"
-    - name: SPRING_DATASOURCE_URL
-      value: "jdbc:postgresql://b27dbvl009.preprod.local/syfoinntektsmelding"
+    - name: DATABASE_HOST
+      value: b27dbvl009.preprod.local
+    - name: DATABASE_PORT
+      value: "5432"
+    - name: DATABASE_NAME
+      value: "syfoinntektsmelding"
+    - name: VAULT_MOUNTPATH
+      value: postgresql/preprod-fss/
+
     - name: SYFO_MOTTAK_INNTEKTSMELDING_QUEUENAME
       value: "QA.Q1_SYFO.MOTTAK_INNTEKTSMELDING"
     - name: SYFOINNTEKTSMELDING_CHANNEL_NAME
