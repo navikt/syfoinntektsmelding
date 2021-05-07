@@ -1,15 +1,12 @@
 package no.nav.syfo.koin
 
 import com.zaxxer.hikari.HikariConfig
-import com.zaxxer.hikari.HikariDataSource
 import io.ktor.config.*
 import io.ktor.util.*
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.system.getString
-import no.nav.helse.arbeidsgiver.web.auth.AltinnAuthorizer
-import no.nav.helse.arbeidsgiver.web.auth.DefaultAltinnAuthorizer
 import no.nav.syfo.MetrikkVarsler
 import no.nav.syfo.behandling.InntektsmeldingBehandler
 import no.nav.syfo.config.OppgaveClientConfigProvider
@@ -44,10 +41,10 @@ import no.nav.tjeneste.virksomhet.journal.v2.binding.JournalV2
 import no.nav.tjeneste.virksomhet.oppgavebehandling.v3.binding.OppgavebehandlingV3
 import no.nav.tjeneste.virksomhet.person.v3.binding.PersonV3
 import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil
-import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil.createHikariDataSourceWithVaultIntegration
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import javax.sql.DataSource
+import no.nav.syfo.repository.InntektsmeldingRepository
 
 @KtorExperimentalAPI
 fun preprodConfig(config: ApplicationConfig) = module {
@@ -138,8 +135,9 @@ fun preprodConfig(config: ApplicationConfig) = module {
         )
     } bind SakConsumer::class
 
+    single { InntektsmeldingRepositoryImp(get()) } bind InntektsmeldingRepository::class
     single { EksisterendeSakService(get()) } bind EksisterendeSakService::class
-    single { InntektsmeldingService(InntektsmeldingRepositoryImp(get()), get()) } bind InntektsmeldingService::class
+    single { InntektsmeldingService( get(), get()) } bind InntektsmeldingService::class
     single { SakClient(config.getString("opprett_sak_url"), get()) } bind SakClient::class
     single { SaksbehandlingService(get(), get(), get(), get()) } bind SaksbehandlingService::class
 

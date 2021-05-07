@@ -9,6 +9,8 @@ import no.nav.helse.arbeidsgiver.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.system.getString
 import no.nav.syfo.MetrikkVarsler
 import no.nav.syfo.behandling.InntektsmeldingBehandler
+import no.nav.syfo.config.OppgaveClientConfigProvider
+import no.nav.syfo.config.SakClientConfigProvider
 import no.nav.syfo.consumer.SakConsumer
 import no.nav.syfo.consumer.azuread.AzureAdTokenConsumer
 import no.nav.syfo.consumer.rest.OppgaveClient
@@ -35,6 +37,7 @@ import no.nav.syfo.consumer.ws.InngaaendeJournalConsumer
 import no.nav.syfo.consumer.ws.BehandleInngaaendeJournalConsumer
 import no.nav.syfo.consumer.ws.JournalConsumer
 import no.nav.syfo.integration.kafka.*
+import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
 import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.binding.ArbeidsfordelingV1
 import no.nav.tjeneste.virksomhet.behandleinngaaendejournal.v1.binding.BehandleInngaaendeJournalV1
 import no.nav.tjeneste.virksomhet.behandlesak.v2.BehandleSakV2
@@ -60,6 +63,32 @@ fun prodConfig(config: ApplicationConfig) = module {
         )
     } bind DataSource::class
 
+    single {
+        OppgaveClientConfigProvider(
+            config.getString("oppgavebehandling_url"),
+            config.getString("security_token_service_token_url"),
+            config.getString("service_user.username"),
+            config.getString("service_user.password")
+        )
+    }
+    single {
+        SakClientConfigProvider(
+            config.getString("opprett_sak_url"),
+            config.getString("security_token_service_token_url"),
+            config.getString("service_user.username"),
+            config.getString("service_user.password")
+        )
+    }
+    single {
+        JoarkInntektsmeldingHendelseProsessor(
+            get(),
+            get(),
+            get(),
+            get(),
+            get()
+        )
+    } bind JoarkInntektsmeldingHendelseProsessor::class
+
     single { AktorConsumer(get(), config.getString("srvsyfoinntektsmelding.username"), config.getString("aktoerregister_api_v1_url"), get()) } bind AktorConsumer::class
     single { TokenConsumer(get(), config.getString("security-token-service-token.url")) } bind TokenConsumer::class
     single { InntektsmeldingBehandler(get(), get(),get(), get(), get(), get(), get()) } bind InntektsmeldingBehandler::class
@@ -83,7 +112,9 @@ fun prodConfig(config: ApplicationConfig) = module {
         config.getString("sakconsumer_host_url"))} bind SakConsumer::class
 
     single { EksisterendeSakService(get()) } bind EksisterendeSakService::class
-    single { InntektsmeldingService(InntektsmeldingRepositoryImp(get()),get()) } bind InntektsmeldingService::class
+    single { InntektsmeldingRepositoryImp(get()) } bind InntektsmeldingRepository::class
+    single { InntektsmeldingService(get(),get()) } bind InntektsmeldingService::class
+    single { ArbeidsgiverperiodeRepositoryImp(get(), get())} bind ArbeidsgiverperiodeRepository::class
     single { SakClient(config.getString("opprett_sak_url"), get()) } bind SakClient::class
     single { SaksbehandlingService(get(), get(), get(), get()) } bind SaksbehandlingService::class
 
