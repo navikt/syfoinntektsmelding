@@ -1,5 +1,6 @@
 package no.nav.syfo.koin
 
+import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.config.*
 import io.ktor.util.*
@@ -42,6 +43,8 @@ import no.nav.tjeneste.virksomhet.inngaaendejournal.v1.binding.InngaaendeJournal
 import no.nav.tjeneste.virksomhet.journal.v2.binding.JournalV2
 import no.nav.tjeneste.virksomhet.oppgavebehandling.v3.binding.OppgavebehandlingV3
 import no.nav.tjeneste.virksomhet.person.v3.binding.PersonV3
+import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil
+import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil.createHikariDataSourceWithVaultIntegration
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import javax.sql.DataSource
@@ -50,12 +53,14 @@ import javax.sql.DataSource
 fun preprodConfig(config: ApplicationConfig) = module {
     externalSystemClients(config)
     single {
-        HikariDataSource(
-            createHikariConfig(
-                config.getjdbcUrlFromProperties(),
-                config.getString("database.username"),
-                config.getString("database.password")
-            )
+        val vaultconfig = HikariConfig()
+        vaultconfig.setJdbcUrl(config.getjdbcUrlFromProperties())
+        vaultconfig.setMinimumIdle(1)
+        vaultconfig.setMaximumPoolSize(2)
+        HikariCPVaultUtil.createHikariDataSourceWithVaultIntegration(
+            vaultconfig,
+            config.getString("database.vault.mountpath"),
+            config.getString("database.vault.admin"),
         )
     } bind DataSource::class
 

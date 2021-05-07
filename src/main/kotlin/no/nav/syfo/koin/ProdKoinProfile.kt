@@ -1,5 +1,6 @@
 package no.nav.syfo.koin
 
+import com.zaxxer.hikari.HikariConfig
 import io.ktor.config.*
 import io.ktor.util.*
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
@@ -41,11 +42,23 @@ import no.nav.tjeneste.virksomhet.inngaaendejournal.v1.binding.InngaaendeJournal
 import no.nav.tjeneste.virksomhet.journal.v2.binding.JournalV2
 import no.nav.tjeneste.virksomhet.oppgavebehandling.v3.binding.OppgavebehandlingV3
 import no.nav.tjeneste.virksomhet.person.v3.binding.PersonV3
+import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil
+import javax.sql.DataSource
 
 @KtorExperimentalAPI
 fun prodConfig(config: ApplicationConfig) = module {
     externalSystemClients(config)
-
+    single {
+        val vaultconfig = HikariConfig()
+        vaultconfig.setJdbcUrl(config.getjdbcUrlFromProperties())
+        vaultconfig.setMinimumIdle(1)
+        vaultconfig.setMaximumPoolSize(2)
+        HikariCPVaultUtil.createHikariDataSourceWithVaultIntegration(
+            vaultconfig,
+            config.getString("database.vault.mountpath"),
+            config.getString("database.vault.admin"),
+        )
+    } bind DataSource::class
 
     single { AktorConsumer(get(), config.getString("srvsyfoinntektsmelding.username"), config.getString("aktoerregister_api_v1_url"), get()) } bind AktorConsumer::class
     single { TokenConsumer(get(), config.getString("security-token-service-token.url")) } bind TokenConsumer::class
