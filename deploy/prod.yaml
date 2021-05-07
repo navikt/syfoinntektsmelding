@@ -43,6 +43,8 @@ spec:
   webproxy: true
   secureLogs:
     enabled: true
+  kafka:
+    pool: nav-dev
   env:
     - name: KOIN_PROFILE
       value: PROD
