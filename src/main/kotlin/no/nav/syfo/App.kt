@@ -112,7 +112,7 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
         Flyway.configure().baselineOnMigrate(true)
             .dataSource(GlobalContext.get().koin.get())
             .load()
-            .repair()
+            .migrate()
 
 
         logger.info("Databasemigrering slutt")
