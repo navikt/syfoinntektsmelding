@@ -1,5 +1,6 @@
 package no.nav.syfo.koin
 
+import com.zaxxer.hikari.HikariDataSource
 import io.ktor.config.*
 import io.ktor.util.*
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
@@ -43,10 +44,20 @@ import no.nav.tjeneste.virksomhet.oppgavebehandling.v3.binding.Oppgavebehandling
 import no.nav.tjeneste.virksomhet.person.v3.binding.PersonV3
 import org.koin.dsl.bind
 import org.koin.dsl.module
+import javax.sql.DataSource
 
 @KtorExperimentalAPI
 fun preprodConfig(config: ApplicationConfig) = module {
     externalSystemClients(config)
+    single {
+        HikariDataSource(
+            createHikariConfig(
+                config.getjdbcUrlFromProperties(),
+                config.getString("database.username"),
+                config.getString("database.password")
+            )
+        )
+    } bind DataSource::class
 
     single {
         OppgaveClientConfigProvider(
