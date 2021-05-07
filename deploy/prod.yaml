@@ -41,6 +41,8 @@ spec:
   secureLogs:
     enabled: true
   env:
+    - name: KOIN_PROFILE
+      value: PROD
     - name: LOADBALANCER_FQDN
       value: "syfoinntektsmelding.nais.adeo.no"
     - name: ABAC_PDP_ENDPOINT_URL
