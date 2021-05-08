@@ -19,9 +19,9 @@ import javax.xml.datatype.DatatypeFactory
 
 class InngaaendeJournalConsumerTest {
 
-    val inngaaendeJournalV1 = mockk<InngaaendeJournalV1>(relaxed = true)
+    private val inngaaendeJournalV1 = mockk<InngaaendeJournalV1>(relaxed = true)
 
-    val inngaaendeJournalConsumer = InngaaendeJournalConsumer(inngaaendeJournalV1)
+    private val inngaaendeJournalConsumer = InngaaendeJournalConsumer(inngaaendeJournalV1)
 
     @Test
     @Throws(Exception::class)

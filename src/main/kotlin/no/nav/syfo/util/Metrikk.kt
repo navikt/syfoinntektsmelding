@@ -9,7 +9,7 @@ import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 
 class Metrikk {
 
-    val METRICS_NS = "spinn"
+    private val METRICS_NS = "spinn"
 
     private fun proseseringsMetrikker(metricName: String, metricHelpText: String): Counter {
         return Counter.build()

@@ -28,8 +28,8 @@ private const val FORDELINGSOPPGAVE_ID = 5678
 
 class OppgaveClientTest {
 
-    var tokenConsumer = mockk<TokenConsumer>(relaxed = true)
-    var metrikk = mockk<Metrikk>(relaxed = true)
+    private var tokenConsumer = mockk<TokenConsumer>(relaxed = true)
+    private var metrikk = mockk<Metrikk>(relaxed = true)
 
     @KtorExperimentalAPI
     private lateinit var oppgaveClient: OppgaveClient

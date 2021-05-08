@@ -8,8 +8,8 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
 
-val validIdentitetsnummer = "20015001543"
-val validOrgNr = "917404437"
+const val validIdentitetsnummer = "20015001543"
+const val validOrgNr = "917404437"
 
 fun getRandomNumber(fra: Int, til: Int) = (fra..til).shuffled().first()
 fun getRandomFeiltype() = Feiltype.values().toList().shuffled().first()

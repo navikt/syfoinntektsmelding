@@ -15,9 +15,9 @@ import org.apache.neethi.Policy
 import java.util.*
 
 internal object STSClientConfig {
-    const val STS_URL_KEY = "SECURITYTOKENSERVICE_URL"
-    const val SERVICEUSER_USERNAME = "SRVSYFOINNTEKTSMELDING_USERNAME"
-    const val SERVICEUSER_PASSWORD = "SRVSYFOINNTEKTSMELDING_PASSWORD"
+    private const val STS_URL_KEY = "SECURITYTOKENSERVICE_URL"
+    private const val SERVICEUSER_USERNAME = "SRVSYFOINNTEKTSMELDING_USERNAME"
+    private const val SERVICEUSER_PASSWORD = "SRVSYFOINNTEKTSMELDING_PASSWORD"
 
     // Only use no transportbinding on localhost, should use the requestSamlPolicy.xml with transport binding https
     // when in production.
@@ -129,9 +129,9 @@ internal object STSClientConfig {
 }
 
 internal object STSClientConfigMock {
-    const val STS_URL_KEY = "SECURITYTOKENSERVICE_URL"
-    const val SERVICEUSER_USERNAME = "SRVSYFOINNTEKTSMELDING_USERNAME"
-    const val SERVICEUSER_PASSWORD = "SRVSYFOINNTEKTSMELDING_PASSWORD"
+    private const val STS_URL_KEY = "SECURITYTOKENSERVICE_URL"
+    private const val SERVICEUSER_USERNAME = "SRVSYFOINNTEKTSMELDING_USERNAME"
+    private const val SERVICEUSER_PASSWORD = "SRVSYFOINNTEKTSMELDING_PASSWORD"
 
     // Only use no transportbinding on localhost, should use the requestSamlPolicy.xml with transport binding https
     // when in production.

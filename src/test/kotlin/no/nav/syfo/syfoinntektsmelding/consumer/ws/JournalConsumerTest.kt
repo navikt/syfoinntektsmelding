@@ -24,8 +24,8 @@ import java.util.function.BinaryOperator
 
 class JournalConsumerTest {
 
-    val journal = mockk<JournalV2>(relaxed = true)
-    val aktør = mockk<AktorConsumer>(relaxed = true)
+    private val journal = mockk<JournalV2>(relaxed = true)
+    private val aktør = mockk<AktorConsumer>(relaxed = true)
 
     private val journalConsumer = JournalConsumer(journal,aktør)
 

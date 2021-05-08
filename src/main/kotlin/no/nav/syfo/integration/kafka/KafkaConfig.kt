@@ -11,7 +11,7 @@ import org.apache.kafka.common.config.SaslConfigs
 import org.apache.kafka.common.serialization.StringDeserializer
 import java.util.*
 
-private val LOCALHOSTBOOTSTRAPSERVER = "localhost:9092"
+private const val LOCALHOSTBOOTSTRAPSERVER = "localhost:9092"
 private fun envOrThrow(envVar: String) =
     System.getenv()[envVar] ?: throw IllegalStateException("$envVar er påkrevd miljøvariabel")
 

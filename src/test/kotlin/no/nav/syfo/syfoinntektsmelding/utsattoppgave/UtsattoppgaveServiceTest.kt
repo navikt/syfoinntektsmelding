@@ -26,7 +26,7 @@ open class UtsattOppgaveServiceTest {
 
     @BeforeEach
     fun setup() {
-        oppgaveService = UtsattOppgaveService(utsattOppgaveDAO, oppgaveClient, behandlendeEnhetConsumer,)
+        oppgaveService = UtsattOppgaveService(utsattOppgaveDAO, oppgaveClient, behandlendeEnhetConsumer)
     }
 
     private val fnr = "fnr"

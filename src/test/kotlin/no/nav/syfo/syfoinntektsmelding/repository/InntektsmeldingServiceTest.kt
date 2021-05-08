@@ -16,7 +16,7 @@ import java.time.LocalDateTime
 
 
 class InntektsmeldingServiceTest {
-    val objectMapper = ObjectMapper().registerModules(KotlinModule(), JavaTimeModule())
+    private val objectMapper = ObjectMapper().registerModules(KotlinModule(), JavaTimeModule())
 
     @Test
     fun `Verifiserer at object mapper gir forventet JSON format`() {

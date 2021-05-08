@@ -1,3 +1,7 @@
+@file:Suppress("BlockingMethodInNonBlockingContext", "BlockingMethodInNonBlockingContext",
+    "BlockingMethodInNonBlockingContext"
+)
+
 package no.nav.syfo.web.api
 
 import com.fasterxml.jackson.databind.ObjectMapper

@@ -42,7 +42,7 @@ class InntektsmeldingKontraktMapperKtTest {
         assertThat(dto.aktorId).isEqualTo("aktorId")
         assertThat(dto.sakId).isEqualTo("sakId")
         assertThat(dto.arbeidsgiverPrivat).isEqualTo("fnr")
-        assertThat(dto.uuid).isNotNull()
+        assertThat(dto.uuid).isNotNull
         assertThat(dto.behandlet).isEqualTo(LocalDateTime.of(2019,10,1,5,18,45,0))
         assertThat(dto.arbeidsgiverperioder.size).isEqualTo(0)
     }

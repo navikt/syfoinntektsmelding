@@ -13,9 +13,9 @@ import org.junit.jupiter.api.Test
 
 class BehandleInngaaendeJournalConsumerTest {
 
-    val behandleInngaaendeJournalV1 = mockk<BehandleInngaaendeJournalV1>(relaxed = true)
+    private val behandleInngaaendeJournalV1 = mockk<BehandleInngaaendeJournalV1>(relaxed = true)
 
-    val behandleInngaaendeJournalConsumer = BehandleInngaaendeJournalConsumer(behandleInngaaendeJournalV1)
+    private val behandleInngaaendeJournalConsumer = BehandleInngaaendeJournalConsumer(behandleInngaaendeJournalV1)
 
     @Test
     @Throws(Exception::class)

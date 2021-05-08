@@ -46,7 +46,7 @@ class OAuth2ClientPropertiesConfig(
 
 
     companion object CommonConfigurationAttributes {
-        const val COMMON_PREFIX = "no.nav.security.jwt.client.registration"
+        private const val COMMON_PREFIX = "no.nav.security.jwt.client.registration"
         const val CLIENTS_PATH = "$COMMON_PREFIX.clients"
         const val CLIENT_NAME = "client_name"
     }

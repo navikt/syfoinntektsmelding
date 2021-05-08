@@ -32,7 +32,7 @@ class JoarkInntektsmeldingHendelseProsessor(
 
     val log = LoggerFactory.getLogger(JoarkInntektsmeldingHendelseProsessor::class.java)!!
     companion object {
-        val JOB_TYPE = "joark-ny-inntektsmelding"
+        const val JOB_TYPE = "joark-ny-inntektsmelding"
     }
 
     override val type: String get() = JOB_TYPE
@@ -85,7 +85,7 @@ class JoarkInntektsmeldingHendelseProsessor(
     }
 
 
-    suspend fun opprettFordelingsoppgave(journalpostId: String): Boolean {
+    private suspend fun opprettFordelingsoppgave(journalpostId: String): Boolean {
         oppgaveClient.opprettFordelingsOppgave(journalpostId)
         return true
     }

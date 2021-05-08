@@ -17,6 +17,6 @@ class UtsattOppgaveVarslingService (
     }
 
     companion object {
-        val VENTETID_I_DAGER = 21L
+        const val VENTETID_I_DAGER = 21L
     }
 }

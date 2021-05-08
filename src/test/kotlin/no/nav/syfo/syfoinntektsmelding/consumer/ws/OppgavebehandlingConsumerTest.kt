@@ -15,9 +15,9 @@ import java.time.LocalDate
 
 
 class OppgavebehandlingConsumerTest {
-    val oppgavebehandlingV3 = mockk<OppgavebehandlingV3>(relaxed = true)
+    private val oppgavebehandlingV3 = mockk<OppgavebehandlingV3>(relaxed = true)
 
-    val oppgavebehandlingConsumer = OppgavebehandlingConsumer(oppgavebehandlingV3)
+    private val oppgavebehandlingConsumer = OppgavebehandlingConsumer(oppgavebehandlingV3)
 
     @Test
     fun opprettOppgave() {

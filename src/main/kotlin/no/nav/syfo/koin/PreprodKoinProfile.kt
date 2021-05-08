@@ -51,9 +51,9 @@ fun preprodConfig(config: ApplicationConfig) = module {
     externalSystemClients(config)
     single {
         val vaultconfig = HikariConfig()
-        vaultconfig.setJdbcUrl(config.getjdbcUrlFromProperties())
-        vaultconfig.setMinimumIdle(1)
-        vaultconfig.setMaximumPoolSize(2)
+        vaultconfig.jdbcUrl = config.getjdbcUrlFromProperties()
+        vaultconfig.minimumIdle = 1
+        vaultconfig.maximumPoolSize = 2
         HikariCPVaultUtil.createHikariDataSourceWithVaultIntegration(
             vaultconfig,
             config.getString("database.vault.mountpath"),

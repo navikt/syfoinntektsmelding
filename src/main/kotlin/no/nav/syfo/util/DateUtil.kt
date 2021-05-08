@@ -15,7 +15,7 @@ object DateUtil {
     }
 
     class LocalDateComparator internal constructor(private val localDate: LocalDate) {
-        fun isNotBetween(fom: LocalDate?, tom: LocalDate?): Boolean {
+        private fun isNotBetween(fom: LocalDate?, tom: LocalDate?): Boolean {
             return localDate.isBefore(fom) || localDate.isAfter(tom)
         }
 

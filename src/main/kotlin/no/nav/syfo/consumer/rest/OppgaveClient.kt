@@ -25,9 +25,9 @@ const val OPPGAVETYPE_FORDELINGSOPPGAVE = "FDR"
 const val TEMA = "SYK"
 
 class OppgaveClient constructor (
-        val oppgavebehndlingUrl: String,
-        val tokenConsumer: TokenConsumer,
-        val metrikk: Metrikk
+    private val oppgavebehndlingUrl: String,
+    val tokenConsumer: TokenConsumer,
+    val metrikk: Metrikk
 ) {
 
     private val log = LoggerFactory.getLogger(OppgaveClient::class.java)
@@ -78,7 +78,7 @@ class OppgaveClient constructor (
         }
     }
 
-    suspend fun hentHvisOppgaveFinnes(oppgavetype: String, journalpostId: String): OppgaveResultat? {
+    private suspend fun hentHvisOppgaveFinnes(oppgavetype: String, journalpostId: String): OppgaveResultat? {
         try {
             val oppgaveResponse = hentOppgave(oppgavetype = oppgavetype, journalpostId = journalpostId)
             return if (oppgaveResponse.antallTreffTotalt > 0) OppgaveResultat(oppgaveResponse.oppgaver.first().id, true) else null
@@ -146,7 +146,7 @@ class OppgaveClient constructor (
             return eksisterendeOppgave
         }
 
-        var behandlingstype: String? = null
+        val behandlingstype: String? = null
 
         val opprettOppgaveRequest = OpprettOppgaveRequest(
             journalpostId = journalpostId,

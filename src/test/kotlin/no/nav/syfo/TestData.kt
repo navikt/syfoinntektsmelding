@@ -15,8 +15,8 @@ import java.util.*
 
 val FØRSTE_JANUAR: LocalDate = LocalDate.of(2019, 1, 1)
 val FØRSTE_FEBRUAR: LocalDate = LocalDate.of(2019, 2, 1)
-val validIdentitetsnummer = "20015001543"
-val validOrgNr = "917404437"
+const val validIdentitetsnummer = "20015001543"
+const val validOrgNr = "917404437"
 val BEHANDLET_DATO: LocalDateTime = LocalDateTime.of(2021, 6, 23, 12, 0,0)
 
 val grunnleggendeInntektsmelding = Inntektsmelding(

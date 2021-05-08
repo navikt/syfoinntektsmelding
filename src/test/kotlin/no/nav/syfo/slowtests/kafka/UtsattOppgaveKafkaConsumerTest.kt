@@ -42,9 +42,9 @@ class UtsattOppgaveKafkaConsumerTest : SystemTestBase() {
     private val bakrepo = PostgresBakgrunnsjobbRepository(HikariDataSource(createTestHikariConfig()))
 
     private val mockUtsattDAO = UtsattOppgaveDAO(UtsattOppgaveRepositoryMockk())
-    val oppgaveClientMock = mockk<OppgaveClient>(relaxed = true)
-    val behandlendeEnhetConsumerMock = mockk<BehandlendeEnhetConsumer>(relaxed = true)
-    val utsattOppgaveServiceMock = UtsattOppgaveService(mockUtsattDAO,oppgaveClientMock, behandlendeEnhetConsumerMock)
+    private val oppgaveClientMock = mockk<OppgaveClient>(relaxed = true)
+    private val behandlendeEnhetConsumerMock = mockk<BehandlendeEnhetConsumer>(relaxed = true)
+    private val utsattOppgaveServiceMock = UtsattOppgaveService(mockUtsattDAO,oppgaveClientMock, behandlendeEnhetConsumerMock)
 
     private val utsattmeldingConsumer = UtsattOppgaveKafkaClient(utsattOppgaveLocalProperties().toMutableMap(),
         topicName,
@@ -69,7 +69,7 @@ class UtsattOppgaveKafkaConsumerTest : SystemTestBase() {
 
     @Test
     fun `Skal lese utsattoppgave`() {
-        var meldinger =  utsattmeldingConsumer.getMessagesToProcess()
+        val meldinger =  utsattmeldingConsumer.getMessagesToProcess()
         Assertions.assertThat(meldinger.size).isEqualTo(1)
         Assertions.assertThat(meldinger[0]).isEqualTo(objectMapper.writeValueAsString(utsattOppgaveKakaData))
     }

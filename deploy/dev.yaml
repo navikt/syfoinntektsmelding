@@ -10,11 +10,11 @@ spec:
     - https://syfoinntektsmelding.nais.preprod.local
   cpuThresholdPercentage: 90
   image: {{image}}
-  port": 8080
+  port: 8080
   istio:
-    enabled": false
+    enabled: false
   prometheus:
-    enabled": true
+    enabled: true
     path: /internal/prometheus
   liveness:
     failureThreshold: 3
@@ -40,9 +40,9 @@ spec:
       memory: "386Mi"
   vault:
     enabled: true
-  paths:
-    - mountPath: /var/run/secrets/nais.io/azuread
-      kvPath: /azuread/data/prod/creds/syfoinntektsmelding
+    paths:
+      - mountPath: /var/run/secrets/nais.io/azuread
+        kvPath: /azuread/data/prod/creds/syfoinntektsmelding
   sidecar: true
   webproxy: true
   secureLogs:

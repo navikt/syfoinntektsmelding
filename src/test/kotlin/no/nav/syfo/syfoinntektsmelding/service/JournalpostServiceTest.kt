@@ -18,13 +18,13 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 class JournalpostServiceTest {
-    var inngaaendeJournalConsumer = mockk<InngaaendeJournalConsumer>(relaxed = true)
-    var behandlendeEnhetConsumer = mockk<BehandlendeEnhetConsumer>(relaxed = true)
-    var journalConsumer = mockk<JournalConsumer>(relaxed = true)
-    var behandleInngaaendeJournalConsumer = mockk<BehandleInngaaendeJournalConsumer>(relaxed = true)
-    val metrikk = mockk<Metrikk>(relaxed = true)
+    private var inngaaendeJournalConsumer = mockk<InngaaendeJournalConsumer>(relaxed = true)
+    private var behandlendeEnhetConsumer = mockk<BehandlendeEnhetConsumer>(relaxed = true)
+    private var journalConsumer = mockk<JournalConsumer>(relaxed = true)
+    private var behandleInngaaendeJournalConsumer = mockk<BehandleInngaaendeJournalConsumer>(relaxed = true)
+    private val metrikk = mockk<Metrikk>(relaxed = true)
 
-    val journalpostService = JournalpostService(
+    private val journalpostService = JournalpostService(
         inngaaendeJournalConsumer,
         behandleInngaaendeJournalConsumer,
         journalConsumer,

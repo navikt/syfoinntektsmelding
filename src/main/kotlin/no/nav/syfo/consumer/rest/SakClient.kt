@@ -21,8 +21,8 @@ import java.time.ZonedDateTime
 
 @KtorExperimentalAPI
 class SakClient constructor(
-        val opprettsakUrl: String,
-        val tokenConsumer: TokenConsumer
+    private val opprettsakUrl: String,
+    val tokenConsumer: TokenConsumer
 ) {
 
     private val log = log()

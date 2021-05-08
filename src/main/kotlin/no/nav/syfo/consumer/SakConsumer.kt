@@ -15,8 +15,8 @@ import java.time.LocalDate
 class SakConsumer(
     val httpClient : HttpClient,
     val azureAdTokenConsumer: AzureAdTokenConsumer,
-    val syfogsakClientId: String,
-    val hostUrl: String
+    private val syfogsakClientId: String,
+    private val hostUrl: String
 ) {
     val log = log()
 

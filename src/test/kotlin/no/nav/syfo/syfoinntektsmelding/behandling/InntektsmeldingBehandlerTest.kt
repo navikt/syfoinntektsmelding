@@ -21,15 +21,15 @@ import java.time.LocalDateTime
 
 class InntektsmeldingBehandlerTest {
 
-    val metrikk = mockk<Metrikk>(relaxed = true)
-    var journalpostService = mockk<JournalpostService>(relaxed = true)
-    var utsattOppgaveService = mockk<UtsattOppgaveService>(relaxed = true)
-    var saksbehandlingService = mockk<SaksbehandlingService>(relaxed = true)
-    var aktorConsumer = mockk<AktorConsumer>(relaxed = true)
-    var inntektsmeldingService = mockk<InntektsmeldingService>(relaxed = true)
-    val inntektsmeldingProducer = mockk<InntektsmeldingProducer>(relaxed = true)
+    private val metrikk = mockk<Metrikk>(relaxed = true)
+    private var journalpostService = mockk<JournalpostService>(relaxed = true)
+    private var utsattOppgaveService = mockk<UtsattOppgaveService>(relaxed = true)
+    private var saksbehandlingService = mockk<SaksbehandlingService>(relaxed = true)
+    private var aktorConsumer = mockk<AktorConsumer>(relaxed = true)
+    private var inntektsmeldingService = mockk<InntektsmeldingService>(relaxed = true)
+    private val inntektsmeldingProducer = mockk<InntektsmeldingProducer>(relaxed = true)
 
-    var inntektsmeldingBehandler = InntektsmeldingBehandler(
+    private var inntektsmeldingBehandler = InntektsmeldingBehandler(
         journalpostService,
         saksbehandlingService,
         metrikk,

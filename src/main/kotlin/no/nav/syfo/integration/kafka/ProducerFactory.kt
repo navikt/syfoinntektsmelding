@@ -26,7 +26,7 @@ class StringKafkaProducerFactory : ProducerFactory<String, String> {
 
 
 
-class BeskjedProducerFactory(val kafkaSchemaRegistryUrl: String) : ProducerFactory<Nokkel, Beskjed> {
+class BeskjedProducerFactory(private val kafkaSchemaRegistryUrl: String) : ProducerFactory<Nokkel, Beskjed> {
     override fun createProducer(props: Map<String, Any>) = KafkaProducer<Nokkel, Beskjed>(
         props + mapOf(
             ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG to KafkaAvroSerializer::class.java.canonicalName,

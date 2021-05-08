@@ -71,7 +71,7 @@ open class UtsattOppgaveDAOTest {
         Assertions.assertNull(maybeOppgave)
     }
 
-    fun oppgave() = UtsattOppgaveEntitet(
+    private fun oppgave() = UtsattOppgaveEntitet(
         fnr = "fnr",
         sakId = "saksId",
         aktørId = "aktørId",
