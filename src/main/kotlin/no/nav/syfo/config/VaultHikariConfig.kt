@@ -15,6 +15,10 @@ class VaultHikariConfig (private var enabled: Boolean,
     @SneakyThrows
     fun buildDatasource(properties: DataSourceProperties): HikariDataSource {
         val config: HikariConfig = createHikariConfig(properties)
+          val config = HikariConfig()
+            config.setJdbcUrl(properties.getUrl())
+            config.setMinimumIdle(1)
+            config.setMaximumPoolSize(2)
         if (enabled) {
             return HikariCPVaultUtil.createHikariDataSourceWithVaultIntegration(
                 config,
