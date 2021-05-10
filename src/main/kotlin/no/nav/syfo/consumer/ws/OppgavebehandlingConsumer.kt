@@ -47,7 +47,7 @@ class OppgavebehandlingConsumer(private val oppgavebehandlingV3: Oppgavebehandli
         }
     }
 
-    fun date(localdate : LocalDate) : XMLGregorianCalendar {
+    private fun date(localdate : LocalDate) : XMLGregorianCalendar {
         val date = localdate
         val gcal = GregorianCalendar.from(date.atStartOfDay(ZoneId.systemDefault()))
         val xcal = DatatypeFactory.newInstance().newXMLGregorianCalendar(gcal)

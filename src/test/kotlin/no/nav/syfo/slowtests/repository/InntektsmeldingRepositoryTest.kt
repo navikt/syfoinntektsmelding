@@ -52,7 +52,7 @@ open class InntektsmeldingRepositoryTest : SystemTestBase(){
         val inntektsmeldinger = repository.findByAktorId("aktorId1")
         assertThat(inntektsmeldinger.size).isEqualTo(1)
         val i = inntektsmeldinger[0]
-        assertThat(i.uuid).isNotNull()
+        assertThat(i.uuid).isNotNull
         assertThat(i.journalpostId).isEqualTo("journalpostId")
         assertThat(i.sakId).isEqualTo("sakId")
         assertThat(i.orgnummer).isEqualTo("orgnummer")
@@ -61,7 +61,7 @@ open class InntektsmeldingRepositoryTest : SystemTestBase(){
         assertThat(i.behandlet).isEqualTo(LocalDateTime.of(2019, 10, 1, 5, 18, 45, 0))
         assertThat(i.arbeidsgiverperioder.size).isEqualTo(1)
       //  assertThat(i.arbeidsgiverperioder[0].inntektsmelding).isEqualTo(i)
-        assertThat(i.arbeidsgiverperioder[0].uuid).isNotNull()
+        assertThat(i.arbeidsgiverperioder[0].uuid).isNotNull
         assertThat(i.arbeidsgiverperioder[0].fom).isEqualTo(LocalDate.of(2019, 10, 5))
         assertThat(i.arbeidsgiverperioder[0].tom).isEqualTo(LocalDate.of(2019, 10, 25))
     }
@@ -85,7 +85,7 @@ open class InntektsmeldingRepositoryTest : SystemTestBase(){
         val i = inntektsmeldinger[0]
         assertThat(i.arbeidsgiverperioder.size).isEqualTo(2)
        // assertThat(i.arbeidsgiverperioder[0].inntektsmelding).isEqualTo(i)
-        assertThat(i.arbeidsgiverperioder[0].uuid).isNotNull()
+        assertThat(i.arbeidsgiverperioder[0].uuid).isNotNull
         assertThat(i.arbeidsgiverperioder[0].fom).isEqualTo(LocalDate.of(2019, 10, 5))
         assertThat(i.arbeidsgiverperioder[0].tom).isEqualTo(LocalDate.of(2019, 10, 25))
     }

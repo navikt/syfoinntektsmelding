@@ -21,7 +21,7 @@ class FeiletUtsattOppgaveMeldingProsessor(
     val log: Logger = LoggerFactory.getLogger(FeiletUtsattOppgaveMeldingProsessor::class.java)
     override val type: String get() = JOB_TYPE
     companion object {
-        val JOB_TYPE = "feilet-utsatt-oppgave"
+        const val JOB_TYPE = "feilet-utsatt-oppgave"
     }
     override fun prosesser(jobb: Bakgrunnsjobb){
         try {

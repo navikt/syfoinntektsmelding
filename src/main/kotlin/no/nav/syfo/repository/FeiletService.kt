@@ -13,7 +13,7 @@ class FeiletService (
         return Historikk(arkivReferanse, LocalDateTime.now(), finnTidligereFeilet(arkivReferanse))
     }
 
-    fun finnTidligereFeilet(arkivReferanse: String): List<FeiletEntitet> {
+    private fun finnTidligereFeilet(arkivReferanse: String): List<FeiletEntitet> {
         return repository.findByArkivReferanse(arkivReferanse)
     }
 

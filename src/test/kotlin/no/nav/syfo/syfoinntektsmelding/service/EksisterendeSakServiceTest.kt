@@ -10,8 +10,8 @@ import org.junit.jupiter.api.Test
 
 class EksisterendeSakServiceTest {
 
-    var sakConsumer = mockk<SakConsumer>(relaxed = true)
-    var eksisterendeSakService = EksisterendeSakService(sakConsumer)
+    private var sakConsumer = mockk<SakConsumer>(relaxed = true)
+    private var eksisterendeSakService = EksisterendeSakService(sakConsumer)
 
     @Test
     fun tarSisteSaksnr() {

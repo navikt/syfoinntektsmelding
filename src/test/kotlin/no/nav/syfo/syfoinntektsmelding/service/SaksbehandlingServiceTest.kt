@@ -27,13 +27,13 @@ import java.util.Collections.emptyList
 
 class SaksbehandlingServiceTest {
 
-    var oppgaveClient = mockk<OppgaveClient>(relaxed = true)
+    private var oppgaveClient = mockk<OppgaveClient>(relaxed = true)
     var behandlendeEnhetConsumer = mockk<BehandlendeEnhetConsumer>(relaxed = true)
-    var aktoridConsumer = mockk<AktorConsumer>(relaxed = true)
-    var inntektsmeldingService = mockk<InntektsmeldingService>(relaxed = true)
-    var eksisterendeSakService = mockk<EksisterendeSakService>(relaxed = true)
-    var sakClient = mockk<SakClient>(relaxed = true)
-    val metrikk = mockk<Metrikk>(relaxed = true)
+    private var aktoridConsumer = mockk<AktorConsumer>(relaxed = true)
+    private var inntektsmeldingService = mockk<InntektsmeldingService>(relaxed = true)
+    private var eksisterendeSakService = mockk<EksisterendeSakService>(relaxed = true)
+    private var sakClient = mockk<SakClient>(relaxed = true)
+    private val metrikk = mockk<Metrikk>(relaxed = true)
    // var utsattOppgaveService = mockk<UtsattOppgaveService>(relaxed = true)
 
     private var saksbehandlingService =

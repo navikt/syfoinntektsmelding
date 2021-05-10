@@ -29,13 +29,13 @@ class JoarkHendelseKafkaClient(props: MutableMap<String, Any>,
 
     private var currentBatch: List<String> = emptyList()
     private var lastThrown: Exception? = null
-    private val consumer: KafkaConsumer<String, String>
+    private val consumer: KafkaConsumer<String, String> =
+        KafkaConsumer<String, String>(props, StringDeserializer(), StringDeserializer())
     private val  topicPartition = TopicPartition(topicName, 0)
 
     private val log = LoggerFactory.getLogger(JoarkHendelseKafkaClient::class.java)
 
     init {
-        consumer = KafkaConsumer<String, String>(props, StringDeserializer(), StringDeserializer())
         consumer.assign(Collections.singletonList(topicPartition))
 
         Runtime.getRuntime().addShutdownHook(Thread {

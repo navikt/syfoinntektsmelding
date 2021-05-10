@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 package no.nav.syfo.behandling
 
 import com.google.common.util.concurrent.Striped
@@ -27,8 +29,8 @@ class InntektsmeldingBehandler(
     private val utsattOppgaveService: UtsattOppgaveService
 ) {
 
-    val consumerLocks = Striped.lock(8)
-    val OPPRETT_OPPGAVE_FORSINKELSE = 12L;
+    private val consumerLocks = Striped.lock(8)
+    private val OPPRETT_OPPGAVE_FORSINKELSE = 12L;
 
     fun behandle(arkivId: String, arkivreferanse: String): String? {
         val inntektsmelding = journalpostService.hentInntektsmelding(arkivId, arkivreferanse)

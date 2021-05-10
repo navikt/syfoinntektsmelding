@@ -41,7 +41,7 @@ class DefaultOAuth2HttpClient(private val httpClient: HttpClient) : OAuth2HttpCl
 }
 
 class TokenResolver : JwtBearerTokenResolver {
-    var tokenPrincipal: TokenValidationContextPrincipal? = null
+    private var tokenPrincipal: TokenValidationContextPrincipal? = null
 
     override fun token(): Optional<String> {
         return tokenPrincipal?.context?.firstValidToken?.map { it.tokenAsString } ?: Optional.empty()

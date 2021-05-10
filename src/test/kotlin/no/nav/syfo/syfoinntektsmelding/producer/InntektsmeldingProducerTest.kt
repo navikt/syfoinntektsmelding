@@ -13,8 +13,8 @@ import no.nav.syfo.integration.kafka.producerLocalProperties
 class InntektsmeldingProducerTest {
 
 
-    val kontraktInntektsmelding = mapInntektsmeldingKontrakt(grunnleggendeInntektsmelding, "0000", Gyldighetsstatus.GYLDIG, arkivreferanse = "AR123", uuid = "ID")
-    val producer = InntektsmeldingProducer(
+    private val kontraktInntektsmelding = mapInntektsmeldingKontrakt(grunnleggendeInntektsmelding, "0000", Gyldighetsstatus.GYLDIG, arkivreferanse = "AR123", uuid = "ID")
+    private val producer = InntektsmeldingProducer(
         producerLocalProperties("localhost:9092"),
         mockk())
 

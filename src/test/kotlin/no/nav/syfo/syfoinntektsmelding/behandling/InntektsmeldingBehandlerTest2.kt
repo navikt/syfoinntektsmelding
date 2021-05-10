@@ -42,32 +42,32 @@ import java.util.concurrent.atomic.AtomicInteger
 
 class InntektsmeldingBehandlerTest2 {
 
-    var objectMapper = ObjectMapper()
-    var journalV2 = mockk<JournalV2>(relaxed = true)
-    var aktorConsumer = mockk<AktorConsumer>(relaxed = true)
-    var inngaaendeJournalConsumer = mockk<InngaaendeJournalConsumer>(relaxed = true)
-    var metrikk = mockk<Metrikk>(relaxed = true)
-    var inntektsmeldingProducer = mockk<InntektsmeldingProducer>(relaxed = true)
-    var behandleInngaaendeJournalConsumer = mockk<BehandleInngaaendeJournalConsumer>(relaxed = true)
-    var behandlendeEnhetConsumer = mockk<BehandlendeEnhetConsumer>(relaxed = true)
+    private var objectMapper = ObjectMapper()
+    private var journalV2 = mockk<JournalV2>(relaxed = true)
+    private var aktorConsumer = mockk<AktorConsumer>(relaxed = true)
+    private var inngaaendeJournalConsumer = mockk<InngaaendeJournalConsumer>(relaxed = true)
+    private var metrikk = mockk<Metrikk>(relaxed = true)
+    private var inntektsmeldingProducer = mockk<InntektsmeldingProducer>(relaxed = true)
+    private var behandleInngaaendeJournalConsumer = mockk<BehandleInngaaendeJournalConsumer>(relaxed = true)
+    private var behandlendeEnhetConsumer = mockk<BehandlendeEnhetConsumer>(relaxed = true)
     var oppgaveClient = mockk<OppgaveClient>(relaxed = true)
-    var sakClient = mockk<SakClient>(relaxed = true)
-    var eksisterendeSakService = mockk<EksisterendeSakService>(relaxed = true)
-    var journalpostService = mockk<JournalpostService>(relaxed = true)
+    private var sakClient = mockk<SakClient>(relaxed = true)
+    private var eksisterendeSakService = mockk<EksisterendeSakService>(relaxed = true)
+    private var journalpostService = mockk<JournalpostService>(relaxed = true)
 
 
-    var inntektsmeldingRepository = mockk<InntektsmeldingRepository>(relaxed = true)
-    var mockInnteksmeldingRepo = InntektsmeldingRepositoryMock()
-    var inntektsmeldingService = InntektsmeldingService(mockInnteksmeldingRepo, objectMapper)  //mockk<InntektsmeldingService>(relaxed = true)
+    private var inntektsmeldingRepository = mockk<InntektsmeldingRepository>(relaxed = true)
+    private var mockInnteksmeldingRepo = InntektsmeldingRepositoryMock()
+    private var inntektsmeldingService = InntektsmeldingService(mockInnteksmeldingRepo, objectMapper)  //mockk<InntektsmeldingService>(relaxed = true)
 
     lateinit var utsattOppgaveDAO: UtsattOppgaveDAO
-    var utsattOppgaveService = mockk<UtsattOppgaveService>(relaxed = true)
+    private var utsattOppgaveService = mockk<UtsattOppgaveService>(relaxed = true)
     //lateinit var utsattOppgaveConsumer: UtsattOppgaveConsumer
 
 
-    var journalConsumer = mockk<JournalConsumer>(relaxed = true)
-    var saksbehandlingService = mockk<SaksbehandlingService>(relaxed = true)
-    var inntektsmeldingBehandler = mockk<InntektsmeldingBehandler>(relaxed = true)
+    private var journalConsumer = mockk<JournalConsumer>(relaxed = true)
+    private var saksbehandlingService = mockk<SaksbehandlingService>(relaxed = true)
+    private var inntektsmeldingBehandler = mockk<InntektsmeldingBehandler>(relaxed = true)
     var feiletUtsattOppgaveMeldingProsessor = mockk<FeiletUtsattOppgaveMeldingProsessor>(relaxed = true)
 
     @BeforeEach
@@ -298,7 +298,7 @@ class InntektsmeldingBehandlerTest2 {
         verify(exactly = numThreads) { behandleInngaaendeJournalConsumer.ferdigstillJournalpost(any()) }
     }
 
-    fun build(fnr: AtomicInteger): HentDokumentResponse {
+    private fun build(fnr: AtomicInteger): HentDokumentResponse {
         val dokumentResponse = HentDokumentResponse()
         dokumentResponse.dokument = JournalConsumerTest.inntektsmeldingArbeidsgiver(
             listOf(
@@ -325,7 +325,7 @@ class InntektsmeldingBehandlerTest2 {
         countdown.await()
     }
 
-    fun lagDokumentRespons(fom: LocalDate, tom: LocalDate): no.nav.tjeneste.virksomhet.journal.v2.HentDokumentResponse {
+    private fun lagDokumentRespons(fom: LocalDate, tom: LocalDate): no.nav.tjeneste.virksomhet.journal.v2.HentDokumentResponse {
         val dokumentResponse1 = no.nav.tjeneste.virksomhet.journal.v2.HentDokumentResponse()
         dokumentResponse1.response = HentDokumentResponse()
         dokumentResponse1.response.dokument = JournalConsumerTest.inntektsmeldingArbeidsgiver(
@@ -334,7 +334,7 @@ class InntektsmeldingBehandlerTest2 {
         return dokumentResponse1
     }
 
-    fun lagDokumentRespons(): no.nav.tjeneste.virksomhet.journal.v2.HentDokumentResponse {
+    private fun lagDokumentRespons(): no.nav.tjeneste.virksomhet.journal.v2.HentDokumentResponse {
         val dokumentResponse1 = no.nav.tjeneste.virksomhet.journal.v2.HentDokumentResponse()
         dokumentResponse1.response = HentDokumentResponse()
         dokumentResponse1.response.dokument = JournalConsumerTest.inntektsmeldingArbeidsgiver(
@@ -343,7 +343,7 @@ class InntektsmeldingBehandlerTest2 {
         return dokumentResponse1
     }
 
-    fun lagDokumentRespons(
+    private fun lagDokumentRespons(
         fom: LocalDate,
         tom: LocalDate,
         fom2: LocalDate,

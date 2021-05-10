@@ -6,7 +6,7 @@ import no.nav.syfo.dto.UtsattOppgaveEntitet
 import no.nav.syfo.repository.UtsattOppgaveRepository
 import java.time.LocalDateTime
 
-class UtsattOppgaveDAO(val utsattOppgaveRepository: UtsattOppgaveRepository) {
+class UtsattOppgaveDAO(private val utsattOppgaveRepository: UtsattOppgaveRepository) {
 
     val log = log()
 

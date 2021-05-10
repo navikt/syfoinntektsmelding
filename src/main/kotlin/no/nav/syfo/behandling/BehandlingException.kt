@@ -16,7 +16,7 @@ open class AktørOppslagException(causedBy: java.lang.Exception?) : AktørExcept
 open class AktørKallResponseException(statusCode: Int, causedBy: java.lang.Exception?) : AktørException(Feiltype.AKTØR_FEIL, "Kall mot aktørregister for aktørId feiler med http status $statusCode", causedBy )
 
 // InngaaendeJournalConsumer
-open class InngaaendeJournalConsumerException( feiltype: Feiltype,  message: String, val causedBy: Exception?) : BehandlingException(feiltype, message, causedBy)
+open class InngaaendeJournalConsumerException(feiltype: Feiltype, message: String, private val causedBy: Exception?) : BehandlingException(feiltype, message, causedBy)
 open class HentJournalpostSikkerhetsbegrensningException(journalpostId: String, cause: java.lang.Exception?) : InngaaendeJournalConsumerException(Feiltype.INNGÅENDE_SIKKERHETSBEGRENSNING, "Sikkerhetsbegrensning for journalpostId $journalpostId!", cause )
 open class HentJournalpostJournalpostIkkeInngaaendeException(journalpostId: String, cause: java.lang.Exception?) : InngaaendeJournalConsumerException(Feiltype.INNGÅENDE_IKKE_INNGÅENDE, "Ikke inngående journalpostId $journalpostId!", cause)
 open class HentJournalpostJournalpostIkkeFunneteException(journalpostId: String, cause: java.lang.Exception?) : InngaaendeJournalConsumerException(Feiltype.INNGÅENDE_IKKE_FUNNET, "Fant ikke journalpostId $journalpostId!", cause )

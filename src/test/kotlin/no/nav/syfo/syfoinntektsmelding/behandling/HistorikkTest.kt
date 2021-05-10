@@ -10,10 +10,10 @@ import java.time.LocalDateTime
 
 class HistorikkTest {
 
-    val IDAG: LocalDateTime = LocalDateTime.of(2019,12,24,18,0)
-    val ELDRE: LocalDateTime = IDAG.minusDays(8)
-    val IGÅR: LocalDateTime = IDAG.minusDays(1)
-    val EN_TIME_SIDEN: LocalDateTime = IDAG.minusDays(0)
+    private val IDAG: LocalDateTime = LocalDateTime.of(2019,12,24,18,0)
+    private val ELDRE: LocalDateTime = IDAG.minusDays(8)
+    private val IGÅR: LocalDateTime = IDAG.minusDays(1)
+    private val EN_TIME_SIDEN: LocalDateTime = IDAG.minusDays(0)
 
     @Test
     fun `Skal arkiveres dersom inntektsmeldingen kom inn før 1 uke siden`() {
@@ -24,7 +24,7 @@ class HistorikkTest {
             FeiletEntitet(arkivReferanse =  AR,feiltype = Feiltype.JMS, tidspunkt = ELDRE)
         )
         val historikk = Historikk( arkivReferanse = AR, feiletList=feiletList, dato = IDAG )
-        assertThat(historikk.skalArkiveresForDato()).isTrue()
+        assertThat(historikk.skalArkiveresForDato()).isTrue
     }
 
     @Test
@@ -32,7 +32,7 @@ class HistorikkTest {
         val AR = "AR-123"
         val feiletList: List<FeiletEntitet> = listOf(FeiletEntitet(arkivReferanse =  AR,feiltype = Feiltype.JMS, tidspunkt = IDAG.minusHours(2)))
         val historikk = Historikk( arkivReferanse = AR, feiletList=feiletList, dato = IDAG )
-        assertThat(historikk.skalArkiveresForDato()).isFalse()
+        assertThat(historikk.skalArkiveresForDato()).isFalse
     }
 
     @Test
@@ -40,7 +40,7 @@ class HistorikkTest {
         val AR = "AR-123"
         val feiletList: List<FeiletEntitet> = listOf(FeiletEntitet(arkivReferanse =  AR,feiltype = Feiltype.JMS, tidspunkt = IGÅR))
         val historikk = Historikk( arkivReferanse = AR, feiletList=feiletList, dato = IDAG )
-        assertThat(historikk.skalArkiveresForDato()).isFalse()
+        assertThat(historikk.skalArkiveresForDato()).isFalse
     }
 
     @Test
@@ -48,7 +48,7 @@ class HistorikkTest {
         val AR = "AR-123"
         val feiletList: List<FeiletEntitet> = listOf()
         val historikk = Historikk( arkivReferanse = AR, feiletList=feiletList, dato = IDAG )
-        assertThat(historikk.skalArkiveresForDato()).isFalse()
+        assertThat(historikk.skalArkiveresForDato()).isFalse
     }
 
 }

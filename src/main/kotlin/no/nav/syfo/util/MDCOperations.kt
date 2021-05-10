@@ -7,9 +7,9 @@ import java.security.SecureRandom
 class MDCOperations {
     companion object {
         var log = logger<MDCOperations>()
-        val MDC_CALL_ID = "callId"
-        val MDC_USER_ID = "userId"
-        val MDC_CONSUMER_ID = "consumerId"
+        const val MDC_CALL_ID = "callId"
+        const val MDC_USER_ID = "userId"
+        const val MDC_CONSUMER_ID = "consumerId"
         private val RANDOM = SecureRandom()
 
         fun generateCallId(): String = "CallId_${getRandomNumber()}_${getSystemTime()}"

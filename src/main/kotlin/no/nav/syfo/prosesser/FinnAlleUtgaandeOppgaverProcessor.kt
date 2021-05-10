@@ -18,7 +18,7 @@ class FinnAlleUtgaandeOppgaverProcessor(
     private val behandlendeEnhetConsumer: BehandlendeEnhetConsumer
 ) : BakgrunnsjobbProsesserer {
     val log = LoggerFactory.getLogger(FinnAlleUtgaandeOppgaverProcessor::class.java)!!
-    companion object { val JOB_TYPE = "finn-alle-utgående-oppgaver"}
+    companion object { const val JOB_TYPE = "finn-alle-utgående-oppgaver"}
     override val type: String get() = JOB_TYPE
 
     override fun prosesser(jobb: Bakgrunnsjobb) {

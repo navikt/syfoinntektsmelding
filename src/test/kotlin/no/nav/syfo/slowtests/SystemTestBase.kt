@@ -26,10 +26,10 @@ import org.koin.test.inject
  */
 open class SystemTestBase : KoinTest {
 
-    val httpClient by inject<HttpClient>()
+    private val httpClient by inject<HttpClient>()
 
     companion object {
-        val testServerPort = 8989
+        const val testServerPort = 8989
         var app: SpinnApplication? = null
         init{
             System.setProperty("SECURITYTOKENSERVICE_URL", "joda")
@@ -55,7 +55,7 @@ open class SystemTestBase : KoinTest {
     /**
      * Hjelpefunksjon for å kalle HTTP-endepunktene med riktig port i testene
      */
-    fun HttpRequestBuilder.appUrl(relativePath: String) {
+    private fun HttpRequestBuilder.appUrl(relativePath: String) {
         url("http://localhost:$testServerPort$relativePath")
     }
 

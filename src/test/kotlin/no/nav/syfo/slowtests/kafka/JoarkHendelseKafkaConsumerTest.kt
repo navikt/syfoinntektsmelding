@@ -53,7 +53,7 @@ class JoarkHendelseKafkaConsumerTest : SystemTestBase(){
 
     @Test
     fun `Skal lese joark hendelse`() {
-        var meldinger = joarkHendleseConsumer.getMessagesToProcess()
+        val meldinger = joarkHendleseConsumer.getMessagesToProcess()
         Assertions.assertThat(meldinger.size).isEqualTo(1)
         Assertions.assertThat(meldinger[0]).isEqualTo(objectMapper.writeValueAsString(journalPostKafkaData))
     }

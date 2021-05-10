@@ -17,7 +17,7 @@ import java.time.LocalDateTime
 
 open class FeiletRepositoryTest : SystemTestBase(){
 
-    lateinit var respository: FeiletRepository
+    private lateinit var respository: FeiletRepository
     val testKrav = grunnleggendeInntektsmelding
 
     @BeforeAll
@@ -32,10 +32,10 @@ open class FeiletRepositoryTest : SystemTestBase(){
         respository.deleteAll()
     }
 
-    val NOW: LocalDateTime = LocalDateTime.now()
-    val DAYS_1: LocalDateTime = NOW.minusDays(1)
-    val DAYS_8: LocalDateTime = NOW.minusDays(8)
-    val DAYS_14: LocalDateTime = NOW.minusDays(14)
+    private val NOW: LocalDateTime = LocalDateTime.now()
+    private val DAYS_1: LocalDateTime = NOW.minusDays(1)
+    private val DAYS_8: LocalDateTime = NOW.minusDays(8)
+    private val DAYS_14: LocalDateTime = NOW.minusDays(14)
 
     @Test
     fun `Skal finne alle entiteter med arkivReferansen og rette verdier`() {

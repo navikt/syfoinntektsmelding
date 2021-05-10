@@ -13,7 +13,7 @@ import java.util.*
 
 @KtorExperimentalAPI
 class UtsattOppgaveService(
-    val utsattOppgaveDAO: UtsattOppgaveDAO,
+    private val utsattOppgaveDAO: UtsattOppgaveDAO,
     private val oppgaveClient: OppgaveClient,
     private val behandlendeEnhetConsumer: BehandlendeEnhetConsumer
 ) {

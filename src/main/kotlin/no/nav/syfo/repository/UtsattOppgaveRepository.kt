@@ -49,7 +49,7 @@ class UtsattOppgaveRepositoryMockk : UtsattOppgaveRepository {
     }
 }
 
-class UtsattOppgaveRepositoryImp(val ds: DataSource) : UtsattOppgaveRepository {
+class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepository {
     override fun findByInntektsmeldingId(inntektsmeldingId: String): UtsattOppgaveEntitet? {
         val findByInnteksmeldingId = "SELECT * FROM UTSATT_OPPGAVE WHERE INNTEKTSMELDING_ID = ?;"
         val inntektsmeldinger = ArrayList<UtsattOppgaveEntitet>()
