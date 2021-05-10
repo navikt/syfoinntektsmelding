@@ -19,13 +19,13 @@ spec:
   liveness:
     failureThreshold: 3
     initialDelay: 60
-    path: /internal/isAlive
+    path: /health/is-alive
     periodSeconds: 10
     timeout: 1
   readiness:
     failureThreshold: 3
     initialDelay: 60
-    path: /internal/isReady
+    path: /health/is-ready
     periodSeconds: 10
     timeout: 1
   replicas:
