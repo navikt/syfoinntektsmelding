@@ -30,7 +30,7 @@ fun Module.externalSystemClients(config: ApplicationConfig) {
         )
     } bind AltinnOrganisationsRepository::class*/
 
-   /* single {
+    single {
         val clientConfig = OAuth2ClientPropertiesConfig(config)
         val tokenResolver = TokenResolver()
         val oauthHttpClient = DefaultOAuth2HttpClient(get())
@@ -43,5 +43,5 @@ fun Module.externalSystemClients(config: ApplicationConfig) {
 
         val azureAdConfig = clientConfig.clientConfig["azure_ad"] ?: error("Fant ikke config i application.conf")
         OAuth2TokenProvider(accessTokenService, azureAdConfig)
-    } bind AccessTokenProvider::class*/
+    } bind AccessTokenProvider::class
 }
