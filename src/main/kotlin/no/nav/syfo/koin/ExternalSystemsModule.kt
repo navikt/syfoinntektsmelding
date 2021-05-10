@@ -18,7 +18,7 @@ import no.nav.syfo.integration.oauth2.OAuth2ClientPropertiesConfig
 import no.nav.syfo.integration.oauth2.TokenResolver
 
 fun Module.externalSystemClients(config: ApplicationConfig) {
-    single {
+   /* single {
         CachedAuthRepo(
             AltinnRestClient(
                 config.getString("altinn.service_owner_api_url"),
@@ -28,9 +28,9 @@ fun Module.externalSystemClients(config: ApplicationConfig) {
                 get()
             )
         )
-    } bind AltinnOrganisationsRepository::class
+    } bind AltinnOrganisationsRepository::class*/
 
-    single {
+   /* single {
         val clientConfig = OAuth2ClientPropertiesConfig(config)
         val tokenResolver = TokenResolver()
         val oauthHttpClient = DefaultOAuth2HttpClient(get())
@@ -43,5 +43,5 @@ fun Module.externalSystemClients(config: ApplicationConfig) {
 
         val azureAdConfig = clientConfig.clientConfig["azure_ad"] ?: error("Fant ikke config i application.conf")
         OAuth2TokenProvider(accessTokenService, azureAdConfig)
-    } bind AccessTokenProvider::class
+    } bind AccessTokenProvider::class*/
 }
