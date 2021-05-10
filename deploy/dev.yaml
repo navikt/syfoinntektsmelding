@@ -14,7 +14,7 @@ spec:
   istio:
     enabled: false
   prometheus:
-    enabled: true
+    enabled: false
     path: /internal/prometheus
   liveness:
     failureThreshold: 3
