@@ -80,7 +80,6 @@ fun producerOnPremProperties(config: ApplicationConfig) = Properties().apply {
     put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, "${config.getString("kafka_bootstrap_servers")}")
     put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_SSL")
     put(SaslConfigs.SASL_MECHANISM, "PLAIN")
-    val jaasTemplate = "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"${config.getString("srvsyfoinntektsmelding.username")}\" password=\"${config.getString("srvsyfoinntektsmelding.password")}\";"
-    val jaasCfg = String.format(jaasTemplate, "${config.getString("srvsyfoinntektsmelding.username")}", "${config.getString("srvsyfoinntektsmelding.password")})")
-    put("sasl.jaas.config", jaasCfg)
+    val jaasCfg = "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"${config.getString("srvsyfoinntektsmelding.username")}\" password=\"${config.getString("srvsyfoinntektsmelding.password")}\";"
+    put(SaslConfigs.SASL_JAAS_CONFIG, jaasCfg)
 }

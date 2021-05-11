@@ -14,8 +14,8 @@ spec:
   istio:
     enabled: false
   prometheus:
-    enabled: false
-    path: /internal/prometheus
+    enabled: true
+    path: /metrics
   liveness:
     failureThreshold: 3
     initialDelay: 60
