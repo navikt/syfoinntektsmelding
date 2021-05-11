@@ -42,7 +42,7 @@ spec:
     enabled: true
     paths:
       - mountPath: /var/run/secrets/nais.io/azuread
-        kvPath: /azuread/data/prod/creds/syfoinntektsmelding
+        kvPath: /azuread/data/dev/creds/syfoinntektsmelding
   sidecar: true
   webproxy: true
   secureLogs:
