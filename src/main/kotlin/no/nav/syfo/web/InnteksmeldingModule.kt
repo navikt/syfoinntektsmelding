@@ -27,7 +27,7 @@ fun Application.inntektsmeldingModule(config: ApplicationConfig = environment.co
     }
 
     install(Authentication) {
-//        tokenValidationSupport(config = config)
+        tokenValidationSupport(config = config)
     }
 
 

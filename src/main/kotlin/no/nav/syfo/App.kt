@@ -79,9 +79,9 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
             }
 
             module {
-              /*  if (runtimeEnvironment != AppEnv.PROD) {
+                if (runtimeEnvironment != AppEnv.PROD) {
                     localCookieDispenser(config)
-                }*/
+                }
                 nais()
                 inntektsmeldingModule(config)
             }
