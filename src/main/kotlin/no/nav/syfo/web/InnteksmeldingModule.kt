@@ -26,10 +26,10 @@ fun Application.inntektsmeldingModule(config: ApplicationConfig = environment.co
         level = Level.INFO
     }
 
-  /*  install(Authentication) {
-        tokenValidationSupport(config = config)
+    install(Authentication) {
+//        tokenValidationSupport(config = config)
     }
-*/
+
 
     configureCORSAccess(config)
  //   configureExceptionHandling() TODO: Har dette bare med altinn å gjøre i fritak AGP, er dette noe vi trenger.
