@@ -14,7 +14,7 @@ spec:
   istio:
     enabled: false
   prometheus:
-    enabled: true
+    enabled: false
     path: /metrics
   liveness:
     failureThreshold: 3
