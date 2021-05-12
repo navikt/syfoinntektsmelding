@@ -4,6 +4,7 @@ import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import io.ktor.util.*
 import io.ktor.util.pipeline.*
 import io.prometheus.client.CollectorRegistry
 import io.prometheus.client.exporter.common.TextFormat
@@ -11,9 +12,21 @@ import no.nav.helse.arbeidsgiver.kubernetes.KubernetesProbeManager
 import no.nav.helse.arbeidsgiver.kubernetes.ProbeResult
 import no.nav.helse.arbeidsgiver.kubernetes.ProbeState
 import org.koin.ktor.ext.get
+import org.slf4j.LoggerFactory
 import java.util.*
 
 fun Application.nais() {
+
+    val logger = LoggerFactory.getLogger("Helsesjekker")
+
+    suspend fun PipelineContext<Unit, ApplicationCall>.returnResultOfChecks(checkResults: ProbeResult) {
+        val httpResult =
+            if (checkResults.state == ProbeState.UN_HEALTHY) HttpStatusCode.InternalServerError else HttpStatusCode.OK
+        checkResults.unhealthyComponents.forEach { r ->
+            r.error?.let { logger.error("Helsejekk feiler for ${r.componentName}", it) }
+        }
+        call.respond(httpResult, checkResults)
+    }
 
     routing {
         get("/health/is-alive") {
@@ -40,23 +53,14 @@ fun Application.nais() {
             val readyResults = kubernetesProbeManager.runReadynessProbe()
             val liveResults = kubernetesProbeManager.runLivenessProbe()
             val combinedResults = ProbeResult(
-                    liveResults.healthyComponents +
-                            liveResults.unhealthyComponents +
-                            readyResults.healthyComponents +
-                            readyResults.unhealthyComponents
+                liveResults.healthyComponents +
+                    liveResults.unhealthyComponents +
+                    readyResults.healthyComponents +
+                    readyResults.unhealthyComponents
             )
 
             returnResultOfChecks(combinedResults)
         }
     }
 }
-
-private suspend fun PipelineContext<Unit, ApplicationCall>.returnResultOfChecks(checkResults: ProbeResult) {
-    val httpResult = if (checkResults.state == ProbeState.UN_HEALTHY) HttpStatusCode.InternalServerError else HttpStatusCode.OK
-    checkResults.unhealthyComponents.forEach { r ->
-        r.error?.let { call.application.environment.log.error(r.toString()) }
-    }
-    call.respond(httpResult, checkResults)
-}
-
 
