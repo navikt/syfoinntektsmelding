@@ -1,6 +1,12 @@
 package no.nav.syfo.syfoinntektsmelding.behandling
 
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.MapperFeature
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.ktor.util.*
 import io.mockk.*
 import kotlinx.coroutines.runBlocking
@@ -43,6 +49,13 @@ import java.util.concurrent.atomic.AtomicInteger
 class InntektsmeldingBehandlerTest2 {
 
     private var objectMapper = ObjectMapper()
+        .registerModule(KotlinModule())
+        .registerModule(Jdk8Module())
+        .registerModule(JavaTimeModule())
+        .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+        .configure(SerializationFeature.INDENT_OUTPUT, true)
+        .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
+        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     private var journalV2 = mockk<JournalV2>(relaxed = true)
     private var aktorConsumer = mockk<AktorConsumer>(relaxed = true)
     private var inngaaendeJournalConsumer = mockk<InngaaendeJournalConsumer>(relaxed = true)
