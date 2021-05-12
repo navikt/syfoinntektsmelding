@@ -30,7 +30,7 @@ class Metrikk {
     }
 
     fun tellInntektsmeldingerJournalfort() {
-        val metricHelpText = ""
+        val metricHelpText = "tellInntektsmeldingerJournalfort"
         proseseringsMetrikker("syfoinntektsmelding_inntektsmeldinger_journalfort", metricHelpText).labels("info").inc()
 
     }
@@ -96,12 +96,12 @@ class Metrikk {
     }
 
     fun tellInntektsmeldingLagtPåTopic() {
-        val metricHelpText = ""
+        val metricHelpText = "tellInntektsmeldingLagtPåTopic"
         proseseringsMetrikker("syfoinntektsmelding_inntektsmelding_lagt_pa_topic", metricHelpText).labels("info").inc()
     }
 
     fun tellInntektsmeldingUtenArkivReferanse() {
-        val metricHelpText = ""
+        val metricHelpText = "tellInntektsmeldingUtenArkivReferanse"
         proseseringsMetrikker("syfoinntektsmelding_inntektsmelding_uten_arkivreferanse", metricHelpText).labels("info").inc()
     }
 
@@ -120,7 +120,7 @@ class Metrikk {
     }
 
     fun tellKreverRefusjon(beløp: Int) {
-        val metricHelpText = ""
+        val metricHelpText = "tellKreverRefusjon"
         if (beløp <= 0) return
         proseseringsMetrikker("syfoinntektsmelding_arbeidsgiver_krever_refusjon", metricHelpText).labels("info").inc()
         proseseringsMetrikker("syfoinntektsmelding_arbeidsgiver_krever_refusjon_beloep", metricHelpText).labels("info")
@@ -128,7 +128,7 @@ class Metrikk {
     }
 
     fun tellNaturalytelse() {
-        val metricHelpText = ""
+        val metricHelpText = "tellNaturalytelse"
         proseseringsMetrikker("syfoinntektsmelding_faar_naturalytelse", metricHelpText).labels("info").inc()
     }
 
@@ -140,17 +140,17 @@ class Metrikk {
     }
 
     fun tellOpprettFordelingsoppgave() {
-        val metricHelpText = ""
+        val metricHelpText = "tellOpprettFordelingsoppgave"
         proseseringsMetrikker("syfoinntektsmelding_opprett_fordelingsoppgave", metricHelpText).labels("info").inc()
     }
 
     fun tellLagreFeiletMislykkes() {
-        val metricHelpText = ""
+        val metricHelpText = "tellLagreFeiletMislykkes"
         proseseringsMetrikker("syfoinntektsmelding_feilet_lagring_mislykkes", metricHelpText).labels("info").inc()
     }
 
     fun tellRekjørerFeilet() {
-        val metricHelpText = ""
+        val metricHelpText = "tellRekjørerFeilet"
         proseseringsMetrikker("syfoinntektsmelding_rekjorer", metricHelpText).labels("info").inc()
     }
 
