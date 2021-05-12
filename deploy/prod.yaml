@@ -13,15 +13,15 @@ spec:
     enabled: false
   prometheus:
     enabled: true
-    path: /internal/prometheus
+    path: /metrics
   readiness:
     initialDelay: 60
-    path: internal/isReady
+    path: /health/is-ready
     timeout: 2
   liveness:
     failureThreshold: 600
     initialDelay: 60
-    path: internal/isAlive
+    path: /health/is-alive
     periodSeconds: 6
     timeout: 3
   replicas:
@@ -38,15 +38,13 @@ spec:
     enabled: true
     paths:
       - mountPath: /var/run/secrets/nais.io/azuread
-        kvPath: /azuread/data/prod/creds/syfoinntektsmelding
+        kvPath: /azuread/prod/creds/syfoinntektsmelding
   sidecar: true
   webproxy: true
   secureLogs:
     enabled: true
   kafka:
     pool: nav-dev
-  envFrom:
-    - configmap: loginservice-idporten # tilgjengeliggjør LOGINSERVICE_IDPORTEN_DISCOVERY_URL og LOGINSERVICE_IDPORTEN_AUDIENCE
   env:
     - name: KOIN_PROFILE
       value: PROD

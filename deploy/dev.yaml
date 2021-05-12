@@ -49,9 +49,6 @@ spec:
     enabled: true
   kafka:
     pool: nav-dev
-  envFrom:
-    - configmap: loginservice-idporten # tilgjengeliggjør LOGINSERVICE_IDPORTEN_DISCOVERY_URL og LOGINSERVICE_IDPORTEN_AUDIENCE
-
   env:
     - name: KOIN_PROFILE
       value: PREPROD

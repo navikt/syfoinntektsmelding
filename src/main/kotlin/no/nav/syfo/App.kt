@@ -21,7 +21,6 @@ import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
 import no.nav.syfo.prosesser.FjernInntektsmeldingByBehandletProcessor
 import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
 import no.nav.syfo.utsattoppgave.FeiletUtsattOppgaveMeldingProsessor
-import no.nav.syfo.web.auth.localCookieDispenser
 import no.nav.syfo.web.inntektsmeldingModule
 import no.nav.syfo.web.nais.nais
 import org.flywaydb.core.Flyway
@@ -58,9 +57,9 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
 
     private fun startKafkaConsumer() {
         val utsattOppgavePoll = PollForUtsattOppgaveVarslingsmeldingJob(get(), get())
-        utsattOppgavePoll.doJob()
+        utsattOppgavePoll.startAsync(retryOnFail = true)
         val joarkPoll = PollForJoarkVarslingsmeldingJob(get(), get())
-        joarkPoll.doJob()
+        joarkPoll.startAsync(retryOnFail = true)
     }
 
     fun shutdown() {
@@ -79,9 +78,6 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
             }
 
             module {
-                if (runtimeEnvironment != AppEnv.PROD) {
-                    localCookieDispenser(config)
-                }
                 nais()
                 inntektsmeldingModule(config)
             }
