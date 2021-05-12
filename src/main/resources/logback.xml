@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <if condition='isDefined("KOIN_PROFILE")'>
+        <then>
+            <appender name="defaultLogger" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <file>/secure-logs/secure.log</file>
+                <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+                    <fileNamePattern>/secure-logs/secure.log.%i</fileNamePattern>
+                    <minIndex>1</minIndex>
+                    <maxIndex>1</maxIndex>
+                </rollingPolicy>
+                <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+                    <maxFileSize>50MB</maxFileSize>
+                </triggeringPolicy>
+                <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
+            </appender>
+        </then>
+        <else>
+            <appender name="defaultLogger" class="ch.qos.logback.core.ConsoleAppender">
+                <encoder>
+                    <pattern>%d{YYYY-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+                </encoder>
+            </appender>
+        </else>
+    </if>
+    <logger name="no.nav" level="${log.level.no.nav:-INFO}"/>
+    <logger name="no.nav.security.token" level="${log.level.no.nav.security.token:-WARN}"/>
+    <logger name="jdbc.sql" level="${log.level.jdbc.sql:-ERROR}"/>
+    <logger name="com.zaxxer.hikari" level="${log.level.com.zaxxer.hikari:-WARN}"/>
+    <logger name="ch.qos.logback" level="${log.level.ch.qos.logback:-WARN}"/>
+    <logger name="org.apache.cxf" level="${log.level.ch.qos.logback:-WARN}"/>
+
+    <root level="INFO">
+        <appender-ref ref="defaultLogger"/>
+    </root>
+</configuration>
