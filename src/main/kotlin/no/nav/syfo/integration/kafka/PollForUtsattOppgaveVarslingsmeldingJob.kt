@@ -6,6 +6,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
+import no.nav.helse.arbeidsgiver.utils.RecurringJob
 import no.nav.syfo.util.MDCOperations
 import no.nav.syfo.utsattoppgave.*
 import java.time.Duration
@@ -19,7 +20,7 @@ class PollForUtsattOppgaveVarslingsmeldingJob(
     private val bakgrunnsjobbRepo: BakgrunnsjobbRepository,
     coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO),
     waitTimeWhenEmptyQueue: Duration = Duration.ofSeconds(30),
-) : RecurringJob(coroutineScope, waitTimeWhenEmptyQueue) {
+) : RecurringJob(coroutineScope, waitTimeWhenEmptyQueue.toMillis()) {
 
     override fun doJob() {
         do {

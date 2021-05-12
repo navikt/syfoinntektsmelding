@@ -1,7 +1,10 @@
 package no.nav.syfo.prosesser
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbProsesserer
+import no.nav.helse.arbeidsgiver.utils.RecurringJob
 import no.nav.syfo.behandling.OpprettOppgaveException
 import no.nav.syfo.consumer.rest.OppgaveClient
 import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
@@ -10,18 +13,17 @@ import no.nav.syfo.util.MDCOperations
 import no.nav.syfo.utsattoppgave.UtsattOppgaveDAO
 import no.nav.syfo.utsattoppgave.opprettOppgaveIGosys
 import org.slf4j.LoggerFactory
+import java.time.Duration
 import java.util.*
 
 class FinnAlleUtgaandeOppgaverProcessor(
     private  val utsattOppgaveDAO: UtsattOppgaveDAO,
     private val oppgaveClient: OppgaveClient,
     private val behandlendeEnhetConsumer: BehandlendeEnhetConsumer
-) : BakgrunnsjobbProsesserer {
+) : RecurringJob(CoroutineScope(Dispatchers.IO),  Duration.ofHours(24).toMillis()) {
     val log = LoggerFactory.getLogger(FinnAlleUtgaandeOppgaverProcessor::class.java)!!
-    companion object { const val JOB_TYPE = "finn-alle-utgående-oppgaver"}
-    override val type: String get() = JOB_TYPE
 
-    override fun prosesser(jobb: Bakgrunnsjobb) {
+    override fun doJob() {
         MDCOperations.putToMDC(MDCOperations.MDC_CALL_ID, UUID.randomUUID().toString())
         utsattOppgaveDAO
             .finnAlleUtgåtteOppgaver()
@@ -37,9 +39,4 @@ class FinnAlleUtgaandeOppgaverProcessor(
             }
         MDCOperations.remove(MDCOperations.MDC_CALL_ID)
     }
-
-
-
-    data class JobbData(val id: UUID)
-
 }

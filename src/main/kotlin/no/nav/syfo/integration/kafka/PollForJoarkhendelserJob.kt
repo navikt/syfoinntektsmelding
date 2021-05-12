@@ -5,6 +5,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
+import no.nav.helse.arbeidsgiver.utils.RecurringJob
 import no.nav.syfo.kafkamottak.InngaaendeJournalpostDTO
 import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
 import java.time.Duration
@@ -17,7 +18,7 @@ class PollForJoarkhendelserJob(
     private val om: ObjectMapper,
     coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO),
     waitTimeWhenEmptyQueue: Duration = Duration.ofSeconds(30)
-) : RecurringJob(coroutineScope, waitTimeWhenEmptyQueue) {
+) : RecurringJob(coroutineScope, waitTimeWhenEmptyQueue.toMillis()) {
 
     override fun doJob() {
         do {

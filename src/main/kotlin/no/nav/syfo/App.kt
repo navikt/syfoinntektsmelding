@@ -49,7 +49,7 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
 
         startKoin { modules(selectModuleBasedOnProfile(appConfig)) }
         migrateDatabase()
-        configAndStartBackgroundWorker()
+        configAndStartBackgroundWorkers()
         autoDetectProbeableComponents()
         configAndStartWebserver()
         startKafkaConsumer()
@@ -87,12 +87,13 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
     }
 
     @KtorExperimentalAPI
-    private fun configAndStartBackgroundWorker() {
+    private fun configAndStartBackgroundWorkers() {
         if (appConfig.getString("run_background_workers") == "true") {
+            get<FinnAlleUtgaandeOppgaverProcessor>().startAsync(true)
+
             get<BakgrunnsjobbService>().apply {
 
                 registrer(get<FeiletUtsattOppgaveMeldingProsessor>())
-                registrer(get<FinnAlleUtgaandeOppgaverProcessor>())
                 registrer(get<FjernInntektsmeldingByBehandletProcessor>())
                 registrer(get<JoarkInntektsmeldingHendelseProsessor>())
 

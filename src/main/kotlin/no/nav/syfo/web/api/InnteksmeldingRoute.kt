@@ -45,22 +45,7 @@ fun Route.syfoinntektsmelding(
             uuid?.let {
                 call.respond(HttpStatusCode.Created, Resultat(uuid))
             }
-            datasource.connection.use { connection ->
-                bakgunnsjobbService.opprettJobb<FjernInntektsmeldingByBehandletProcessor>(
-                    kjoeretid = LocalDate.now().plusDays(1).atStartOfDay().plusHours(4),
-                    maksAntallForsoek = 10,
-                    data = om.writeValueAsString(FjernInntektsmeldingByBehandletProcessor.JobbData(UUID.randomUUID())),
-                    connection = connection
-                )
-                bakgunnsjobbService.opprettJobb<FinnAlleUtgaandeOppgaverProcessor>(
-                    kjoeretid = LocalDate.now().plusDays(1).atStartOfDay(),
-                    maksAntallForsoek = 10,
-                    data = om.writeValueAsString(FinnAlleUtgaandeOppgaverProcessor.JobbData(UUID.randomUUID())),
-                    connection = connection
-                )
-            }
             call.respond(HttpStatusCode.NoContent)
         }
     }
 }
-
