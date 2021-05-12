@@ -13,7 +13,7 @@ import no.nav.helse.arbeidsgiver.kubernetes.ReadynessComponent
 import no.nav.helse.arbeidsgiver.system.AppEnv
 import no.nav.helse.arbeidsgiver.system.getEnvironment
 import no.nav.helse.arbeidsgiver.system.getString
-import no.nav.syfo.integration.kafka.PollForJoarkVarslingsmeldingJob
+import no.nav.syfo.integration.kafka.PollForJoarkhendelserJob
 import no.nav.syfo.integration.kafka.PollForUtsattOppgaveVarslingsmeldingJob
 import no.nav.syfo.koin.getAllOfType
 import no.nav.syfo.koin.selectModuleBasedOnProfile
@@ -56,9 +56,9 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
     }
 
     private fun startKafkaConsumer() {
-        val utsattOppgavePoll = PollForUtsattOppgaveVarslingsmeldingJob(get(), get())
+        val utsattOppgavePoll = PollForUtsattOppgaveVarslingsmeldingJob(get(), get(), get(), get())
         utsattOppgavePoll.startAsync(retryOnFail = true)
-        val joarkPoll = PollForJoarkVarslingsmeldingJob(get(), get())
+        val joarkPoll = PollForJoarkhendelserJob(get(), get(), get())
         joarkPoll.startAsync(retryOnFail = true)
     }
 

@@ -34,8 +34,7 @@ class JoarkHendelseKafkaConsumerTest : SystemTestBase(){
     .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
-    private val bakrepo = PostgresBakgrunnsjobbRepository(HikariDataSource(createTestHikariConfig()))
-    private val joarkHendleseConsumer =  JoarkHendelseKafkaClient(joarkLocalProperties().toMutableMap(), topicName, objectMapper, bakrepo)
+    private val joarkHendleseConsumer =  JoarkHendelseKafkaClient(joarkLocalProperties().toMutableMap(), topicName)
 
     @BeforeAll
     internal fun setUp() {

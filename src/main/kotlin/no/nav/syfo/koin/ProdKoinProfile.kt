@@ -120,17 +120,14 @@ fun prodConfig(config: ApplicationConfig) = module {
 
     single { JoarkHendelseKafkaClient(
         joarkOnPremProperties(config).toMutableMap(),
-        config.getString("kafka_joark_hendelse_topic"), get(), get()
+        config.getString("kafka_joark_hendelse_topic")
     ) }
-    single { JoarkHendelseVarslingService(get()) }
     single {
         UtsattOppgaveKafkaClient(
             utsattOppgaveOnPremProperties(config).toMutableMap(),
             config.getString("kafka_utsatt_oppgave_topic"), get(), get(), get()
         )
     }
-    single { UtsattOppgaveVarslingService(get()) }
-
 
     single { InntektsmeldingProducer(producerOnPremProperties(config), get()) } bind InntektsmeldingProducer::class
 

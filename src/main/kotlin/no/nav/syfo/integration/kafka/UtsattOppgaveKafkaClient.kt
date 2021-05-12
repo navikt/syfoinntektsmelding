@@ -55,38 +55,6 @@ class UtsattOppgaveKafkaClient(props: MutableMap<String, Any>,
             val records : ConsumerRecords<String, String>? = consumer.poll(Duration.ofMillis(100))
             val payloads = records?.map { it.value() }
             payloads.let {  currentBatch = it!! }
-            records?.forEach { record ->
-                MDCOperations.putToMDC(MDCOperations.MDC_CALL_ID, UUID.randomUUID().toString())
-                val hendelse = om.readValue<UtsattOppgaveDTO>(record.value().toString())
-                if (DokumentTypeDTO.Inntektsmelding != hendelse.dokumentType) {
-                    return@forEach
-                }
-
-                try {
-                    oppgaveService.prosesser(
-                        OppgaveOppdatering(
-                            hendelse.dokumentId,
-                            hendelse.oppdateringstype.tilHandling(),
-                            hendelse.timeout
-                        )
-                    )
-                } catch (ex: Exception) {
-                    bakgrunnsjobbRepo.save(
-                        Bakgrunnsjobb(
-                            type = FeiletUtsattOppgaveMeldingProsessor.JOB_TYPE,
-                            kjoeretid = LocalDateTime.now().plusMinutes(30),
-                            maksAntallForsoek = 10,
-                            data = om.writeValueAsString(
-                                FeiletUtsattOppgaveMeldingProsessor.JobbData(
-                                    UUID.randomUUID(),
-                                    om.writeValueAsString(hendelse)
-                                )
-                            )
-                        )
-                    )
-                }
-                MDCOperations.remove(MDCOperations.MDC_CALL_ID)
-            }
 
             lastThrown = null
 

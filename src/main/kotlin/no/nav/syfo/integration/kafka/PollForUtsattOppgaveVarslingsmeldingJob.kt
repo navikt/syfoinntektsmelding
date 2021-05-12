@@ -1,21 +1,63 @@
 package no.nav.syfo.integration.kafka
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
+import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
+import no.nav.syfo.util.MDCOperations
+import no.nav.syfo.utsattoppgave.*
 import java.time.Duration
+import java.time.LocalDateTime
+import java.util.*
 
 class PollForUtsattOppgaveVarslingsmeldingJob(
-        private val kafkaProvider: UtsattOppgaveKafkaClient,
-        private val service: UtsattOppgaveVarslingService,
-        coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO),
-        waitTimeWhenEmptyQueue: Duration = Duration.ofSeconds(30)
+    private val kafkaProvider: UtsattOppgaveKafkaClient,
+    private val om: ObjectMapper,
+    private val oppgaveService: UtsattOppgaveService,
+    private val bakgrunnsjobbRepo: BakgrunnsjobbRepository,
+    coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO),
+    waitTimeWhenEmptyQueue: Duration = Duration.ofSeconds(30),
 ) : RecurringJob(coroutineScope, waitTimeWhenEmptyQueue) {
 
     override fun doJob() {
         do {
             val wasEmpty = kafkaProvider
                     .getMessagesToProcess()
-                    .onEach(service::handleMessage)
+                    .onEach {
+                        MDCOperations.putToMDC(MDCOperations.MDC_CALL_ID, UUID.randomUUID().toString())
+                        val hendelse = om.readValue<UtsattOppgaveDTO>(it)
+                        if (DokumentTypeDTO.Inntektsmelding != hendelse.dokumentType) {
+                            return@onEach
+                        }
+
+                        try {
+                            oppgaveService.prosesser(
+                                OppgaveOppdatering(
+                                    hendelse.dokumentId,
+                                    hendelse.oppdateringstype.tilHandling(),
+                                    hendelse.timeout
+                                )
+                            )
+                        } catch (ex: Exception) {
+                            bakgrunnsjobbRepo.save(
+                                Bakgrunnsjobb(
+                                    type = FeiletUtsattOppgaveMeldingProsessor.JOB_TYPE,
+                                    kjoeretid = LocalDateTime.now().plusMinutes(30),
+                                    maksAntallForsoek = 10,
+                                    data = om.writeValueAsString(
+                                        FeiletUtsattOppgaveMeldingProsessor.JobbData(
+                                            UUID.randomUUID(),
+                                            om.writeValueAsString(hendelse)
+                                        )
+                                    )
+                                )
+                            )
+                        }
+                        MDCOperations.remove(MDCOperations.MDC_CALL_ID)
+
+                    }
                     .isEmpty()
 
             if (!wasEmpty) {

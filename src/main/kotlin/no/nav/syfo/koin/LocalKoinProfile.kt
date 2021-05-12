@@ -77,16 +77,14 @@ fun localDevConfig(config: ApplicationConfig) = module {
 
     single { JoarkHendelseKafkaClient(
          joarkLocalProperties().toMutableMap(),
-        config.getString("kafka_joark_hendelse_topic"), get(), get()
+        config.getString("kafka_joark_hendelse_topic")
     ) }
-    single { JoarkHendelseVarslingService(get()) }
     single {
         UtsattOppgaveKafkaClient(
             utsattOppgaveLocalProperties().toMutableMap(),
             config.getString("kafka_utsatt_oppgave_topic"), get(), get(), get()
         )
     }
-    single { UtsattOppgaveVarslingService(get())}
     single {
         OppgaveClientConfigProvider(
             config.getString("oppgavebehandling_url"),
