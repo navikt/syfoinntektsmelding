@@ -48,9 +48,10 @@ class JoarkHendelseKafkaClient(props: MutableMap<String, Any>, topicName: String
 
             lastThrown = null
 
-            log.debug("Fikk ${records?.count()} meldinger med offsets ${records?.map { it.offset() }?.joinToString(", ")}")
+            log.info("Fikk ${records?.count()} meldinger med offsets ${records?.map { it.offset() }?.joinToString(", ")}")
             return currentBatch
         } catch (e: Exception) {
+            log.error("Fikk error i JoarkHendelseKafkaClient: ${e.message}")
             lastThrown = e
             throw e
         }
