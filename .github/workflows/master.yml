@@ -48,7 +48,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-cache-
       - name: test and build
-        run: ./gradlew test build jacocoTestReport sonarqube
+        run: ./gradlew test slowTests build jacocoTestReport sonarqube
         env:
           ORG_GRADLE_PROJECT_githubUser: x-access-token
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
