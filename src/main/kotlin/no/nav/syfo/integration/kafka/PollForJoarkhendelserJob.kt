@@ -9,6 +9,7 @@ import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.utils.RecurringJob
 import no.nav.syfo.kafkamottak.InngaaendeJournalpostDTO
 import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
+import org.apache.commons.text.StringEscapeUtils
 import org.slf4j.LoggerFactory
 import java.time.Duration
 import java.time.LocalDateTime
@@ -32,7 +33,7 @@ class PollForJoarkhendelserJob(
                     try {
                         hendelse = om.readValue(it, InngaaendeJournalpostDTO::class.java)
                     } catch (e : JsonParseException) {
-                        log.error("JsonParseError in  $it, removing non chars ${it.replace("[^a-zA-Z0-9]", " ")}")
+                        log.error("JsonParseError in  $it, removing non chars String ${StringEscapeUtils.escapeJson(it)}")
                     }
 
                     // https://confluence.adeo.no/display/BOA/Tema https://confluence.adeo.no/display/BOA/Mottakskanal
