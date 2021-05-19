@@ -25,17 +25,10 @@ class PollForJoarkhendelserJob(
 
     override fun doJob() {
         do {
-            lateinit var hendelse : InngaaendeJournalpostDTO
-            val log = LoggerFactory.getLogger(PollForJoarkhendelserJob::class.java)
             val wasEmpty = kafkaProvider
                 .getMessagesToProcess()
                 .onEach {
-                    try {
-                        hendelse = om.readValue(it, InngaaendeJournalpostDTO::class.java)
-                    } catch (e : JsonParseException) {
-                        log.error("JsonParseError in  $it, removing non chars String ${StringEscapeUtils.escapeJson(it)}")
-                    }
-
+                    val hendelse = om.readValue(it, InngaaendeJournalpostDTO::class.java)
                     // https://confluence.adeo.no/display/BOA/Tema https://confluence.adeo.no/display/BOA/Mottakskanal
                     val isSyketemaOgFraAltinnMidlertidig =
                         hendelse.temaNytt == "SYK" &&
