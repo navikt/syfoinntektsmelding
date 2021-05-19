@@ -32,7 +32,7 @@ class PollForJoarkhendelserJob(
                     try {
                         hendelse = om.readValue(it, InngaaendeJournalpostDTO::class.java)
                     } catch (e : JsonParseException) {
-                        log.error("JsonParseError in  $it")
+                        log.error("JsonParseError in  $it, removing non chars ${it.replace("[^a-zA-Z0-9]", " ")}")
                     }
 
                     // https://confluence.adeo.no/display/BOA/Tema https://confluence.adeo.no/display/BOA/Mottakskanal
