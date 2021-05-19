@@ -45,6 +45,7 @@ fun joarkLocalProperties() = consumerLocalProperties() +  mapOf(
 
 fun joarkOnPremProperties(config: ApplicationConfig) = consumerOnPremProperties(config) +  mapOf(
     ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to GenericAvroDeserializer::class.java,
+    "value.converter.schema.registry.url" to config.getString("kafka_schema_registry_url_config"),
     "schema.registry.url" to config.getString("kafka_schema_registry_url_config"),
     ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
     ConsumerConfig.GROUP_ID_CONFIG to "syfoinntektsmelding-v2")
