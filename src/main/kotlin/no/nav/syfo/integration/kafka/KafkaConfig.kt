@@ -1,5 +1,6 @@
 package no.nav.syfo.integration.kafka
 
+import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig
 import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig
 import io.confluent.kafka.streams.serdes.avro.GenericAvroDeserializer
 import io.ktor.config.*
@@ -21,6 +22,8 @@ private fun consumerOnPremProperties(config: ApplicationConfig) = mutableMapOf<S
     ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
     CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG to config.getString("kafka_bootstrap_servers"),
     CommonClientConfigs.SECURITY_PROTOCOL_CONFIG to "SASL_SSL",
+    CommonClientConfigs.RETRY_BACKOFF_MS_CONFIG to 1000,
+    CommonClientConfigs.RECONNECT_BACKOFF_MS_CONFIG to 5000,
     SaslConfigs.SASL_MECHANISM to "PLAIN",
     SaslConfigs.SASL_JAAS_CONFIG to "org.apache.kafka.common.security.plain.PlainLoginModule required " +
         "username=\"${config.getString("srvsyfoinntektsmelding.username")}\" password=\"${envOrThrow("SRVSYFOINNTEKTSMELDING_PASSWORD")}\";"

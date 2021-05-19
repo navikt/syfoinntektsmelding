@@ -9,7 +9,7 @@ spec:
   ingresses:
     - https://syfoinntektsmelding.nais.preprod.local
   cpuThresholdPercentage: 90
-  image: "{{image}}"
+  image: {{image}}
   port: 8080
   istio:
     enabled: false

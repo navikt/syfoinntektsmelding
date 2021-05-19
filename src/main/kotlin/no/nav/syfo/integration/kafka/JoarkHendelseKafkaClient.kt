@@ -30,7 +30,7 @@ class JoarkHendelseKafkaClient(props: MutableMap<String, Any>, topicName: String
 
         Runtime.getRuntime().addShutdownHook(Thread {
             log.debug("Got shutdown message, closing Kafka connection...")
-            consumer.close()
+            stop()
             log.debug("Kafka connection closed")
         })
     }
@@ -51,6 +51,7 @@ class JoarkHendelseKafkaClient(props: MutableMap<String, Any>, topicName: String
             log.debug("Fikk ${records?.count()} meldinger med offsets ${records?.map { it.offset() }?.joinToString(", ")}")
             return currentBatch
         } catch (e: Exception) {
+            stop()
             lastThrown = e
             throw e
         }
