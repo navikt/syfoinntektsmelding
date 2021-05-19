@@ -207,7 +207,7 @@ dependencies {
     testAnnotationProcessor("org.projectlombok:lombok:1.18.18")*/
     implementation("com.google.guava:guava:30.0-jre")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3")
-    implementation("io.confluent:kafka-streams-avro-serde:5.5.2")
+    implementation("io.confluent:kafka-streams-avro-serde:6.1.1")
 
 
     testImplementation("io.mockk:mockk:1.11.0")
@@ -247,8 +247,6 @@ dependencies {
     implementation("io.prometheus:simpleclient_hotspot:$prometheusVersion")
     implementation("no.nav.tjenestespesifikasjoner:altinn-correspondence-agency-external-basic:1.2019.09.25-00.21-49b69f0625e0")
     implementation("javax.annotation:javax.annotation-api:1.3.2")
-    // https://mvnrepository.com/artifact/org.apache.commons/commons-text
-    implementation("org.apache.commons:commons-text:1.9")
 }
 
 tasks.named<Jar>("jar") {

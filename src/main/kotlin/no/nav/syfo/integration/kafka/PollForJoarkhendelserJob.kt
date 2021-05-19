@@ -1,6 +1,5 @@
 package no.nav.syfo.integration.kafka
 
-import com.fasterxml.jackson.core.JsonParseException
 import com.fasterxml.jackson.databind.ObjectMapper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -9,8 +8,6 @@ import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.utils.RecurringJob
 import no.nav.syfo.kafkamottak.InngaaendeJournalpostDTO
 import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
-import org.apache.commons.text.StringEscapeUtils
-import org.slf4j.LoggerFactory
 import java.time.Duration
 import java.time.LocalDateTime
 import java.util.*
