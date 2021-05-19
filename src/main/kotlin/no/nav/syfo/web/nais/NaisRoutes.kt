@@ -23,7 +23,7 @@ fun Application.nais() {
         val httpResult =
             if (checkResults.state == ProbeState.UN_HEALTHY) HttpStatusCode.InternalServerError else HttpStatusCode.OK
         checkResults.unhealthyComponents.forEach { r ->
-            r.error?.let { logger.error("Helsejekk feiler for ${r.componentName}", it) }
+            r.error?.let { logger.error("Helsesjekk feiler for ${r.componentName}", it) }
         }
         call.respond(httpResult, checkResults)
     }
