@@ -1,5 +1,6 @@
 package no.nav.syfo.integration.kafka
 
+import com.fasterxml.jackson.core.JsonParseException
 import com.fasterxml.jackson.databind.ObjectMapper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -8,6 +9,7 @@ import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.utils.RecurringJob
 import no.nav.syfo.kafkamottak.InngaaendeJournalpostDTO
 import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
+import org.slf4j.LoggerFactory
 import java.time.Duration
 import java.time.LocalDateTime
 import java.util.*
@@ -22,10 +24,16 @@ class PollForJoarkhendelserJob(
 
     override fun doJob() {
         do {
+            lateinit var hendelse : InngaaendeJournalpostDTO
+            val log = LoggerFactory.getLogger(PollForJoarkhendelserJob::class.java)
             val wasEmpty = kafkaProvider
                 .getMessagesToProcess()
                 .onEach {
-                    val hendelse = om.readValue(it, InngaaendeJournalpostDTO::class.java)
+                    try {
+                        hendelse = om.readValue(it, InngaaendeJournalpostDTO::class.java)
+                    } catch (e : JsonParseException) {
+                        log.error("JsonParseError in  $it")
+                    }
 
                     // https://confluence.adeo.no/display/BOA/Tema https://confluence.adeo.no/display/BOA/Mottakskanal
                     val isSyketemaOgFraAltinnMidlertidig =
