@@ -4,7 +4,6 @@ package no.nav.syfo.integration.kafka
 import io.confluent.kafka.streams.serdes.avro.GenericAvroDeserializer
 import no.nav.helse.arbeidsgiver.kubernetes.LivenessComponent
 import org.apache.avro.generic.GenericRecord
-import org.apache.kafka.clients.consumer.ConsumerRecords
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.TopicPartition
 import org.apache.kafka.common.serialization.StringDeserializer
@@ -42,9 +41,8 @@ class JoarkHendelseKafkaClient(props: MutableMap<String, Any>, topicName: String
         if (currentBatch.isNotEmpty()) {
             return currentBatch
         }
-        lateinit var records : ConsumerRecords<String, GenericRecord>
         try {
-            records = consumer.poll(Duration.ofMillis(100))
+            val records = consumer.poll(Duration.ofMillis(100))
             consumer.commitSync()
             currentBatch = records.map { it.value().toString() }
 
@@ -53,9 +51,6 @@ class JoarkHendelseKafkaClient(props: MutableMap<String, Any>, topicName: String
             log.debug("Fikk ${records?.count()} meldinger med offsets ${records?.map { it.offset() }?.joinToString(", ")}")
             return currentBatch
         } catch (e: Exception) {
-            log.error("""ConsumerRecord first: key-> ${records.first().key()} / value-> ${records.first().value()}
-                ConsumerRecord last: key-> ${records.last().key()} / value-> ${records.last().value()}
-            """.trimMargin())
             stop()
             lastThrown = e
             throw e
