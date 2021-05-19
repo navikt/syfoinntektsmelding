@@ -32,7 +32,7 @@ class InntektsmeldingBehandler(
 ) {
 
     val consumerLocks = Striped.lock(8)
-    val OPPRETT_OPPGAVE_FORSINKELSE = 12L;
+    val OPPRETT_OPPGAVE_FORSINKELSE = 48L;
 
     fun behandle(arkivId: String, arkivreferanse: String): String? {
         val inntektsmelding = journalpostService.hentInntektsmelding(arkivId, arkivreferanse)
