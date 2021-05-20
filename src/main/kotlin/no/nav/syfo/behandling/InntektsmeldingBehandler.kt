@@ -45,6 +45,7 @@ class InntektsmeldingBehandler(
         try {
             consumerLock.lock()
             val aktorid = aktorConsumer.getAktorId(inntektsmelding.fnr)
+            log.info("fant aktørid for ${inntektsmelding.arkivRefereranse}")
 
             tellMetrikker(inntektsmelding)
 
@@ -52,10 +53,13 @@ class InntektsmeldingBehandler(
                 metrikk.tellInntektsmeldingerMottatt(inntektsmelding)
 
                 val saksId = saksbehandlingService.behandleInntektsmelding(inntektsmelding, aktorid, arkivreferanse)
+                log.info("fant sak $saksId")
 
                 journalpostService.ferdigstillJournalpost(saksId, inntektsmelding)
+                log.info("ferdigstilte ${inntektsmelding.arkivRefereranse}")
 
                 val dto = inntektsmeldingService.lagreBehandling(inntektsmelding, aktorid, saksId, arkivreferanse)
+                log.info("lagret ${inntektsmelding.arkivRefereranse}")
 
                 utsattOppgaveService.opprett(
                     UtsattOppgaveEntitet(
@@ -69,6 +73,7 @@ class InntektsmeldingBehandler(
                         timeout = LocalDateTime.now().plusHours(OPPRETT_OPPGAVE_FORSINKELSE)
                     )
                 )
+                log.info("opprettet utsatt oppgave på ${inntektsmelding.arkivRefereranse}")
 
                 inntektsmeldingProducer.leggMottattInntektsmeldingPåTopics(
                     mapInntektsmeldingKontrakt(

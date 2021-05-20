@@ -16,6 +16,7 @@ import no.nav.syfo.repository.FeiletService
 import no.nav.syfo.util.MDCOperations
 import no.nav.syfo.util.Metrikk
 import org.slf4j.LoggerFactory
+import java.net.ConnectException
 import java.util.*
 
 /**
@@ -78,6 +79,7 @@ class JoarkInntektsmeldingHendelseProsessor(
             log.error("Det skjedde en feil ved journalføring med arkivreferanse $arkivReferanse", e)
             metrikk.tellBehandlingsfeil(Feiltype.USPESIFISERT)
             lagreFeilet(arkivReferanse, Feiltype.USPESIFISERT)
+
             throw InntektsmeldingConsumerException(arkivReferanse, e, Feiltype.USPESIFISERT)
         } finally {
             MDCOperations.remove(MDCOperations.MDC_CALL_ID)
