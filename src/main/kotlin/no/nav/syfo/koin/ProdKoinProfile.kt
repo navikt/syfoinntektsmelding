@@ -19,6 +19,7 @@ import no.nav.syfo.consumer.rest.TokenConsumer
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
 import no.nav.syfo.consumer.util.ws.LogErrorHandler
 import no.nav.syfo.consumer.util.ws.WsClient
+import no.nav.syfo.consumer.util.ws.createServicePort
 import no.nav.syfo.consumer.ws.*
 import no.nav.syfo.producer.InntektsmeldingProducer
 import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
@@ -147,52 +148,52 @@ fun prodConfig(config: ApplicationConfig) = module {
     single { BakgrunnsjobbService(get(), bakgrunnsvarsler = MetrikkVarsler()) }
 
     single {
-        WsClient<PersonV3>().createPort(
-            config.getString("virksomhet_person_3_endpointurl"),
-            PersonV3::class.java,
-            listOf(LogErrorHandler())
+        createServicePort(
+            serviceUrl = config.getString("virksomhet_person_3_endpointurl"),
+            serviceClazz = PersonV3::class.java
         )
     } bind PersonV3::class
+
     single {
-        WsClient<ArbeidsfordelingV1>().createPort(
-            config.getString("virksomhet_arbeidsfordeling_v1_endpointurl"),
-            ArbeidsfordelingV1::class.java,
-            listOf(LogErrorHandler())
+        createServicePort(
+            serviceUrl = config.getString("virksomhet_arbeidsfordeling_v1_endpointurl"),
+            serviceClazz = ArbeidsfordelingV1::class.java
         )
     } bind ArbeidsfordelingV1::class
+
     single {
-        WsClient<OppgavebehandlingV3>().createPort(
-            config.getString("servicegateway_url"),
-            OppgavebehandlingV3::class.java,
-            listOf(LogErrorHandler())
+        createServicePort(
+            serviceUrl = config.getString("servicegateway_url"),
+            serviceClazz = OppgavebehandlingV3::class.java
         )
+
     } bind OppgavebehandlingV3::class
+
     single {
-        WsClient<JournalV2>().createPort(
-            config.getString("journal_v2_endpointurl"),
-            JournalV2::class.java,
-            listOf(LogErrorHandler())
+        createServicePort(
+            serviceUrl = config.getString("journal_v2_endpointurl"),
+            serviceClazz = JournalV2::class.java
         )
     } bind JournalV2::class
+
     single {
-        WsClient<InngaaendeJournalV1>().createPort(
-            config.getString("inngaaendejournal_v1_endpointurl"),
-            InngaaendeJournalV1::class.java,
-            listOf(LogErrorHandler())
+        createServicePort(
+            serviceUrl = config.getString("inngaaendejournal_v1_endpointurl"),
+            serviceClazz = InngaaendeJournalV1::class.java
         )
     } bind InngaaendeJournalV1::class
+
     single {
-        WsClient<BehandleSakV2>().createPort(
-            config.getString("virksomhet_behandlesak_v2_endpointurl"),
-            BehandleSakV2::class.java,
-            listOf(LogErrorHandler())
+        createServicePort(
+            serviceUrl = config.getString("virksomhet_behandlesak_v2_endpointurl"),
+            serviceClazz = BehandleSakV2::class.java
         )
     } bind BehandleSakV2::class
+
     single {
-        WsClient<BehandleInngaaendeJournalV1>().createPort(
-            config.getString("behandleinngaaendejournal_v1_endpointurl"),
-            BehandleInngaaendeJournalV1::class.java,
-            listOf(LogErrorHandler())
+        createServicePort(
+            serviceUrl = config.getString("behandleinngaaendejournal_v1_endpointurl"),
+            serviceClazz = BehandleInngaaendeJournalV1::class.java
         )
     } bind BehandleInngaaendeJournalV1::class
 }

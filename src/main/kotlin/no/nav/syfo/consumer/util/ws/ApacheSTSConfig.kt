@@ -19,11 +19,24 @@ val STS_SAML_POLICY = "classpath:policy/requestSamlPolicy.xml"
 fun <PORT_TYPE> createServicePort(
     serviceUrl: String,
     serviceClazz: Class<PORT_TYPE>
-): PORT_TYPE = JaxWsProxyFactoryBean().apply {
-    address = serviceUrl
-    serviceClass = serviceClazz
-}.create(serviceClazz)
+): PORT_TYPE {
+    val port = JaxWsProxyFactoryBean().apply {
+        address = serviceUrl
+        serviceClass = serviceClazz
+    }.create(serviceClazz)
 
+    //TODO: Trekk ut til config
+    val STS_URL = System.getenv("SECURITYTOKENSERVICE_URL")
+    val SERVICEUSER_USERNAME = System.getenv("SRVSYFOINNTEKTSMELDING_USERNAME")
+    val SERVICEUSER_PASSWORD = System.getenv("SRVSYFOINNTEKTSMELDING_PASSWORD")
+
+    val sts = wsStsClient(
+        STS_URL,
+        SERVICEUSER_USERNAME to SERVICEUSER_PASSWORD
+    )
+    sts.configureFor(port!!)
+    return port
+}
 fun wsStsClient(stsUrl: String, credentials: Pair<String, String>): org.apache.cxf.ws.security.trust.STSClient {
     val bus = BusFactory.getDefaultBus()
     return org.apache.cxf.ws.security.trust.STSClient(bus).apply {
