@@ -97,7 +97,14 @@ fun preprodConfig(config: ApplicationConfig) = module {
             get()
         )
     } bind AktorConsumer::class
-    single { TokenConsumer(get(), config.getString("security-token-service-token.url")) } bind TokenConsumer::class
+    single {
+        TokenConsumer(
+            get(),
+            config.getString("security-token-service-token.url"),
+            config.getString("srvsyfoinntektsmelding.username"),
+            config.getString("srvsyfoinntektsmelding.password")
+        )
+    } bind TokenConsumer::class
     single {
         InntektsmeldingBehandler(
             get(),

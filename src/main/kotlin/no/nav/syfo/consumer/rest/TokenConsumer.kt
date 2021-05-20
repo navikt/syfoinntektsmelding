@@ -8,8 +8,14 @@ import io.ktor.http.*
 import io.ktor.util.*
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.behandling.TokenException
+import java.util.*
 
-class TokenConsumer(private val httpClient: HttpClient, private val url: String) {
+class TokenConsumer(
+    private val httpClient: HttpClient,
+    private val url: String,
+    private val username: String,
+    private val password: String
+    ) {
     val token: String
         get() {
             var result = ""
@@ -19,7 +25,9 @@ class TokenConsumer(private val httpClient: HttpClient, private val url: String)
             val genUrl = URLBuilder(URLProtocol.HTTPS, url, parameters = params).toString()
             runBlocking {
                 try {
-                    result = httpClient.get<Token>(genUrl).access_token
+                    result = httpClient.get<Token>(genUrl){
+                        header(HttpHeaders.Authorization, "Basic " + "$username:$password".toBase64())
+                    }.access_token
                 } catch (cause: ClientRequestException) {
                     throw TokenException(cause.response?.status?.value, cause)
                 }
@@ -27,3 +35,5 @@ class TokenConsumer(private val httpClient: HttpClient, private val url: String)
             return result
         }
 }
+
+fun String.toBase64(): String = Base64.getEncoder().encodeToString(this.toByteArray())
