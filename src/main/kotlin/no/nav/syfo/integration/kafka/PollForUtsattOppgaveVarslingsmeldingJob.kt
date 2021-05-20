@@ -47,12 +47,7 @@ class PollForUtsattOppgaveVarslingsmeldingJob(
                                     type = FeiletUtsattOppgaveMeldingProsessor.JOB_TYPE,
                                     kjoeretid = LocalDateTime.now().plusMinutes(30),
                                     maksAntallForsoek = 10,
-                                    data = om.writeValueAsString(
-                                        FeiletUtsattOppgaveMeldingProsessor.JobbData(
-                                            UUID.randomUUID(),
-                                            om.writeValueAsString(hendelse)
-                                        )
-                                    )
+                                    data = it
                                 )
                             )
                         }

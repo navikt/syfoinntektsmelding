@@ -38,12 +38,7 @@ class PollForJoarkhendelserJob(
                                 type = JoarkInntektsmeldingHendelseProsessor.JOB_TYPE,
                                 kjoeretid = LocalDateTime.now(),
                                 maksAntallForsoek = 10,
-                                data = om.writeValueAsString(
-                                    JoarkInntektsmeldingHendelseProsessor.JobbData(
-                                        UUID.randomUUID(),
-                                        om.writeValueAsString(hendelse)
-                                    )
-                                )
+                                data = it
                             )
                         )
                     }

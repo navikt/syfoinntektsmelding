@@ -97,6 +97,4 @@ class JoarkInntektsmeldingHendelseProsessor(
             metrikk.tellLagreFeiletMislykkes();
         }
     }
-
-    data class JobbData(val id: UUID, val data: String)
 }

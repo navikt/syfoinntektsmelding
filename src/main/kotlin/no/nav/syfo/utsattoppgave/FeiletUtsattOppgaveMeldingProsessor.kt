@@ -38,6 +38,4 @@ class FeiletUtsattOppgaveMeldingProsessor(
             MDCOperations.remove(MDCOperations.MDC_CALL_ID)
         }
     }
-
-    data class JobbData(val id: UUID, val data: String)
 }
