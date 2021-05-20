@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory
 class AktorConsumer(
     private val tokenConsumer: TokenConsumer,
     private val username: String,
-    private val url: String,
+    private val endpointUrl: String,
     private val httpClient: HttpClient
 ) {
     private val log = LoggerFactory.getLogger(AktorConsumer::class.java)
@@ -34,7 +34,7 @@ class AktorConsumer(
         runBlocking {
             try {
                 aktor = httpClient.get<AktorResponse> {
-                    url("$url?gjeldende=true&identgruppe=$identgruppe")
+                    url("$endpointUrl?gjeldende=true&identgruppe=$identgruppe")
                     header("Authorization", "Bearer ${tokenConsumer.token}")
                     header("Nav-Call-Id", "${getFromMDC(MDC_CALL_ID)}")
                     header("Nav-Consumer-Id", "$username")
