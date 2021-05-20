@@ -33,13 +33,8 @@ class AktorConsumer(
 
         runBlocking {
             try {
-                aktor = httpClient.get<AktorResponse>(
-                    url {
-                        protocol = URLProtocol.HTTPS
-                        host = "$url/identer"
-                        parameters.append("gjeldende", "true")
-                        parameters.append("identgruppe", identgruppe)
-                    }) {
+                aktor = httpClient.get<AktorResponse> {
+                    url("$url?gjeldende=true&identgruppe=$identgruppe")
                     header("Authorization", "Bearer ${tokenConsumer.token}")
                     header("Nav-Call-Id", "${getFromMDC(MDC_CALL_ID)}")
                     header("Nav-Consumer-Id", "$username")
