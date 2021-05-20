@@ -58,7 +58,14 @@ fun localDevConfig(config: ApplicationConfig) = module {
             get()
         )
     }
-    single { TokenConsumer(get(), config.getString("security-token-service-token.url")) }
+    single {
+        TokenConsumer(
+            get(),
+            config.getString("security-token-service-token.url"),
+            config.getString("srvsyfoinntektsmelding.username"),
+            config.getString("srvsyfoinntektsmelding.password")
+        )
+    }
     single { InntektsmeldingRepositoryMock() } bind InntektsmeldingRepository::class
 
     single {

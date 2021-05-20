@@ -91,7 +91,14 @@ fun prodConfig(config: ApplicationConfig) = module {
     } bind JoarkInntektsmeldingHendelseProsessor::class
 
     single { AktorConsumer(get(), config.getString("srvsyfoinntektsmelding.username"), config.getString("aktoerregister_api_v1_url"), get()) } bind AktorConsumer::class
-    single { TokenConsumer(get(), config.getString("security-token-service-token.url")) } bind TokenConsumer::class
+    single {
+        TokenConsumer(
+            get(),
+            config.getString("security-token-service-token.url"),
+            config.getString("srvsyfoinntektsmelding.username"),
+            config.getString("srvsyfoinntektsmelding.password")
+        )
+    } bind TokenConsumer::class
     single { InntektsmeldingBehandler(get(), get(),get(), get(), get(), get(), get()) } bind InntektsmeldingBehandler::class
 
 
