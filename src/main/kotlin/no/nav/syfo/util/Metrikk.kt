@@ -11,13 +11,22 @@ class Metrikk {
 
     private val METRICS_NS = "spinn"
 
+    val counters = HashMap<String, Counter>()
+
     private fun proseseringsMetrikker(metricName: String, metricHelpText: String): Counter {
-        return Counter.build()
-            .namespace(METRICS_NS)
-            .name(metricName)
-            .labelNames("hendelse")
-            .help(metricHelpText)
-            .register()
+        if (counters.containsKey(metricName)) {
+            return counters[metricName]!!
+        } else {
+            val counter = Counter.build()
+                .namespace(METRICS_NS)
+                .name(metricName)
+                .labelNames("hendelse")
+                .help(metricHelpText)
+                .register()
+
+            counters[metricName] = counter
+            return counter
+        }
     }
 
     fun tellInntektsmeldingerMottatt(inntektsmelding: Inntektsmelding) {
