@@ -45,9 +45,15 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 import javax.sql.DataSource
 import no.nav.syfo.repository.InntektsmeldingRepository
+import org.slf4j.LoggerFactory
 
 @KtorExperimentalAPI
 fun preprodConfig(config: ApplicationConfig) = module {
+
+    val logger = LoggerFactory.getLogger("Koin Profile")
+
+    logger.info("Kafka registry: " + config.getString("kafka_schema_registry_url_config"))
+
     externalSystemClients(config)
     single {
         val vaultconfig = HikariConfig()
