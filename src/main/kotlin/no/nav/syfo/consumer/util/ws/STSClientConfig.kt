@@ -21,7 +21,7 @@ internal object STSClientConfig {
 
     // Only use no transportbinding on localhost, should use the requestSamlPolicy.xml with transport binding https
     // when in production.
-    private const val STS_REQUEST_SAML_POLICY = "classpath:policy/requestSamlPolicyNoTransportBinding.xml"
+    private const val STS_REQUEST_SAML_POLICY = "classpath:policy/requestSamlPolicy.xml"
     private const val STS_CLIENT_AUTHENTICATION_POLICY = "classpath:policy/untPolicy.xml"
     fun <T> configureRequestSamlToken(port: T): T {
         val client = ClientProxy.getClient(port)
