@@ -45,8 +45,9 @@ class AktorConsumer(
                     header("Nav-Consumer-Id", "$username")
                     header("Nav-Personidenter", "$sokeIdent")
                 }[sokeIdent]
-            } catch (cause: Exception) {
-                val status = (cause as ClientRequestException).response?.status?.value
+
+            } catch (cause: ClientRequestException) {
+                val status = cause.response?.status?.value
                 log.error("Kall mot aktørregister feiler med HTTP-$status")
                 throw AktørKallResponseException(status, null)
             }
