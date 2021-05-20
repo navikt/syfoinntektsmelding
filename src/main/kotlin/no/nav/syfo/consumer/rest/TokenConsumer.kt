@@ -19,10 +19,7 @@ class TokenConsumer(
     val token: String
         get() {
             var result = ""
-            val params = ParametersBuilder()
-            params.append("grant_type", "client_credentials")
-            params.append("scope", "openid")
-            val genUrl = URLBuilder(URLProtocol.HTTPS, url, parameters = params).toString()
+            val genUrl = "$url?grant_type=client_credentials&scope=openid"
             runBlocking {
                 try {
                     result = httpClient.get<Token>(genUrl){
