@@ -10,6 +10,8 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.ktor.client.*
+import io.ktor.client.engine.*
+import io.ktor.client.engine.ProxyBuilder.http
 import io.ktor.client.engine.apache.*
 import io.ktor.client.features.json.*
 import io.ktor.config.*
@@ -51,6 +53,14 @@ val common = module {
     single { KubernetesProbeManager() }
 
     val httpClient = HttpClient(Apache) {
+
+        if (System.getenv().containsKey("HTTPS_PROXY")) {
+            engine {
+                val httpProxy = ProxyBuilder.http(System.getenv("HTTPS_PROXY"))
+                proxy = httpProxy
+            }
+        }
+
         install(JsonFeature) {
             serializer = JacksonSerializer {
                 registerModule(KotlinModule())
