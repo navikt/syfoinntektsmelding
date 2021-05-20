@@ -25,8 +25,8 @@ class AzureAdTokenConsumer(private val httpClient: HttpClient,
                         append("grant_type", "client_credentials")
                         append("client_secret", clientSecret)
                     })
-            } catch (cause: Throwable) {
-                throw AzureAdTokenException((cause as ClientRequestException).response?.status?.value)
+            } catch (cause: ClientRequestException) {
+                throw AzureAdTokenException(cause.response?.status?.value, cause)
             }
         }
         return token?.access_token

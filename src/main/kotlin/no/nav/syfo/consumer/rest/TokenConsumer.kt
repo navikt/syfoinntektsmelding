@@ -19,14 +19,9 @@ class TokenConsumer(private val httpClient: HttpClient, private val url: String)
             val genUrl = URLBuilder(URLProtocol.HTTPS, url, parameters = params).toString()
             runBlocking {
                 try {
-                    result = httpClient.get<Token>(
-                        url {
-                            protocol = URLProtocol.HTTPS
-                            host = genUrl
-                        }
-                    ).access_token
-                } catch (cause: Throwable) {
-                    throw TokenException((cause as ClientRequestException).response?.status?.value, null)
+                    result = httpClient.get<Token>(genUrl).access_token
+                } catch (cause: ClientRequestException) {
+                    throw TokenException(cause.response?.status?.value, cause)
                 }
             }
             return result

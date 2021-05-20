@@ -3,7 +3,7 @@ package no.nav.syfo.behandling
 open class BehandlingException(val feiltype: Feiltype, message: String, cause: Exception?) : RuntimeException(message, cause)
 
 // Azure
-open class AzureAdTokenException(statusCode: Int) : BehandlingException(Feiltype.AZUREADTOKEN, "Henting av token fra Azure AD feiler med HTTP status $statusCode", null)
+open class AzureAdTokenException(statusCode: Int, cause: java.lang.Exception?) : BehandlingException(Feiltype.AZUREADTOKEN, "Henting av token fra Azure AD feiler med HTTP status $statusCode", null)
 
 // TokenConsumer
 open class TokenException(statusCode: Int, causedBy: Exception?) : BehandlingException(Feiltype.TOKEN, "Henting av token feiler med HTTP status $statusCode", causedBy)
