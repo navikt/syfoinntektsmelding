@@ -13,6 +13,7 @@ import no.nav.syfo.consumer.rest.TokenConsumer
 import no.nav.syfo.util.MDCOperations.Companion.MDC_CALL_ID
 import no.nav.syfo.util.MDCOperations.Companion.getFromMDC
 import org.slf4j.LoggerFactory
+import java.net.ConnectException
 
 class AktorConsumer(
     private val tokenConsumer: TokenConsumer,
@@ -32,9 +33,10 @@ class AktorConsumer(
         var aktor: Aktor? = null
 
         runBlocking {
+            val urlString = "$endpointUrl?gjeldende=true&identgruppe=$identgruppe"
             try {
                 aktor = httpClient.get<AktorResponse> {
-                    url("$endpointUrl?gjeldende=true&identgruppe=$identgruppe")
+                    url(urlString)
                     header("Authorization", "Bearer ${tokenConsumer.token}")
                     header("Nav-Call-Id", "${getFromMDC(MDC_CALL_ID)}")
                     header("Nav-Consumer-Id", "$username")
@@ -45,6 +47,9 @@ class AktorConsumer(
                 val status = cause.response?.status?.value
                 log.error("Kall mot aktørregister feiler med HTTP-$status")
                 throw AktørKallResponseException(status, null)
+            } catch (cause: ConnectException) {
+                log.error("Kall til $urlString gir ${cause.message}")
+                throw AktørKallResponseException(999, cause)
             }
             if (aktor?.identer == null) {
                 log.error("Fant ikke aktøren: ${aktor?.feilmelding}")
