@@ -157,6 +157,7 @@ dependencies {
     implementation("org.apache.cxf:cxf-rt-frontend-simple:$cxfVersion")
     implementation("org.apache.cxf:cxf-core:$cxfVersion")
     implementation("org.apache.cxf:cxf-rt-bindings-soap:$cxfVersion")
+    implementation("org.apache.cxf:cxf-rt-transports-http:$cxfVersion")
     implementation("org.apache.cxf:cxf-rt-databinding-jaxb:$cxfVersion")
     runtimeOnly("org.apache.cxf:cxf-rt-features-logging:$cxfVersion")
 
