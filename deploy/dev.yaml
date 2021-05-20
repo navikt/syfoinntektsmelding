@@ -80,16 +80,7 @@ spec:
       value: "5432"
     - name: DATABASE_NAME
       value: "syfoinntektsmelding"
-    - name: SYFO_MOTTAK_INNTEKTSMELDING_QUEUENAME
-      value: "QA.Q1_SYFO.MOTTAK_INNTEKTSMELDING"
-    - name: SYFOINNTEKTSMELDING_CHANNEL_NAME
-      value: Q1_SYFOINNTEKTSMLD
-    - name: MQGATEWAY03_HOSTNAME
-      value: "b27apvl173.preprod.local"
-    - name: MQGATEWAY03_PORT
-      value: "1413"
-    - name: MQGATEWAY03_NAME
-      value: MQ1LSC03
+
     - name: INNGAAENDEJOURNAL_V1_ENDPOINTURL
       value: "https://dokarkiv-q1.nais.preprod.local/services/inngaaendejournal/v1"
     - name: BEHANDLEINNGAAENDEJOURNAL_V1_ENDPOINTURL

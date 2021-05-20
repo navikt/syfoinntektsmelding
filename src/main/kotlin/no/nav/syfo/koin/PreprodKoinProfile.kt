@@ -3,6 +3,7 @@ package no.nav.syfo.koin
 import com.zaxxer.hikari.HikariConfig
 import io.ktor.config.*
 import io.ktor.util.*
+import no.altinn.services.serviceengine.correspondence._2009._10.ICorrespondenceAgencyExternalBasic
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
@@ -17,8 +18,7 @@ import no.nav.syfo.consumer.rest.OppgaveClient
 import no.nav.syfo.consumer.rest.SakClient
 import no.nav.syfo.consumer.rest.TokenConsumer
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
-import no.nav.syfo.consumer.util.ws.LogErrorHandler
-import no.nav.syfo.consumer.util.ws.WsClient
+import no.nav.syfo.consumer.util.ws.*
 import no.nav.syfo.consumer.ws.*
 import no.nav.syfo.integration.kafka.*
 import no.nav.syfo.producer.InntektsmeldingProducer
@@ -49,11 +49,6 @@ import org.slf4j.LoggerFactory
 
 @KtorExperimentalAPI
 fun preprodConfig(config: ApplicationConfig) = module {
-
-    val logger = LoggerFactory.getLogger("Koin Profile")
-
-    logger.info("Kafka registry: " + config.getString("kafka_schema_registry_url_config"))
-
     externalSystemClients(config)
     single {
         val vaultconfig = HikariConfig()
@@ -216,11 +211,22 @@ fun preprodConfig(config: ApplicationConfig) = module {
         )
     } bind JournalV2::class
     single {
-        WsClient<InngaaendeJournalV1>().createPort(
-            config.getString("inngaaendejournal_v1_endpointurl"),
-            InngaaendeJournalV1::class.java,
-            listOf(LogErrorHandler())
+        val servicePort = createServicePort(
+            serviceUrl = config.getString("inngaaendejournal_v1_endpointurl"),
+            serviceClazz = InngaaendeJournalV1::class.java
         )
+
+        val STS_URL = System.getenv("SECURITYTOKENSERVICE_URL")
+        val SERVICEUSER_USERNAME = System.getenv("SRVSYFOINNTEKTSMELDING_USERNAME")
+        val SERVICEUSER_PASSWORD = System.getenv("SRVSYFOINNTEKTSMELDING_PASSWORD")
+
+        val sts = wsStsClient(
+            STS_URL,
+            SERVICEUSER_USERNAME to SERVICEUSER_PASSWORD
+        )
+        sts.configureFor(servicePort)
+        servicePort
+
     } bind InngaaendeJournalV1::class
     single {
         WsClient<BehandleSakV2>().createPort(
