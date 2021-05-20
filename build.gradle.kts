@@ -132,12 +132,6 @@ dependencies {
             }
             because("snyk control")
         }
-        implementation("org.glassfish.jersey.core:jersey-common") {
-            version {
-                strictly("3.0.2")
-            }
-            because("snyk control")
-        }
     }
     implementation("io.netty:netty-codec:4.1.59.Final") // overstyrer transiente 4.1.44
     implementation("io.netty:netty-codec-http:4.1.59.Final") // overstyrer transiente 4.1.51.Final gjennom ktor-server-netty
