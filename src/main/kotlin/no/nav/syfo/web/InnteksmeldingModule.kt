@@ -16,10 +16,6 @@ import org.slf4j.event.Level
 @KtorExperimentalLocationsAPI
 @KtorExperimentalAPI
 fun Application.inntektsmeldingModule(config: ApplicationConfig = environment.config) {
-    install(CallLogging) {
-        level = Level.INFO
-    }
-
     install(ContentNegotiation) {
         val commonObjectMapper = get<ObjectMapper>()
         register(ContentType.Application.Json, JacksonConverter(commonObjectMapper))
