@@ -44,6 +44,7 @@ class InntektsmeldingBehandler(
         val consumerLock = consumerLocks.get(inntektsmelding.fnr)
         try {
             consumerLock.lock()
+            log.info("Slår opp aktørID for ${inntektsmelding.arkivRefereranse}")
             val aktorid = aktorConsumer.getAktorId(inntektsmelding.fnr)
             log.info("fant aktørid for ${inntektsmelding.arkivRefereranse}")
 
