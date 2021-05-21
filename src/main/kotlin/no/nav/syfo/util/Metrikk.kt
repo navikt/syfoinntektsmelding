@@ -10,10 +10,9 @@ import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 class Metrikk {
 
     private val METRICS_NS = "spinn"
-
     val counters = HashMap<String, Counter>()
 
-    private fun proseseringsMetrikker(metricName: String, metricHelpText: String, labelNames: Array<String> ): Counter {
+    private fun proseseringsMetrikker(metricName: String, metricHelpText: String, vararg labelNames : String ): Counter {
         return if (counters.containsKey(metricName)) {
             counters[metricName]!!
         } else {
@@ -29,115 +28,128 @@ class Metrikk {
         }
     }
 
+    val NO_LABELS = ""
+    val INNTEKTSMELDINGERMOTTATT = proseseringsMetrikker("syfoinntektsmelding_inntektsmeldinger_mottatt",
+        "Metrikker for mottatt inntektsmeldinger", "type","harArbeidsforholdId","arsakTilSending")
+
+    val INNTEKTS_MELDINGER_JOURNALFORT = proseseringsMetrikker("syfoinntektsmelding_inntektsmeldinger_journalfort",
+    "Metrikker for journalfort inntektsmeldinger", "type = info")
+
+    val OVERLAPPENDEINNTEKTSMELDING = proseseringsMetrikker("syfoinntektsmelding_inntektsmeldinger_kobling",
+    "Metrikker for inntektsmeldinger kobling","type", "kobling")
+
+    val INNTEKTSMELDINGSAKSIDFRASYFO = proseseringsMetrikker( "syfoinntektsmelding_inntektsmeldinger_kobling",
+        "Metrikker for inntektsmeldinger kobling",  "type",  "kobling")
+
+    val INNTEKTSMELDINGNYSAK = proseseringsMetrikker( "syfoinntektsmelding_inntektsmeldinger_kobling",
+    "Metrikker for inntektsmeldinger kobling", "type",  "kobling")
+
+    val INNTEKTSMELDINGSYKEPENGERUTLAND = proseseringsMetrikker("syfoinntektsmelding_sykepenger_utland",
+        "Metrikker for sykepenger utland", NO_LABELS)
+
+    val FEILETBAKGRUNNSJOBB = proseseringsMetrikker("syfoinntektsmelding_bakgrunnsjobb_feilet",
+    "Metrikker for feilt bakgrunnjobb", NO_LABELS)
+
+    val STOPPETBAKGRUNNSJOBB = proseseringsMetrikker("syfoinntektsmelding_bakgrunnsjobb_stoppet",
+    "Metrikker for stoppet bakgrunnsjob", NO_LABELS)
+
+    val INNTEKTSMELDINGFEIL = proseseringsMetrikker("syfoinntektsmelding_inntektsmeldingfeil",
+    "Metrikker for inntektsmelding feiler", NO_LABELS)
+
+    val BEHANDLINGSFEIL = proseseringsMetrikker("syfoinntektsmelding_behandlingsfeil",
+    "Metrikker for behandlet feiler", NO_LABELS)
+
+    val IKKEBEHANDLET = proseseringsMetrikker("syfoinntektsmelding_ikkebehandlet",
+    "Metrikker for ikke behandlet", NO_LABELS)
+
+    val JOURNALPOSTSTATUS = proseseringsMetrikker("syfoinntektsmelding_journalpost",
+            "Metrikk for journal post status", "type", "status")
+
+    val INNTEKTSMELDINGLAGTPÅTOPIC = proseseringsMetrikker("syfoinntektsmelding_inntektsmelding_lagt_pa_topic",
+    "Metrikker for InntektsmeldingLagt På topic", NO_LABELS)
+
+    val INNTEKTSMELDINGUTENARKIVREFERANSE = proseseringsMetrikker("syfoinntektsmelding_inntektsmelding_uten_arkivreferanse",
+    "Metrikker for InntektsmeldingLagt uten arkiv refereanse", NO_LABELS)
+
+    val INNTEKTSMELDINGERREDUSERTELLERINGENUTBETALING = proseseringsMetrikker("syfoinntektsmelding_redusert_eller_ingen_utbetaling",
+            "Metrikker for Inntektsmeldinger Redusert Eller Ingen Utbetaling", "type", "begrunnelse")
+
+    val ARBEIDSGIVERPERIODER = proseseringsMetrikker("syfoinntektsmelding_arbeidsgiverperioder",
+            "Metrikker for arbeidsgiverperioder", "antall")
+
+    val KREVERREFUSJON =  proseseringsMetrikker("syfoinntektsmelding_arbeidsgiver_krever_refusjon",
+        "Metrikker for KreverRefusjon", NO_LABELS)
+
+    val NATURALYTELSE = proseseringsMetrikker("syfoinntektsmelding_faar_naturalytelse",
+    "Metrikker for Naturalytelse", NO_LABELS)
+
+    val OPPRETTOPPGAVE = proseseringsMetrikker("syfoinntektsmelding_opprett_oppgave",
+            "Metrikker for OpprettOppgave", "eksisterer")
+
+    val OPPRETTFORDELINGSOPPGAVE = proseseringsMetrikker("syfoinntektsmelding_opprett_fordelingsoppgave",
+            "Metrikker for Opprett Fordelingsoppgave", NO_LABELS)
+
+    val LAGREFEILETMISLYKKES = proseseringsMetrikker("syfoinntektsmelding_feilet_lagring_mislykkes",
+            "Metrikker for Lagre feilet mislykkes", NO_LABELS)
+
+    val REKJØRERFEILET = proseseringsMetrikker("syfoinntektsmelding_rekjorer",
+            "Metrikker for rekjører Feilet", NO_LABELS)
+
+
+
     fun tellInntektsmeldingerMottatt(inntektsmelding: Inntektsmelding) {
-        val labelNames = arrayOf("type", "info","harArbeidsforholdId",
+        val labelNames = arrayOf("info",
             if (inntektsmelding.arbeidsforholdId != null) "J" else "N",
-           "arsakTilSending",
             inntektsmelding.arsakTilInnsending)
-
-        proseseringsMetrikker("syfoinntektsmelding_inntektsmeldinger_mottatt",
-            "Metrikker for mottatt inntektsmeldinger", labelNames).inc()
+        INNTEKTSMELDINGERMOTTATT.labels(*labelNames).inc()
     }
 
-    fun tellInntektsmeldingerJournalfort() = proseseringsMetrikker("syfoinntektsmelding_inntektsmeldinger_journalfort",
-            "Metrikker for journalfort inntektsmeldinger",arrayOf("type", "info")).inc()
+    fun tellInntektsmeldingerJournalfort() = INNTEKTS_MELDINGER_JOURNALFORT.inc()
 
+    fun tellOverlappendeInntektsmelding() = OVERLAPPENDEINNTEKTSMELDING.labels("info", OVERLAPPENDE).inc()
 
-    fun tellOverlappendeInntektsmelding() = proseseringsMetrikker("syfoinntektsmelding_inntektsmeldinger_kobling",
-            "Metrikker for inntektsmeldinger kobling",arrayOf("type", "info", "kobling", OVERLAPPENDE)).inc()
+    fun tellInntektsmeldingSaksIdFraSyfo() = INNTEKTSMELDINGSAKSIDFRASYFO.labels("info", SAK_FRA_SYFO).inc()
 
-    fun tellInntektsmeldingSaksIdFraSyfo() = proseseringsMetrikker( "syfoinntektsmelding_inntektsmeldinger_kobling", "Metrikker for inntektsmeldinger kobling",
-            arrayOf("type", "info",  "kobling", SAK_FRA_SYFO)).inc()
+    fun tellInntektsmeldingNySak() = INNTEKTSMELDINGNYSAK.labels("info", NY_SAK).inc()
 
+    fun tellInntektsmeldingSykepengerUtland() = INNTEKTSMELDINGSYKEPENGERUTLAND.inc()
 
-    fun tellInntektsmeldingNySak() =
-        proseseringsMetrikker( "syfoinntektsmelding_inntektsmeldinger_kobling",
-            "Metrikker for inntektsmeldinger kobling", arrayOf("type", "info",  "kobling", NY_SAK)).inc()
+    fun tellFeiletBakgrunnsjobb() = FEILETBAKGRUNNSJOBB.inc()
 
+    fun tellStoppetBakgrunnsjobb() = STOPPETBAKGRUNNSJOBB.inc()
 
-    fun tellInntektsmeldingSykepengerUtland() =
-        proseseringsMetrikker("syfoinntektsmelding_sykepenger_utland", "Metrikker for sykepenger utland", arrayOf("")).inc()
+    fun tellInntektsmeldingfeil() = INNTEKTSMELDINGFEIL.labels("error").inc()
 
+    fun tellBehandlingsfeil(feiltype: Feiltype) = BEHANDLINGSFEIL.labels("${feiltype.navn}").inc()
 
-    fun tellFeiletBakgrunnsjobb() = proseseringsMetrikker("syfoinntektsmelding_bakgrunnsjobb_feilet",
-        "Metrikker for feilt bakgrunnjobb", arrayOf("")).inc()
+    fun tellIkkebehandlet() = IKKEBEHANDLET.inc()
 
-    fun tellStoppetBakgrunnsjobb() = proseseringsMetrikker("syfoinntektsmelding_bakgrunnsjobb_stoppet",
-        "Metrikker for stoppet bakgrunnsjob", arrayOf("")).inc()
+    fun tellJournalpoststatus(status: JournalStatus) = JOURNALPOSTSTATUS.labels("info", "${status.name}" ).inc()
 
+    fun tellInntektsmeldingLagtPåTopic() = INNTEKTSMELDINGLAGTPÅTOPIC.inc()
 
-    fun tellInntektsmeldingfeil() = proseseringsMetrikker("syfoinntektsmelding_inntektsmeldingfeil",
-        "Metrikker for inntektsmelding feiler", arrayOf("type", "error")).inc()
+    fun tellInntektsmeldingUtenArkivReferanse() = INNTEKTSMELDINGUTENARKIVREFERANSE.inc()
 
+    fun tellInntektsmeldingerRedusertEllerIngenUtbetaling(begrunnelse: String?) = INNTEKTSMELDINGERREDUSERTELLERINGENUTBETALING.labels("info", "$begrunnelse").inc()
 
-    fun tellBehandlingsfeil(feiltype: Feiltype) = proseseringsMetrikker("syfoinntektsmelding_behandlingsfeil",
-        "Metrikker for behandlet feiler", arrayOf("feiltype", feiltype.navn)).inc()
-
-
-    fun tellIkkebehandlet() = proseseringsMetrikker("syfoinntektsmelding_ikkebehandlet",
-            "Metrikker for ikke behandlet", arrayOf("")).inc()
-
-
-    fun tellJournalpoststatus(status: JournalStatus) {
-        val metricHelpText = """
-                "status", ${status.name}
-        """.trimIndent()
-        proseseringsMetrikker("syfoinntektsmelding_journalpost",
-            "Metrikk for journal post status", arrayOf("type", "info", "status", status.name)).inc()
-    }
-
-    fun tellInntektsmeldingLagtPåTopic() = proseseringsMetrikker("syfoinntektsmelding_inntektsmelding_lagt_pa_topic",
-        "Metrikker for InntektsmeldingLagt På topic", arrayOf("")).inc()
-
-
-    fun tellInntektsmeldingUtenArkivReferanse() = proseseringsMetrikker("syfoinntektsmelding_inntektsmelding_uten_arkivreferanse",
-        "Metrikker for InntektsmeldingLagt uten arkiv refereanse", arrayOf("")).inc()
-
-
-    fun tellInntektsmeldingerRedusertEllerIngenUtbetaling(begrunnelse: String?) {
-        proseseringsMetrikker("syfoinntektsmelding_redusert_eller_ingen_utbetaling",
-            "Metrikker for Inntektsmeldinger Redusert Eller Ingen Utbetaling", arrayOf("type", "info", "begrunnelse", begrunnelse!!)).inc()
-    }
-
-    fun tellArbeidsgiverperioder(antall: String?) {
-        proseseringsMetrikker("syfoinntektsmelding_arbeidsgiverperioder",
-            "Metrikker for arbeidsgiverperioder", arrayOf("antall", antall!!)).inc()
-    }
+    fun tellArbeidsgiverperioder(antall: String?) = ARBEIDSGIVERPERIODER.labels("$antall").inc()
 
     fun tellKreverRefusjon(beløp: Int) {
-        val metricHelpText = "tellKreverRefusjon"
         if (beløp <= 0) return
-        proseseringsMetrikker("syfoinntektsmelding_arbeidsgiver_krever_refusjon",
-            "Metrikker for KreverRefusjon", arrayOf("")).inc()
-        proseseringsMetrikker("syfoinntektsmelding_arbeidsgiver_krever_refusjon_beloep",
-            "Metrikker for KreverRefusjon", arrayOf("")).inc((beløp / 1000).toDouble()) // Teller beløpet i antall tusener for å unngå overflow
+        KREVERREFUSJON.inc()
+        KREVERREFUSJON.inc((beløp / 1000).toDouble()) // Teller beløpet i antall tusener for å unngå overflow
     }
 
-    fun tellNaturalytelse() = proseseringsMetrikker("syfoinntektsmelding_faar_naturalytelse",
-            "Metrikker for Naturalytelse", arrayOf("")).inc()
+    fun tellNaturalytelse() = NATURALYTELSE.inc()
 
+    fun tellOpprettOppgave(eksisterer: Boolean) = OPPRETTOPPGAVE.labels(if (eksisterer) "J" else "N").inc()
 
-    fun tellOpprettOppgave(eksisterer: Boolean) {
-        proseseringsMetrikker("syfoinntektsmelding_opprett_oppgave",
-            "Metrikker for OpprettOppgave", arrayOf("eksisterer", if (eksisterer) "J" else "N")).inc()
-    }
+    fun tellOpprettFordelingsoppgave() = OPPRETTFORDELINGSOPPGAVE.inc()
 
-    fun tellOpprettFordelingsoppgave() {
-        proseseringsMetrikker("syfoinntektsmelding_opprett_fordelingsoppgave",
-            "Metrikker for Opprett Fordelingsoppgave", arrayOf("")).inc()
+    fun tellLagreFeiletMislykkes() = LAGREFEILETMISLYKKES.inc()
 
-    }
+    fun tellRekjørerFeilet() = REKJØRERFEILET.inc()
 
-    fun tellLagreFeiletMislykkes() {
-        proseseringsMetrikker("syfoinntektsmelding_feilet_lagring_mislykkes",
-            "Metrikker for Lagre feilet mislykkes", arrayOf("")).inc()
-    }
-
-    fun tellRekjørerFeilet() {
-        val metricHelpText = "tellRekjørerFeilet"
-        proseseringsMetrikker("syfoinntektsmelding_rekjorer",
-            "Metrikker for rekjører Feilet", arrayOf("")).inc()
-    }
 
     companion object {
         private const val OVERLAPPENDE = "overlappende"
