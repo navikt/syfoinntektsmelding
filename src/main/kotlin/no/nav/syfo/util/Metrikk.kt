@@ -33,7 +33,7 @@ class Metrikk {
         "Metrikker for mottatt inntektsmeldinger", "type","harArbeidsforholdId","arsakTilSending")
 
     val INNTEKTS_MELDINGER_JOURNALFORT = proseseringsMetrikker("syfoinntektsmelding_inntektsmeldinger_journalfort",
-    "Metrikker for journalfort inntektsmeldinger", "type = info")
+    "Metrikker for journalfort inntektsmeldinger", "type")
 
     val OVERLAPPENDEINNTEKTSMELDING = proseseringsMetrikker("syfoinntektsmelding_inntektsmeldinger_kobling",
     "Metrikker for inntektsmeldinger kobling","type", "kobling")
@@ -104,7 +104,7 @@ class Metrikk {
         INNTEKTSMELDINGERMOTTATT.labels(*labelNames).inc()
     }
 
-    fun tellInntektsmeldingerJournalfort() = INNTEKTS_MELDINGER_JOURNALFORT.inc()
+    fun tellInntektsmeldingerJournalfort() = INNTEKTS_MELDINGER_JOURNALFORT.labels("info").inc()
 
     fun tellOverlappendeInntektsmelding() = OVERLAPPENDEINNTEKTSMELDING.labels("info", OVERLAPPENDE).inc()
 
