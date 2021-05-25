@@ -33,7 +33,7 @@ class AktorConsumer(
         var aktor: Aktor? = null
 
         runBlocking {
-            val urlString = "$endpointUrl?gjeldende=true&identgruppe=$identgruppe"
+            val urlString = "$endpointUrl/identer?gjeldende=true&identgruppe=$identgruppe"
             try {
                 aktor = httpClient.get<AktorResponse> {
                     url(urlString)
