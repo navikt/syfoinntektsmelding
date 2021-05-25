@@ -26,7 +26,7 @@ class SakConsumer(
             try {
                 result = httpClient.get<SisteSakRespons>(
                     url {
-                        protocol = URLProtocol.HTTPS
+                        protocol = URLProtocol.HTTP
                         host = hostUrl
                         path("$aktorId","sisteSak")
                         parameters.append("fom", fom.toString())
