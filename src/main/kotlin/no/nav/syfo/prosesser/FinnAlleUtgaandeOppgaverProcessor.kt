@@ -20,7 +20,7 @@ class FinnAlleUtgaandeOppgaverProcessor(
     private  val utsattOppgaveDAO: UtsattOppgaveDAO,
     private val oppgaveClient: OppgaveClient,
     private val behandlendeEnhetConsumer: BehandlendeEnhetConsumer
-) : RecurringJob(CoroutineScope(Dispatchers.IO),  Duration.ofHours(24).toMillis()) {
+) : RecurringJob(CoroutineScope(Dispatchers.IO),  Duration.ofHours(6).toMillis()) {
     val log = LoggerFactory.getLogger(FinnAlleUtgaandeOppgaverProcessor::class.java)!!
 
     override fun doJob() {
