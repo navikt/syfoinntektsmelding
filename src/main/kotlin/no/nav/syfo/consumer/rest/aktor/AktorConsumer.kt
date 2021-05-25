@@ -45,7 +45,7 @@ class AktorConsumer(
 
             } catch (cause: ClientRequestException) {
                 val status = cause.response?.status?.value
-                log.error("Kall mot aktørregister feiler med HTTP-$status")
+                log.error("Kall mot aktørregister på $endpointUrl feiler med HTTP-$status")
                 throw AktørKallResponseException(status, null)
             } catch (cause: ConnectException) {
                 log.error("Kall til $urlString gir ${cause.message}")
