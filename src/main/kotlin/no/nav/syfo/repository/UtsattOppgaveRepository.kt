@@ -16,7 +16,8 @@ interface UtsattOppgaveRepository {
         tilstand: Tilstand
     ): List<UtsattOppgaveEntitet>
 
-    fun lagreInnteksmelding(innteksmelding: UtsattOppgaveEntitet): UtsattOppgaveEntitet
+    fun opprett(innteksmelding: UtsattOppgaveEntitet): UtsattOppgaveEntitet
+    fun oppdater(innteksmelding: UtsattOppgaveEntitet): UtsattOppgaveEntitet
     fun deleteAll()
     fun findAll(): List<UtsattOppgaveEntitet>
 }
@@ -35,8 +36,12 @@ class UtsattOppgaveRepositoryMockk : UtsattOppgaveRepository {
         return mockrepo.filter { it.timeout < timeout && it.tilstand == tilstand }
     }
 
-    override fun lagreInnteksmelding(innteksmelding: UtsattOppgaveEntitet): UtsattOppgaveEntitet {
+    override fun opprett(innteksmelding: UtsattOppgaveEntitet): UtsattOppgaveEntitet {
         mockrepo.add(innteksmelding)
+        return innteksmelding
+    }
+
+    override fun oppdater(innteksmelding: UtsattOppgaveEntitet): UtsattOppgaveEntitet {
         return innteksmelding
     }
 
@@ -73,15 +78,36 @@ class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepo
         }
     }
 
-    override fun lagreInnteksmelding(utsattOppgave: UtsattOppgaveEntitet): UtsattOppgaveEntitet {
+    override fun opprett(utsattOppgave: UtsattOppgaveEntitet): UtsattOppgaveEntitet {
         val insertStatement =
-            """INSERT INTO UTSATT_OPPGAVE (OPPGAVE_ID, INNTEKTSMELDING_ID, ARKIVREFERANSE, FNR, AKTOR_ID, SAK_ID, JOURNALPOST_ID, TIMEOUT, TILSTAND)
-        VALUES ('${utsattOppgave.id}', '${utsattOppgave.inntektsmeldingId}', '${utsattOppgave.arkivreferanse}', '${utsattOppgave.fnr}', '${utsattOppgave.aktørId}', '${utsattOppgave.sakId}', '${utsattOppgave.journalpostId}', '${Timestamp.valueOf(utsattOppgave.timeout)}', '${utsattOppgave.tilstand.name}')
+            """INSERT INTO UTSATT_OPPGAVE (INNTEKTSMELDING_ID, ARKIVREFERANSE, FNR, AKTOR_ID, SAK_ID, JOURNALPOST_ID, TIMEOUT, TILSTAND)
+        VALUES ('${utsattOppgave.inntektsmeldingId}', '${utsattOppgave.arkivreferanse}', '${utsattOppgave.fnr}', '${utsattOppgave.aktørId}', '${utsattOppgave.sakId}', '${utsattOppgave.journalpostId}', '${Timestamp.valueOf(utsattOppgave.timeout)}', '${utsattOppgave.tilstand.name}')
         RETURNING *;""".trimMargin()
+
         val utsattOppgaver = ArrayList<UtsattOppgaveEntitet>()
+
         ds.connection.use {
             val res = it.prepareStatement(insertStatement).executeQuery()
             return resultLoop(res, utsattOppgaver).first()
+        }
+    }
+
+    override fun oppdater(utsattOppgave: UtsattOppgaveEntitet): UtsattOppgaveEntitet {
+        val updateStatement =
+            """UPDATE UTSATT_OPPGAVE SET
+                INNTEKTSMELDING_ID='${utsattOppgave.inntektsmeldingId}',
+                ARKIVREFERANSE = '${utsattOppgave.arkivreferanse}',
+                FNR = '${utsattOppgave.fnr}',
+                AKTOR_ID = '${utsattOppgave.aktørId}',
+                SAK_ID = '${utsattOppgave.sakId}',
+                JOURNALPOST_ID = '${utsattOppgave.journalpostId}',
+                TIMEOUT = '${Timestamp.valueOf(utsattOppgave.timeout)}',
+                TILSTAND = '${utsattOppgave.tilstand}'
+            WHERE OPPGAVE_ID = ${utsattOppgave.id}""".trimMargin()
+
+        ds.connection.use {
+            it.prepareStatement(updateStatement).executeUpdate()
+            return utsattOppgave
         }
     }
 

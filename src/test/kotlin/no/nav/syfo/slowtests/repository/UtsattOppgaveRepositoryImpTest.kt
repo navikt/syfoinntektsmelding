@@ -13,7 +13,7 @@ import java.util.UUID
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 
-open class UtsattOppgaveRepositoryTest : SystemTestBase(){
+open class UtsattOppgaveRepositoryImpTest : SystemTestBase(){
 
     lateinit var repository: UtsattOppgaveRepository
 
@@ -32,7 +32,7 @@ open class UtsattOppgaveRepositoryTest : SystemTestBase(){
 
     @Test
     fun `finner en utsatt oppgave som skal opprettes`() {
-        repository.lagreInnteksmelding(
+        repository.opprett(
             UtsattOppgaveEntitet(
                 id = 0,
                 inntektsmeldingId = "id",
@@ -53,8 +53,40 @@ open class UtsattOppgaveRepositoryTest : SystemTestBase(){
     }
 
     @Test
+    fun `Databasen angir ID ved opprettelse`() {
+        val firstId = repository.opprett(
+            UtsattOppgaveEntitet(
+                inntektsmeldingId = "id",
+                arkivreferanse = "arkivref",
+                fnr = "fnr",
+                aktørId = "aktørId",
+                sakId = "sakId",
+                journalpostId = "journalpostId",
+                timeout = now().minusHours(1),
+                tilstand = Tilstand.Utsatt
+            )
+        ).id
+
+        val secondId = repository.opprett(
+            UtsattOppgaveEntitet(
+                inntektsmeldingId = "id2",
+                arkivreferanse = "arkivref",
+                fnr = "fnr",
+                aktørId = "aktørId",
+                sakId = "sakId",
+                journalpostId = "journalpostId",
+                timeout = now().minusHours(1),
+                tilstand = Tilstand.Utsatt
+            )
+        ).id
+
+
+       Assertions.assertNotEquals(firstId, secondId)
+    }
+
+    @Test
     fun `ignorerer oppgaver i andre tilstander`() {
-        repository.lagreInnteksmelding(
+        repository.opprett(
             enOppgaveEntitet(
                 id= 0,
                 timeout = now().minusHours(1),
@@ -63,7 +95,7 @@ open class UtsattOppgaveRepositoryTest : SystemTestBase(){
             )
         )
 
-        repository.lagreInnteksmelding(
+        repository.opprett(
             enOppgaveEntitet(
                 id= 1,
                 timeout = now().minusHours(1),
@@ -71,7 +103,7 @@ open class UtsattOppgaveRepositoryTest : SystemTestBase(){
                 inntektsmeldingsId = "id2"
             )
         )
-        repository.lagreInnteksmelding(
+        repository.opprett(
             enOppgaveEntitet(
                 id= 2,
                 timeout = now().plusHours(1),
@@ -80,7 +112,7 @@ open class UtsattOppgaveRepositoryTest : SystemTestBase(){
             )
         )
 
-        repository.lagreInnteksmelding(
+        repository.opprett(
             enOppgaveEntitet(
                 id= 3,
                 timeout = now().minusHours(1),

@@ -11,14 +11,14 @@ class UtsattOppgaveDAO(private val utsattOppgaveRepository: UtsattOppgaveReposit
     val log = log()
 
     fun opprett(oppgave: UtsattOppgaveEntitet): Int {
-        return utsattOppgaveRepository.lagreInnteksmelding(oppgave).id
+        return utsattOppgaveRepository.opprett(oppgave).id
     }
 
     fun finn(id: String) =
         utsattOppgaveRepository.findByInntektsmeldingId(id)
 
     fun lagre(oppgave: UtsattOppgaveEntitet) {
-        utsattOppgaveRepository.lagreInnteksmelding(oppgave)
+        utsattOppgaveRepository.oppdater(oppgave)
     }
 
     fun finnAlleUtgåtteOppgaver(): List<UtsattOppgaveEntitet> =
