@@ -118,7 +118,7 @@ fun prodConfig(config: ApplicationConfig) = module {
 
     single { SakConsumer(get(),
         get(),
-        config.getString("aad_syfoinntektsmelding_clientid_username"),
+        config.getString("aad_syfogsak_clientid_username"),
         config.getString("sakconsumer_host_url"))} bind SakConsumer::class
 
     single { EksisterendeSakService(get()) } bind EksisterendeSakService::class

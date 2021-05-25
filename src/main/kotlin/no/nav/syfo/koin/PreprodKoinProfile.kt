@@ -139,7 +139,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
         SakConsumer(
             get(),
             get(),
-            config.getString("aad_syfoinntektsmelding_clientid_username"),
+            config.getString("aad_syfogsak_clientid_username"),
             config.getString("sakconsumer_host_url")
         )
     } bind SakConsumer::class
