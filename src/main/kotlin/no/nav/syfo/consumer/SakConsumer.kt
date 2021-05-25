@@ -24,7 +24,7 @@ class SakConsumer(
         var result: String? = null
         val accessToken = azureAdTokenConsumer.getAccessToken(syfogsakClientId)
         runBlocking {
-            val url = "$hostUrl/$aktorId/sisteSak?fom=$fom&tom=$tom"
+            val url = "$hostUrl/$aktorId/sisteSak" + if (fom != null && tom != null ) "?fom=$fom&tom=$tom" else ""
             try {
                 result = httpClient.get<SisteSakRespons>(url) {
                     header("Authorization", "Bearer $accessToken")
