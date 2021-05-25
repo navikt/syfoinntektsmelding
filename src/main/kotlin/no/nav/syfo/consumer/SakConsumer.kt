@@ -23,26 +23,18 @@ class SakConsumer(
     fun finnSisteSak(aktorId: String, fom: LocalDate?, tom: LocalDate?): String? {
         var result: String? = null
         runBlocking {
+            val url = "$hostUrl/$aktorId/sisteSak?fom=$fom&tom=$tom"
             try {
-                result = httpClient.get<SisteSakRespons>(
-                    url {
-                        protocol = URLProtocol.HTTP
-                        host = hostUrl
-                        path("$aktorId","sisteSak")
-                        parameters.append("fom", fom.toString())
-                        parameters.append("tom", tom.toString())
-                    }
-                ) {
+                result = httpClient.get<SisteSakRespons>(url) {
                     header("Authorization", "Bearer ${azureAdTokenConsumer.getAccessToken(syfogsakClientId)}")
                 }.sisteSak
             } catch (cause: Throwable) {
                 when(cause) {
                     is ClientRequestException -> if (HttpStatusCode.OK.value != cause.response.status.value) {
-                        log.error("Kall mot syfonarmesteleder feiler med HTTP-${cause.response.status.value}")
+                        log.error("Kall mot syfonarmesteleder mot $url feiler med HTTP-${cause.response.status.value}")
                         throw SakResponseException(aktorId, cause.response.status.value, null)
-                        }
-                    else -> {
-                        log.error("Uventet feil ved henting av nærmeste leder")
+                    } else -> {
+                        log.error("Uventet feil ved henting av nærmeste leder på url $url")
                         throw SakFeilException(aktorId, Exception(cause.message))
                     }
                 }
