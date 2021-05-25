@@ -47,6 +47,7 @@ import no.nav.tjeneste.virksomhet.journal.v2.binding.JournalV2
 import no.nav.tjeneste.virksomhet.oppgavebehandling.v3.binding.OppgavebehandlingV3
 import no.nav.tjeneste.virksomhet.person.v3.binding.PersonV3
 import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil
+import org.koin.core.qualifier.StringQualifier
 import javax.sql.DataSource
 
 @KtorExperimentalAPI
@@ -109,9 +110,10 @@ fun prodConfig(config: ApplicationConfig) = module {
     single { BehandlendeEnhetConsumer(get(), get(), get()) } bind BehandlendeEnhetConsumer::class
     single { JournalpostService(get(), get(), get(), get(), get()) } bind JournalpostService::class
 
-    single { AzureAdTokenConsumer(get(),
+    single { AzureAdTokenConsumer(
+        get(StringQualifier("proxyHttpClient")),
         config.getString("aadaccesstoken_url"),
-        config.getString("aad_syfogsak_clientid_username"),
+        config.getString("aad_syfoinntektsmelding_clientid_username"),
         config.getString("aad_syfoinntektsmelding_clientid_password")) } bind AzureAdTokenConsumer::class
 
     single { SakConsumer(get(),

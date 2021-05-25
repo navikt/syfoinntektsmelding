@@ -130,7 +130,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
         AzureAdTokenConsumer(
             get(StringQualifier("proxyHttpClient")),
             config.getString("aadaccesstoken_url"),
-            config.getString("aad_syfogsak_clientid_username"),
+            config.getString("aad_syfoinntektsmelding_clientid_username"),
             config.getString("aad_syfoinntektsmelding_clientid_password")
         )
     } bind AzureAdTokenConsumer::class
