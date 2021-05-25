@@ -22,11 +22,12 @@ class SakConsumer(
 
     fun finnSisteSak(aktorId: String, fom: LocalDate?, tom: LocalDate?): String? {
         var result: String? = null
+        val accessToken = azureAdTokenConsumer.getAccessToken(syfogsakClientId)
         runBlocking {
             val url = "$hostUrl/$aktorId/sisteSak?fom=$fom&tom=$tom"
             try {
                 result = httpClient.get<SisteSakRespons>(url) {
-                    header("Authorization", "Bearer ${azureAdTokenConsumer.getAccessToken(syfogsakClientId)}")
+                    header("Authorization", "Bearer $accessToken")
                 }.sisteSak
             } catch (cause: Throwable) {
                 when(cause) {

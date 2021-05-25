@@ -20,6 +20,8 @@ import no.nav.helse.arbeidsgiver.kubernetes.KubernetesProbeManager
 import org.koin.core.Koin
 import org.koin.core.definition.Kind
 import org.koin.core.module.Module
+import org.koin.core.qualifier.Qualifier
+import org.koin.core.qualifier.StringQualifier
 import org.koin.dsl.module
 
 @KtorExperimentalAPI
@@ -52,29 +54,36 @@ val common = module {
 
     single { KubernetesProbeManager() }
 
-    val httpClient = HttpClient(Apache) {
+    val jacksonSerializer = JacksonSerializer {
+        registerModule(KotlinModule())
+        registerModule(Jdk8Module())
+        registerModule(JavaTimeModule())
+        disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+        configure(SerializationFeature.INDENT_OUTPUT, true)
+        configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+        configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
+    }
 
-        /*if (System.getenv().containsKey("HTTPS_PROXY")) {
+    val httpClient = HttpClient(Apache) {
+        install(JsonFeature) {
+            serializer = jacksonSerializer
+        }
+    }
+
+    val proxiedHttpClient = HttpClient(Apache) {
+        if (System.getenv().containsKey("HTTPS_PROXY")) {
             engine {
                 proxy = ProxyBuilder.http(System.getenv("HTTPS_PROXY"))
             }
-        }*/
+        }
 
         install(JsonFeature) {
-            serializer = JacksonSerializer {
-                registerModule(KotlinModule())
-                registerModule(Jdk8Module())
-                registerModule(JavaTimeModule())
-                disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                configure(SerializationFeature.INDENT_OUTPUT, true)
-                configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
-            }
+            serializer = jacksonSerializer
         }
     }
 
     single { httpClient }
-
+    single(qualifier = StringQualifier("proxyHttpClient")) {proxiedHttpClient}
 }
 
 // utils
