@@ -54,12 +54,11 @@ val common = module {
 
     val httpClient = HttpClient(Apache) {
 
-        if (System.getenv().containsKey("HTTPS_PROXY")) {
+        /*if (System.getenv().containsKey("HTTPS_PROXY")) {
             engine {
-                val httpProxy = ProxyBuilder.http(System.getenv("HTTPS_PROXY"))
-                proxy = httpProxy
+                proxy = ProxyBuilder.http(System.getenv("HTTPS_PROXY"))
             }
-        }
+        }*/
 
         install(JsonFeature) {
             serializer = JacksonSerializer {
