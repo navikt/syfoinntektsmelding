@@ -8,6 +8,7 @@ import no.nav.syfo.consumer.rest.aktor.AktorConsumer
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.dto.InntektsmeldingEntitet
+import no.nav.syfo.producer.InntektsmeldingAivenProducer
 import no.nav.syfo.producer.InntektsmeldingProducer
 import no.nav.syfo.repository.InntektsmeldingService
 import no.nav.syfo.service.JournalpostService
@@ -28,6 +29,7 @@ class InntektsmeldingBehandlerTest {
     private var aktorConsumer = mockk<AktorConsumer>(relaxed = true)
     private var inntektsmeldingService = mockk<InntektsmeldingService>(relaxed = true)
     private val inntektsmeldingProducer = mockk<InntektsmeldingProducer>(relaxed = true)
+    private val aivenInntektsmeldingProducer = mockk<InntektsmeldingAivenProducer>(relaxed = true)
 
     private var inntektsmeldingBehandler = InntektsmeldingBehandler(
         journalpostService,
@@ -36,6 +38,7 @@ class InntektsmeldingBehandlerTest {
         inntektsmeldingService,
         aktorConsumer,
         inntektsmeldingProducer,
+        aivenInntektsmeldingProducer,
         utsattOppgaveService
     )
 
@@ -81,6 +84,7 @@ class InntektsmeldingBehandlerTest {
         verify { saksbehandlingService.behandleInntektsmelding(any(), any(), any()) }
         verify { journalpostService.ferdigstillJournalpost(match { it.contentEquals("saksId") }, any()) }
         verify { inntektsmeldingProducer.leggMottattInntektsmeldingPåTopics(any()) }
+        verify { aivenInntektsmeldingProducer.leggMottattInntektsmeldingPåTopics(any()) }
     }
 
     @Test

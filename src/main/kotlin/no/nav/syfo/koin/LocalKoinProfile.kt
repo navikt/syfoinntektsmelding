@@ -23,6 +23,7 @@ import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
 import no.nav.syfo.consumer.ws.InngaaendeJournalConsumer
 import no.nav.syfo.consumer.ws.JournalConsumer
 import no.nav.syfo.integration.kafka.*
+import no.nav.syfo.producer.InntektsmeldingAivenProducer
 import no.nav.syfo.producer.InntektsmeldingProducer
 import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
 import no.nav.syfo.prosesser.FjernInntektsmeldingByBehandletProcessor
@@ -178,6 +179,7 @@ fun localDevConfig(config: ApplicationConfig) = module {
             get(),
             get(),
             get(),
+            get(),
             get()
         )
     } bind InntektsmeldingBehandler::class
@@ -204,6 +206,10 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single {
         InntektsmeldingProducer(producerLocalProperties(config.getString("kafka_bootstrap_servers")), get())
     } bind InntektsmeldingProducer::class
+
+    single {
+        InntektsmeldingAivenProducer(producerLocalProperties(config.getString("kafka_bootstrap_servers")))
+    }
 
     single {
         SakConsumer(

@@ -21,6 +21,7 @@ import no.nav.syfo.consumer.rest.aktor.AktorConsumer
 import no.nav.syfo.consumer.util.ws.*
 import no.nav.syfo.consumer.ws.*
 import no.nav.syfo.integration.kafka.*
+import no.nav.syfo.producer.InntektsmeldingAivenProducer
 import no.nav.syfo.producer.InntektsmeldingProducer
 import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
 import no.nav.syfo.prosesser.FjernInntektsmeldingByBehandletProcessor
@@ -114,6 +115,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
             get(),
             get(),
             get(),
+            get(),
             get()
         )
     } bind InntektsmeldingBehandler::class
@@ -169,6 +171,12 @@ fun preprodConfig(config: ApplicationConfig) = module {
             producerOnPremProperties(config), get()
         )
     } bind InntektsmeldingProducer::class
+
+    single {
+        InntektsmeldingAivenProducer(
+            producerOnPremProperties(config)
+        )
+    }
 
     single { UtsattOppgaveDAO(UtsattOppgaveRepositoryImp(get())) }
     single { OppgaveClient(config.getString("oppgavebehandling_url"), get(), get()) } bind OppgaveClient::class

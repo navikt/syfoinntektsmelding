@@ -38,6 +38,7 @@ import no.nav.syfo.consumer.ws.InngaaendeJournalConsumer
 import no.nav.syfo.consumer.ws.BehandleInngaaendeJournalConsumer
 import no.nav.syfo.consumer.ws.JournalConsumer
 import no.nav.syfo.integration.kafka.*
+import no.nav.syfo.producer.InntektsmeldingAivenProducer
 import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
 import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.binding.ArbeidsfordelingV1
 import no.nav.tjeneste.virksomhet.behandleinngaaendejournal.v1.binding.BehandleInngaaendeJournalV1
@@ -100,7 +101,7 @@ fun prodConfig(config: ApplicationConfig) = module {
             config.getString("srvsyfoinntektsmelding.password")
         )
     } bind TokenConsumer::class
-    single { InntektsmeldingBehandler(get(), get(),get(), get(), get(), get(), get()) } bind InntektsmeldingBehandler::class
+    single { InntektsmeldingBehandler(get(), get(),get(), get(), get(), get(), get(), get()) } bind InntektsmeldingBehandler::class
 
 
     single { InngaaendeJournalConsumer(get()) } bind InngaaendeJournalConsumer::class
@@ -140,6 +141,7 @@ fun prodConfig(config: ApplicationConfig) = module {
     }
 
     single { InntektsmeldingProducer(producerOnPremProperties(config), get()) } bind InntektsmeldingProducer::class
+    single { InntektsmeldingAivenProducer(producerOnPremProperties(config)) }
 
     single { UtsattOppgaveDAO(UtsattOppgaveRepositoryImp(get()))}
     single { OppgaveClient(config.getString("oppgavebehandling_url"), get(), get())} bind OppgaveClient::class
