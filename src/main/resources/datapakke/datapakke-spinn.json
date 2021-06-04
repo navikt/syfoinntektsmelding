@@ -1,0 +1,62 @@
+{
+  "title": "SYFO Inntektsmelding",
+  "type": "datapackage",
+  "description": "Kravstatistikk fra inntektsmeldinger for sykepenger",
+  "name": "syfoinntektsmelding_statistikk",
+  "uri": "",
+  "url": "",
+  "team": "helsearbeidsgiver",
+  "views": [
+    {
+      "title": "Antall IM og beløp",
+      "description": "Antall IM og beløp per uke",
+      "specType": "echart",
+      "spec": {
+        "url": "",
+        "option": {
+          "tooltip": {
+            "trigger": "axis",
+            "axisPointer": {
+              "type": "cross",
+              "crossStyle": {
+                "color": "#999"
+              }
+            }
+          },
+          "legend": {
+            "data": ["Antall krav", "Estimert refusjonsbeløp"],
+            "left": 10
+          },
+          "xAxis": {
+            "type": "category",
+            "data": [@ukeSerie]
+          },
+          "yAxis": [{
+            "type": "value",
+            "name": "Antall"
+          }, {
+            "type": "value",
+            "name": "Beløp (NOK)"
+          }],
+          "series": [{
+            "name": "Antall",
+            "data": [@antallSerie],
+            "type": "line"
+          }, {
+            "data": [@beløpSerie],
+            "name": "Beløp (NOK)",
+            "yAxisIndex": 1,
+            "type": "line"
+          }],
+          "toolbox": {
+            "show": true,
+            "feature": {
+              "magicType": {"type": ["line", "bar"]},
+              "saveAsImage": {}
+            }
+          }
+        }
+      }
+    }
+  ]
+}
