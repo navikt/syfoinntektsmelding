@@ -44,7 +44,7 @@ spec:
   secureLogs:
     enabled: true
   kafka:
-    pool: nav-dev
+    pool: nav-prod
   env:
     - name: KOIN_PROFILE
       value: PROD
