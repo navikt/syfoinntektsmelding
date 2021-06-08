@@ -174,7 +174,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
 
     single {
         InntektsmeldingAivenProducer(
-            producerOnPremProperties(config)
+            producerAivenProperties(config)
         )
     }
 

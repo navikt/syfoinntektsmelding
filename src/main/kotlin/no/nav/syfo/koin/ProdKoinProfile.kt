@@ -141,7 +141,7 @@ fun prodConfig(config: ApplicationConfig) = module {
     }
 
     single { InntektsmeldingProducer(producerOnPremProperties(config), get()) } bind InntektsmeldingProducer::class
-    single { InntektsmeldingAivenProducer(producerOnPremProperties(config)) }
+    single { InntektsmeldingAivenProducer(producerAivenProperties(config)) }
 
     single { UtsattOppgaveDAO(UtsattOppgaveRepositoryImp(get()))}
     single { OppgaveClient(config.getString("oppgavebehandling_url"), get(), get())} bind OppgaveClient::class
