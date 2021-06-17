@@ -1,15 +1,15 @@
 {
   "title": "SYFO Inntektsmelding",
   "type": "datapackage",
-  "description": "Kravstatistikk fra inntektsmeldinger for sykepenger",
+  "description": "Inntektsmeldingsstatistikk - Sykepenger",
   "name": "syfoinntektsmelding_statistikk",
   "uri": "",
   "url": "",
   "team": "helsearbeidsgiver",
   "views": [
     {
-      "title": "Antall IM og beløp",
-      "description": "Antall IM og beløp per uke",
+      "title": "Tidsserier - Sykepenger",
+      "description": "Inntektsmeldingsstatistikk for sykepenger",
       "specType": "echart",
       "spec": {
         "url": "",
@@ -23,35 +23,147 @@
               }
             }
           },
-          "legend": {
-            "data": ["Antall krav", "Estimert refusjonsbeløp"],
-            "left": 10
-          },
           "xAxis": {
             "type": "category",
+            "name": "Uke",
             "data": [@ukeSerie]
           },
           "yAxis": [{
             "type": "value",
             "name": "Antall"
-          }, {
-            "type": "value",
-            "name": "Beløp (NOK)"
           }],
           "series": [{
             "name": "Antall",
-            "data": [@antallSerie],
+            "data": [@total],
             "type": "line"
           }, {
-            "data": [@beløpSerie],
-            "name": "Beløp (NOK)",
-            "yAxisIndex": 1,
+            "data": [@fraLPS],
+            "name": "Fra LPS",
+            "type": "line"
+          }, {
+            "data": [@fraAltinnPortal],
+            "name": "Fra Altinn",
+            "type": "line"
+          }, {
+            "data": [@fravaer],
+            "name": "Fravær",
+            "type": "line"
+          }, {
+            "data": [@ikkeFravaer],
+            "name": "Ikke Fravær",
+            "type": "line"
+          }, {
+            "data": [@arsakEndring],
+            "name": "Endring",
+            "type": "line"
+          }, {
+            "data": [@arsakNy],
+            "name": "Ny",
+            "type": "line"
+          }, {
+            "data": [@ingenRefusjon],
+            "name": "Ingen refusjon",
+            "type": "line"
+          }, {
+            "data": [@delvisRefusjon],
+            "name": "Delvis refusjon",
+            "type": "line"
+          }, {
+            "data": [@fullRefusjon],
+            "name": "Fra LPS",
             "type": "line"
           }],
           "toolbox": {
             "show": true,
             "feature": {
               "magicType": {"type": ["line", "bar"]},
+              "dataView": {"show": true, "readOnly": true},
+              "saveAsImage": {}
+            }
+          }
+        }
+      }
+    },
+    {
+      "title": "LPS - Siste 7 dager",
+      "description": "LPS - statistikk siste 7 dager",
+      "specType": "echart",
+      "spec": {
+        "url": "",
+        "option": {
+          "tooltip": {
+            "trigger": "axis",
+            "axisPointer": {
+              "type": "cross",
+              "crossStyle": {
+                "color": "#999"
+              }
+            }
+          },
+          "xAxis": {
+            "type": "category",
+            "name": "LPS",
+            "data": [@lpsNavn]
+          },
+          "yAxis": [{
+            "type": "value",
+            "name": "Antall"
+          }],
+          "series": [{
+            "name": "Antall IM",
+            "data": [@lpsAntallIM],
+            "type": "bar"
+          }, {
+            "data": [@lpsAntallVersjoner],
+            "name": "Antall versjoner",
+            "type": "bar"
+          }],
+          "toolbox": {
+            "show": true,
+            "feature": {
+              "magicType": {"type": ["line", "bar"]},
+              "dataView": {"show": true, "readOnly": true},
+              "saveAsImage": {}
+            }
+          }
+        }
+      }
+    },
+    {
+      "title": "Begrunnelse For Reduksjon Eller Ikke Utbetalt - Siste 7 dager",
+      "description": "Begrunnelse For Reduksjon Eller Ikke Utbetalt - Siste 7 dager",
+      "specType": "echart",
+      "spec": {
+        "url": "",
+        "option": {
+          "tooltip": {
+            "trigger": "axis",
+            "axisPointer": {
+              "type": "cross",
+              "crossStyle": {
+                "color": "#999"
+              }
+            }
+          },
+          "xAxis": {
+            "type": "category",
+            "name": "Begrunnelse",
+            "data": [@begrunnelse]
+          },
+          "yAxis": [{
+            "type": "value",
+            "name": "Antall"
+          }],
+          "series": [{
+            "name": "Antall IM",
+            "data": [@begrunnelseAntall],
+            "type": "bar"
+          }],
+          "toolbox": {
+            "show": true,
+            "feature": {
+              "magicType": {"type": ["line", "bar"]},
+              "dataView": {"show": true, "readOnly": true},
               "saveAsImage": {}
             }
           }

@@ -197,6 +197,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
 
     single { PostgresBakgrunnsjobbRepository(get()) } bind BakgrunnsjobbRepository::class
     single { BakgrunnsjobbService(get(), bakgrunnsvarsler = MetrikkVarsler()) }
+    single { IMStatsRepoImpl(get()) } bind IMStatsRepo::class
 
     single {
         createServicePort(

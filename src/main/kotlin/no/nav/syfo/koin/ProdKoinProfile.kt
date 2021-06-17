@@ -156,6 +156,7 @@ fun prodConfig(config: ApplicationConfig) = module {
     single { FeiletService(FeiletRepositoryImp(get())) } bind FeiletService::class
 
     single { PostgresBakgrunnsjobbRepository(get()) } bind BakgrunnsjobbRepository::class
+    single { IMStatsRepoImpl(get()) } bind IMStatsRepo::class
     single { BakgrunnsjobbService(get(), bakgrunnsvarsler = MetrikkVarsler()) }
 
     single {
