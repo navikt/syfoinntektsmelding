@@ -26,14 +26,12 @@ data class IMWeeklyStats(
 data class LPSStats(
     val lpsNavn: String,
     val antallVersjoner: Int,
-    val antallInntektsmeldinger: Int,
-    val fraDato: LocalDateTime
+    val antallInntektsmeldinger: Int
 )
 
 data class ArsakStats(
     val arsak: String,
-    val antall: Int,
-    val fraDato: LocalDateTime
+    val antall: Int
 )
 
 
@@ -49,8 +47,6 @@ interface IMStatsRepo {
 class IMStatsRepoImpl (
     private val ds: DataSource
 ) : IMStatsRepo {
-
-    val postgresStringFormat = DateTimeFormatter.ofPattern("YYYY-MM-dd HH:mm:ss")
 
     override fun getWeeklyStats(): List<IMWeeklyStats> {
         val query = """
@@ -117,8 +113,7 @@ class IMStatsRepoImpl (
                     LPSStats(
                         res.getString("lps_navn"),
                         res.getInt("antall_versjoner"),
-                        res.getInt("antall_im"),
-                        LocalDateTime.from(res.getDate("fra_dato").toInstant())
+                        res.getInt("antall_im")
                     )
                 )
             }
@@ -147,8 +142,7 @@ class IMStatsRepoImpl (
                 returnValue.add(
                     ArsakStats(
                         res.getString("begrunnelse"),
-                        res.getInt("antall_im"),
-                        LocalDateTime.from(res.getDate("fra_dato").toInstant())
+                        res.getInt("antall_im")
                     )
                 )
             }
