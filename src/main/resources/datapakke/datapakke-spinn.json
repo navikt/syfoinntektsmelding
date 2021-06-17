@@ -26,7 +26,7 @@
           "xAxis": {
             "type": "category",
             "name": "Uke",
-            "data": []
+            "data": [@ukeSerie]
           },
           "yAxis": [{
             "type": "value",
@@ -34,42 +34,42 @@
           }],
           "series": [{
             "name": "Antall",
-            "data": [],
+            "data": [@total],
             "type": "line"
           }, {
-            "data": [],
+            "data": [@fraLPS],
             "name": "Fra LPS",
             "type": "line"
           }, {
-            "data": [],
+            "data": [@fraAltinnPortal],
             "name": "Fra Altinn",
             "type": "line"
           }, {
-            "data": [],
+            "data": [@fravaer],
             "name": "Fravær",
             "type": "line"
           }, {
-            "data": [],
+            "data": [@ikkeFravaer],
             "name": "Ikke Fravær",
             "type": "line"
           }, {
-            "data": [],
+            "data": [@arsakEndring],
             "name": "Endring",
             "type": "line"
           }, {
-            "data": [],
+            "data": [@arsakNy],
             "name": "Ny",
             "type": "line"
           }, {
-            "data": [],
+            "data": [@ingenRefusjon],
             "name": "Ingen refusjon",
             "type": "line"
           }, {
-            "data": [],
+            "data": [@delvisRefusjon],
             "name": "Delvis refusjon",
             "type": "line"
           }, {
-            "data": [],
+            "data": [@fullRefusjon],
             "name": "Fra LPS",
             "type": "line"
           }],
@@ -103,7 +103,7 @@
           "xAxis": {
             "type": "category",
             "name": "LPS",
-            "data": []
+            "data": [@lpsNavn]
           },
           "yAxis": [{
             "type": "value",
@@ -111,10 +111,10 @@
           }],
           "series": [{
             "name": "Antall IM",
-            "data": [],
+            "data": [@lpsAntallIM],
             "type": "bar"
           }, {
-            "data": [],
+            "data": [@lpsAntallVersjoner],
             "name": "Antall versjoner",
             "type": "bar"
           }],
@@ -148,7 +148,7 @@
           "xAxis": {
             "type": "category",
             "name": "Begrunnelse",
-            "data": []
+            "data": [@begrunnelse]
           },
           "yAxis": [{
             "type": "value",
@@ -156,7 +156,7 @@
           }],
           "series": [{
             "name": "Antall IM",
-            "data": [],
+            "data": [@begrunnelseAntall],
             "type": "bar"
           }],
           "toolbox": {

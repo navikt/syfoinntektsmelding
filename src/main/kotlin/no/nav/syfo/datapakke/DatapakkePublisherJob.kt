@@ -46,11 +46,11 @@ class DatapakkePublisherJob(
             .replace("@fullRefusjon", timeseries.map { it.fullRefusjon }.joinToString())
             .replace("@ingenRefusjon", timeseries.map { it.ingenRefusjon }.joinToString())
 
-            .replace("@lpsNavn", lpsStats.joinToString { it.lpsNavn })
+            .replace("@lpsNavn", lpsStats.joinToString { """"${it.lpsNavn}"""" })
             .replace("@lpsAntallIM", lpsStats.map { it.antallInntektsmeldinger }.joinToString())
             .replace("@lpsAntallVersjoner", lpsStats.map { it.antallVersjoner }.joinToString())
 
-            .replace("@begrunnelse", arsakStats.map { it.arsak }.joinToString())
+            .replace("@begrunnelse", arsakStats.map { """"${it.arsak}"""" }.joinToString())
             .replace("@begrunnelseAntall", arsakStats.map { it.antall }.joinToString())
 
 
