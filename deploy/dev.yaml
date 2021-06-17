@@ -130,6 +130,6 @@ spec:
     - name: KAFKA_SCHEMA_REGISTRY_URL_CONFIG
       value: "http://kafka-schema-registry.tpa.svc.nais.local:8081"
     - name: DATAPAKKE_ID
-      value: 8f29efc4b7e41002130db5a172587fd4
+      value: fb74c8d14d9c579e05b0b4b587843e6b
     - name: DATAPAKKE_API_URL
       value: https://datakatalog-api.dev.intern.nav.no/v1/datapackage

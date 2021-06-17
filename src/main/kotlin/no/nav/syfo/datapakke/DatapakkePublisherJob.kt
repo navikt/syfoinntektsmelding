@@ -20,7 +20,7 @@ class DatapakkePublisherJob(
 ) :
     RecurringJob(
         CoroutineScope(Dispatchers.IO),
-        Duration.ofHours(4).toMillis()
+        Duration.ofHours(   24).toMillis()
     ) {
 
     override fun doJob() {
