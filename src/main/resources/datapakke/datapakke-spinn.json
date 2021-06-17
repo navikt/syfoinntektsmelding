@@ -148,7 +148,7 @@
           "xAxis": {
             "type": "category",
             "name": "Begrunnelse",
-            "data": [@begrunnelse]
+            "data": [@arsak]
           },
           "yAxis": [{
             "type": "value",

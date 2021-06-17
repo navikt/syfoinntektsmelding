@@ -40,7 +40,53 @@ val inntektsmeldingEntitet = InntektsmeldingEntitet(
     orgnummer = validOrgNr,
     arbeidsgiverPrivat = null,
     behandlet = BEHANDLET_DATO,
-    data = null
+    data = """
+        {
+          "id": "",
+          "fnr": "",
+          "sakId": null,
+          "aktorId": null,
+          "refusjon": {
+            "beloepPrMnd": 39968,
+            "opphoersdato": null
+          },
+          "mottattDato": "2021-06-15T12:42:37",
+          "nærRelasjon": false,
+          "feriePerioder": [],
+          "journalStatus": "MIDLERTIDIG",
+          "journalpostId": "5406",
+          "årsakEndring": null,
+          "avsenderSystem": {
+            "navn": "AltinnPortal",
+            "versjon": "1.455"
+          },
+          "bruttoUtbetalt": 2216,
+          "beregnetInntekt": 3968,
+          "arbeidsforholdId": null,
+          "arkivRefereranse": "AR434",
+          "gyldighetsStatus": "GYLDIG",
+          "arsakTilInnsending": "Ny",
+          "endringerIRefusjon": [],
+          "førsteFraværsdag": "2021-05-01",
+          "kontaktinformasjon": {
+            "navn": "Pedersen",
+            "telefon": "3232233"
+          },
+          "begrunnelseRedusert": "",
+          "arbeidsgiverperioder": [
+            {
+              "fom": "2021-01-26",
+              "tom": "2021-02-10"
+            }
+          ],
+          "innsendingstidspunkt": null,
+          "arbeidsgiverOrgnummer": "9999999",
+          "arbeidsgiverPrivatFnr": null,
+          "opphørAvNaturalYtelse": [],
+          "arbeidsgiverPrivatAktørId": null,
+          "gjenopptakelserNaturalYtelse": []
+        }
+    """.trimIndent()
 )
 
 val journalPostKafkaData =  InngaaendeJournalpostDTO(

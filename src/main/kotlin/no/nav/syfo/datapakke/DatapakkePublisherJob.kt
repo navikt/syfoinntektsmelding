@@ -50,10 +50,8 @@ class DatapakkePublisherJob(
             .replace("@lpsAntallIM", lpsStats.map { it.antallInntektsmeldinger }.joinToString())
             .replace("@lpsAntallVersjoner", lpsStats.map { it.antallVersjoner }.joinToString())
 
-            .replace("@begrunnelse", arsakStats.map { """"${it.arsak}"""" }.joinToString())
+            .replace("@arsak", arsakStats.map { """"${it.arsak}"""" }.joinToString())
             .replace("@begrunnelseAntall", arsakStats.map { it.antall }.joinToString())
-
-
 
         runBlocking {
             val response = httpClient.put<HttpResponse>("$datapakkeApiUrl/$datapakkeId") {
