@@ -1,0 +1,174 @@
+{
+  "title": "SYFO Inntektsmelding",
+  "type": "datapackage",
+  "description": "Inntektsmeldingsstatistikk - Sykepenger",
+  "name": "syfoinntektsmelding_statistikk",
+  "uri": "",
+  "url": "",
+  "team": "helsearbeidsgiver",
+  "views": [
+    {
+      "title": "Tidsserier - Sykepenger",
+      "description": "Inntektsmeldingsstatistikk for sykepenger",
+      "specType": "echart",
+      "spec": {
+        "url": "",
+        "option": {
+          "tooltip": {
+            "trigger": "axis",
+            "axisPointer": {
+              "type": "cross",
+              "crossStyle": {
+                "color": "#999"
+              }
+            }
+          },
+          "xAxis": {
+            "type": "category",
+            "name": "Uke",
+            "data": []
+          },
+          "yAxis": [{
+            "type": "value",
+            "name": "Antall"
+          }],
+          "series": [{
+            "name": "Antall",
+            "data": [],
+            "type": "line"
+          }, {
+            "data": [],
+            "name": "Fra LPS",
+            "type": "line"
+          }, {
+            "data": [],
+            "name": "Fra Altinn",
+            "type": "line"
+          }, {
+            "data": [],
+            "name": "Fravær",
+            "type": "line"
+          }, {
+            "data": [],
+            "name": "Ikke Fravær",
+            "type": "line"
+          }, {
+            "data": [],
+            "name": "Endring",
+            "type": "line"
+          }, {
+            "data": [],
+            "name": "Ny",
+            "type": "line"
+          }, {
+            "data": [],
+            "name": "Ingen refusjon",
+            "type": "line"
+          }, {
+            "data": [],
+            "name": "Delvis refusjon",
+            "type": "line"
+          }, {
+            "data": [],
+            "name": "Fra LPS",
+            "type": "line"
+          }],
+          "toolbox": {
+            "show": true,
+            "feature": {
+              "magicType": {"type": ["line", "bar"]},
+              "dataView": {"show": true, "readOnly": true},
+              "saveAsImage": {}
+            }
+          }
+        }
+      }
+    },
+    {
+      "title": "LPS - Siste 7 dager",
+      "description": "LPS - statistikk siste 7 dager",
+      "specType": "echart",
+      "spec": {
+        "url": "",
+        "option": {
+          "tooltip": {
+            "trigger": "axis",
+            "axisPointer": {
+              "type": "cross",
+              "crossStyle": {
+                "color": "#999"
+              }
+            }
+          },
+          "xAxis": {
+            "type": "category",
+            "name": "LPS",
+            "data": []
+          },
+          "yAxis": [{
+            "type": "value",
+            "name": "Antall"
+          }],
+          "series": [{
+            "name": "Antall IM",
+            "data": [],
+            "type": "bar"
+          }, {
+            "data": [],
+            "name": "Antall versjoner",
+            "type": "bar"
+          }],
+          "toolbox": {
+            "show": true,
+            "feature": {
+              "magicType": {"type": ["line", "bar"]},
+              "dataView": {"show": true, "readOnly": true},
+              "saveAsImage": {}
+            }
+          }
+        }
+      }
+    },
+    {
+      "title": "Begrunnelse For Reduksjon Eller Ikke Utbetalt - Siste 7 dager",
+      "description": "Begrunnelse For Reduksjon Eller Ikke Utbetalt - Siste 7 dager",
+      "specType": "echart",
+      "spec": {
+        "url": "",
+        "option": {
+          "tooltip": {
+            "trigger": "axis",
+            "axisPointer": {
+              "type": "cross",
+              "crossStyle": {
+                "color": "#999"
+              }
+            }
+          },
+          "xAxis": {
+            "type": "category",
+            "name": "Begrunnelse",
+            "data": []
+          },
+          "yAxis": [{
+            "type": "value",
+            "name": "Antall"
+          }],
+          "series": [{
+            "name": "Antall IM",
+            "data": [],
+            "type": "bar"
+          }],
+          "toolbox": {
+            "show": true,
+            "feature": {
+              "magicType": {"type": ["line", "bar"]},
+              "dataView": {"show": true, "readOnly": true},
+              "saveAsImage": {}
+            }
+          }
+        }
+      }
+    }
+  ]
+}

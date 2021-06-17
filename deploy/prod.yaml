@@ -134,3 +134,7 @@ spec:
       value: "aapen-helse-spre-oppgaver"
     - name: KAFKA_SCHEMA_REGISTRY_URL_CONFIG
       value: "http://kafka-schema-registry.tpa.svc.nais.local:8081"
+    - name: DATAPAKKE_API_URL
+      value: https://datakatalog-api.intern.nav.no/v1/datapackage
+    - name: DATAPAKKE_ID
+      value: fb74c8d14d9c579e05b0b4b587843e6b
