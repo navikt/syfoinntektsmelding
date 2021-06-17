@@ -1,6 +1,7 @@
 package no.nav.syfo.repository
 
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import javax.sql.DataSource
 
 data class IMWeeklyStats(
@@ -47,6 +48,8 @@ interface IMStatsRepo {
 class IMStatsRepoImpl (
     private val ds: DataSource
 ) : IMStatsRepo {
+
+    val postgresStringFormat = DateTimeFormatter.ofPattern("YYYY-MM-dd HH:mm:ss")
 
     override fun getWeeklyStats(): List<IMWeeklyStats> {
         val query = """
@@ -114,7 +117,7 @@ class IMStatsRepoImpl (
                         res.getString("lps_navn"),
                         res.getInt("antall_versjoner"),
                         res.getInt("antall_im"),
-                        LocalDateTime.parse(res.getString("fra_dato"))
+                        LocalDateTime.parse(res.getString("fra_dato"), postgresStringFormat)
                     )
                 )
             }
@@ -144,7 +147,7 @@ class IMStatsRepoImpl (
                     ArsakStats(
                         res.getString("begrunnelse"),
                         res.getInt("antall_im"),
-                        LocalDateTime.parse(res.getString("fra_dato"))
+                        LocalDateTime.parse(res.getString("fra_dato"), postgresStringFormat)
                     )
                 )
             }
