@@ -1,5 +1,6 @@
 package no.nav.syfo.repository
 
+import io.ktor.util.*
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import javax.sql.DataSource
@@ -117,7 +118,7 @@ class IMStatsRepoImpl (
                         res.getString("lps_navn"),
                         res.getInt("antall_versjoner"),
                         res.getInt("antall_im"),
-                        LocalDateTime.parse(res.getString("fra_dato"), postgresStringFormat)
+                        LocalDateTime.from(res.getDate("fra_dato").toInstant())
                     )
                 )
             }
@@ -147,7 +148,7 @@ class IMStatsRepoImpl (
                     ArsakStats(
                         res.getString("begrunnelse"),
                         res.getInt("antall_im"),
-                        LocalDateTime.parse(res.getString("fra_dato"), postgresStringFormat)
+                        LocalDateTime.from(res.getDate("fra_dato").toInstant())
                     )
                 )
             }
