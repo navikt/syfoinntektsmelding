@@ -1,50 +1,68 @@
 package no.nav.syfo.slowtests.datapakke
 
-import com.zaxxer.hikari.HikariDataSource
+import io.mockk.every
+import io.mockk.mockk
 import no.nav.syfo.datapakke.DatapakkePublisherJob
-import no.nav.syfo.inntektsmeldingEntitet
+import no.nav.syfo.repository.ArsakStats
 import no.nav.syfo.repository.IMStatsRepo
-import no.nav.syfo.repository.InntektsmeldingRepository
-import no.nav.syfo.repository.InntektsmeldingRepositoryImp
-import no.nav.syfo.repository.createTestHikariConfig
+import no.nav.syfo.repository.IMWeeklyStats
+import no.nav.syfo.repository.LPSStats
 import no.nav.syfo.slowtests.SystemTestBase
-import org.junit.Ignore
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import org.koin.test.inject
+import java.util.*
+import kotlin.random.Random
 
 class DatapakkePublisherJobTest : SystemTestBase() {
 
-    val repo by inject<IMStatsRepo>()
-    val testKrav = inntektsmeldingEntitet
-    lateinit var repository: InntektsmeldingRepository
+    val repo = mockk<IMStatsRepo>()
 
     @BeforeAll
     internal fun setUp() {
-        val ds = HikariDataSource(createTestHikariConfig())
-        repository = InntektsmeldingRepositoryImp(ds)
-        repository.deleteAll()
-    }
+        every { repo.getWeeklyStats() } returns (1..25)
+            .map {
+                IMWeeklyStats(
+                    it,
+                    Random.nextInt(10000),
+                    Random.nextInt(10000),
+                    Random.nextInt(10000),
+                    Random.nextInt(10000),
+                    Random.nextInt(10000),
+                    Random.nextInt(10000),
+                    Random.nextInt(10000),
+                    Random.nextInt(10000),
+                    Random.nextInt(10000),
+                    Random.nextInt(10000),
+                )
+            }.toList()
 
-    @AfterEach
-    internal fun tearDown() {
-        repository.deleteAll()
+        every { repo.getArsakStats() } returns (1..10)
+            .map {
+                ArsakStats(
+                    UUID.randomUUID().toString().substring(0, 5),
+                    Random.nextInt(500)
+                )
+            }.toList()
+
+        every { repo.getLPSStats() } returns (1..10)
+            .map {
+                LPSStats(
+                    UUID.randomUUID().toString().substring(0, 5),
+                    Random.nextInt(50),
+                    Random.nextInt(5000)
+                )
+            }.toList()
     }
 
     @Disabled
     @Test
     internal fun name() = suspendableTest {
-        val ds = HikariDataSource(createTestHikariConfig())
-        val repository = InntektsmeldingRepositoryImp(ds)
-
-        repository.lagreInnteksmelding(testKrav)
         DatapakkePublisherJob(
             repo,
             httpClient,
             "https://datakatalog-api.dev.intern.nav.no/v1/datapackage",
-        "8f29efc4b7e41002130db5a172587fd4"
+            "8f29efc4b7e41002130db5a172587fd4"
         ).doJob()
     }
 }
