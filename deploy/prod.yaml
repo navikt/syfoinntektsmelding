@@ -138,3 +138,5 @@ spec:
       value: https://datakatalog-api.intern.nav.no/v1/datapackage
     - name: DATAPAKKE_ID
       value: fb74c8d14d9c579e05b0b4b587843e6b
+    - name: RUN_BACKGROUND_WORKERS
+      value: "true"

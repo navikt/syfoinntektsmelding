@@ -133,3 +133,5 @@ spec:
       value: fb74c8d14d9c579e05b0b4b587843e6b
     - name: DATAPAKKE_API_URL
       value: https://datakatalog-api.dev.intern.nav.no/v1/datapackage
+    - name: RUN_BACKGROUND_WORKERS
+      value: "true"
