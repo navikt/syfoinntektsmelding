@@ -23,6 +23,21 @@
               }
             }
           },
+          "legend": {
+            "data": [
+              "Totalt antall",
+              "Fra LPS",
+              "Fra Altinn",
+              "Fravær",
+              "Ikke Fravær",
+              "Årsak: Endring",
+              "Årsak: Ny",
+              "Ingen refusjon",
+              "Delvis refusjon",
+              "Full refusjon"
+            ]
+          },
+
           "xAxis": {
             "type": "category",
             "name": "Uke",
@@ -33,7 +48,7 @@
             "name": "Antall"
           }],
           "series": [{
-            "name": "Antall",
+            "name": "Totalt antall",
             "data": [@total],
             "type": "line"
           }, {
@@ -54,11 +69,11 @@
             "type": "line"
           }, {
             "data": [@arsakEndring],
-            "name": "Endring",
+            "name": "Årsak: Endring",
             "type": "line"
           }, {
             "data": [@arsakNy],
-            "name": "Ny",
+            "name": "Årsak: Ny",
             "type": "line"
           }, {
             "data": [@ingenRefusjon],
@@ -70,7 +85,7 @@
             "type": "line"
           }, {
             "data": [@fullRefusjon],
-            "name": "Fra LPS",
+            "name": "Full refusjon",
             "type": "line"
           }],
           "toolbox": {
