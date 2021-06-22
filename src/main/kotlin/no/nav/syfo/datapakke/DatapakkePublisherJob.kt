@@ -54,6 +54,7 @@ class DatapakkePublisherJob(
 
         val arsakStats = imRepo.getArsakStats()
 
+
         val populatedDatapakke = datapakkeTemplate
             .replace("@ukeSerie", timeseries.map { it.weekNumber }.joinToString())
             .replace("@total", timeseries.map { it.total }.joinToString())
@@ -74,8 +75,7 @@ class DatapakkePublisherJob(
             .replace("@lpsAntallIM", filteredLpsStats.map { """{value: ${it.antallInntektsmeldinger}, name: "${it.lpsNavn}"}""" }.joinToString())
             .replace("@lpsAntallVersjoner", filteredLpsStats.map { """{value: ${it.antallVersjoner}, name: "${it.lpsNavn}"}""" }.joinToString())
 
-            .replace("@arsak", arsakStats.map { """"${it.arsak}"""" }.joinToString())
-            .replace("@begrunnelseAntall", arsakStats.map { it.antall }.joinToString())
+            .replace("@arsak", arsakStats.map { """{value: ${it.antall}, name: "${it.arsak}"}""" }.joinToString())
 
         runBlocking {
             val response = httpClient.put<HttpResponse>("$datapakkeApiUrl/$datapakkeId") {

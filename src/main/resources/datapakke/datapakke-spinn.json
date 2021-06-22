@@ -177,7 +177,8 @@
                   "shadowColor": "rgba(0, 0, 0, 0.5)"
                 }
               }
-            }, {
+            },
+            {
               "name": "Versjoner",
               "type": "pie",
               "radius": "20%",
@@ -187,6 +188,44 @@
               ],
               "data": [
                 @lpsAntallVersjoner
+              ],
+              "emphasis": {
+                "itemStyle": {
+                  "shadowBlur": 10,
+                  "shadowOffsetX": 0,
+                  "shadowColor": "rgba(0, 0, 0, 0.5)"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "title": "Begrunnelse redusert eller ikke-utbetaling",
+      "description": "Siste 7 dager",
+      "specType": "echart",
+      "spec": {
+        "url": "",
+        "option": {
+          "tooltip": {
+            "trigger": "item"
+          },
+          "legend": {
+            "orient": "vertical",
+            "left": "left"
+          },
+          "series": [
+            {
+              "name": "Antall IM",
+              "type": "pie",
+              "radius": "50%",
+              "center": [
+                "50%",
+                "50%"
+              ],
+              "data": [
+                @arsak
               ],
               "emphasis": {
                 "itemStyle": {
