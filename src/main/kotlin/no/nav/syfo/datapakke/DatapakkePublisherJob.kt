@@ -9,24 +9,49 @@ import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.utils.RecurringJob
 import no.nav.helse.arbeidsgiver.utils.loadFromResources
 import no.nav.syfo.repository.IMStatsRepo
-import no.nav.syfo.repository.InntektsmeldingRepository
+import no.nav.syfo.repository.LPSStats
+import java.time.DayOfWeek
 import java.time.Duration
+import java.time.LocalDateTime
 
 class DatapakkePublisherJob(
     private val imRepo: IMStatsRepo,
     private val httpClient: HttpClient,
     private val datapakkeApiUrl: String,
     private val datapakkeId: String,
+    private val applyWeeklyOnly: Boolean = false
 ) :
     RecurringJob(
         CoroutineScope(Dispatchers.IO),
-        Duration.ofHours( 24).toMillis()
+        Duration.ofHours(1).toMillis()
     ) {
 
     override fun doJob() {
+        val now = LocalDateTime.now()
+        if(applyWeeklyOnly && now.dayOfWeek != DayOfWeek.MONDAY && now.hour != 0) {
+            return // Ikke kjør jobben med mindre det er natt til mandag
+        }
+
         val datapakkeTemplate = "datapakke/datapakke-spinn.json".loadFromResources()
         val timeseries = imRepo.getWeeklyStats().sortedBy { it.weekNumber }
         val lpsStats = imRepo.getLPSStats()
+
+        val mergedSapStats = lpsStats // SAP rapporterer versjon i feil felt, så de må slås sammen
+            .filter { it.lpsNavn.startsWith("SAP") }
+            .reduce { s1, s2 ->
+                LPSStats("SAP",
+                    s1.antallVersjoner + s2.antallVersjoner,
+                    s1.antallInntektsmeldinger + s2.antallInntektsmeldinger
+                )
+            }
+
+        val filteredLpsStats = lpsStats // Altinn er ikke en LPS, og fjerner alle SAP duplikatene
+            .filter { !it.lpsNavn.startsWith("Altinn") }
+            .filter { !it.lpsNavn.startsWith("SAP") }
+            .toMutableList()
+
+        filteredLpsStats.add(mergedSapStats)
+
         val arsakStats = imRepo.getArsakStats()
 
         val populatedDatapakke = datapakkeTemplate
@@ -46,9 +71,8 @@ class DatapakkePublisherJob(
             .replace("@fullRefusjon", timeseries.map { it.fullRefusjon }.joinToString())
             .replace("@ingenRefusjon", timeseries.map { it.ingenRefusjon }.joinToString())
 
-            .replace("@lpsNavn", lpsStats.joinToString { """"${it.lpsNavn}"""" })
-            .replace("@lpsAntallIM", lpsStats.map { it.antallInntektsmeldinger }.joinToString())
-            .replace("@lpsAntallVersjoner", lpsStats.map { it.antallVersjoner }.joinToString())
+            .replace("@lpsAntallIM", filteredLpsStats.map { """{value: ${it.antallInntektsmeldinger}, name: "${it.lpsNavn}"},""" }.joinToString())
+            .replace("@lpsAntallVersjoner", filteredLpsStats.map { """{value: ${it.antallVersjoner}, name: "${it.lpsNavn}"},""" }.joinToString())
 
             .replace("@arsak", arsakStats.map { """"${it.arsak}"""" }.joinToString())
             .replace("@begrunnelseAntall", arsakStats.map { it.antall }.joinToString())

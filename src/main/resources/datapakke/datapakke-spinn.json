@@ -38,118 +38,106 @@
               "Full refusjon"
             ]
           },
-
           "xAxis": {
             "type": "category",
             "name": "Uke",
-            "data": [@ukeSerie]
-          },
-          "yAxis": [{
-            "type": "value",
-            "name": "Antall"
-          }],
-          "series": [{
-            "name": "Totalt antall",
-            "data": [@total],
-            "type": "line"
-          }, {
-            "data": [@fraLPS],
-            "name": "Fra LPS",
-            "type": "line"
-          }, {
-            "data": [@fraAltinnPortal],
-            "name": "Fra Altinn",
-            "type": "line"
-          }, {
-            "data": [@fravaer],
-            "name": "Fravær",
-            "type": "line"
-          }, {
-            "data": [@ikkeFravaer],
-            "name": "Ikke Fravær",
-            "type": "line"
-          }, {
-            "data": [@arsakEndring],
-            "name": "Årsak: Endring",
-            "type": "line"
-          }, {
-            "data": [@arsakNy],
-            "name": "Årsak: Ny",
-            "type": "line"
-          }, {
-            "data": [@ingenRefusjon],
-            "name": "Ingen refusjon",
-            "type": "line"
-          }, {
-            "data": [@delvisRefusjon],
-            "name": "Delvis refusjon",
-            "type": "line"
-          }, {
-            "data": [@fullRefusjon],
-            "name": "Full refusjon",
-            "type": "line"
-          }],
-          "toolbox": {
-            "show": true,
-            "left": "center",
-            "top": "bottom",
-            "feature": {
-              "magicType": {"type": ["line", "bar"]},
-              "dataView": {"show": true, "readOnly": true},
-              "saveAsImage": {}
-            }
-          }
-        }
-      }
-    },
-    {
-      "title": "LPS - Siste 7 dager",
-      "description": "LPS - statistikk siste 7 dager",
-      "specType": "echart",
-      "spec": {
-        "url": "",
-        "option": {
-          "tooltip": {
-            "trigger": "axis",
-            "axisPointer": {
-              "type": "cross",
-              "crossStyle": {
-                "color": "#999"
-              }
-            }
-          },
-          "legend": {
-            "left": "center",
             "data": [
-              "Antall IM",
-              "Antall versjoner"
+              @ukeSerie
             ]
           },
-          "xAxis": {
-            "type": "category",
-            "name": "LPS",
-            "data": [@lpsNavn]
-          },
-          "yAxis": [{
-            "type": "value",
-            "name": "Antall"
-          }],
-          "series": [{
-            "name": "Antall IM",
-            "data": [@lpsAntallIM],
-            "type": "bar"
-          }, {
-            "data": [@lpsAntallVersjoner],
-            "name": "Antall versjoner",
-            "type": "bar"
-          }],
+          "yAxis": [
+            {
+              "type": "value",
+              "name": "Antall"
+            }
+          ],
+          "series": [
+            {
+              "name": "Totalt antall",
+              "data": [
+                @total
+              ],
+              "type": "line"
+            },
+            {
+              "data": [
+                @fraLPS
+              ],
+              "name": "Fra LPS",
+              "type": "line"
+            },
+            {
+              "data": [
+                @fraAltinnPortal
+              ],
+              "name": "Fra Altinn",
+              "type": "line"
+            },
+            {
+              "data": [
+                @fravaer
+              ],
+              "name": "Fravær",
+              "type": "line"
+            },
+            {
+              "data": [
+                @ikkeFravaer
+              ],
+              "name": "Ikke Fravær",
+              "type": "line"
+            },
+            {
+              "data": [
+                @arsakEndring
+              ],
+              "name": "Årsak: Endring",
+              "type": "line"
+            },
+            {
+              "data": [
+                @arsakNy
+              ],
+              "name": "Årsak: Ny",
+              "type": "line"
+            },
+            {
+              "data": [
+                @ingenRefusjon
+              ],
+              "name": "Ingen refusjon",
+              "type": "line"
+            },
+            {
+              "data": [
+                @delvisRefusjon
+              ],
+              "name": "Delvis refusjon",
+              "type": "line"
+            },
+            {
+              "data": [
+                @fullRefusjon
+              ],
+              "name": "Full refusjon",
+              "type": "line"
+            }
+          ],
           "toolbox": {
             "show": true,
             "left": "center",
             "top": "bottom",
             "feature": {
-              "magicType": {"type": ["line", "bar"]},
-              "dataView": {"show": true, "readOnly": true},
+              "magicType": {
+                "type": [
+                  "line",
+                  "bar"
+                ]
+              },
+              "dataView": {
+                "show": true,
+                "readOnly": true
+              },
               "saveAsImage": {}
             }
           }
@@ -157,45 +145,58 @@
       }
     },
     {
-      "title": "Begrunnelse For Reduksjon Eller Ikke Utbetalt - Siste 7 dager",
-      "description": "Begrunnelse For Reduksjon Eller Ikke Utbetalt - Siste 7 dager",
+      "title": "LPS",
+      "description": "Siste 7 dager",
       "specType": "echart",
       "spec": {
         "url": "",
         "option": {
           "tooltip": {
-            "trigger": "axis",
-            "axisPointer": {
-              "type": "cross",
-              "crossStyle": {
-                "color": "#999"
+            "trigger": "item"
+          },
+          "legend": {
+            "orient": "vertical",
+            "left": "left"
+          },
+          "series": [
+            {
+              "name": "Antall IM",
+              "type": "pie",
+              "radius": "30%",
+              "center": [
+                "25%",
+                "50%"
+              ],
+              "data": [
+                @lpsAntallIM
+              ],
+              "emphasis": {
+                "itemStyle": {
+                  "shadowBlur": 10,
+                  "shadowOffsetX": 0,
+                  "shadowColor": "rgba(0, 0, 0, 0.5)"
+                }
+              }
+            }, {
+              "name": "Versjoner",
+              "type": "pie",
+              "radius": "20%",
+              "center": [
+                "75%",
+                "50%"
+              ],
+              "data": [
+                @lpsAntallVersjoner
+              ],
+              "emphasis": {
+                "itemStyle": {
+                  "shadowBlur": 10,
+                  "shadowOffsetX": 0,
+                  "shadowColor": "rgba(0, 0, 0, 0.5)"
+                }
               }
             }
-          },
-
-          "xAxis": {
-            "type": "category",
-            "name": "Begrunnelse",
-            "data": [@arsak]
-          },
-          "yAxis": [{
-            "type": "value",
-            "name": "Antall"
-          }],
-          "series": [{
-            "name": "Antall IM",
-            "data": [@begrunnelseAntall],
-            "type": "bar"
-          }],
-          "toolbox": {
-            "show": true,
-            "left": "center",
-            "top": "bottom",
-            "feature": {
-              "dataView": {"show": true, "readOnly": true},
-              "saveAsImage": {}
-            }
-          }
+          ]
         }
       }
     }
