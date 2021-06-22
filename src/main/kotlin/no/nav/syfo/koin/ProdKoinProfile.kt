@@ -17,13 +17,15 @@ import no.nav.syfo.consumer.rest.OppgaveClient
 import no.nav.syfo.consumer.rest.SakClient
 import no.nav.syfo.consumer.rest.TokenConsumer
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
-import no.nav.syfo.consumer.util.ws.LogErrorHandler
-import no.nav.syfo.consumer.util.ws.WsClient
 import no.nav.syfo.consumer.util.ws.createServicePort
 import no.nav.syfo.consumer.ws.*
+import no.nav.syfo.datapakke.DatapakkePublisherJob
+import no.nav.syfo.integration.kafka.*
+import no.nav.syfo.producer.InntektsmeldingAivenProducer
 import no.nav.syfo.producer.InntektsmeldingProducer
 import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
 import no.nav.syfo.prosesser.FjernInntektsmeldingByBehandletProcessor
+import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
 import no.nav.syfo.repository.*
 import no.nav.syfo.service.EksisterendeSakService
 import no.nav.syfo.service.JournalpostService
@@ -32,15 +34,6 @@ import no.nav.syfo.util.Metrikk
 import no.nav.syfo.utsattoppgave.FeiletUtsattOppgaveMeldingProsessor
 import no.nav.syfo.utsattoppgave.UtsattOppgaveDAO
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
-import org.koin.dsl.bind
-import org.koin.dsl.module
-import no.nav.syfo.consumer.ws.InngaaendeJournalConsumer
-import no.nav.syfo.consumer.ws.BehandleInngaaendeJournalConsumer
-import no.nav.syfo.consumer.ws.JournalConsumer
-import no.nav.syfo.datapakke.DatapakkePublisherJob
-import no.nav.syfo.integration.kafka.*
-import no.nav.syfo.producer.InntektsmeldingAivenProducer
-import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
 import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.binding.ArbeidsfordelingV1
 import no.nav.tjeneste.virksomhet.behandleinngaaendejournal.v1.binding.BehandleInngaaendeJournalV1
 import no.nav.tjeneste.virksomhet.behandlesak.v2.BehandleSakV2
@@ -50,6 +43,8 @@ import no.nav.tjeneste.virksomhet.oppgavebehandling.v3.binding.Oppgavebehandling
 import no.nav.tjeneste.virksomhet.person.v3.binding.PersonV3
 import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil
 import org.koin.core.qualifier.StringQualifier
+import org.koin.dsl.bind
+import org.koin.dsl.module
 import javax.sql.DataSource
 
 @KtorExperimentalAPI
@@ -129,7 +124,7 @@ fun prodConfig(config: ApplicationConfig) = module {
     single { ArbeidsgiverperiodeRepositoryImp(get(), get())} bind ArbeidsgiverperiodeRepository::class
     single { SakClient(config.getString("opprett_sak_url"), get()) } bind SakClient::class
     single { SaksbehandlingService(get(), get(), get(), get()) } bind SaksbehandlingService::class
-    single { DatapakkePublisherJob(get(), get(), config.getString("datapakke.api_url"), config.getString("datapakke.id"), true) }
+    single { DatapakkePublisherJob(get(), get(), config.getString("datapakke.api_url"), config.getString("datapakke.id"), false) }
 
     single { JoarkHendelseKafkaClient(
         joarkOnPremProperties(config).toMutableMap(),
