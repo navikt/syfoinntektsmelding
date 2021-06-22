@@ -9,6 +9,7 @@ import no.nav.syfo.repository.IMWeeklyStats
 import no.nav.syfo.repository.LPSStats
 import no.nav.syfo.slowtests.SystemTestBase
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.util.*
 import kotlin.random.Random
@@ -55,6 +56,7 @@ class DatapakkePublisherJobTest : SystemTestBase() {
     }
 
     @Test
+    @Disabled
     internal fun name() = suspendableTest {
         DatapakkePublisherJob(
             repo,
