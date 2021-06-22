@@ -71,8 +71,8 @@ class DatapakkePublisherJob(
             .replace("@fullRefusjon", timeseries.map { it.fullRefusjon }.joinToString())
             .replace("@ingenRefusjon", timeseries.map { it.ingenRefusjon }.joinToString())
 
-            .replace("@lpsAntallIM", filteredLpsStats.map { """{value: ${it.antallInntektsmeldinger}, name: "${it.lpsNavn}"},""" }.joinToString())
-            .replace("@lpsAntallVersjoner", filteredLpsStats.map { """{value: ${it.antallVersjoner}, name: "${it.lpsNavn}"},""" }.joinToString())
+            .replace("@lpsAntallIM", filteredLpsStats.map { """{value: ${it.antallInntektsmeldinger}, name: "${it.lpsNavn}"}""" }.joinToString())
+            .replace("@lpsAntallVersjoner", filteredLpsStats.map { """{value: ${it.antallVersjoner}, name: "${it.lpsNavn}"}""" }.joinToString())
 
             .replace("@arsak", arsakStats.map { """"${it.arsak}"""" }.joinToString())
             .replace("@begrunnelseAntall", arsakStats.map { it.antall }.joinToString())
