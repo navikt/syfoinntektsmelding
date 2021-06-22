@@ -38,7 +38,7 @@ class DatapakkePublisherJob(
 
         val mergedSapStats = lpsStats // SAP rapporterer versjon i feil felt, så de må slås sammen
             .filter { it.lpsNavn.startsWith("SAP") }
-            .reduce { s1, s2 ->
+            .reduceOrNull { s1, s2 ->
                 LPSStats("SAP",
                     s1.antallVersjoner + s2.antallVersjoner,
                     s1.antallInntektsmeldinger + s2.antallInntektsmeldinger
@@ -50,7 +50,7 @@ class DatapakkePublisherJob(
             .filter { !it.lpsNavn.startsWith("SAP") }
             .toMutableList()
 
-        filteredLpsStats.add(mergedSapStats)
+        mergedSapStats?.let { filteredLpsStats.add(it) }
 
         val arsakStats = imRepo.getArsakStats()
 
