@@ -72,10 +72,14 @@ class DatapakkePublisherJob(
             .replace("@fullRefusjon", timeseries.map { it.fullRefusjon }.joinToString())
             .replace("@ingenRefusjon", timeseries.map { it.ingenRefusjon }.joinToString())
 
-            .replace("@lpsAntallIM", filteredLpsStats.map { """{value: ${it.antallInntektsmeldinger}, name: "${it.lpsNavn}"}""" }.joinToString())
-            .replace("@lpsAntallVersjoner", filteredLpsStats.map { """{value: ${it.antallVersjoner}, name: "${it.lpsNavn}"}""" }.joinToString())
+            .replace("@lpsAntallIM", filteredLpsStats.map { //language=JSON
+                """{"value": ${it.antallInntektsmeldinger}, "name": "${it.lpsNavn}"}""" }.joinToString())
 
-            .replace("@arsak", arsakStats.map { """{value: ${it.antall}, name: "${it.arsak}"}""" }.joinToString())
+            .replace("@lpsAntallVersjoner", filteredLpsStats.map { //language=JSON
+                """{"value": ${it.antallVersjoner}, "name": "${it.lpsNavn}"}""" }.joinToString())
+
+            .replace("@arsak", arsakStats.map { //language=JSON
+                """{"value": ${it.antall}, "name": "${it.arsak}"}""" }.joinToString())
 
         runBlocking {
             val response = httpClient.put<HttpResponse>("$datapakkeApiUrl/$datapakkeId") {
