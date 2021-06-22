@@ -162,7 +162,7 @@
             {
               "name": "Antall IM",
               "type": "pie",
-              "radius": "30%",
+              "radius": "50%",
               "center": [
                 "25%",
                 "50%"
@@ -181,7 +181,7 @@
             {
               "name": "Versjoner",
               "type": "pie",
-              "radius": "20%",
+              "radius": "40%",
               "center": [
                 "75%",
                 "50%"
@@ -219,7 +219,7 @@
             {
               "name": "Antall IM",
               "type": "pie",
-              "radius": "50%",
+              "radius": "75%",
               "center": [
                 "50%",
                 "50%"
