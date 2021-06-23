@@ -154,10 +154,6 @@
           "tooltip": {
             "trigger": "item"
           },
-          "legend": {
-            "orient": "vertical",
-            "left": "left"
-          },
           "series": [
             {
               "name": "Antall IM",
@@ -210,10 +206,6 @@
         "option": {
           "tooltip": {
             "trigger": "item"
-          },
-          "legend": {
-            "orient": "vertical",
-            "left": "left"
           },
           "series": [
             {

@@ -78,7 +78,9 @@ class DatapakkePublisherJob(
             .replace("@lpsAntallVersjoner", filteredLpsStats.map { //language=JSON
                 """{"value": ${it.antallVersjoner}, "name": "${it.lpsNavn}"}""" }.joinToString())
 
-            .replace("@arsak", arsakStats.map { //language=JSON
+            .replace("@arsak", arsakStats
+                .filter { it.arsak.isNotBlank() }
+                .map { //language=JSON
                 """{"value": ${it.antall}, "name": "${it.arsak}"}""" }.joinToString())
 
         runBlocking {
