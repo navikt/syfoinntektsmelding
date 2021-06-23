@@ -3,7 +3,6 @@ package no.nav.syfo.koin
 import com.zaxxer.hikari.HikariConfig
 import io.ktor.config.*
 import io.ktor.util.*
-import no.altinn.services.serviceengine.correspondence._2009._10.ICorrespondenceAgencyExternalBasic
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
@@ -18,12 +17,11 @@ import no.nav.syfo.consumer.rest.OppgaveClient
 import no.nav.syfo.consumer.rest.SakClient
 import no.nav.syfo.consumer.rest.TokenConsumer
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
-import no.nav.syfo.consumer.util.ws.*
+import no.nav.syfo.consumer.util.ws.createServicePort
 import no.nav.syfo.consumer.ws.*
 import no.nav.syfo.datapakke.DatapakkePublisherJob
 import no.nav.syfo.integration.kafka.*
 import no.nav.syfo.producer.InntektsmeldingAivenProducer
-import no.nav.syfo.producer.InntektsmeldingProducer
 import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
 import no.nav.syfo.prosesser.FjernInntektsmeldingByBehandletProcessor
 import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
@@ -43,12 +41,10 @@ import no.nav.tjeneste.virksomhet.journal.v2.binding.JournalV2
 import no.nav.tjeneste.virksomhet.oppgavebehandling.v3.binding.OppgavebehandlingV3
 import no.nav.tjeneste.virksomhet.person.v3.binding.PersonV3
 import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil
+import org.koin.core.qualifier.StringQualifier
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import javax.sql.DataSource
-import no.nav.syfo.repository.InntektsmeldingRepository
-import org.koin.core.qualifier.StringQualifier
-import org.slf4j.LoggerFactory
 
 @KtorExperimentalAPI
 fun preprodConfig(config: ApplicationConfig) = module {
@@ -116,7 +112,6 @@ fun preprodConfig(config: ApplicationConfig) = module {
             get(),
             get(),
             get(),
-            get(),
             get()
         )
     } bind InntektsmeldingBehandler::class
@@ -166,13 +161,6 @@ fun preprodConfig(config: ApplicationConfig) = module {
             config.getString("kafka_utsatt_oppgave_topic"), get(), get(), get()
         )
     }
-
-
-    single {
-        InntektsmeldingProducer(
-            producerOnPremProperties(config), get()
-        )
-    } bind InntektsmeldingProducer::class
 
     single {
         InntektsmeldingAivenProducer(
