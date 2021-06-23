@@ -1,9 +1,7 @@
 package no.nav.syfo.integration.kafka
 
 import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig
-import io.confluent.kafka.serializers.KafkaAvroDeserializer
 import io.confluent.kafka.streams.serdes.avro.GenericAvroDeserializer
-import io.confluent.kafka.streams.serdes.avro.GenericAvroSerde
 import io.ktor.config.*
 import no.nav.helse.arbeidsgiver.system.getString
 import org.apache.kafka.clients.CommonClientConfigs
@@ -73,21 +71,6 @@ fun producerLocalProperties(bootstrapServers: String) =  Properties().apply {
     put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer")
     put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer")
     put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers)
-}
-
-fun producerOnPremProperties(config: ApplicationConfig) = Properties().apply {
-    put(ProducerConfig.ACKS_CONFIG, "all")
-    put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "true")
-    put(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, "1")
-    put(ProducerConfig.MAX_BLOCK_MS_CONFIG, "15000")
-    put(ProducerConfig.RETRIES_CONFIG, "2")
-    put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer")
-    put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer")
-    put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, "${config.getString("kafka_bootstrap_servers")}")
-    put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_SSL")
-    put(SaslConfigs.SASL_MECHANISM, "PLAIN")
-    val jaasCfg = "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"${config.getString("srvsyfoinntektsmelding.username")}\" password=\"${envOrThrow("SRVSYFOINNTEKTSMELDING_PASSWORD")}\";"
-    put(SaslConfigs.SASL_JAAS_CONFIG, jaasCfg)
 }
 
 

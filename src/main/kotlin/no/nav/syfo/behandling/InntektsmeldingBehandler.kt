@@ -11,7 +11,6 @@ import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.dto.UtsattOppgaveEntitet
 import no.nav.syfo.mapping.mapInntektsmeldingKontrakt
 import no.nav.syfo.producer.InntektsmeldingAivenProducer
-import no.nav.syfo.producer.InntektsmeldingProducer
 import no.nav.syfo.repository.InntektsmeldingService
 import no.nav.syfo.service.JournalpostService
 import no.nav.syfo.service.SaksbehandlingService
@@ -26,7 +25,6 @@ class InntektsmeldingBehandler(
     private val metrikk: Metrikk,
     private val inntektsmeldingService: InntektsmeldingService,
     private val aktorConsumer: AktorConsumer,
-    private val inntektsmeldingProducer: InntektsmeldingProducer,
     private val inntektsmeldingAivenProducer: InntektsmeldingAivenProducer,
     private val utsattOppgaveService: UtsattOppgaveService
 ) {
@@ -86,7 +84,6 @@ class InntektsmeldingBehandler(
                     dto.uuid
                 )
 
-                inntektsmeldingProducer.leggMottattInntektsmeldingPåTopics(mappedInntektsmelding)
                 inntektsmeldingAivenProducer.leggMottattInntektsmeldingPåTopics(mappedInntektsmelding)
 
                 log.info("Inntektsmelding {} er journalført for {} refusjon {}", inntektsmelding.journalpostId, arkivreferanse, inntektsmelding.refusjon.beloepPrMnd)

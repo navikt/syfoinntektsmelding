@@ -9,7 +9,6 @@ import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.dto.InntektsmeldingEntitet
 import no.nav.syfo.producer.InntektsmeldingAivenProducer
-import no.nav.syfo.producer.InntektsmeldingProducer
 import no.nav.syfo.repository.InntektsmeldingService
 import no.nav.syfo.service.JournalpostService
 import no.nav.syfo.service.SaksbehandlingService
@@ -28,7 +27,6 @@ class InntektsmeldingBehandlerTest {
     private var saksbehandlingService = mockk<SaksbehandlingService>(relaxed = true)
     private var aktorConsumer = mockk<AktorConsumer>(relaxed = true)
     private var inntektsmeldingService = mockk<InntektsmeldingService>(relaxed = true)
-    private val inntektsmeldingProducer = mockk<InntektsmeldingProducer>(relaxed = true)
     private val aivenInntektsmeldingProducer = mockk<InntektsmeldingAivenProducer>(relaxed = true)
 
     private var inntektsmeldingBehandler = InntektsmeldingBehandler(
@@ -37,7 +35,6 @@ class InntektsmeldingBehandlerTest {
         metrikk,
         inntektsmeldingService,
         aktorConsumer,
-        inntektsmeldingProducer,
         aivenInntektsmeldingProducer,
         utsattOppgaveService
     )
@@ -83,7 +80,6 @@ class InntektsmeldingBehandlerTest {
 
         verify { saksbehandlingService.behandleInntektsmelding(any(), any(), any()) }
         verify { journalpostService.ferdigstillJournalpost(match { it.contentEquals("saksId") }, any()) }
-        verify { inntektsmeldingProducer.leggMottattInntektsmeldingPåTopics(any()) }
         verify { aivenInntektsmeldingProducer.leggMottattInntektsmeldingPåTopics(any()) }
     }
 
@@ -127,7 +123,6 @@ class InntektsmeldingBehandlerTest {
 
         verify(exactly = 0) { saksbehandlingService.behandleInntektsmelding(any(), any(), any()) }
         verify(exactly = 0) { journalpostService.ferdigstillJournalpost(any(), any()) }
-        verify(exactly = 0) { inntektsmeldingProducer.leggMottattInntektsmeldingPåTopics(any()) }
     }
 }
 

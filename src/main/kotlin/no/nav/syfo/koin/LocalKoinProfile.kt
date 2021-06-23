@@ -1,8 +1,6 @@
 package no.nav.syfo.koin
 
 import com.zaxxer.hikari.HikariDataSource
-import io.ktor.client.*
-import io.ktor.client.engine.*
 import io.ktor.config.*
 import io.ktor.util.*
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
@@ -27,7 +25,6 @@ import no.nav.syfo.consumer.ws.JournalConsumer
 import no.nav.syfo.datapakke.DatapakkePublisherJob
 import no.nav.syfo.integration.kafka.*
 import no.nav.syfo.producer.InntektsmeldingAivenProducer
-import no.nav.syfo.producer.InntektsmeldingProducer
 import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
 import no.nav.syfo.prosesser.FjernInntektsmeldingByBehandletProcessor
 import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
@@ -184,7 +181,6 @@ fun localDevConfig(config: ApplicationConfig) = module {
             get(),
             get(),
             get(),
-            get(),
             get()
         )
     } bind InntektsmeldingBehandler::class
@@ -207,10 +203,6 @@ fun localDevConfig(config: ApplicationConfig) = module {
             get()
         )
     } bind JoarkInntektsmeldingHendelseProsessor::class
-
-    single {
-        InntektsmeldingProducer(producerLocalProperties(config.getString("kafka_bootstrap_servers")), get())
-    } bind InntektsmeldingProducer::class
 
     single {
         InntektsmeldingAivenProducer(producerLocalProperties(config.getString("kafka_bootstrap_servers")))
