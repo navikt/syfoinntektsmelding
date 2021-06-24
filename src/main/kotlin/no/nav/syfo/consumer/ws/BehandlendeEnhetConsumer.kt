@@ -1,29 +1,25 @@
 package no.nav.syfo.consumer.ws
 
 import log
+import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClient
 import no.nav.syfo.behandling.BehandlendeEnhetFeiletException
 import no.nav.syfo.behandling.FinnBehandlendeEnhetListeUgyldigInputException
-import no.nav.syfo.behandling.HentGeografiskTilknytningPersonIkkeFunnetException
-import no.nav.syfo.behandling.HentGeografiskTilknytningSikkerhetsbegrensingException
 import no.nav.syfo.behandling.IngenAktivEnhetException
 import no.nav.syfo.domain.GeografiskTilknytningData
 import no.nav.syfo.util.Metrikk
 import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.binding.ArbeidsfordelingV1
 import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.binding.FinnBehandlendeEnhetListeUgyldigInput
-import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.informasjon.*
+import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.informasjon.ArbeidsfordelingKriterier
+import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.informasjon.Diskresjonskoder
+import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.informasjon.Enhetsstatus
+import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.informasjon.Geografi
+import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.informasjon.Tema
 import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.meldinger.FinnBehandlendeEnhetListeRequest
-import no.nav.tjeneste.virksomhet.person.v3.binding.HentGeografiskTilknytningPersonIkkeFunnet
-import no.nav.tjeneste.virksomhet.person.v3.binding.HentGeografiskTilknytningSikkerhetsbegrensing
-import no.nav.tjeneste.virksomhet.person.v3.binding.PersonV3
-import no.nav.tjeneste.virksomhet.person.v3.informasjon.NorskIdent
-import no.nav.tjeneste.virksomhet.person.v3.informasjon.PersonIdent
-import no.nav.tjeneste.virksomhet.person.v3.meldinger.HentGeografiskTilknytningRequest
-import org.koin.core.KoinComponent
 
 const val SYKEPENGER_UTLAND = "4474"
 
 class BehandlendeEnhetConsumer(
-    private val personV3: PersonV3,
+    private val pdlClient: PdlClient,
     private val arbeidsfordelingV1: ArbeidsfordelingV1,
     private val metrikk: Metrikk
 )  {
@@ -80,24 +76,12 @@ class BehandlendeEnhetConsumer(
     }
 
     fun hentGeografiskTilknytning(fnr: String): GeografiskTilknytningData {
-        try {
-            val response = personV3.hentGeografiskTilknytning(
-                HentGeografiskTilknytningRequest()
-                    .withAktoer(PersonIdent().withIdent(NorskIdent().withIdent(fnr)))
-            )
-
+        pdlClient.fullPerson(fnr).let {
             return GeografiskTilknytningData(
-                geografiskTilknytning = response.geografiskTilknytning?.geografiskTilknytning,
-                diskresjonskode = response.diskresjonskode?.value
+                geografiskTilknytning = it?.hentGeografiskTilknytning?.hentTilknytning(),
+                diskresjonskode = it?.hentPerson?.trekkUtDiskresjonskode()
             )
-        } catch (e: HentGeografiskTilknytningSikkerhetsbegrensing) {
-            log.error("Feil ved henting av geografisk tilknytning", e)
-            throw HentGeografiskTilknytningSikkerhetsbegrensingException(e)
-        } catch (e: HentGeografiskTilknytningPersonIkkeFunnet) {
-            log.error("Feil ved henting av geografisk tilknytning", e)
-            throw HentGeografiskTilknytningPersonIkkeFunnetException(e)
         }
-
     }
 
 }

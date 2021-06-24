@@ -6,6 +6,8 @@ import io.ktor.util.*
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
+import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClient
+import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClientImpl
 import no.nav.helse.arbeidsgiver.system.getString
 import no.nav.syfo.behandling.InntektsmeldingBehandler
 import no.nav.syfo.config.OppgaveClientConfigProvider
@@ -114,6 +116,15 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single { BakgrunnsjobbService(get()) }
     single { IMStatsRepoImpl(get()) } bind IMStatsRepo::class
     single { DatapakkePublisherJob(get(), get(), config.getString("datapakke.api_url"), config.getString("datapakke.id")) }
+
+    single {
+        PdlClientImpl(
+            config.getString("pdl_url"),
+            get(),
+            get(),
+            get()
+        )
+    } bind PdlClient::class
 
     single {
         WsClientMock<PersonV3>().createPort(

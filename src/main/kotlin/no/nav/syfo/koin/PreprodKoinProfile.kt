@@ -6,6 +6,8 @@ import io.ktor.util.*
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
+import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClient
+import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClientImpl
 import no.nav.helse.arbeidsgiver.system.getString
 import no.nav.syfo.MetrikkVarsler
 import no.nav.syfo.behandling.InntektsmeldingBehandler
@@ -188,6 +190,15 @@ fun preprodConfig(config: ApplicationConfig) = module {
     single { PostgresBakgrunnsjobbRepository(get()) } bind BakgrunnsjobbRepository::class
     single { BakgrunnsjobbService(get(), bakgrunnsvarsler = MetrikkVarsler()) }
     single { IMStatsRepoImpl(get()) } bind IMStatsRepo::class
+
+    single {
+        PdlClientImpl(
+            config.getString("pdl_url"),
+            get(),
+            get(),
+            get()
+        )
+    } bind PdlClient::class
 
     single {
         createServicePort(
