@@ -6,6 +6,7 @@ import io.ktor.util.*
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
+import no.nav.helse.arbeidsgiver.integrasjoner.RestSTSAccessTokenProvider
 import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClient
 import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClientImpl
 import no.nav.helse.arbeidsgiver.system.getString
@@ -201,11 +202,14 @@ fun preprodConfig(config: ApplicationConfig) = module {
     } bind PdlClient::class
 
     single {
-        createServicePort(
-            serviceUrl = config.getString("virksomhet_person_3_endpointurl"),
-            serviceClazz = PersonV3::class.java
+        RestSTSAccessTokenProvider(
+            config.getString("service_user.username"),
+            config.getString("service_user.password"),
+            config.getString("sts_url"),
+            get()
         )
-    } bind PersonV3::class
+    } bind RestSTSAccessTokenProvider::class.java
+
 
     single {
         createServicePort(

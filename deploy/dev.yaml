@@ -137,3 +137,5 @@ spec:
       value: "true"
     - name: PDL_URL
       value: https://pdl-api.nais.preprod.local/graphql
+    - name: STS_URL
+      value: http://security-token-service.default.svc.nais.local/rest/v1/sts/token

@@ -168,9 +168,9 @@ fun prodConfig(config: ApplicationConfig) = module {
 
     single {
         RestSTSAccessTokenProvider(
-            config.getString("SRVSYFOINNTEKTSMELDING_USERNAME"),
-            config.getString("SRVSYFOINNTEKTSMELDING_PASSWORD"),
-            config.getString("SECURITYTOKENSERVICE_URL"),
+            config.getString("service_user.username"),
+            config.getString("service_user.password"),
+            config.getString("sts_url"),
             get()
         )
     } bind RestSTSAccessTokenProvider::class.java
