@@ -97,8 +97,6 @@ spec:
       value: "https://wasapp-q1.adeo.no/nav-gsak-ws/BehandleSakV2"
     - name: VIRKSOMHET_OPPGAVE_V3_ENDPOINTURL
       value: "https://wasapp-q1.adeo.no/nav-gsak-ws/OppgaveV3"
-    - name: VIRKSOMHET_OPPGAVEBEHANDLING_V3_ENDPOINTURL
-      value: "https://wasapp-q1.adeo.no/nav-gsak-ws/OppgavebehandlingV3"
     - name: SYFOSERVICESTRANGLERAPI_URL
       value: "http://syfoservicestrangler.default.svc.nais.local/api"
     - name: AKTOERREGISTER_API_V1_URL

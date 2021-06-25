@@ -183,8 +183,6 @@ fun preprodConfig(config: ApplicationConfig) = module {
     } bind FjernInntektsmeldingByBehandletProcessor::class
     single { FinnAlleUtgaandeOppgaverProcessor(get(), get(), get()) } bind FinnAlleUtgaandeOppgaverProcessor::class
 
-    single { OppgavebehandlingConsumer(get()) } bind OppgavebehandlingConsumer::class
-
     single { FeiletService(FeiletRepositoryImp(get())) } bind FeiletService::class
 
     single { PostgresBakgrunnsjobbRepository(get()) } bind BakgrunnsjobbRepository::class
@@ -221,7 +219,8 @@ fun preprodConfig(config: ApplicationConfig) = module {
 
     single {
         createServicePort(
-            serviceUrl = config.getString("inngaaendejournal_v1_endpointurl"),
+            serviceUrl = config.getString("" +
+                ""),
             serviceClazz = InngaaendeJournalV1::class.java
         )
     } bind InngaaendeJournalV1::class
