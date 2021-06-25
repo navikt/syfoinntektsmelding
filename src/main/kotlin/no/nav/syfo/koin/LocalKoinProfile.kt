@@ -134,7 +134,7 @@ fun localDevConfig(config: ApplicationConfig) = module {
             config.getString("sts_url"),
             get()
         )
-    } bind RestSTSAccessTokenProvider::class.java
+    } bind RestSTSAccessTokenProvider::class
 
     single {
         WsClientMock<ArbeidsfordelingV1>().createPort(

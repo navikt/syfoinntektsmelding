@@ -208,7 +208,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
             config.getString("sts_url"),
             get()
         )
-    } bind RestSTSAccessTokenProvider::class.java
+    } bind RestSTSAccessTokenProvider::class
 
 
     single {
