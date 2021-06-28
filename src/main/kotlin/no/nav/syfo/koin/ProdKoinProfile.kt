@@ -173,7 +173,7 @@ fun prodConfig(config: ApplicationConfig) = module {
             config.getString("sts_url"),
             get()
         )
-    } bind RestSTSAccessTokenProvider::class
+    } bind AccessTokenProvider::class
 
     single {
         createServicePort(
