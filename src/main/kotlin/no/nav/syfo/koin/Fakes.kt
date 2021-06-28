@@ -6,9 +6,12 @@ import no.nav.helse.arbeidsgiver.integrasjoner.altinn.AltinnOrganisasjon
 import no.nav.helse.arbeidsgiver.integrasjoner.dokarkiv.DokarkivKlient
 import no.nav.helse.arbeidsgiver.integrasjoner.dokarkiv.JournalpostRequest
 import no.nav.helse.arbeidsgiver.integrasjoner.dokarkiv.JournalpostResponse
+import no.nav.helse.arbeidsgiver.integrasjoner.oppgave.OPPGAVETYPE_FORDELINGSOPPGAVE
 import no.nav.helse.arbeidsgiver.integrasjoner.oppgave.OppgaveKlient
 import no.nav.helse.arbeidsgiver.integrasjoner.oppgave.OpprettOppgaveRequest
 import no.nav.helse.arbeidsgiver.integrasjoner.oppgave.OpprettOppgaveResponse
+import no.nav.helse.arbeidsgiver.integrasjoner.oppgave.Prioritet
+import no.nav.helse.arbeidsgiver.integrasjoner.oppgave.Status
 import no.nav.helse.arbeidsgiver.integrasjoner.pdl.*
 import no.nav.helse.arbeidsgiver.utils.loadFromResources
 import no.nav.helse.arbeidsgiver.web.auth.AltinnOrganisationsRepository
@@ -17,6 +20,7 @@ import no.nav.syfo.repository.InntektsmeldingRepositoryMock
 import no.nav.syfo.repository.InntektsmeldingService
 import org.koin.core.module.Module
 import org.koin.dsl.bind
+import java.time.LocalDate
 
 fun Module.mockExternalDependecies() {
     //single { MockAltinnRepo(get()) } bind AltinnOrganisationsRepository::class
@@ -42,8 +46,11 @@ fun Module.mockExternalDependecies() {
                         emptyList(),
                         emptyList(),
                         emptyList(),
+                        emptyList(),
+                        emptyList(),
                         emptyList()
                     ),
+
 
                     PdlHentFullPerson.PdlIdentResponse(listOf(PdlIdent("aktør-id", PdlIdent.PdlIdentGruppe.AKTORID))),
 
@@ -75,7 +82,16 @@ fun Module.mockExternalDependecies() {
             override suspend fun opprettOppgave(
                 opprettOppgaveRequest: OpprettOppgaveRequest,
                 callId: String
-            ): OpprettOppgaveResponse = OpprettOppgaveResponse(1234)
+            ): OpprettOppgaveResponse = OpprettOppgaveResponse(
+                1234,
+                "1234",
+                "SYK",
+                OPPGAVETYPE_FORDELINGSOPPGAVE,
+                1,
+                LocalDate.now(),
+                Prioritet.HOY,
+                Status.OPPRETTET
+            )
         }
     } bind OppgaveKlient::class
 
