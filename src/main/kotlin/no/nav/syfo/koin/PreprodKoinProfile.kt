@@ -119,7 +119,6 @@ fun preprodConfig(config: ApplicationConfig) = module {
         )
     } bind InntektsmeldingBehandler::class
 
-
     single { InngaaendeJournalConsumer(get()) } bind InngaaendeJournalConsumer::class
     single { BehandleInngaaendeJournalConsumer(get()) } bind BehandleInngaaendeJournalConsumer::class
     single { JournalConsumer(get(), get()) } bind JournalConsumer::class
