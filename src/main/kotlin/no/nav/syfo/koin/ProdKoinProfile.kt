@@ -167,15 +167,6 @@ fun prodConfig(config: ApplicationConfig) = module {
     } bind PdlClient::class
 
     single {
-        RestSTSAccessTokenProvider(
-            config.getString("service_user.username"),
-            config.getString("service_user.password"),
-            config.getString("sts_url"),
-            get()
-        )
-    } bind AccessTokenProvider::class
-
-    single {
         createServicePort(
             serviceUrl = config.getString("virksomhet_arbeidsfordeling_v1_endpointurl"),
             serviceClazz = ArbeidsfordelingV1::class.java

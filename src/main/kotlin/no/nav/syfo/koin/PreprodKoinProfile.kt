@@ -199,12 +199,6 @@ fun preprodConfig(config: ApplicationConfig) = module {
             get(),
             get()
         )
-//        RestSTSAccessTokenProvider(
-//            config.getString("service_user.username"),
-//            config.getString("service_user.password"),
-//            config.getString("sts_url"),
-//            get()
-//        )
     } bind PdlClient::class
 
     single {

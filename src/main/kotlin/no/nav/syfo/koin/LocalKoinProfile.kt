@@ -120,24 +120,6 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single { DatapakkePublisherJob(get(), get(), config.getString("datapakke.api_url"), config.getString("datapakke.id")) }
 
     single {
-        PdlClientImpl(
-            config.getString("pdl_url"),
-            get(),
-            get(),
-            get()
-        )
-    } bind PdlClient::class
-
-    single {
-        RestSTSAccessTokenProvider(
-            config.getString("service_user.username"),
-            config.getString("service_user.password"),
-            config.getString("sts_url"),
-            get()
-        )
-    } bind AccessTokenProvider::class
-
-    single {
         WsClientMock<ArbeidsfordelingV1>().createPort(
             config.getString("virksomhet_arbeidsfordeling_v1_endpointurl"),
             ArbeidsfordelingV1::class.java,
