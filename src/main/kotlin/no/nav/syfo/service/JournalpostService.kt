@@ -36,7 +36,7 @@ class JournalpostService(
                 fnr = inntektsmelding.fnr,
                 gsakId = gsakId,
                 journalpostId = inntektsmelding.journalpostId,
-                dokumentId = inngaaendeJournal.dokumentId,
+                dokumentId = inngaaendeJournal?.dokumentId ?: "",
                 behandlendeEnhetId = behandlendeEnhet,
                 arbeidsgiverOrgnummer = inntektsmelding.arbeidsgiverOrgnummer,
                 arbeidsgiverPrivat = inntektsmelding.arbeidsgiverPrivatFnr

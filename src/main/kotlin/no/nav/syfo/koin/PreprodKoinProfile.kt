@@ -6,6 +6,8 @@ import io.ktor.util.*
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
+import no.nav.helse.arbeidsgiver.integrasjoner.dokarkiv.graphql.DokarkivGraphQLClient
+import no.nav.helse.arbeidsgiver.integrasjoner.dokarkiv.graphql.DokarkivGraphQLClientImpl
 import no.nav.helse.arbeidsgiver.system.getString
 import no.nav.syfo.MetrikkVarsler
 import no.nav.syfo.behandling.InntektsmeldingBehandler
@@ -238,5 +240,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
             serviceClazz = BehandleInngaaendeJournalV1::class.java
         )
     } bind BehandleInngaaendeJournalV1::class
+    single { DokarkivGraphQLClientImpl(config.getString("inngaaendejournal_v1_graphql_endpointurl"),
+        get(),get(),get()) } bind DokarkivGraphQLClient::class
 }
 

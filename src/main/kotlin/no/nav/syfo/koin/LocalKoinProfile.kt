@@ -6,6 +6,8 @@ import io.ktor.util.*
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
+import no.nav.helse.arbeidsgiver.integrasjoner.dokarkiv.graphql.DokarkivGraphQLClient
+import no.nav.helse.arbeidsgiver.integrasjoner.dokarkiv.graphql.DokarkivGraphQLClientImpl
 import no.nav.helse.arbeidsgiver.system.getString
 import no.nav.syfo.behandling.InntektsmeldingBehandler
 import no.nav.syfo.config.OppgaveClientConfigProvider
@@ -143,13 +145,13 @@ fun localDevConfig(config: ApplicationConfig) = module {
             listOf(LogErrorHandler())
         )
     } bind JournalV2::class
-    single {
+ /*   single {
         WsClientMock<InngaaendeJournalV1>().createPort(
             config.getString("inngaaendejournal_v1_endpointurl"),
             InngaaendeJournalV1::class.java,
             listOf(LogErrorHandler())
         )
-    } bind InngaaendeJournalV1::class
+    } bind InngaaendeJournalV1::class*/
     single {
         WsClientMock<BehandleSakV2>().createPort(
             config.getString("virksomhet_behandlesak_v2_endpointurl"),
@@ -226,4 +228,6 @@ fun localDevConfig(config: ApplicationConfig) = module {
         )
     } bind AzureAdTokenConsumer::class
     single { ArbeidsgiverperiodeRepositoryImp(get(), get())} bind ArbeidsgiverperiodeRepository::class
+    single { DokarkivGraphQLClientImpl(config.getString("inngaaendejournal_v1_graphql_endpointurl"),
+        get(),get(),get()) } bind DokarkivGraphQLClient::class
 }

@@ -135,3 +135,5 @@ spec:
       value: https://datakatalog-api.dev.intern.nav.no/v1/datapackage
     - name: RUN_BACKGROUND_WORKERS
       value: "true"
+    - name: INNGAAENDEJOURNAL_V1_GRAPHQL_ENDPOINTURL
+      value: https://saf.dev-fss-pub.nais.io/graphql

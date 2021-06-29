@@ -23,15 +23,17 @@ class JournalConsumer(private val journalV2: JournalV2,
 
     var log = log()
 
-    fun hentInntektsmelding(journalpostId: String, inngaaendeJournal: InngaaendeJournal, arkivReferanse: String): Inntektsmelding {
+    fun hentInntektsmelding(journalpostId: String, inngaaendeJournal: InngaaendeJournal?, arkivReferanse: String): Inntektsmelding {
 
         val format = Variantformater()
         format.value = "ORIGINAL"
 
         val request = HentDokumentRequest()
-        request.journalpostId = journalpostId
-        request.dokumentId = inngaaendeJournal.dokumentId
-        request.variantformat = format
+        if (inngaaendeJournal != null) {
+            request.journalpostId = journalpostId
+            request.dokumentId = inngaaendeJournal.dokumentId
+            request.variantformat = format
+        }
 
         try {
             val inntektsmeldingRAW = journalV2.hentDokument(request).dokument

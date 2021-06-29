@@ -1,14 +1,10 @@
 package no.nav.syfo.domain
 
-import javax.xml.datatype.DatatypeFactory
-import javax.xml.datatype.XMLGregorianCalendar
+import java.time.LocalDateTime
+import no.nav.helse.arbeidsgiver.integrasjoner.dokarkiv.graphql.*
 
 data class InngaaendeJournal(
-        val dokumentId: String,
-        val status: JournalStatus,
-        val mottattDato: XMLGregorianCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar()
+    val dokumentId: String,
+    val status: Journalstatus,
+    val mottattDato: LocalDateTime?
 )
-
-enum class JournalStatus {
-    MIDLERTIDIG, ANNET, ENDELIG, UTGAAR
-}
