@@ -142,5 +142,3 @@ spec:
       value: "true"
     - name: PDL_URL
       value: https://pdl-api.nais.adeo.no/graphql
-    - name: STS_URL
-      value: https://security-token-service.nais.adeo.no/rest/v1/sts/token
