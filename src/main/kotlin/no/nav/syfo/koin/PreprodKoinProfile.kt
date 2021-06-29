@@ -194,7 +194,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
         PdlClientImpl(
             config.getString("pdl_url"),
             get(),
-            get(),
+            get(StringQualifier("proxyHttpClient")),
             get()
         )
     } bind PdlClient::class
