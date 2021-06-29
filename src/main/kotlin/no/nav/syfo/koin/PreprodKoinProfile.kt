@@ -199,17 +199,13 @@ fun preprodConfig(config: ApplicationConfig) = module {
             get(),
             get()
         )
-    } bind PdlClient::class
-
-    single {
         RestSTSAccessTokenProvider(
             config.getString("service_user.username"),
             config.getString("service_user.password"),
             config.getString("sts_url"),
             get()
         )
-    } bind AccessTokenProvider::class
-
+    } bind PdlClient::class
 
     single {
         createServicePort(
