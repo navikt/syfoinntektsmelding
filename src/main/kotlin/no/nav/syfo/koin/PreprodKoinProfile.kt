@@ -196,7 +196,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
             RestSTSAccessTokenProvider(
                 config.getString("service_user.username"),
                 config.getString("service_user.password"),
-                config.getString("sts_url"),
+                config.getString("security_token_service_token_url"),
                 get()
             ),
             get(),
