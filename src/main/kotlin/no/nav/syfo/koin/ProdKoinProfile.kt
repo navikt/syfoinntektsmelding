@@ -6,6 +6,7 @@ import io.ktor.util.*
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
+import no.nav.helse.arbeidsgiver.integrasjoner.RestSTSAccessTokenProvider
 import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClient
 import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClientImpl
 import no.nav.helse.arbeidsgiver.system.getString
@@ -158,8 +159,13 @@ fun prodConfig(config: ApplicationConfig) = module {
     single {
         PdlClientImpl(
             config.getString("pdl_url"),
+            RestSTSAccessTokenProvider(
+                config.getString("service_user.username"),
+                config.getString("service_user.password"),
+                config.getString("sts_url"),
+                get()
+            ),
             get(),
-            get(StringQualifier("proxyHttpClient")),
             get()
         )
     } bind PdlClient::class

@@ -6,6 +6,7 @@ import io.ktor.util.*
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
+import no.nav.helse.arbeidsgiver.integrasjoner.RestSTSAccessTokenProvider
 import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClient
 import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClientImpl
 import no.nav.helse.arbeidsgiver.system.getString
@@ -41,7 +42,6 @@ import no.nav.tjeneste.virksomhet.behandlesak.v2.BehandleSakV2
 import no.nav.tjeneste.virksomhet.inngaaendejournal.v1.binding.InngaaendeJournalV1
 import no.nav.tjeneste.virksomhet.journal.v2.binding.JournalV2
 import no.nav.tjeneste.virksomhet.oppgavebehandling.v3.binding.OppgavebehandlingV3
-import no.nav.tjeneste.virksomhet.person.v3.binding.PersonV3
 import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil
 import org.koin.core.qualifier.StringQualifier
 import org.koin.dsl.bind
@@ -193,8 +193,13 @@ fun preprodConfig(config: ApplicationConfig) = module {
     single {
         PdlClientImpl(
             config.getString("pdl_url"),
+            RestSTSAccessTokenProvider(
+                config.getString("service_user.username"),
+                config.getString("service_user.password"),
+                config.getString("sts_url"),
+                get()
+            ),
             get(),
-            get(StringQualifier("proxyHttpClient")),
             get()
         )
     } bind PdlClient::class
