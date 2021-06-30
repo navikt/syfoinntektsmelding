@@ -194,8 +194,8 @@ fun preprodConfig(config: ApplicationConfig) = module {
         PdlClientImpl(
             config.getString("pdl_url"),
             RestSTSAccessTokenProvider(
-                config.getString("SRVSYFOINNTEKTSMELDING_USERNAME"),
-                config.getString("SRVSYFOINNTEKTSMELDING_PASSWORD"),
+                config.getString("security_token.username"),
+                config.getString("security_token.password"),
                 config.getString("security_token_service_token_url"),
                 get()
             ),
