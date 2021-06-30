@@ -160,8 +160,8 @@ fun prodConfig(config: ApplicationConfig) = module {
         PdlClientImpl(
             config.getString("pdl_url"),
             RestSTSAccessTokenProvider(
-                config.getString("service_user.username"),
-                config.getString("service_user.password"),
+                config.getString("security_token.username"),
+                config.getString("security_token.password"),
                 config.getString("security_token_service_token_url"),
                 get()
             ),
