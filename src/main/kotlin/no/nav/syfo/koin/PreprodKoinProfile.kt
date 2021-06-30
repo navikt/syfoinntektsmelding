@@ -204,6 +204,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
         )
     } bind PdlClient::class
 
+
     single {
         createServicePort(
             serviceUrl = config.getString("virksomhet_arbeidsfordeling_v1_endpointurl"),
