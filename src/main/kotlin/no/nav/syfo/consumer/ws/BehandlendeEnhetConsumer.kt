@@ -1,26 +1,25 @@
 package no.nav.syfo.consumer.ws
 
+import kotlinx.coroutines.runBlocking
 import log
 import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClient
 import no.nav.syfo.behandling.BehandlendeEnhetFeiletException
 import no.nav.syfo.behandling.FinnBehandlendeEnhetListeUgyldigInputException
 import no.nav.syfo.behandling.IngenAktivEnhetException
+import no.nav.syfo.consumer.rest.norg.ArbeidsfordelingResponse
+import no.nav.syfo.consumer.rest.norg.ArbeidsfordelingRequest
+import no.nav.syfo.consumer.rest.norg.Norg2Client
 import no.nav.syfo.domain.GeografiskTilknytningData
 import no.nav.syfo.util.Metrikk
-import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.binding.ArbeidsfordelingV1
 import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.binding.FinnBehandlendeEnhetListeUgyldigInput
-import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.informasjon.ArbeidsfordelingKriterier
-import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.informasjon.Diskresjonskoder
-import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.informasjon.Enhetsstatus
-import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.informasjon.Geografi
-import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.informasjon.Tema
-import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.meldinger.FinnBehandlendeEnhetListeRequest
+import java.time.LocalDate
 
 const val SYKEPENGER_UTLAND = "4474"
+const val SYKEPENGER = "SYK";
 
 class BehandlendeEnhetConsumer(
     private val pdlClient: PdlClient,
-    private val arbeidsfordelingV1: ArbeidsfordelingV1,
+    private val arbeidsfordelingV1: Norg2Client,
     private val metrikk: Metrikk
 )  {
 
@@ -29,30 +28,20 @@ class BehandlendeEnhetConsumer(
     fun hentBehandlendeEnhet(fnr: String, uuid: String): String {
         val geografiskTilknytning = hentGeografiskTilknytning(fnr)
 
-        val tema = Tema()
-        tema.value = "SYK"
-
-        val disk = Diskresjonskoder()
-        disk.value = geografiskTilknytning.diskresjonskode
-
-        val geo = Geografi()
-        geo.value = geografiskTilknytning.geografiskTilknytning
-
-        val kriterier = ArbeidsfordelingKriterier()
-        kriterier.tema = tema
-        kriterier.diskresjonskode = null
-        kriterier.geografiskTilknytning = geo
-
-
-        if (geografiskTilknytning.diskresjonskode != null){
-            kriterier.diskresjonskode = disk
-        }
-
-        val request = FinnBehandlendeEnhetListeRequest()
-        request.arbeidsfordelingKriterier = kriterier
+        val criteria = ArbeidsfordelingRequest(
+            tema = SYKEPENGER,
+            diskresjonskode = geografiskTilknytning?.diskresjonskode,
+            geografiskOmraade = geografiskTilknytning?.geografiskTilknytning
+        )
 
         try {
-            val behandlendeEnhet = finnAktivBehandlendeEnhet(request, geografiskTilknytning)
+            val behandlendeEnhet = finnAktivBehandlendeEnhet(
+                runBlocking {
+                    arbeidsfordelingV1.hentAlleArbeidsfordelinger(criteria,"callId")
+                },
+                geografiskTilknytning?.geografiskTilknytning,
+                LocalDate.now()
+            )
             if (SYKEPENGER_UTLAND == behandlendeEnhet) {
                 metrikk.tellInntektsmeldingSykepengerUtland()
             }
@@ -68,20 +57,17 @@ class BehandlendeEnhetConsumer(
         }
     }
 
-    private fun finnAktivBehandlendeEnhet(
-        request: FinnBehandlendeEnhetListeRequest,
-        geografiskTilknytning: GeografiskTilknytningData
-    ): String {
-        val behandlendeEnhet = arbeidsfordelingV1.finnBehandlendeEnhetListe(request)
-            .behandlendeEnhetListe
+    fun finnAktivBehandlendeEnhet(arbeidsfordelinger: List<ArbeidsfordelingResponse>, geografiskTilknytning: String?, tidspunkt: LocalDate): String {
+        val behandlendeEnhet = arbeidsfordelinger
             .stream()
-            .filter { wsOrganisasjonsenhet -> Enhetsstatus.AKTIV == wsOrganisasjonsenhet.status }
-            .map { it.enhetId }
+            .filter {
+                tidspunkt >= it.gyldigFra && tidspunkt <= it.gyldigTil
+            }
+            .map { it.enhetNr }
             .findFirst()
-            .orElseThrow { IngenAktivEnhetException(geografiskTilknytning.geografiskTilknytning, null) }
+            .orElseThrow { IngenAktivEnhetException(geografiskTilknytning, null) }
         return behandlendeEnhet
     }
-
 
     fun hentGeografiskTilknytning(fnr: String): GeografiskTilknytningData {
         pdlClient.fullPerson(fnr).let {

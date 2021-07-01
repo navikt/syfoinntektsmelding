@@ -1,0 +1,32 @@
+package no.nav.syfo.consumer.rest.norg
+
+import io.ktor.client.*
+import io.ktor.client.request.*
+import io.ktor.http.*
+import kotlinx.coroutines.runBlocking
+import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
+
+/**
+ * Klient som henter alle arbeidsfordelinger
+ *
+ * https://confluence.adeo.no/pages/viewpage.action?pageId=178072651
+ *
+ * https://norg2.dev.adeo.no/norg2/swagger-ui.html#/arbeidsfordeling/findArbeidsfordelingByCriteriaUsingPOST
+ *
+ */
+class Norg2Client(
+    private val url: String, private val stsClient: AccessTokenProvider, private val httpClient: HttpClient
+)  {
+
+    suspend fun hentAlleArbeidsfordelinger(request: ArbeidsfordelingRequest, callId: String): List<ArbeidsfordelingResponse> {
+        val stsToken = stsClient.getToken()
+        return runBlocking {
+            httpClient.post<List<ArbeidsfordelingResponse>>(url) {
+                contentType(ContentType.Application.Json.withCharset(Charsets.UTF_8))
+                header("Authorization", "Bearer $stsToken")
+                header("X-Correlation-ID", callId)
+                body = request
+            }
+        }
+    }
+}
