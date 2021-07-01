@@ -52,14 +52,7 @@ class BehandlendeEnhetConsumer(
         request.arbeidsfordelingKriterier = kriterier
 
         try {
-            val behandlendeEnhet = arbeidsfordelingV1.finnBehandlendeEnhetListe(request)
-                    .behandlendeEnhetListe
-                    .stream()
-                    .filter { wsOrganisasjonsenhet -> Enhetsstatus.AKTIV == wsOrganisasjonsenhet.status }
-                    .map { it.enhetId }
-                    .findFirst()
-                    .orElseThrow { IngenAktivEnhetException(geografiskTilknytning.geografiskTilknytning, null) }
-
+            val behandlendeEnhet = finnAktivBehandlendeEnhet(request, geografiskTilknytning)
             if (SYKEPENGER_UTLAND == behandlendeEnhet) {
                 metrikk.tellInntektsmeldingSykepengerUtland()
             }
@@ -74,6 +67,21 @@ class BehandlendeEnhetConsumer(
             throw BehandlendeEnhetFeiletException(e)
         }
     }
+
+    private fun finnAktivBehandlendeEnhet(
+        request: FinnBehandlendeEnhetListeRequest,
+        geografiskTilknytning: GeografiskTilknytningData
+    ): String {
+        val behandlendeEnhet = arbeidsfordelingV1.finnBehandlendeEnhetListe(request)
+            .behandlendeEnhetListe
+            .stream()
+            .filter { wsOrganisasjonsenhet -> Enhetsstatus.AKTIV == wsOrganisasjonsenhet.status }
+            .map { it.enhetId }
+            .findFirst()
+            .orElseThrow { IngenAktivEnhetException(geografiskTilknytning.geografiskTilknytning, null) }
+        return behandlendeEnhet
+    }
+
 
     fun hentGeografiskTilknytning(fnr: String): GeografiskTilknytningData {
         pdlClient.fullPerson(fnr).let {
