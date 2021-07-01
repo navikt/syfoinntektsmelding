@@ -6,6 +6,9 @@ import io.ktor.util.*
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
+import no.nav.helse.arbeidsgiver.integrasjoner.RestSTSAccessTokenProvider
+import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClient
+import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClientImpl
 import no.nav.helse.arbeidsgiver.system.getString
 import no.nav.syfo.MetrikkVarsler
 import no.nav.syfo.behandling.InntektsmeldingBehandler
@@ -39,7 +42,6 @@ import no.nav.tjeneste.virksomhet.behandlesak.v2.BehandleSakV2
 import no.nav.tjeneste.virksomhet.inngaaendejournal.v1.binding.InngaaendeJournalV1
 import no.nav.tjeneste.virksomhet.journal.v2.binding.JournalV2
 import no.nav.tjeneste.virksomhet.oppgavebehandling.v3.binding.OppgavebehandlingV3
-import no.nav.tjeneste.virksomhet.person.v3.binding.PersonV3
 import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil
 import org.koin.core.qualifier.StringQualifier
 import org.koin.dsl.bind
@@ -116,7 +118,6 @@ fun preprodConfig(config: ApplicationConfig) = module {
         )
     } bind InntektsmeldingBehandler::class
 
-
     single { InngaaendeJournalConsumer(get()) } bind InngaaendeJournalConsumer::class
     single { BehandleInngaaendeJournalConsumer(get()) } bind BehandleInngaaendeJournalConsumer::class
     single { JournalConsumer(get(), get()) } bind JournalConsumer::class
@@ -190,11 +191,19 @@ fun preprodConfig(config: ApplicationConfig) = module {
     single { IMStatsRepoImpl(get()) } bind IMStatsRepo::class
 
     single {
-        createServicePort(
-            serviceUrl = config.getString("virksomhet_person_3_endpointurl"),
-            serviceClazz = PersonV3::class.java
+        PdlClientImpl(
+            config.getString("pdl_url"),
+            RestSTSAccessTokenProvider(
+                config.getString("security_token.username"),
+                config.getString("security_token.password"),
+                config.getString("security_token_service_token_url"),
+                get()
+            ),
+            get(),
+            get()
         )
-    } bind PersonV3::class
+    } bind PdlClient::class
+
 
     single {
         createServicePort(

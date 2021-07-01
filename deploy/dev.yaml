@@ -135,3 +135,5 @@ spec:
       value: https://datakatalog-api.dev.intern.nav.no/v1/datapackage
     - name: RUN_BACKGROUND_WORKERS
       value: "true"
+    - name: PDL_URL
+      value: https://pdl-api.nais.preprod.local/graphql

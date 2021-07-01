@@ -140,3 +140,5 @@ spec:
       value: fb74c8d14d9c579e05b0b4b587843e6b
     - name: RUN_BACKGROUND_WORKERS
       value: "true"
+    - name: PDL_URL
+      value: https://pdl-api.nais.adeo.no/graphql
