@@ -36,11 +36,11 @@ class Norg2ClientTest {
             norgClient = Norg2Client("url", mockStsClient, mockHttpClientWithResponse(lagResponse()))
             val arbeidsfordelinger = norgClient.hentAlleArbeidsfordelinger(lagRequest(), "123")
             assertThat(arbeidsfordelinger.size).isEqualTo(1)
-            assertThat(arbeidsfordelinger[0].gyldigFra).isEqualTo(LocalDate.of(2021,1,1))
+            assertThat(arbeidsfordelinger[0].gyldigFra).isEqualTo(LocalDate.of(2021, 1, 1))
         }
     }
 
-    private fun mockHttpClientWithResponse(oppgaveResponse: List<ArbeidsfordelingResponse>): HttpClient{
+    private fun mockHttpClientWithResponse(oppgaveResponse: List<ArbeidsfordelingResponse>): HttpClient {
         return HttpClient(MockEngine) {
             install(JsonFeature) {
                 serializer = JacksonSerializer {
@@ -57,7 +57,10 @@ class Norg2ClientTest {
             }
             engine {
                 addHandler {
-                    respond(jacksonObjectMapper().registerModule(JavaTimeModule()).writeValueAsString(oppgaveResponse), headers = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString())))
+                    respond(
+                        jacksonObjectMapper().registerModule(JavaTimeModule()).writeValueAsString(oppgaveResponse),
+                        headers = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
+                    )
                 }
             }
         }
@@ -66,19 +69,19 @@ class Norg2ClientTest {
     private fun lagResponse(): List<ArbeidsfordelingResponse> {
         val a = ArbeidsfordelingResponse(
             behandlingstema = "string",
-            behandlingstype= "string",
-            diskresjonskode= "string",
-            enhetId= 0,
-            enhetNavn= "string",
-            enhetNr= "string",
-            geografiskOmraade= "string",
-            gyldigFra= LocalDate.of(2021,1,1),
-            gyldigTil= LocalDate.of(2021,11,1),
-            id= 0,
-            oppgavetype= "string",
-            skalTilLokalkontor= true,
-            tema= "string",
-            temagruppe= "string"
+            behandlingstype = "string",
+            diskresjonskode = "string",
+            enhetId = 0,
+            enhetNavn = "string",
+            enhetNr = "string",
+            geografiskOmraade = "string",
+            gyldigFra = LocalDate.of(2021, 1, 1),
+            gyldigTil = LocalDate.of(2021, 11, 1),
+            id = 0,
+            oppgavetype = "string",
+            skalTilLokalkontor = true,
+            tema = "string",
+            temagruppe = "string"
         )
         return listOf(a)
     }

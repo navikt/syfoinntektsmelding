@@ -45,15 +45,15 @@ data class ArbeidsfordelingRequest(
 )
 
 data class ArbeidsfordelingResponse(
-    val behandlingstema: String,
-    val behandlingstype: String,
-    val diskresjonskode: String,
+    val behandlingstema: String? = null,
+    val behandlingstype: String? = null,
+    val diskresjonskode: String? = null,
     val enhetId: Int,
     val enhetNavn: String,
     val enhetNr: String,
-    val geografiskOmraade: String,
-    val gyldigFra: LocalDate,
-    val gyldigTil: LocalDate,
+    val geografiskOmraade: String? = null,
+    val gyldigFra: LocalDate? = null,
+    val gyldigTil: LocalDate? = null,
     val id: Int,
     val oppgavetype: String,
     val skalTilLokalkontor: Boolean,
