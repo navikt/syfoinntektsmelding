@@ -15,11 +15,11 @@ import java.time.LocalDate
  * https://norg2.dev.adeo.no/norg2/swagger-ui.html#/arbeidsfordeling/findArbeidsfordelingByCriteriaUsingPOST
  *
  */
-class Norg2Client(
+open class Norg2Client (
     private val url: String, private val stsClient: AccessTokenProvider, private val httpClient: HttpClient
 )  {
 
-    suspend fun hentAlleArbeidsfordelinger(request: ArbeidsfordelingRequest, callId: String?): List<ArbeidsfordelingResponse> {
+    open suspend fun hentAlleArbeidsfordelinger(request: ArbeidsfordelingRequest, callId: String?): List<ArbeidsfordelingResponse> {
         val stsToken = stsClient.getToken()
         return runBlocking {
             httpClient.post<List<ArbeidsfordelingResponse>>(url) {

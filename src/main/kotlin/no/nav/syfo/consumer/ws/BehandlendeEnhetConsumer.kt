@@ -20,7 +20,7 @@ const val SYKEPENGER = "SYK";
 
 class BehandlendeEnhetConsumer(
     private val pdlClient: PdlClient,
-    private val arbeidsfordelingV1: Norg2Client,
+    private val norg2Client: Norg2Client,
     private val metrikk: Metrikk
 )  {
 
@@ -40,7 +40,7 @@ class BehandlendeEnhetConsumer(
         try {
             val behandlendeEnhet = finnAktivBehandlendeEnhet(
                 runBlocking {
-                    arbeidsfordelingV1.hentAlleArbeidsfordelinger(criteria, callId)
+                    norg2Client.hentAlleArbeidsfordelinger(criteria, callId)
                 },
                 geografiskTilknytning?.geografiskTilknytning,
                 tidspunkt

@@ -6,10 +6,7 @@ import io.ktor.util.*
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
-import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
 import no.nav.helse.arbeidsgiver.integrasjoner.RestSTSAccessTokenProvider
-import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClient
-import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClientImpl
 import no.nav.helse.arbeidsgiver.system.getString
 import no.nav.syfo.behandling.InntektsmeldingBehandler
 import no.nav.syfo.config.OppgaveClientConfigProvider
@@ -119,13 +116,6 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single { IMStatsRepoImpl(get()) } bind IMStatsRepo::class
     single { DatapakkePublisherJob(get(), get(), config.getString("datapakke.api_url"), config.getString("datapakke.id")) }
 
-    single {
-        WsClientMock<ArbeidsfordelingV1>().createPort(
-            config.getString("virksomhet_arbeidsfordeling_v1_endpointurl"),
-            ArbeidsfordelingV1::class.java,
-            listOf(LogErrorHandler())
-        )
-    } bind ArbeidsfordelingV1::class
     single {
         WsClientMock<OppgavebehandlingV3>().createPort(
             config.getString("servicegateway_url"),
