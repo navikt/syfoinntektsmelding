@@ -19,7 +19,7 @@ class Norg2Client(
     private val url: String, private val stsClient: AccessTokenProvider, private val httpClient: HttpClient
 )  {
 
-    suspend fun hentAlleArbeidsfordelinger(request: ArbeidsfordelingRequest, callId: String): List<ArbeidsfordelingResponse> {
+    suspend fun hentAlleArbeidsfordelinger(request: ArbeidsfordelingRequest, callId: String?): List<ArbeidsfordelingResponse> {
         val stsToken = stsClient.getToken()
         return runBlocking {
             httpClient.post<List<ArbeidsfordelingResponse>>(url) {
