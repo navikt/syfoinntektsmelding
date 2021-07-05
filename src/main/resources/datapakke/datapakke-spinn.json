@@ -230,6 +230,143 @@
           ]
         }
       }
+    },
+    {
+      "title": "Tidsserier - Sykepenger - kvalitetsorientert",
+      "description": "Kvalitetsorientert statistikk for intektsmelding",
+      "specType": "echart",
+      "spec": {
+        "url": "",
+        "option": {
+          "tooltip": {
+            "trigger": "axis",
+            "axisPointer": {
+              "type": "cross",
+              "crossStyle": {
+                "color": "#999"
+              }
+            }
+          },
+          "legend": {
+            "left": "center",
+            "data": [
+              "Totalt antall",
+              "Ingen Arbeidsforhold",
+              "Har Arbeidsforhold",
+              "En Periode",
+              "To Perioder",
+              "Over To Perioder",
+              "Riktig FF",
+              "Feil FF",
+              "Ikke Fravær",
+              "Ikke Fravær med refusjon"
+            ]
+          },
+          "xAxis": {
+            "type": "category",
+            "name": "Uke",
+            "data": [
+              @ukeSerieKS
+            ]
+          },
+          "yAxis": [
+            {
+              "type": "value",
+              "name": "Antall"
+            }
+          ],
+          "series": [
+            {
+              "name": "Totalt antall",
+              "data": [
+                @totalKS
+              ],
+              "type": "line"
+            },
+            {
+              "data": [
+                @ingenArbeidKS
+              ],
+              "name": "Ingen Arbeidsforhold",
+              "type": "line"
+            },
+            {
+              "data": [
+                @harArbeidKS
+              ],
+              "name": "Har Arbeidsforhold",
+              "type": "line"
+            },
+            {
+              "data": [
+                @enPeriodeKS
+              ],
+              "name": "En Periode",
+              "type": "line"
+            },
+            {
+              "data": [
+                @toPerioderKS
+              ],
+              "name": "To Perioder",
+              "type": "line"
+            },
+            {
+              "data": [
+                @overToPerioderKS
+              ],
+              "name": "Over To Perioder",
+              "type": "line"
+            },
+            {
+              "data": [
+                @riktigFFKS
+              ],
+              "name": "Riktig FF",
+              "type": "line"
+            },
+            {
+              "data": [
+                @feilFFKS
+              ],
+              "name": "Feil FF",
+              "type": "line"
+            },
+            {
+              "data": [
+                @ikkeFravaerKS
+              ],
+              "name": "Ikke Fravær",
+              "type": "line"
+            },
+            {
+              "data": [
+                @ikkeFravaerMedRefKS
+              ],
+              "name": "Ikke Fravær med refusjon",
+              "type": "line"
+            }
+          ],
+          "toolbox": {
+            "show": true,
+            "left": "center",
+            "top": "bottom",
+            "feature": {
+              "magicType": {
+                "type": [
+                  "line",
+                  "bar"
+                ]
+              },
+              "dataView": {
+                "show": true,
+                "readOnly": true
+              },
+              "saveAsImage": {}
+            }
+          }
+        }
+      }
     }
   ]
 }

@@ -54,6 +54,7 @@ class DatapakkePublisherJob(
 
         val arsakStats = imRepo.getArsakStats()
 
+        val timeseriesKS = imRepo.getWeeklyQualityStats().sortedBy { it.weekNumber }
 
         val populatedDatapakke = datapakkeTemplate
             .replace("@ukeSerie", timeseries.map { it.weekNumber }.joinToString())
@@ -82,6 +83,19 @@ class DatapakkePublisherJob(
                 .filter { it.arsak.isNotBlank() }
                 .map { //language=JSON
                 """{"value": ${it.antall}, "name": "${it.arsak}"}""" }.joinToString())
+
+            .replace("@ukeSerieKS", timeseriesKS.map { it.weekNumber }.joinToString())
+            .replace("@totalKS", timeseriesKS.map { it.total }.joinToString())
+            .replace("@ingenArbeidKS", timeseriesKS.map { it.ingen_arbeidsforhold_id }.joinToString())
+            .replace("@harArbeidKS", timeseriesKS.map { it.har_arbeidsforhold_id }.joinToString())
+            .replace("@enPeriodeKS", timeseriesKS.map { it.en_periode }.joinToString())
+            .replace("@toPerioderKS", timeseriesKS.map { it.to_perioder }.joinToString())
+            .replace("@overToPerioder", timeseriesKS.map { it.over_to_perioder }.joinToString())
+            .replace("@riktigFFKS", timeseriesKS.map { it.riktig_ff }.joinToString())
+            .replace("@feilFFKS", timeseriesKS.map { it.feil_ff }.joinToString())
+            .replace("@ikkeFravaerKS", timeseriesKS.map { it.ingen_fravaer }.joinToString())
+            .replace("@ikkeFravaerMedRefKS", timeseriesKS.map { it.ingen_fravaer_med_refusjon }.joinToString())
+
 
         runBlocking {
             val response = httpClient.put<HttpResponse>("$datapakkeApiUrl/$datapakkeId") {

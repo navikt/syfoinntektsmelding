@@ -34,11 +34,27 @@ data class ArsakStats(
     val antall: Int
 )
 
+data class IMWeeklyQualityStats(
+    val weekNumber: Int,
+
+    val total: Int,
+    val ingen_arbeidsforhold_id: Int,
+    val har_arbeidsforhold_id: Int,
+    val en_periode: Int,
+    val to_perioder: Int,
+    val over_to_perioder: Int,
+    val riktig_ff: Int,
+    val feil_ff: Int,
+    val ingen_fravaer: Int,
+    val ingen_fravaer_med_refusjon: Int
+)
+
 
 interface IMStatsRepo {
     fun getWeeklyStats(): List<IMWeeklyStats>
     fun getLPSStats(): List<LPSStats>
     fun getArsakStats(): List<ArsakStats>
+    fun getWeeklyQualityStats(): List<IMWeeklyQualityStats>
 }
 
 /**
@@ -150,5 +166,64 @@ class IMStatsRepoImpl (
             return returnValue
         }
     }
+
+
+    override fun getWeeklyQualityStats(): List<IMWeeklyQualityStats> {
+        val query = """
+            select
+                extract('week' from behandlet) as uke,
+                count(*) as total,
+                count(*) filter (where (data ->> 'arbeidsforholdId') is null or (data ->> 'arbeidsforholdId') = '') as ingen_arbeidsforhold_id, -- K1A
+                    count(*) filter (where (data ->> 'arbeidsforholdId') is not null and (data ->> 'arbeidsforholdId') != '') as har_arbeidsforhold_id, -- K1B
+                    count(*) filter (where JSONB_ARRAY_LENGTH(data -> 'arbeidsgiverperioder') = 1 and data ->> 'begrunnelseRedusert' != 'IkkeFravaer') as en_periode, -- K2A
+                    count(*) filter (where JSONB_ARRAY_LENGTH(data -> 'arbeidsgiverperioder') = 2 and data ->> 'begrunnelseRedusert' != 'IkkeFravaer') as to_perioder, -- K2B
+                    count(*) filter (where JSONB_ARRAY_LENGTH(data -> 'arbeidsgiverperioder') > 2 and data ->> 'begrunnelseRedusert' != 'IkkeFravaer') as over_to_perioder, -- K2C
+                    count(*) filter (
+                    where (
+                        date(data ->> 'førsteFraværsdag') - date((data -> 'arbeidsgiverperioder' ->> -1)::jsonb ->> 'tom') < 2 and
+                        data ->> 'begrunnelseRedusert' != 'IkkeFravaer' and
+                        date(data ->> 'førsteFraværsdag') = date((data -> 'arbeidsgiverperioder' ->> -1)::jsonb ->> 'fom')
+                      )
+                    ) as riktig_ff,-- K4A
+                    count(*) filter (
+                    where (
+                        date(data ->> 'førsteFraværsdag') - date((data -> 'arbeidsgiverperioder' ->> -1)::jsonb ->> 'tom') < 2 and
+                        data ->> 'begrunnelseRedusert' != 'IkkeFravaer' and
+                        date(data ->> 'førsteFraværsdag') != date((data -> 'arbeidsgiverperioder' ->> -1)::jsonb ->> 'fom')
+                      )
+                    ) as feil_ff,-- K4B
+                    count(*) filter (where (data -> 'refusjon' ->> 'beloepPrMnd')::numeric = 0 and data ->> 'begrunnelseRedusert' = 'IkkeFravaer') as ingen_fravaer, -- K6A
+                    count(*) filter (where (data -> 'refusjon' ->> 'beloepPrMnd')::numeric > 0 and data ->> 'begrunnelseRedusert' = 'IkkeFravaer') as ingen_fravaer_med_refusjon -- K6B
+            from inntektsmelding
+            group by extract('week' from behandlet);
+
+        """.trimIndent()
+
+        ds.connection.use {
+            val res = it.prepareStatement(query).executeQuery()
+            val returnValue = ArrayList<IMWeeklyQualityStats>()
+            while (res.next()) {
+                returnValue.add(
+                    IMWeeklyQualityStats(
+                        res.getInt("uke"),
+                        res.getInt("total"),
+                        res.getInt("ingen_arbeidsforhold_id"),
+                        res.getInt("har_arbeidsforhold_id"),
+                        res.getInt("en_periode"),
+                        res.getInt("to_perioder"),
+                        res.getInt("over_to_perioder"),
+                        res.getInt("riktig_ff"),
+                        res.getInt("feil_ff"),
+                        res.getInt("ingen_fravaer"),
+                        res.getInt("ingen_fravaer_med_refusjon"),
+                    )
+                )
+            }
+
+            return returnValue
+        }
+    }
+
+
 }
 
