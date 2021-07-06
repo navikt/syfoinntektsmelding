@@ -96,6 +96,12 @@ class DatapakkePublisherJob(
             .replace("@ikkeFravaerKS", timeseriesKS.map { it.ingen_fravaer }.joinToString())
             .replace("@ikkeFravaerMedRefKS", timeseriesKS.map { it.ingen_fravaer_med_refusjon }.joinToString())
 
+            .replace("@lpsAntallKS", filteredLpsStats.map { //language=JSON
+                """{"value": ${it.antallInntektsmeldinger}, "name": "${it.lpsNavn}"}""" }.joinToString())
+
+            .replace("@lpsAntallVersjonerKS", filteredLpsStats.map { //language=JSON
+                """{"value": ${it.antallVersjoner}, "name": "${it.lpsNavn}"}""" }.joinToString())
+
 
         runBlocking {
             val response = httpClient.put<HttpResponse>("$datapakkeApiUrl/$datapakkeId") {
