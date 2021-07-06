@@ -102,6 +102,13 @@ class DatapakkePublisherJob(
             .replace("@lpsAntallVersjonerKS", filteredLpsStats.map { //language=JSON
                 """{"value": ${it.antallVersjoner}, "name": "${it.lpsNavn}"}""" }.joinToString())
 
+            .replace("@lpsAntallNullFra", filteredLpsStats.map { //language=JSON
+                """{"value": ${it.antallInntektsmeldinger}, "name": "${it.lpsNavn}"}""" }.joinToString())
+
+            .replace("@lpsAntallVersjonerNullFra", filteredLpsStats.map { //language=JSON
+                """{"value": ${it.antallVersjoner}, "name": "${it.lpsNavn}"}""" }.joinToString())
+
+
 
         runBlocking {
             val response = httpClient.put<HttpResponse>("$datapakkeApiUrl/$datapakkeId") {

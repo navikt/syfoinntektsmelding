@@ -421,6 +421,60 @@
           ]
         }
       }
+    },
+
+    {
+      "title": "Antall IM for 0-fravær",
+      "description": "Siste 7 dager",
+      "specType": "echart",
+      "spec": {
+        "url": "",
+        "option": {
+          "tooltip": {
+            "trigger": "item"
+          },
+          "series": [
+            {
+              "name": "Antall IM",
+              "type": "pie",
+              "radius": "50%",
+              "center": [
+                "25%",
+                "50%"
+              ],
+              "data": [
+                @lpsAntallIMNullFra
+              ],
+              "emphasis": {
+                "itemStyle": {
+                  "shadowBlur": 10,
+                  "shadowOffsetX": 0,
+                  "shadowColor": "rgba(0, 0, 0, 0.5)"
+                }
+              }
+            },
+            {
+              "name": "Versjoner",
+              "type": "pie",
+              "radius": "40%",
+              "center": [
+                "75%",
+                "50%"
+              ],
+              "data": [
+                @lpsAntallVersjonerNullFra
+              ],
+              "emphasis": {
+                "itemStyle": {
+                  "shadowBlur": 10,
+                  "shadowOffsetX": 0,
+                  "shadowColor": "rgba(0, 0, 0, 0.5)"
+                }
+              }
+            }
+          ]
+        }
+      }
     }
   ]
 }
