@@ -57,6 +57,7 @@ interface IMStatsRepo {
     fun getWeeklyQualityStats(): List<IMWeeklyQualityStats>
     fun getFeilFFPerLPS():List<LPSStats>
     fun getIngenFravaerPerLPS():List<LPSStats>
+    fun getBackToBackPerLPS():List<LPSStats>
 }
 
 /**
@@ -291,6 +292,38 @@ class IMStatsRepoImpl (
 
             return returnValue
         }
+    }
+
+    override fun getBackToBackPerLPS(): List<LPSStats> {
+        val query = """
+            select
+                   count(*) as antall_im,
+                   count(data -> 'avsenderSystem' ->> 'versjon') as antall_versjoner,
+                   data -> 'avsenderSystem' ->> 'navn' as lps_navn
+            from inntektsmelding i
+            where
+                    JSONB_ARRAY_LENGTH(data -> 'arbeidsgiverperioder') = 2 and
+                    (date(data -> 'arbeidsgiverperioder' -> 0 ->> 'tom') - date(data -> 'arbeidsgiverperioder' -> 1 ->> 'fom')) = -1 and
+                                data -> 'arbeidsgiverperioder' -> 1 ->> 'fom'  = data ->> 'førsteFraværsdag'
+            group by DATA -> 'avsenderSystem' ->> 'navn';
+        """.trimIndent()
+
+        ds.connection.use {
+            val res = it.prepareStatement(query).executeQuery()
+            val returnValue = ArrayList<LPSStats>()
+            while (res.next()) {
+                returnValue.add(
+                    LPSStats(
+                        res.getString("lps_navn"),
+                        res.getInt("antall_versjoner"),
+                        res.getInt("antall_im")
+                    )
+                )
+            }
+
+            return returnValue
+        }
+
     }
 
 }

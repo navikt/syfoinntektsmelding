@@ -56,6 +56,21 @@ class DatapakkePublisherJob(
 
         val timeseriesKS = imRepo.getWeeklyQualityStats().sortedBy { it.weekNumber }
 
+        val lpsFeilFF = imRepo.getFeilFFPerLPS()
+            .filter { !it.lpsNavn.startsWith("Altinn") }
+            .filter { !it.lpsNavn.startsWith("SAP") }
+            .toMutableList()
+
+        val lpsIngenFravaer = imRepo.getIngenFravaerPerLPS()
+            .filter { !it.lpsNavn.startsWith("Altinn") }
+            .filter { !it.lpsNavn.startsWith("SAP") }
+            .toMutableList()
+
+        val lpsBackToBack = imRepo.getBackToBackPerLPS()
+            .filter { !it.lpsNavn.startsWith("Altinn") }
+            .filter { !it.lpsNavn.startsWith("SAP") }
+            .toMutableList()
+
         val populatedDatapakke = datapakkeTemplate
             .replace("@ukeSerie", timeseries.map { it.weekNumber }.joinToString())
             .replace("@total", timeseries.map { it.total }.joinToString())
@@ -96,18 +111,23 @@ class DatapakkePublisherJob(
             .replace("@ikkeFravaerKS", timeseriesKS.map { it.ingen_fravaer }.joinToString())
             .replace("@ikkeFravaerMedRefKS", timeseriesKS.map { it.ingen_fravaer_med_refusjon }.joinToString())
 
-            .replace("@lpsAntallKS", filteredLpsStats.map { //language=JSON
+            .replace("@lpsAntallKS", lpsFeilFF.map { //language=JSON
                 """{"value": ${it.antallInntektsmeldinger}, "name": "${it.lpsNavn}"}""" }.joinToString())
 
-            .replace("@lpsAntallVersjonerKS", filteredLpsStats.map { //language=JSON
+            .replace("@lpsAntallVersjonerKS", lpsFeilFF.map { //language=JSON
                 """{"value": ${it.antallVersjoner}, "name": "${it.lpsNavn}"}""" }.joinToString())
 
-            .replace("@lpsAntallNullFra", filteredLpsStats.map { //language=JSON
+            .replace("@lpsAntallNullFra", lpsIngenFravaer.map { //language=JSON
                 """{"value": ${it.antallInntektsmeldinger}, "name": "${it.lpsNavn}"}""" }.joinToString())
 
-            .replace("@lpsAntallVersjonerNullFra", filteredLpsStats.map { //language=JSON
+            .replace("@lpsAntallVersjonerNullFra", lpsIngenFravaer.map { //language=JSON
                 """{"value": ${it.antallVersjoner}, "name": "${it.lpsNavn}"}""" }.joinToString())
 
+            .replace("@lpsAntallBackToBack", lpsBackToBack.map { //language=JSON
+                """{"value": ${it.antallInntektsmeldinger}, "name": "${it.lpsNavn}"}""" }.joinToString())
+
+            .replace("@lpsAntallVersjonerBackToBack", lpsBackToBack.map { //language=JSON
+                """{"value": ${it.antallVersjoner}, "name": "${it.lpsNavn}"}""" }.joinToString())
 
 
         runBlocking {
