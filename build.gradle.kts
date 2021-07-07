@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val micrometerVersion = "1.6.3"
 val flywayVersion = "6.1.4"
-val cxfVersion = "3.4.2"
+val cxfVersion = "3.4.4"
 val swaggerVersion = "2.10.0"
 val kotlinVersion = "1.4.10"
 val hikariVersion = "3.4.5"
@@ -202,8 +202,8 @@ dependencies {
     testAnnotationProcessor("org.projectlombok:lombok:1.18.18")*/
     implementation("com.google.guava:guava:30.0-jre")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3")
-    implementation("io.confluent:kafka-streams-avro-serde:6.1.1")
-    implementation("io.confluent:kafka-avro-serializer:6.1.1")
+    implementation("io.confluent:kafka-streams-avro-serde:6.1.2")
+    implementation("io.confluent:kafka-avro-serializer:6.1.2")
     implementation("org.apache.kafka:kafka-streams:2.8.0")
 
 
