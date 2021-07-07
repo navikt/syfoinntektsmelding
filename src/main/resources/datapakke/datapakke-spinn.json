@@ -528,6 +528,48 @@
           ]
         }
       }
+    },
+    {
+      "title": "Antall IM for Insendingstidspunt opp mot FF",
+      "description": "Antall IM / antall dager melleom insendingstidspunkt og FF",
+      "specType": "echart",
+      "spec": {
+        "url": "",
+        "option": {
+          "xAxis": {},
+          "yAxis": {},
+          "legend": {
+            "data": [
+              "Forsinkelse fra Altinn",
+              "Forsinkelse fra LPS"
+            ]
+          },
+          "tooltip": {
+            "trigger": "item",
+            "formatter": function (params) {
+              return 'Dager fra ff: ' + params.data[0] + '<br>Antall IM: ' + params.data[1];
+            }
+          },
+          "series": [
+            {
+              "name": "Forsinkelse fra Altinn",
+              "symbolSize": 20,
+              "data": [
+                @antallForsinketFraAltinn
+              ],
+              "type": "scatter"
+            },
+            {
+              "name": "Forsinkelse fra LPS",
+              "symbolSize": 20,
+              "data": [
+                @antallForsinketFraLPS
+              ],
+              "type": "scatter"
+            }
+          ]
+        }
+      }
     }
   ]
 }

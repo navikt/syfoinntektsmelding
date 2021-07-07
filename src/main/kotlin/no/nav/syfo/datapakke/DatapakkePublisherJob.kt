@@ -71,6 +71,8 @@ class DatapakkePublisherJob(
             .filter { !it.lpsNavn.startsWith("SAP") }
             .toMutableList()
 
+        val forsinket = imRepo.getForsinkelseStats()
+
         val populatedDatapakke = datapakkeTemplate
             .replace("@ukeSerie", timeseries.map { it.weekNumber }.joinToString())
             .replace("@total", timeseries.map { it.total }.joinToString())
@@ -128,6 +130,12 @@ class DatapakkePublisherJob(
 
             .replace("@lpsAntallVersjonerBackToBack", lpsBackToBack.map { //language=JSON
                 """{"value": ${it.antallVersjoner}, "name": "${it.lpsNavn}"}""" }.joinToString())
+
+            .replace("@antallForsinketFraAltinn", forsinket.filter { it.antall_med_forsinkelsen_altinn != 0 }.map { //language=JSON
+                """{"value": ${it.antall_med_forsinkelsen_altinn}, "dager_etter_ff": "${it.dager_etter_ff}"}""" }.joinToString())
+
+            .replace("@antallForsinketFraLPS", forsinket.filter { it.antall_med_forsinkelsen_lps != 0 }.map { //language=JSON
+                """{"value": ${it.antall_med_forsinkelsen_altinn}, "dager_etter_ff": "${it.dager_etter_ff}"}""" }.joinToString())
 
 
         runBlocking {

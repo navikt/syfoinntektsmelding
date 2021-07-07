@@ -49,21 +49,28 @@ data class IMWeeklyQualityStats(
     val ingen_fravaer_med_refusjon: Int
 )
 
+data class ForsinkelseStats(
+    val antall_med_forsinkelsen_altinn: Int,
+    val antall_med_forsinkelsen_lps: Int,
+    val dager_etter_ff: Int
+)
+
 
 interface IMStatsRepo {
     fun getWeeklyStats(): List<IMWeeklyStats>
     fun getLPSStats(): List<LPSStats>
     fun getArsakStats(): List<ArsakStats>
     fun getWeeklyQualityStats(): List<IMWeeklyQualityStats>
-    fun getFeilFFPerLPS():List<LPSStats>
-    fun getIngenFravaerPerLPS():List<LPSStats>
-    fun getBackToBackPerLPS():List<LPSStats>
+    fun getFeilFFPerLPS(): List<LPSStats>
+    fun getIngenFravaerPerLPS(): List<LPSStats>
+    fun getBackToBackPerLPS(): List<LPSStats>
+    fun getForsinkelseStats(): List<ForsinkelseStats>
 }
 
 /**
  * Implementasjon av https://confluence.adeo.no/display/PH/Inntektsmeldingen+-+datapakke
  */
-class IMStatsRepoImpl (
+class IMStatsRepoImpl(
     private val ds: DataSource
 ) : IMStatsRepo {
 
@@ -326,5 +333,37 @@ class IMStatsRepoImpl (
 
     }
 
+    override fun getForsinkelseStats(): List<ForsinkelseStats> {
+
+        val query = """
+            select
+                count(*) filter (where data -> 'avsenderSystem' ->> 'navn' = 'AltinnPortal') as antall_med_forsinkelsen_altinn, -- K3A
+                count(*) filter (where data -> 'avsenderSystem' ->> 'navn' != 'AltinnPortal') as antall_med_forsinkelsen_lps, --K3B
+                DATE_PART('day', behandlet - DATE(data ->> 'førsteFraværsdag')) as dager_etter_ff
+            from
+                inntektsmelding i2
+            where
+                    data ->> 'førsteFraværsdag' = data -> 'arbeidsgiverperioder' -> 0 ->> 'fom' and
+                    (date(data -> 'arbeidsgiverperioder' -> 0 ->> 'tom') - date(data -> 'arbeidsgiverperioder' -> 0 ->> 'fom')) = 15
+            GROUP BY
+                DATE_PART('day', behandlet - DATE(data ->> 'førsteFraværsdag'));
+        """.trimIndent()
+
+        ds.connection.use {
+            val res = it.prepareStatement(query).executeQuery()
+            val returnValue = ArrayList<ForsinkelseStats>()
+            while (res.next()) {
+                returnValue.add(
+                    ForsinkelseStats(
+                        res.getInt("antall_med_forsinkelsen_altinn"),
+                        res.getInt("antall_med_forsinkelsen_lps"),
+                        res.getInt("dager_etter_ff")
+                    )
+                )
+            }
+
+            return returnValue
+        }
+    }
 }
 
