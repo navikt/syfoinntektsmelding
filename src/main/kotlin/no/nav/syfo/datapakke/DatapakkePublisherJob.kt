@@ -54,6 +54,24 @@ class DatapakkePublisherJob(
 
         val arsakStats = imRepo.getArsakStats()
 
+        val timeseriesKS = imRepo.getWeeklyQualityStats().sortedBy { it.weekNumber }
+
+        val lpsFeilFF = imRepo.getFeilFFPerLPS()
+            .filter { !it.lpsNavn.startsWith("Altinn") }
+            .filter { !it.lpsNavn.startsWith("SAP") }
+            .toMutableList()
+
+        val lpsIngenFravaer = imRepo.getIngenFravaerPerLPS()
+            .filter { !it.lpsNavn.startsWith("Altinn") }
+            .filter { !it.lpsNavn.startsWith("SAP") }
+            .toMutableList()
+
+        val lpsBackToBack = imRepo.getBackToBackPerLPS()
+            .filter { !it.lpsNavn.startsWith("Altinn") }
+            .filter { !it.lpsNavn.startsWith("SAP") }
+            .toMutableList()
+
+        val forsinket = imRepo.getForsinkelseStats()
 
         val populatedDatapakke = datapakkeTemplate
             .replace("@ukeSerie", timeseries.map { it.weekNumber }.joinToString())
@@ -82,6 +100,43 @@ class DatapakkePublisherJob(
                 .filter { it.arsak.isNotBlank() }
                 .map { //language=JSON
                 """{"value": ${it.antall}, "name": "${it.arsak}"}""" }.joinToString())
+
+            .replace("@ukeSerieKS", timeseriesKS.map { it.weekNumber }.joinToString())
+            .replace("@totalKS", timeseriesKS.map { it.total }.joinToString())
+            .replace("@ingenArbeidKS", timeseriesKS.map { it.ingen_arbeidsforhold_id }.joinToString())
+            .replace("@harArbeidKS", timeseriesKS.map { it.har_arbeidsforhold_id }.joinToString())
+            .replace("@enPeriodeKS", timeseriesKS.map { it.en_periode }.joinToString())
+            .replace("@toPerioderKS", timeseriesKS.map { it.to_perioder }.joinToString())
+            .replace("@overToPerioder", timeseriesKS.map { it.over_to_perioder }.joinToString())
+            .replace("@riktigFFKS", timeseriesKS.map { it.riktig_ff }.joinToString())
+            .replace("@feilFFKS", timeseriesKS.map { it.feil_ff }.joinToString())
+            .replace("@ikkeFravaerKS", timeseriesKS.map { it.ingen_fravaer }.joinToString())
+            .replace("@ikkeFravaerMedRefKS", timeseriesKS.map { it.ingen_fravaer_med_refusjon }.joinToString())
+
+            .replace("@lpsAntallKS", lpsFeilFF.map { //language=JSON
+                """{"value": ${it.antallInntektsmeldinger}, "name": "${it.lpsNavn}"}""" }.joinToString())
+
+            .replace("@lpsAntallVersjonerKS", lpsFeilFF.map { //language=JSON
+                """{"value": ${it.antallVersjoner}, "name": "${it.lpsNavn}"}""" }.joinToString())
+
+            .replace("@lpsAntallNullFra", lpsIngenFravaer.map { //language=JSON
+                """{"value": ${it.antallInntektsmeldinger}, "name": "${it.lpsNavn}"}""" }.joinToString())
+
+            .replace("@lpsAntallVersjonerNullFra", lpsIngenFravaer.map { //language=JSON
+                """{"value": ${it.antallVersjoner}, "name": "${it.lpsNavn}"}""" }.joinToString())
+
+            .replace("@lpsAntallBackToBack", lpsBackToBack.map { //language=JSON
+                """{"value": ${it.antallInntektsmeldinger}, "name": "${it.lpsNavn}"}""" }.joinToString())
+
+            .replace("@lpsAntallVersjonerBackToBack", lpsBackToBack.map { //language=JSON
+                """{"value": ${it.antallVersjoner}, "name": "${it.lpsNavn}"}""" }.joinToString())
+
+            .replace("@antallForsinketFraAltinn", forsinket.filter { it.antall_med_forsinkelsen_altinn != 0 }.map { //language=JSON
+                """{"value": ${it.antall_med_forsinkelsen_altinn}, "dager_etter_ff": "${it.dager_etter_ff}"}""" }.joinToString())
+
+            .replace("@antallForsinketFraLPS", forsinket.filter { it.antall_med_forsinkelsen_lps != 0 }.map { //language=JSON
+                """{"value": ${it.antall_med_forsinkelsen_altinn}, "dager_etter_ff": "${it.dager_etter_ff}"}""" }.joinToString())
+
 
         runBlocking {
             val response = httpClient.put<HttpResponse>("$datapakkeApiUrl/$datapakkeId") {
