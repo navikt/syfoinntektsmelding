@@ -88,7 +88,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
             get()
         )
     } bind JoarkInntektsmeldingHendelseProsessor::class
-    single { ArbeidsgiverperiodeRepositoryImp(get(), get())} bind ArbeidsgiverperiodeRepository::class
+    single { ArbeidsgiverperiodeRepositoryImp(get())} bind ArbeidsgiverperiodeRepository::class
 
     single {
         AktorConsumer(

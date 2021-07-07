@@ -24,10 +24,18 @@ ignore:
         expires: 2021-07-18T11:41:41.327Z
   SNYK-JAVA-ORGCODEHAUSJACKSON-534878:
     - '*':
-        reason: "Ingen fix tilgjengelig"
+        reason: Ingen fix tilgjengelig
         expires: 2021-07-18T11:42:25.874Z
   SNYK-JAVA-COMNIMBUSDS-1243767:
     - '*':
-        reason: "Ingen fix tilgjengelig"
+        reason: Ingen fix tilgjengelig
         expires: 2021-07-18T11:42:25.874Z
+  SNYK-JAVA-IONETTY-1042268:
+    - '*':
+        reason: None Given
+        expires: 2021-08-06T14:41:18.933Z
+  SNYK-JAVA-ORGBOUNCYCASTLE-1296075:
+    - '*':
+        reason: None Given
+        expires: 2021-08-06T14:46:34.769Z
 patch: {}

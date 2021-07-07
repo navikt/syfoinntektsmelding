@@ -5,7 +5,6 @@ import no.nav.syfo.dto.UtsattOppgaveEntitet
 import java.sql.ResultSet
 import java.sql.Timestamp
 import java.time.LocalDateTime
-import java.util.*
 import javax.sql.DataSource
 
 
@@ -70,44 +69,67 @@ class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepo
         timeout: LocalDateTime,
         tilstand: Tilstand
     ): List<UtsattOppgaveEntitet> {
-        val queryString = " SELECT * FROM UTSATT_OPPGAVE WHERE TIMEOUT < '${Timestamp.valueOf(timeout)}' AND TILSTAND = '${tilstand.name}';"
+        val queryString = " SELECT * FROM UTSATT_OPPGAVE WHERE TIMEOUT < ? AND TILSTAND = ?;"
         val utsattoppgaver = ArrayList<UtsattOppgaveEntitet>()
         ds.connection.use {
-            val res = it.prepareStatement(queryString).executeQuery()
+            val prepareStatement = it.prepareStatement(queryString)
+            prepareStatement.setTimestamp(1, Timestamp.valueOf(timeout))
+            prepareStatement.setString(2, tilstand.name)
+            val res = prepareStatement.executeQuery()
             return resultLoop(res, utsattoppgaver)
         }
     }
 
-    override fun opprett(utsattOppgave: UtsattOppgaveEntitet): UtsattOppgaveEntitet {
+    override fun opprett(uo: UtsattOppgaveEntitet): UtsattOppgaveEntitet {
         val insertStatement =
             """INSERT INTO UTSATT_OPPGAVE (INNTEKTSMELDING_ID, ARKIVREFERANSE, FNR, AKTOR_ID, SAK_ID, JOURNALPOST_ID, TIMEOUT, TILSTAND)
-        VALUES ('${utsattOppgave.inntektsmeldingId}', '${utsattOppgave.arkivreferanse}', '${utsattOppgave.fnr}', '${utsattOppgave.aktørId}', '${utsattOppgave.sakId}', '${utsattOppgave.journalpostId}', '${Timestamp.valueOf(utsattOppgave.timeout)}', '${utsattOppgave.tilstand.name}')
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         RETURNING *;""".trimMargin()
 
         val utsattOppgaver = ArrayList<UtsattOppgaveEntitet>()
 
         ds.connection.use {
-            val res = it.prepareStatement(insertStatement).executeQuery()
+            val ps = it.prepareStatement(insertStatement)
+            ps.setString(1, uo.inntektsmeldingId)
+            ps.setString(2, uo.arkivreferanse)
+            ps.setString(3, uo.fnr)
+            ps.setString(4, uo.aktørId)
+            ps.setString(5, uo.sakId)
+            ps.setString(6, uo.journalpostId)
+            ps.setTimestamp(7, Timestamp.valueOf(uo.timeout))
+            ps.setString(8, uo.tilstand.name)
+            val res = ps.executeQuery()
             return resultLoop(res, utsattOppgaver).first()
         }
     }
 
-    override fun oppdater(utsattOppgave: UtsattOppgaveEntitet): UtsattOppgaveEntitet {
+    override fun oppdater(uo: UtsattOppgaveEntitet): UtsattOppgaveEntitet {
         val updateStatement =
             """UPDATE UTSATT_OPPGAVE SET
-                INNTEKTSMELDING_ID='${utsattOppgave.inntektsmeldingId}',
-                ARKIVREFERANSE = '${utsattOppgave.arkivreferanse}',
-                FNR = '${utsattOppgave.fnr}',
-                AKTOR_ID = '${utsattOppgave.aktørId}',
-                SAK_ID = '${utsattOppgave.sakId}',
-                JOURNALPOST_ID = '${utsattOppgave.journalpostId}',
-                TIMEOUT = '${Timestamp.valueOf(utsattOppgave.timeout)}',
-                TILSTAND = '${utsattOppgave.tilstand}'
-            WHERE OPPGAVE_ID = ${utsattOppgave.id}""".trimMargin()
+                INNTEKTSMELDING_ID= ?,
+                ARKIVREFERANSE =  ?,
+                FNR =  ?,
+                AKTOR_ID =  ?,
+                SAK_ID =  ?,
+                JOURNALPOST_ID =  ?,
+                TIMEOUT =  ?,
+                TILSTAND =  ?
+            WHERE OPPGAVE_ID = ?""".trimMargin()
 
         ds.connection.use {
-            it.prepareStatement(updateStatement).executeUpdate()
-            return utsattOppgave
+            val ps = it.prepareStatement(updateStatement)
+            ps.setString(1, uo.inntektsmeldingId)
+            ps.setString(2, uo.arkivreferanse)
+            ps.setString(3, uo.fnr)
+            ps.setString(4, uo.aktørId)
+            ps.setString(5, uo.sakId)
+            ps.setString(6, uo.journalpostId)
+            ps.setString(7, uo.timeout.toString())
+            ps.setString(8, uo.tilstand.name)
+            ps.setInt(9, uo.id)
+
+            ps.executeUpdate()
+            return uo
         }
     }
 

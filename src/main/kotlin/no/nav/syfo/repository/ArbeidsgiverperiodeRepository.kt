@@ -1,41 +1,35 @@
 package no.nav.syfo.repository
 
 import no.nav.syfo.dto.ArbeidsgiverperiodeEntitet
-import no.nav.syfo.dto.InntektsmeldingEntitet
+import java.sql.Connection
 import java.sql.ResultSet
-import java.sql.Timestamp
-import java.time.LocalDate
-import java.util.ArrayList
 import javax.sql.DataSource
 
 interface ArbeidsgiverperiodeRepository {
-    fun lagreData(arbeidsgiverperiodeEntitet: ArbeidsgiverperiodeEntitet) : List<ArbeidsgiverperiodeEntitet>
+    fun lagreData(agp: ArbeidsgiverperiodeEntitet, connection: Connection) : List<ArbeidsgiverperiodeEntitet>
     fun deleteAll()
 }
 
-class ArbeidsgiverperiodeRepositoryImp(private val ds: DataSource, private val inntektsmeldingRepository: InntektsmeldingRepository?) : ArbeidsgiverperiodeRepository{
+class ArbeidsgiverperiodeRepositoryImp(private val ds: DataSource) : ArbeidsgiverperiodeRepository{
 
-    override fun lagreData(arbeidsgiverperiodeEntitet: ArbeidsgiverperiodeEntitet) : List<ArbeidsgiverperiodeEntitet>{
+    override fun lagreData(agp: ArbeidsgiverperiodeEntitet, connection: Connection) : List<ArbeidsgiverperiodeEntitet>{
         val insertStatement =
             """INSERT INTO ARBEIDSGIVERPERIODE (PERIODE_UUID, INNTEKTSMELDING_UUID, FOM, TOM)
-        VALUES ('${arbeidsgiverperiodeEntitet.uuid}', '${arbeidsgiverperiodeEntitet.inntektsmelding?.uuid}', '${arbeidsgiverperiodeEntitet.fom}', '${arbeidsgiverperiodeEntitet.tom}')
+        VALUES (?, ?, ?::date, ?::date)
         RETURNING *;""".trimMargin()
         val arbeidsgiverperioder = ArrayList<ArbeidsgiverperiodeEntitet>()
-        ds.connection.use {
-            val res = it.prepareStatement(insertStatement).executeQuery()
-            return resultLoop(res, arbeidsgiverperioder)
-        }
+        val prepareStatement = connection.prepareStatement(insertStatement)
+        prepareStatement.setString(1, "${agp.uuid}")
+        prepareStatement.setString(2, "${agp.inntektsmelding?.uuid}")
+        prepareStatement.setString(3, "${agp.fom}")
+        prepareStatement.setString(4, "${agp.tom}")
+        val res = prepareStatement.executeQuery()
+        return resultLoop(res, arbeidsgiverperioder)
     }
 
-    fun lagreDataer(arbeidsgiverperiodeEntiteter: List<ArbeidsgiverperiodeEntitet>, inntekUuid : String) {
+    fun lagreDataer(arbeidsgiverperiodeEntiteter: List<ArbeidsgiverperiodeEntitet>, connection: Connection) {
         arbeidsgiverperiodeEntiteter.forEach { agiver ->
-            val insertStatement =
-                """INSERT INTO ARBEIDSGIVERPERIODE (PERIODE_UUID, INNTEKTSMELDING_UUID, FOM, TOM)
-        VALUES ('${agiver.uuid}', '$inntekUuid', '${agiver.fom}', '${agiver.tom}')
-        RETURNING *;""".trimMargin()
-            ds.connection.use {
-                it.prepareStatement(insertStatement).executeQuery()
-            }
+            lagreData(agiver, connection)
         }
     }
 
@@ -51,6 +45,17 @@ class ArbeidsgiverperiodeRepositoryImp(private val ds: DataSource, private val i
         val arbeidsperioder = ArrayList<ArbeidsgiverperiodeEntitet>()
         ds.connection.use {
             val res = it.prepareStatement(findall).executeQuery()
+            return resultLoop(res, arbeidsperioder)
+        }
+    }
+
+    fun find(imUuid: String): List<ArbeidsgiverperiodeEntitet> {
+        val find = " SELECT * FROM ARBEIDSGIVERPERIODE where inntektsmelding_uuid = ?;"
+        val arbeidsperioder = ArrayList<ArbeidsgiverperiodeEntitet>()
+        ds.connection.use {
+            val prepareStatement = it.prepareStatement(find)
+            prepareStatement.setString(1, imUuid)
+            val res = prepareStatement.executeQuery()
             return resultLoop(res, arbeidsperioder)
         }
     }
