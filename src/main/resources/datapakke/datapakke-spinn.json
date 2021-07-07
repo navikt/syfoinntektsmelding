@@ -545,10 +545,7 @@
             ]
           },
           "tooltip": {
-            "trigger": "item",
-            "formatter": function (params) {
-              return 'Dager fra ff: ' + params.data[0] + '<br>Antall IM: ' + params.data[1];
-            }
+            "trigger": "axis"
           },
           "series": [
             {
