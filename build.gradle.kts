@@ -161,7 +161,7 @@ dependencies {
     implementation("org.apache.cxf:cxf-rt-databinding-jaxb:$cxfVersion")
     runtimeOnly("org.apache.cxf:cxf-rt-features-logging:$cxfVersion")
 
-    implementation("org.postgresql:postgresql:42.2.13")
+    implementation("org.postgresql:postgresql:42.2.23")
     implementation("org.apache.neethi:neethi:3.1.0")
     implementation("org.flywaydb:flyway-core:$flywayVersion")
 
