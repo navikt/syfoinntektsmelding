@@ -2,10 +2,10 @@ package no.nav.syfo.repository
 
 import no.nav.syfo.dto.ArbeidsgiverperiodeEntitet
 import no.nav.syfo.dto.InntektsmeldingEntitet
+import java.sql.Connection
 import java.sql.ResultSet
 import java.sql.Timestamp
 import java.time.LocalDateTime
-import java.util.*
 import javax.sql.DataSource
 
 interface InntektsmeldingRepository {
@@ -53,6 +53,8 @@ class InntektsmeldingRepositoryMock : InntektsmeldingRepository {
 class InntektsmeldingRepositoryImp(
     private val ds: DataSource
 ) : InntektsmeldingRepository {
+    private val agpRepo = ArbeidsgiverperiodeRepositoryImp(ds)
+
     override fun findByUuid(uuid: String): InntektsmeldingEntitet {
         val findByAktorId = "SELECT * FROM INNTEKTSMELDING WHERE INNTEKTSMELDING_UUID = ?;"
         val inntektsmeldinger = ArrayList<InntektsmeldingEntitet>()
@@ -63,7 +65,7 @@ class InntektsmeldingRepositoryImp(
             }.executeQuery()
             result = resultLoop(res, inntektsmeldinger).first()
         }
-        result.arbeidsgiverperioder = findAllArbeidsgiverperioder().filter { it.inntektsmelding_uuid == result.uuid }.toMutableList()
+        result.arbeidsgiverperioder = finnAgpForIm(uuid).toMutableList()
         return result
     }
 
@@ -81,11 +83,13 @@ class InntektsmeldingRepositoryImp(
     }
 
     override fun findFirst100ByBehandletBefore(førDato: LocalDateTime): ArrayList<InntektsmeldingEntitet> {
-        val findFirst100ByBehandletBefore = " SELECT * FROM INNTEKTSMELDING WHERE BEHANDLET < '${Timestamp.valueOf(førDato)}' LIMIT 100;"
+        val findFirst100ByBehandletBefore = " SELECT * FROM INNTEKTSMELDING WHERE BEHANDLET < ? LIMIT 100;"
         val inntektsmeldinger = ArrayList<InntektsmeldingEntitet>()
         val results : ArrayList<InntektsmeldingEntitet>
         ds.connection.use {
-            val res = it.prepareStatement(findFirst100ByBehandletBefore).executeQuery()
+            val prepareStatement = it.prepareStatement(findFirst100ByBehandletBefore)
+            prepareStatement.setTimestamp(1, Timestamp.valueOf(førDato))
+            val res = prepareStatement.executeQuery()
             results = resultLoop(res, inntektsmeldinger)
         }
 
@@ -93,44 +97,55 @@ class InntektsmeldingRepositoryImp(
     }
 
     override fun deleteByBehandletBefore(førDato: LocalDateTime): Int {
-        val deleteFirst100ByBehandletBefore = "DELETE FROM INNTEKTSMELDING WHERE BEHANDLET < '${Timestamp.valueOf(førDato)}';"
+        val deleteFirst100ByBehandletBefore = "DELETE FROM INNTEKTSMELDING WHERE BEHANDLET < ?;"
         ds.connection.use {
-            return it.prepareStatement(deleteFirst100ByBehandletBefore).executeUpdate()
+            val prepareStatement = it.prepareStatement(deleteFirst100ByBehandletBefore)
+            prepareStatement.setTimestamp(1, Timestamp.valueOf(førDato))
+            return prepareStatement.executeUpdate()
         }
     }
 
     override fun lagreInnteksmelding(innteksmelding: InntektsmeldingEntitet): InntektsmeldingEntitet {
         val insertStatement =
             """INSERT INTO INNTEKTSMELDING (INNTEKTSMELDING_UUID, AKTOR_ID, ORGNUMMER, SAK_ID, JOURNALPOST_ID, BEHANDLET, ARBEIDSGIVER_PRIVAT, DATA)
-        VALUES ('${innteksmelding.uuid}', '${innteksmelding.aktorId}', '${innteksmelding.orgnummer}', '${innteksmelding.sakId}', '${innteksmelding.journalpostId}', '${Timestamp.valueOf(innteksmelding.behandlet)}', '${innteksmelding.arbeidsgiverPrivat}','${innteksmelding.data}')
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?::jsonb)
         RETURNING *;""".trimMargin()
         val inntektsmeldinger = ArrayList<InntektsmeldingEntitet>()
         var result : InntektsmeldingEntitet
         ds.connection.use {
-            val res = it.prepareStatement(insertStatement).executeQuery()
+            val ps = it.prepareStatement(insertStatement)
+            ps.setString(1, innteksmelding.uuid)
+            ps.setString(2, innteksmelding.aktorId)
+            ps.setString(3, innteksmelding.orgnummer)
+            ps.setString(4, innteksmelding.sakId)
+            ps.setString(5, innteksmelding.journalpostId)
+            ps.setTimestamp(6, Timestamp.valueOf(innteksmelding.behandlet))
+            ps.setString(7, innteksmelding.arbeidsgiverPrivat)
+            ps.setString(8, innteksmelding.data)
+
+            val res = ps.executeQuery()
             result = resultLoop(res, inntektsmeldinger).first()
+            lagreArbeidsgiverperioder(innteksmelding.arbeidsgiverperioder, it)
         }
-        lagreArbeidsgiverperioder(innteksmelding.arbeidsgiverperioder, innteksmelding.uuid)
-        result.arbeidsgiverperioder = findAllArbeidsgiverperioder().filter { it.inntektsmelding_uuid == result.uuid }.toMutableList()
+        result.arbeidsgiverperioder = finnAgpForIm(result.uuid).toMutableList()
         return result
     }
 
+    private fun finnAgpForIm(imUuid: String): List<ArbeidsgiverperiodeEntitet> {
+        return agpRepo.find(imUuid)
+    }
+
     private fun addArbeidsgiverperioderTilInnteksmelding(results : ArrayList<InntektsmeldingEntitet>) : ArrayList<InntektsmeldingEntitet>{
-        val aperioder = findAllArbeidsgiverperioder()
         results.forEach{ inntek ->
+            val aperioder = finnAgpForIm(inntek.uuid)
             inntek.arbeidsgiverperioder = aperioder.filter { it.inntektsmelding_uuid == inntek.uuid }.toMutableList()
         }
         return results
     }
 
-    private fun findAllArbeidsgiverperioder(): List<ArbeidsgiverperiodeEntitet> {
-        val rep = ArbeidsgiverperiodeRepositoryImp(ds, null)
-        return rep.findAll()
-    }
-
-    private fun lagreArbeidsgiverperioder(arbeidsgiverperioder: List<ArbeidsgiverperiodeEntitet>, uuid : String) {
-        val rep = ArbeidsgiverperiodeRepositoryImp(ds, null)
-        rep.lagreDataer(arbeidsgiverperioder, uuid)
+    private fun lagreArbeidsgiverperioder(arbeidsgiverperioder: List<ArbeidsgiverperiodeEntitet>, connection: Connection) {
+        val rep = agpRepo
+        rep.lagreDataer(arbeidsgiverperioder, connection)
     }
 
     override fun deleteAll() {
