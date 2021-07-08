@@ -206,7 +206,6 @@ class IMStatsRepoImpl(
                     count(*) filter (where (data -> 'refusjon' ->> 'beloepPrMnd')::numeric > 0 and data ->> 'begrunnelseRedusert' = 'IkkeFravaer') as ingen_fravaer_med_refusjon -- K6B
             from inntektsmelding
             group by extract('week' from behandlet);
-
         """.trimIndent()
 
         ds.connection.use {

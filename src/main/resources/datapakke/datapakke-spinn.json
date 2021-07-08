@@ -266,7 +266,7 @@
             "type": "category",
             "name": "Uke",
             "data": [
-              @ukeSerieKS
+              @KSukeSerie
             ]
           },
           "yAxis": [
@@ -279,27 +279,27 @@
             {
               "name": "Totalt antall",
               "data": [
-                @totalKS
+                @KStotal
               ],
               "type": "line"
             },
             {
               "data": [
-                @ingenArbeidKS
+                @KSingenArbeid
               ],
               "name": "Ingen Arbeidsforhold",
               "type": "line"
             },
             {
               "data": [
-                @harArbeidKS
+                @KSharArbeid
               ],
               "name": "Har Arbeidsforhold",
               "type": "line"
             },
             {
               "data": [
-                @enPeriodeKS
+                @KSenPeriode
               ],
               "name": "En Periode",
               "type": "line"
@@ -313,35 +313,35 @@
             },
             {
               "data": [
-                @overToPerioderKS
+                @KSoverToPerioder
               ],
               "name": "Over To Perioder",
               "type": "line"
             },
             {
               "data": [
-                @riktigFFKS
+                @KSriktigFF
               ],
               "name": "Riktig FF",
               "type": "line"
             },
             {
               "data": [
-                @feilFFKS
+                @KSfeilFF
               ],
               "name": "Feil FF",
               "type": "line"
             },
             {
               "data": [
-                @ikkeFravaerKS
+                @KSikkeFravaer
               ],
               "name": "Ikke Fravær",
               "type": "line"
             },
             {
               "data": [
-                @ikkeFravaerMedRefKS
+                @KSikkeFravaerMedRef
               ],
               "name": "Ikke Fravær med refusjon",
               "type": "line"
@@ -389,7 +389,7 @@
                 "50%"
               ],
               "data": [
-                @lpsAntallIMKS
+                @KSlpsAntallFeilFF
               ],
               "emphasis": {
                 "itemStyle": {
@@ -408,7 +408,7 @@
                 "50%"
               ],
               "data": [
-                @lpsAntallVersjonerKS
+                @KSlpsAntallVersjonerFeilFF
               ],
               "emphasis": {
                 "itemStyle": {
@@ -443,7 +443,7 @@
                 "50%"
               ],
               "data": [
-                @lpsAntallIMNullFra
+                @KSlpsAntallIMNullFra
               ],
               "emphasis": {
                 "itemStyle": {
@@ -462,7 +462,7 @@
                 "50%"
               ],
               "data": [
-                @lpsAntallVersjonerNullFra
+                @KSlpsAntallVersjonerNullFra
               ],
               "emphasis": {
                 "itemStyle": {
@@ -496,7 +496,7 @@
                 "50%"
               ],
               "data": [
-                @lpsAntallIMBackToBack
+                @KSlpsAntallIMBackToBack
               ],
               "emphasis": {
                 "itemStyle": {
@@ -515,7 +515,7 @@
                 "50%"
               ],
               "data": [
-                @lpsAntallVersjonerBackToBack
+                @KSlpsAntallVersjonerBackToBack
               ],
               "emphasis": {
                 "itemStyle": {
@@ -552,7 +552,7 @@
               "name": "Forsinkelse fra Altinn",
               "symbolSize": 20,
               "data": [
-                @antallForsinketFraAltinn
+                @KSantallForsinketFraAltinn
               ],
               "type": "scatter"
             },
@@ -560,7 +560,7 @@
               "name": "Forsinkelse fra LPS",
               "symbolSize": 20,
               "data": [
-                @antallForsinketFraLPS
+                @KSantallForsinketFraLPS
               ],
               "type": "scatter"
             }
