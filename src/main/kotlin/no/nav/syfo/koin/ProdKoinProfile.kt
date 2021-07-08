@@ -148,7 +148,7 @@ fun prodConfig(config: ApplicationConfig) = module {
     single { FjernInntektsmeldingByBehandletProcessor(InntektsmeldingRepositoryImp(get()), config.getString("lagringstidMåneder").toInt() )} bind FjernInntektsmeldingByBehandletProcessor::class
     single { FinnAlleUtgaandeOppgaverProcessor(get(), get(), get()) } bind FinnAlleUtgaandeOppgaverProcessor::class
 
-    single { OppgavebehandlingConsumer(get()) } bind OppgavebehandlingConsumer::class
+
 
     single { FeiletService(FeiletRepositoryImp(get())) } bind FeiletService::class
 
