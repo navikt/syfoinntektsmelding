@@ -334,7 +334,7 @@
             },
             {
               "data": [
-                @KSikkeFravaer
+                @KSikkeFravaerUtenRef
               ],
               "name": "Ikke Fravær",
               "type": "line"

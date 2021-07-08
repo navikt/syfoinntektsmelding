@@ -110,7 +110,7 @@ class DatapakkePublisherJob(
             .replace("@KSoverToPerioder", timeseriesKS.map { it.over_to_perioder }.joinToString())
             .replace("@KSriktigFF", timeseriesKS.map { it.riktig_ff }.joinToString())
             .replace("@KSfeilFF", timeseriesKS.map { it.feil_ff }.joinToString())
-            .replace("@KSikkeFravaer", timeseriesKS.map { it.ingen_fravaer }.joinToString())
+            .replace("@KSikkeFravaerUtenRef", timeseriesKS.map { it.ingen_fravaer }.joinToString())
             .replace("@KSikkeFravaerMedRef", timeseriesKS.map { it.ingen_fravaer_med_refusjon }.joinToString())
 
             .replace("@KSlpsAntallFeilFF", lpsFeilFF.map { //language=JSON
