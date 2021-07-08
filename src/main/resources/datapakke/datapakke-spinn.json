@@ -443,7 +443,7 @@
                 "50%"
               ],
               "data": [
-                @KSlpsAntallIMNullFra
+                @KSlpsAntallNullFra
               ],
               "emphasis": {
                 "itemStyle": {
@@ -496,7 +496,7 @@
                 "50%"
               ],
               "data": [
-                @KSlpsAntallIMBackToBack
+                @KSlpsAntallBackToBack
               ],
               "emphasis": {
                 "itemStyle": {

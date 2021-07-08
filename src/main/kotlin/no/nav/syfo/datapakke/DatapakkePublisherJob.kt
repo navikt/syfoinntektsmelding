@@ -119,13 +119,13 @@ class DatapakkePublisherJob(
             .replace("@KSlpsAntallVersjonerFeilFF", lpsFeilFF.map { //language=JSON
                 """{"value": ${it.antallVersjoner}, "name": "${it.lpsNavn}"}""" }.joinToString())
 
-            .replace("KS@lpsAntallNullFra", lpsIngenFravaer.map { //language=JSON
+            .replace("@KSlpsAntallNullFra", lpsIngenFravaer.map { //language=JSON
                 """{"value": ${it.antallInntektsmeldinger}, "name": "${it.lpsNavn}"}""" }.joinToString())
 
             .replace("@KSlpsAntallVersjonerNullFra", lpsIngenFravaer.map { //language=JSON
                 """{"value": ${it.antallVersjoner}, "name": "${it.lpsNavn}"}""" }.joinToString())
 
-            .replace("@kslpsAntallBackToBack", lpsBackToBack.map { //language=JSON
+            .replace("@KSlpsAntallBackToBack", lpsBackToBack.map { //language=JSON
                 """{"value": ${it.antallInntektsmeldinger}, "name": "${it.lpsNavn}"}""" }.joinToString())
 
             .replace("@KSlpsAntallVersjonerBackToBack", lpsBackToBack.map { //language=JSON
