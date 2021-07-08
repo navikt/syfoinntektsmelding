@@ -306,7 +306,7 @@
             },
             {
               "data": [
-                @toPerioderKS
+                @KStoPerioder
               ],
               "name": "To Perioder",
               "type": "line"
