@@ -135,7 +135,7 @@ class DatapakkePublisherJob(
                 """{"value": ${it.antall_med_forsinkelsen_altinn}, "dager_etter_ff": "${it.dager_etter_ff}"}""" }.joinToString())
 
             .replace("@KSantallForsinketFraLPS", forsinket.filter { it.antall_med_forsinkelsen_lps != 0 }.map { //language=JSON
-                """{"value": ${it.antall_med_forsinkelsen_altinn}, "dager_etter_ff": "${it.dager_etter_ff}"}""" }.joinToString())
+                """{"value": ${it.antall_med_forsinkelsen_lps}, "dager_etter_ff": "${it.dager_etter_ff}"}""" }.joinToString())
 
 
         runBlocking {
