@@ -546,7 +546,9 @@
               "Antall IM LPS",
               "Dager Forsinkelse"
             ],
-            "source": @KSForsinketData
+            "source": [
+                @KSForsinketData
+              ]
           },
           "legend": {
             "data": [
