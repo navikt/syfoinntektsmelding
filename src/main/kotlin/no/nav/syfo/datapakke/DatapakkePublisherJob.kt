@@ -71,7 +71,7 @@ class DatapakkePublisherJob(
             .filter { !it.lpsNavn.startsWith("SAP") }
             .toMutableList()
 
-        //val forsinket = imRepo.getForsinkelseStats()
+        val forsinket = imRepo.getForsinkelseStats()
 
         val populatedDatapakke = datapakkeTemplate
             .replace("@ukeSerie", timeseries.map { it.weekNumber }.joinToString())
@@ -131,12 +131,9 @@ class DatapakkePublisherJob(
             .replace("@KSlpsAntallVersjonerBackToBack", lpsBackToBack.map { //language=JSON
                 """{"value": ${it.antallVersjoner}, "name": "${it.lpsNavn}"}""" }.joinToString())
 
-            /*.replace("@KSantallForsinketFraAltinn", forsinket.filter { it.antall_med_forsinkelsen_altinn != 0 }.map { //language=JSON
-                """{"value": ${it.antall_med_forsinkelsen_altinn}, "dager_etter_ff": "${it.dager_etter_ff}"}""" }.joinToString())
-
-            .replace("@KSantallForsinketFraLPS", forsinket.filter { it.antall_med_forsinkelsen_lps != 0 }.map { //language=JSON
-                """{"value": ${it.antall_med_forsinkelsen_lps}, "dager_etter_ff": "${it.dager_etter_ff}"}""" }.joinToString())
-            */
+            .replace("@KSForsinketData", forsinket.map { //language=JSON
+                """{"antall_altinn":  ${it.antall_med_forsinkelsen_altinn}, "antall_lps": ${it.antall_med_forsinkelsen_lps}, "dager_forsinket":  ${it.dager_etter_ff}}"""
+            }.joinToString())
 
         runBlocking {
             val response = httpClient.put<HttpResponse>("$datapakkeApiUrl/$datapakkeId") {
