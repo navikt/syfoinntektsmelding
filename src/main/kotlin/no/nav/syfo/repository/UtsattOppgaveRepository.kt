@@ -124,7 +124,7 @@ class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepo
             ps.setString(4, uo.aktørId)
             ps.setString(5, uo.sakId)
             ps.setString(6, uo.journalpostId)
-            ps.setString(7, uo.timeout.toString())
+            ps.setTimestamp(7, Timestamp.valueOf(uo.timeout))
             ps.setString(8, uo.tilstand.name)
             ps.setInt(9, uo.id)
 
