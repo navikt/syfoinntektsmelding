@@ -132,7 +132,7 @@ class DatapakkePublisherJob(
                 """{"value": ${it.antallVersjoner}, "name": "${it.lpsNavn}"}""" }.joinToString())
 
             .replace("@KSForsinketData", forsinket.map { //language=JSON
-                """{"antall_altinn":  ${it.antall_med_forsinkelsen_altinn}, "antall_lps": ${it.antall_med_forsinkelsen_lps}, "dager_forsinket":  ${it.dager_etter_ff}}"""
+                """[${it.antall_med_forsinkelsen_altinn},${it.antall_med_forsinkelsen_lps},${it.dager_etter_ff}]"""
             }.joinToString())
 
         runBlocking {
