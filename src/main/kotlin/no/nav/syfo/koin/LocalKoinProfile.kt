@@ -40,7 +40,6 @@ import no.nav.tjeneste.virksomhet.behandleinngaaendejournal.v1.binding.BehandleI
 import no.nav.tjeneste.virksomhet.behandlesak.v2.BehandleSakV2
 import no.nav.tjeneste.virksomhet.inngaaendejournal.v1.binding.InngaaendeJournalV1
 import no.nav.tjeneste.virksomhet.journal.v2.binding.JournalV2
-import no.nav.tjeneste.virksomhet.oppgavebehandling.v3.binding.OppgavebehandlingV3
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import javax.sql.DataSource
@@ -113,13 +112,6 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single { IMStatsRepoImpl(get()) } bind IMStatsRepo::class
     single { DatapakkePublisherJob(get(), get(), config.getString("datapakke.api_url"), config.getString("datapakke.id")) }
 
-    single {
-        WsClientMock<OppgavebehandlingV3>().createPort(
-            config.getString("servicegateway_url"),
-            OppgavebehandlingV3::class.java,
-            listOf(LogErrorHandler())
-        )
-    } bind OppgavebehandlingV3::class
     single {
         WsClientMock<JournalV2>().createPort(
             config.getString("journal_v2_endpointurl"),
