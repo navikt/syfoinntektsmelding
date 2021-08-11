@@ -38,7 +38,6 @@ import no.nav.tjeneste.virksomhet.behandleinngaaendejournal.v1.binding.BehandleI
 import no.nav.tjeneste.virksomhet.behandlesak.v2.BehandleSakV2
 import no.nav.tjeneste.virksomhet.inngaaendejournal.v1.binding.InngaaendeJournalV1
 import no.nav.tjeneste.virksomhet.journal.v2.binding.JournalV2
-import no.nav.tjeneste.virksomhet.oppgavebehandling.v3.binding.OppgavebehandlingV3
 import no.nav.tjeneste.virksomhet.person.v3.binding.PersonV3
 import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil
 import org.koin.dsl.bind
@@ -202,13 +201,6 @@ fun preprodConfig(config: ApplicationConfig) = module {
         )
     } bind ArbeidsfordelingV1::class
 
-    single {
-        createServicePort(
-            serviceUrl = config.getString("servicegateway_url"),
-            serviceClazz = OppgavebehandlingV3::class.java
-        )
-
-    } bind OppgavebehandlingV3::class
 
     single {
         createServicePort(
