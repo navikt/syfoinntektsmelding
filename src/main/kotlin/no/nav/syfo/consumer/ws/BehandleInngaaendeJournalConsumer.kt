@@ -89,7 +89,7 @@ class BehandleInngaaendeJournalConsumer(private val behandleInngaaendeJournalV1:
         val journalpostId = inngaendeJournalpost.journalpostId
 
         val request = FerdigstillJournalfoeringRequest()
-        request.enhetId = inngaendeJournalpost.behandlendeEnhetId
+        request.enhetId = "9999"
         request.journalpostId = journalpostId
 
         try {

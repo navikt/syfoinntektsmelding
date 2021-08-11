@@ -36,7 +36,6 @@ import no.nav.syfo.util.Metrikk
 import no.nav.syfo.utsattoppgave.FeiletUtsattOppgaveMeldingProsessor
 import no.nav.syfo.utsattoppgave.UtsattOppgaveDAO
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
-import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.binding.ArbeidsfordelingV1
 import no.nav.tjeneste.virksomhet.behandleinngaaendejournal.v1.binding.BehandleInngaaendeJournalV1
 import no.nav.tjeneste.virksomhet.behandlesak.v2.BehandleSakV2
 import no.nav.tjeneste.virksomhet.inngaaendejournal.v1.binding.InngaaendeJournalV1
@@ -168,13 +167,6 @@ fun prodConfig(config: ApplicationConfig) = module {
             get()
         )
     } bind PdlClient::class
-
-    single {
-        createServicePort(
-            serviceUrl = config.getString("virksomhet_arbeidsfordeling_v1_endpointurl"),
-            serviceClazz = ArbeidsfordelingV1::class.java
-        )
-    } bind ArbeidsfordelingV1::class
 
     single {
         createServicePort(
