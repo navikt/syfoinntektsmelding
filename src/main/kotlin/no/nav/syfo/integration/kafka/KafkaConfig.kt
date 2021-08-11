@@ -1,15 +1,15 @@
 package no.nav.syfo.integration.kafka
 
 import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig
-import io.confluent.kafka.serializers.KafkaAvroDeserializer
 import io.confluent.kafka.streams.serdes.avro.GenericAvroDeserializer
-import io.confluent.kafka.streams.serdes.avro.GenericAvroSerde
 import io.ktor.config.*
 import no.nav.helse.arbeidsgiver.system.getString
 import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.common.config.SaslConfigs
+import org.apache.kafka.common.config.SslConfigs
+import org.apache.kafka.common.security.auth.SecurityProtocol
 import org.apache.kafka.common.serialization.StringDeserializer
 import java.util.*
 
@@ -73,17 +73,29 @@ fun producerLocalProperties(bootstrapServers: String) =  Properties().apply {
     put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers)
 }
 
-fun producerOnPremProperties(config: ApplicationConfig) = Properties().apply {
-    put(ProducerConfig.ACKS_CONFIG, "all")
+
+fun producerAivenProperties(config: ApplicationConfig) = Properties().apply {
+    val PKCS12 = "PKCS12"
+    val JAVA_KEYSTORE = "jks"
+
     put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "true")
     put(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, "1")
     put(ProducerConfig.MAX_BLOCK_MS_CONFIG, "15000")
     put(ProducerConfig.RETRIES_CONFIG, "2")
     put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer")
     put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer")
-    put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, "${config.getString("kafka_bootstrap_servers")}")
-    put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_SSL")
-    put(SaslConfigs.SASL_MECHANISM, "PLAIN")
-    val jaasCfg = "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"${config.getString("srvsyfoinntektsmelding.username")}\" password=\"${envOrThrow("SRVSYFOINNTEKTSMELDING_PASSWORD")}\";"
-    put(SaslConfigs.SASL_JAAS_CONFIG, jaasCfg)
+
+    put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, envOrThrow("KAFKA_BROKERS"))
+    put(ProducerConfig.ACKS_CONFIG, "all")
+    put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, SecurityProtocol.SSL.name)
+    put(SslConfigs.SSL_ENDPOINT_IDENTIFICATION_ALGORITHM_CONFIG, "")
+    put(SslConfigs.SSL_TRUSTSTORE_TYPE_CONFIG, JAVA_KEYSTORE)
+    put(SslConfigs.SSL_KEYSTORE_TYPE_CONFIG, PKCS12)
+    put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, envOrThrow("KAFKA_TRUSTSTORE_PATH"))
+    put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, envOrThrow("KAFKA_CREDSTORE_PASSWORD"))
+    put(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, envOrThrow("KAFKA_KEYSTORE_PATH"))
+    put(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, envOrThrow("KAFKA_CREDSTORE_PASSWORD"))
+    put(SslConfigs.SSL_KEY_PASSWORD_CONFIG, envOrThrow("KAFKA_CREDSTORE_PASSWORD"))
+
+
 }

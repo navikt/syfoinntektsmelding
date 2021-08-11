@@ -3,7 +3,6 @@ package no.nav.syfo.slowtests.repository
 import com.zaxxer.hikari.HikariDataSource
 import no.nav.syfo.behandling.Feiltype
 import no.nav.syfo.dto.FeiletEntitet
-import no.nav.syfo.grunnleggendeInntektsmelding
 import no.nav.syfo.repository.FeiletRepository
 import no.nav.syfo.repository.FeiletRepositoryImp
 import no.nav.syfo.repository.createTestHikariConfig
@@ -18,7 +17,6 @@ import java.time.LocalDateTime
 open class FeiletRepositoryTest : SystemTestBase(){
 
     private lateinit var respository: FeiletRepository
-    val testKrav = grunnleggendeInntektsmelding
 
     @BeforeAll
     internal fun setUp() {

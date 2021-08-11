@@ -1,0 +1,587 @@
+{
+  "title": "SYFO Inntektsmelding",
+  "type": "datapackage",
+  "description": "Inntektsmeldingsstatistikk - Sykepenger",
+  "name": "syfoinntektsmelding_statistikk",
+  "uri": "",
+  "url": "",
+  "team": "helsearbeidsgiver",
+  "views": [
+    {
+      "title": "Tidsserier - Sykepenger",
+      "description": "Inntektsmeldingsstatistikk for sykepenger",
+      "specType": "echart",
+      "spec": {
+        "url": "",
+        "option": {
+          "tooltip": {
+            "trigger": "axis",
+            "axisPointer": {
+              "type": "cross",
+              "crossStyle": {
+                "color": "#999"
+              }
+            }
+          },
+          "legend": {
+            "left": "center",
+            "data": [
+              "Totalt antall",
+              "Fra LPS",
+              "Fra Altinn",
+              "Fravær",
+              "Ikke Fravær",
+              "Årsak: Endring",
+              "Årsak: Ny",
+              "Ingen refusjon",
+              "Delvis refusjon",
+              "Full refusjon"
+            ]
+          },
+          "xAxis": {
+            "type": "category",
+            "name": "Uke",
+            "data": [
+              @ukeSerie
+            ]
+          },
+          "yAxis": [
+            {
+              "type": "value",
+              "name": "Antall"
+            }
+          ],
+          "series": [
+            {
+              "name": "Totalt antall",
+              "data": [
+                @total
+              ],
+              "type": "line"
+            },
+            {
+              "data": [
+                @fraLPS
+              ],
+              "name": "Fra LPS",
+              "type": "line"
+            },
+            {
+              "data": [
+                @fraAltinnPortal
+              ],
+              "name": "Fra Altinn",
+              "type": "line"
+            },
+            {
+              "data": [
+                @fravaer
+              ],
+              "name": "Fravær",
+              "type": "line"
+            },
+            {
+              "data": [
+                @ikkeFravaer
+              ],
+              "name": "Ikke Fravær",
+              "type": "line"
+            },
+            {
+              "data": [
+                @arsakEndring
+              ],
+              "name": "Årsak: Endring",
+              "type": "line"
+            },
+            {
+              "data": [
+                @arsakNy
+              ],
+              "name": "Årsak: Ny",
+              "type": "line"
+            },
+            {
+              "data": [
+                @ingenRefusjon
+              ],
+              "name": "Ingen refusjon",
+              "type": "line"
+            },
+            {
+              "data": [
+                @delvisRefusjon
+              ],
+              "name": "Delvis refusjon",
+              "type": "line"
+            },
+            {
+              "data": [
+                @fullRefusjon
+              ],
+              "name": "Full refusjon",
+              "type": "line"
+            }
+          ],
+          "toolbox": {
+            "show": true,
+            "left": "center",
+            "top": "bottom",
+            "feature": {
+              "magicType": {
+                "type": [
+                  "line",
+                  "bar"
+                ]
+              },
+              "dataView": {
+                "show": true,
+                "readOnly": true
+              },
+              "saveAsImage": {}
+            }
+          }
+        }
+      }
+    },
+    {
+      "title": "LPS",
+      "description": "Siste 7 dager",
+      "specType": "echart",
+      "spec": {
+        "url": "",
+        "option": {
+          "tooltip": {
+            "trigger": "item"
+          },
+          "series": [
+            {
+              "name": "Antall IM",
+              "type": "pie",
+              "radius": "50%",
+              "center": [
+                "25%",
+                "50%"
+              ],
+              "data": [
+                @lpsAntallIM
+              ],
+              "emphasis": {
+                "itemStyle": {
+                  "shadowBlur": 10,
+                  "shadowOffsetX": 0,
+                  "shadowColor": "rgba(0, 0, 0, 0.5)"
+                }
+              }
+            },
+            {
+              "name": "Versjoner",
+              "type": "pie",
+              "radius": "40%",
+              "center": [
+                "75%",
+                "50%"
+              ],
+              "data": [
+                @lpsAntallVersjoner
+              ],
+              "emphasis": {
+                "itemStyle": {
+                  "shadowBlur": 10,
+                  "shadowOffsetX": 0,
+                  "shadowColor": "rgba(0, 0, 0, 0.5)"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "title": "Begrunnelse redusert eller ikke-utbetaling",
+      "description": "Siste 7 dager",
+      "specType": "echart",
+      "spec": {
+        "url": "",
+        "option": {
+          "tooltip": {
+            "trigger": "item"
+          },
+          "series": [
+            {
+              "name": "Antall IM",
+              "type": "pie",
+              "radius": "75%",
+              "center": [
+                "50%",
+                "50%"
+              ],
+              "data": [
+                @arsak
+              ],
+              "emphasis": {
+                "itemStyle": {
+                  "shadowBlur": 10,
+                  "shadowOffsetX": 0,
+                  "shadowColor": "rgba(0, 0, 0, 0.5)"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "title": "Tidsserier - Sykepenger - kvalitetsorientert",
+      "description": "Kvalitetsorientert statistikk for intektsmelding",
+      "specType": "echart",
+      "spec": {
+        "url": "",
+        "option": {
+          "tooltip": {
+            "trigger": "axis",
+            "axisPointer": {
+              "type": "cross",
+              "crossStyle": {
+                "color": "#999"
+              }
+            }
+          },
+          "legend": {
+            "left": "center",
+            "data": [
+              "Totalt antall",
+              "Ingen Arbeidsforhold",
+              "Har Arbeidsforhold",
+              "En Periode",
+              "To Perioder",
+              "Over To Perioder",
+              "Riktig FF",
+              "Feil FF",
+              "Ikke Fravær",
+              "Ikke Fravær med refusjon"
+            ]
+          },
+          "xAxis": {
+            "type": "category",
+            "name": "Uke",
+            "data": [
+              @KSukeSerie
+            ]
+          },
+          "yAxis": [
+            {
+              "type": "value",
+              "name": "Antall"
+            }
+          ],
+          "series": [
+            {
+              "name": "Totalt antall",
+              "data": [
+                @KStotal
+              ],
+              "type": "line"
+            },
+            {
+              "data": [
+                @KSingenArbeid
+              ],
+              "name": "Ingen Arbeidsforhold",
+              "type": "line"
+            },
+            {
+              "data": [
+                @KSharArbeid
+              ],
+              "name": "Har Arbeidsforhold",
+              "type": "line"
+            },
+            {
+              "data": [
+                @KSenPeriode
+              ],
+              "name": "En Periode",
+              "type": "line"
+            },
+            {
+              "data": [
+                @KStoPerioder
+              ],
+              "name": "To Perioder",
+              "type": "line"
+            },
+            {
+              "data": [
+                @KSoverToPerioder
+              ],
+              "name": "Over To Perioder",
+              "type": "line"
+            },
+            {
+              "data": [
+                @KSriktigFF
+              ],
+              "name": "Riktig FF",
+              "type": "line"
+            },
+            {
+              "data": [
+                @KSfeilFF
+              ],
+              "name": "Feil FF",
+              "type": "line"
+            },
+            {
+              "data": [
+                @KSikkeFravaerUtenRef
+              ],
+              "name": "Ikke Fravær",
+              "type": "line"
+            },
+            {
+              "data": [
+                @KSikkeFravaerMedRef
+              ],
+              "name": "Ikke Fravær med refusjon",
+              "type": "line"
+            }
+          ],
+          "toolbox": {
+            "show": true,
+            "left": "center",
+            "top": "bottom",
+            "feature": {
+              "magicType": {
+                "type": [
+                  "line",
+                  "bar"
+                ]
+              },
+              "dataView": {
+                "show": true,
+                "readOnly": true
+              },
+              "saveAsImage": {}
+            }
+          }
+        }
+      }
+    },
+
+    {
+      "title": "Feil FF per LPS",
+      "description": "Siste 7 dager",
+      "specType": "echart",
+      "spec": {
+        "url": "",
+        "option": {
+          "tooltip": {
+            "trigger": "item"
+          },
+          "series": [
+            {
+              "name": "Antall IM",
+              "type": "pie",
+              "radius": "50%",
+              "center": [
+                "25%",
+                "50%"
+              ],
+              "data": [
+                @KSlpsAntallFeilFF
+              ],
+              "emphasis": {
+                "itemStyle": {
+                  "shadowBlur": 10,
+                  "shadowOffsetX": 0,
+                  "shadowColor": "rgba(0, 0, 0, 0.5)"
+                }
+              }
+            },
+            {
+              "name": "Versjoner",
+              "type": "pie",
+              "radius": "40%",
+              "center": [
+                "75%",
+                "50%"
+              ],
+              "data": [
+                @KSlpsAntallVersjonerFeilFF
+              ],
+              "emphasis": {
+                "itemStyle": {
+                  "shadowBlur": 10,
+                  "shadowOffsetX": 0,
+                  "shadowColor": "rgba(0, 0, 0, 0.5)"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+
+    {
+      "title": "Antall IM for 0-fravær",
+      "description": "Siste 7 dager",
+      "specType": "echart",
+      "spec": {
+        "url": "",
+        "option": {
+          "tooltip": {
+            "trigger": "item"
+          },
+          "series": [
+            {
+              "name": "Antall IM",
+              "type": "pie",
+              "radius": "50%",
+              "center": [
+                "25%",
+                "50%"
+              ],
+              "data": [
+                @KSlpsAntallNullFra
+              ],
+              "emphasis": {
+                "itemStyle": {
+                  "shadowBlur": 10,
+                  "shadowOffsetX": 0,
+                  "shadowColor": "rgba(0, 0, 0, 0.5)"
+                }
+              }
+            },
+            {
+              "name": "Versjoner",
+              "type": "pie",
+              "radius": "40%",
+              "center": [
+                "75%",
+                "50%"
+              ],
+              "data": [
+                @KSlpsAntallVersjonerNullFra
+              ],
+              "emphasis": {
+                "itemStyle": {
+                  "shadowBlur": 10,
+                  "shadowOffsetX": 0,
+                  "shadowColor": "rgba(0, 0, 0, 0.5)"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "title": "Antall IM med sammenhengende delperioder",
+      "description": "Siste 7 dager",
+      "specType": "echart",
+      "spec": {
+        "url": "",
+        "option": {
+          "tooltip": {
+            "trigger": "item"
+          },
+          "series": [
+            {
+              "name": "Antall IM",
+              "type": "pie",
+              "radius": "50%",
+              "center": [
+                "25%",
+                "50%"
+              ],
+              "data": [
+                @KSlpsAntallBackToBack
+              ],
+              "emphasis": {
+                "itemStyle": {
+                  "shadowBlur": 10,
+                  "shadowOffsetX": 0,
+                  "shadowColor": "rgba(0, 0, 0, 0.5)"
+                }
+              }
+            },
+            {
+              "name": "Versjoner",
+              "type": "pie",
+              "radius": "40%",
+              "center": [
+                "75%",
+                "50%"
+              ],
+              "data": [
+                @KSlpsAntallVersjonerBackToBack
+              ],
+              "emphasis": {
+                "itemStyle": {
+                  "shadowBlur": 10,
+                  "shadowOffsetX": 0,
+                  "shadowColor": "rgba(0, 0, 0, 0.5)"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "title": "Antall IM for Insendingstidspunt opp mot FF",
+      "description": "Antall IM / antall dager melleom insendingstidspunkt og FF",
+      "specType": "echart",
+      "spec": {
+        "url": "",
+        "option": {
+          "xAxis": {},
+          "yAxis": {
+            "min": 1
+          },
+          "dataset": {
+            "dimensions": [
+              "Antall IM Altinn",
+              "Antall IM LPS",
+              "Dager Forsinkelse"
+            ],
+            "source": [
+                @KSForsinketData
+              ]
+          },
+          "legend": {
+            "data": [
+              "Forsinkelse fra Altinn",
+              "Forsinkelse fra LPS"
+            ]
+          },
+          "tooltip": {
+          },
+          "series": [{
+            "name": "Forsinkelse fra Altinn",
+            "symbolSize": 20,
+            "encode": {
+              "x": 2,
+              "y": 0,
+              "tooltip": [0, 2]
+            },
+            "type": "scatter"
+          },
+            {
+              "name": "Forsinkelse fra LPS",
+              "symbolSize": 20,
+              "encode": {
+                "x": 2,
+                "y": 1,
+                "tooltip":[1, 2]
+              },
+              "type": "scatter"
+            }
+          ]
+
+        }
+      }
+    }
+  ]
+}

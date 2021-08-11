@@ -44,7 +44,7 @@ spec:
   secureLogs:
     enabled: true
   kafka:
-    pool: nav-dev
+    pool: nav-prod
   env:
     - name: KOIN_PROFILE
       value: PROD
@@ -70,8 +70,12 @@ spec:
       value: "http://security-token-service.default.svc.nais.local/rest/v1/sts/jwks"
     - name: KAFKA_BOOTSTRAP_SERVERS
       value: "a01apvl00145.adeo.no:8443,a01apvl00146.adeo.no:8443,a01apvl00147.adeo.no:8443,a01apvl00148.adeo.no:8443,a01apvl00149.adeo.no:8443,a01apvl00150.adeo.no:8443\n"
-    - name: SPRING_DATASOURCE_URL
-      value: "jdbc:postgresql://a01dbvl010.adeo.no/syfoinntektsmelding"
+    - name: DATABASE_HOST
+      value: a01dbvl010.adeo.no
+    - name: DATABASE_PORT
+      value: "5432"
+    - name: DATABASE_NAME
+      value: "syfoinntektsmelding"
     - name: SYFO_MOTTAK_INNTEKTSMELDING_QUEUENAME
       value: "QA.P_SYFO.MOTTAK_INNTEKTSMELDING"
     - name: SYFOINNTEKTSMELDING_CHANNEL_NAME
@@ -128,3 +132,11 @@ spec:
       value: "aapen-helse-spre-oppgaver"
     - name: KAFKA_SCHEMA_REGISTRY_URL_CONFIG
       value: "http://kafka-schema-registry.tpa.svc.nais.local:8081"
+    - name: DATAPAKKE_API_URL
+      value: https://datakatalog-api.intern.nav.no/v1/datapackage
+    - name: DATAPAKKE_ID
+      value: fb74c8d14d9c579e05b0b4b587843e6b
+    - name: RUN_BACKGROUND_WORKERS
+      value: "true"
+    - name: PDL_URL
+      value: https://pdl-api.nais.adeo.no/graphql

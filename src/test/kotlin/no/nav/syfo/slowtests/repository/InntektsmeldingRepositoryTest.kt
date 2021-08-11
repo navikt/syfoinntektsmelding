@@ -7,7 +7,9 @@ import no.nav.syfo.domain.Periode
 import no.nav.syfo.domain.inntektsmelding.*
 import no.nav.syfo.dto.InntektsmeldingEntitet
 import no.nav.syfo.grunnleggendeInntektsmelding
-import no.nav.syfo.repository.*
+import no.nav.syfo.repository.InntektsmeldingRepository
+import no.nav.syfo.repository.InntektsmeldingRepositoryImp
+import no.nav.syfo.repository.createTestHikariConfig
 import no.nav.syfo.slowtests.SystemTestBase
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
@@ -212,7 +214,6 @@ open class InntektsmeldingRepositoryTest : SystemTestBase(){
         repository.deleteByBehandletBefore(LocalDate.of(2020, 1, 1).atStartOfDay())
         //Nå skal det bare være 5 treff
         assertThat(repository.findAll().size).isEqualTo(5)
-
     }
 
     private fun lagInntektsmelding(behandlet: LocalDateTime): InntektsmeldingEntitet {

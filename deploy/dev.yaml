@@ -127,4 +127,11 @@ spec:
       value: "aapen-helse-spre-oppgaver"
     - name: KAFKA_SCHEMA_REGISTRY_URL_CONFIG
       value: "http://kafka-schema-registry.tpa.svc.nais.local:8081"
-
+    - name: DATAPAKKE_ID
+      value: fb74c8d14d9c579e05b0b4b587843e6b
+    - name: DATAPAKKE_API_URL
+      value: https://datakatalog-api.dev.intern.nav.no/v1/datapackage
+    - name: RUN_BACKGROUND_WORKERS
+      value: "true"
+    - name: PDL_URL
+      value: https://pdl-api.nais.preprod.local/graphql

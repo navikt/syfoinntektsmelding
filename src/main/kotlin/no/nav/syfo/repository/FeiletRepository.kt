@@ -4,10 +4,7 @@ import no.nav.syfo.behandling.Feiltype
 import no.nav.syfo.dto.FeiletEntitet
 import java.sql.ResultSet
 import java.sql.Timestamp
-import java.time.LocalDateTime
-import java.util.*
 import javax.sql.DataSource
-import java.time.format.DateTimeFormatter
 
 
 interface FeiletRepository {
@@ -33,19 +30,27 @@ class FeiletRepositoryMock : FeiletRepository {
 
 class FeiletRepositoryImp(private val ds: DataSource) : FeiletRepository {
     override fun findByArkivReferanse(arkivReferanse: String): List<FeiletEntitet> {
-        val queryString = "SELECT * FROM FEILET WHERE ARKIVREFERANSE = '$arkivReferanse';"
+        val queryString = "SELECT * FROM FEILET WHERE ARKIVREFERANSE = ?;"
         ds.connection.use {
-            val res = it.prepareStatement(queryString).executeQuery()
+            val prepareStatement = it.prepareStatement(queryString)
+            prepareStatement.setString(1, arkivReferanse)
+            val res = prepareStatement.executeQuery()
             return resultLoop(res)
         }
     }
 
     override fun lagreInnteksmelding(feil: FeiletEntitet): FeiletEntitet {
         val insertStatement = """INSERT INTO FEILET (FEILET_ID, ARKIVREFERANSE, TIDSPUNKT, FEILTYPE)
-        VALUES (${feil.id}, '${feil.arkivReferanse}', '${Timestamp.valueOf(feil.tidspunkt)}', '${feil.feiltype.name}')
+        VALUES (?, ?, ?, ?)
         RETURNING *;""".trimMargin()
         ds.connection.use {
-            val res = it.prepareStatement(insertStatement).executeQuery()
+            val prepareStatement = it.prepareStatement(insertStatement)
+            prepareStatement.setInt(1, feil.id)
+            prepareStatement.setString(2, feil.arkivReferanse)
+            prepareStatement.setTimestamp(3, Timestamp.valueOf(feil.tidspunkt))
+            prepareStatement.setString(4, feil.feiltype.name)
+
+            val res = prepareStatement.executeQuery()
             return resultLoop(res).first()
         }
     }

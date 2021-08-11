@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val micrometerVersion = "1.6.3"
 val flywayVersion = "6.1.4"
-val cxfVersion = "3.4.2"
+val cxfVersion = "3.4.4"
 val swaggerVersion = "2.10.0"
 val kotlinVersion = "1.4.10"
 val hikariVersion = "3.4.5"
@@ -161,7 +161,7 @@ dependencies {
     implementation("org.apache.cxf:cxf-rt-databinding-jaxb:$cxfVersion")
     runtimeOnly("org.apache.cxf:cxf-rt-features-logging:$cxfVersion")
 
-    implementation("org.postgresql:postgresql:42.2.13")
+    implementation("org.postgresql:postgresql:42.2.23")
     implementation("org.apache.neethi:neethi:3.1.0")
     implementation("org.flywaydb:flyway-core:$flywayVersion")
 
@@ -181,7 +181,7 @@ dependencies {
     implementation("no.nav.syfo.sm:syfosm-common-networking:2019.09.03-10-50-64032e3b6381665e9f9c0914cef626331399e66d")
     implementation("no.nav:vault-jdbc:1.3.1")
     implementation("no.nav.common:log:2.2021.01.05_08.07-2c586ccadf95")
-    implementation("no.nav.helsearbeidsgiver:helse-arbeidsgiver-felles-backend:2021.03.02-15-19-eb0ee")
+    implementation("no.nav.helsearbeidsgiver:helse-arbeidsgiver-felles-backend:2021.06.28-09-42-e08ae")
     implementation("no.nav.security:token-client-core:$tokenSupportVersion")
     implementation("no.nav.security:token-validation-ktor:$tokenSupportVersion")
     implementation("no.nav.security:mock-oauth2-server:$mockOAuth2ServerVersion")
@@ -202,8 +202,8 @@ dependencies {
     testAnnotationProcessor("org.projectlombok:lombok:1.18.18")*/
     implementation("com.google.guava:guava:30.0-jre")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3")
-    implementation("io.confluent:kafka-streams-avro-serde:6.1.1")
-    implementation("io.confluent:kafka-avro-serializer:6.1.1")
+    implementation("io.confluent:kafka-streams-avro-serde:6.1.2")
+    implementation("io.confluent:kafka-avro-serializer:6.1.2")
     implementation("org.apache.kafka:kafka-streams:2.8.0")
 
 

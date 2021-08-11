@@ -23,7 +23,7 @@ import no.nav.syfo.domain.GeografiskTilknytningData
 import no.nav.syfo.domain.InngaaendeJournal
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
-import no.nav.syfo.producer.InntektsmeldingProducer
+import no.nav.syfo.producer.InntektsmeldingAivenProducer
 import no.nav.syfo.repository.InntektsmeldingRepository
 import no.nav.syfo.repository.InntektsmeldingRepositoryMock
 import no.nav.syfo.repository.InntektsmeldingService
@@ -60,7 +60,6 @@ class InntektsmeldingBehandlerTest2 {
     private var aktorConsumer = mockk<AktorConsumer>(relaxed = true)
     private var inngaaendeJournalConsumer = mockk<InngaaendeJournalConsumer>(relaxed = true)
     private var metrikk = mockk<Metrikk>(relaxed = true)
-    private var inntektsmeldingProducer = mockk<InntektsmeldingProducer>(relaxed = true)
     private var behandleInngaaendeJournalConsumer = mockk<BehandleInngaaendeJournalConsumer>(relaxed = true)
     private var behandlendeEnhetConsumer = mockk<BehandlendeEnhetConsumer>(relaxed = true)
     var oppgaveClient = mockk<OppgaveClient>(relaxed = true)
@@ -81,6 +80,7 @@ class InntektsmeldingBehandlerTest2 {
     private var journalConsumer = mockk<JournalConsumer>(relaxed = true)
     private var saksbehandlingService = mockk<SaksbehandlingService>(relaxed = true)
     private var inntektsmeldingBehandler = mockk<InntektsmeldingBehandler>(relaxed = true)
+    private var aivenInntektsmeldingBehandler = mockk<InntektsmeldingAivenProducer>(relaxed = true)
     var feiletUtsattOppgaveMeldingProsessor = mockk<FeiletUtsattOppgaveMeldingProsessor>(relaxed = true)
 
     @BeforeEach
@@ -102,7 +102,7 @@ class InntektsmeldingBehandlerTest2 {
             metrikk,
             inntektsmeldingService,
             aktorConsumer,
-            inntektsmeldingProducer,
+            aivenInntektsmeldingBehandler,
             utsattOppgaveService
         )
         MockKAnnotations.init(inntektsmeldingBehandler)

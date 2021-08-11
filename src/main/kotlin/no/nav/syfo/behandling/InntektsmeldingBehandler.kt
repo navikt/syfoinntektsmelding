@@ -10,7 +10,7 @@ import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.dto.UtsattOppgaveEntitet
 import no.nav.syfo.mapping.mapInntektsmeldingKontrakt
-import no.nav.syfo.producer.InntektsmeldingProducer
+import no.nav.syfo.producer.InntektsmeldingAivenProducer
 import no.nav.syfo.repository.InntektsmeldingService
 import no.nav.syfo.service.JournalpostService
 import no.nav.syfo.service.SaksbehandlingService
@@ -25,7 +25,7 @@ class InntektsmeldingBehandler(
     private val metrikk: Metrikk,
     private val inntektsmeldingService: InntektsmeldingService,
     private val aktorConsumer: AktorConsumer,
-    private val inntektsmeldingProducer: InntektsmeldingProducer,
+    private val inntektsmeldingAivenProducer: InntektsmeldingAivenProducer,
     private val utsattOppgaveService: UtsattOppgaveService
 ) {
 
@@ -76,15 +76,15 @@ class InntektsmeldingBehandler(
                 )
                 log.info("opprettet utsatt oppgave på ${inntektsmelding.arkivRefereranse}")
 
-                inntektsmeldingProducer.leggMottattInntektsmeldingPåTopics(
-                    mapInntektsmeldingKontrakt(
-                        inntektsmelding,
-                        aktorid,
-                        validerInntektsmelding(inntektsmelding),
-                        arkivreferanse,
-                        dto.uuid
-                    )
+                val mappedInntektsmelding = mapInntektsmeldingKontrakt(
+                    inntektsmelding,
+                    aktorid,
+                    validerInntektsmelding(inntektsmelding),
+                    arkivreferanse,
+                    dto.uuid
                 )
+
+                inntektsmeldingAivenProducer.leggMottattInntektsmeldingPåTopics(mappedInntektsmelding)
 
                 log.info("Inntektsmelding {} er journalført for {} refusjon {}", inntektsmelding.journalpostId, arkivreferanse, inntektsmelding.refusjon.beloepPrMnd)
                 ret = dto.uuid

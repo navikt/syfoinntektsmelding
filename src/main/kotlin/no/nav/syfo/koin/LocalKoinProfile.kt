@@ -22,8 +22,9 @@ import no.nav.syfo.consumer.ws.BehandleInngaaendeJournalConsumer
 import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
 import no.nav.syfo.consumer.ws.InngaaendeJournalConsumer
 import no.nav.syfo.consumer.ws.JournalConsumer
+import no.nav.syfo.datapakke.DatapakkePublisherJob
 import no.nav.syfo.integration.kafka.*
-import no.nav.syfo.producer.InntektsmeldingProducer
+import no.nav.syfo.producer.InntektsmeldingAivenProducer
 import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
 import no.nav.syfo.prosesser.FjernInntektsmeldingByBehandletProcessor
 import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
@@ -40,7 +41,6 @@ import no.nav.tjeneste.virksomhet.behandleinngaaendejournal.v1.binding.BehandleI
 import no.nav.tjeneste.virksomhet.behandlesak.v2.BehandleSakV2
 import no.nav.tjeneste.virksomhet.inngaaendejournal.v1.binding.InngaaendeJournalV1
 import no.nav.tjeneste.virksomhet.journal.v2.binding.JournalV2
-import no.nav.tjeneste.virksomhet.person.v3.binding.PersonV3
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import javax.sql.DataSource
@@ -110,14 +110,9 @@ fun localDevConfig(config: ApplicationConfig) = module {
     //single { VaultHikariConfig(config.getString("vault.enabled:true").toBoolean(), config.getString("vault.backend"), config.getString("vault.role:syfoinntektsmelding-user"), config.getString("vault.admin:syfoinntektsmelding-admin") ) }
     single { PostgresBakgrunnsjobbRepository(get()) } bind BakgrunnsjobbRepository::class
     single { BakgrunnsjobbService(get()) }
+    single { IMStatsRepoImpl(get()) } bind IMStatsRepo::class
+    single { DatapakkePublisherJob(get(), get(), config.getString("datapakke.api_url"), config.getString("datapakke.id")) }
 
-    single {
-        WsClientMock<PersonV3>().createPort(
-            config.getString("virksomhet_person_3_endpointurl"),
-            PersonV3::class.java,
-            listOf(LogErrorHandler())
-        )
-    } bind PersonV3::class
     single {
         WsClientMock<ArbeidsfordelingV1>().createPort(
             config.getString("virksomhet_arbeidsfordeling_v1_endpointurl"),
@@ -194,8 +189,8 @@ fun localDevConfig(config: ApplicationConfig) = module {
     } bind JoarkInntektsmeldingHendelseProsessor::class
 
     single {
-        InntektsmeldingProducer(producerLocalProperties(config.getString("kafka_bootstrap_servers")), get())
-    } bind InntektsmeldingProducer::class
+        InntektsmeldingAivenProducer(producerLocalProperties(config.getString("kafka_bootstrap_servers")))
+    }
 
     single {
         SakConsumer(
@@ -214,5 +209,5 @@ fun localDevConfig(config: ApplicationConfig) = module {
             config.getString("aad_syfoinntektsmelding_clientid_password")
         )
     } bind AzureAdTokenConsumer::class
-    single { ArbeidsgiverperiodeRepositoryImp(get(), get())} bind ArbeidsgiverperiodeRepository::class
+    single { ArbeidsgiverperiodeRepositoryImp(get())} bind ArbeidsgiverperiodeRepository::class
 }

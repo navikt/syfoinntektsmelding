@@ -26,7 +26,7 @@ import org.koin.test.inject
  */
 open class SystemTestBase : KoinTest {
 
-    private val httpClient by inject<HttpClient>()
+    protected val httpClient by inject<HttpClient>()
 
     companion object {
         const val testServerPort = 8989
