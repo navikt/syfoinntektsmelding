@@ -4,7 +4,6 @@ import kotlinx.coroutines.runBlocking
 import log
 import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClient
 import no.nav.syfo.behandling.BehandlendeEnhetFeiletException
-import no.nav.syfo.behandling.FinnBehandlendeEnhetListeUgyldigInputException
 import no.nav.syfo.behandling.IngenAktivEnhetException
 import no.nav.syfo.consumer.rest.norg.ArbeidsfordelingResponse
 import no.nav.syfo.consumer.rest.norg.ArbeidsfordelingRequest
@@ -12,7 +11,6 @@ import no.nav.syfo.consumer.rest.norg.Norg2Client
 import no.nav.syfo.domain.GeografiskTilknytningData
 import no.nav.syfo.util.MDCOperations
 import no.nav.syfo.util.Metrikk
-import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.binding.FinnBehandlendeEnhetListeUgyldigInput
 import java.time.LocalDate
 
 const val SYKEPENGER_UTLAND = "4474"
@@ -38,10 +36,11 @@ class BehandlendeEnhetConsumer(
         val callId = MDCOperations.getFromMDC(MDCOperations.MDC_CALL_ID)
 
         try {
+            val arbeidsfordelinger = runBlocking {
+                norg2Client.hentAlleArbeidsfordelinger(criteria, callId)
+            }
             val behandlendeEnhet = finnAktivBehandlendeEnhet(
-                runBlocking {
-                    norg2Client.hentAlleArbeidsfordelinger(criteria, callId)
-                },
+                arbeidsfordelinger,
                 geografiskTilknytning?.geografiskTilknytning,
                 tidspunkt
             )
@@ -50,10 +49,6 @@ class BehandlendeEnhetConsumer(
             }
             log.info("Fant geografiskTilknytning ${geografiskTilknytning.geografiskTilknytning} med behandlendeEnhet $behandlendeEnhet for inntektsmelding $uuid");
             return behandlendeEnhet
-
-        } catch (e: FinnBehandlendeEnhetListeUgyldigInput) {
-            log.error("Feil ved henting av brukers forvaltningsenhet", e)
-            throw FinnBehandlendeEnhetListeUgyldigInputException(e)
         } catch (e: RuntimeException) {
             log.error("Klarte ikke å hente behandlende enhet!", e)
             throw BehandlendeEnhetFeiletException(e)
@@ -72,7 +67,7 @@ class BehandlendeEnhetConsumer(
 }
 
 fun finnAktivBehandlendeEnhet(arbeidsfordelinger: List<ArbeidsfordelingResponse>, geografiskTilknytning: String?, tidspunkt: LocalDate): String {
-    val behandlendeEnhet = arbeidsfordelinger
+    return arbeidsfordelinger
         .stream()
         .filter {
             tidspunkt >= it.gyldigFra && tidspunkt <= it.gyldigTil
@@ -80,5 +75,4 @@ fun finnAktivBehandlendeEnhet(arbeidsfordelinger: List<ArbeidsfordelingResponse>
         .map { it.enhetNr }
         .findFirst()
         .orElseThrow { IngenAktivEnhetException(geografiskTilknytning, null) }
-    return behandlendeEnhet
 }
