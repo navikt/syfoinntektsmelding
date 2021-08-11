@@ -70,7 +70,7 @@ fun finnAktivBehandlendeEnhet(arbeidsfordelinger: List<ArbeidsfordelingResponse>
     return arbeidsfordelinger
         .stream()
         .filter {
-            tidspunkt >= it.gyldigFra && tidspunkt <= it.gyldigTil
+            tidspunkt >= it.gyldigFra && (it.gyldigTil ==null || tidspunkt <= it.gyldigTil)
         }
         .map { it.enhetNr }
         .findFirst()
