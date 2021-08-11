@@ -30,7 +30,7 @@ class BehandleInngaaendeJournalConsumerTest {
         )
         verify { behandleInngaaendeJournalV1.ferdigstillJournalfoering( capture(captor)) }
 
-        assertThat(captor.captured.enhetId).isEqualTo(behandlendeEngetId)
+        assertThat(captor.captured.enhetId).isEqualTo("9999")
         assertThat(captor.captured.journalpostId).isEqualTo(journalpostId)
     }
 
