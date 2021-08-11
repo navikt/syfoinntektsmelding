@@ -2,6 +2,7 @@ package no.nav.syfo.koin
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
 import no.nav.helse.arbeidsgiver.integrasjoner.altinn.AltinnOrganisasjon
 import no.nav.helse.arbeidsgiver.integrasjoner.dokarkiv.DokarkivKlient
 import no.nav.helse.arbeidsgiver.integrasjoner.dokarkiv.JournalpostRequest
@@ -10,8 +11,12 @@ import no.nav.helse.arbeidsgiver.integrasjoner.oppgave.*
 import no.nav.helse.arbeidsgiver.integrasjoner.pdl.*
 import no.nav.helse.arbeidsgiver.utils.loadFromResources
 import no.nav.helse.arbeidsgiver.web.auth.AltinnOrganisationsRepository
+import no.nav.syfo.consumer.rest.norg.ArbeidsfordelingRequest
+import no.nav.syfo.consumer.rest.norg.ArbeidsfordelingResponse
+import no.nav.syfo.consumer.rest.norg.Norg2Client
 import org.koin.core.module.Module
 import org.koin.dsl.bind
+import java.time.LocalDate
 import java.time.LocalDate.now
 
 fun Module.mockExternalDependecies() {
@@ -85,7 +90,34 @@ fun Module.mockExternalDependecies() {
         }
     } bind OppgaveKlient::class
 
-
+    single {
+        object : Norg2Client("",
+            object : AccessTokenProvider {
+                override fun getToken(): String {
+                    return "token";
+                }
+            },
+            get()) {
+            override suspend fun hentAlleArbeidsfordelinger(
+                request: ArbeidsfordelingRequest, callId: String?
+            ): List<ArbeidsfordelingResponse> = listOf(ArbeidsfordelingResponse(
+                behandlingstema = "string",
+                behandlingstype= "string",
+                diskresjonskode= "string",
+                enhetId= 0,
+                enhetNavn= "string",
+                enhetNr= "string",
+                geografiskOmraade= "string",
+                gyldigFra= LocalDate.of(2021,1,1),
+                gyldigTil= LocalDate.of(2021,11,1),
+                id= 0,
+                oppgavetype= "string",
+                skalTilLokalkontor= true,
+                tema= "string",
+                temagruppe= "string"
+            ))
+        }
+    } bind Norg2Client::class
 }
 
 class MockAltinnRepo(om: ObjectMapper) : AltinnOrganisationsRepository {

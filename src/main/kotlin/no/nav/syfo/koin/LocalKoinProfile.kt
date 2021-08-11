@@ -36,7 +36,6 @@ import no.nav.syfo.util.Metrikk
 import no.nav.syfo.utsattoppgave.FeiletUtsattOppgaveMeldingProsessor
 import no.nav.syfo.utsattoppgave.UtsattOppgaveDAO
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
-import no.nav.tjeneste.virksomhet.arbeidsfordeling.v1.binding.ArbeidsfordelingV1
 import no.nav.tjeneste.virksomhet.behandleinngaaendejournal.v1.binding.BehandleInngaaendeJournalV1
 import no.nav.tjeneste.virksomhet.behandlesak.v2.BehandleSakV2
 import no.nav.tjeneste.virksomhet.inngaaendejournal.v1.binding.InngaaendeJournalV1
@@ -114,13 +113,6 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single { IMStatsRepoImpl(get()) } bind IMStatsRepo::class
     single { DatapakkePublisherJob(get(), get(), config.getString("datapakke.api_url"), config.getString("datapakke.id")) }
 
-    single {
-        WsClientMock<ArbeidsfordelingV1>().createPort(
-            config.getString("virksomhet_arbeidsfordeling_v1_endpointurl"),
-            ArbeidsfordelingV1::class.java,
-            listOf(LogErrorHandler())
-        )
-    } bind ArbeidsfordelingV1::class
     single {
         WsClientMock<OppgavebehandlingV3>().createPort(
             config.getString("servicegateway_url"),
