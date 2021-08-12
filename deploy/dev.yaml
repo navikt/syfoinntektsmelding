@@ -89,8 +89,6 @@ spec:
       value: "https://wasapp-q1.adeo.no/joark/Journal/v2"
     - name: VIRKSOMHET_PERSON_V3_ENDPOINTURL
       value: "https://app-q1.adeo.no/tpsws-aura/ws/Person/v3"
-    - name: SERVICEGATEWAY_URL
-      value: "https://service-gw-q1.preprod.local/"
     - name: VIRKSOMHET_BEHANDLESAK_V2_ENDPOINTURL
       value: "https://wasapp-q1.adeo.no/nav-gsak-ws/BehandleSakV2"
     - name: VIRKSOMHET_OPPGAVE_V3_ENDPOINTURL
