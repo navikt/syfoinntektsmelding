@@ -69,10 +69,8 @@ class BehandlendeEnhetConsumer(
 fun finnAktivBehandlendeEnhet(arbeidsfordelinger: List<ArbeidsfordelingResponse>, geografiskTilknytning: String?, tidspunkt: LocalDate): String {
     return arbeidsfordelinger
         .stream()
-        .filter {
-            tidspunkt >= it.gyldigFra && (it.gyldigTil ==null || tidspunkt <= it.gyldigTil)
-        }
-        .map { it.enhetNr }
-        .findFirst()
-        .orElseThrow { IngenAktivEnhetException(geografiskTilknytning, null) }
+        .filter { tidspunkt >= it.gyldigFra }
+        .filter { it.gyldigTil == null || tidspunkt <= it.gyldigTil }
+        .filter { it.enhetNr !== null }
+        .findFirst().orElseThrow { IngenAktivEnhetException(geografiskTilknytning, null) }.enhetNr!!
 }
