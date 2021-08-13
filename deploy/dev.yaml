@@ -132,4 +132,4 @@ spec:
     - name: PDL_URL
       value: https://pdl-api.nais.preprod.local/graphql
     - name: NORG2_URL
-      value: https://norg2.dev.adeo.no/norg2/api/v1/arbeidsfordeling
+      value: https://norg2.dev.adeo.no/norg2/api/v1
