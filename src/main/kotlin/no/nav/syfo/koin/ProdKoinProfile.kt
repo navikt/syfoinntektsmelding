@@ -22,7 +22,6 @@ import no.nav.syfo.consumer.rest.TokenConsumer
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
 
 import no.nav.syfo.consumer.rest.norg.Norg2Client
-import no.nav.syfo.consumer.util.ws.createServicePort
 
 import no.nav.syfo.consumer.ws.*
 import no.nav.syfo.datapakke.DatapakkePublisherJob
