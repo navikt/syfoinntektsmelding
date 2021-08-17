@@ -16,8 +16,7 @@ import no.nav.syfo.consumer.rest.OppgaveClient
 import no.nav.syfo.consumer.rest.SakClient
 import no.nav.syfo.consumer.rest.TokenConsumer
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
-import no.nav.syfo.consumer.util.ws.LogErrorHandler
-import no.nav.syfo.consumer.util.ws.WsClientMock
+
 import no.nav.syfo.consumer.ws.BehandleInngaaendeJournalConsumer
 import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
 import no.nav.syfo.consumer.ws.InngaaendeJournalConsumer
@@ -37,8 +36,6 @@ import no.nav.syfo.util.Metrikk
 import no.nav.syfo.utsattoppgave.FeiletUtsattOppgaveMeldingProsessor
 import no.nav.syfo.utsattoppgave.UtsattOppgaveDAO
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
-import no.nav.tjeneste.virksomhet.behandleinngaaendejournal.v1.binding.BehandleInngaaendeJournalV1
-import no.nav.tjeneste.virksomhet.behandlesak.v2.BehandleSakV2
 
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -112,20 +109,6 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single { IMStatsRepoImpl(get()) } bind IMStatsRepo::class
     single { DatapakkePublisherJob(get(), get(), config.getString("datapakke.api_url"), config.getString("datapakke.id")) }
 
-    single {
-        WsClientMock<BehandleSakV2>().createPort(
-            config.getString("virksomhet_behandlesak_v2_endpointurl"),
-            BehandleSakV2::class.java,
-            listOf(LogErrorHandler())
-        )
-    } bind BehandleSakV2::class
-    single {
-        WsClientMock<BehandleInngaaendeJournalV1>().createPort(
-            config.getString("behandleinngaaendejournal_v1_endpointurl"),
-            BehandleInngaaendeJournalV1::class.java,
-            listOf(LogErrorHandler())
-        )
-    } bind BehandleInngaaendeJournalV1::class
 
     single { BehandlendeEnhetConsumer(get(), get(), get()) } bind BehandlendeEnhetConsumer::class
     single { UtsattOppgaveDAO(UtsattOppgaveRepositoryMockk()) }
@@ -147,8 +130,6 @@ fun localDevConfig(config: ApplicationConfig) = module {
         )
     } bind InntektsmeldingBehandler::class
     single { InngaaendeJournalConsumer(get()) } bind InngaaendeJournalConsumer::class
-    single { BehandleInngaaendeJournalConsumer(get()) } bind BehandleInngaaendeJournalConsumer::class
-
     single { Metrikk() } bind Metrikk::class
     single { JournalpostService(get(), get(), get(), get(), get(), get()) } bind JournalpostService::class
     single { EksisterendeSakService(get()) } bind EksisterendeSakService::class

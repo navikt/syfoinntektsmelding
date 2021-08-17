@@ -21,7 +21,7 @@ import no.nav.syfo.consumer.rest.SakClient
 import no.nav.syfo.consumer.rest.TokenConsumer
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
 import no.nav.syfo.consumer.rest.norg.Norg2Client
-import no.nav.syfo.consumer.util.ws.createServicePort
+
 import no.nav.syfo.consumer.ws.*
 import no.nav.syfo.datapakke.DatapakkePublisherJob
 import no.nav.syfo.integration.kafka.*
@@ -39,9 +39,7 @@ import no.nav.syfo.util.Metrikk
 import no.nav.syfo.utsattoppgave.FeiletUtsattOppgaveMeldingProsessor
 import no.nav.syfo.utsattoppgave.UtsattOppgaveDAO
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
-import no.nav.tjeneste.virksomhet.behandleinngaaendejournal.v1.binding.BehandleInngaaendeJournalV1
-import no.nav.tjeneste.virksomhet.behandlesak.v2.BehandleSakV2
-import no.nav.tjeneste.virksomhet.inngaaendejournal.v1.binding.InngaaendeJournalV1
+
 import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil
 import org.koin.core.qualifier.StringQualifier
 import org.koin.dsl.bind
@@ -119,7 +117,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
     } bind InntektsmeldingBehandler::class
 
     single { InngaaendeJournalConsumer(get()) } bind InngaaendeJournalConsumer::class
-    single { BehandleInngaaendeJournalConsumer(get()) } bind BehandleInngaaendeJournalConsumer::class
+
     single { Metrikk() } bind Metrikk::class
     single { BehandlendeEnhetConsumer(get(), get(), get()) } bind BehandlendeEnhetConsumer::class
     single { JournalpostService(get(), get(), get(), get(), get(), get()) } bind JournalpostService::class
@@ -229,26 +227,5 @@ fun preprodConfig(config: ApplicationConfig) = module {
         )
     } bind SafDokumentClient::class
 
-    single {
-        createServicePort(
-            serviceUrl = config.getString("" +
-                ""),
-            serviceClazz = InngaaendeJournalV1::class.java
-        )
-    } bind InngaaendeJournalV1::class
-
-    single {
-        createServicePort(
-            serviceUrl = config.getString("virksomhet_behandlesak_v2_endpointurl"),
-            serviceClazz = BehandleSakV2::class.java
-        )
-    } bind BehandleSakV2::class
-
-    single {
-        createServicePort(
-            serviceUrl = config.getString("behandleinngaaendejournal_v1_endpointurl"),
-            serviceClazz = BehandleInngaaendeJournalV1::class.java
-        )
-    } bind BehandleInngaaendeJournalV1::class
 }
 
