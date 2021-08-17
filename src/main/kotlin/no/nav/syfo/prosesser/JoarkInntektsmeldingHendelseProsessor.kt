@@ -66,7 +66,10 @@ class JoarkInntektsmeldingHendelseProsessor(
                 return
             }
 
-            val behandle = inntektsmeldingBehandler.behandle(journalpostDTO.journalpostId.toString(), arkivReferanse)
+            runBlocking {
+                inntektsmeldingBehandler.behandle(journalpostDTO.journalpostId.toString(), arkivReferanse)
+            }
+
         } catch(e: IllegalArgumentException) {
             metrikk.tellInntektsmeldingUtenArkivReferanse()
             throw InntektsmeldingConsumerException(arkivReferanse, e, Feiltype.INNGÅENDE_MANGLER_KANALREFERANSE)

@@ -1,10 +1,10 @@
 package no.nav.syfo.service
 
 import io.ktor.client.*
-import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
 import no.nav.syfo.consumer.ws.BehandleInngaaendeJournalConsumer
 import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
+import no.nav.syfo.consumer.rest.inntektsmelding.InntektsmeldingMapper
 import no.nav.syfo.domain.InngaendeJournalpost
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.saf.SafDokumentClient
@@ -20,12 +20,12 @@ class JournalpostService(
     private val stsClient: AccessTokenProvider
 ) {
 
-    fun hentInntektsmelding(journalpostId: String, arkivReferanse: String) : Inntektsmelding? {
-        runBlocking {
-            val inngaaendeJournal = inngaaendeJournalConsumer.getJournalpostMetadata(journalpostId,stsClient.getToken())
-            return@runBlocking journalConsumer.hentDokument(journalpostId, inngaaendeJournal?.data?.journalpost?.dokumentId!!, arkivReferanse)
-        }
-        return null;
+    suspend fun hentInntektsmelding(journalpostId: String, arkivReferanse: String) : Inntektsmelding? {
+        val journalpostResponse = inngaaendeJournalConsumer.getJournalpostMetadata(journalpostId, stsClient.getToken())
+        val bytes: ByteArray? = journalConsumer.hentDokument(journalpostId, journalpostResponse?.data?.journalpost?.dokumentId!!, stsClient.getToken())
+        val mottattDato = journalpostResponse.data.journalpost.mottattDato!!
+        val journalStatus = journalpostResponse.data.journalpost.journalstatus!!
+        return InntektsmeldingMapper().mapInntektsmelding(bytes!!, journalpostId, mottattDato, journalpostId, journalStatus, arkivReferanse)
     }
 
     suspend fun ferdigstillJournalpost(saksId: String, inntektsmelding: Inntektsmelding) {
@@ -36,12 +36,9 @@ class JournalpostService(
     }
 
     private suspend fun hentInngaendeJournalpost(gsakId: String, inntektsmelding: Inntektsmelding): InngaendeJournalpost {
-        val inngaaendeJournal = hentInntektsmelding(inntektsmelding.journalpostId,gsakId)
         val behandlendeEnhet = behandlendeEnhetConsumer.hentBehandlendeEnhet(inntektsmelding.fnr, inntektsmelding.id)
-
         val safJournalpostClient = SafJournalpostClient(HttpClient(),"","")
         val dokumentId = safJournalpostClient.getJournalpostMetadata(inntektsmelding.journalpostId,stsClient.getToken())?.data?.journalpost?.dokumentId
-
         return InngaendeJournalpost(
                 fnr = inntektsmelding.fnr,
                 gsakId = gsakId,

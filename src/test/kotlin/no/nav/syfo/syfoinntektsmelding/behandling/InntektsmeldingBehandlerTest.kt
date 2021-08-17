@@ -59,69 +59,70 @@ class InntektsmeldingBehandlerTest {
 
     }
 
-    @Test
-    fun behandler_midlertidig() {
-        every { journalpostService.hentInntektsmelding("arkivId", "AR-123") } returns
-            Inntektsmelding(
-                fnr = "fnr",
-                arbeidsgiverOrgnummer = "orgnummer",
-                arbeidsgiverPrivatFnr = null,
-                arbeidsforholdId = "",
-                journalpostId = "arkivId",
-                arsakTilInnsending = "",
-                journalStatus = JournalStatus.MIDLERTIDIG,
-                arbeidsgiverperioder = emptyList(),
-                arkivRefereranse = "AR-123",
-                førsteFraværsdag = LocalDate.now(),
-                mottattDato = LocalDate.of(2019, 2, 6).atStartOfDay()
-            )
+//    @Test
+//    fun behandler_midlertidig() {
+//        every { journalpostService.hentInntektsmelding("arkivId", "AR-123") } returns
+//            Inntektsmelding(
+//                fnr = "fnr",
+//                arbeidsgiverOrgnummer = "orgnummer",
+//                arbeidsgiverPrivatFnr = null,
+//                arbeidsforholdId = "",
+//                journalpostId = "arkivId",
+//                arsakTilInnsending = "",
+//                journalStatus = JournalStatus.MIDLERTIDIG,
+//                arbeidsgiverperioder = emptyList(),
+//                arkivRefereranse = "AR-123",
+//                førsteFraværsdag = LocalDate.now(),
+//                mottattDato = LocalDate.of(2019, 2, 6).atStartOfDay()
+//            )
+//
+//        inntektsmeldingBehandler.behandle("arkivId", "AR-123")
+//
+//        verify { saksbehandlingService.behandleInntektsmelding(any(), any(), any()) }
+//        verify { aivenInntektsmeldingProducer.leggMottattInntektsmeldingPåTopics(any()) }
+//    }
+//
+//    @Test
+//    fun behandler_Ikke_ForskjelligFraMidlertidig() {
+//        every { journalpostService.hentInntektsmelding("arkivId", "AR-123") } returns
+//            Inntektsmelding(
+//                fnr = "fnr",
+//                arbeidsforholdId = "123",
+//                journalpostId = "arkivId",
+//                arsakTilInnsending = "",
+//                journalStatus = JournalStatus.ANNET,
+//                arbeidsgiverperioder = emptyList(),
+//                arkivRefereranse = "AR-123",
+//                førsteFraværsdag = LocalDate.now(),
+//                mottattDato = LocalDate.of(2019, 2, 6).atStartOfDay()
+//            )
+//
+//        inntektsmeldingBehandler.behandle("arkivId", "AR-123")
+//
+//        verify(exactly = 0) { saksbehandlingService.behandleInntektsmelding(any(), any(), any()) }
+//
+//    }
+//
+//    @Test
+//    fun behandler_Ikke_StatusEndelig() {
+//        every { journalpostService.hentInntektsmelding("arkivId", "AR-123") } returns
+//            Inntektsmelding(
+//                fnr = "fnr",
+//                arbeidsforholdId = "123",
+//                journalpostId = "arkivId",
+//                arsakTilInnsending = "",
+//                journalStatus = JournalStatus.ENDELIG,
+//                arbeidsgiverperioder = emptyList(),
+//                arkivRefereranse = "AR-123",
+//                førsteFraværsdag = LocalDate.now(),
+//                mottattDato = LocalDate.of(2019, 2, 6).atStartOfDay()
+//            )
+//
+//        inntektsmeldingBehandler.behandle("arkivId", "AR-123")
+//
+//        verify(exactly = 0) { saksbehandlingService.behandleInntektsmelding(any(), any(), any()) }
+//
+//    }
 
-        inntektsmeldingBehandler.behandle("arkivId", "AR-123")
-
-        verify { saksbehandlingService.behandleInntektsmelding(any(), any(), any()) }
-        verify { aivenInntektsmeldingProducer.leggMottattInntektsmeldingPåTopics(any()) }
-    }
-
-    @Test
-    fun behandler_Ikke_ForskjelligFraMidlertidig() {
-        every { journalpostService.hentInntektsmelding("arkivId", "AR-123") } returns
-            Inntektsmelding(
-                fnr = "fnr",
-                arbeidsforholdId = "123",
-                journalpostId = "arkivId",
-                arsakTilInnsending = "",
-                journalStatus = JournalStatus.ANNET,
-                arbeidsgiverperioder = emptyList(),
-                arkivRefereranse = "AR-123",
-                førsteFraværsdag = LocalDate.now(),
-                mottattDato = LocalDate.of(2019, 2, 6).atStartOfDay()
-            )
-
-        inntektsmeldingBehandler.behandle("arkivId", "AR-123")
-
-        verify(exactly = 0) { saksbehandlingService.behandleInntektsmelding(any(), any(), any()) }
-
-    }
-
-    @Test
-    fun behandler_Ikke_StatusEndelig() {
-        every { journalpostService.hentInntektsmelding("arkivId", "AR-123") } returns
-            Inntektsmelding(
-                fnr = "fnr",
-                arbeidsforholdId = "123",
-                journalpostId = "arkivId",
-                arsakTilInnsending = "",
-                journalStatus = JournalStatus.ENDELIG,
-                arbeidsgiverperioder = emptyList(),
-                arkivRefereranse = "AR-123",
-                førsteFraværsdag = LocalDate.now(),
-                mottattDato = LocalDate.of(2019, 2, 6).atStartOfDay()
-            )
-
-        inntektsmeldingBehandler.behandle("arkivId", "AR-123")
-
-        verify(exactly = 0) { saksbehandlingService.behandleInntektsmelding(any(), any(), any()) }
-
-    }
 }
 

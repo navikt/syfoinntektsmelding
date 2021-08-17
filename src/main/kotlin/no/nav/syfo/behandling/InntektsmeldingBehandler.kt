@@ -33,7 +33,7 @@ class InntektsmeldingBehandler(
     private val consumerLocks = Striped.lock(8)
     private val OPPRETT_OPPGAVE_FORSINKELSE = 48L;
 
-    fun behandle(arkivId: String, arkivreferanse: String): String? {
+    suspend fun behandle(arkivId: String, arkivreferanse: String): String? {
         val inntektsmelding = journalpostService.hentInntektsmelding(arkivId, arkivreferanse)
         return behandle(arkivId, arkivreferanse, inntektsmelding)
     }
@@ -56,10 +56,10 @@ class InntektsmeldingBehandler(
 
                 val saksId = saksbehandlingService.behandleInntektsmelding(inntektsmelding, aktorid, arkivreferanse)
                 log.info("fant sak $saksId")
-    runBlocking {
-        journalpostService.ferdigstillJournalpost(saksId, inntektsmelding)
-        log.info("ferdigstilte ${inntektsmelding.arkivRefereranse}")
-    }
+                runBlocking {
+                    journalpostService.ferdigstillJournalpost(saksId, inntektsmelding)
+                    log.info("ferdigstilte ${inntektsmelding.arkivRefereranse}")
+                }
 
                 val dto = inntektsmeldingService.lagreBehandling(inntektsmelding, aktorid, saksId, arkivreferanse)
                 log.info("lagret ${inntektsmelding.arkivRefereranse}")
