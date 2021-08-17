@@ -274,7 +274,7 @@ class IMStatsRepoImpl(
                 data -> 'avsenderSystem' ->> 'navn'  as lps_navn
             from inntektsmelding i
             where (
-                  behandlet > NOW()::DATE-EXTRACT(DOW FROM NOW())::INTEGER-7
+                  behandlet > NOW()::DATE-EXTRACT(DOW FROM NOW())::INTEGER-28
               and
                   (data -> 'refusjon' ->> 'beloepPrMnd')::numeric > 0
               and
