@@ -21,6 +21,9 @@ import no.nav.syfo.consumer.rest.SakClient
 import no.nav.syfo.consumer.rest.TokenConsumer
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
 
+import no.nav.syfo.consumer.rest.norg.Norg2Client
+import no.nav.syfo.consumer.util.ws.createServicePort
+
 import no.nav.syfo.consumer.ws.*
 import no.nav.syfo.datapakke.DatapakkePublisherJob
 import no.nav.syfo.integration.kafka.*
@@ -164,6 +167,21 @@ fun prodConfig(config: ApplicationConfig) = module {
             get()
         )
     } bind PdlClient::class
+
+
+    single {
+        Norg2Client(
+            config.getString("norg2_url"),
+            RestSTSAccessTokenProvider(
+                config.getString("security_token.username"),
+                config.getString("security_token.password"),
+                config.getString("security_token_service_token_url"),
+                get()
+            ),
+            get()
+        )
+    } bind Norg2Client::class
+
 
 
 }

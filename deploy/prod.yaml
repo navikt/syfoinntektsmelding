@@ -94,8 +94,6 @@ spec:
       value: "https://wasapp.adeo.no/joark/Journal/v2"
     - name: VIRKSOMHET_PERSON_V3_ENDPOINTURL
       value: "https://app.adeo.no/tpsws-aura/ws/Person/v3"
-    - name: SERVICEGATEWAY_URL
-      value: "https://service-gw.adeo.no/"
     - name: VIRKSOMHET_BEHANDLESAK_V2_ENDPOINTURL
       value: "https://wasapp.adeo.no/nav-gsak-ws/BehandleSakV2\n"
     - name: VIRKSOMHET_OPPGAVE_V3_ENDPOINTURL
@@ -139,4 +137,4 @@ spec:
     - name: PDL_URL
       value: https://pdl-api.nais.adeo.no/graphql
     - name: NORG2_URL
-      value: https://norg2.adeo.no/norg2/api/v1/arbeidsfordeling
+      value: https://norg2.adeo.no/norg2/api/v1

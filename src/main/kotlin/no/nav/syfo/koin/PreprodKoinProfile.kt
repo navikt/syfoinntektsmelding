@@ -217,6 +217,8 @@ fun preprodConfig(config: ApplicationConfig) = module {
             get(),
             config.getString(""),
             config.getString("")
+
+
         )
     } bind SafJournalpostClient::class
 
