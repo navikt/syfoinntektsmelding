@@ -79,7 +79,6 @@ class InntektsmeldingBehandlerTest {
         inntektsmeldingBehandler.behandle("arkivId", "AR-123")
 
         verify { saksbehandlingService.behandleInntektsmelding(any(), any(), any()) }
-        verify { journalpostService.ferdigstillJournalpost(match { it.contentEquals("saksId") }, any()) }
         verify { aivenInntektsmeldingProducer.leggMottattInntektsmeldingPåTopics(any()) }
     }
 
@@ -101,7 +100,7 @@ class InntektsmeldingBehandlerTest {
         inntektsmeldingBehandler.behandle("arkivId", "AR-123")
 
         verify(exactly = 0) { saksbehandlingService.behandleInntektsmelding(any(), any(), any()) }
-        verify(exactly = 0) { journalpostService.ferdigstillJournalpost(any(), any()) }
+
     }
 
     @Test
@@ -122,7 +121,7 @@ class InntektsmeldingBehandlerTest {
         inntektsmeldingBehandler.behandle("arkivId", "AR-123")
 
         verify(exactly = 0) { saksbehandlingService.behandleInntektsmelding(any(), any(), any()) }
-        verify(exactly = 0) { journalpostService.ferdigstillJournalpost(any(), any()) }
+
     }
 }
 

@@ -13,10 +13,6 @@ import io.ktor.routing.*
 import io.ktor.util.*
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.syfo.behandling.InntektsmeldingBehandler
-import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
-import no.nav.syfo.prosesser.FjernInntektsmeldingByBehandletProcessor
-import java.time.LocalDate
-import java.util.*
 import javax.sql.DataSource
 
 @KtorExperimentalAPI

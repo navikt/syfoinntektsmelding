@@ -21,7 +21,7 @@ import no.nav.syfo.consumer.util.ws.WsClientMock
 import no.nav.syfo.consumer.ws.BehandleInngaaendeJournalConsumer
 import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
 import no.nav.syfo.consumer.ws.InngaaendeJournalConsumer
-import no.nav.syfo.consumer.ws.JournalConsumer
+
 import no.nav.syfo.datapakke.DatapakkePublisherJob
 import no.nav.syfo.integration.kafka.*
 import no.nav.syfo.producer.InntektsmeldingAivenProducer
@@ -29,6 +29,7 @@ import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
 import no.nav.syfo.prosesser.FjernInntektsmeldingByBehandletProcessor
 import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
 import no.nav.syfo.repository.*
+import no.nav.syfo.saf.SafJournalpostClient
 import no.nav.syfo.service.EksisterendeSakService
 import no.nav.syfo.service.JournalpostService
 import no.nav.syfo.service.SaksbehandlingService
@@ -38,8 +39,7 @@ import no.nav.syfo.utsattoppgave.UtsattOppgaveDAO
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import no.nav.tjeneste.virksomhet.behandleinngaaendejournal.v1.binding.BehandleInngaaendeJournalV1
 import no.nav.tjeneste.virksomhet.behandlesak.v2.BehandleSakV2
-import no.nav.tjeneste.virksomhet.inngaaendejournal.v1.binding.InngaaendeJournalV1
-import no.nav.tjeneste.virksomhet.journal.v2.binding.JournalV2
+
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import javax.sql.DataSource
@@ -106,26 +106,12 @@ fun localDevConfig(config: ApplicationConfig) = module {
             config.getString("service_user.password")
         )
     }
-    //single { VaultHikariConfig(config.getString("vault.enabled:true").toBoolean(), config.getString("vault.backend"), config.getString("vault.role:syfoinntektsmelding-user"), config.getString("vault.admin:syfoinntektsmelding-admin") ) }
+
     single { PostgresBakgrunnsjobbRepository(get()) } bind BakgrunnsjobbRepository::class
     single { BakgrunnsjobbService(get()) }
     single { IMStatsRepoImpl(get()) } bind IMStatsRepo::class
     single { DatapakkePublisherJob(get(), get(), config.getString("datapakke.api_url"), config.getString("datapakke.id")) }
 
-    single {
-        WsClientMock<JournalV2>().createPort(
-            config.getString("journal_v2_endpointurl"),
-            JournalV2::class.java,
-            listOf(LogErrorHandler())
-        )
-    } bind JournalV2::class
-    single {
-        WsClientMock<InngaaendeJournalV1>().createPort(
-            config.getString("inngaaendejournal_v1_endpointurl"),
-            InngaaendeJournalV1::class.java,
-            listOf(LogErrorHandler())
-        )
-    } bind InngaaendeJournalV1::class
     single {
         WsClientMock<BehandleSakV2>().createPort(
             config.getString("virksomhet_behandlesak_v2_endpointurl"),
@@ -162,9 +148,9 @@ fun localDevConfig(config: ApplicationConfig) = module {
     } bind InntektsmeldingBehandler::class
     single { InngaaendeJournalConsumer(get()) } bind InngaaendeJournalConsumer::class
     single { BehandleInngaaendeJournalConsumer(get()) } bind BehandleInngaaendeJournalConsumer::class
-    single { JournalConsumer(get(), get()) } bind JournalConsumer::class
+
     single { Metrikk() } bind Metrikk::class
-    single { JournalpostService(get(), get(), get(), get(), get()) } bind JournalpostService::class
+    single { JournalpostService(get(), get(), get(), get(), get(), get()) } bind JournalpostService::class
     single { EksisterendeSakService(get()) } bind EksisterendeSakService::class
     single { InntektsmeldingService(InntektsmeldingRepositoryImp(get()), get()) } bind InntektsmeldingService::class
     single { SakClient(config.getString("opprett_sak_url"), get()) } bind SakClient::class
@@ -192,6 +178,14 @@ fun localDevConfig(config: ApplicationConfig) = module {
             config.getString("sakconsumer_host_url")
         )
     } bind SakConsumer::class
+
+    single {
+        SafJournalpostClient(
+            get(),
+            config.getString(""),
+            config.getString("")
+        )
+    } bind SafJournalpostClient::class
 
     single {
         AzureAdTokenConsumer(

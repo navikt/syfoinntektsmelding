@@ -3,6 +3,7 @@
 package no.nav.syfo.behandling
 
 import com.google.common.util.concurrent.Striped
+import kotlinx.coroutines.runBlocking
 import log
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
 import no.nav.syfo.domain.JournalStatus
@@ -37,27 +38,28 @@ class InntektsmeldingBehandler(
         return behandle(arkivId, arkivreferanse, inntektsmelding)
     }
 
-    fun behandle(arkivId: String, arkivreferanse: String, inntektsmelding: Inntektsmelding): String? {
+    fun behandle(arkivId: String, arkivreferanse: String, inntektsmelding: Inntektsmelding?): String? {
 
         val log = log()
         var ret : String? = null
-        val consumerLock = consumerLocks.get(inntektsmelding.fnr)
+        val consumerLock = consumerLocks.get(inntektsmelding!!.fnr)
         try {
             consumerLock.lock()
-            log.info("Slår opp aktørID for ${inntektsmelding.arkivRefereranse}")
-            val aktorid = aktorConsumer.getAktorId(inntektsmelding.fnr)
+            log.info("Slår opp aktørID for ${inntektsmelding!!.arkivRefereranse}")
+            val aktorid = aktorConsumer.getAktorId(inntektsmelding!!.fnr)
             log.info("fant aktørid for ${inntektsmelding.arkivRefereranse}")
 
-            tellMetrikker(inntektsmelding)
+            tellMetrikker(inntektsmelding!!)
 
             if (JournalStatus.MIDLERTIDIG == inntektsmelding.journalStatus) {
                 metrikk.tellInntektsmeldingerMottatt(inntektsmelding)
 
                 val saksId = saksbehandlingService.behandleInntektsmelding(inntektsmelding, aktorid, arkivreferanse)
                 log.info("fant sak $saksId")
-
-                journalpostService.ferdigstillJournalpost(saksId, inntektsmelding)
-                log.info("ferdigstilte ${inntektsmelding.arkivRefereranse}")
+    runBlocking {
+        journalpostService.ferdigstillJournalpost(saksId, inntektsmelding)
+        log.info("ferdigstilte ${inntektsmelding.arkivRefereranse}")
+    }
 
                 val dto = inntektsmeldingService.lagreBehandling(inntektsmelding, aktorid, saksId, arkivreferanse)
                 log.info("lagret ${inntektsmelding.arkivRefereranse}")

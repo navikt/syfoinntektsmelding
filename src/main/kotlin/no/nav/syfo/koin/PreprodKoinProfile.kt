@@ -30,6 +30,8 @@ import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
 import no.nav.syfo.prosesser.FjernInntektsmeldingByBehandletProcessor
 import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
 import no.nav.syfo.repository.*
+import no.nav.syfo.saf.SafDokumentClient
+import no.nav.syfo.saf.SafJournalpostClient
 import no.nav.syfo.service.EksisterendeSakService
 import no.nav.syfo.service.JournalpostService
 import no.nav.syfo.service.SaksbehandlingService
@@ -40,7 +42,6 @@ import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import no.nav.tjeneste.virksomhet.behandleinngaaendejournal.v1.binding.BehandleInngaaendeJournalV1
 import no.nav.tjeneste.virksomhet.behandlesak.v2.BehandleSakV2
 import no.nav.tjeneste.virksomhet.inngaaendejournal.v1.binding.InngaaendeJournalV1
-import no.nav.tjeneste.virksomhet.journal.v2.binding.JournalV2
 import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil
 import org.koin.core.qualifier.StringQualifier
 import org.koin.dsl.bind
@@ -119,10 +120,9 @@ fun preprodConfig(config: ApplicationConfig) = module {
 
     single { InngaaendeJournalConsumer(get()) } bind InngaaendeJournalConsumer::class
     single { BehandleInngaaendeJournalConsumer(get()) } bind BehandleInngaaendeJournalConsumer::class
-    single { JournalConsumer(get(), get()) } bind JournalConsumer::class
     single { Metrikk() } bind Metrikk::class
     single { BehandlendeEnhetConsumer(get(), get(), get()) } bind BehandlendeEnhetConsumer::class
-    single { JournalpostService(get(), get(), get(), get(), get()) } bind JournalpostService::class
+    single { JournalpostService(get(), get(), get(), get(), get(), get()) } bind JournalpostService::class
     single { DatapakkePublisherJob(get(), get(), config.getString("datapakke.api_url"), config.getString("datapakke.id")) }
 
     single {
@@ -214,13 +214,20 @@ fun preprodConfig(config: ApplicationConfig) = module {
         )
     } bind Norg2Client::class
 
+    single {
+        SafJournalpostClient(
+            get(),
+            config.getString(""),
+            config.getString("")
+        )
+    } bind SafJournalpostClient::class
 
     single {
-        createServicePort(
-            serviceUrl = config.getString("journal_v2_endpointurl"),
-            serviceClazz = JournalV2::class.java
+        SafDokumentClient(
+            config.getString(""),
+            get()
         )
-    } bind JournalV2::class
+    } bind SafDokumentClient::class
 
     single {
         createServicePort(
