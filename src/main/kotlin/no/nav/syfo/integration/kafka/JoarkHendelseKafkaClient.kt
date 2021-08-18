@@ -4,7 +4,6 @@ package no.nav.syfo.integration.kafka
 import no.nav.helse.arbeidsgiver.kubernetes.LivenessComponent
 import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.clients.consumer.KafkaConsumer
-import org.apache.kafka.common.TopicPartition
 import org.slf4j.LoggerFactory
 import java.time.Duration
 
@@ -17,12 +16,10 @@ class JoarkHendelseKafkaClient(props: MutableMap<String, Any>, topicName: String
     private var currentBatch: List<String> = emptyList()
     private var lastThrown: Exception? = null
     private val consumer: KafkaConsumer<String, GenericRecord> = KafkaConsumer(props)
-    private val  topicPartition = TopicPartition(topicName, 0)
 
     private val log = LoggerFactory.getLogger(JoarkHendelseKafkaClient::class.java)
 
     init {
-        //consumer.assign(Collections.singletonList(topicPartition))
         consumer.subscribe(listOf(topicName))
 
         Runtime.getRuntime().addShutdownHook(Thread {
@@ -39,12 +36,12 @@ class JoarkHendelseKafkaClient(props: MutableMap<String, Any>, topicName: String
             return currentBatch
         }
         try {
-            val records = consumer.poll(Duration.ofMillis(100))
+            val records = consumer.poll(Duration.ofMillis(1000))
             currentBatch = records.map { it.value().toString() }
 
             lastThrown = null
 
-            log.debug("Fikk ${records?.count()} meldinger med offsets ${records?.map { it.offset() }?.joinToString(", ")}")
+            log.info("Fikk ${records?.count()} meldinger med offsets ${records?.map { it.offset() }?.joinToString(", ")}")
             return currentBatch
         } catch (e: Exception) {
             stop()
