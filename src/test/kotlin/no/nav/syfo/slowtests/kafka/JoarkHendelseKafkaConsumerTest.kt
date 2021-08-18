@@ -7,14 +7,10 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import com.zaxxer.hikari.HikariDataSource
-import no.nav.helse.arbeidsgiver.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
 import no.nav.syfo.integration.kafka.JoarkHendelseKafkaClient
 import no.nav.syfo.integration.kafka.joarkLocalProperties
 import no.nav.syfo.integration.kafka.producerLocalProperties
 import no.nav.syfo.journalPostKafkaData
-import no.nav.syfo.journalPostKafkaFeilData
-import no.nav.syfo.repository.createTestHikariConfig
 import no.nav.syfo.slowtests.SystemTestBase
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.AfterAll
@@ -42,7 +38,8 @@ class JoarkHendelseKafkaConsumerTest : SystemTestBase(){
         kafkaProdusent.createTopicIfNotExists()
         kafkaProdusent.addRecordeToKafka(objectMapper.writeValueAsString(journalPostKafkaData),
             topicName,
-            producerLocalProperties( "localhost:9092"))
+            producerLocalProperties( "localhost:9092")
+        )
     }
 
     @AfterAll

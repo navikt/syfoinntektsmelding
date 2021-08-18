@@ -1,28 +1,18 @@
 package no.nav.syfo.integration.kafka
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
-import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
-import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
-import no.nav.helse.arbeidsgiver.kubernetes.LivenessComponent
-import no.nav.syfo.util.MDCOperations
-import no.nav.syfo.utsattoppgave.*
-import org.apache.kafka.clients.consumer.ConsumerRecords
 //import no.nav.helse.inntektsmeldingsvarsel.ANTALL_INNKOMMENDE_MELDINGER
+import no.nav.helse.arbeidsgiver.kubernetes.LivenessComponent
+import org.apache.kafka.clients.consumer.ConsumerRecords
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.TopicPartition
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.slf4j.LoggerFactory
 import java.time.Duration
-import java.time.LocalDateTime
 import java.util.*
 
 
-class UtsattOppgaveKafkaClient(props: MutableMap<String, Any>,
-                               topicName: String,
-                               private val om : ObjectMapper,
-                               val oppgaveService: UtsattOppgaveService,
-                               private val bakgrunnsjobbRepo: BakgrunnsjobbRepository) :
+class UtsattOppgaveKafkaClient(props: Map<String, Any>,
+                               topicName: String) :
         MeldingProvider,
         LivenessComponent {
 
