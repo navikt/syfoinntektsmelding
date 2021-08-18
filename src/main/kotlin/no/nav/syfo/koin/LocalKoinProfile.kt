@@ -28,6 +28,7 @@ import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
 import no.nav.syfo.prosesser.FjernInntektsmeldingByBehandletProcessor
 import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
 import no.nav.syfo.repository.*
+import no.nav.syfo.saf.SafDokumentClient
 import no.nav.syfo.saf.SafJournalpostClient
 import no.nav.syfo.service.EksisterendeSakService
 import no.nav.syfo.service.JournalpostService
@@ -163,10 +164,19 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single {
         SafJournalpostClient(
             get(),
-            config.getString(""),
+            config.getString("saf_journal_url"),
             config.getString("")
+
+
         )
     } bind SafJournalpostClient::class
+
+    single {
+        SafDokumentClient(
+            config.getString("saf_dokument_url"),
+            get()
+        )
+    } bind SafDokumentClient::class
 
     single {
         AzureAdTokenConsumer(

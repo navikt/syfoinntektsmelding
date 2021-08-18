@@ -215,7 +215,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
     single {
         SafJournalpostClient(
             get(),
-            config.getString(""),
+            config.getString("saf_journal_url"),
             config.getString("")
 
 
@@ -224,7 +224,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
 
     single {
         SafDokumentClient(
-            config.getString(""),
+            config.getString("saf_dokument_url"),
             get()
         )
     } bind SafDokumentClient::class
