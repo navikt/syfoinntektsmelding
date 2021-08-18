@@ -36,7 +36,7 @@ class JoarkHendelseKafkaClient(props: MutableMap<String, Any>, topicName: String
             return currentBatch
         }
         try {
-            val records = consumer.poll(Duration.ofMillis(1000))
+            val records = consumer.poll(Duration.ofMillis(10000))
             currentBatch = records.map { it.value().toString() }
 
             lastThrown = null
