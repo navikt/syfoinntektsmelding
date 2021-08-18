@@ -7,7 +7,6 @@ import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.TopicPartition
 import org.slf4j.LoggerFactory
 import java.time.Duration
-import java.util.*
 
 interface MeldingProvider {
     fun getMessagesToProcess(): List<String>
@@ -23,7 +22,8 @@ class JoarkHendelseKafkaClient(props: MutableMap<String, Any>, topicName: String
     private val log = LoggerFactory.getLogger(JoarkHendelseKafkaClient::class.java)
 
     init {
-        consumer.assign(Collections.singletonList(topicPartition))
+        //consumer.assign(Collections.singletonList(topicPartition))
+        consumer.subscribe(listOf(topicName))
 
         Runtime.getRuntime().addShutdownHook(Thread {
             log.debug("Got shutdown message, closing Kafka connection...")
