@@ -27,7 +27,7 @@ class SafDokumentClient constructor(
     ): ByteArray? {
         log.info("Henter dokument fra journalpostId $journalpostId, og dokumentInfoId $dokumentInfoId")
         val httpResponse =
-            httpClient.get<HttpStatement>("$url/rest/hentdokument/$journalpostId/$dokumentInfoId/ARKIV") {
+            httpClient.get<HttpStatement>("$url/hentdokument/$journalpostId/$dokumentInfoId/ARKIV") {
                 accept(ContentType.Application.Pdf)
                 header("Authorization", "Bearer $accessToken")
                 header("Nav-Callid", MDCOperations.putToMDC(MDCOperations.MDC_CALL_ID, UUID.randomUUID().toString()))

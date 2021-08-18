@@ -139,6 +139,6 @@ spec:
     - name: NORG2_URL
       value: https://norg2.adeo.no/norg2/api/v1
     - name: SAF_DOKUMENT_URL
-      value: TODO
+      value: https://saf-q1.nais.preprod.local/rest
     - name: SAF_JOURNAL_URL
-      value: TODO
+      value: https://saf.nais.adeo.no/graphql
