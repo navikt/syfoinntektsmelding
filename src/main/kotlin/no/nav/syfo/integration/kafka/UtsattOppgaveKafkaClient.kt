@@ -4,12 +4,9 @@ package no.nav.syfo.integration.kafka
 import no.nav.helse.arbeidsgiver.kubernetes.LivenessComponent
 import org.apache.kafka.clients.consumer.ConsumerRecords
 import org.apache.kafka.clients.consumer.KafkaConsumer
-import org.apache.kafka.common.TopicPartition
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.slf4j.LoggerFactory
 import java.time.Duration
-import java.util.*
-
 
 class UtsattOppgaveKafkaClient(props: Map<String, Any>,
                                topicName: String) :
@@ -20,12 +17,11 @@ class UtsattOppgaveKafkaClient(props: Map<String, Any>,
     private var lastThrown: Exception? = null
     private val consumer: KafkaConsumer<String, String> =
         KafkaConsumer<String, String>(props, StringDeserializer(), StringDeserializer())
-    private val  topicPartition = TopicPartition(topicName, 0)
 
     private val log = LoggerFactory.getLogger(UtsattOppgaveKafkaClient::class.java)
 
     init {
-        consumer.assign(Collections.singletonList(topicPartition))
+        consumer.subscribe(listOf(topicName))
 
         Runtime.getRuntime().addShutdownHook(Thread {
             log.debug("Got shutdown message, closing Kafka connection...")
