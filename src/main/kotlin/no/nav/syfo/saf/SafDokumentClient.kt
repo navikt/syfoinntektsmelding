@@ -20,11 +20,12 @@ class SafDokumentClient constructor(
     private val httpClient: HttpClient
 ) {
     val log = log()
-    private suspend fun hentDokumentFraSaf(
+     suspend fun hentDokument(
         journalpostId: String,
         dokumentInfoId: String,
         accessToken: String
     ): ByteArray? {
+        log.info("Henter dokument fra journalpostId $journalpostId, og dokumentInfoId $dokumentInfoId")
         val httpResponse =
             httpClient.get<HttpStatement>("$url/rest/hentdokument/$journalpostId/$dokumentInfoId/ARKIV") {
                 accept(ContentType.Application.Pdf)
@@ -32,9 +33,7 @@ class SafDokumentClient constructor(
                 header("Nav-Callid", MDCOperations.putToMDC(MDCOperations.MDC_CALL_ID, UUID.randomUUID().toString()))
                 header("Nav-Consumer-Id", "syfoinntektsmelding")
             }.execute()
-
         log.info("Saf returnerte: httpstatus {}", httpResponse.status)
-
         return when (httpResponse.status) {
             HttpStatusCode.NotFound -> {
                 log.error("Dokumentet finnes ikke for journalpostId {}, response {}", journalpostId, httpResponse.call.response.receive())
@@ -67,18 +66,4 @@ class SafDokumentClient constructor(
         }
     }
 
-    suspend fun hentDokument(
-        journalpostId: String,
-        dokumentInfoId: String,
-        accessToken: String
-
-    ): ByteArray? {
-        log.info(
-            "Henter dokument fra oppgaveId {}, journalpostId {}, og dokumentInfoId {}",
-
-            journalpostId,
-            dokumentInfoId
-        )
-        return hentDokumentFraSaf(journalpostId, dokumentInfoId, accessToken)
-    }
 }
