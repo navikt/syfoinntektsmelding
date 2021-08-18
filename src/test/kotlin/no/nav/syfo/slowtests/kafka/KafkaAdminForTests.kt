@@ -1,14 +1,11 @@
 package no.nav.syfo.slowtests.kafka
 
-import no.nav.inntektsmelding.kontrakt.serde.JacksonJsonConfig
-import no.nav.inntektsmeldingkontrakt.Inntektsmelding
 import org.apache.kafka.clients.admin.AdminClient
 import org.apache.kafka.clients.admin.KafkaAdminClient
 import org.apache.kafka.clients.admin.NewTopic
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.errors.TopicExistsException
-import java.util.*
 import java.util.concurrent.TimeUnit
 
 class KafkaAdminForTests(private val props : MutableMap<String, Any>, private val topicName: String) {
@@ -43,7 +40,7 @@ class KafkaAdminForTests(private val props : MutableMap<String, Any>, private va
         adminClient.close()
     }
 
-    fun addRecordeToKafka(record : String, topicName : String, props : Properties) {
+    fun addRecordeToKafka(record : String, topicName : String, props : Map<String, Any>) {
         val kafkaproducer = KafkaProducer<String, String>(props)
         val res = kafkaproducer.send(ProducerRecord(topicName, record)).get()
         kafkaproducer.flush()

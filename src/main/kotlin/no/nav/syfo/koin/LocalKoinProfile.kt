@@ -87,7 +87,7 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single {
         UtsattOppgaveKafkaClient(
             utsattOppgaveLocalProperties().toMutableMap(),
-            config.getString("kafka_utsatt_oppgave_topic"), get(), get(), get()
+            config.getString("kafka_utsatt_oppgave_topic")
         )
     }
     single {

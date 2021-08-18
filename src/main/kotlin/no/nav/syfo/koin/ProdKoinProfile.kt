@@ -22,7 +22,10 @@ import no.nav.syfo.consumer.rest.TokenConsumer
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
 import no.nav.syfo.consumer.rest.norg.Norg2Client
 import no.nav.syfo.consumer.util.ws.createServicePort
-import no.nav.syfo.consumer.ws.*
+import no.nav.syfo.consumer.ws.BehandleInngaaendeJournalConsumer
+import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
+import no.nav.syfo.consumer.ws.InngaaendeJournalConsumer
+import no.nav.syfo.consumer.ws.JournalConsumer
 import no.nav.syfo.datapakke.DatapakkePublisherJob
 import no.nav.syfo.integration.kafka.*
 import no.nav.syfo.producer.InntektsmeldingAivenProducer
@@ -132,12 +135,12 @@ fun prodConfig(config: ApplicationConfig) = module {
     ) }
     single {
         UtsattOppgaveKafkaClient(
-            utsattOppgaveOnPremProperties(config).toMutableMap(),
-            config.getString("kafka_utsatt_oppgave_topic"), get(), get(), get()
+            utsattOppgaveAivenProperties(config),
+            config.getString("kafka_utsatt_oppgave_topic")
         )
     }
 
-    single { InntektsmeldingAivenProducer(producerAivenProperties(config)) }
+    single { InntektsmeldingAivenProducer(commonAivenProperties(config)) }
 
     single { UtsattOppgaveDAO(UtsattOppgaveRepositoryImp(get()))}
     single { OppgaveClient(config.getString("oppgavebehandling_url"), get(), get())} bind OppgaveClient::class
