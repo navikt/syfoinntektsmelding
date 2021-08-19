@@ -15,8 +15,10 @@ import no.nav.syfo.slowtests.SystemTestBase
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
+@Disabled("WIP: For at denne testen skal være verdifull måvi sette opp et schema registry eller en mock av en")
 class JoarkHendelseKafkaConsumerTest : SystemTestBase(){
     private lateinit var kafkaProdusent: KafkaAdminForTests
     private val topicName = "aapen-dok-journalfoering-v1-q1"
@@ -53,6 +55,4 @@ class JoarkHendelseKafkaConsumerTest : SystemTestBase(){
         Assertions.assertThat(meldinger.size).isEqualTo(1)
         Assertions.assertThat(meldinger[0]).isEqualTo(objectMapper.writeValueAsString(journalPostKafkaData))
     }
-
-
 }
