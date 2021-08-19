@@ -184,8 +184,7 @@ dependencies {
     implementation("no.nav.security:token-client-core:$tokenSupportVersion")
     implementation("no.nav.security:token-validation-ktor:$tokenSupportVersion")
     implementation("no.nav.security:mock-oauth2-server:$mockOAuth2ServerVersion")
-    implementation("com.github.navikt:brukernotifikasjon-schemas:$brukernotifikasjonSchemasVersion")
-    //NAV
+    //implementation("com.github.navikt:brukernotifikasjon-schemas:$brukernotifikasjonSchemasVersion")
 
     implementation("com.zaxxer:HikariCP:$hikariVersion")
 
@@ -195,17 +194,11 @@ dependencies {
     implementation("io.micrometer:micrometer-core:$micrometerVersion")
     runtimeOnly("io.micrometer:micrometer-registry-prometheus:$micrometerVersion")
 
-   /* compileOnly("org.projectlombok:lombok:1.18.18")
-    annotationProcessor("org.projectlombok:lombok:1.18.18")
-    testCompileOnly("org.projectlombok:lombok:1.18.18")
-    testAnnotationProcessor("org.projectlombok:lombok:1.18.18")*/
     implementation("com.google.guava:guava:30.0-jre")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3")
     implementation("io.confluent:kafka-streams-avro-serde:6.1.2")
     implementation("io.confluent:kafka-avro-serializer:6.1.2")
     implementation("org.apache.kafka:kafka-streams:2.8.0")
-
-
 
     testImplementation("io.mockk:mockk:1.11.0")
 

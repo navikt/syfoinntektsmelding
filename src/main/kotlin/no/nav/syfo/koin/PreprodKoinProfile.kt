@@ -155,14 +155,14 @@ fun preprodConfig(config: ApplicationConfig) = module {
     }
     single {
         UtsattOppgaveKafkaClient(
-            utsattOppgaveOnPremProperties(config).toMutableMap(),
-            config.getString("kafka_utsatt_oppgave_topic"), get(), get(), get()
+            utsattOppgaveAivenProperties(config),
+            config.getString("kafka_utsatt_oppgave_topic")
         )
     }
 
     single {
         InntektsmeldingAivenProducer(
-            producerAivenProperties(config)
+            commonAivenProperties(config)
         )
     }
 

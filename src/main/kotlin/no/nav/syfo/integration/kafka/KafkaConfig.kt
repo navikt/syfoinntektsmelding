@@ -11,7 +11,6 @@ import org.apache.kafka.common.config.SaslConfigs
 import org.apache.kafka.common.config.SslConfigs
 import org.apache.kafka.common.security.auth.SecurityProtocol
 import org.apache.kafka.common.serialization.StringDeserializer
-import java.util.*
 
 private const val LOCALHOSTBOOTSTRAPSERVER = "localhost:9092"
 private fun envOrThrow(envVar: String) =
@@ -48,6 +47,7 @@ fun joarkOnPremProperties(config: ApplicationConfig) = consumerOnPremProperties(
     ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to GenericAvroDeserializer::class.java,
     AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG to config.getString("kafka_schema_registry_url_config"),
     ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
+    ConsumerConfig.CLIENT_ID_CONFIG to "syfoinntektsmelding",
     ConsumerConfig.GROUP_ID_CONFIG to "syfoinntektsmelding-v2")
 
 fun utsattOppgaveLocalProperties() = consumerLocalProperties() + mapOf(
@@ -56,13 +56,13 @@ fun utsattOppgaveLocalProperties() = consumerLocalProperties() + mapOf(
     ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to UtsattOppgaveDTODeserializer::class.java
 )
 
-fun utsattOppgaveOnPremProperties(config: ApplicationConfig) = consumerOnPremProperties(config) + mapOf(
+fun utsattOppgaveAivenProperties(config: ApplicationConfig) = commonAivenProperties(config) + mapOf(
     ConsumerConfig.GROUP_ID_CONFIG to "syfoinntektsmelding-v1",
     ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
     ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to UtsattOppgaveDTODeserializer::class.java
 )
 
-fun producerLocalProperties(bootstrapServers: String) =  Properties().apply {
+fun producerLocalProperties(bootstrapServers: String) =  mutableMapOf<String, Any>().apply {
     put(ProducerConfig.ACKS_CONFIG, "all")
     put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "true")
     put(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, "1")
@@ -74,7 +74,7 @@ fun producerLocalProperties(bootstrapServers: String) =  Properties().apply {
 }
 
 
-fun producerAivenProperties(config: ApplicationConfig) = Properties().apply {
+fun commonAivenProperties(config: ApplicationConfig) = mutableMapOf<String, Any>().apply {
     val PKCS12 = "PKCS12"
     val JAVA_KEYSTORE = "jks"
 
@@ -96,6 +96,4 @@ fun producerAivenProperties(config: ApplicationConfig) = Properties().apply {
     put(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, envOrThrow("KAFKA_KEYSTORE_PATH"))
     put(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, envOrThrow("KAFKA_CREDSTORE_PASSWORD"))
     put(SslConfigs.SSL_KEY_PASSWORD_CONFIG, envOrThrow("KAFKA_CREDSTORE_PASSWORD"))
-
-
 }

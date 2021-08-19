@@ -132,12 +132,12 @@ fun prodConfig(config: ApplicationConfig) = module {
     ) }
     single {
         UtsattOppgaveKafkaClient(
-            utsattOppgaveOnPremProperties(config).toMutableMap(),
-            config.getString("kafka_utsatt_oppgave_topic"), get(), get(), get()
+            utsattOppgaveAivenProperties(config),
+            config.getString("kafka_utsatt_oppgave_topic")
         )
     }
 
-    single { InntektsmeldingAivenProducer(producerAivenProperties(config)) }
+    single { InntektsmeldingAivenProducer(commonAivenProperties(config)) }
 
     single { UtsattOppgaveDAO(UtsattOppgaveRepositoryImp(get()))}
     single { OppgaveClient(config.getString("oppgavebehandling_url"), get(), get())} bind OppgaveClient::class

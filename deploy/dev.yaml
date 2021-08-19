@@ -120,7 +120,7 @@ spec:
     - name: KAFKA_JOARK_HENDELSE_TOPIC
       value: "aapen-dok-journalfoering-v1-q1"
     - name: KAFKA_UTSATT_OPPGAVE_TOPIC
-      value: "aapen-helse-spre-oppgaver"
+      value: "tbd.spre-oppgaver"
     - name: KAFKA_SCHEMA_REGISTRY_URL_CONFIG
       value: "http://kafka-schema-registry.tpa.svc.nais.local:8081"
     - name: DATAPAKKE_ID

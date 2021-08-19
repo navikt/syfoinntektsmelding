@@ -4,9 +4,8 @@ import no.nav.inntektsmelding.kontrakt.serde.JacksonJsonConfig
 import no.nav.inntektsmeldingkontrakt.Inntektsmelding
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerRecord
-import java.util.*
 
-class InntektsmeldingAivenProducer(producerProperties: Properties) {
+class InntektsmeldingAivenProducer(producerProperties: Map<String, Any>) {
 
     private val inntektsmeldingTopics = listOf("helsearbeidsgiver.privat-sykepenger-inntektsmelding")
     val objectMapper = JacksonJsonConfig.objectMapperFactory.opprettObjectMapper()
