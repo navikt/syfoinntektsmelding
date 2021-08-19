@@ -10,26 +10,28 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.util.KtorExperimentalAPI
 import log
+import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
 import no.nav.syfo.saf.exception.SafNotFoundException
 import no.nav.syfo.util.MDCOperations
+import org.apache.cxf.ws.security.trust.STSClient
 import java.util.*
 
 @KtorExperimentalAPI
 class SafDokumentClient constructor(
     private val url: String,
-    private val httpClient: HttpClient
+    private val httpClient: HttpClient,
+    private val stsClient: AccessTokenProvider
 ) {
     val log = log()
      suspend fun hentDokument(
         journalpostId: String,
-        dokumentInfoId: String,
-        accessToken: String
+        dokumentInfoId: String
     ): ByteArray? {
         log.info("Henter dokument fra journalpostId $journalpostId, og dokumentInfoId $dokumentInfoId")
         val httpResponse =
             httpClient.get<HttpStatement>("$url/hentdokument/$journalpostId/$dokumentInfoId/ARKIV") {
                 accept(ContentType.Application.Pdf)
-                header("Authorization", "Bearer $accessToken")
+                header("Authorization", "Bearer ${stsClient.getToken()}")
                 header("Nav-Callid", MDCOperations.putToMDC(MDCOperations.MDC_CALL_ID, UUID.randomUUID().toString()))
                 header("Nav-Consumer-Id", "syfoinntektsmelding")
             }.execute()
