@@ -37,7 +37,7 @@ class JournalpostService(
 
     private suspend fun hentInngaendeJournalpost(gsakId: String, inntektsmelding: Inntektsmelding): InngaendeJournalpost {
         val behandlendeEnhet = behandlendeEnhetConsumer.hentBehandlendeEnhet(inntektsmelding.fnr, inntektsmelding.id)
-        val safJournalpostClient = SafJournalpostClient(HttpClient(),"","")
+        val safJournalpostClient = SafJournalpostClient(HttpClient(),"",SafJournalpostClient::class.java.getResource("/graphql/getJournalpostDokumentId.graphql").readText().replace(Regex("[\n\t]"), ""))
         val dokumentId = safJournalpostClient.getJournalpostMetadata(inntektsmelding.journalpostId,stsClient.getToken())?.data?.journalpost?.dokumentId
         return InngaendeJournalpost(
                 fnr = inntektsmelding.fnr,

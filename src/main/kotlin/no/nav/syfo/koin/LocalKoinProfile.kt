@@ -130,9 +130,9 @@ fun localDevConfig(config: ApplicationConfig) = module {
             get()
         )
     } bind InntektsmeldingBehandler::class
-    single { InngaaendeJournalConsumer(get()) } bind InngaaendeJournalConsumer::class
+//    single { InngaaendeJournalConsumer(get()) } bind InngaaendeJournalConsumer::class
     single { Metrikk() } bind Metrikk::class
-    single { JournalpostService(get(), get(), get(), get(), get(), get()) } bind JournalpostService::class
+//    single { JournalpostService(get(), get(), get(), get(), get(), get()) } bind JournalpostService::class
     single { EksisterendeSakService(get()) } bind EksisterendeSakService::class
     single { InntektsmeldingService(InntektsmeldingRepositoryImp(get()), get()) } bind InntektsmeldingService::class
     single { SakClient(config.getString("opprett_sak_url"), get()) } bind SakClient::class
@@ -161,22 +161,15 @@ fun localDevConfig(config: ApplicationConfig) = module {
         )
     } bind SakConsumer::class
 
-    single {
-        SafJournalpostClient(
-            get(),
-            config.getString("saf_journal_url"),
-            config.getString("")
-
-
-        )
-    } bind SafJournalpostClient::class
-
-    single {
-        SafDokumentClient(
-            config.getString("saf_dokument_url"),
-            get()
-        )
-    } bind SafDokumentClient::class
+//    single {
+//        SafJournalpostClient(
+//            get(),
+//            config.getString("saf_journal_url"),
+//            config.getString("")
+//
+//
+//        )
+//    } bind SafJournalpostClient::class
 
     single {
         AzureAdTokenConsumer(
