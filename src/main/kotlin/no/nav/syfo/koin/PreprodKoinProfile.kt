@@ -16,6 +16,7 @@ import no.nav.syfo.config.OppgaveClientConfigProvider
 import no.nav.syfo.config.SakClientConfigProvider
 import no.nav.syfo.consumer.SakConsumer
 import no.nav.syfo.consumer.azuread.AzureAdTokenConsumer
+import no.nav.syfo.consumer.rest.JournalpostClient
 import no.nav.syfo.consumer.rest.OppgaveClient
 import no.nav.syfo.consumer.rest.SakClient
 import no.nav.syfo.consumer.rest.TokenConsumer
@@ -245,5 +246,18 @@ fun preprodConfig(config: ApplicationConfig) = module {
             serviceClazz = BehandleInngaaendeJournalV1::class.java
         )
     } bind BehandleInngaaendeJournalV1::class
+
+    single {
+        JournalpostClient(
+            config.getString("DOKARKIV_URL"),
+            RestSTSAccessTokenProvider(
+                config.getString("security_token.username"),
+                config.getString("security_token.password"),
+                config.getString("security_token_service_token_url"),
+                get()
+            ),
+            get()
+        )
+    } bind JournalpostClient::class
 }
 

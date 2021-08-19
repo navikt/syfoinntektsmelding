@@ -6,12 +6,14 @@ import io.ktor.util.*
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
+import no.nav.helse.arbeidsgiver.integrasjoner.RestSTSAccessTokenProvider
 import no.nav.helse.arbeidsgiver.system.getString
 import no.nav.syfo.behandling.InntektsmeldingBehandler
 import no.nav.syfo.config.OppgaveClientConfigProvider
 import no.nav.syfo.config.SakClientConfigProvider
 import no.nav.syfo.consumer.SakConsumer
 import no.nav.syfo.consumer.azuread.AzureAdTokenConsumer
+import no.nav.syfo.consumer.rest.JournalpostClient
 import no.nav.syfo.consumer.rest.OppgaveClient
 import no.nav.syfo.consumer.rest.SakClient
 import no.nav.syfo.consumer.rest.TokenConsumer
@@ -192,7 +194,6 @@ fun localDevConfig(config: ApplicationConfig) = module {
             config.getString("sakconsumer_host_url")
         )
     } bind SakConsumer::class
-
     single {
         AzureAdTokenConsumer(
             get(),
@@ -202,4 +203,17 @@ fun localDevConfig(config: ApplicationConfig) = module {
         )
     } bind AzureAdTokenConsumer::class
     single { ArbeidsgiverperiodeRepositoryImp(get())} bind ArbeidsgiverperiodeRepository::class
+
+    single {
+        JournalpostClient(
+            config.getString("DOKARKIV_URL"),
+            RestSTSAccessTokenProvider(
+                config.getString("security_token.username"),
+                config.getString("security_token.password"),
+                config.getString("security_token_service_token_url"),
+                get()
+            ),
+            get()
+        )
+    } bind JournalpostClient::class
 }
