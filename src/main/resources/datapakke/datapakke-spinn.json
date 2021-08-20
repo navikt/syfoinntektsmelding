@@ -233,7 +233,7 @@
     },
     {
       "title": "Tidsserier - Sykepenger - kvalitetsorientert",
-      "description": "Kvalitetsorientert statistikk for intektsmelding",
+      "description": "Kvalitetsorientert statistikk for intektsmelding, \n(FF = Første Fraværsdag)",
       "specType": "echart",
       "spec": {
         "url": "",
