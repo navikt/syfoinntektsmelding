@@ -2,18 +2,21 @@ package no.nav.syfo.consumer.ws.mapping
 
 import log
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
-import no.nav.syfo.domain.InngaaendeJournal
+import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
 import no.nav.syfo.domain.inntektsmelding.*
 import no.seres.xsd.nav.inntektsmelding_m._20181211.*
 import java.time.LocalDate
+import java.time.LocalDateTime
 import javax.xml.bind.JAXBElement
 
 internal object InntektsmeldingArbeidsgiverPrivat20181211Mapper {
 
     val log = log()
 
-    fun tilXMLInntektsmelding(jaxbInntektsmelding: JAXBElement<Any>, journalpostId: String, inngaaendeJournal: InngaaendeJournal, aktorConsumer: AktorConsumer, arkivReferanse: String): Inntektsmelding {
+    fun tilXMLInntektsmelding(jaxbInntektsmelding: JAXBElement<Any>, journalpostId: String, mottattDato: LocalDateTime, journalStatus: JournalStatus,
+                              arkivReferanse: String, aktorConsumer: AktorConsumer
+    ): Inntektsmelding {
         log.info("Behandling inntektsmelding på 20181211 format")
         val skjemainnhold = (jaxbInntektsmelding.value as XMLInntektsmeldingM).skjemainnhold
 
@@ -41,7 +44,7 @@ internal object InntektsmeldingArbeidsgiverPrivat20181211Mapper {
             arbeidsforholdId = arbeidsforholdId,
             journalpostId = journalpostId,
             arsakTilInnsending = skjemainnhold.aarsakTilInnsending,
-            journalStatus = inngaaendeJournal.status,
+            journalStatus = journalStatus,
             arbeidsgiverperioder = perioder,
             beregnetInntekt = beregnetInntekt,
             refusjon = mapXmlRefusjon(skjemainnhold.refusjon),
@@ -52,7 +55,7 @@ internal object InntektsmeldingArbeidsgiverPrivat20181211Mapper {
             arkivRefereranse = arkivReferanse,
             feriePerioder = mapFerie(skjemainnhold.arbeidsforhold),
             førsteFraværsdag = mapFørsteFraværsdag(skjemainnhold.arbeidsforhold),
-            mottattDato = mapXmlGregorianTilLocalDate(inngaaendeJournal.mottattDato),
+            mottattDato = mottattDato,
             begrunnelseRedusert = skjemainnhold.sykepengerIArbeidsgiverperioden.value.begrunnelseForReduksjonEllerIkkeUtbetalt?.value
                 ?: "",
             avsenderSystem = AvsenderSystem(skjemainnhold.avsendersystem.systemnavn, skjemainnhold.avsendersystem.systemversjon),
