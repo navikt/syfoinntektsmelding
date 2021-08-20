@@ -1,11 +1,12 @@
 package no.nav.syfo.consumer.ws.mapping
 
 import log
-import no.nav.syfo.domain.InngaaendeJournal
+import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
 import no.nav.syfo.domain.inntektsmelding.*
 import no.seres.xsd.nav.inntektsmelding_m._20180924.*
 import java.time.LocalDate
+import java.time.LocalDateTime
 import javax.xml.bind.JAXBElement
 
 
@@ -13,7 +14,7 @@ internal object InntektsmeldingArbeidsgiver20180924Mapper {
 
     val log = log()
 
-    fun tilXMLInntektsmelding(jabxInntektsmelding: JAXBElement<Any>, journalpostId: String, inngaaendeJournal: InngaaendeJournal, arkivReferanse: String): Inntektsmelding {
+    fun tilXMLInntektsmelding(jabxInntektsmelding: JAXBElement<Any>, journalpostId: String, mottattDato: LocalDateTime, journalStatus: JournalStatus, arkivReferanse: String): Inntektsmelding {
         log.info("Behandling inntektsmelding på 20180924 format")
         val skjemainnhold = (jabxInntektsmelding.value as XMLInntektsmeldingM).skjemainnhold
 
@@ -40,7 +41,7 @@ internal object InntektsmeldingArbeidsgiver20180924Mapper {
             arbeidsforholdId = arbeidsforholdId,
             journalpostId = journalpostId,
             arsakTilInnsending = skjemainnhold.aarsakTilInnsending,
-            journalStatus = inngaaendeJournal.status,
+            journalStatus = journalStatus,
             arbeidsgiverperioder = perioder,
             beregnetInntekt = beregnetInntekt,
             refusjon = mapXmlRefusjon(skjemainnhold.refusjon),
@@ -51,7 +52,7 @@ internal object InntektsmeldingArbeidsgiver20180924Mapper {
             arkivRefereranse = arkivReferanse,
             feriePerioder = mapFerie(skjemainnhold.arbeidsforhold),
             førsteFraværsdag = mapFørsteFraværsdag(skjemainnhold.arbeidsforhold),
-            mottattDato = mapXmlGregorianTilLocalDate(inngaaendeJournal.mottattDato),
+            mottattDato = mottattDato,
             begrunnelseRedusert = skjemainnhold.sykepengerIArbeidsgiverperioden.value.begrunnelseForReduksjonEllerIkkeUtbetalt?.value
                 ?: "",
             avsenderSystem = AvsenderSystem(skjemainnhold.avsendersystem.systemnavn, skjemainnhold.avsendersystem.systemversjon),
