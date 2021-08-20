@@ -1,0 +1,5 @@
+query FindJournalpost($id: String!) {
+  journalpost(journalpostId: $id) {
+    journalstatus
+  }
+}
