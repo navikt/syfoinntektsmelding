@@ -6,6 +6,7 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
 import no.nav.syfo.util.MDCOperations
+import org.slf4j.LoggerFactory
 import java.time.LocalDate
 
 /**
@@ -21,6 +22,7 @@ open class JournalpostClient (
     private val stsClient: AccessTokenProvider,
     private val httpClient: HttpClient
 )  {
+    private val logger: org.slf4j.Logger = LoggerFactory.getLogger("JournalpostClient")
 
     /**
      * Ved suksess
@@ -34,6 +36,7 @@ open class JournalpostClient (
      *
      */
     open suspend fun ferdigstillJournalpost(journalpostId: String, journalfoerendeEnhet: String): HttpStatusCode {
+        logger.info("Ferdigstiller journalpost $journalpostId for enhet $journalfoerendeEnhet")
         return httpClient.patch<HttpStatement>(url + "/journalpost/$journalpostId/ferdigstill") {
             contentType(ContentType.Application.Json.withCharset(Charsets.UTF_8))
             header("Authorization", "Bearer ${stsClient.getToken()}")
