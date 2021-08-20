@@ -251,8 +251,8 @@
             "left": "center",
             "data": [
               "Totalt antall",
-              "Ingen Arbeidsforhold",
-              "Har Arbeidsforhold",
+              "Ingen ArbeidsforholdId",
+              "Har ArbeidsforholdId",
               "En Periode",
               "To Perioder",
               "Over To Perioder",
@@ -287,14 +287,14 @@
               "data": [
                 @KSingenArbeid
               ],
-              "name": "Ingen Arbeidsforhold",
+              "name": "Ingen ArbeidsforholdId",
               "type": "line"
             },
             {
               "data": [
                 @KSharArbeid
               ],
-              "name": "Har Arbeidsforhold",
+              "name": "Har ArbeidsforholdId",
               "type": "line"
             },
             {
