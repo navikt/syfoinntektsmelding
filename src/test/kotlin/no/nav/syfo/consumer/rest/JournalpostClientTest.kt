@@ -6,6 +6,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import io.ktor.client.*
 import io.ktor.client.engine.mock.*
+import io.ktor.client.features.*
 import io.ktor.client.features.json.*
 import io.ktor.http.*
 import io.ktor.util.*
@@ -14,6 +15,7 @@ import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.assertThrows
 
 class JournalpostClientTest {
 
@@ -24,7 +26,7 @@ class JournalpostClientTest {
 
     @org.junit.jupiter.api.Test
     @KtorExperimentalAPI
-    fun skal_ferdigstille() {
+    fun `Skal ferdigstille journalposten`() {
         journalpostClient = JournalpostClient("http://localhost", mockStsClient, lagClientMockEngine(HttpStatusCode.OK) )
         runBlocking {
             val resultat = journalpostClient.ferdigstillJournalpost("111", "1001")
@@ -34,11 +36,12 @@ class JournalpostClientTest {
 
     @org.junit.jupiter.api.Test
     @KtorExperimentalAPI
-    fun skal_håndtere_ikke_ok() {
-        journalpostClient = JournalpostClient("http://localhost", mockStsClient, lagClientMockEngine(HttpStatusCode.InternalServerError) )
-        runBlocking {
-            val resultat = journalpostClient.ferdigstillJournalpost("222", "2002")
-            Assertions.assertThat(resultat.value).isEqualTo(HttpStatusCode.InternalServerError.value)
+    fun `Skal håndtere alle andre statuser enn 200`() {
+        assertThrows<ServerResponseException> {
+            journalpostClient = JournalpostClient("http://localhost", mockStsClient, lagClientMockEngine(HttpStatusCode.InternalServerError) )
+            runBlocking {
+                journalpostClient.ferdigstillJournalpost("222", "2002")
+            }
         }
     }
 
