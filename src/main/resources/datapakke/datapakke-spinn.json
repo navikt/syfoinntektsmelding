@@ -151,6 +151,30 @@
       "spec": {
         "url": "",
         "option": {
+          "title": [
+            {
+              "subtext": "Antall intektsmeldinger per LPS-system",
+              "left": "25%",
+              "top": "10%",
+              "textAlign": "center",
+              "subtextStyle": {
+                "fontSize": 20,
+                "color": "black"
+              }
+
+            },
+            {
+              "subtext": "Antall systemversjoner i bruk per LPS-system",
+              "left": "75%",
+              "top": "10%",
+              "textAlign": "center",
+              "subtextStyle": {
+                "fontSize": 20,
+                "color": "black"
+              }
+
+            }
+          ],
           "tooltip": {
             "trigger": "item"
           },
