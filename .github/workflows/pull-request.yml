@@ -8,19 +8,6 @@ jobs:
     # You must use a Linux environment when using service containers or container jobs
     runs-on: ubuntu-latest
 
-    # Service containers to run with `container-job`
-    services:
-      # Label used to access the service container
-      postgres:
-        # Docker Hub image
-        image: postgres
-        ports:
-          # Maps tcp port 5432 on service container to the host
-          - 5432:5432
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: postgres
     steps:
       # Downloads a copy of the code in your repository before running CI tests
       - name: Check out repository code
@@ -44,8 +31,12 @@ jobs:
           key: ${{ runner.os }}-gradle-cache-${{ hashFiles('build.gradle') }}
           restore-keys: |
             ${{ runner.os }}-gradle-cache-
+
+      - name: compose up
+        run: cd docker/local && docker-compose up -d && sleep 10
+
       - name: Test and build
-        run: ./gradlew test build jacocoTestReport sonarqube
+        run: ./gradlew test slowTests jacocoTestReport sonarqube
         env:
           ORG_GRADLE_PROJECT_githubUser: x-access-token
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
