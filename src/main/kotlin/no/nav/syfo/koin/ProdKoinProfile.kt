@@ -16,6 +16,7 @@ import no.nav.syfo.config.OppgaveClientConfigProvider
 import no.nav.syfo.config.SakClientConfigProvider
 import no.nav.syfo.consumer.SakConsumer
 import no.nav.syfo.consumer.azuread.AzureAdTokenConsumer
+import no.nav.syfo.consumer.rest.JournalpostClient
 import no.nav.syfo.consumer.rest.OppgaveClient
 import no.nav.syfo.consumer.rest.SakClient
 import no.nav.syfo.consumer.rest.TokenConsumer
@@ -188,6 +189,19 @@ fun prodConfig(config: ApplicationConfig) = module {
     } bind Norg2Client::class
 
     single {
+        JournalpostClient(
+            config.getString("DOKARKIV_URL"),
+            RestSTSAccessTokenProvider(
+                config.getString("security_token.username"),
+                config.getString("security_token.password"),
+                config.getString("security_token_service_token_url"),
+                get()
+            ),
+            get()
+        )
+    } bind JournalpostClient::class
+
+    single {
         createServicePort(
             serviceUrl = config.getString("journal_v2_endpointurl"),
             serviceClazz = JournalV2::class.java
@@ -215,6 +229,7 @@ fun prodConfig(config: ApplicationConfig) = module {
         )
     } bind BehandleInngaaendeJournalV1::class
 
+
     single {
         SafJournalpostClient(
             get(),
@@ -240,4 +255,5 @@ fun prodConfig(config: ApplicationConfig) = module {
             )
         )
     } bind SafDokumentClient::class
+
 }
