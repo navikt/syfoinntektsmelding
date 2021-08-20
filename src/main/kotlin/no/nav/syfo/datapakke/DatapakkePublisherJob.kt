@@ -116,8 +116,6 @@ class DatapakkePublisherJob(
             .replace("@KSlpsAntallFeilFF", lpsFeilFF.map { //language=JSON
                 """{"value": ${it.antallInntektsmeldinger}, "name": "${it.lpsNavn}"}""" }.joinToString())
 
-            .replace("@KSlpsAntallVersjonerFeilFF", lpsFeilFF.map { //language=JSON
-                """{"value": ${it.antallVersjoner}, "name": "${it.lpsNavn}"}""" }.joinToString())
 
             .replace("@KSlpsAntallNullFra", lpsIngenFravaer.map { //language=JSON
                 """{"value": ${it.antallInntektsmeldinger}, "name": "${it.lpsNavn}"}""" }.joinToString())
@@ -128,8 +126,6 @@ class DatapakkePublisherJob(
             .replace("@KSlpsAntallBackToBack", lpsBackToBack.map { //language=JSON
                 """{"value": ${it.antallInntektsmeldinger}, "name": "${it.lpsNavn}"}""" }.joinToString())
 
-            .replace("@KSlpsAntallVersjonerBackToBack", lpsBackToBack.map { //language=JSON
-                """{"value": ${it.antallVersjoner}, "name": "${it.lpsNavn}"}""" }.joinToString())
 
             .replace("@KSForsinketData", forsinket.map { //language=JSON
                 """[${it.antall_med_forsinkelsen_altinn},${it.antall_med_forsinkelsen_lps},${it.dager_etter_ff}]"""
