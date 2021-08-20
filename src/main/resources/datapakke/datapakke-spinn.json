@@ -223,7 +223,7 @@
     },
     {
       "title": "Begrunnelse redusert eller ikke-utbetaling",
-      "description": "Siste 7 dager",
+      "description": "I inntektsmeldingen skal arbeidsgiver oppgi det fulle bruttobeløpet arbeidsgiver har utbetalt i arbeidsgiverperioden. \nArbeidsgiveren må også oppgi hvorfor det som er utbetalt eventuelt er lavere enn beregnet beløp etter §8-28 (i folketrygdloven) eller satt til 0,-. \nArbeidsgiver må eventuelt også oppgi hvorfor det ikke er noen ny arbeidsgiverperiode. \nFor å angi den konkrete årsaken for redusert eller ingen slik utbetaling i arbeidsgiverperioden må arbeidsgiveren i inntektsmeldingen oppgi en årsakskode. \nDiagrammet nedenfor viser antallet inntektsmeldinger med en gitt årsakskode for de 7 siste dagene",
       "specType": "echart",
       "spec": {
         "url": "",
