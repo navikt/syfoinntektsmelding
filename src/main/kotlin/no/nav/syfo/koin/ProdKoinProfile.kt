@@ -187,6 +187,19 @@ fun prodConfig(config: ApplicationConfig) = module {
     } bind Norg2Client::class
 
     single {
+        JournalpostClient(
+            config.getString("DOKARKIV_URL"),
+            RestSTSAccessTokenProvider(
+                config.getString("security_token.username"),
+                config.getString("security_token.password"),
+                config.getString("security_token_service_token_url"),
+                get()
+            ),
+            get()
+        )
+    } bind JournalpostClient::class
+
+    single {
         createServicePort(
             serviceUrl = config.getString("journal_v2_endpointurl"),
             serviceClazz = JournalV2::class.java
@@ -214,16 +227,5 @@ fun prodConfig(config: ApplicationConfig) = module {
         )
     } bind BehandleInngaaendeJournalV1::class
 
-    single {
-        JournalpostClient(
-            config.getString("DOKARKIV_URL"),
-            RestSTSAccessTokenProvider(
-                config.getString("security_token.username"),
-                config.getString("security_token.password"),
-                config.getString("security_token_service_token_url"),
-                get()
-            ),
-            get()
-        )
-    } bind JournalpostClient::class
+
 }

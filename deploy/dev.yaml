@@ -123,6 +123,8 @@ spec:
       value: "tbd.spre-oppgaver"
     - name: KAFKA_SCHEMA_REGISTRY_URL_CONFIG
       value: "http://kafka-schema-registry.tpa.svc.nais.local:8081"
+    - name: DOKARKIV_URL
+      value: https://dokarkiv-q1.nais.preprod.local/rest/journalpostapi/v1/
     - name: DATAPAKKE_ID
       value: fb74c8d14d9c579e05b0b4b587843e6b
     - name: DATAPAKKE_API_URL
@@ -133,5 +135,3 @@ spec:
       value: https://pdl-api.nais.preprod.local/graphql
     - name: NORG2_URL
       value: https://norg2.dev.adeo.no/norg2/api/v1
-    - name: DOKARKIV_URL
-      value: https://dokarkiv-q1.nais.preprod.local/rest/journalpostapi/v1/
