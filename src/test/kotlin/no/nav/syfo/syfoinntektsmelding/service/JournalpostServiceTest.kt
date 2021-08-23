@@ -63,7 +63,7 @@ class JournalpostServiceTest {
     fun hentInntektsmelding() {
         val journal = InngaaendeJournal(dokumentId = "dokumentId", status = JournalStatus.MIDLERTIDIG)
         every { inngaaendeJournalConsumer.hentDokumentId("journalpostId") } returns journal
-        every { journalConsumer!!.hentInntektsmelding("journalpostId", journal, "AR-1234") } returns
+        every { journalConsumer!!.hentInntektsmelding("journalpostId", "AR-1234") } returns
             Inntektsmelding(
                 fnr = "fnr",
                 arbeidsgiverOrgnummer = "orgnummer",

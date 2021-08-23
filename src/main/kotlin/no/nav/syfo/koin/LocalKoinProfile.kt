@@ -164,7 +164,7 @@ fun localDevConfig(config: ApplicationConfig) = module {
     } bind InntektsmeldingBehandler::class
     single { InngaaendeJournalConsumer(get()) } bind InngaaendeJournalConsumer::class
     single { BehandleInngaaendeJournalConsumer(get()) } bind BehandleInngaaendeJournalConsumer::class
-    single { JournalConsumer(get(), get()) } bind JournalConsumer::class
+    single { JournalConsumer(get(), get(), get()) } bind JournalConsumer::class
     single { Metrikk() } bind Metrikk::class
     single { JournalpostService(get(), get(), get(), get(), get()) } bind JournalpostService::class
     single { EksisterendeSakService(get()) } bind EksisterendeSakService::class

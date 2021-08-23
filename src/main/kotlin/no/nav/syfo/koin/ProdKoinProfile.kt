@@ -108,7 +108,7 @@ fun prodConfig(config: ApplicationConfig) = module {
 
     single { InngaaendeJournalConsumer(get()) } bind InngaaendeJournalConsumer::class
     single { BehandleInngaaendeJournalConsumer(get()) } bind BehandleInngaaendeJournalConsumer::class
-    single { JournalConsumer(get(), get()) } bind JournalConsumer::class
+    single { JournalConsumer(get(), get(), get()) } bind JournalConsumer::class
     single { Metrikk() } bind Metrikk::class
     single { BehandlendeEnhetConsumer(get(), get(), get()) } bind BehandlendeEnhetConsumer::class
     single { JournalpostService(get(), get(), get(), get(), get()) } bind JournalpostService::class
