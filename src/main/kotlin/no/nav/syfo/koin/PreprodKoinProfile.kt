@@ -242,13 +242,6 @@ fun preprodConfig(config: ApplicationConfig) = module {
 
     single {
         createServicePort(
-            serviceUrl = config.getString("inngaaendejournal_v1_endpointurl"),
-            serviceClazz = InngaaendeJournalV1::class.java
-        )
-    } bind InngaaendeJournalV1::class
-
-    single {
-        createServicePort(
             serviceUrl = config.getString("virksomhet_behandlesak_v2_endpointurl"),
             serviceClazz = BehandleSakV2::class.java
         )

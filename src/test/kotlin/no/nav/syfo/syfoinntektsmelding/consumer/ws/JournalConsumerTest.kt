@@ -18,6 +18,7 @@ import no.nav.tjeneste.virksomhet.journal.v2.meldinger.HentDokumentRequest
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.function.BinaryOperator
 
@@ -42,7 +43,7 @@ class JournalConsumerTest {
 
         val (_, fnr) = journalConsumer.hentInntektsmelding(
             "journalpostId",
-            InngaaendeJournal(dokumentId = "dokumentId", status = JournalStatus.MIDLERTIDIG),
+            InngaaendeJournal(dokumentId = "dokumentId", status = JournalStatus.MIDLERTIDIG, mottattDato = LocalDateTime.now()),
             "AR-123"
         )
 
@@ -64,7 +65,7 @@ class JournalConsumerTest {
 
         val (_, _, _, _, _, _, _, _, _, arbeidsgiverperioder) = journalConsumer.hentInntektsmelding(
             "jounralpostID",
-            InngaaendeJournal(dokumentId = "", status = JournalStatus.ANNET),
+            InngaaendeJournal(dokumentId = "", status = JournalStatus.ANNET, mottattDato = LocalDateTime.now()),
             "AR-123"
         )
 
@@ -82,7 +83,7 @@ class JournalConsumerTest {
 
         val (_, _, _, arbeidsgiverPrivat, _, _, _, _, _, arbeidsgiverperioder) = journalConsumer.hentInntektsmelding(
             "journalpostId",
-            InngaaendeJournal(dokumentId = "", status = JournalStatus.ANNET),
+            InngaaendeJournal(dokumentId = "", status = JournalStatus.ANNET, mottattDato = LocalDateTime.now()),
             "AR-123"
         )
 
@@ -108,7 +109,7 @@ class JournalConsumerTest {
 
         val (_, _, arbeidsgiverOrgnummer, arbeidsgiverPrivat) = journalConsumer.hentInntektsmelding(
             "journalpostId",
-            InngaaendeJournal(dokumentId = "", status = JournalStatus.ANNET),
+            InngaaendeJournal(dokumentId = "", status = JournalStatus.ANNET, mottattDato = LocalDateTime.now()),
             "AR-123"
         )
 

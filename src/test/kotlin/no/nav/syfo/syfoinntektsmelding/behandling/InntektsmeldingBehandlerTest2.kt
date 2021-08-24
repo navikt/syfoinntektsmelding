@@ -41,6 +41,7 @@ import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.ZonedDateTime
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.atomic.AtomicInteger
@@ -373,7 +374,8 @@ class InntektsmeldingBehandlerTest2 {
     private fun inngaaendeJournal(arkivId: String): InngaaendeJournal {
         return InngaaendeJournal(
             dokumentId = arkivId,
-            status = JournalStatus.MIDLERTIDIG
+            status = JournalStatus.MIDLERTIDIG,
+            mottattDato = LocalDateTime.now()
         )
     }
 

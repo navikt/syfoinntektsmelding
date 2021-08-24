@@ -122,13 +122,6 @@ fun localDevConfig(config: ApplicationConfig) = module {
         )
     } bind JournalV2::class
     single {
-        WsClientMock<InngaaendeJournalV1>().createPort(
-            config.getString("inngaaendejournal_v1_endpointurl"),
-            InngaaendeJournalV1::class.java,
-            listOf(LogErrorHandler())
-        )
-    } bind InngaaendeJournalV1::class
-    single {
         WsClientMock<BehandleSakV2>().createPort(
             config.getString("virksomhet_behandlesak_v2_endpointurl"),
             BehandleSakV2::class.java,

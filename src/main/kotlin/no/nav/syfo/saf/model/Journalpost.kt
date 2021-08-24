@@ -9,6 +9,10 @@ data class JournalpostResponse(
 
 data class Journalpost(
     val journalstatus: JournalStatus?,
-    val dokumentId : String?,
-    val mottattDato: LocalDateTime?
+    val mottattDato: LocalDateTime?,
+    val dokumenter: List<Dokument>
+)
+
+data class Dokument (
+    val dokumentInfoId: String
 )
