@@ -83,7 +83,7 @@ class IMStatsRepoImpl(
                 count(*) filter (where data -> 'avsenderSystem' ->> 'navn' != 'AltinnPortal') as fra_lps, -- O1B
                 count(*) filter (where data -> 'refusjon' ->> 'beloepPrMnd' = data ->> 'beregnetInntekt' and data ->> 'begrunnelseRedusert' != 'IkkeFravaer') as full_refusjon, -- 03A
                 count(*) filter (where data -> 'refusjon' ->> 'beloepPrMnd' < data ->> 'beregnetInntekt' and data ->> 'begrunnelseRedusert' != 'IkkeFravaer') as delvis_refusjon, -- 03A
-                count(*) filter (where (data -> 'refusjon' -> 'beloepPrMnd') is null and data ->> 'begrunnelseRedusert' != 'IkkeFravaer') as ingen_refusjon, -- 03C
+                count(*) filter (where ((data -> 'refusjon' -> 'beloepPrMnd') is null or data -> 'refusjon' ->> 'beloepPrMnd' = '0') and data ->> 'begrunnelseRedusert' != 'IkkeFravaer') as ingen_refusjon, -- 03C
                 count(*) filter (where data ->> 'begrunnelseRedusert' != 'IkkeFravaer') as med_fravaer, -- 04A
                 count(*) filter (where data ->> 'begrunnelseRedusert' = 'IkkeFravaer') as ikke_fravaer, -- 04B
                 count(*) filter (where data ->> 'arsakTilInnsending' = 'Ny') as arsak_ny, -- 05A
