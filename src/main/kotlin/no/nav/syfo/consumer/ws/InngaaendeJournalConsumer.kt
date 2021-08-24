@@ -3,7 +3,9 @@ package no.nav.syfo.consumer.ws
 import log
 import no.nav.syfo.domain.InngaaendeJournal
 import kotlinx.coroutines.runBlocking
+import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.saf.SafJournalpostClient
+import java.time.LocalDateTime
 
 class InngaaendeJournalConsumer(
     private val safJournalpostClient: SafJournalpostClient,
@@ -22,3 +24,9 @@ class InngaaendeJournalConsumer(
         }
     }
 }
+
+data class InngaaendeJournal (
+    val dokumentId: String,
+    val status: JournalStatus,
+    val mottattDato: LocalDateTime,
+)
