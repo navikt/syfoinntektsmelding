@@ -34,7 +34,7 @@ class InngaaendeJournalConsumerTest {
             data = JournalpostResponse(
                 journalpost = Journalpost(
                     JournalStatus.MIDLERTIDIG,
-                    mottattDato = LocalDateTime.now(),
+                    datoOpprettet = LocalDateTime.now(),
                     dokumenter = listOf(Dokument(dokumentId1))
                 )
             ),
