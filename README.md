@@ -68,6 +68,5 @@ Flyway blir brukt til versjonering i databasen. Passord mot databasen ligger i v
 ![image](docs/datamodell.png)
 
 
-
 ## For NAV-ansatte
 Interne henvendelser kan sendes via Slack i kanalen #helse-arbeidsgiver
