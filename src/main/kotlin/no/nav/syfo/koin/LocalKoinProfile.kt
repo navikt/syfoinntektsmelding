@@ -182,7 +182,7 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single {
         SafJournalpostClient(
             get(),
-            config.getString("saf_journal_url"),
+            "http://localhost",
             RestSTSAccessTokenProvider(
                 config.getString("security_token.username"),
                 config.getString("security_token.password"),
