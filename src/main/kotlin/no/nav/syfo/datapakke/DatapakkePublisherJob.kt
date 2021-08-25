@@ -10,6 +10,7 @@ import no.nav.helse.arbeidsgiver.utils.RecurringJob
 import no.nav.helse.arbeidsgiver.utils.loadFromResources
 import no.nav.syfo.repository.IMStatsRepo
 import no.nav.syfo.repository.LPSStats
+import no.nav.syfo.util.DatapakkeUtil
 import java.time.DayOfWeek
 import java.time.Duration
 import java.time.LocalDateTime
@@ -36,14 +37,8 @@ class DatapakkePublisherJob(
         val timeseries = imRepo.getWeeklyStats().sortedBy { it.weekNumber }
         val lpsStats = imRepo.getLPSStats()
 
-        val mergedSapStats = lpsStats // SAP rapporterer versjon i feil felt, så de må slås sammen
-            .filter { it.lpsNavn.startsWith("SAP") }
-            .reduceOrNull { s1, s2 ->
-                LPSStats("SAP",
-                    s1.antallVersjoner + s2.antallVersjoner,
-                    s1.antallInntektsmeldinger + s2.antallInntektsmeldinger
-                )
-            }
+        val sapList = lpsStats.filter { it.lpsNavn.startsWith("SAP") }
+        val mergedSapStats = DatapakkeUtil.countSAP(sapList)
 
         val filteredLpsStats = lpsStats // Altinn er ikke en LPS, og fjerner alle SAP duplikatene
             .filter { !it.lpsNavn.startsWith("Altinn") }
