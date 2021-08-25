@@ -11,7 +11,6 @@ Andre applikasjoner kan be om utsettelse eller ignorering av opprettelser av dis
 
 ![image](docs/hovedflyt.svg)
 
-
 ## Robusthet
 Applikasjonen er laget med tanke på aldri miste noen inntektsmeldinger. Dette er løst med disse tiltakene:
 
