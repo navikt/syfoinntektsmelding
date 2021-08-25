@@ -24,10 +24,10 @@ class SafJournalpostClient(
     fun lagQuery(journalpostId: String) : String {
         return """
             journalpost(journalpostId: $journalpostId) {
+                journalstatus,
+                datoOpprettet,
                 dokumenter {
-                    dokumentInfoId,
-                    mottattDato,
-                    journalstatus
+                  dokumentInfoId
                 }
         }"""
     }

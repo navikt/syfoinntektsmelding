@@ -8,8 +8,8 @@ data class JournalpostResponse(
 )
 
 data class Journalpost(
-    val journalstatus: JournalStatus?,
-    val mottattDato: LocalDateTime?,
+    val journalstatus: JournalStatus,
+    val datoOpprettet: LocalDateTime,
     val dokumenter: List<Dokument>
 )
 
