@@ -190,7 +190,7 @@ fun prodConfig(config: ApplicationConfig) = module {
 
     single {
         JournalpostClient(
-            config.getString("DOKARKIV_URL"),
+            config.getString("dokarkiv_url"),
             RestSTSAccessTokenProvider(
                 config.getString("security_token.username"),
                 config.getString("security_token.password"),
@@ -242,6 +242,7 @@ fun prodConfig(config: ApplicationConfig) = module {
             )
         )
     } bind SafJournalpostClient::class
+
 
     single {
         SafDokumentClient(
