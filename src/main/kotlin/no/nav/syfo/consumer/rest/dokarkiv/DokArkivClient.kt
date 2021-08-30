@@ -24,7 +24,7 @@ class DokArkivClient(
 ) {
     private val log: org.slf4j.Logger = LoggerFactory.getLogger("DokArkivClient")
 
-    private suspend fun ferdigstillJournalpost(
+    suspend fun ferdigstillJournalpost(
         journalpostId: String,
         msgId: String,
     ): String = retry("ferdigstill_journalpost") {
