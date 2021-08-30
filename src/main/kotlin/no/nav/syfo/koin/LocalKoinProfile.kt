@@ -31,6 +31,7 @@ import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
 import no.nav.syfo.prosesser.FjernInntektsmeldingByBehandletProcessor
 import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
 import no.nav.syfo.repository.*
+import no.nav.syfo.saf.SafJournalpostClient
 import no.nav.syfo.service.EksisterendeSakService
 import no.nav.syfo.service.JournalpostService
 import no.nav.syfo.service.SaksbehandlingService
@@ -40,7 +41,6 @@ import no.nav.syfo.utsattoppgave.UtsattOppgaveDAO
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import no.nav.tjeneste.virksomhet.behandleinngaaendejournal.v1.binding.BehandleInngaaendeJournalV1
 import no.nav.tjeneste.virksomhet.behandlesak.v2.BehandleSakV2
-import no.nav.tjeneste.virksomhet.inngaaendejournal.v1.binding.InngaaendeJournalV1
 import no.nav.tjeneste.virksomhet.journal.v2.binding.JournalV2
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -122,13 +122,6 @@ fun localDevConfig(config: ApplicationConfig) = module {
         )
     } bind JournalV2::class
     single {
-        WsClientMock<InngaaendeJournalV1>().createPort(
-            config.getString("inngaaendejournal_v1_endpointurl"),
-            InngaaendeJournalV1::class.java,
-            listOf(LogErrorHandler())
-        )
-    } bind InngaaendeJournalV1::class
-    single {
         WsClientMock<BehandleSakV2>().createPort(
             config.getString("virksomhet_behandlesak_v2_endpointurl"),
             BehandleSakV2::class.java,
@@ -185,6 +178,19 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single {
         InntektsmeldingAivenProducer(producerLocalProperties(config.getString("kafka_bootstrap_servers")))
     }
+
+    single {
+        SafJournalpostClient(
+            get(),
+            "https://security-token-service.dev.adeo.no",
+            RestSTSAccessTokenProvider(
+                config.getString("security_token.username"),
+                config.getString("security_token.password"),
+                config.getString("security_token_service_token_url"),
+                get()
+            )
+        )
+    } bind SafJournalpostClient::class
 
     single {
         SakConsumer(

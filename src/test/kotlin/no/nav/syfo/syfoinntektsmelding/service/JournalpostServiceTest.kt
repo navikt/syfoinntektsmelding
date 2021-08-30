@@ -34,7 +34,7 @@ class JournalpostServiceTest {
 
     @Test
     fun ferdigstillJournalpost() {
-        val journal = InngaaendeJournal(dokumentId = "dokumentId", status = JournalStatus.MIDLERTIDIG)
+        val journal = InngaaendeJournal(dokumentId = "dokumentId", status = JournalStatus.MIDLERTIDIG, mottattDato = LocalDateTime.now())
         every { inngaaendeJournalConsumer.hentDokumentId("journalpostId") } returns journal
         every { behandlendeEnhetConsumer.hentBehandlendeEnhet(any(), any()) } returns "enhet"
 
@@ -61,7 +61,7 @@ class JournalpostServiceTest {
 
     @Test
     fun hentInntektsmelding() {
-        val journal = InngaaendeJournal(dokumentId = "dokumentId", status = JournalStatus.MIDLERTIDIG)
+        val journal = InngaaendeJournal(dokumentId = "dokumentId", status = JournalStatus.MIDLERTIDIG, mottattDato = LocalDateTime.now())
         every { inngaaendeJournalConsumer.hentDokumentId("journalpostId") } returns journal
         every { journalConsumer!!.hentInntektsmelding("journalpostId", journal, "AR-1234") } returns
             Inntektsmelding(

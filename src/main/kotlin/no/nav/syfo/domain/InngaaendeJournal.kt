@@ -1,12 +1,11 @@
 package no.nav.syfo.domain
 
-import javax.xml.datatype.DatatypeFactory
-import javax.xml.datatype.XMLGregorianCalendar
+import java.time.LocalDateTime
 
 data class InngaaendeJournal(
         val dokumentId: String,
         val status: JournalStatus,
-        val mottattDato: XMLGregorianCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar()
+        val mottattDato: LocalDateTime
 )
 
 enum class JournalStatus {

@@ -41,7 +41,7 @@ class JournalConsumer(private val journalV2: JournalV2,
 
             val jaxbInntektsmelding = JAXB.unmarshalInntektsmelding<JAXBElement<Any>>(inntektsmelding)
 
-            val mottattDato: LocalDateTime = inngaaendeJournal.mottattDato.toGregorianCalendar().toZonedDateTime().toLocalDateTime()
+            val mottattDato: LocalDateTime = inngaaendeJournal.mottattDato
             val journalStatus: JournalStatus = inngaaendeJournal.status
             return if (jaxbInntektsmelding.value is XMLInntektsmeldingM)
                 InntektsmeldingArbeidsgiver20180924Mapper.tilXMLInntektsmelding(jaxbInntektsmelding, journalpostId, mottattDato, journalStatus, arkivReferanse)

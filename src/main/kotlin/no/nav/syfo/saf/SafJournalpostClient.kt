@@ -20,11 +20,21 @@ class SafJournalpostClient(
     private val stsClient: AccessTokenProvider
 ) {
     val log = log()
-    suspend fun getJournalpostMetadata(journalpostId: String, graphQlQuery: String): GraphQLResponse<JournalpostResponse>? {
 
+    fun lagQuery(journalpostId: String) : String {
+        return """
+            journalpost(journalpostId: $journalpostId) {
+                journalstatus,
+                datoOpprettet,
+                dokumenter {
+                  dokumentInfoId
+                }
+        }"""
+    }
+
+    suspend fun getJournalpostMetadata(journalpostId: String): GraphQLResponse<JournalpostResponse>? {
         log.info("Henter journalpostmetadata for $journalpostId")
-
-        val getJournalpostRequest = GetJournalpostRequest(query = graphQlQuery, variables = GetJournalpostVariables(journalpostId))
+        val getJournalpostRequest = GetJournalpostRequest(query = lagQuery(journalpostId), variables = GetJournalpostVariables(journalpostId))
         val httpResponse = httpClient.post<HttpStatement>(basePath) {
             body = getJournalpostRequest
             header(HttpHeaders.Authorization, "Bearer ${stsClient.getToken()}")
