@@ -168,12 +168,7 @@ fun localDevConfig(config: ApplicationConfig) = module {
         SafJournalpostClient(
             get(),
             "http://localhost",
-            RestSTSAccessTokenProvider(
-                config.getString("security_token.username"),
-                config.getString("security_token.password"),
-                config.getString("http://localhost"),
-                get()
-            )
+            get()
         )
     } bind SafJournalpostClient::class
 
@@ -181,12 +176,7 @@ fun localDevConfig(config: ApplicationConfig) = module {
         SafDokumentClient(
             config.getString("saf_dokument_url"),
             get(),
-            RestSTSAccessTokenProvider(
-                config.getString("security_token.username"),
-                config.getString("security_token.password"),
-                config.getString("http://localhost"),
-                get()
-            )
+            get()
         )
     } bind SafDokumentClient::class
 
