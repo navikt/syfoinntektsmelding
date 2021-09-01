@@ -38,7 +38,7 @@ class UtsattOppgaveKafkaClient(props: Map<String, Any>,
         }
 
         try {
-            val records : ConsumerRecords<String, String>? = consumer.poll(Duration.ofMillis(100))
+            val records : ConsumerRecords<String, String>? = consumer.poll(Duration.ofSeconds(10))
             val payloads = records?.map { it.value() }
             payloads.let {  currentBatch = it!! }
 
