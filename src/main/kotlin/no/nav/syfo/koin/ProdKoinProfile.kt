@@ -45,7 +45,6 @@ import no.nav.syfo.utsattoppgave.UtsattOppgaveDAO
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import no.nav.tjeneste.virksomhet.behandleinngaaendejournal.v1.binding.BehandleInngaaendeJournalV1
 import no.nav.tjeneste.virksomhet.behandlesak.v2.BehandleSakV2
-import no.nav.tjeneste.virksomhet.journal.v2.binding.JournalV2
 import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil
 import org.koin.core.qualifier.StringQualifier
 import org.koin.dsl.bind
@@ -107,7 +106,7 @@ fun prodConfig(config: ApplicationConfig) = module {
 
     single { InngaaendeJournalConsumer(get()) } bind InngaaendeJournalConsumer::class
     single { BehandleInngaaendeJournalConsumer(get()) } bind BehandleInngaaendeJournalConsumer::class
-    single { JournalConsumer(get(), get()) } bind JournalConsumer::class
+    single { JournalConsumer(get(), get(), get()) } bind JournalConsumer::class
     single { Metrikk() } bind Metrikk::class
     single { BehandlendeEnhetConsumer(get(), get(), get()) } bind BehandlendeEnhetConsumer::class
     single { JournalpostService(get(), get(), get(), get(), get()) } bind JournalpostService::class
@@ -199,13 +198,6 @@ fun prodConfig(config: ApplicationConfig) = module {
             get()
         )
     } bind JournalpostClient::class
-
-    single {
-        createServicePort(
-            serviceUrl = config.getString("journal_v2_endpointurl"),
-            serviceClazz = JournalV2::class.java
-        )
-    } bind JournalV2::class
 
     single {
         createServicePort(

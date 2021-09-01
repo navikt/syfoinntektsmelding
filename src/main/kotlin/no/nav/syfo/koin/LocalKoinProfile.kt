@@ -41,7 +41,6 @@ import no.nav.syfo.utsattoppgave.UtsattOppgaveDAO
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import no.nav.tjeneste.virksomhet.behandleinngaaendejournal.v1.binding.BehandleInngaaendeJournalV1
 import no.nav.tjeneste.virksomhet.behandlesak.v2.BehandleSakV2
-import no.nav.tjeneste.virksomhet.journal.v2.binding.JournalV2
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import javax.sql.DataSource
@@ -115,13 +114,6 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single { DatapakkePublisherJob(get(), get(), config.getString("datapakke.api_url"), config.getString("datapakke.id")) }
 
     single {
-        WsClientMock<JournalV2>().createPort(
-            config.getString("journal_v2_endpointurl"),
-            JournalV2::class.java,
-            listOf(LogErrorHandler())
-        )
-    } bind JournalV2::class
-    single {
         WsClientMock<BehandleSakV2>().createPort(
             config.getString("virksomhet_behandlesak_v2_endpointurl"),
             BehandleSakV2::class.java,
@@ -157,7 +149,7 @@ fun localDevConfig(config: ApplicationConfig) = module {
     } bind InntektsmeldingBehandler::class
     single { InngaaendeJournalConsumer(get()) } bind InngaaendeJournalConsumer::class
     single { BehandleInngaaendeJournalConsumer(get()) } bind BehandleInngaaendeJournalConsumer::class
-    single { JournalConsumer(get(), get()) } bind JournalConsumer::class
+    single { JournalConsumer(get(), get(), get()) } bind JournalConsumer::class
     single { Metrikk() } bind Metrikk::class
     single { JournalpostService(get(), get(), get(), get(), get()) } bind JournalpostService::class
     single { EksisterendeSakService(get()) } bind EksisterendeSakService::class

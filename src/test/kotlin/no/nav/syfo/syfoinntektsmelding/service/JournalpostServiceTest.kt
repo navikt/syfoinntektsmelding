@@ -14,6 +14,7 @@ import no.nav.syfo.service.JournalpostService
 import no.nav.syfo.util.Metrikk
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.junit.jupiter.api.Test
+import org.mockito.ArgumentMatchers.any
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -63,7 +64,7 @@ class JournalpostServiceTest {
     fun hentInntektsmelding() {
         val journal = InngaaendeJournal(dokumentId = "dokumentId", status = JournalStatus.MIDLERTIDIG, mottattDato = LocalDateTime.now())
         every { inngaaendeJournalConsumer.hentDokumentId("journalpostId") } returns journal
-        every { journalConsumer!!.hentInntektsmelding("journalpostId", journal, "AR-1234") } returns
+        every { journalConsumer.hentInntektsmelding("journalpostId", "AR-1234") } returns
             Inntektsmelding(
                 fnr = "fnr",
                 arbeidsgiverOrgnummer = "orgnummer",
@@ -77,7 +78,7 @@ class JournalpostServiceTest {
             )
 
 
-        val (_, fnr, _, arbeidsgiverPrivat) = journalpostService!!.hentInntektsmelding("journalpostId", "AR-1234")
+        val (_, fnr, _, arbeidsgiverPrivat) = journalpostService.hentInntektsmelding("journalpostId", "AR-1234")
 
         assertThat(fnr).isEqualTo("fnr")
         assertThat(arbeidsgiverPrivat).isNull()
