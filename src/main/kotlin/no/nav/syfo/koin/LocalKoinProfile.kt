@@ -167,7 +167,7 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single {
         SafJournalpostClient(
             get(),
-            "https://security-token-service.dev.adeo.no",
+            "http://localhost",
             RestSTSAccessTokenProvider(
                 config.getString("security_token.username"),
                 config.getString("security_token.password"),
