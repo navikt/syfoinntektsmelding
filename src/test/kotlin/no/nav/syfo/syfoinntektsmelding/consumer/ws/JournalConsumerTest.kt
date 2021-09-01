@@ -2,7 +2,6 @@ package no.nav.syfo.syfoinntektsmelding.consumer.ws
 
 import io.mockk.every
 import io.mockk.mockk
-import kotlinx.io.core.toByteArray
 import no.nav.syfo.behandling.HentDokumentFeiletException
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
 import no.nav.syfo.consumer.ws.JournalConsumer

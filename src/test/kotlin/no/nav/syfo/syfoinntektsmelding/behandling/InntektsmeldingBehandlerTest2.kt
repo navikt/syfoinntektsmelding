@@ -11,7 +11,6 @@ import io.ktor.util.*
 import io.mockk.*
 import org.mockito.ArgumentMatchers.any
 import kotlinx.coroutines.runBlocking
-import kotlinx.io.core.toByteArray
 import no.nav.syfo.behandling.InntektsmeldingBehandler
 import no.nav.syfo.consumer.rest.OppgaveClient
 import no.nav.syfo.consumer.rest.SakClient
