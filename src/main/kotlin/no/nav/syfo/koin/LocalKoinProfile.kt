@@ -179,7 +179,7 @@ fun localDevConfig(config: ApplicationConfig) = module {
 
     single {
         SafDokumentClient(
-            get(),
+            config.getString("saf_dokument_url"),
             get(),
             RestSTSAccessTokenProvider(
                 config.getString("security_token.username"),
