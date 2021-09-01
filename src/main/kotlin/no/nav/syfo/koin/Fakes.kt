@@ -23,6 +23,14 @@ fun Module.mockExternalDependecies() {
     //single { MockAltinnRepo(get()) } bind AltinnOrganisationsRepository::class
 
     single {
+        object : AccessTokenProvider {
+            override fun getToken(): String {
+                return "token";
+            }
+        }
+    } bind AccessTokenProvider::class
+
+    single {
         object : DokarkivKlient {
             override fun journalførDokument(
                 journalpost: JournalpostRequest,

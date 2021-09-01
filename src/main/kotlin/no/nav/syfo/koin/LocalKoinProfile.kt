@@ -13,11 +13,11 @@ import no.nav.syfo.config.OppgaveClientConfigProvider
 import no.nav.syfo.config.SakClientConfigProvider
 import no.nav.syfo.consumer.SakConsumer
 import no.nav.syfo.consumer.azuread.AzureAdTokenConsumer
-import no.nav.syfo.consumer.rest.JournalpostClient
 import no.nav.syfo.consumer.rest.OppgaveClient
 import no.nav.syfo.consumer.rest.SakClient
 import no.nav.syfo.consumer.rest.TokenConsumer
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
+import no.nav.syfo.consumer.rest.dokarkiv.DokArkivClient
 import no.nav.syfo.consumer.util.ws.LogErrorHandler
 import no.nav.syfo.consumer.util.ws.WsClientMock
 import no.nav.syfo.consumer.ws.BehandleInngaaendeJournalConsumer
@@ -179,6 +179,14 @@ fun localDevConfig(config: ApplicationConfig) = module {
             get()
         )
     } bind SafDokumentClient::class
+
+    single {
+        DokArkivClient(
+            config.getString("dokarkiv_url"),
+            get(),
+            get()
+        )
+    } bind DokArkivClient::class
 
     single {
         SakConsumer(
