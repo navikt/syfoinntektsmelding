@@ -3,7 +3,9 @@ package no.nav.syfo.util
 import no.nav.syfo.repository.LPSStats
 
 object DatapakkeUtil {
-    fun countSAP(sapList: List<LPSStats>): LPSStats {
+    fun countSAP(sapList: List<LPSStats>): LPSStats? {
+
+        if(sapList.isEmpty()) return null
 
         val noBuild = sapList.filter { !it.lpsNavn.contains("BUILD") }
             .reduce{ s1, s2 ->
@@ -30,4 +32,5 @@ object DatapakkeUtil {
             )
         }
     }
+
 }
