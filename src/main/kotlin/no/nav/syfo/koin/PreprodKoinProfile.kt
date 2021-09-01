@@ -43,7 +43,6 @@ import no.nav.syfo.util.Metrikk
 import no.nav.syfo.utsattoppgave.FeiletUtsattOppgaveMeldingProsessor
 import no.nav.syfo.utsattoppgave.UtsattOppgaveDAO
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
-import no.nav.tjeneste.virksomhet.behandleinngaaendejournal.v1.binding.BehandleInngaaendeJournalV1
 import no.nav.tjeneste.virksomhet.behandlesak.v2.BehandleSakV2
 import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil
 import org.koin.core.qualifier.StringQualifier
@@ -238,12 +237,6 @@ fun preprodConfig(config: ApplicationConfig) = module {
         )
     } bind BehandleSakV2::class
 
-    single {
-        createServicePort(
-            serviceUrl = config.getString("behandleinngaaendejournal_v1_endpointurl"),
-            serviceClazz = BehandleInngaaendeJournalV1::class.java
-        )
-    } bind BehandleInngaaendeJournalV1::class
 
 
     single {

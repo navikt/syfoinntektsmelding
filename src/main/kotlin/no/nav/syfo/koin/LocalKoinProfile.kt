@@ -40,7 +40,6 @@ import no.nav.syfo.util.Metrikk
 import no.nav.syfo.utsattoppgave.FeiletUtsattOppgaveMeldingProsessor
 import no.nav.syfo.utsattoppgave.UtsattOppgaveDAO
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
-import no.nav.tjeneste.virksomhet.behandleinngaaendejournal.v1.binding.BehandleInngaaendeJournalV1
 import no.nav.tjeneste.virksomhet.behandlesak.v2.BehandleSakV2
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -121,13 +120,6 @@ fun localDevConfig(config: ApplicationConfig) = module {
             listOf(LogErrorHandler())
         )
     } bind BehandleSakV2::class
-    single {
-        WsClientMock<BehandleInngaaendeJournalV1>().createPort(
-            config.getString("behandleinngaaendejournal_v1_endpointurl"),
-            BehandleInngaaendeJournalV1::class.java,
-            listOf(LogErrorHandler())
-        )
-    } bind BehandleInngaaendeJournalV1::class
 
     single { BehandlendeEnhetConsumer(get(), get(), get()) } bind BehandlendeEnhetConsumer::class
     single { UtsattOppgaveDAO(UtsattOppgaveRepositoryMockk()) }
