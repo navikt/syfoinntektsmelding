@@ -8,6 +8,7 @@ import no.nav.syfo.consumer.rest.dokarkiv.DokArkivClient
 import no.nav.syfo.consumer.ws.BehandleInngaaendeJournalConsumer
 import no.nav.syfo.domain.InngaendeJournalpost
 import org.junit.jupiter.api.Test
+import kotlin.test.assertTrue
 
 class BehandleInngaaendeJournalConsumerTest {
 
@@ -43,7 +44,7 @@ class BehandleInngaaendeJournalConsumerTest {
         behandleInngaaendeJournalConsumer.oppdaterJournalpost(inngaendeJournalpost)
         verify {
             runBlocking {
-                dokArkivClient.oppdaterJournalpost( "journalpostId", "fnr", any(), any() )
+                dokArkivClient.oppdaterJournalpost( "journalpostId", any(), any(), any(), any() )
             }
         }
         // TODO - Asserten under må virke

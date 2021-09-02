@@ -16,6 +16,10 @@ import no.nav.syfo.helpers.retry
 import org.slf4j.LoggerFactory
 import java.io.IOException
 
+// NAV-enheten som personen som utfører journalføring jobber for. Ved automatisk journalføring uten
+// mennesker involvert, skal enhet settes til "9999".
+val AUTOMATISK_JOURNALFOERING_ENHET = "9999"
+
 @KtorExperimentalAPI
 class DokArkivClient(
     private val url: String,
@@ -24,17 +28,28 @@ class DokArkivClient(
 ) {
     private val log: org.slf4j.Logger = LoggerFactory.getLogger("DokArkivClient")
 
-    suspend fun ferdigstillJournalpost(
+    /**
+     * Ved suksessfull ferdigstilling: 200 OK.
+     *
+     * Ved feil:
+     *
+     * 400 Bad Request. Kan ikke ferdigstille. Enten lar ikke journalposten seg ferdigstille eller så er input ugyldig.
+     * 401 Unauthorized. Konsument kaller tjenesten med ugyldig OIDC-token.
+     * 403 Forbidden. Konsument har ikke tilgang til å ferdigstille journalpost.
+     * 500 Internal Server Error. Dersom en uventet feil oppstår i dokarkiv.
+     */
+    suspend private fun ferdigstillJournalpost(
         journalpostId: String,
         msgId: String,
+        ferdigstillRequest: FerdigstillRequest
     ): String = retry("ferdigstill_journalpost") {
         try {
-            return@retry httpClient.patch<String>("$url/$journalpostId/ferdigstill") {
+            return@retry httpClient.patch<String>("$url/journalpost/$journalpostId/ferdigstill") {
                 contentType(ContentType.Application.Json)
                 accept(ContentType.Application.Json)
                 header("Authorization", "Bearer ${oidcClient.getToken()}")
                 header("Nav-Callid", msgId)
-                body = FerdigstillJournal("9999")
+                body = ferdigstillRequest
             }.also { log.info("ferdigstilling av journalpost ok for journalpostid {}, msgId {}, {}", journalpostId, msgId ) }
         } catch (e: Exception) {
             if (e is ClientRequestException) {
@@ -54,26 +69,30 @@ class DokArkivClient(
         }
     }
 
-    suspend fun oppdaterJournalpost(
+    suspend fun ferdigstillJournalpost(
         journalpostId: String,
-        fnr: String,
-        behandler: Behandler,
+        msgId: String,
+    ): String {
+        return ferdigstillJournalpost(journalpostId, msgId, FerdigstillRequest(AUTOMATISK_JOURNALFOERING_ENHET))
+    }
+
+    /**
+     *
+     *
+     * https://confluence.adeo.no/display/BOA/oppdaterJournalpost
+     */
+    suspend private fun oppdaterJournalpost(
+        journalpostId: String,
+        oppdaterJournalpostRequest: OppdaterJournalpostRequest,
         msgId: String
     ) = retry("oppdater_journalpost") {
         try {
-            httpClient.put<HttpResponse>("$url/$journalpostId") {
+            httpClient.put<HttpResponse>("$url/journalpost/$journalpostId") {
                 contentType(ContentType.Application.Json)
                 accept(ContentType.Application.Json)
                 header("Authorization", "Bearer ${oidcClient.getToken()}")
                 header("Nav-Callid", msgId)
-                body = OppdaterJournalpost(
-                    avsenderMottaker = AvsenderMottaker(
-                        id = hprnummerMedRiktigLengde(behandler.hpr!!),
-                        navn = finnNavn(behandler)
-                    ),
-                    bruker = Bruker(id = fnr),
-                    sak = Sak()
-                )
+                body = oppdaterJournalpostRequest
             }.also { log.info("Oppdatering av journalpost ok for journalpostid {}, msgId {}, {}", journalpostId, msgId ) }
         } catch (e: Exception) {
             if (e is ClientRequestException) {
@@ -93,46 +112,25 @@ class DokArkivClient(
         }
     }
 
-    private fun hprnummerMedRiktigLengde(hprnummer: String): String {
-        if (hprnummer.length < 9) {
-            return hprnummer.padStart(9, '0')
-        }
-        return hprnummer
+    suspend fun oppdaterJournalpost(
+        journalpostId: String,
+        fnr: String,
+        isFnr: Boolean,
+        gsakId: String,
+        msgId: String
+    ): HttpResponse {
+        val req = OppdaterJournalpostRequest(
+            bruker = Bruker(fnr, if (isFnr) { "FNR" } else { "ORGNR"} ),
+            avsenderMottaker = AvsenderMottaker(fnr, "Arbeidsgiver"),
+            sak = Sak("ARKIVSAK", "GSAK", gsakId )
+        )
+        return oppdaterJournalpost(journalpostId, req, msgId )
     }
 
-    private fun finnNavn(behandler: Behandler): String {
-        return "${behandler.fornavn} ${behandler.etternavn}"
-    }
 
-    data class Behandler(
-        val fornavn: String,
-        val etternavn: String,
-        val hpr: String,
-    )
 
-    data class FerdigstillJournal(
-        val journalfoerendeEnhet: String
-    )
 
-    data class OppdaterJournalpost(
-        val tema: String = "SYM",
-        val avsenderMottaker: AvsenderMottaker,
-        val bruker: Bruker,
-        val sak: Sak
-    )
 
-    data class AvsenderMottaker(
-        val id: String,
-        val idType: String = "HPRNR",
-        val navn: String
-    )
 
-    data class Bruker(
-        val id: String,
-        val idType: String = "FNR"
-    )
-
-    data class Sak(
-        val sakstype: String = "GENERELL_SAK"
-    )
 }
+
