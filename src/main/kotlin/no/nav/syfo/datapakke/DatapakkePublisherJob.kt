@@ -10,7 +10,6 @@ import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.utils.RecurringJob
 import no.nav.helse.arbeidsgiver.utils.loadFromResources
 import no.nav.syfo.repository.IMStatsRepo
-import no.nav.syfo.repository.LPSStats
 import no.nav.syfo.util.DatapakkeUtil
 import java.time.DayOfWeek
 import java.time.Duration
@@ -129,8 +128,8 @@ class DatapakkePublisherJob(
 
         runBlocking {
             val response = httpClient.put<HttpResponse>("$datapakkeApiUrl/$datapakkeId") {
+                contentType(ContentType.Application.Json)
                 body = populatedDatapakke
-                header(HttpHeaders.ContentType, "application/json")
             }
 
             logger.info("Oppdaterte datapakke $datapakkeId med respons ${response.readText()}")
