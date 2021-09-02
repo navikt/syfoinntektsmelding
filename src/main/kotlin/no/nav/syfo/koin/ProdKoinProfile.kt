@@ -21,6 +21,7 @@ import no.nav.syfo.consumer.rest.OppgaveClient
 import no.nav.syfo.consumer.rest.SakClient
 import no.nav.syfo.consumer.rest.TokenConsumer
 import no.nav.syfo.consumer.rest.aktor.AktorConsumer
+import no.nav.syfo.consumer.rest.dokarkiv.DokArkivClient
 import no.nav.syfo.consumer.rest.norg.Norg2Client
 import no.nav.syfo.consumer.util.ws.createServicePort
 import no.nav.syfo.consumer.ws.BehandleInngaaendeJournalConsumer
@@ -232,5 +233,13 @@ fun prodConfig(config: ApplicationConfig) = module {
             )
         )
     } bind SafDokumentClient::class
+
+    single {
+        DokArkivClient(
+            config.getString("dokarkiv_url"),
+            get(),
+            get()
+        )
+    } bind DokArkivClient::class
 
 }
