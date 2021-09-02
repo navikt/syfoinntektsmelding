@@ -85,8 +85,6 @@ spec:
       value: "https://dokarkiv-q1.nais.preprod.local/services/behandleinngaaendejournal/v1"
     - name: VIRKSOMHET_PERSON_V3_ENDPOINTURL
       value: "https://app-q1.adeo.no/tpsws-aura/ws/Person/v3"
-    - name: VIRKSOMHET_BEHANDLESAK_V2_ENDPOINTURL
-      value: "https://wasapp-q1.adeo.no/nav-gsak-ws/BehandleSakV2"
     - name: VIRKSOMHET_OPPGAVE_V3_ENDPOINTURL
       value: "https://wasapp-q1.adeo.no/nav-gsak-ws/OppgaveV3"
     - name: SYFOSERVICESTRANGLERAPI_URL
