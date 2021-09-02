@@ -31,6 +31,7 @@ import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
 import no.nav.syfo.prosesser.FjernInntektsmeldingByBehandletProcessor
 import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
 import no.nav.syfo.repository.*
+import no.nav.syfo.saf.SafDokumentClient
 import no.nav.syfo.saf.SafJournalpostClient
 import no.nav.syfo.service.EksisterendeSakService
 import no.nav.syfo.service.JournalpostService
@@ -182,15 +183,18 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single {
         SafJournalpostClient(
             get(),
-            "https://security-token-service.dev.adeo.no",
-            RestSTSAccessTokenProvider(
-                config.getString("security_token.username"),
-                config.getString("security_token.password"),
-                config.getString("security_token_service_token_url"),
-                get()
-            )
+            "http://localhost",
+            get()
         )
     } bind SafJournalpostClient::class
+
+    single {
+        SafDokumentClient(
+            config.getString("saf_dokument_url"),
+            get(),
+            get()
+        )
+    } bind SafDokumentClient::class
 
     single {
         SakConsumer(
