@@ -128,8 +128,8 @@ class DatapakkePublisherJob(
 
         runBlocking {
             val response = httpClient.put<HttpResponse>("$datapakkeApiUrl/$datapakkeId") {
-                contentType(ContentType.Application.Json)
                 body = populatedDatapakke
+                contentType(ContentType.Application.Json)
             }
 
             logger.info("Oppdaterte datapakke $datapakkeId med respons ${response.readText()}")
