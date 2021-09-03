@@ -137,7 +137,7 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single { JournalpostService(get(), get(), get(), get(), get()) } bind JournalpostService::class
     single { EksisterendeSakService(get()) } bind EksisterendeSakService::class
     single { InntektsmeldingService(InntektsmeldingRepositoryImp(get()), get()) } bind InntektsmeldingService::class
-    single { SakClient(config.getString("opprett_sak_url"), get()) } bind SakClient::class
+    single { SakClient(config.getString("opprett_sak_url"), get(), get()) } bind SakClient::class
     single { SaksbehandlingService(get(), get(), get(), get()) } bind SaksbehandlingService::class
     single { FeiletService(get()) } bind FeiletService::class
     single {
