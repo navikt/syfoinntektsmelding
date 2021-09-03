@@ -179,6 +179,7 @@ fun localDevConfig(config: ApplicationConfig) = module {
     } bind DokArkivClient::class
 
     single {
+
         SakConsumer(
             get(),
             get(),

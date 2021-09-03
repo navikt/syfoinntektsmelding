@@ -3,13 +3,13 @@ package no.nav.syfo.datapakke
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
+import io.ktor.http.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.utils.RecurringJob
 import no.nav.helse.arbeidsgiver.utils.loadFromResources
 import no.nav.syfo.repository.IMStatsRepo
-import no.nav.syfo.repository.LPSStats
 import no.nav.syfo.util.DatapakkeUtil
 import java.time.DayOfWeek
 import java.time.Duration
@@ -129,6 +129,7 @@ class DatapakkePublisherJob(
         runBlocking {
             val response = httpClient.put<HttpResponse>("$datapakkeApiUrl/$datapakkeId") {
                 body = populatedDatapakke
+                contentType(ContentType.Application.Json)
             }
 
             logger.info("Oppdaterte datapakke $datapakkeId med respons ${response.readText()}")
