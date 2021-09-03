@@ -3,10 +3,10 @@ package no.nav.syfo.utsattoppgave
 import io.ktor.util.*
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.client.OppgaveClient
-import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
-import no.nav.syfo.consumer.ws.SYKEPENGER_UTLAND
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.dto.UtsattOppgaveEntitet
+import no.nav.syfo.service.BehandlendeEnhetConsumer
+import no.nav.syfo.service.SYKEPENGER_UTLAND
 import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
 import java.util.*

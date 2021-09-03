@@ -1,19 +1,15 @@
 package no.nav.syfo.service
 
-import no.nav.syfo.consumer.ws.BehandleInngaaendeJournalConsumer
-import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
-import no.nav.syfo.consumer.ws.InngaaendeJournalConsumer
-import no.nav.syfo.consumer.ws.JournalConsumer
 import no.nav.syfo.domain.InngaendeJournalpost
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.util.Metrikk
 
 class JournalpostService(
-        private val inngaaendeJournalConsumer: InngaaendeJournalConsumer,
-        private val behandleInngaaendeJournalConsumer: BehandleInngaaendeJournalConsumer,
-        private val journalConsumer: JournalConsumer,
-        private val behandlendeEnhetConsumer: BehandlendeEnhetConsumer,
-        private val metrikk: Metrikk
+    private val inngaaendeJournalConsumer: InngaaendeJournalConsumer,
+    private val behandleInngaaendeJournalConsumer: BehandleInngaaendeJournalConsumer,
+    private val journalConsumer: JournalConsumer,
+    private val behandlendeEnhetConsumer: BehandlendeEnhetConsumer,
+    private val metrikk: Metrikk
 ) {
 
     fun hentInntektsmelding(journalpostId: String, arkivReferanse: String): Inntektsmelding {
