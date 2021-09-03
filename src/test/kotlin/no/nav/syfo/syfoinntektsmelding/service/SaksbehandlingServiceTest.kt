@@ -5,10 +5,10 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.runBlocking
-import no.nav.syfo.consumer.rest.OppgaveClient
-import no.nav.syfo.consumer.rest.SakClient
-import no.nav.syfo.consumer.rest.SakResponse
-import no.nav.syfo.consumer.rest.aktor.AktorConsumer
+import no.nav.syfo.client.OppgaveClient
+import no.nav.syfo.client.SakClient
+import no.nav.syfo.client.SakResponse
+import no.nav.syfo.client.aktor.AktorConsumer
 import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode

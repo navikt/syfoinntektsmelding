@@ -1,14 +1,12 @@
 package no.nav.syfo.syfoinntektsmelding.consumer.ws
 
 import io.mockk.mockk
-import io.mockk.slot
 import io.mockk.verify
 import kotlinx.coroutines.runBlocking
-import no.nav.syfo.consumer.rest.dokarkiv.DokArkivClient
+import no.nav.syfo.client.dokarkiv.DokArkivClient
 import no.nav.syfo.consumer.ws.BehandleInngaaendeJournalConsumer
 import no.nav.syfo.domain.InngaendeJournalpost
 import org.junit.jupiter.api.Test
-import kotlin.test.assertTrue
 
 class BehandleInngaaendeJournalConsumerTest {
 

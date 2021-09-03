@@ -2,7 +2,7 @@ package no.nav.syfo.syfoinntektsmelding.service
 
 import io.mockk.every
 import io.mockk.mockk
-import no.nav.syfo.consumer.SakConsumer
+import no.nav.syfo.client.SakConsumer
 import no.nav.syfo.service.EksisterendeSakService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test

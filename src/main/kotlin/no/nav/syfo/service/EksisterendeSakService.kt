@@ -1,7 +1,7 @@
 package no.nav.syfo.service
 
 import log
-import no.nav.syfo.consumer.SakConsumer
+import no.nav.syfo.client.SakConsumer
 import java.time.LocalDate
 
 class EksisterendeSakService(

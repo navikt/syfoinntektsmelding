@@ -3,7 +3,7 @@ package no.nav.syfo.syfoinntektsmelding.utsattoppgave
 import io.ktor.util.*
 import io.mockk.mockk
 import io.mockk.verify
-import no.nav.syfo.consumer.rest.OppgaveClient
+import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.dto.UtsattOppgaveEntitet
