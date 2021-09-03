@@ -3,7 +3,7 @@ package no.nav.syfo.service
 import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.runBlocking
 import log
-import no.nav.syfo.consumer.rest.SakClient
+import no.nav.syfo.client.SakClient
 import no.nav.syfo.domain.Periode
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.repository.InntektsmeldingService

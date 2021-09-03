@@ -4,7 +4,7 @@ package no.nav.syfo.behandling
 
 import com.google.common.util.concurrent.Striped
 import log
-import no.nav.syfo.consumer.rest.aktor.AktorConsumer
+import no.nav.syfo.client.aktor.AktorConsumer
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.dto.Tilstand

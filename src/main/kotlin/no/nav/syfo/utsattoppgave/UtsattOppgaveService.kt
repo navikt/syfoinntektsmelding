@@ -2,7 +2,7 @@ package no.nav.syfo.utsattoppgave
 
 import io.ktor.util.*
 import kotlinx.coroutines.runBlocking
-import no.nav.syfo.consumer.rest.OppgaveClient
+import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
 import no.nav.syfo.consumer.ws.SYKEPENGER_UTLAND
 import no.nav.syfo.dto.Tilstand

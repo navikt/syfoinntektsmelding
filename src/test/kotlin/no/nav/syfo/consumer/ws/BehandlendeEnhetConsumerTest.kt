@@ -6,10 +6,9 @@ import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClient
 import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlHentFullPerson
 import no.nav.syfo.behandling.BehandlendeEnhetFeiletException
-import no.nav.syfo.behandling.FinnBehandlendeEnhetListeUgyldigInputException
 import no.nav.syfo.behandling.IngenAktivEnhetException
-import no.nav.syfo.consumer.rest.norg.ArbeidsfordelingResponse
-import no.nav.syfo.consumer.rest.norg.Norg2Client
+import no.nav.syfo.client.norg.ArbeidsfordelingResponse
+import no.nav.syfo.client.norg.Norg2Client
 import no.nav.syfo.util.Metrikk
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThatThrownBy

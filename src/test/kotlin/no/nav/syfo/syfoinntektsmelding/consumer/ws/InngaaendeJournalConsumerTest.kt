@@ -9,9 +9,9 @@ import org.mockito.ArgumentMatchers.any
 import no.nav.syfo.consumer.ws.InngaaendeJournalConsumer
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.graphql.model.SafJournalResponse
-import no.nav.syfo.saf.SafJournalpostClient
-import no.nav.syfo.saf.model.Dokument
-import no.nav.syfo.saf.model.Journalpost
+import no.nav.syfo.client.saf.SafJournalpostClient
+import no.nav.syfo.client.saf.model.Dokument
+import no.nav.syfo.client.saf.model.Journalpost
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime

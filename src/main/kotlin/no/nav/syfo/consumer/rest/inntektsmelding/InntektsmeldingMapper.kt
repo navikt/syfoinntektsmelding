@@ -1,6 +1,6 @@
 package no.nav.syfo.consumer.rest.inntektsmelding
 
-import no.nav.syfo.consumer.rest.aktor.AktorConsumer
+import no.nav.syfo.client.aktor.AktorConsumer
 import no.nav.syfo.consumer.ws.mapping.InntektsmeldingArbeidsgiver20180924Mapper
 import no.nav.syfo.consumer.ws.mapping.InntektsmeldingArbeidsgiverPrivat20181211Mapper
 import no.nav.syfo.domain.JournalStatus

@@ -11,9 +11,9 @@ import no.nav.helse.arbeidsgiver.integrasjoner.oppgave.*
 import no.nav.helse.arbeidsgiver.integrasjoner.pdl.*
 import no.nav.helse.arbeidsgiver.utils.loadFromResources
 import no.nav.helse.arbeidsgiver.web.auth.AltinnOrganisationsRepository
-import no.nav.syfo.consumer.rest.norg.ArbeidsfordelingRequest
-import no.nav.syfo.consumer.rest.norg.ArbeidsfordelingResponse
-import no.nav.syfo.consumer.rest.norg.Norg2Client
+import no.nav.syfo.client.norg.ArbeidsfordelingRequest
+import no.nav.syfo.client.norg.ArbeidsfordelingResponse
+import no.nav.syfo.client.norg.Norg2Client
 import org.koin.core.module.Module
 import org.koin.dsl.bind
 import java.time.LocalDate

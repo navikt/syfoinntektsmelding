@@ -5,9 +5,9 @@ import log
 import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClient
 import no.nav.syfo.behandling.BehandlendeEnhetFeiletException
 import no.nav.syfo.behandling.IngenAktivEnhetException
-import no.nav.syfo.consumer.rest.norg.ArbeidsfordelingResponse
-import no.nav.syfo.consumer.rest.norg.ArbeidsfordelingRequest
-import no.nav.syfo.consumer.rest.norg.Norg2Client
+import no.nav.syfo.client.norg.ArbeidsfordelingResponse
+import no.nav.syfo.client.norg.ArbeidsfordelingRequest
+import no.nav.syfo.client.norg.Norg2Client
 import no.nav.syfo.domain.GeografiskTilknytningData
 import no.nav.syfo.util.MDCOperations
 import no.nav.syfo.util.Metrikk

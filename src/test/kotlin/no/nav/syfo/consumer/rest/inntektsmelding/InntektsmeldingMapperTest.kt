@@ -1,6 +1,6 @@
 package no.nav.syfo.consumer.rest.inntektsmelding
 
-import no.nav.syfo.consumer.rest.aktor.AktorConsumer
+import no.nav.syfo.client.aktor.AktorConsumer
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
 import org.assertj.core.api.Assertions

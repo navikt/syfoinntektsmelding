@@ -3,13 +3,13 @@ package no.nav.syfo.consumer.ws
 import kotlinx.coroutines.runBlocking
 import log
 import no.nav.syfo.behandling.HentDokumentFeiletException
-import no.nav.syfo.consumer.rest.aktor.AktorConsumer
+import no.nav.syfo.client.aktor.AktorConsumer
 import no.nav.syfo.consumer.ws.mapping.InntektsmeldingArbeidsgiver20180924Mapper
 import no.nav.syfo.consumer.ws.mapping.InntektsmeldingArbeidsgiverPrivat20181211Mapper
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
-import no.nav.syfo.saf.SafDokumentClient
-import no.nav.syfo.saf.SafJournalpostClient
+import no.nav.syfo.client.saf.SafDokumentClient
+import no.nav.syfo.client.saf.SafJournalpostClient
 import no.nav.syfo.util.JAXB
 import no.seres.xsd.nav.inntektsmelding_m._20180924.XMLInntektsmeldingM
 import java.lang.IllegalArgumentException

@@ -2,7 +2,7 @@ package no.nav.syfo.consumer.ws
 
 import kotlinx.coroutines.runBlocking
 import log
-import no.nav.syfo.consumer.rest.dokarkiv.DokArkivClient
+import no.nav.syfo.client.dokarkiv.DokArkivClient
 import no.nav.syfo.domain.InngaendeJournalpost
 import no.nav.syfo.util.MDCOperations
 
