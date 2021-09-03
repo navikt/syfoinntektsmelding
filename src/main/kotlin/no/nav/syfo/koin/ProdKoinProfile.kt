@@ -123,7 +123,7 @@ fun prodConfig(config: ApplicationConfig) = module {
     single { InntektsmeldingRepositoryImp(get()) } bind InntektsmeldingRepository::class
     single { InntektsmeldingService(get(),get()) } bind InntektsmeldingService::class
     single { ArbeidsgiverperiodeRepositoryImp(get())} bind ArbeidsgiverperiodeRepository::class
-    single { SakClient(config.getString("opprett_sak_url"), get()) } bind SakClient::class
+    single { SakClient(config.getString("opprett_sak_url"), get(), get()) } bind SakClient::class
     single { SaksbehandlingService(get(), get(), get(), get()) } bind SaksbehandlingService::class
     single { DatapakkePublisherJob(get(), get(), config.getString("datapakke.api_url"), config.getString("datapakke.id"), false) }
 
