@@ -17,16 +17,10 @@ class InngaaendeJournalConsumer(
         return runBlocking {
             val response = safJournalpostClient.getJournalpostMetadata(journalpostId)
             InngaaendeJournal(
-                dokumentId = response?.data?.journalpost?.dokumenter!![0].dokumentInfoId,
-                status = response.data.journalpost.journalstatus,
-                mottattDato = response.data.journalpost.datoOpprettet
+                dokumentId = response.journalpost?.dokumenter!![0].dokumentInfoId,
+                status = response.journalpost.journalstatus,
+                mottattDato = response.journalpost.datoOpprettet
             )
         }
     }
 }
-
-data class InngaaendeJournal (
-    val dokumentId: String,
-    val status: JournalStatus,
-    val mottattDato: LocalDateTime,
-)

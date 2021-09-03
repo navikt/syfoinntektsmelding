@@ -1,5 +1,12 @@
 package no.nav.syfo.graphql.model
 
+import no.nav.syfo.saf.model.Journalpost
+
+data class SafJournalResponse (
+    val journalpost: Journalpost,
+    val errors: List<ResponseError>?
+)
+
 data class GraphQLResponse<T> (
     val data: T,
     val errors: List<ResponseError>?
