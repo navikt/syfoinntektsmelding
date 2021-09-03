@@ -4,12 +4,12 @@ import io.mockk.every
 import io.mockk.mockk
 import no.nav.syfo.behandling.HentDokumentFeiletException
 import no.nav.syfo.client.aktor.AktorConsumer
+import no.nav.syfo.client.saf.ResponseError
 import no.nav.syfo.consumer.ws.JournalConsumer
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
-import no.nav.syfo.graphql.model.ResponseError
-import no.nav.syfo.graphql.model.SafJournalResponse
 import no.nav.syfo.client.saf.SafDokumentClient
+import no.nav.syfo.client.saf.SafJournalResponse
 import no.nav.syfo.client.saf.SafJournalpostClient
 import no.nav.syfo.client.saf.model.Dokument
 import no.nav.syfo.client.saf.model.Journalpost

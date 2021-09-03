@@ -7,19 +7,11 @@ import io.ktor.http.HttpHeaders
 import kotlinx.coroutines.runBlocking
 import log
 import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
-import no.nav.syfo.graphql.model.SafJournalResponse
 import no.nav.syfo.client.saf.model.GetJournalpostRequest
 import no.nav.syfo.client.saf.model.GetJournalpostVariables
 
-class SafJournalpostClient(
-    private val httpClient: HttpClient,
-    private val basePath: String,
-    private val stsClient: AccessTokenProvider
-) {
-    val log = log()
-
-    fun lagQuery(journalpostId: String) : String {
-        return """
+fun lagQuery(journalpostId: String) : String {
+    return """
             journalpost(journalpostId: $journalpostId) {
                 journalstatus,
                 datoOpprettet,
@@ -27,7 +19,14 @@ class SafJournalpostClient(
                   dokumentInfoId
                 }
         }"""
-    }
+}
+
+class SafJournalpostClient(
+    private val httpClient: HttpClient,
+    private val basePath: String,
+    private val stsClient: AccessTokenProvider
+) {
+    val log = log()
 
     fun getJournalpostMetadata(journalpostId: String): SafJournalResponse {
         log.info("Henter journalpostmetadata for $journalpostId")
