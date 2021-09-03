@@ -20,7 +20,7 @@ class SafJournalpostClient(
 
     fun getJournalpostMetadata(journalpostId: String): SafJournalResponse {
         val token = stsClient.getToken()
-        log.info("Henter journalpostmetadata for $journalpostId with token: " + token)
+        log.info("Henter journalpostmetadata for $journalpostId with token size " + token.length)
         return runBlocking {
             httpClient.post<SafJournalResponse>(basePath) {
                 contentType(ContentType.Application.Json)
