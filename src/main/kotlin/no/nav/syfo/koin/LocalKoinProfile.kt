@@ -9,8 +9,6 @@ import no.nav.helse.arbeidsgiver.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.integrasjoner.RestSTSAccessTokenProvider
 import no.nav.helse.arbeidsgiver.system.getString
 import no.nav.syfo.behandling.InntektsmeldingBehandler
-import no.nav.syfo.config.OppgaveClientConfigProvider
-import no.nav.syfo.config.SakClientConfigProvider
 import no.nav.syfo.consumer.SakConsumer
 import no.nav.syfo.consumer.azuread.AzureAdTokenConsumer
 import no.nav.syfo.consumer.rest.OppgaveClient
@@ -90,23 +88,6 @@ fun localDevConfig(config: ApplicationConfig) = module {
             config.getString("kafka_utsatt_oppgave_topic")
         )
     }
-    single {
-        OppgaveClientConfigProvider(
-            config.getString("oppgavebehandling_url"),
-            config.getString("security_token_service_token_url"),
-            config.getString("service_user.username"),
-            config.getString("service_user.password")
-        )
-    }
-    single {
-        SakClientConfigProvider(
-            config.getString("opprett_sak_url"),
-            config.getString("security_token_service_token_url"),
-            config.getString("service_user.username"),
-            config.getString("service_user.password")
-        )
-    }
-    //single { VaultHikariConfig(config.getString("vault.enabled:true").toBoolean(), config.getString("vault.backend"), config.getString("vault.role:syfoinntektsmelding-user"), config.getString("vault.admin:syfoinntektsmelding-admin") ) }
     single { PostgresBakgrunnsjobbRepository(get()) } bind BakgrunnsjobbRepository::class
     single { BakgrunnsjobbService(get()) }
     single { IMStatsRepoImpl(get()) } bind IMStatsRepo::class

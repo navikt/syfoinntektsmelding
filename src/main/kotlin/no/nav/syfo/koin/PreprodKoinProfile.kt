@@ -12,8 +12,6 @@ import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClientImpl
 import no.nav.helse.arbeidsgiver.system.getString
 import no.nav.syfo.MetrikkVarsler
 import no.nav.syfo.behandling.InntektsmeldingBehandler
-import no.nav.syfo.config.OppgaveClientConfigProvider
-import no.nav.syfo.config.SakClientConfigProvider
 import no.nav.syfo.consumer.SakConsumer
 import no.nav.syfo.consumer.azuread.AzureAdTokenConsumer
 import no.nav.syfo.consumer.rest.OppgaveClient
@@ -63,22 +61,6 @@ fun preprodConfig(config: ApplicationConfig) = module {
         )
     } bind DataSource::class
 
-    single {
-        OppgaveClientConfigProvider(
-            config.getString("oppgavebehandling_url"),
-            config.getString("security_token_service_token_url"),
-            config.getString("service_user.username"),
-            config.getString("service_user.password")
-        )
-    }
-    single {
-        SakClientConfigProvider(
-            config.getString("opprett_sak_url"),
-            config.getString("security_token_service_token_url"),
-            config.getString("service_user.username"),
-            config.getString("service_user.password")
-        )
-    }
     single {
         JoarkInntektsmeldingHendelseProsessor(
             get(),
