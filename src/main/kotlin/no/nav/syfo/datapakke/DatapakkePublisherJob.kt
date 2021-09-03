@@ -20,7 +20,8 @@ class DatapakkePublisherJob(
     private val httpClient: HttpClient,
     private val datapakkeApiUrl: String,
     private val datapakkeId: String,
-    private val applyWeeklyOnly: Boolean = false
+    private val applyWeeklyOnly: Boolean = false,
+    private val logDatapakke: Boolean = false
 ) :
     RecurringJob(
         CoroutineScope(Dispatchers.IO),
@@ -127,6 +128,8 @@ class DatapakkePublisherJob(
             }.joinToString())
 
         runBlocking {
+            if (logDatapakke) logger.info("Datapakke $datapakkeId med innhold: $populatedDatapakke")
+
             val response = httpClient.put<HttpResponse>("$datapakkeApiUrl/$datapakkeId") {
                 body = populatedDatapakke
                 contentType(ContentType.Application.Json)
