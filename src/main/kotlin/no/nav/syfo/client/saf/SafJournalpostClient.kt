@@ -29,11 +29,12 @@ class SafJournalpostClient(
     val log = log()
 
     fun getJournalpostMetadata(journalpostId: String): SafJournalResponse {
-        log.info("Henter journalpostmetadata for $journalpostId")
+        val token = stsClient.getToken()
+        log.info("Henter journalpostmetadata for $journalpostId with token size " + token.length)
         val response = runBlocking {
             httpClient.post<SafJournalResponse>(basePath) {
                 body = GetJournalpostRequest(query = lagQuery(journalpostId), variables = GetJournalpostVariables(journalpostId))
-                header("Authorization", "Bearer ${stsClient.getToken()}")
+                header("Authorization", "Bearer ${token}")
                 header("X-Correlation-ID", journalpostId)
                 header(HttpHeaders.ContentType, "application/json")
             }
