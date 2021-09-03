@@ -170,7 +170,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
     }
 
     single { UtsattOppgaveDAO(UtsattOppgaveRepositoryImp(get())) }
-    single { OppgaveClient(config.getString("oppgavebehandling_url"), get(), get()) } bind OppgaveClient::class
+    single { OppgaveClient(config.getString("oppgavebehandling_url"), get(), get(), get()) } bind OppgaveClient::class
     single { UtsattOppgaveService(get(), get(), get()) } bind UtsattOppgaveService::class
     single { FeiletUtsattOppgaveMeldingProsessor(get(), get()) }
 

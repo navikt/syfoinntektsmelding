@@ -1,12 +1,6 @@
 package no.nav.syfo.consumer.rest
 
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import io.ktor.client.*
-import io.ktor.client.engine.apache.*
-import io.ktor.client.features.json.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import no.nav.syfo.behandling.HentOppgaveException
@@ -25,31 +19,13 @@ const val OPPGAVETYPE_FORDELINGSOPPGAVE = "FDR"
 const val TEMA = "SYK"
 
 class OppgaveClient constructor (
-    private val oppgavebehndlingUrl: String,
+    val oppgavebehndlingUrl: String,
     val tokenConsumer: TokenConsumer,
+    val httpClient: HttpClient,
     val metrikk: Metrikk
 ) {
 
     private val log = LoggerFactory.getLogger(OppgaveClient::class.java)
-    private var httpClient = buildClient()
-
-    fun setHttpClient(httpClient: HttpClient) {
-        this.httpClient = httpClient
-    }
-
-    private fun buildClient(): HttpClient {
-        return HttpClient(Apache) {
-            install(JsonFeature) {
-                serializer = JacksonSerializer {
-                    registerKotlinModule()
-                    registerModule(JavaTimeModule())
-                    configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-                    configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                }
-                expectSuccess = false
-            }
-        }
-    }
 
     private suspend fun opprettOppgave(opprettOppgaveRequest: OpprettOppgaveRequest): OpprettOppgaveResponse = retry("opprett_oppgave") {
         httpClient.post<OpprettOppgaveResponse>(oppgavebehndlingUrl) {

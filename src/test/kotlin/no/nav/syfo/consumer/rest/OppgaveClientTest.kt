@@ -1,7 +1,5 @@
-package no.nav.syfo.syfoinntektsmelding.consumer.rest
+package no.nav.syfo.consumer.rest
 
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
@@ -15,9 +13,9 @@ import io.ktor.util.*
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.consumer.rest.*
+import no.nav.syfo.consumer.rest.dokarkiv.buildHttpClientJson
 import no.nav.syfo.util.Metrikk
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -34,21 +32,12 @@ class OppgaveClientTest {
     @KtorExperimentalAPI
     private lateinit var oppgaveClient: OppgaveClient
 
-    @BeforeEach
-    @KtorExperimentalAPI
-    fun setUp() {
-        oppgaveClient = OppgaveClient("url", tokenConsumer, metrikk)
-    }
-
     @Test
     @KtorExperimentalAPI
     fun henterEksisterendeOppgave() {
         runBlocking {
-            val client = lagClientMockEngine(lagOppgaveResponse())
-            oppgaveClient.setHttpClient(client)
-
+            oppgaveClient = OppgaveClient("url", tokenConsumer, buildHttpClientJson(HttpStatusCode.OK, lagOppgaveResponse()), metrikk)
             val resultat = oppgaveClient.opprettOppgave("sakId", "123", "tildeltEnhet", "aktoerid", false)
-
             assertThat(resultat.oppgaveId).isEqualTo(OPPGAVE_ID)
             assertThat(resultat.duplikat).isTrue
         }
@@ -58,12 +47,9 @@ class OppgaveClientTest {
     @KtorExperimentalAPI
     fun oppretterNyOppgave() {
         runBlocking {
-            val client = lagClientMockEngine(lagTomOppgaveResponse())
-            oppgaveClient.setHttpClient(client)
-
+            oppgaveClient = OppgaveClient("url", tokenConsumer, buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk)
             val resultat = oppgaveClient.opprettOppgave("sakId", "123", "tildeltEnhet", "aktoerid", false)
-            val requestVerdier = hentRequestInnhold(client)
-
+            val requestVerdier = hentRequestInnhold(oppgaveClient.httpClient)
             assertThat(resultat.oppgaveId).isNotEqualTo(OPPGAVE_ID)
             assertThat(resultat.duplikat).isFalse
             assertThat(requestVerdier?.journalpostId).isEqualTo("123")
@@ -76,16 +62,13 @@ class OppgaveClientTest {
     @KtorExperimentalAPI
     fun oppretterNyFordelingsOppgave() {
         runBlocking {
-        val client = lagClientMockEngine(lagTomOppgaveResponse())
-        oppgaveClient.setHttpClient(client)
-
+            oppgaveClient = OppgaveClient("url", tokenConsumer, buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk)
             val resultat = oppgaveClient.opprettFordelingsOppgave("journalpostId")
-            val requestVerdier = hentRequestInnhold(client)
-
-        assertThat(resultat.oppgaveId).isNotEqualTo(FORDELINGSOPPGAVE_ID)
-        assertThat(resultat.duplikat).isFalse
-        assertThat(requestVerdier?.oppgavetype).isEqualTo("FDR")
-        assertThat(requestVerdier?.behandlingstype).isNull()
+            val requestVerdier = hentRequestInnhold(oppgaveClient.httpClient)
+            assertThat(resultat.oppgaveId).isNotEqualTo(FORDELINGSOPPGAVE_ID)
+            assertThat(resultat.duplikat).isFalse
+            assertThat(requestVerdier?.oppgavetype).isEqualTo("FDR")
+            assertThat(requestVerdier?.behandlingstype).isNull()
         }
     }
 
@@ -93,13 +76,10 @@ class OppgaveClientTest {
     @KtorExperimentalAPI
     fun henterEksisterendeFordelingsOppgave() {
         runBlocking {
-        val client = lagClientMockEngine(lagFordelingsOppgaveResponse())
-        oppgaveClient.setHttpClient(client)
-
+            oppgaveClient = OppgaveClient("url", tokenConsumer, buildHttpClientJson(HttpStatusCode.OK, lagFordelingsOppgaveResponse()), metrikk)
             val resultat = oppgaveClient.opprettFordelingsOppgave("journalpostId")
-
-        assertThat(resultat.oppgaveId).isEqualTo(FORDELINGSOPPGAVE_ID)
-        assertThat(resultat.duplikat).isTrue
+            assertThat(resultat.oppgaveId).isEqualTo(FORDELINGSOPPGAVE_ID)
+            assertThat(resultat.duplikat).isTrue
         }
     }
 
@@ -107,19 +87,17 @@ class OppgaveClientTest {
     @KtorExperimentalAPI
     fun gjelderUtlandFårBehandlingstype() {
         runBlocking {
-        val client = lagClientMockEngine(lagTomOppgaveResponse())
-        oppgaveClient.setHttpClient(client)
-
-        oppgaveClient.opprettOppgave("sakId", "123", "tildeltEnhet", "aktoerid", true)
-        val requestVerdier = hentRequestInnhold(client)
-
-        assertThat(requestVerdier?.behandlingstype).isEqualTo("ae0106")
+            oppgaveClient = OppgaveClient("url", tokenConsumer, buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk)
+            oppgaveClient.opprettOppgave("sakId", "123", "tildeltEnhet", "aktoerid", true)
+            val requestVerdier = hentRequestInnhold(oppgaveClient.httpClient)
+            assertThat(requestVerdier?.behandlingstype).isEqualTo("ae0106")
         }
     }
 
     @Test
     @KtorExperimentalAPI
     fun henterRiktigFerdigstillelsesFrist() {
+        oppgaveClient = OppgaveClient("url", tokenConsumer, buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk)
         val onsdag = LocalDate.of(2019, Month.NOVEMBER, 27)
         val fredag = LocalDate.of(2019, Month.NOVEMBER, 29)
         val lørdag =  LocalDate.of(2019, Month.NOVEMBER, 30)
@@ -145,26 +123,6 @@ class OppgaveClientTest {
         }
         return null
     }
-
-    private fun lagClientMockEngine(oppgaveResponse: OppgaveResponse): HttpClient{
-        return HttpClient(MockEngine) {
-            install(JsonFeature) {
-                serializer = JacksonSerializer {
-                    registerKotlinModule()
-                    registerModule(JavaTimeModule())
-                    configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-                    configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                }
-                expectSuccess = false
-            }
-            engine {
-                addHandler {
-                    respond(jacksonObjectMapper().writeValueAsString(oppgaveResponse), headers = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString())))
-                }
-            }
-        }
-    }
-
 
     private fun lagOppgaveResponse(): OppgaveResponse {
         return OppgaveResponse (
