@@ -7,8 +7,8 @@ import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbProsesserer
 import no.nav.helse.arbeidsgiver.utils.RecurringJob
 import no.nav.syfo.behandling.OpprettOppgaveException
 import no.nav.syfo.client.OppgaveClient
-import no.nav.syfo.consumer.ws.BehandlendeEnhetConsumer
 import no.nav.syfo.dto.Tilstand
+import no.nav.syfo.service.BehandlendeEnhetConsumer
 import no.nav.syfo.util.MDCOperations
 import no.nav.syfo.utsattoppgave.UtsattOppgaveDAO
 import no.nav.syfo.utsattoppgave.opprettOppgaveIGosys
