@@ -34,7 +34,7 @@ class SafJournalpostClient(
         val response = runBlocking {
             httpClient.post<SafJournalResponse>(basePath) {
                 body = GetJournalpostRequest(query = lagQuery(journalpostId), variables = GetJournalpostVariables(journalpostId))
-                header("Authorization", "Bearer ${token}")
+                header("Authorization", "Bearer $token")
                 header("X-Correlation-ID", journalpostId)
                 header(HttpHeaders.ContentType, "application/json")
             }
