@@ -139,14 +139,6 @@ dependencies {
     implementation("commons-collections:commons-collections:3.2.2")
     // - end SNYK overrides
 
-   // implementation("javax.inject:javax.inject:1")
-    implementation("jakarta.activation:jakarta.activation-api:1.2.1")
-    implementation("jakarta.xml.bind:jakarta.xml.bind-api:2.3.1")
-    implementation("jakarta.xml.ws:jakarta.xml.ws-api:2.3.2")
-    implementation("jakarta.ws.rs:jakarta.ws.rs-api:2.1.6")
-    implementation("com.sun.activation:javax.activation:1.2.0")
-    implementation("com.sun.xml.messaging.saaj:saaj-impl:1.5.1")
-
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.4.10")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.4.10")
 
