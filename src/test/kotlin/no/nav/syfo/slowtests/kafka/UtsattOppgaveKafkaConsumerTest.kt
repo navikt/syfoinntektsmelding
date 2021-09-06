@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test
 
 class UtsattOppgaveKafkaConsumerTest : SystemTestBase() {
     private lateinit var kafkaProdusent: KafkaAdminForTests
-    private val topicName = "tbd.spre-oppgaver"
+    private val topicName = "topic"
     private val objectMapper = ObjectMapper()
         .registerModule(KotlinModule())
         .registerModule(Jdk8Module())
