@@ -77,11 +77,6 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
             connector {
                 port = this@SpinnApplication.port
             }
-
-            module {
-                nais()
-                inntektsmeldingModule(config)
-            }
         })
 
         webserver!!.start(wait = false)
