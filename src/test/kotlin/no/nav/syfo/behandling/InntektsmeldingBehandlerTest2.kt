@@ -13,7 +13,7 @@ import kotlinx.coroutines.runBlocking
 import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.client.SakClient
 import no.nav.syfo.client.SakResponse
-import no.nav.syfo.client.aktor.AktorConsumer
+import no.nav.syfo.client.aktor.AktorClient
 import no.nav.syfo.service.BehandleInngaaendeJournalConsumer
 import no.nav.syfo.service.InngaaendeJournalConsumer
 import no.nav.syfo.service.JournalConsumer
@@ -60,7 +60,7 @@ class InntektsmeldingBehandlerTest2 {
         .configure(SerializationFeature.INDENT_OUTPUT, true)
         .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-    private var aktorConsumer = mockk<AktorConsumer>(relaxed = true)
+    private var aktorClient = mockk<AktorClient>(relaxed = true)
     private var inngaaendeJournalConsumer = mockk<InngaaendeJournalConsumer>(relaxed = true)
     private var metrikk = mockk<Metrikk>(relaxed = true)
     private var behandleInngaaendeJournalConsumer = mockk<BehandleInngaaendeJournalConsumer>(relaxed = true)
@@ -90,7 +90,7 @@ class InntektsmeldingBehandlerTest2 {
     @BeforeEach
     fun setup() {
         inntektsmeldingRepository.deleteAll()
-        journalConsumer = JournalConsumer(safDokumentClient, safJournalpostClient, aktorConsumer)
+        journalConsumer = JournalConsumer(safDokumentClient, safJournalpostClient, aktorClient)
         journalpostService = JournalpostService(
             inngaaendeJournalConsumer,
             behandleInngaaendeJournalConsumer,
@@ -105,7 +105,7 @@ class InntektsmeldingBehandlerTest2 {
             saksbehandlingService,
             metrikk,
             inntektsmeldingService,
-            aktorConsumer,
+            aktorClient,
             aivenInntektsmeldingBehandler,
             utsattOppgaveService
         )
@@ -136,7 +136,7 @@ class InntektsmeldingBehandlerTest2 {
         }
         every { inngaaendeJournalConsumer.hentDokumentId("arkivId") } returns inngaaendeJournal("arkivId")
 
-        every { aktorConsumer.getAktorId(any()) } answers { "aktorId_for_" + firstArg() }
+        every { aktorClient.getAktorId(any()) } answers { "aktorId_for_" + firstArg() }
 
         every { eksisterendeSakService.finnEksisterendeSak(any(), any(), any()) } returns null
         every { behandlendeEnhetConsumer.hentBehandlendeEnhet(any(), any()) } returns "enhet"
@@ -160,7 +160,7 @@ class InntektsmeldingBehandlerTest2 {
     @OptIn(KtorExperimentalAPI::class)
     @Test
     fun `Gjenbruker saksId hvis vi får to overlappende inntektsmeldinger`() {
-        every { aktorConsumer.getAktorId(any()) } returnsMany listOf("aktorId_for_1", "aktorId_for_1")
+        every { aktorClient.getAktorId(any()) } returnsMany listOf("aktorId_for_1", "aktorId_for_1")
         every { inngaaendeJournalConsumer.hentDokumentId("arkivId1") } returns inngaaendeJournal("arkivId1")
         every { inngaaendeJournalConsumer.hentDokumentId("arkivId2") } returns inngaaendeJournal("arkivId2")
         val dokumentResponse1 = lagDokumentRespons(LocalDate.of(2019, 1, 1), LocalDate.of(2019, 1, 16))
@@ -191,7 +191,7 @@ class InntektsmeldingBehandlerTest2 {
             safDokumentClient.hentDokument(any(), any())
         } returnsMany listOf(dokumentResponse1.toByteArray(), dokumentResponse2.toByteArray())
 
-        every { aktorConsumer.getAktorId(any()) } returnsMany listOf("778", "778")
+        every { aktorClient.getAktorId(any()) } returnsMany listOf("778", "778")
 
         inntektsmeldingBehandler.behandle("arkivId3", "AR-3")
         inntektsmeldingBehandler.behandle("arkivId4", "AR-4")
@@ -223,7 +223,7 @@ class InntektsmeldingBehandlerTest2 {
         } returnsMany listOf(dokumentResponse1.toByteArray(), dokumentResponse2.toByteArray())
 
 
-        every { aktorConsumer.getAktorId(any()) } returnsMany listOf("999", "999")
+        every { aktorClient.getAktorId(any()) } returnsMany listOf("999", "999")
 
         inntektsmeldingBehandler.behandle("arkivId5", "AR-5")
         inntektsmeldingBehandler.behandle("arkivId6", "AR-6")
@@ -242,7 +242,7 @@ class InntektsmeldingBehandlerTest2 {
 
     @Test
     fun `Mottar inntektsmelding uten arbeidsgiverperioder`() {
-        every { aktorConsumer.getAktorId(any()) } returnsMany listOf("aktorId_for_7", "aktorId_for_7")
+        every { aktorClient.getAktorId(any()) } returnsMany listOf("aktorId_for_7", "aktorId_for_7")
         every { inngaaendeJournalConsumer.hentDokumentId("arkivId7") } returns inngaaendeJournal("arkivId7")
 
         every {
@@ -258,7 +258,7 @@ class InntektsmeldingBehandlerTest2 {
 
     @Test
     fun `Mottar inntektsmelding med flere perioder`() {
-        every { aktorConsumer.getAktorId(any()) } returnsMany listOf("aktorId_for_8", "aktorId_for_8")
+        every { aktorClient.getAktorId(any()) } returnsMany listOf("aktorId_for_8", "aktorId_for_8")
         val dokumentResponse = lagDokumentRespons(
             LocalDate.of(2019, 1, 1),
             LocalDate.of(2019, 1, 12),
@@ -284,7 +284,7 @@ class InntektsmeldingBehandlerTest2 {
 
     @Test
     fun `Mottar inntektsmelding med privat arbeidsgiver`() {
-        every { aktorConsumer.getAktorId(any()) } returnsMany listOf("aktorId_for_9", "aktorId_for_9")
+        every { aktorClient.getAktorId(any()) } returnsMany listOf("aktorId_for_9", "aktorId_for_9")
         every {
             safDokumentClient.hentDokument(any(), any())
         } returns inntektsmeldingArbeidsgiverPrivat( ).toByteArray()

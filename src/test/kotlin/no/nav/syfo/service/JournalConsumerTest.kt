@@ -3,7 +3,7 @@ package no.nav.syfo.service
 import io.mockk.every
 import io.mockk.mockk
 import no.nav.syfo.behandling.HentDokumentFeiletException
-import no.nav.syfo.client.aktor.AktorConsumer
+import no.nav.syfo.client.aktor.AktorClient
 import no.nav.syfo.client.saf.ResponseError
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
@@ -24,7 +24,7 @@ import java.time.LocalDateTime
 
 class JournalConsumerTest {
 
-    private val aktør = mockk<AktorConsumer>(relaxed = true)
+    private val aktør = mockk<AktorClient>(relaxed = true)
     private val dokumentClient = mockk<SafDokumentClient>(relaxed = true)
     private val safJournalpostClient = mockk<SafJournalpostClient>(relaxed = true)
     private val journalConsumer = JournalConsumer(dokumentClient, safJournalpostClient, aktør)

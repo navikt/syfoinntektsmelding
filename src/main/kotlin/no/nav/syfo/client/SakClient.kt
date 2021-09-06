@@ -1,53 +1,49 @@
 package no.nav.syfo.client
 
-import io.ktor.client.HttpClient
-import io.ktor.client.request.header
-import io.ktor.client.request.post
-import io.ktor.http.ContentType
-import io.ktor.http.contentType
-import io.ktor.util.KtorExperimentalAPI
-import no.nav.syfo.helpers.retry
-import java.time.ZonedDateTime
+import io.ktor.client.*
+import io.ktor.client.features.*
+import io.ktor.client.request.*
+import io.ktor.http.*
+import kotlinx.coroutines.runBlocking
+import log
+import no.nav.syfo.behandling.SakFeilException
+import no.nav.syfo.behandling.SakResponseException
+import no.nav.syfo.client.azuread.AzureAdTokenConsumer
+import java.time.LocalDate
 
-@KtorExperimentalAPI
-class SakClient constructor(
-    val opprettsakUrl: String,
-    val tokenConsumer: TokenConsumer,
-    val httpClient: HttpClient
+class SakConsumer(
+    val httpClient : HttpClient,
+    val azureAdTokenConsumer: AzureAdTokenConsumer,
+    private val syfogsakClientId: String,
+    private val hostUrl: String
 ) {
+    val log = log()
 
-    suspend fun opprettSak(pasientAktoerId: String, msgId: String): SakResponse = retry("opprett_sak") {
-        httpClient.post(opprettsakUrl) {
-            contentType(ContentType.Application.Json)
-            header("X-Correlation-ID", msgId)
-            header("Authorization", "Bearer ${tokenConsumer.token}")
-            body = OpprettSakRequest(
-                tema = "SYK",
-                applikasjon = "FS22",
-                aktoerId = pasientAktoerId,
-                orgnr = null,
-                fagsakNr = null
-            )
+    fun finnSisteSak(aktorId: String, fom: LocalDate?, tom: LocalDate?): String? {
+        var result: String? = null
+        val accessToken = azureAdTokenConsumer.getAccessToken(syfogsakClientId)
+        runBlocking {
+            val url = "$hostUrl/$aktorId/sisteSak" + if (fom != null && tom != null ) "?fom=$fom&tom=$tom" else ""
+            try {
+                result = httpClient.get<SisteSakRespons>(url) {
+                    header("Authorization", "Bearer $accessToken")
+                }.sisteSak
+            } catch (cause: Throwable) {
+                when(cause) {
+                    is ClientRequestException -> if (HttpStatusCode.OK.value != cause.response.status.value) {
+                        log.error("Kall mot syfonarmesteleder mot $url feiler med HTTP-${cause.response.status.value}")
+                        throw SakResponseException(aktorId, cause.response.status.value, null)
+                    } else -> {
+                        log.error("Uventet feil ved henting av nærmeste leder på url $url")
+                        throw SakFeilException(aktorId, Exception(cause.message))
+                    }
+                }
+            }
         }
+        return result
     }
-
 }
 
-data class OpprettSakRequest(
-        val tema: String,
-        val applikasjon: String,
-        val aktoerId: String,
-        val orgnr: String?,
-        val fagsakNr: String?
-)
-
-data class SakResponse(
-        val id: Long,
-        val tema: String,
-        val aktoerId: String,
-        val orgnr: String?,
-        val fagsakNr: String?,
-        val applikasjon: String,
-        val opprettetAv: String,
-        val opprettetTidspunkt: ZonedDateTime
+data class SisteSakRespons(
+    val sisteSak: String?
 )

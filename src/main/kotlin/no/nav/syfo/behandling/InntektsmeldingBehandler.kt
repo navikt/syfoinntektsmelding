@@ -4,7 +4,7 @@ package no.nav.syfo.behandling
 
 import com.google.common.util.concurrent.Striped
 import log
-import no.nav.syfo.client.aktor.AktorConsumer
+import no.nav.syfo.client.aktor.AktorClient
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.dto.Tilstand
@@ -24,7 +24,7 @@ class InntektsmeldingBehandler(
     private val saksbehandlingService: SaksbehandlingService,
     private val metrikk: Metrikk,
     private val inntektsmeldingService: InntektsmeldingService,
-    private val aktorConsumer: AktorConsumer,
+    private val aktorClient: AktorClient,
     private val inntektsmeldingAivenProducer: InntektsmeldingAivenProducer,
     private val utsattOppgaveService: UtsattOppgaveService
 ) {
@@ -45,7 +45,7 @@ class InntektsmeldingBehandler(
         try {
             consumerLock.lock()
             log.info("Slår opp aktørID for ${inntektsmelding.arkivRefereranse}")
-            val aktorid = aktorConsumer.getAktorId(inntektsmelding.fnr)
+            val aktorid = aktorClient.getAktorId(inntektsmelding.fnr)
             log.info("fant aktørid for ${inntektsmelding.arkivRefereranse}")
 
             tellMetrikker(inntektsmelding)

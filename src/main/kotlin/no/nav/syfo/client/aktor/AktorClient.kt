@@ -15,13 +15,13 @@ import no.nav.syfo.util.MDCOperations.Companion.getFromMDC
 import org.slf4j.LoggerFactory
 import java.net.ConnectException
 
-class AktorConsumer(
+class AktorClient(
     private val tokenConsumer: TokenConsumer,
     private val username: String,
     private val endpointUrl: String,
     private val httpClient: HttpClient
 ) {
-    private val log = LoggerFactory.getLogger(AktorConsumer::class.java)
+    private val log = LoggerFactory.getLogger(AktorClient::class.java)
 
     @Throws(AktørException::class)
     fun getAktorId(fnr: String): String {

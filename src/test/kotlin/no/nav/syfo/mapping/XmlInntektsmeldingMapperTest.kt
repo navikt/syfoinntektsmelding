@@ -1,6 +1,6 @@
 package no.nav.syfo.mapping
 
-import no.nav.syfo.client.aktor.AktorConsumer
+import no.nav.syfo.client.aktor.AktorClient
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
 import org.assertj.core.api.Assertions
@@ -18,19 +18,19 @@ class XmlInntektsmeldingMapperTest {
     val MOTTATT_DATO = LocalDateTime.of(2021, 7, 18, 16,0,0)
     val JOURNALPOST_ID = "journalpostId"
     val ARKIV_REFERANSE = "ar-123"
-    var aktorConsumer = mockk<AktorConsumer>(relaxed = true)
+    var aktorClient = mockk<AktorClient>(relaxed = true)
 
     @Before
     fun all(){
         every {
-            aktorConsumer.getAktorId(any())
+            aktorClient.getAktorId(any())
         } returns "aktør-123"
     }
 
     @Test
     fun map20180924() {
         val bytes : ByteArray = inntektsmelding.toByteArray()
-        val im = XmlInntektsmeldingMapper().mapInntektsmelding(bytes, aktorConsumer, MOTTATT_DATO, JOURNALPOST_ID, JournalStatus.MIDLERTIDIG, ARKIV_REFERANSE  )
+        val im = XmlInntektsmeldingMapper().mapInntektsmelding(bytes, aktorClient, MOTTATT_DATO, JOURNALPOST_ID, JournalStatus.MIDLERTIDIG, ARKIV_REFERANSE  )
         Assertions.assertThat(im.fnr).isEqualTo("18018522868")
         Assertions.assertThat(im.journalpostId).isEqualTo("journalpostId")
         Assertions.assertThat(im.arbeidsgiverperioder.size).isEqualTo(1)
@@ -41,7 +41,7 @@ class XmlInntektsmeldingMapperTest {
         val p1 = Periode(LocalDate.of(2021, 6, 1), LocalDate.of(2021, 6, 17))
         val p2 = Periode(LocalDate.of(2021, 7, 1), LocalDate.of(2021, 7, 17))
         val bytes : ByteArray = inntektsmeldingArbeidsgiver(listOf(p1, p2), "fnr-2").toByteArray()
-        val im = XmlInntektsmeldingMapper().mapInntektsmelding(bytes, aktorConsumer, MOTTATT_DATO, JOURNALPOST_ID, JournalStatus.MIDLERTIDIG, ARKIV_REFERANSE  )
+        val im = XmlInntektsmeldingMapper().mapInntektsmelding(bytes, aktorClient, MOTTATT_DATO, JOURNALPOST_ID, JournalStatus.MIDLERTIDIG, ARKIV_REFERANSE  )
         Assertions.assertThat(im.fnr).isEqualTo("fnr-2")
         Assertions.assertThat(im.journalpostId).isEqualTo("journalpostId")
         Assertions.assertThat(im.arbeidsgiverperioder.size).isEqualTo(2)
@@ -50,7 +50,7 @@ class XmlInntektsmeldingMapperTest {
     @Test
     fun map20181211() {
         val bytes : ByteArray = inntektsmeldingArbeidsgiverPrivat().toByteArray()
-        val im = XmlInntektsmeldingMapper().mapInntektsmelding(bytes, aktorConsumer, MOTTATT_DATO, JOURNALPOST_ID, JournalStatus.MIDLERTIDIG, ARKIV_REFERANSE  )
+        val im = XmlInntektsmeldingMapper().mapInntektsmelding(bytes, aktorClient, MOTTATT_DATO, JOURNALPOST_ID, JournalStatus.MIDLERTIDIG, ARKIV_REFERANSE  )
         Assertions.assertThat(im.fnr).isEqualTo("fnr")
         Assertions.assertThat(im.journalpostId).isEqualTo("journalpostId")
         Assertions.assertThat(im.arbeidsgiverperioder.size).isEqualTo(1)

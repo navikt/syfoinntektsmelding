@@ -1,7 +1,7 @@
 package no.nav.syfo.mapping
 
 import log
-import no.nav.syfo.client.aktor.AktorConsumer
+import no.nav.syfo.client.aktor.AktorClient
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
 import no.nav.syfo.domain.inntektsmelding.*
@@ -15,14 +15,14 @@ internal object InntektsmeldingArbeidsgiverPrivat20181211Mapper {
     val log = log()
 
     fun tilXMLInntektsmelding(jaxbInntektsmelding: JAXBElement<Any>, journalpostId: String, mottattDato: LocalDateTime, journalStatus: JournalStatus,
-                              arkivReferanse: String, aktorConsumer: AktorConsumer
+                              arkivReferanse: String, aktorClient: AktorClient
     ): Inntektsmelding {
         log.info("Behandling inntektsmelding på 20181211 format")
         val skjemainnhold = (jaxbInntektsmelding.value as XMLInntektsmeldingM).skjemainnhold
 
         val arbeidsforholdId = skjemainnhold.arbeidsforhold.value.arbeidsforholdId?.value
         val beregnetInntekt = skjemainnhold.arbeidsforhold.value.beregnetInntekt?.value?.beloep?.value
-        val arbeidsGiverAktørId = skjemainnhold.arbeidsgiverPrivat?.value?.arbeidsgiverFnr?.let { ap -> aktorConsumer.getAktorId(ap) }
+        val arbeidsGiverAktørId = skjemainnhold.arbeidsgiverPrivat?.value?.arbeidsgiverFnr?.let { ap -> aktorClient.getAktorId(ap) }
 
         val innsendingstidspunkt = skjemainnhold.avsendersystem?.innsendingstidspunkt?.value
         val bruttoUtbetalt = skjemainnhold.sykepengerIArbeidsgiverperioden?.value?.bruttoUtbetalt?.value

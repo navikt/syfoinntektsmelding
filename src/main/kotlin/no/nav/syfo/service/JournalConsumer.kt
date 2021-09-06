@@ -3,7 +3,7 @@ package no.nav.syfo.service
 import kotlinx.coroutines.runBlocking
 import log
 import no.nav.syfo.behandling.HentDokumentFeiletException
-import no.nav.syfo.client.aktor.AktorConsumer
+import no.nav.syfo.client.aktor.AktorClient
 import no.nav.syfo.mapping.InntektsmeldingArbeidsgiver20180924Mapper
 import no.nav.syfo.mapping.InntektsmeldingArbeidsgiverPrivat20181211Mapper
 import no.nav.syfo.domain.JournalStatus
@@ -19,7 +19,7 @@ import javax.xml.bind.JAXBElement
 class JournalConsumer(
     private val safDokumentClient: SafDokumentClient,
     private val safJournalpostClient: SafJournalpostClient,
-    private val aktorConsumer: AktorConsumer)
+    private val aktorClient: AktorClient)
 {
     var log = log()
 
@@ -45,7 +45,7 @@ class JournalConsumer(
             return if (jaxbInntektsmelding.value is XMLInntektsmeldingM)
                 InntektsmeldingArbeidsgiver20180924Mapper.tilXMLInntektsmelding(jaxbInntektsmelding, journalpostId, mottattDato, journalStatus, arkivReferanse)
             else
-                InntektsmeldingArbeidsgiverPrivat20181211Mapper.tilXMLInntektsmelding(jaxbInntektsmelding, journalpostId, mottattDato, journalStatus, arkivReferanse, aktorConsumer)
+                InntektsmeldingArbeidsgiverPrivat20181211Mapper.tilXMLInntektsmelding(jaxbInntektsmelding, journalpostId, mottattDato, journalStatus, arkivReferanse, aktorClient)
         } catch (e: RuntimeException) {
             log.error( "Klarte ikke å hente inntektsmelding med journalpostId: $journalpostId", e )
             throw HentDokumentFeiletException(journalpostId, e)
