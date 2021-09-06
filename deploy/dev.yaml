@@ -51,7 +51,7 @@ spec:
     pool: nav-dev
   env:
     - name: KOIN_PROFILE
-      value: PREPROD
+      value: "PREPROD"
     - name: LOADBALANCER_FQDN
       value: "syfoinntektsmelding.nais.preprod.local"
     - name: ABAC_PDP_ENDPOINT_URL
@@ -59,7 +59,7 @@ spec:
     - name: SECURITYTOKENSERVICE_URL
       value: "https://sts-q1.preprod.local/SecurityTokenServiceProvider/"
     - name: SRVSYFOINNTEKTSMELDING_USERNAME
-      value: srvsyfoinntektsmel
+      value: "srvsyfoinntektsmel"
     - name: OPENIDCONNECT_ISSOHOST
       value: "https://isso-q.adeo.no:443/isso/oauth2"
     - name: OPENIDCONNECT_ISSOISSUER
@@ -75,12 +75,11 @@ spec:
     - name: KAFKA_BOOTSTRAP_SERVERS
       value: "b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443"
     - name: DATABASE_HOST
-      value: b27dbvl009.preprod.local
+      value: "b27dbvl009.preprod.local"
     - name: DATABASE_PORT
       value: "5432"
     - name: DATABASE_NAME
       value: "syfoinntektsmelding"
-
     - name: BEHANDLEINNGAAENDEJOURNAL_V1_ENDPOINTURL
       value: "https://dokarkiv-q1.nais.preprod.local/services/behandleinngaaendejournal/v1"
     - name: VIRKSOMHET_PERSON_V3_ENDPOINTURL
@@ -96,21 +95,21 @@ spec:
     - name: AADACCESSTOKEN_URL
       value: "https://login.microsoftonline.com/navq.onmicrosoft.com/oauth2/token"
     - name: AAD_SYFOGSAK_CLIENTID_USERNAME
-      value: ddbeeacd-9280-4741-a49a-45d7690b730e
+      value: "ddbeeacd-9280-4741-a49a-45d7690b730e"
     - name: AAD_SYFOINNTEKTSMELDING_CLIENTID_USERNAME
-      value: 56813e1b-97db-4da9-bcc1-a53d0a677ca2
+      value: "56813e1b-97db-4da9-bcc1-a53d0a677ca2"
     - name: OPPGAVEBEHANDLING_URL
       value: "https://oppgave.nais.preprod.local/api/v1/oppgaver"
     - name: OPPRETT_SAK_URL
       value: "http://sak.default.svc.nais.local/api/v1/saker"
     - name: SRVAPPSERVER_USERNAME
-      value: srvappserver
+      value: "srvappserver"
     - name: SRVAPPSERVER_PASSWORD
       value: ""
     - name: VAULT_BACKEND
-      value: postgresql/preprod-fss
+      value: "postgresql/preprod-fss"
     - name: VAULT_MOUNTPATH
-      value: postgresql/preprod-fss/
+      value: "postgresql/preprod-fss/"
     - name: KAFKA_JOARK_HENDELSE_TOPIC
       value: "aapen-dok-journalfoering-v1-q1"
     - name: KAFKA_UTSATT_OPPGAVE_TOPIC
@@ -118,19 +117,19 @@ spec:
     - name: KAFKA_SCHEMA_REGISTRY_URL_CONFIG
       value: "http://kafka-schema-registry.tpa.svc.nais.local:8081"
     - name: DOKARKIV_URL
-      value: https://dokarkiv-q1.nais.preprod.local/rest/journalpostapi/v1/
+      value: "https://dokarkiv-q1.nais.preprod.local/rest/journalpostapi/v1/"
     - name: DATAPAKKE_ID
-      value: fb74c8d14d9c579e05b0b4b587843e6b
+      value: "fb74c8d14d9c579e05b0b4b587843e6b"
     - name: DATAPAKKE_API_URL
-      value: https://datakatalog-api.dev.intern.nav.no/v1/datapackage
+      value: "https://datakatalog-api.dev.intern.nav.no/v1/datapackage"
     - name: RUN_BACKGROUND_WORKERS
       value: "true"
     - name: PDL_URL
-      value: https://pdl-api.nais.preprod.local/graphql
+      value: "https://pdl-api.nais.preprod.local/graphql"
     - name: NORG2_URL
-      value: https://norg2.dev.adeo.no/norg2/api/v1
+      value: "https://norg2.dev.adeo.no/norg2/api/v1"
     - name: SAF_DOKUMENT_URL
-      value: https://saf-q1.nais.preprod.local/rest
+      value: "https://saf-q1.nais.preprod.local/rest"
     - name: SAF_JOURNAL_URL
-      value: https://saf-q1.dev.intern.nav.no/graphql
+      value: "https://saf-q1.dev.intern.nav.no/graphql"
 
