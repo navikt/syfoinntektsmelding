@@ -47,7 +47,7 @@ spec:
     pool: nav-prod
   env:
     - name: KOIN_PROFILE
-      value: PROD
+      value: "PROD"
     - name: LOADBALANCER_FQDN
       value: "syfoinntektsmelding.nais.adeo.no"
     - name: ABAC_PDP_ENDPOINT_URL
@@ -55,7 +55,7 @@ spec:
     - name: SECURITYTOKENSERVICE_URL
       value: "https://sts.adeo.no/SecurityTokenServiceProvider/"
     - name: SRVSYFOINNTEKTSMELDING_USERNAME
-      value: srvsyfoinntektsmel
+      value: "srvsyfoinntektsmel"
     - name: OPENIDCONNECT_ISSOHOST
       value: "https://isso.adeo.no:443/isso/oauth2"
     - name: OPENIDCONNECT_ISSOISSUER
@@ -71,7 +71,7 @@ spec:
     - name: KAFKA_BOOTSTRAP_SERVERS
       value: "a01apvl00145.adeo.no:8443,a01apvl00146.adeo.no:8443,a01apvl00147.adeo.no:8443,a01apvl00148.adeo.no:8443,a01apvl00149.adeo.no:8443,a01apvl00150.adeo.no:8443\n"
     - name: DATABASE_HOST
-      value: a01dbvl010.adeo.no
+      value: "a01dbvl010.adeo.no"
     - name: DATABASE_PORT
       value: "5432"
     - name: DATABASE_NAME
@@ -79,13 +79,13 @@ spec:
     - name: SYFO_MOTTAK_INNTEKTSMELDING_QUEUENAME
       value: "QA.P_SYFO.MOTTAK_INNTEKTSMELDING"
     - name: SYFOINNTEKTSMELDING_CHANNEL_NAME
-      value: P_SYFOINNTEKTSMLD
+      value: "P_SYFOINNTEKTSMLD"
     - name: MQGATEWAY03_HOSTNAME
       value: "a01apvl062.adeo.no"
     - name: MQGATEWAY03_PORT
       value: "1414"
     - name: MQGATEWAY03_NAME
-      value: MPLSC03
+      value: "MPLSC03"
     - name: BEHANDLEINNGAAENDEJOURNAL_V1_ENDPOINTURL
       value: "https://dokarkiv.nais.adeo.no/services/behandleinngaaendejournal/v1"
     - name: VIRKSOMHET_PERSON_V3_ENDPOINTURL
@@ -101,9 +101,9 @@ spec:
     - name: AADACCESSTOKEN_URL
       value: "https://login.microsoftonline.com/navno.onmicrosoft.com/oauth2/token"
     - name: AAD_SYFOGSAK_CLIENTID_USERNAME
-      value: 1e05815e-2d35-4903-b304-623b4d137c23
+      value: "1e05815e-2d35-4903-b304-623b4d137c23"
     - name: AAD_SYFOINNTEKTSMELDING_CLIENTID_USERNAME
-      value: e533392d-3b97-4c8c-a0d5-d4af010f1b54
+      value: "e533392d-3b97-4c8c-a0d5-d4af010f1b54"
     - name: OPPGAVEBEHANDLING_URL
       value: "http://oppgave.default.svc.nais.local/api/v1/oppgaver"
     - name: OPPRETT_SAK_URL
@@ -113,9 +113,9 @@ spec:
     - name: SRVAPPSERVER_PASSWORD
       value: ""
     - name: VAULT_BACKEND
-      value: postgresql/prod-fss
+      value: "postgresql/prod-fss"
     - name: VAULT_MOUNTPATH
-      value: postgresql/prod-fss/
+      value: "postgresql/prod-fss/"
     - name: KAFKA_JOARK_HENDELSE_TOPIC
       value: "aapen-dok-journalfoering-v1-p"
     - name: KAFKA_UTSATT_OPPGAVE_TOPIC
@@ -123,18 +123,18 @@ spec:
     - name: KAFKA_SCHEMA_REGISTRY_URL_CONFIG
       value: "http://kafka-schema-registry.tpa.svc.nais.local:8081"
     - name: DOKARKIV_URL
-      value: https://dokarkiv.nais.adeo.no/rest/journalpostapi/v1/
+      value: "https://dokarkiv.nais.adeo.no/rest/journalpostapi/v1/"
     - name: DATAPAKKE_API_URL
-      value: https://datakatalog-api.intern.nav.no/v1/datapackage
+      value: "https://datakatalog-api.intern.nav.no/v1/datapackage"
     - name: DATAPAKKE_ID
-      value: fb74c8d14d9c579e05b0b4b587843e6b
+      value: "fb74c8d14d9c579e05b0b4b587843e6b"
     - name: RUN_BACKGROUND_WORKERS
       value: "true"
     - name: PDL_URL
-      value: https://pdl-api.nais.adeo.no/graphql
+      value: "https://pdl-api.nais.adeo.no/graphql"
     - name: NORG2_URL
-      value: https://norg2.adeo.no/norg2/api/v1
+      value: "https://norg2.adeo.no/norg2/api/v1"
     - name: SAF_DOKUMENT_URL
-      value: https://saf-q1.nais.preprod.local/rest
+      value: "https://saf-q1.nais.preprod.local/rest"
     - name: SAF_JOURNAL_URL
-      value: https://saf.nais.adeo.no/graphql
+      value: "https://saf.nais.adeo.no/graphql"
