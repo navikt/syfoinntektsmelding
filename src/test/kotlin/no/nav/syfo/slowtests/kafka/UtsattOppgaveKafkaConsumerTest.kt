@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import kotlinx.coroutines.runBlocking
 import no.nav.syfo.integration.kafka.UtsattOppgaveKafkaClient
 import no.nav.syfo.integration.kafka.joarkLocalProperties
 import no.nav.syfo.integration.kafka.producerLocalProperties
@@ -38,9 +39,6 @@ class UtsattOppgaveKafkaConsumerTest : SystemTestBase() {
         kafkaProdusent = KafkaAdminForTests(utsattOppgaveLocalProperties().toMutableMap(),topicName )
         kafkaProdusent = KafkaAdminForTests(joarkLocalProperties().toMutableMap(),topicName)
         kafkaProdusent.createTopicIfNotExists()
-        kafkaProdusent.addRecordeToKafka(objectMapper.writeValueAsString(utsattOppgaveKakaData),
-            topicName,
-            producerLocalProperties( "localhost:9092"))
     }
 
     @AfterAll
@@ -50,6 +48,10 @@ class UtsattOppgaveKafkaConsumerTest : SystemTestBase() {
 
     @Test
     fun `Skal lese utsattoppgave`() {
+        val beforeCount =  utsattmeldingConsumer.getMessagesToProcess() //
+        kafkaProdusent.addRecordeToKafka(objectMapper.writeValueAsString(utsattOppgaveKakaData),
+            topicName,
+            producerLocalProperties( "localhost:9092"))
         val meldinger =  utsattmeldingConsumer.getMessagesToProcess()
         Assertions.assertThat(meldinger.size).isEqualTo(1)
         Assertions.assertThat(meldinger[0]).isEqualTo(objectMapper.writeValueAsString(utsattOppgaveKakaData))
