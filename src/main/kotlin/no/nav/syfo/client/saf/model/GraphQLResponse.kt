@@ -3,8 +3,12 @@ package no.nav.syfo.client.saf
 import no.nav.syfo.client.saf.model.Journalpost
 
 data class SafJournalResponse (
-    val journalpost: Journalpost,
+    val data: SafJournalData,
     val errors: List<ResponseError>?
+)
+
+data class SafJournalData (
+    val journalpost: Journalpost
 )
 
 data class ResponseError(

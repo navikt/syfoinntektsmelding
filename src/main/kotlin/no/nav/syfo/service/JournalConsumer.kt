@@ -35,7 +35,7 @@ class JournalConsumer(
             if (!response.errors.isNullOrEmpty()){
                 throw IllegalArgumentException("Feil i spørring")
             }
-            val journalpost = response.journalpost
+            val journalpost = response.data.journalpost
             val inntektsmeldingRAW = runBlocking {
                 safDokumentClient.hentDokument(journalpostId, journalpost.dokumenter[0].dokumentInfoId)
             }

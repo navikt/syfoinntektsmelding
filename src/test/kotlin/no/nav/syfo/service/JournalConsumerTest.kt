@@ -8,6 +8,7 @@ import no.nav.syfo.client.saf.ResponseError
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
 import no.nav.syfo.client.saf.SafDokumentClient
+import no.nav.syfo.client.saf.SafJournalData
 import no.nav.syfo.client.saf.SafJournalResponse
 import no.nav.syfo.client.saf.SafJournalpostClient
 import no.nav.syfo.client.saf.model.Dokument
@@ -37,10 +38,12 @@ class JournalConsumerTest {
             LocalDate.of(2021,7,19)
         )
         val journalresponse = SafJournalResponse(
-            journalpost = Journalpost(
-                JournalStatus.MIDLERTIDIG,
-                LocalDateTime.now(),
-                dokumenter = listOf(Dokument(dokumentInfoId="dokumentId"))
+            data = SafJournalData(
+                journalpost = Journalpost(
+                    JournalStatus.MIDLERTIDIG,
+                    LocalDateTime.now(),
+                    dokumenter = listOf(Dokument(dokumentInfoId="dokumentId"))
+                )
             ), errors = emptyList()
         )
         every {
@@ -58,11 +61,14 @@ class JournalConsumerTest {
     @Test
     fun parserInntektsmeldingUtenPerioder() {
         val journalresponse = SafJournalResponse(
-            journalpost = Journalpost(
-                JournalStatus.MIDLERTIDIG,
-                LocalDateTime.now(),
-                dokumenter = listOf(Dokument(dokumentInfoId="dokumentId"))
-            ), errors = emptyList()
+            data = SafJournalData(
+                journalpost = Journalpost(
+                    JournalStatus.MIDLERTIDIG,
+                    LocalDateTime.now(),
+                    dokumenter = listOf(Dokument(dokumentInfoId="dokumentId"))
+                )
+            )
+            , errors = emptyList()
         )
         every {
             safJournalpostClient.getJournalpostMetadata(any())
@@ -83,11 +89,14 @@ class JournalConsumerTest {
             LocalDate.of(2021,7,19)
         )
         val journalresponse = SafJournalResponse(
-            journalpost = Journalpost(
-                JournalStatus.MIDLERTIDIG,
-                LocalDateTime.now(),
-                dokumenter = listOf(Dokument(dokumentInfoId="dokumentId"))
-            ), errors = emptyList()
+            data = SafJournalData(
+                journalpost = Journalpost(
+                    JournalStatus.MIDLERTIDIG,
+                    LocalDateTime.now(),
+                    dokumenter = listOf(Dokument(dokumentInfoId="dokumentId"))
+                )
+            )
+            , errors = emptyList()
         )
         every {
             safJournalpostClient.getJournalpostMetadata(any())
@@ -109,11 +118,14 @@ class JournalConsumerTest {
     @Test
     fun parseInntektsmelding0924() {
         val journalresponse = SafJournalResponse(
-            journalpost = Journalpost(
-                JournalStatus.MIDLERTIDIG,
-                LocalDateTime.now(),
-                dokumenter = listOf(Dokument(dokumentInfoId="dokumentId"))
-            ), errors = emptyList()
+            data = SafJournalData(
+                journalpost = Journalpost(
+                    JournalStatus.MIDLERTIDIG,
+                    LocalDateTime.now(),
+                    dokumenter = listOf(Dokument(dokumentInfoId="dokumentId"))
+                )
+            )
+            , errors = emptyList()
         )
         every {
             safJournalpostClient.getJournalpostMetadata(any())
@@ -141,11 +153,14 @@ class JournalConsumerTest {
     @Test
     fun feil_i_graphql_spørring() {
         val journalresponse = SafJournalResponse(
-            journalpost = Journalpost(
-                JournalStatus.MIDLERTIDIG,
-                LocalDateTime.now(),
-                dokumenter = listOf(Dokument(dokumentInfoId="dokumentId"))
-            ), errors = listOf(ResponseError("Feil", locations = emptyList(), path= emptyList(), extensions = null))
+            data = SafJournalData(
+                journalpost = Journalpost(
+                    JournalStatus.MIDLERTIDIG,
+                    LocalDateTime.now(),
+                    dokumenter = listOf(Dokument(dokumentInfoId="dokumentId"))
+                )
+            )
+            , errors = listOf(ResponseError("Feil", locations = emptyList(), path= emptyList(), extensions = null))
         )
         every {
             safJournalpostClient.getJournalpostMetadata(any())

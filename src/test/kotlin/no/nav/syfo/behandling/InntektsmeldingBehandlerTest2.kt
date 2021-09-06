@@ -26,6 +26,7 @@ import no.nav.syfo.repository.InntektsmeldingRepository
 import no.nav.syfo.repository.InntektsmeldingRepositoryMock
 import no.nav.syfo.repository.InntektsmeldingService
 import no.nav.syfo.client.saf.SafDokumentClient
+import no.nav.syfo.client.saf.SafJournalData
 import no.nav.syfo.client.saf.SafJournalResponse
 import no.nav.syfo.client.saf.SafJournalpostClient
 import no.nav.syfo.client.saf.model.Dokument
@@ -142,10 +143,13 @@ class InntektsmeldingBehandlerTest2 {
         every { behandlendeEnhetConsumer.hentGeografiskTilknytning(any()) } returns
             GeografiskTilknytningData(geografiskTilknytning = "tilknytning", diskresjonskode = "")
         val journalresponse = SafJournalResponse(
-            journalpost = Journalpost(
-                JournalStatus.MIDLERTIDIG,
-                LocalDateTime.now(),
-                dokumenter = listOf(Dokument(dokumentInfoId="dokumentId"))
+
+            data = SafJournalData(
+                journalpost = Journalpost(
+                    JournalStatus.MIDLERTIDIG,
+                    LocalDateTime.now(),
+                    dokumenter = listOf(Dokument(dokumentInfoId="dokumentId"))
+                )
             ), errors = emptyList()
         )
         every {

@@ -5,6 +5,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
+import no.nav.syfo.client.saf.SafJournalData
 import no.nav.syfo.client.saf.SafJournalResponse
 import org.mockito.ArgumentMatchers.any
 import no.nav.syfo.domain.JournalStatus
@@ -29,10 +30,12 @@ class InngaaendeJournalConsumerTest {
         val journalpostId = "journalpostId"
 
         val journalpostResponse = SafJournalResponse(
-            journalpost = Journalpost(
-                JournalStatus.MIDLERTIDIG,
-                datoOpprettet = LocalDateTime.now(),
-                dokumenter = listOf(Dokument(dokumentId1))
+            data = SafJournalData(
+                journalpost = Journalpost(
+                    JournalStatus.MIDLERTIDIG,
+                    datoOpprettet = LocalDateTime.now(),
+                    dokumenter = listOf(Dokument(dokumentId1))
+                )
             ),
             errors = emptyList()
         )
