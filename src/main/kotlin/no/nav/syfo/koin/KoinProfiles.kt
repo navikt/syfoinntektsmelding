@@ -23,6 +23,7 @@ import org.koin.core.module.Module
 import org.koin.core.qualifier.Qualifier
 import org.koin.core.qualifier.StringQualifier
 import org.koin.dsl.module
+import kotlin.math.sin
 
 @KtorExperimentalAPI
 fun selectModuleBasedOnProfile(config: ApplicationConfig): List<Module> {
@@ -82,8 +83,11 @@ val common = module {
         }
     }
 
+    val datapakkeHttpClient = HttpClient(Apache)
+
     single { httpClient }
     single(qualifier = StringQualifier("proxyHttpClient")) {proxiedHttpClient}
+    single (qualifier = StringQualifier("datapakkeHttpClient")) {datapakkeHttpClient}
 }
 
 // utils
