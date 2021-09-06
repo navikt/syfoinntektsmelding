@@ -12,23 +12,11 @@ import no.nav.security.token.support.client.core.oauth2.OnBehalfOfTokenClient
 import no.nav.security.token.support.client.core.oauth2.TokenExchangeClient
 import org.koin.core.module.Module
 import org.koin.dsl.bind
-import no.nav.syfo.integration.altinn.CachedAuthRepo
 import no.nav.syfo.integration.oauth2.DefaultOAuth2HttpClient
 import no.nav.syfo.integration.oauth2.OAuth2ClientPropertiesConfig
 import no.nav.syfo.integration.oauth2.TokenResolver
 
 fun Module.externalSystemClients(config: ApplicationConfig) {
-   /* single {
-        CachedAuthRepo(
-            AltinnRestClient(
-                config.getString("altinn.service_owner_api_url"),
-                config.getString("altinn.gw_api_key"),
-                config.getString("altinn.altinn_api_key"),
-                config.getString("altinn.service_id"),
-                get()
-            )
-        )
-    } bind AltinnOrganisationsRepository::class */
 
    single {
         val clientConfig = OAuth2ClientPropertiesConfig(config)
