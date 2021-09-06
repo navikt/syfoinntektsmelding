@@ -3,7 +3,7 @@ package no.nav.syfo.behandling
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import no.nav.syfo.client.aktor.AktorConsumer
+import no.nav.syfo.client.aktor.AktorClient
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.dto.InntektsmeldingEntitet
@@ -24,7 +24,7 @@ class InntektsmeldingBehandlerTest {
     private var journalpostService = mockk<JournalpostService>(relaxed = true)
     private var utsattOppgaveService = mockk<UtsattOppgaveService>(relaxed = true)
     private var saksbehandlingService = mockk<SaksbehandlingService>(relaxed = true)
-    private var aktorConsumer = mockk<AktorConsumer>(relaxed = true)
+    private var aktorClient = mockk<AktorClient>(relaxed = true)
     private var inntektsmeldingService = mockk<InntektsmeldingService>(relaxed = true)
     private val aivenInntektsmeldingProducer = mockk<InntektsmeldingAivenProducer>(relaxed = true)
 
@@ -33,14 +33,14 @@ class InntektsmeldingBehandlerTest {
         saksbehandlingService,
         metrikk,
         inntektsmeldingService,
-        aktorConsumer,
+        aktorClient,
         aivenInntektsmeldingProducer,
         utsattOppgaveService
     )
 
     @BeforeEach
     fun setup() {
-        every { aktorConsumer.getAktorId("fnr") } returns "aktorId" // inntektsmelding.fnr
+        every { aktorClient.getAktorId("fnr") } returns "aktorId" // inntektsmelding.fnr
         every {
             saksbehandlingService.behandleInntektsmelding(any(),
                 match { it.contentEquals("aktorId") },

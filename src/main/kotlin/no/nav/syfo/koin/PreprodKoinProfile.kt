@@ -17,7 +17,7 @@ import no.nav.syfo.client.azuread.AzureAdTokenConsumer
 import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.client.SakClient
 import no.nav.syfo.client.TokenConsumer
-import no.nav.syfo.client.aktor.AktorConsumer
+import no.nav.syfo.client.aktor.AktorClient
 import no.nav.syfo.client.dokarkiv.DokArkivClient
 import no.nav.syfo.client.norg.Norg2Client
 import no.nav.syfo.service.BehandleInngaaendeJournalConsumer
@@ -73,13 +73,13 @@ fun preprodConfig(config: ApplicationConfig) = module {
     single { ArbeidsgiverperiodeRepositoryImp(get())} bind ArbeidsgiverperiodeRepository::class
 
     single {
-        AktorConsumer(
+        AktorClient(
             get(),
             config.getString("srvsyfoinntektsmelding.username"),
             config.getString("aktoerregister_api_v1_url"),
             get()
         )
-    } bind AktorConsumer::class
+    } bind AktorClient::class
     single {
         TokenConsumer(
             get(),

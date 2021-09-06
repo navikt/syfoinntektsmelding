@@ -8,14 +8,11 @@ import kotlinx.coroutines.runBlocking
 import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.client.SakClient
 import no.nav.syfo.client.SakResponse
-import no.nav.syfo.client.aktor.AktorConsumer
+import no.nav.syfo.client.aktor.AktorClient
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.repository.InntektsmeldingService
-import no.nav.syfo.service.BehandlendeEnhetConsumer
-import no.nav.syfo.service.EksisterendeSakService
-import no.nav.syfo.service.SaksbehandlingService
 import no.nav.syfo.util.Metrikk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -29,7 +26,7 @@ class SaksbehandlingServiceTest {
 
     private var oppgaveClient = mockk<OppgaveClient>(relaxed = true)
     var behandlendeEnhetConsumer = mockk<BehandlendeEnhetConsumer>(relaxed = true)
-    private var aktoridConsumer = mockk<AktorConsumer>(relaxed = true)
+    private var aktoridConsumer = mockk<AktorClient>(relaxed = true)
     private var inntektsmeldingService = mockk<InntektsmeldingService>(relaxed = true)
     private var eksisterendeSakService = mockk<EksisterendeSakService>(relaxed = true)
     private var sakClient = mockk<SakClient>(relaxed = true)

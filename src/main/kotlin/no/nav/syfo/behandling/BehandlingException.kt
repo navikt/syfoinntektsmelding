@@ -8,7 +8,7 @@ open class AzureAdTokenException(statusCode: Int, cause: java.lang.Exception?) :
 // TokenConsumer
 open class TokenException(statusCode: Int, causedBy: Exception?) : BehandlingException(Feiltype.TOKEN, "Henting av token feiler med HTTP status $statusCode", causedBy)
 
-// AktorConsumer
+// AktorClient
 open class AktørException(feiltype: Feiltype,  message: String, causedBy: Exception?) : BehandlingException(feiltype, message, causedBy)
 open class TomAktørListeException(causedBy: java.lang.Exception?) : AktørException(Feiltype.AKTØR_LISTE_TOM, "Fikk tom liste for aktørId", causedBy )
 open class FantIkkeAktørException(causedBy: java.lang.Exception?) : AktørException(Feiltype.AKTØR_IKKE_FUNNET, "Fant ikke aktørId", causedBy )
