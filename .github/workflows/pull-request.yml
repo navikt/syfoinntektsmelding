@@ -31,6 +31,8 @@ jobs:
           key: ${{ runner.os }}-gradle-cache-${{ hashFiles('build.gradle') }}
           restore-keys: |
             ${{ runner.os }}-gradle-cache-
+      - name: compose up
+        run: cd docker/local && docker-compose up -d db_spinn
       - name: Setup Kafka
         uses: 280780363/kafka-action@v1.0
       - name: Test and build
