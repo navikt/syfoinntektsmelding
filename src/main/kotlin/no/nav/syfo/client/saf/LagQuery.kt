@@ -1,7 +1,7 @@
 package no.nav.syfo.client.saf
 
 fun lagQuery(journalpostId: String): String {
-    return """
+    return """query {
         journalpost(journalpostId: "$journalpostId") {
             tittel,
             journalstatus,
@@ -11,5 +11,5 @@ fun lagQuery(journalpostId: String): String {
                 dokumentInfoId
             }
         }
-""".trim()
+}""".trim()
 }
