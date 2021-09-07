@@ -29,6 +29,12 @@ class DokArkivClient(
     private val log: org.slf4j.Logger = LoggerFactory.getLogger("DokArkivClient")
 
     /**
+     * Tjeneste som lar konsument "switche" status på en journalpost fra midlerdidig til endelig. Dersom journalposten
+     * ikke er mulig å ferdigstille, for eksempel fordi den mangler påkrevde metadata, får konsument beskjed om hva
+     * som mangler.
+     *
+     * https://confluence.adeo.no/display/BOA/ferdigstillJournalpost
+     *
      * Ved suksessfull ferdigstilling: 200 OK.
      *
      * Ved feil:
@@ -52,6 +58,7 @@ class DokArkivClient(
                 body = ferdigstillRequest
             }.also { log.info("ferdigstilling av journalpost ok for journalpostid {}, msgId {}, {}", journalpostId, msgId ) }
         } catch (e: Exception) {
+            log.error("Dokarkiv svarte med feilmelding ved ferdigstilling av journalpost for msgId $msgId", e )
             if (e is ClientRequestException) {
                 when (e.response.status) {
                     HttpStatusCode.NotFound -> {
@@ -64,7 +71,7 @@ class DokArkivClient(
                     }
                 }
             }
-            log.error("Dokarkiv svarte med feilmelding ved ferdigstilling av journalpost for msgId {}, {}", msgId )
+            log.error("Dokarkiv svarte med feilmelding ved ferdigstilling av journalpost for msgId $msgId", e )
             throw IOException("Dokarkiv svarte med feilmelding ved ferdigstilling av journalpost for $journalpostId msgid $msgId")
         }
     }
