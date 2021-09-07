@@ -33,6 +33,7 @@ class JournalConsumer(
         try {
             val response = safJournalpostClient.getJournalpostMetadata(journalpostId)
             if (!response.errors.isNullOrEmpty()){
+                log.error("Feil i spørring: ${response.errors}")
                 throw IllegalArgumentException("Feil i spørring")
             }
             val journalpost = response.data?.journalpost
