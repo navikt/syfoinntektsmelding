@@ -11,7 +11,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.ktor.client.*
 import io.ktor.client.engine.*
-import io.ktor.client.engine.ProxyBuilder.http
 import io.ktor.client.engine.apache.*
 import io.ktor.client.features.json.*
 import io.ktor.config.*
@@ -20,7 +19,6 @@ import no.nav.helse.arbeidsgiver.kubernetes.KubernetesProbeManager
 import org.koin.core.Koin
 import org.koin.core.definition.Kind
 import org.koin.core.module.Module
-import org.koin.core.qualifier.Qualifier
 import org.koin.core.qualifier.StringQualifier
 import org.koin.dsl.module
 
@@ -35,26 +33,25 @@ fun selectModuleBasedOnProfile(config: ApplicationConfig): List<Module> {
     return listOf(common, envModule)
 }
 
-val common = module {
-    val om = ObjectMapper()
-    om.registerModule(KotlinModule())
-    om.registerModule(Jdk8Module())
-    om.registerModule(JavaTimeModule())
-    om.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-    om.configure(SerializationFeature.INDENT_OUTPUT, true)
-    om.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
-    om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+fun buildObjectMapper(): ObjectMapper {
+    return ObjectMapper().apply {
+        registerModule(KotlinModule())
+        registerModule(KotlinModule())
+        registerModule(Jdk8Module())
+        registerModule(JavaTimeModule())
+        disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+        configure(SerializationFeature.INDENT_OUTPUT, true)
+        configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
+        configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+        setDefaultPrettyPrinter(DefaultPrettyPrinter().apply {
+            indentArraysWith(DefaultPrettyPrinter.FixedSpaceIndenter.instance)
+            indentObjectsWith(DefaultIndenter("  ", "\n"))
+        })
+    }
+}
 
-    om.setDefaultPrettyPrinter(DefaultPrettyPrinter().apply {
-        indentArraysWith(DefaultPrettyPrinter.FixedSpaceIndenter.instance)
-        indentObjectsWith(DefaultIndenter("  ", "\n"))
-    })
-
-    single { om }
-
-    single { KubernetesProbeManager() }
-
-    val jacksonSerializer = JacksonSerializer {
+fun buildJacksonSerializer(): JacksonSerializer {
+    return JacksonSerializer {
         registerModule(KotlinModule())
         registerModule(Jdk8Module())
         registerModule(JavaTimeModule())
@@ -63,6 +60,14 @@ val common = module {
         configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
     }
+}
+
+val common = module {
+    single { buildObjectMapper() }
+
+    single { KubernetesProbeManager() }
+
+    val jacksonSerializer = buildJacksonSerializer()
 
     val httpClient = HttpClient(Apache) {
         install(JsonFeature) {
