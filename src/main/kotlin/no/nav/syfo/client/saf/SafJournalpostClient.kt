@@ -8,6 +8,7 @@ import io.ktor.http.ContentType
 import kotlinx.coroutines.runBlocking
 import log
 import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
+import no.nav.syfo.client.saf.model.GetJournalpostRequest
 import no.nav.syfo.client.saf.model.JournalResponse
 import no.nav.syfo.client.saf.model.Journalpost
 
@@ -27,7 +28,7 @@ class SafJournalpostClient(
                 contentType(ContentType.Application.Json)
                 header("Authorization", "Bearer $token")
                 header("X-Correlation-ID", journalpostId)
-                body = lagQuery(journalpostId)
+                body = GetJournalpostRequest(query=lagQuery(journalpostId))
             }
         }
         if (response.status == 401) {
