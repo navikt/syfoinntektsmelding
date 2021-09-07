@@ -31,12 +31,7 @@ class JournalConsumer(
      */
     fun hentInntektsmelding(journalpostId: String, arkivReferanse: String): Inntektsmelding {
         try {
-            val response = safJournalpostClient.getJournalpostMetadata(journalpostId)
-            if (!response.errors.isNullOrEmpty()){
-                log.error("Feil i spørring: ${response.errors}")
-                throw IllegalArgumentException("Feil i spørring")
-            }
-            val journalpost = response.data?.journalpost
+            val journalpost = safJournalpostClient.getJournalpostMetadata(journalpostId)
             val inntektsmeldingRAW = runBlocking {
                 safDokumentClient.hentDokument(journalpostId, journalpost?.dokumenter!![0].dokumentInfoId)
             }

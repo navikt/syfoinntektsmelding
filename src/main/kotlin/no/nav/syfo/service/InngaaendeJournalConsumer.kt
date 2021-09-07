@@ -13,11 +13,11 @@ class InngaaendeJournalConsumer(
 
     fun hentDokumentId(journalpostId: String): InngaaendeJournal {
         return runBlocking {
-            val response = safJournalpostClient.getJournalpostMetadata(journalpostId)
+            val journalpost = safJournalpostClient.getJournalpostMetadata(journalpostId)
             InngaaendeJournal(
-                dokumentId = response.data?.journalpost?.dokumenter!![0].dokumentInfoId,
-                status = response.data.journalpost.journalstatus,
-                mottattDato = response.data.journalpost.datoOpprettet
+                dokumentId = journalpost?.dokumenter!![0].dokumentInfoId,
+                status = journalpost.journalstatus,
+                mottattDato = journalpost.datoOpprettet
             )
         }
     }

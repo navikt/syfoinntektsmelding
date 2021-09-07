@@ -1,12 +1,9 @@
 package no.nav.syfo.service
 
-
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
-import no.nav.syfo.client.saf.SafJournalData
-import no.nav.syfo.client.saf.model.JournalResponse
 import org.mockito.ArgumentMatchers.any
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.client.saf.SafJournalpostClient
@@ -29,20 +26,15 @@ class InngaaendeJournalConsumerTest {
         val dokumentId1 = "dokumentId"
         val journalpostId = "journalpostId"
 
-        val journalpostResponse = JournalResponse(
-            data = SafJournalData(
-                journalpost = Journalpost(
-                    JournalStatus.MIDLERTIDIG,
-                    datoOpprettet = LocalDateTime.now(),
-                    dokumenter = listOf(Dokument(dokumentId1))
-                )
-            ),
-            errors = emptyList()
+        val journalpost = Journalpost(
+            JournalStatus.MIDLERTIDIG,
+            datoOpprettet = LocalDateTime.now(),
+            dokumenter = listOf(Dokument(dokumentId1))
         )
 
         every {
             safJournalpostClient.getJournalpostMetadata(any())
-        } returns journalpostResponse
+        } returns journalpost
         val captor = slot<String>()
 
         val inngaaendeJournal = inngaaendeJournalConsumer.hentDokumentId(journalpostId)

@@ -1,12 +1,17 @@
 package no.nav.syfo.client.saf
 
-fun lagQuery(journalpostId: String) : String {
+fun lagQuery(journalpostId: String): String {
     return """
-        journalpost(journalpostId: $journalpostId) {
-            journalstatus,
-            datoOpprettet,
-            dokumenter {
-              dokumentInfoId
+        query {
+	        journalpost(journalpostId: "$journalpostId") {
+                tittel,
+                journalstatus,
+                datoOpprettet,
+                opprettetAvNavn,
+                dokumenter {
+                    dokumentInfoId
+                }
             }
-        }"""
+        }
+""".trim()
 }

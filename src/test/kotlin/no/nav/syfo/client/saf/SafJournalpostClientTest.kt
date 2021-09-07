@@ -11,6 +11,7 @@ import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.koin.buildObjectMapper
 import org.assertj.core.api.Assertions
 import org.junit.Test
+import org.junit.jupiter.api.assertThrows
 
 class SafJournalpostClientTest {
 
@@ -25,11 +26,9 @@ class SafJournalpostClientTest {
     fun `Skal hente ut gyldig respons`() {
         client = SafJournalpostClient(buildHttpClientJson(HttpStatusCode.OK, validJson()), "http://localhost", stsClient )
         runBlocking {
-            val journalResponse = client.getJournalpostMetadata("123")
-            Assertions.assertThat(journalResponse.errors).isNull()
-            Assertions.assertThat(journalResponse.data).isNotNull()
-            Assertions.assertThat(journalResponse.data?.journalpost?.journalstatus).isEqualTo(JournalStatus.MIDLERTIDIG)
-            Assertions.assertThat(journalResponse.data?.journalpost?.dokumenter!![0].dokumentInfoId).isEqualTo("533122674")
+            val journalpost = client.getJournalpostMetadata("123")
+            Assertions.assertThat(journalpost?.journalstatus).isEqualTo(JournalStatus.MIDLERTIDIG)
+            Assertions.assertThat(journalpost?.dokumenter!![0].dokumentInfoId).isEqualTo("533122674")
         }
     }
 
@@ -37,12 +36,22 @@ class SafJournalpostClientTest {
     fun `Skal håndtere feil`() {
         client = SafJournalpostClient(buildHttpClientJson(HttpStatusCode.OK, errorJson()), "http://localhost", stsClient )
         runBlocking {
-            val journalResponse = client.getJournalpostMetadata("123")
-            Assertions.assertThat(journalResponse.errors).isNotNull()
-            Assertions.assertThat(journalResponse.errors!!.size).isEqualTo(1)
-            Assertions.assertThat(journalResponse.errors!![0].message).isNotBlank()
+            assertThrows<ErrorException> {
+                client.getJournalpostMetadata("123")
+            }
         }
     }
+
+    @Test
+    fun `Skal håndtere ikke autorisert`() {
+        client = SafJournalpostClient(buildHttpClientJson(HttpStatusCode.OK, unauthorizedJson()), "http://localhost", stsClient )
+        runBlocking {
+            assertThrows<NotAuthorizedException> {
+                client.getJournalpostMetadata("123")
+            }
+        }
+    }
+
 
     @Test
     fun `Skal lese gyldig JSON`(){
