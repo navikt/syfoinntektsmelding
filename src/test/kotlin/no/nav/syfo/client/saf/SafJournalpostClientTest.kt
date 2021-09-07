@@ -23,25 +23,45 @@ class SafJournalpostClientTest {
 
     @Test
     fun `Skal hente ut gyldig respons`() {
-        client = SafJournalpostClient(buildHttpClientJson(HttpStatusCode.OK, gyldig()), "http://localhost", stsClient )
+        client = SafJournalpostClient(buildHttpClientJson(HttpStatusCode.OK, validJson()), "http://localhost", stsClient )
         runBlocking {
             val journalResponse = client.getJournalpostMetadata("123")
             Assertions.assertThat(journalResponse.errors).isNull()
             Assertions.assertThat(journalResponse.data).isNotNull()
             Assertions.assertThat(journalResponse.data?.journalpost?.journalstatus).isEqualTo(JournalStatus.MIDLERTIDIG)
-            Assertions.assertThat(journalResponse.data?.journalpost?.dokumenter!![0].dokumentInfoId).isEqualTo("abc")
+            Assertions.assertThat(journalResponse.data?.journalpost?.dokumenter!![0].dokumentInfoId).isEqualTo("533122674")
         }
     }
 
     @Test
     fun `Skal håndtere feil`() {
-        client = SafJournalpostClient(buildHttpClientJson(HttpStatusCode.OK, feil()), "http://localhost", stsClient )
+        client = SafJournalpostClient(buildHttpClientJson(HttpStatusCode.OK, errorJson()), "http://localhost", stsClient )
         runBlocking {
             val journalResponse = client.getJournalpostMetadata("123")
             Assertions.assertThat(journalResponse.errors).isNotNull()
             Assertions.assertThat(journalResponse.errors!!.size).isEqualTo(1)
             Assertions.assertThat(journalResponse.errors!![0].message).isNotBlank()
         }
+    }
+
+    @Test
+    fun `Skal lese gyldig JSON`(){
+        validJson()
+    }
+
+    @Test
+    fun `Skal lese error JSON`(){
+        errorJson()
+    }
+
+    @Test
+    fun `Skal lese unauthorized JSON`(){
+        unauthorizedJson()
+    }
+
+    @Test
+    fun `Skal lese not found JSON`(){
+        notFoundJson()
     }
 
     fun getResource(path: String): String {
@@ -52,22 +72,20 @@ class SafJournalpostClientTest {
         return objectMapper.readValue(getResource(path), JournalResponse::class.java)
     }
 
-    fun gyldig(): JournalResponse {
-        return getJsonFile("/saf_gyldig.json")
+    fun validJson(): JournalResponse {
+        return getJsonFile("/saf_valid.json")
     }
 
-    fun feil(): JournalResponse {
+    fun errorJson(): JournalResponse {
         return getJsonFile("/saf_error.json")
     }
 
-    @Test
-    fun skal_lese_gyldig(){
-        gyldig()
+    fun notFoundJson(): JournalResponse {
+        return getJsonFile("/saf_not_found.json")
     }
 
-    @Test
-    fun skal_lese_error(){
-        feil()
+    fun unauthorizedJson(): JournalResponse {
+        return getJsonFile("/saf_unauthorized.json")
     }
 
 }

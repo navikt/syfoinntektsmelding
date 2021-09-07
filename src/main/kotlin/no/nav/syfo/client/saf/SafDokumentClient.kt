@@ -27,7 +27,7 @@ class SafDokumentClient constructor(
         log.info("Henter dokument fra journalpostId $journalpostId, og dokumentInfoId $dokumentInfoId")
         val response = runBlocking {
             httpClient.get<HttpStatement>("$url/hentdokument/$journalpostId/$dokumentInfoId/ARKIV") {
-                accept(ContentType.Application.Pdf)
+                accept(ContentType.Application.Xml)
                 header("Authorization", "Bearer ${stsClient.getToken()}")
                 header("Nav-Callid", MDCOperations.putToMDC(MDCOperations.MDC_CALL_ID, UUID.randomUUID().toString()))
                 header("Nav-Consumer-Id", "syfoinntektsmelding")

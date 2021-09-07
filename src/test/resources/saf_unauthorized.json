@@ -1,0 +1,7 @@
+{
+  "timestamp": "2021-09-07T10:01:50.656+00:00",
+  "status": 401,
+  "error": "Unauthorized",
+  "message": "no.nav.security.token.support.core.exceptions.JwtTokenMissingException: no valid token found in validation context",
+  "path": "/graphql"
+}
