@@ -30,7 +30,7 @@ class XmlInntektsmeldingMapperTest {
     @Test
     fun map20180924() {
         val bytes : ByteArray = inntektsmelding.toByteArray()
-        val im = XmlInntektsmeldingMapper().mapInntektsmelding(bytes, aktorClient, MOTTATT_DATO, JOURNALPOST_ID, JournalStatus.MIDLERTIDIG, ARKIV_REFERANSE  )
+        val im = XmlInntektsmeldingMapper().mapInntektsmelding(bytes, aktorClient, MOTTATT_DATO, JOURNALPOST_ID, JournalStatus.MOTTATT, ARKIV_REFERANSE  )
         Assertions.assertThat(im.fnr).isEqualTo("18018522868")
         Assertions.assertThat(im.journalpostId).isEqualTo("journalpostId")
         Assertions.assertThat(im.arbeidsgiverperioder.size).isEqualTo(1)
@@ -41,7 +41,7 @@ class XmlInntektsmeldingMapperTest {
         val p1 = Periode(LocalDate.of(2021, 6, 1), LocalDate.of(2021, 6, 17))
         val p2 = Periode(LocalDate.of(2021, 7, 1), LocalDate.of(2021, 7, 17))
         val bytes : ByteArray = inntektsmeldingArbeidsgiver(listOf(p1, p2), "fnr-2").toByteArray()
-        val im = XmlInntektsmeldingMapper().mapInntektsmelding(bytes, aktorClient, MOTTATT_DATO, JOURNALPOST_ID, JournalStatus.MIDLERTIDIG, ARKIV_REFERANSE  )
+        val im = XmlInntektsmeldingMapper().mapInntektsmelding(bytes, aktorClient, MOTTATT_DATO, JOURNALPOST_ID, JournalStatus.MOTTATT, ARKIV_REFERANSE  )
         Assertions.assertThat(im.fnr).isEqualTo("fnr-2")
         Assertions.assertThat(im.journalpostId).isEqualTo("journalpostId")
         Assertions.assertThat(im.arbeidsgiverperioder.size).isEqualTo(2)
@@ -50,7 +50,7 @@ class XmlInntektsmeldingMapperTest {
     @Test
     fun map20181211() {
         val bytes : ByteArray = inntektsmeldingArbeidsgiverPrivat().toByteArray()
-        val im = XmlInntektsmeldingMapper().mapInntektsmelding(bytes, aktorClient, MOTTATT_DATO, JOURNALPOST_ID, JournalStatus.MIDLERTIDIG, ARKIV_REFERANSE  )
+        val im = XmlInntektsmeldingMapper().mapInntektsmelding(bytes, aktorClient, MOTTATT_DATO, JOURNALPOST_ID, JournalStatus.MOTTATT, ARKIV_REFERANSE  )
         Assertions.assertThat(im.fnr).isEqualTo("fnr")
         Assertions.assertThat(im.journalpostId).isEqualTo("journalpostId")
         Assertions.assertThat(im.arbeidsgiverperioder.size).isEqualTo(1)

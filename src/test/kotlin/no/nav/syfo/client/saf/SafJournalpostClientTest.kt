@@ -27,7 +27,7 @@ class SafJournalpostClientTest {
         client = SafJournalpostClient(buildHttpClientJson(HttpStatusCode.OK, validJson()), "http://localhost", stsClient )
         runBlocking {
             val journalpost = client.getJournalpostMetadata("123")
-            Assertions.assertThat(journalpost?.journalstatus).isEqualTo(JournalStatus.MIDLERTIDIG)
+            Assertions.assertThat(journalpost?.journalstatus).isEqualTo(JournalStatus.MOTTATT)
             Assertions.assertThat(journalpost?.dokumenter!![0].dokumentInfoId).isEqualTo("533122674")
         }
     }

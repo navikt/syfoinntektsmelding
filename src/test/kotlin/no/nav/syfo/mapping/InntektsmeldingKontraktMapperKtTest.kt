@@ -24,7 +24,7 @@ class InntektsmeldingKontraktMapperKtTest {
             arbeidsgiverPrivatFnr = "fnr",
             journalpostId = "journalpostId",
             arsakTilInnsending = "",
-            journalStatus = JournalStatus.MIDLERTIDIG,
+            journalStatus = JournalStatus.MOTTATT,
             arbeidsgiverperioder = ArrayList(),
             refusjon = Refusjon(BigDecimal.ONE),
             gyldighetsStatus = Gyldighetsstatus.GYLDIG,

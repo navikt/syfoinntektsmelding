@@ -29,7 +29,7 @@ class InntektsmeldingServiceTest {
             arbeidsforholdId = "arb-123",
             journalpostId = "jp-123",
             arsakTilInnsending = "Ingen årsak",
-            journalStatus = JournalStatus.MIDLERTIDIG,
+            journalStatus = JournalStatus.MOTTATT,
             arbeidsgiverperioder = listOf(
                 Periode(fom = LocalDate.of(2011, 11, 1), tom = LocalDate.of(2012, 12, 2)),
                 Periode(fom = LocalDate.of(2013, 3, 3), tom = LocalDate.of(2014, 4, 4))
@@ -88,7 +88,7 @@ class InntektsmeldingServiceTest {
         assertThat(node.get("arbeidsgiverPrivatAktørId").asText()).isEqualTo("arb-priv-aktør-123")
         assertThat(node.get("beregnetInntekt").asLong()).isEqualTo(999999999999)
         assertThat(node.get("gyldighetsStatus").asText()).isEqualTo("GYLDIG")
-        assertThat(node.get("journalStatus").asText()).isEqualTo("MIDLERTIDIG")
+        assertThat(node.get("journalStatus").asText()).isEqualTo("MOTTATT")
 
         assertThat(node.get("arbeidsgiverperioder").size()).isEqualTo(2)
         assertThat(node.get("arbeidsgiverperioder")[0].get("fom").toString()).isEqualTo("[2011,11,1]")

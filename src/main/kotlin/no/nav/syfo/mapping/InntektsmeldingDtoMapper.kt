@@ -8,7 +8,6 @@ import no.nav.syfo.domain.inntektsmelding.Refusjon
 import no.nav.syfo.dto.ArbeidsgiverperiodeEntitet
 import no.nav.syfo.dto.InntektsmeldingEntitet
 import java.time.LocalDate
-import java.util.*
 import kotlin.collections.ArrayList
 
 
@@ -34,7 +33,7 @@ fun toInntektsmelding(inntektsmeldingEntitet: InntektsmeldingEntitet) : Inntekts
         arbeidsforholdId = null,
         journalpostId = inntektsmeldingEntitet.journalpostId,
         arsakTilInnsending = "?",
-        journalStatus = JournalStatus.MIDLERTIDIG,
+        journalStatus = JournalStatus.MOTTATT,
         arbeidsgiverperioder = mapPerioder(inntektsmeldingEntitet.arbeidsgiverperioder), // TODO - Dette feltet må populeres fra database
         beregnetInntekt = null,
         refusjon = Refusjon(),

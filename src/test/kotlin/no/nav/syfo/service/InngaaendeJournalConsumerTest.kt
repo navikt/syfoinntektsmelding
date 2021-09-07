@@ -27,7 +27,7 @@ class InngaaendeJournalConsumerTest {
         val journalpostId = "journalpostId"
 
         val journalpost = Journalpost(
-            JournalStatus.MIDLERTIDIG,
+            JournalStatus.MOTTATT,
             datoOpprettet = LocalDateTime.now(),
             dokumenter = listOf(Dokument(dokumentId1))
         )

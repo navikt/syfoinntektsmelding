@@ -8,6 +8,20 @@ data class InngaaendeJournal(
         val mottattDato: LocalDateTime
 )
 
+/**
+ * https://confluence.adeo.no/display/BOA/saf+-+Enums
+ */
 enum class JournalStatus {
-    MIDLERTIDIG, ANNET, ENDELIG, UTGAAR
+    MOTTATT,       // Tidligere: MIDLERTIDIG
+    UKJENT,        // Tidligere: ANNET
+    FERDIGSTILT,   // Tidligere: ENDELIG
+    UTGAAR,
+    JOURNALFOERT,
+    EKSPEDERT,
+    UNDER_ARBEID,
+    FEILREGISTRERT,
+    AVBRUTT,
+    UKJENT_BRUKER,
+    RESERVERT,
+    OPPLASTING_DOKUMENT,
 }

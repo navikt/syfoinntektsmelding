@@ -50,7 +50,7 @@ class InntektsmeldingBehandler(
 
             tellMetrikker(inntektsmelding)
 
-            if (JournalStatus.MIDLERTIDIG == inntektsmelding.journalStatus) {
+            if (JournalStatus.MOTTATT == inntektsmelding.journalStatus) {
                 metrikk.tellInntektsmeldingerMottatt(inntektsmelding)
 
                 val saksId = saksbehandlingService.behandleInntektsmelding(inntektsmelding, aktorid, arkivreferanse)

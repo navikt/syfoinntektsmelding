@@ -3,14 +3,9 @@ package no.nav.syfo.service
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import no.nav.syfo.service.BehandleInngaaendeJournalConsumer
-import no.nav.syfo.service.InngaaendeJournalConsumer
-import no.nav.syfo.service.JournalConsumer
 import no.nav.syfo.domain.InngaaendeJournal
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
-import no.nav.syfo.service.BehandlendeEnhetConsumer
-import no.nav.syfo.service.JournalpostService
 import no.nav.syfo.util.Metrikk
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.junit.jupiter.api.Test
@@ -35,7 +30,7 @@ class JournalpostServiceTest {
 
     @Test
     fun ferdigstillJournalpost() {
-        val journal = InngaaendeJournal(dokumentId = "dokumentId", status = JournalStatus.MIDLERTIDIG, mottattDato = LocalDateTime.now())
+        val journal = InngaaendeJournal(dokumentId = "dokumentId", status = JournalStatus.MOTTATT, mottattDato = LocalDateTime.now())
         every { inngaaendeJournalConsumer.hentDokumentId("journalpostId") } returns journal
         every { behandlendeEnhetConsumer.hentBehandlendeEnhet(any(), any()) } returns "enhet"
 
@@ -47,7 +42,7 @@ class JournalpostServiceTest {
                 arbeidsforholdId = null,
                 journalpostId = "journalpostId",
                 arsakTilInnsending = "Ny",
-                journalStatus = JournalStatus.MIDLERTIDIG,
+                journalStatus = JournalStatus.MOTTATT,
                 arkivRefereranse = "AR123",
                 førsteFraværsdag = LocalDate.now(),
                 mottattDato = LocalDateTime.now()
@@ -62,7 +57,7 @@ class JournalpostServiceTest {
 
     @Test
     fun hentInntektsmelding() {
-        val journal = InngaaendeJournal(dokumentId = "dokumentId", status = JournalStatus.MIDLERTIDIG, mottattDato = LocalDateTime.now())
+        val journal = InngaaendeJournal(dokumentId = "dokumentId", status = JournalStatus.MOTTATT, mottattDato = LocalDateTime.now())
         every { inngaaendeJournalConsumer.hentDokumentId("journalpostId") } returns journal
         every { journalConsumer.hentInntektsmelding("journalpostId", "AR-1234") } returns
             Inntektsmelding(
@@ -71,7 +66,7 @@ class JournalpostServiceTest {
                 arbeidsgiverPrivatFnr = null,
                 journalpostId = "journalpostId",
                 arsakTilInnsending = "",
-                journalStatus = JournalStatus.MIDLERTIDIG,
+                journalStatus = JournalStatus.MOTTATT,
                 arkivRefereranse = "AR123",
                 førsteFraværsdag = LocalDate.now(),
                 mottattDato = LocalDateTime.now()

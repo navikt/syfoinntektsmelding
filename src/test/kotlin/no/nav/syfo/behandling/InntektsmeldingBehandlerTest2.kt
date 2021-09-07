@@ -141,7 +141,7 @@ class InntektsmeldingBehandlerTest2 {
         every { behandlendeEnhetConsumer.hentGeografiskTilknytning(any()) } returns
             GeografiskTilknytningData(geografiskTilknytning = "tilknytning", diskresjonskode = "")
         val journalpost = Journalpost(
-            JournalStatus.MIDLERTIDIG,
+            JournalStatus.MOTTATT,
             LocalDateTime.now(),
             dokumenter = listOf(Dokument(dokumentInfoId="dokumentId"))
         )
@@ -379,7 +379,7 @@ class InntektsmeldingBehandlerTest2 {
     private fun inngaaendeJournal(arkivId: String): InngaaendeJournal {
         return InngaaendeJournal(
             dokumentId = arkivId,
-            status = JournalStatus.MIDLERTIDIG,
+            status = JournalStatus.MOTTATT,
             mottattDato = LocalDateTime.now()
         )
     }

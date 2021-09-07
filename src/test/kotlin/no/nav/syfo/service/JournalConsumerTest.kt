@@ -34,7 +34,7 @@ class JournalConsumerTest {
             LocalDate.of(2021,7,19)
         )
         val journalpost = Journalpost(
-            JournalStatus.MIDLERTIDIG,
+            JournalStatus.MOTTATT,
             LocalDateTime.now(),
             dokumenter = listOf(Dokument(dokumentInfoId="dokumentId"))
         )
@@ -53,7 +53,7 @@ class JournalConsumerTest {
     @Test
     fun parserInntektsmeldingUtenPerioder() {
         val journalresponse = Journalpost(
-            JournalStatus.MIDLERTIDIG,
+            JournalStatus.MOTTATT,
             LocalDateTime.now(),
             dokumenter = listOf(Dokument(dokumentInfoId="dokumentId"))
         )
@@ -76,7 +76,7 @@ class JournalConsumerTest {
             LocalDate.of(2021,7,19)
         )
         val journalresponse = Journalpost(
-            JournalStatus.MIDLERTIDIG,
+            JournalStatus.MOTTATT,
             LocalDateTime.now(),
             dokumenter = listOf(Dokument(dokumentInfoId="dokumentId"))
         )
@@ -100,7 +100,7 @@ class JournalConsumerTest {
     @Test
     fun parseInntektsmelding0924() {
         val journalresponse = Journalpost(
-            JournalStatus.MIDLERTIDIG,
+            JournalStatus.MOTTATT,
             LocalDateTime.now(),
             dokumenter = listOf(Dokument(dokumentInfoId="dokumentId"))
         )
@@ -130,7 +130,7 @@ class JournalConsumerTest {
     @Test
     fun feil_i_graphql_spørring() {
         val journalresponse = Journalpost(
-            JournalStatus.MIDLERTIDIG,
+            JournalStatus.MOTTATT,
             LocalDateTime.now(),
             dokumenter = listOf(Dokument(dokumentInfoId="dokumentId"))
         )

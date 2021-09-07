@@ -67,7 +67,7 @@ class SaksbehandlingServiceTest {
             arbeidsforholdId = null,
             journalpostId = "journalpostId",
             arsakTilInnsending = "Ny",
-            journalStatus = JournalStatus.MIDLERTIDIG,
+            journalStatus = JournalStatus.MOTTATT,
             arbeidsgiverperioder = listOf(
                 Periode(
                     fom = LocalDate.of(2019, 1, 4),
@@ -143,7 +143,7 @@ class SaksbehandlingServiceTest {
             arbeidsforholdId = null,
             journalpostId = journalpostId,
             arsakTilInnsending = "Ny",
-            journalStatus = JournalStatus.MIDLERTIDIG,
+            journalStatus = JournalStatus.MOTTATT,
             arbeidsgiverperioder = arbeidsgiverperioder,
             arkivRefereranse = "AR",
             førsteFraværsdag = LocalDate.now(),

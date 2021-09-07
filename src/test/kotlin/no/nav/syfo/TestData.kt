@@ -25,7 +25,7 @@ val grunnleggendeInntektsmelding = Inntektsmelding(
     arbeidsgiverOrgnummer = "1234",
     journalpostId = "123",
     arsakTilInnsending = "TEST",
-    journalStatus = JournalStatus.ENDELIG,
+    journalStatus = JournalStatus.FERDIGSTILT,
     arbeidsgiverperioder = listOf(Periode(FØRSTE_JANUAR, FØRSTE_FEBRUAR)),
     arkivRefereranse = "AR123",
     førsteFraværsdag = LocalDate.of(2019, 10, 5),
@@ -53,7 +53,7 @@ val inntektsmeldingEntitet = InntektsmeldingEntitet(
           "mottattDato": "2021-06-15T12:42:37",
           "nærRelasjon": false,
           "feriePerioder": [],
-          "journalStatus": "MIDLERTIDIG",
+          "journalStatus": "MOTTATT",
           "journalpostId": "5406",
           "årsakEndring": null,
           "avsenderSystem": {

@@ -121,7 +121,7 @@ open class InntektsmeldingRepositoryTest : SystemTestBase(){
             arbeidsforholdId = "arb-123",
             journalpostId = "jp-123",
             arsakTilInnsending = "Ingen årsak",
-            journalStatus = JournalStatus.MIDLERTIDIG,
+            journalStatus = JournalStatus.MOTTATT,
             arbeidsgiverperioder = listOf(
                 Periode(fom = LocalDate.of(2011, 11, 1), tom = LocalDate.of(2012, 12, 2)),
                 Periode(fom = LocalDate.of(2013, 3, 3), tom = LocalDate.of(2014, 4, 4))
