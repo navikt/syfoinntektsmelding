@@ -2,13 +2,8 @@ package no.nav.syfo.client.saf
 
 import no.nav.syfo.client.saf.model.Journalpost
 
-data class SafJournalResponse (
-    val data: SafJournalData,
-    val errors: List<ResponseError>?
-)
-
 data class SafJournalData (
-    val journalpost: Journalpost
+    val journalpost: Journalpost? = null
 )
 
 data class ResponseError(
@@ -19,8 +14,8 @@ data class ResponseError(
 )
 
 data class ErrorLocation(
-    val line: String?,
-    val column: String?
+    val line: Number?,
+    val column: Number?
 )
 
 data class ErrorExtension(

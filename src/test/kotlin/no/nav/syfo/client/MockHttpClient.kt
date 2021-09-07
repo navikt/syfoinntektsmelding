@@ -1,27 +1,16 @@
 package no.nav.syfo.client
 
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.MapperFeature
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.KotlinModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import io.ktor.client.*
 import io.ktor.client.engine.mock.*
 import io.ktor.client.features.json.*
 import io.ktor.http.*
+import no.nav.syfo.koin.buildJacksonSerializer
+import no.nav.syfo.koin.buildObjectMapper
 
 fun buildHttpClientText(status: HttpStatusCode, text: String = ""): HttpClient {
     return HttpClient(MockEngine) {
         install(JsonFeature) {
-            serializer = JacksonSerializer {
-                registerKotlinModule()
-                registerModule(JavaTimeModule())
-                configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-                configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            }
+            serializer = buildJacksonSerializer()
             expectSuccess = false
         }
         engine {
@@ -39,22 +28,13 @@ fun buildHttpClientText(status: HttpStatusCode, text: String = ""): HttpClient {
 fun buildHttpClientJson(status: HttpStatusCode, response: Any): HttpClient {
     return HttpClient(MockEngine) {
         install(JsonFeature) {
-            serializer = JacksonSerializer {
-                registerModule(KotlinModule())
-                registerModule(Jdk8Module())
-                registerModule(JavaTimeModule())
-                disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                configure(SerializationFeature.INDENT_OUTPUT, true)
-                configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
-                accept(ContentType.Application.Json)
-            }
+            serializer = buildJacksonSerializer()
             expectSuccess = false
         }
         engine {
             addHandler {
                 respond(
-                    jacksonObjectMapper().registerModule(JavaTimeModule()).writeValueAsString(response),
+                    buildObjectMapper().writeValueAsString(response),
                     headers = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString())),
                     status = status
                 )

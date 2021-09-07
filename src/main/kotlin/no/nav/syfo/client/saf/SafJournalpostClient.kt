@@ -10,6 +10,7 @@ import log
 import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
 import no.nav.syfo.client.saf.model.GetJournalpostRequest
 import no.nav.syfo.client.saf.model.GetJournalpostVariables
+import no.nav.syfo.client.saf.model.JournalResponse
 
 class SafJournalpostClient(
     private val httpClient: HttpClient,
@@ -18,11 +19,11 @@ class SafJournalpostClient(
 ) {
     val log = log()
 
-    fun getJournalpostMetadata(journalpostId: String): SafJournalResponse {
+    fun getJournalpostMetadata(journalpostId: String): JournalResponse {
         val token = stsClient.getToken()
         log.info("Henter journalpostmetadata for $journalpostId with token size " + token.length)
         return runBlocking {
-            httpClient.post<SafJournalResponse>(basePath) {
+            httpClient.post<JournalResponse>(basePath) {
                 contentType(ContentType.Application.Json)
                 header("Authorization", "Bearer $token")
                 header("X-Correlation-ID", journalpostId)

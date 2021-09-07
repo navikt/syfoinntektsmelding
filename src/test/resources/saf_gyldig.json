@@ -1,0 +1,14 @@
+{
+  "data": {
+    "journalpost": {
+      "journalstatus": "MIDLERTIDIG",
+      "datoOpprettet": "2019-07-05T14:02:11",
+      "dokumenter": [
+        {
+          "dokumentInfoId": "abc"
+        }
+      ]
+    }
+  },
+  "errors": null
+}

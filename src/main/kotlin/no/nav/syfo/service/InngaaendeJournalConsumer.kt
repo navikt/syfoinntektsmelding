@@ -15,7 +15,7 @@ class InngaaendeJournalConsumer(
         return runBlocking {
             val response = safJournalpostClient.getJournalpostMetadata(journalpostId)
             InngaaendeJournal(
-                dokumentId = response.data.journalpost?.dokumenter!![0].dokumentInfoId,
+                dokumentId = response.data?.journalpost?.dokumenter!![0].dokumentInfoId,
                 status = response.data.journalpost.journalstatus,
                 mottattDato = response.data.journalpost.datoOpprettet
             )

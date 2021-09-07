@@ -4,3 +4,7 @@ data class GetJournalpostRequest(
     val query: String,
     val variables: GetJournalpostVariables
 )
+
+data class GetJournalpostVariables(
+    val id: String
+)

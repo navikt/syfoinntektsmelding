@@ -35,12 +35,12 @@ class JournalConsumer(
             if (!response.errors.isNullOrEmpty()){
                 throw IllegalArgumentException("Feil i spørring")
             }
-            val journalpost = response.data.journalpost
+            val journalpost = response.data?.journalpost
             val inntektsmeldingRAW = runBlocking {
-                safDokumentClient.hentDokument(journalpostId, journalpost.dokumenter[0].dokumentInfoId)
+                safDokumentClient.hentDokument(journalpostId, journalpost?.dokumenter!![0].dokumentInfoId)
             }
             val jaxbInntektsmelding = JAXB.unmarshalInntektsmelding<JAXBElement<Any>>(inntektsmeldingRAW?.decodeToString())
-            val mottattDato: LocalDateTime = journalpost.datoOpprettet
+            val mottattDato: LocalDateTime = journalpost!!.datoOpprettet
             val journalStatus: JournalStatus = journalpost.journalstatus
             return if (jaxbInntektsmelding.value is XMLInntektsmeldingM)
                 InntektsmeldingArbeidsgiver20180924Mapper.tilXMLInntektsmelding(jaxbInntektsmelding, journalpostId, mottattDato, journalStatus, arkivReferanse)

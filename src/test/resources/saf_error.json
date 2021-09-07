@@ -1,0 +1,23 @@
+{
+  "errors": [
+    {
+      "message": "Feilet ved henting av data",
+      "locations": [
+        {
+          "line": 3,
+          "column": 3
+        }
+      ],
+      "path": [
+        "journalpost"
+      ],
+      "extensions": {
+        "code": "server_error",
+        "classification": "DataFetchingException"
+      }
+    }
+  ],
+  "data": {
+    "journalpost": null
+  }
+}

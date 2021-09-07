@@ -9,7 +9,7 @@ import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
 import no.nav.syfo.client.saf.SafDokumentClient
 import no.nav.syfo.client.saf.SafJournalData
-import no.nav.syfo.client.saf.SafJournalResponse
+import no.nav.syfo.client.saf.model.JournalResponse
 import no.nav.syfo.client.saf.SafJournalpostClient
 import no.nav.syfo.client.saf.model.Dokument
 import no.nav.syfo.client.saf.model.Journalpost
@@ -18,7 +18,6 @@ import no.nav.syfo.syfoinntektsmelding.consumer.ws.inntektsmeldingArbeidsgiverPr
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.mockito.ArgumentMatchers.any
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -37,7 +36,7 @@ class JournalConsumerTest {
             LocalDate.of(2021,7,1),
             LocalDate.of(2021,7,19)
         )
-        val journalresponse = SafJournalResponse(
+        val journalresponse = JournalResponse(
             data = SafJournalData(
                 journalpost = Journalpost(
                     JournalStatus.MIDLERTIDIG,
@@ -60,7 +59,7 @@ class JournalConsumerTest {
 
     @Test
     fun parserInntektsmeldingUtenPerioder() {
-        val journalresponse = SafJournalResponse(
+        val journalresponse = JournalResponse(
             data = SafJournalData(
                 journalpost = Journalpost(
                     JournalStatus.MIDLERTIDIG,
@@ -88,7 +87,7 @@ class JournalConsumerTest {
             LocalDate.of(2021,7,1),
             LocalDate.of(2021,7,19)
         )
-        val journalresponse = SafJournalResponse(
+        val journalresponse = JournalResponse(
             data = SafJournalData(
                 journalpost = Journalpost(
                     JournalStatus.MIDLERTIDIG,
@@ -117,7 +116,7 @@ class JournalConsumerTest {
 
     @Test
     fun parseInntektsmelding0924() {
-        val journalresponse = SafJournalResponse(
+        val journalresponse = JournalResponse(
             data = SafJournalData(
                 journalpost = Journalpost(
                     JournalStatus.MIDLERTIDIG,
@@ -152,7 +151,7 @@ class JournalConsumerTest {
 
     @Test
     fun feil_i_graphql_spørring() {
-        val journalresponse = SafJournalResponse(
+        val journalresponse = JournalResponse(
             data = SafJournalData(
                 journalpost = Journalpost(
                     JournalStatus.MIDLERTIDIG,
