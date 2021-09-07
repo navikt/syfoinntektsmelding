@@ -2,6 +2,7 @@ package no.nav.syfo.slowtests.datapakke
 
 import io.mockk.every
 import io.mockk.mockk
+import no.nav.security.mock.oauth2.http.objectMapper
 import no.nav.syfo.datapakke.DatapakkePublisherJob
 import no.nav.syfo.repository.ArsakStats
 import no.nav.syfo.repository.IMStatsRepo
@@ -62,7 +63,8 @@ class DatapakkePublisherJobTest : SystemTestBase() {
             repo,
             httpClient,
             "https://datakatalog-api.dev.intern.nav.no/v1/datapackage",
-            "8f29efc4b7e41002130db5a172587fd4"
+            "8f29efc4b7e41002130db5a172587fd4",
+            om = objectMapper
         ).doJob()
     }
 }

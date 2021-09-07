@@ -1,5 +1,6 @@
 package no.nav.syfo.datapakke
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
@@ -22,7 +23,7 @@ class DatapakkePublisherJob(
     private val datapakkeApiUrl: String,
     private val datapakkeId: String,
     private val applyWeeklyOnly: Boolean = false,
-    private val logDatapakke: Boolean = false
+    private val om: ObjectMapper
 ) :
     RecurringJob(
         CoroutineScope(Dispatchers.IO),
@@ -129,12 +130,9 @@ class DatapakkePublisherJob(
             }.joinToString())
 
         runBlocking {
-            if (logDatapakke) logger.info("Datapakke $datapakkeId med innhold: $populatedDatapakke")
-
             val response = httpClient.put<HttpResponse>("$datapakkeApiUrl/$datapakkeId") {
                 contentType(ContentType.Application.Json)
-                accept(ContentType.Application.Json)
-                body = populatedDatapakke
+                body = om.readTree(populatedDatapakke)
             }
 
             logger.info("Oppdaterte datapakke $datapakkeId med respons ${response.readText()}")

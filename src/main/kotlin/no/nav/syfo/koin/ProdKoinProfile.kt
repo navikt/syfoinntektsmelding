@@ -107,7 +107,7 @@ fun prodConfig(config: ApplicationConfig) = module {
     single { ArbeidsgiverperiodeRepositoryImp(get())} bind ArbeidsgiverperiodeRepository::class
     single { SakClient(config.getString("opprett_sak_url"), get(), get()) } bind SakClient::class
     single { SaksbehandlingService(get(), get(), get(), get()) } bind SaksbehandlingService::class
-    single { DatapakkePublisherJob(get(), get(), config.getString("datapakke.api_url"), config.getString("datapakke.id"), false) }
+    single { DatapakkePublisherJob(get(), get(), config.getString("datapakke.api_url"), config.getString("datapakke.id"),false, get()) }
 
     single { JoarkHendelseKafkaClient(
         joarkOnPremProperties(config).toMutableMap(),
