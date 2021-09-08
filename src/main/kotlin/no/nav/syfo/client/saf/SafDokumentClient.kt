@@ -1,11 +1,9 @@
 package no.nav.syfo.client.saf
 
-import io.ktor.client.HttpClient
-import io.ktor.client.request.accept
-import io.ktor.client.request.get
-import io.ktor.client.request.header
-import io.ktor.client.statement.HttpStatement
-import io.ktor.http.ContentType
+import io.ktor.client.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
 import io.ktor.util.*
 import kotlinx.coroutines.runBlocking
 import log
@@ -13,6 +11,11 @@ import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
 import no.nav.syfo.util.MDCOperations
 import java.util.*
 
+/**
+ * REST tjeneste for å hente fysisk dokument fra arkivet.
+ *
+ * https://confluence.adeo.no/display/BOA/saf+-+REST+hentdokument
+ */
 @KtorExperimentalAPI
 class SafDokumentClient constructor(
     private val url: String,
@@ -20,7 +23,8 @@ class SafDokumentClient constructor(
     private val stsClient: AccessTokenProvider
 ) {
     val log = log()
-     fun hentDokument(
+
+    fun hentDokument(
         journalpostId: String,
         dokumentInfoId: String
     ): ByteArray? {
@@ -33,7 +37,10 @@ class SafDokumentClient constructor(
                 header("Nav-Consumer-Id", "syfoinntektsmelding")
             }.execute()
         }
-        log.info("Saf returnerte: httpstatus {}", response.status)
+        if (response.status != HttpStatusCode.OK) {
+            log.info("Saf returnerte: httpstatus {}", response.status)
+            return null
+        }
         return runBlocking {
             response.content.toByteArray()
         }
