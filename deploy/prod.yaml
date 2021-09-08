@@ -123,7 +123,7 @@ spec:
     - name: KAFKA_SCHEMA_REGISTRY_URL_CONFIG
       value: "http://kafka-schema-registry.tpa.svc.nais.local:8081"
     - name: DOKARKIV_URL
-      value: "https://dokarkiv.nais.adeo.no/rest/journalpostapi/v1/"
+      value: "https://dokarkiv.nais.adeo.no/rest/journalpostapi/v1"
     - name: DATAPAKKE_API_URL
       value: "https://datakatalog-api.intern.nav.no/v1/datapackage"
     - name: DATAPAKKE_ID
