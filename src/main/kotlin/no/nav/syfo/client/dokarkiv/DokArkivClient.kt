@@ -23,7 +23,7 @@ val AUTOMATISK_JOURNALFOERING_ENHET = "9999"
 @KtorExperimentalAPI
 class DokArkivClient(
     private val url: String,
-    private val oidcClient: AccessTokenProvider,
+    private val accessTokenProvider: AccessTokenProvider,
     private val httpClient: HttpClient
 ) {
     private val log: org.slf4j.Logger = LoggerFactory.getLogger("DokArkivClient")
@@ -53,7 +53,7 @@ class DokArkivClient(
             return httpClient.patch<String>("$url/journalpost/$journalpostId/ferdigstill") {
                 contentType(ContentType.Application.Json)
                 accept(ContentType.Application.Json)
-                header("Authorization", "Bearer ${oidcClient.getToken()}")
+                header("Authorization", "Bearer ${accessTokenProvider.getToken()}")
                 header("Nav-Callid", msgId)
                 body = ferdigstillRequest
             }.also { log.info("ferdigstilling av journalpost ok for journalpostid {}, msgId {}, {}", journalpostId, msgId ) }
@@ -97,7 +97,7 @@ class DokArkivClient(
             httpClient.put<HttpResponse>("$url/journalpost/$journalpostId") {
                 contentType(ContentType.Application.Json)
                 accept(ContentType.Application.Json)
-                header("Authorization", "Bearer ${oidcClient.getToken()}")
+                header("Authorization", "Bearer ${accessTokenProvider.getToken()}")
                 header("Nav-Callid", msgId)
                 body = oppdaterJournalpostRequest
             }.also { log.info("Oppdatering av journalpost ok for journalpostid {}, msgId {}, {}", journalpostId, msgId ) }
