@@ -226,7 +226,12 @@ fun preprodConfig(config: ApplicationConfig) = module {
     single {
         DokArkivClient(
             config.getString("dokarkiv_url"),
-            get(),
+            RestSTSAccessTokenProvider(
+                config.getString("security_token.username"),
+                config.getString("security_token.password"),
+                config.getString("security_token_service_token_url"),
+                get()
+            ),
             get()
         )
     } bind DokArkivClient::class
