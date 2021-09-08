@@ -131,5 +131,5 @@ spec:
     - name: SAF_DOKUMENT_URL
       value: "https://saf-q1.nais.preprod.local/rest"
     - name: SAF_JOURNAL_URL
-      value: "https://saf-q1.dev.intern.nav.no/graphql"
+      value: "https://saf-q1.nais.preprod.local/graphql"
 

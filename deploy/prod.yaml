@@ -124,10 +124,10 @@ spec:
       value: "http://kafka-schema-registry.tpa.svc.nais.local:8081"
     - name: DOKARKIV_URL
       value: "https://dokarkiv.nais.adeo.no/rest/journalpostapi/v1"
-    - name: DATAPAKKE_API_URL
-      value: "https://datakatalog-api.intern.nav.no/v1/datapackage"
     - name: DATAPAKKE_ID
       value: "fb74c8d14d9c579e05b0b4b587843e6b"
+    - name: DATAPAKKE_API_URL
+      value: "https://datakatalog-api.intern.nav.no/v1/datapackage"
     - name: RUN_BACKGROUND_WORKERS
       value: "true"
     - name: PDL_URL
@@ -135,6 +135,6 @@ spec:
     - name: NORG2_URL
       value: "https://norg2.adeo.no/norg2/api/v1"
     - name: SAF_DOKUMENT_URL
-      value: "https://saf-q1.nais.preprod.local/rest"
+      value: "https://saf.nais.adeo.no/rest"
     - name: SAF_JOURNAL_URL
       value: "https://saf.nais.adeo.no/graphql"
