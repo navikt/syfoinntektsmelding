@@ -48,9 +48,9 @@ class DokArkivClient(
         journalpostId: String,
         msgId: String,
         ferdigstillRequest: FerdigstillRequest
-    ): String = retry("ferdigstill_journalpost") {
+    ): String {
         try {
-            return@retry httpClient.patch<String>("$url/journalpost/$journalpostId/ferdigstill") {
+            return httpClient.patch<String>("$url/journalpost/$journalpostId/ferdigstill") {
                 contentType(ContentType.Application.Json)
                 accept(ContentType.Application.Json)
                 header("Authorization", "Bearer ${oidcClient.getToken()}")
@@ -102,6 +102,7 @@ class DokArkivClient(
                 body = oppdaterJournalpostRequest
             }.also { log.info("Oppdatering av journalpost ok for journalpostid {}, msgId {}, {}", journalpostId, msgId ) }
         } catch (e: Exception) {
+            log.error("Dokarkiv svarte med feilmelding", e )
             if (e is ClientRequestException) {
                 when (e.response.status) {
                     HttpStatusCode.NotFound -> {
@@ -114,7 +115,7 @@ class DokArkivClient(
                     }
                 }
             }
-            log.error("Dokarkiv svarte med feilmelding ved oppdatering av journalpost for msgId {}, {}", msgId )
+            log.error("Dokarkiv svarte med feilmelding ved oppdatering av journalpost for msgId {}, {}", msgId, e )
             throw IOException("Dokarkiv svarte med feilmelding ved oppdatering av journalpost for $journalpostId msgid $msgId")
         }
     }
@@ -133,11 +134,4 @@ class DokArkivClient(
         )
         return oppdaterJournalpost(journalpostId, req, msgId )
     }
-
-
-
-
-
-
 }
-
