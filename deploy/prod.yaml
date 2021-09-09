@@ -133,7 +133,7 @@ spec:
     - name: PDL_URL
       value: "https://pdl-api.nais.adeo.no/graphql"
     - name: NORG2_URL
-      value: "https://norg2.adeo.no/norg2/api/v1"
+      value: "https://norg2.nais.adeo.no/norg2/api/v1"
     - name: SAF_DOKUMENT_URL
       value: "https://saf.nais.adeo.no/rest"
     - name: SAF_JOURNAL_URL
