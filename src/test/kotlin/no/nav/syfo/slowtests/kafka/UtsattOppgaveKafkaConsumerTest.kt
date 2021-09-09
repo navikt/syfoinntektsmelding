@@ -16,12 +16,11 @@ import no.nav.syfo.utsattOppgaveKakaData
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 class UtsattOppgaveKafkaConsumerTest : SystemTestBase() {
     private lateinit var kafkaProdusent: KafkaAdminForTests
-    private val topicName = "topic"
+    private val topicName = "tbd.spre-oppgaver"
     private val objectMapper = ObjectMapper()
         .registerModule(KotlinModule())
         .registerModule(Jdk8Module())
