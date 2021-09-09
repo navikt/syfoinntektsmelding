@@ -52,8 +52,6 @@ spec:
   env:
     - name: KOIN_PROFILE
       value: "PREPROD"
-    - name: LOADBALANCER_FQDN
-      value: "syfoinntektsmelding.nais.preprod.local"
     - name: ABAC_PDP_ENDPOINT_URL
       value: "https://wasapp-q0.adeo.no/asm-pdp/authorize"
     - name: SECURITYTOKENSERVICE_URL
@@ -80,14 +78,6 @@ spec:
       value: "5432"
     - name: DATABASE_NAME
       value: "syfoinntektsmelding"
-    - name: BEHANDLEINNGAAENDEJOURNAL_V1_ENDPOINTURL
-      value: "https://dokarkiv-q1.nais.preprod.local/services/behandleinngaaendejournal/v1"
-    - name: VIRKSOMHET_PERSON_V3_ENDPOINTURL
-      value: "https://app-q1.adeo.no/tpsws-aura/ws/Person/v3"
-    - name: VIRKSOMHET_OPPGAVE_V3_ENDPOINTURL
-      value: "https://wasapp-q1.adeo.no/nav-gsak-ws/OppgaveV3"
-    - name: SYFOSERVICESTRANGLERAPI_URL
-      value: "http://syfoservicestrangler.default.svc.nais.local/api"
     - name: AKTOERREGISTER_API_V1_URL
       value: "https://app-q1.adeo.no/aktoerregister/api/v1"
     - name: SECURITY_TOKEN_SERVICE_TOKEN_URL
