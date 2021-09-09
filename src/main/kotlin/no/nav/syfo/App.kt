@@ -22,6 +22,7 @@ import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
 import no.nav.syfo.prosesser.FjernInntektsmeldingByBehandletProcessor
 import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
 import no.nav.syfo.utsattoppgave.FeiletUtsattOppgaveMeldingProsessor
+import no.nav.syfo.web.inntektsmeldingModule
 import no.nav.syfo.web.nais.nais
 import org.flywaydb.core.Flyway
 import org.koin.core.KoinComponent
@@ -79,6 +80,7 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
 
             module {
                 nais()
+                inntektsmeldingModule(config)
             }
         })
 
