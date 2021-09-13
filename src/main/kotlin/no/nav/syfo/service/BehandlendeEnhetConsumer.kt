@@ -39,6 +39,7 @@ class BehandlendeEnhetConsumer(
             val arbeidsfordelinger = runBlocking {
                 norg2Client.hentAlleArbeidsfordelinger(criteria, callId)
             }
+            log.info("Fant enheter: " + arbeidsfordelinger.toString() )
             val behandlendeEnhet = finnAktivBehandlendeEnhet(
                 arbeidsfordelinger,
                 geografiskTilknytning?.geografiskTilknytning,
