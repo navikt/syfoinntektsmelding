@@ -109,20 +109,23 @@ fun Module.mockExternalDependecies() {
             override suspend fun hentAlleArbeidsfordelinger(
                 request: ArbeidsfordelingRequest, callId: String?
             ): List<ArbeidsfordelingResponse> = listOf(ArbeidsfordelingResponse(
-                behandlingstema = "string",
-                behandlingstype= "string",
-                diskresjonskode= "string",
-                enhetId= 0,
-                enhetNavn= "string",
-                enhetNr= "string",
-                geografiskOmraade= "string",
-                gyldigFra= LocalDate.of(2021,1,1),
-                gyldigTil= LocalDate.of(2021,11,1),
-                id= 0,
-                oppgavetype= "string",
-                skalTilLokalkontor= true,
-                tema= "string",
-                temagruppe= "string"
+                aktiveringsdato = LocalDate.of(2020,11,31),
+                antallRessurser = 0,
+                enhetId = 123456789,
+                enhetNr = "1234",
+                kanalstrategi = null,
+                navn = "NAV Område",
+                nedleggelsesdato = null,
+                oppgavebehandler = false,
+                orgNivaa = "SPESEN",
+                orgNrTilKommunaltNavKontor = "",
+                organisasjonsnummer = null,
+                sosialeTjenester = "",
+                status = "Aktiv",
+                type = "KO",
+                underAvviklingDato = null,
+                underEtableringDato = LocalDate.of(2020,11,30),
+                versjon=1
             ))
         }
     } bind Norg2Client::class

@@ -43,22 +43,6 @@ class BehandlendeEnhetConsumerTest {
     }
 
     @Test
-    fun har_ingen_gyldige_perioder() {
-        every {
-            pdlClient.fullPerson(FNR)
-        } returns buildPdlHentFullPerson(DISKRESJONSKODE)
-        val arbeidsfordelinger = listOf<ArbeidsfordelingResponse>(buildArbeidsfordelingResponse(ENHET_NR, LocalDate.of(1900,1,1), LocalDate.of(2000,1,1)))
-        every {
-            runBlocking {
-                norg2Client.hentAlleArbeidsfordelinger(any(), any())
-            }
-        } returns arbeidsfordelinger
-        assertThatThrownBy {
-            BehandlendeEnhetConsumer(pdlClient, norg2Client, metrikk).hentBehandlendeEnhet(FNR, UUID, TIDSPUNKT)
-        }.isInstanceOf(BehandlendeEnhetFeiletException::class.java)
-    }
-
-    @Test
     fun skal_finne_aktiv_arbeidsfordeling() {
         val fordelinger = listOf(buildArbeidsfordelingResponse(ENHET_NR, LocalDate.of(2021,1,1), LocalDate.of(2022,1,1)))
         val enhet = finnAktivBehandlendeEnhet(fordelinger, "", TIDSPUNKT)
@@ -67,29 +51,10 @@ class BehandlendeEnhetConsumerTest {
 
     @Test
     fun skal_ikke_finne_aktiv_arbeidsfordeling() {
-        val fordelinger = listOf(buildArbeidsfordelingResponse(ENHET_NR, LocalDate.of(2020,1,1), LocalDate.of(2021,4,1)))
+        val fordelinger = listOf(buildArbeidsfordelingResponse(ENHET_NR, LocalDate.of(2020,1,1), LocalDate.of(2021,4,1), "Inaktiv"))
         assertThatThrownBy {
             finnAktivBehandlendeEnhet(fordelinger, "", TIDSPUNKT)
         }.isInstanceOf(IngenAktivEnhetException::class.java)
-    }
-
-    fun buildArbeidsfordelingResponse(enhetNr: String, fra: LocalDate, til: LocalDate): ArbeidsfordelingResponse {
-        return ArbeidsfordelingResponse(
-            behandlingstema = "behandlingstema",
-            behandlingstype= "behandlingstype",
-            diskresjonskode= "diskresjonskode",
-            enhetId= 0,
-            enhetNavn= "enhetNavn",
-            enhetNr= enhetNr,
-            geografiskOmraade= "geografiskOmraade",
-            gyldigFra= fra,
-            gyldigTil= til,
-            id= 0,
-            oppgavetype= "oppgavetype",
-            skalTilLokalkontor= true,
-            tema= "tema",
-            temagruppe= "temagruppe"
-        )
     }
 
     fun buildPdlHentFullPerson(diskresjonskode: String): PdlHentFullPerson {

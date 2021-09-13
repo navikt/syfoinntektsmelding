@@ -24,26 +24,29 @@ class Norg2ClientTest {
             norgClient = Norg2Client("url", mockStsClient, buildHttpClientJson(HttpStatusCode.OK, lagResponse()))
             val arbeidsfordelinger = norgClient.hentAlleArbeidsfordelinger(lagRequest(), "123")
             assertThat(arbeidsfordelinger.size).isEqualTo(1)
-            assertThat(arbeidsfordelinger[0].gyldigFra).isEqualTo(LocalDate.of(2021, 1, 1))
+            assertThat(arbeidsfordelinger[0].enhetNr).isEqualTo("1234")
         }
     }
 
     private fun lagResponse(): List<ArbeidsfordelingResponse> {
         val a = ArbeidsfordelingResponse(
-            behandlingstema = "string",
-            behandlingstype = "string",
-            diskresjonskode = "string",
-            enhetId = 0,
-            enhetNavn = "string",
-            enhetNr = "string",
-            geografiskOmraade = "string",
-            gyldigFra = LocalDate.of(2021, 1, 1),
-            gyldigTil = LocalDate.of(2021, 11, 1),
-            id = 0,
-            oppgavetype = "string",
-            skalTilLokalkontor = true,
-            tema = "string",
-            temagruppe = "string"
+            aktiveringsdato = LocalDate.of(2020,12,31),
+            antallRessurser = 0,
+            enhetId = 123456789,
+            enhetNr = "1234",
+            kanalstrategi = null,
+            navn = "NAV Område",
+            nedleggelsesdato = null,
+            oppgavebehandler = false,
+            orgNivaa = "SPESEN",
+            orgNrTilKommunaltNavKontor = "",
+            organisasjonsnummer = null,
+            sosialeTjenester = "",
+            status = "Aktiv",
+            type = "KO",
+            underAvviklingDato = null,
+            underEtableringDato = LocalDate.of(2020,11,30),
+            versjon=1
         )
         return listOf(a)
     }
