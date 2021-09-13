@@ -113,7 +113,8 @@ class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepo
                 SAK_ID =  ?,
                 JOURNALPOST_ID =  ?,
                 TIMEOUT =  ?,
-                TILSTAND =  ?
+                TILSTAND =  ?,
+                ENHET = ?
             WHERE OPPGAVE_ID = ?""".trimMargin()
 
         ds.connection.use {
@@ -126,7 +127,8 @@ class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepo
             ps.setString(6, uo.journalpostId)
             ps.setTimestamp(7, Timestamp.valueOf(uo.timeout))
             ps.setString(8, uo.tilstand.name)
-            ps.setInt(9, uo.id)
+            ps.setString(9, uo.enhet)
+            ps.setInt(10, uo.id)
 
             ps.executeUpdate()
             return uo
@@ -164,7 +166,8 @@ class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepo
                     sakId = res.getString("SAK_ID"),
                     journalpostId = res.getString("JOURNALPOST_ID"),
                     timeout = res.getTimestamp("TIMEOUT").toLocalDateTime(),
-                    tilstand = Tilstand.valueOf(res.getString("TILSTAND"))
+                    tilstand = Tilstand.valueOf(res.getString("TILSTAND")),
+                    enhet = res.getString("ENHET")
                 )
             )
         }

@@ -85,6 +85,29 @@ open class UtsattOppgaveRepositoryImpTest : SystemTestBase(){
     }
 
     @Test
+    fun `oppdaterer oppgaver med enhet`() {
+        val enhet = "Test123"
+
+        val utsattOppgave = repository.opprett(UtsattOppgaveEntitet(
+            inntektsmeldingId = "id3",
+            arkivreferanse = "arkivref",
+            fnr = "fnr",
+            aktørId = "aktørId",
+            sakId = "sakId",
+            journalpostId = "journalpostId",
+            timeout = now().minusHours(1),
+            tilstand = Tilstand.Utsatt,
+            enhet = ""
+        ))
+
+        utsattOppgave.enhet = enhet
+        repository.oppdater(utsattOppgave)
+
+        val enhetDb = repository.findByInntektsmeldingId(utsattOppgave.inntektsmeldingId)?.enhet
+        Assertions.assertEquals(enhet, enhetDb)
+    }
+
+    @Test
     fun `ignorerer oppgaver i andre tilstander`() {
         repository.opprett(
             enOppgaveEntitet(
@@ -140,7 +163,8 @@ open class UtsattOppgaveRepositoryImpTest : SystemTestBase(){
         arkivreferanse = "arkivreferanse",
         timeout = timeout,
         inntektsmeldingId = inntektsmeldingsId,
-        tilstand = tilstand
+        tilstand = tilstand,
+        enhet = ""
     )
 }
 
