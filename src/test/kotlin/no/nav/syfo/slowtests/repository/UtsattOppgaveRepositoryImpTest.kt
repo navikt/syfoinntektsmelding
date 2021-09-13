@@ -87,7 +87,8 @@ open class UtsattOppgaveRepositoryImpTest : SystemTestBase(){
     @Test
     fun `oppdaterer oppgaver med enhet`() {
         val enhet = "Test123"
-        val utsattOppgave = UtsattOppgaveEntitet(
+
+        val utsattOppgave = repository.opprett(UtsattOppgaveEntitet(
             inntektsmeldingId = "id3",
             arkivreferanse = "arkivref",
             fnr = "fnr",
@@ -95,15 +96,15 @@ open class UtsattOppgaveRepositoryImpTest : SystemTestBase(){
             sakId = "sakId",
             journalpostId = "journalpostId",
             timeout = now().minusHours(1),
-            tilstand = Tilstand.Utsatt
-        )
-
-        repository.opprett(utsattOppgave)
+            tilstand = Tilstand.Utsatt,
+            enhet = ""
+        ))
 
         utsattOppgave.enhet = enhet
+        repository.oppdater(utsattOppgave)
 
-        val oppdatertEnhet = repository.oppdater(utsattOppgave).enhet
-        Assertions.assertEquals(enhet, oppdatertEnhet)
+        val enhetDb = repository.findByInntektsmeldingId(utsattOppgave.inntektsmeldingId)?.enhet
+        Assertions.assertEquals(enhet, enhetDb)
     }
 
     @Test
@@ -162,7 +163,8 @@ open class UtsattOppgaveRepositoryImpTest : SystemTestBase(){
         arkivreferanse = "arkivreferanse",
         timeout = timeout,
         inntektsmeldingId = inntektsmeldingsId,
-        tilstand = tilstand
+        tilstand = tilstand,
+        enhet = ""
     )
 }
 
