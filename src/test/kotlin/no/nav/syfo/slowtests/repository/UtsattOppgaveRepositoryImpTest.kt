@@ -85,6 +85,28 @@ open class UtsattOppgaveRepositoryImpTest : SystemTestBase(){
     }
 
     @Test
+    fun `oppdaterer oppgaver med enhet`() {
+        val enhet = "Test123"
+        val utsattOppgave = UtsattOppgaveEntitet(
+            inntektsmeldingId = "id3",
+            arkivreferanse = "arkivref",
+            fnr = "fnr",
+            aktørId = "aktørId",
+            sakId = "sakId",
+            journalpostId = "journalpostId",
+            timeout = now().minusHours(1),
+            tilstand = Tilstand.Utsatt
+        )
+
+        repository.opprett(utsattOppgave)
+
+        utsattOppgave.enhet = enhet
+
+        val oppdatertEnhet = repository.oppdater(utsattOppgave).enhet
+        Assertions.assertEquals(enhet, oppdatertEnhet)
+    }
+
+    @Test
     fun `ignorerer oppgaver i andre tilstander`() {
         repository.opprett(
             enOppgaveEntitet(

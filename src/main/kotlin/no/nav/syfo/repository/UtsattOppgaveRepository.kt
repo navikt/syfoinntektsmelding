@@ -114,7 +114,7 @@ class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepo
                 JOURNALPOST_ID =  ?,
                 TIMEOUT =  ?,
                 TILSTAND =  ?,
-                ENHET = ?,
+                ENHET = ?
             WHERE OPPGAVE_ID = ?""".trimMargin()
 
         ds.connection.use {
