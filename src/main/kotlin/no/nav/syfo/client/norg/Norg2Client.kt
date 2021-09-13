@@ -51,18 +51,21 @@ data class ArbeidsfordelingRequest(
 )
 
 data class ArbeidsfordelingResponse(
-    val id: Int,
-    val diskresjonskode: String? = null,
-    val oppgavetype: String? = null,
-    val behandlingstype: String? = null,
-    val behandlingstema: String? = null,
-    val tema: String? = null,
-    val temagruppe: String? = null,
-    val geografiskOmraade: String? = null,
+    val aktiveringsdato: LocalDate?,
+    val antallRessurser: Int?,
     val enhetId: Int,
     val enhetNr: String? = null,
-    val enhetNavn: String? = null,
-    val skalTilLokalkontor: Boolean,
-    val gyldigFra: LocalDate? = null,
-    val gyldigTil: LocalDate? = null,
+    val kanalstrategi: String?,
+    val navn: String,
+    val nedleggelsesdato: LocalDate?,
+    val oppgavebehandler: Boolean?,
+    val orgNivaa: String?,
+    val orgNrTilKommunaltNavKontor: String?,
+    val organisasjonsnummer: String?,
+    val sosialeTjenester: String?,
+    val status: String?,
+    val type: String?,
+    val underAvviklingDato: LocalDate?,
+    val underEtableringDato: LocalDate?,
+    val versjon: Int?
 )
