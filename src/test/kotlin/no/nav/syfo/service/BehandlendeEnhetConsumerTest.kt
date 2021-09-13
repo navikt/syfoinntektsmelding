@@ -44,14 +44,14 @@ class BehandlendeEnhetConsumerTest {
 
     @Test
     fun skal_finne_aktiv_arbeidsfordeling() {
-        val fordelinger = listOf(buildArbeidsfordelingResponse(ENHET_NR, LocalDate.of(2021,1,1), LocalDate.of(2022,1,1)))
+        val fordelinger = listOf(buildArbeidsfordelingResponse(ENHET_NR, LocalDate.of(2021,1,1), LocalDate.of(2022,1,1), "Aktiv"))
         val enhet = finnAktivBehandlendeEnhet(fordelinger, "", TIDSPUNKT)
         Assertions.assertThat(enhet).isEqualTo(ENHET_NR)
     }
 
     @Test
     fun skal_ikke_finne_aktiv_arbeidsfordeling() {
-        val fordelinger = listOf(buildArbeidsfordelingResponse(ENHET_NR, LocalDate.of(2020,1,1), LocalDate.of(2021,4,1), "Inaktiv"))
+        val fordelinger = emptyList<ArbeidsfordelingResponse>()
         assertThatThrownBy {
             finnAktivBehandlendeEnhet(fordelinger, "", TIDSPUNKT)
         }.isInstanceOf(IngenAktivEnhetException::class.java)
