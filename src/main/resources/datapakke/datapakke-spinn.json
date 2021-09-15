@@ -568,6 +568,45 @@
 
         }
       }
+    },
+    {
+      "title": "Gosysoppgaver opprettet",
+      "description": "Gosys oppgaver opprettet siste 30 dager",
+      "specType": "echart",
+      "spec": {
+        "url": "",
+        "option": {
+          "xAxis": [
+            {
+              "type": "category",
+              "encode": {
+                "x": 0
+              }
+          }
+          ],
+          "yAxis": {
+          },
+          "dataset": {
+            "source": [
+                @OppgStats
+              ]
+          },
+          "tooltip": {
+            "trigger": "axis",
+            "axisPointer": {
+              "type": "shadow"
+            }
+          },
+          "series": [{
+            "name": "Antall oppgaver",
+            "encode": {
+              "x": 1,
+            },
+            "type": "bar"
+          }
+          ]
+        }
+      }
     }
   ]
 }
