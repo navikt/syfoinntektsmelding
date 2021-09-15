@@ -568,6 +568,52 @@
 
         }
       }
+    },
+    {
+      "title": "Gosysoppgaver opprettet",
+      "description": "Gosys oppgaver opprettet siste 30 dager",
+      "specType": "echart",
+      "spec": {
+        "url": "",
+        "option": {
+          "xAxis": [
+            {
+              "type": "category",
+              "encode": {
+                "x": 0
+              }
+            }
+          ],
+          "yAxis": {
+          },
+          "dataset": {
+            "source":  [
+              [40, "2021-08-13"],
+              [13, "2021-08-14"],
+              [20, "2021-08-15"],
+              [40, "2021-08-16"],
+              [32, "2021-08-17"],
+              [90, "2021-08-18"],
+              [40, "2021-08-19"],
+              [21, "2021-08-20"]
+            ]
+          },
+          "tooltip": {
+            "trigger": "axis",
+            "axisPointer": {
+              "type": "shadow"
+            }
+          },
+          "series": [{
+            "name": "Antall oppgaver",
+            "encode": {
+              "x": 1
+            },
+            "type": "bar"
+          }
+          ]
+        }
+      }
     }
   ]
 }
