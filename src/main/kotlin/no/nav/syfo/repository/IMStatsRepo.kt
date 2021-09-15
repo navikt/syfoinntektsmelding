@@ -3,7 +3,9 @@ package no.nav.syfo.repository
 import io.ktor.util.*
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.*
 import javax.sql.DataSource
+import kotlin.collections.ArrayList
 
 data class IMWeeklyStats(
     val weekNumber: Int,
@@ -53,6 +55,11 @@ data class ForsinkelseStats(
     val antall_med_forsinkelsen_altinn: Int,
     val antall_med_forsinkelsen_lps: Int,
     val dager_etter_ff: Int
+)
+
+data class OppgaveStats(
+    val antall: Int,
+    val dato: Date
 )
 
 
@@ -362,6 +369,32 @@ class IMStatsRepoImpl(
             }
 
             return returnValue
+        }
+    }
+
+    fun getOppgaverStats(): List<OppgaveStats>{
+        val query = """
+            select count(*) as antall,
+            Date(timeout) as dato
+            from utsatt_oppgave
+            where tilstand = 'Opprettet'
+            GROUP BY Date(timeout)
+            Order by Date(timeout);
+        """.trimIndent()
+
+        ds.connection.use {
+            val res = it.prepareStatement(query).executeQuery()
+            val returnValue = ArrayList<OppgaveStats>()
+            while (res.next()) {
+                returnValue.add(
+                    OppgaveStats(
+                        res.getInt("antall"),
+                        res.getDate("dato")
+                    )
+                )
+            }
+
+            return  returnValue;
         }
     }
 }
