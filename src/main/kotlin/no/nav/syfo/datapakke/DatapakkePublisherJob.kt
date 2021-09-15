@@ -71,6 +71,8 @@ class DatapakkePublisherJob(
 
         val forsinket = imRepo.getForsinkelseStats()
 
+        val oppgaveStats = imRepo.getOppgaveStats()
+
         val populatedDatapakke = datapakkeTemplate
             .replace("@ukeSerie", timeseries.map { it.weekNumber }.joinToString())
             .replace("@total", timeseries.map { it.total }.joinToString())
@@ -127,6 +129,10 @@ class DatapakkePublisherJob(
 
             .replace("@KSForsinketData", forsinket.map { //language=JSON
                 """[${it.antall_med_forsinkelsen_altinn},${it.antall_med_forsinkelsen_lps},${it.dager_etter_ff}]"""
+            }.joinToString())
+
+            .replace("@OppgStats", oppgaveStats.map { //language=JSON
+                """[${it.antall}, ${it.dato}]"""
             }.joinToString())
 
         runBlocking {
