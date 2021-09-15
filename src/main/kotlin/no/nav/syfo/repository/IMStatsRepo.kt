@@ -59,7 +59,7 @@ data class ForsinkelseStats(
 
 data class OppgaveStats(
     val antall: Int,
-    val dato: Date
+    val dato: String
 )
 
 
@@ -72,6 +72,7 @@ interface IMStatsRepo {
     fun getIngenFravaerPerLPS(): List<LPSStats>
     fun getBackToBackPerLPS(): List<LPSStats>
     fun getForsinkelseStats(): List<ForsinkelseStats>
+    fun getOppgaveStats(): List<OppgaveStats>
 }
 
 /**
@@ -372,12 +373,12 @@ class IMStatsRepoImpl(
         }
     }
 
-    fun getOppgaverStats(): List<OppgaveStats>{
+    override fun getOppgaveStats(): List<OppgaveStats>{
         val query = """
             select count(*) as antall,
             Date(timeout) as dato
             from utsatt_oppgave
-            where tilstand = 'Opprettet'
+            where tilstand = 'Opprettet' and timeout > NOW()::DATE - EXTRACT(DOW FROM NOW())::INTEGER - 30
             GROUP BY Date(timeout)
             Order by Date(timeout);
         """.trimIndent()
@@ -389,7 +390,7 @@ class IMStatsRepoImpl(
                 returnValue.add(
                     OppgaveStats(
                         res.getInt("antall"),
-                        res.getDate("dato")
+                        res.getDate("dato").toString()
                     )
                 )
             }
