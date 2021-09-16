@@ -120,9 +120,6 @@ class DatapakkePublisherJob(
             .replace("@KSlpsAntallNullFra", lpsIngenFravaer.map { //language=JSON
                 """{"value": ${it.antallInntektsmeldinger}, "name": "${it.lpsNavn}"}""" }.joinToString())
 
-            .replace("@KSlpsAntallVersjonerNullFra", lpsIngenFravaer.map { //language=JSON
-                """{"value": ${it.antallVersjoner}, "name": "${it.lpsNavn}"}""" }.joinToString())
-
             .replace("@KSlpsAntallBackToBack", lpsBackToBack.map { //language=JSON
                 """{"value": ${it.antallInntektsmeldinger}, "name": "${it.lpsNavn}"}""" }.joinToString())
 
