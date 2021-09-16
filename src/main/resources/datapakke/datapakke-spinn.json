@@ -600,7 +600,7 @@
           "series": [{
             "name": "Antall oppgaver",
             "encode": {
-              "x": 1,
+              "x": 1
             },
             "type": "bar"
           }

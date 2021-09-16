@@ -132,7 +132,7 @@ class DatapakkePublisherJob(
             }.joinToString())
 
             .replace("@OppgStats", oppgaveStats.map { //language=JSON
-                """[${it.antall}, ${it.dato}]"""
+                """[${it.antall},"${it.dato}"]"""
             }.joinToString())
 
         runBlocking {

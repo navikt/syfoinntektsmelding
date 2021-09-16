@@ -4,10 +4,7 @@ import io.mockk.every
 import io.mockk.mockk
 import no.nav.security.mock.oauth2.http.objectMapper
 import no.nav.syfo.datapakke.DatapakkePublisherJob
-import no.nav.syfo.repository.ArsakStats
-import no.nav.syfo.repository.IMStatsRepo
-import no.nav.syfo.repository.IMWeeklyStats
-import no.nav.syfo.repository.LPSStats
+import no.nav.syfo.repository.*
 import no.nav.syfo.slowtests.SystemTestBase
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Disabled
@@ -54,17 +51,81 @@ class DatapakkePublisherJobTest : SystemTestBase() {
                     Random.nextInt(5000)
                 )
             }.toList()
+
+        every { repo.getWeeklyQualityStats() } returns (1..25)
+            .map {
+                IMWeeklyQualityStats(
+                    it,
+                    Random.nextInt(10000),
+                    Random.nextInt(10000),
+                    Random.nextInt(10000),
+                    Random.nextInt(10000),
+                    Random.nextInt(10000),
+                    Random.nextInt(10000),
+                    Random.nextInt(10000),
+                    Random.nextInt(10000),
+                    Random.nextInt(10000),
+                    Random.nextInt(10000),
+                )
+            }.toList()
+
+        every { repo.getFeilFFPerLPS() } returns (1..10)
+            .map {
+                LPSStats(
+                    UUID.randomUUID().toString().substring(0, 5),
+                    Random.nextInt(50),
+                    Random.nextInt(5000)
+                )
+            }.toList()
+
+        every { repo.getIngenFravaerPerLPS() } returns (1..10)
+            .map {
+                LPSStats(
+                    UUID.randomUUID().toString().substring(0, 5),
+                    Random.nextInt(50),
+                    Random.nextInt(5000)
+                )
+            }.toList()
+
+        every { repo.getBackToBackPerLPS() } returns (1..10)
+            .map {
+                LPSStats(
+                    UUID.randomUUID().toString().substring(0, 5),
+                    Random.nextInt(50),
+                    Random.nextInt(5000)
+                )
+            }.toList()
+
+        every { repo.getForsinkelseStats() } returns (1..30)
+            .map {
+                ForsinkelseStats(
+                    Random.nextInt(50),
+                    Random.nextInt(50),
+                    Random.nextInt(160)
+                )
+            }.toList()
+
+
+
+        every { repo.getOppgaveStats() } returns (1..10)
+            .map {
+                OppgaveStats(
+                    Random.nextInt(100),
+                    "2021-08-14"
+                )
+            }.toList()
     }
 
+
     @Test
-    @Disabled
     internal fun name() = suspendableTest {
         DatapakkePublisherJob(
             repo,
             httpClient,
-            "https://datakatalog-api.dev.intern.nav.no/v1/datapackage",
-            "8f29efc4b7e41002130db5a172587fd4",
+            "localhost:3000",
+            "",
             om = objectMapper
         ).doJob()
+
     }
 }
