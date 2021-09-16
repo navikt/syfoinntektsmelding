@@ -7,14 +7,6 @@ object DatapakkeUtil {
 
         if(sapList.isEmpty()) return null
 
-        val noBuild = sapList.filter { !it.lpsNavn.contains("BUILD") }
-            .reduce{ s1, s2 ->
-                LPSStats("SAP",
-                    s1.antallVersjoner,
-                    s1.antallInntektsmeldinger + s2.antallInntektsmeldinger
-                )
-            }
-
         val withBuild = sapList.filter { it.lpsNavn.contains("BUILD") }.groupBy { it.lpsNavn }.map{it.value.reduce{ s1, s2 ->
             LPSStats(s1.lpsNavn,
                 s1.antallVersjoner,
@@ -23,8 +15,21 @@ object DatapakkeUtil {
         }}
 
         val tempList = withBuild.toMutableList()
-        tempList.add(noBuild)
-
+		val noBuildList = sapList.filter { !it.lpsNavn.contains("BUILD") }
+		if (noBuildList.isNotEmpty()) {
+			val noBuild = noBuildList.reduce { s1, s2 ->
+				LPSStats(
+					"SAP",
+					s1.antallVersjoner,
+					s1.antallInntektsmeldinger + s2.antallInntektsmeldinger
+				)
+			}
+        	tempList.add(noBuild)
+		}
+		if (tempList.size == 1) {
+			val lpsObj = tempList.get(0)
+			return LPSStats("SAP", lpsObj.antallVersjoner, lpsObj.antallInntektsmeldinger)
+		}
         return tempList.reduce{ s1, s2 ->
             LPSStats("SAP",
                 s1.antallVersjoner + s2.antallVersjoner,

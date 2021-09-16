@@ -43,14 +43,23 @@ class DatapakkePublisherJobTest : SystemTestBase() {
                 )
             }.toList()
 
-        every { repo.getLPSStats() } returns (1..10)
-            .map {
-                LPSStats(
-                    UUID.randomUUID().toString().substring(0, 5),
-                    Random.nextInt(50),
-                    Random.nextInt(5000)
-                )
-            }.toList()
+        every { repo.getLPSStats() } returns listOf(
+			LPSStats(
+				"SAP [SID:QHR/002][BUILD:20210820]",
+				1,
+				6
+			),
+			LPSStats(
+				"Aditro Lønn",
+				2,
+				3
+			),
+			LPSStats(
+				"24SevenOffice",
+				1,
+				25
+			)
+		)
 
         every { repo.getWeeklyQualityStats() } returns (1..25)
             .map {
@@ -118,12 +127,13 @@ class DatapakkePublisherJobTest : SystemTestBase() {
 
 
     @Test
+	@Disabled
     internal fun name() = suspendableTest {
         DatapakkePublisherJob(
             repo,
             httpClient,
-            "localhost:3000",
-            "",
+            "https://datakatalog-api.dev.intern.nav.no/v1/datapackage",
+            "fb74c8d14d9c579e05b0b4b587843e6b",
             om = objectMapper
         ).doJob()
 
