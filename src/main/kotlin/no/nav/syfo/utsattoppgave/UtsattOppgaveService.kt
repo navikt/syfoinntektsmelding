@@ -3,6 +3,7 @@ package no.nav.syfo.utsattoppgave
 import io.ktor.util.*
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.client.OppgaveClient
+import no.nav.syfo.domain.OppgaveResultat
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.dto.UtsattOppgaveEntitet
 import no.nav.syfo.service.BehandlendeEnhetConsumer
@@ -42,9 +43,9 @@ class UtsattOppgaveService(
         }
 
         if ((oppgave.tilstand == Tilstand.Utsatt || oppgave.tilstand == Tilstand.Forkastet) && oppdatering.handling == Handling.Opprett) {
-            opprettOppgaveIGosys(oppgave, oppgaveClient, utsattOppgaveDAO, behandlendeEnhetConsumer)
+            val resultat = opprettOppgaveIGosys(oppgave, oppgaveClient, utsattOppgaveDAO, behandlendeEnhetConsumer)
             lagre(oppgave.copy(tilstand = Tilstand.Opprettet))
-            log.info("Endret oppgave: ${oppgave.inntektsmeldingId} til tilstand: ${Tilstand.Opprettet.name}")
+            log.info("Endret oppgave: ${oppgave.inntektsmeldingId} til tilstand: ${Tilstand.Opprettet.name} gosys oppgaveID: ${resultat.oppgaveId} duplikat? ${resultat.duplikat}")
             return
         }
 
@@ -66,7 +67,7 @@ class UtsattOppgaveService(
 fun opprettOppgaveIGosys(utsattOppgave: UtsattOppgaveEntitet,
                          oppgaveClient: OppgaveClient,
                          utsattOppgaveDAO: UtsattOppgaveDAO,
-                         behandlendeEnhetConsumer: BehandlendeEnhetConsumer) {
+                         behandlendeEnhetConsumer: BehandlendeEnhetConsumer): OppgaveResultat {
     val behandlendeEnhet = behandlendeEnhetConsumer.hentBehandlendeEnhet(utsattOppgave.fnr, utsattOppgave.inntektsmeldingId)
     val gjelderUtland = (SYKEPENGER_UTLAND == behandlendeEnhet)
     val resultat = runBlocking {
@@ -80,7 +81,8 @@ fun opprettOppgaveIGosys(utsattOppgave: UtsattOppgaveEntitet,
     }
     utsattOppgave.enhet = behandlendeEnhet
     utsattOppgave.gosysOppgaveId = resultat.oppgaveId.toString()
-    utsattOppgaveDAO.lagre(utsattOppgave);
+    utsattOppgaveDAO.lagre(utsattOppgave)
+    return resultat
 }
 
 class OppgaveOppdatering(
