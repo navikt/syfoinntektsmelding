@@ -82,8 +82,8 @@ class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepo
 
     override fun opprett(uo: UtsattOppgaveEntitet): UtsattOppgaveEntitet {
         val insertStatement =
-            """INSERT INTO UTSATT_OPPGAVE (INNTEKTSMELDING_ID, ARKIVREFERANSE, FNR, AKTOR_ID, SAK_ID, JOURNALPOST_ID, TIMEOUT, TILSTAND)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """INSERT INTO UTSATT_OPPGAVE (INNTEKTSMELDING_ID, ARKIVREFERANSE, FNR, AKTOR_ID, SAK_ID, JOURNALPOST_ID, TIMEOUT, TILSTAND, GOSYS_OPPGAVE_ID)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)
         RETURNING *;""".trimMargin()
 
         val utsattOppgaver = ArrayList<UtsattOppgaveEntitet>()
@@ -98,6 +98,7 @@ class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepo
             ps.setString(6, uo.journalpostId)
             ps.setTimestamp(7, Timestamp.valueOf(uo.timeout))
             ps.setString(8, uo.tilstand.name)
+            ps.setString(9, uo.gosysOppgaveId)
             val res = ps.executeQuery()
             return resultLoop(res, utsattOppgaver).first()
         }
@@ -114,7 +115,8 @@ class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepo
                 JOURNALPOST_ID =  ?,
                 TIMEOUT =  ?,
                 TILSTAND =  ?,
-                ENHET = ?
+                ENHET = ?,
+		GOSYS_OPPGAVE_ID = ?
             WHERE OPPGAVE_ID = ?""".trimMargin()
 
         ds.connection.use {
@@ -128,7 +130,8 @@ class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepo
             ps.setTimestamp(7, Timestamp.valueOf(uo.timeout))
             ps.setString(8, uo.tilstand.name)
             ps.setString(9, uo.enhet)
-            ps.setInt(10, uo.id)
+            ps.setString(10, uo.gosysOppgaveId)
+            ps.setInt(11, uo.id)
 
             ps.executeUpdate()
             return uo
@@ -167,7 +170,8 @@ class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepo
                     journalpostId = res.getString("JOURNALPOST_ID"),
                     timeout = res.getTimestamp("TIMEOUT").toLocalDateTime(),
                     tilstand = Tilstand.valueOf(res.getString("TILSTAND")),
-                    enhet = res.getString("ENHET")
+                    enhet = res.getString("ENHET"),
+                    gosysOppgaveId = res.getString("GOSYS_OPPGAVE_ID")
                 )
             )
         }

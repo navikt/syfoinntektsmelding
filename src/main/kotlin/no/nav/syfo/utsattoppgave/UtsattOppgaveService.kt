@@ -69,7 +69,7 @@ fun opprettOppgaveIGosys(utsattOppgave: UtsattOppgaveEntitet,
                          behandlendeEnhetConsumer: BehandlendeEnhetConsumer) {
     val behandlendeEnhet = behandlendeEnhetConsumer.hentBehandlendeEnhet(utsattOppgave.fnr, utsattOppgave.inntektsmeldingId)
     val gjelderUtland = (SYKEPENGER_UTLAND == behandlendeEnhet)
-    runBlocking {
+    val resultat = runBlocking {
         oppgaveClient.opprettOppgave(
             sakId = utsattOppgave.sakId,
             journalpostId = utsattOppgave.journalpostId,
@@ -78,7 +78,8 @@ fun opprettOppgaveIGosys(utsattOppgave: UtsattOppgaveEntitet,
             gjelderUtland = gjelderUtland
         )
     }
-    utsattOppgave.enhet = behandlendeEnhet;
+    utsattOppgave.enhet = behandlendeEnhet
+    utsattOppgave.gosysOppgaveId = resultat.oppgaveId.toString()
     utsattOppgaveDAO.lagre(utsattOppgave);
 }
 
