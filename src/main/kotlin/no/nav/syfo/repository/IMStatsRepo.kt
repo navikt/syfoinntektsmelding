@@ -352,6 +352,7 @@ class IMStatsRepoImpl(
             where
                     data ->> 'førsteFraværsdag' = data -> 'arbeidsgiverperioder' -> 0 ->> 'fom' and
                     (date(data -> 'arbeidsgiverperioder' -> 0 ->> 'tom') - date(data -> 'arbeidsgiverperioder' -> 0 ->> 'fom')) = 15
+					and behandlet > NOW()::DATE - EXTRACT(DOW FROM NOW())::INTEGER - 90
             GROUP BY
                 DATE_PART('day', behandlet - DATE(data ->> 'førsteFraværsdag'));
         """.trimIndent()
@@ -378,7 +379,9 @@ class IMStatsRepoImpl(
             select count(*) as antall,
             Date(timeout) as dato
             from utsatt_oppgave
-            where tilstand = 'Opprettet' and timeout > NOW()::DATE - EXTRACT(DOW FROM NOW())::INTEGER - 30
+            where tilstand = 'Opprettet'
+			and timeout > NOW()::DATE - EXTRACT(DOW FROM NOW())::INTEGER - 30
+			and timeout < NOW()::DATE
             GROUP BY Date(timeout)
             Order by Date(timeout);
         """.trimIndent()
