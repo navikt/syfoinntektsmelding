@@ -9,6 +9,7 @@ import no.nav.syfo.dto.UtsattOppgaveEntitet
 import no.nav.syfo.service.BehandlendeEnhetConsumer
 import no.nav.syfo.service.SYKEPENGER_UTLAND
 import org.slf4j.LoggerFactory
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
 
@@ -31,12 +32,14 @@ class UtsattOppgaveService(
         if (oppgave.tilstand == Tilstand.Utsatt && oppdatering.handling == Handling.Utsett) {
             oppdatering.timeout ?: error("Timeout på utsettelse mangler")
             oppgave.timeout = oppdatering.timeout
+			oppgave.oppdatert = LocalDateTime.now()
             lagre(oppgave)
             log.info("Oppdaterte timeout på inntektsmelding: ${oppgave.inntektsmeldingId} til ${oppdatering.timeout}")
             return
         }
 
         if (oppgave.tilstand == Tilstand.Utsatt && oppdatering.handling == Handling.Forkast) {
+			oppgave.oppdatert = LocalDateTime.now()
             lagre(oppgave.copy(tilstand = Tilstand.Forkastet))
             log.info("Endret oppgave: ${oppgave.inntektsmeldingId} til tilstand: ${Tilstand.Forkastet.name}")
             return
@@ -44,6 +47,7 @@ class UtsattOppgaveService(
 
         if ((oppgave.tilstand == Tilstand.Utsatt || oppgave.tilstand == Tilstand.Forkastet) && oppdatering.handling == Handling.Opprett) {
             val resultat = opprettOppgaveIGosys(oppgave, oppgaveClient, utsattOppgaveDAO, behandlendeEnhetConsumer)
+			oppgave.oppdatert = LocalDateTime.now()
             lagre(oppgave.copy(tilstand = Tilstand.Opprettet))
             log.info("Endret oppgave: ${oppgave.inntektsmeldingId} til tilstand: ${Tilstand.Opprettet.name} gosys oppgaveID: ${resultat.oppgaveId} duplikat? ${resultat.duplikat}")
             return
