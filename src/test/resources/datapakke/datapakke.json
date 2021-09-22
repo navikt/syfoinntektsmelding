@@ -517,7 +517,7 @@
     },
     {
       "title": "Antall IM for Insendingstidspunt opp mot FF",
-      "description": "Antall IM / antall dager melleom insendingstidspunkt og FF",
+      "description": "Grafene viser hvor lenge etter første fraværsdag en inntektsmelding sendes inn. Tilfeller der arbeidsgiverperioden er på 16 kalenderdager og der første fraværsdag er satt til første dag i arbeidsgiverperioden er tatt med. I slike tilfeller forventer vi at inntektsmelding sendes inn snarest mulig etter at arbeidsgiverperioden er over, men heller ikke før. Vi forventer dermed å se mange inntektsmeldinger på dag 16 i arbeidsgiverperioden eller dagen etter, men mange færre før dette",
       "specType": "echart",
       "spec": {
         "url": "",
@@ -540,7 +540,8 @@
             "left": "25%",
             "data": [
               "Forsinkelse fra Altinn",
-              "Forsinkelse fra LPS"
+              "Forsinkelse fra LPS",
+              "16 dager linje"
             ]
           },
           "dataZoom": [{
@@ -590,9 +591,19 @@
                 "y": 1,
                 "tooltip":[1, 2]
               },
+              "type": "line"
+            },
+            {
+              "name": "16 dager linje",
               "type": "line",
-              "smooth": true
+              "data": {},
+              "markLine": {
+                "data": [{
+                  "xAxis": 16
+                }]
+              }
             }
+
           ]
 
         }
