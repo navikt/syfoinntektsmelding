@@ -13,7 +13,8 @@ data class UtsattOppgaveEntitet(
     var timeout: LocalDateTime,
     var tilstand: Tilstand,
     var enhet: String = "",
-    var gosysOppgaveId: String = ""
+    var gosysOppgaveId: String = "",
+	var oppdatert: LocalDateTime
 )
 
 enum class Tilstand {
