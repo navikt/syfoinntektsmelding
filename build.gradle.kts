@@ -9,7 +9,7 @@ val hikariVersion = "3.4.5"
 val ktorVersion = "1.5.3"
 val koinVersion = "2.0.1"
 val tokenSupportVersion = "1.3.1"
-val mockOAuth2ServerVersion = "0.2.1"
+val mockOAuth2ServerVersion = "0.3.4"
 val brukernotifikasjonSchemasVersion = "1.2021.01.18-11.12-b9c8c40b98d1"
 val jacksonVersion = "2.12.3"
 val junitJupiterVersion = "5.7.0"
@@ -109,7 +109,7 @@ dependencies {
     constraints {
         implementation("io.netty:netty-codec-http2") {
             version {
-                strictly("4.1.61.Final")
+                strictly("4.1.68.Final")
             }
             because("snyk control")
         }
@@ -133,8 +133,8 @@ dependencies {
             because("snyk control")
         }
     }
-    implementation("io.netty:netty-codec:4.1.59.Final") // overstyrer transiente 4.1.44
-    implementation("io.netty:netty-codec-http:4.1.59.Final") // overstyrer transiente 4.1.51.Final gjennom ktor-server-netty
+    implementation("io.netty:netty-codec:4.1.68.Final") // overstyrer transiente 4.1.44
+    implementation("io.netty:netty-codec-http:4.1.68.Final") // overstyrer transiente 4.1.51.Final gjennom ktor-server-netty
     // SNYK overrides
     implementation("commons-collections:commons-collections:3.2.2")
     // - end SNYK overrides
