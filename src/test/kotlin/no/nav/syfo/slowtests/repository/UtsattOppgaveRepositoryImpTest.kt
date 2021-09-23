@@ -42,7 +42,8 @@ open class UtsattOppgaveRepositoryImpTest : SystemTestBase(){
                 sakId = "sakId",
                 journalpostId = "journalpostId",
                 timeout = now().minusHours(1),
-                tilstand = Tilstand.Utsatt
+                tilstand = Tilstand.Utsatt,
+				oppdatert = now()
             )
         )
 
@@ -63,7 +64,8 @@ open class UtsattOppgaveRepositoryImpTest : SystemTestBase(){
                 sakId = "sakId",
                 journalpostId = "journalpostId",
                 timeout = now().minusHours(1),
-                tilstand = Tilstand.Utsatt
+                tilstand = Tilstand.Utsatt,
+				oppdatert = now()
             )
         ).id
 
@@ -76,7 +78,8 @@ open class UtsattOppgaveRepositoryImpTest : SystemTestBase(){
                 sakId = "sakId",
                 journalpostId = "journalpostId",
                 timeout = now().minusHours(1),
-                tilstand = Tilstand.Utsatt
+                tilstand = Tilstand.Utsatt,
+				oppdatert = now()
             )
         ).id
 
@@ -97,7 +100,8 @@ open class UtsattOppgaveRepositoryImpTest : SystemTestBase(){
             journalpostId = "journalpostId",
             timeout = now().minusHours(1),
             tilstand = Tilstand.Utsatt,
-            enhet = ""
+            enhet = "",
+			oppdatert = now()
         ))
 
         utsattOppgave.enhet = enhet
@@ -164,7 +168,8 @@ open class UtsattOppgaveRepositoryImpTest : SystemTestBase(){
         timeout = timeout,
         inntektsmeldingId = inntektsmeldingsId,
         tilstand = tilstand,
-        enhet = ""
+        enhet = "",
+		oppdatert = now()
     )
 }
 
