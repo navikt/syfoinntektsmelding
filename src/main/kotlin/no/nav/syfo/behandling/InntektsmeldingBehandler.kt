@@ -71,8 +71,7 @@ class InntektsmeldingBehandler(
                         arkivreferanse = inntektsmelding.arkivRefereranse,
                         inntektsmeldingId = dto.uuid,
                         tilstand = Tilstand.Utsatt,
-                        timeout = LocalDateTime.now().plusHours(OPPRETT_OPPGAVE_FORSINKELSE),
-						oppdatert = LocalDateTime.now()
+                        timeout = LocalDateTime.now().plusHours(OPPRETT_OPPGAVE_FORSINKELSE)
                     )
                 )
                 log.info("opprettet utsatt oppgave på ${inntektsmelding.arkivRefereranse}")

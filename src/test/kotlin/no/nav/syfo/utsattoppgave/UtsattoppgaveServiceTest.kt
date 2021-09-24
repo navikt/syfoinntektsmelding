@@ -49,8 +49,7 @@ open class UtsattOppgaveServiceTest {
         arkivreferanse = arkivreferanse,
         timeout = timeout,
         inntektsmeldingId = UUID.randomUUID().toString(),
-        tilstand = tilstand,
-		oppdatert = LocalDateTime.now()
+        tilstand = tilstand
     )
 
 }
