@@ -117,8 +117,8 @@ class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepo
                 TIMEOUT =  ?,
                 TILSTAND =  ?,
                 ENHET = ?,
-				GOSYS_OPPGAVE_ID = ?,
-				OPPDATERT = ?
+                GOSYS_OPPGAVE_ID = ?,
+                OPPDATERT = ?
             WHERE OPPGAVE_ID = ?""".trimMargin()
 
         ds.connection.use {
@@ -133,7 +133,7 @@ class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepo
             ps.setString(8, uo.tilstand.name)
             ps.setString(9, uo.enhet)
             ps.setString(10, uo.gosysOppgaveId)
-			ps.setTimestamp(11, Timestamp.valueOf(uo.oppdatert))
+            ps.setTimestamp(11, Timestamp.valueOf(uo.oppdatert))
             ps.setInt(12, uo.id)
 
             ps.executeUpdate()
@@ -175,7 +175,7 @@ class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepo
                     tilstand = Tilstand.valueOf(res.getString("TILSTAND")),
                     enhet = res.getString("ENHET"),
                     gosysOppgaveId = res.getString("GOSYS_OPPGAVE_ID"),
-					oppdatert = res.getTimestamp("OPPDATERT").toLocalDateTime()
+                    oppdatert = res.getTimestamp("OPPDATERT").toLocalDateTime()
                 )
             )
         }
