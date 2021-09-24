@@ -55,8 +55,7 @@ fun getRandonUtsattOppgaveEntitet(
         sakId = sakId,
         journalpostId = journalpostId,
         timeout = timeout,
-        tilstand = tilstand,
-		oppdatert = LocalDateTime.now()
+        tilstand = tilstand
     )
 }
 

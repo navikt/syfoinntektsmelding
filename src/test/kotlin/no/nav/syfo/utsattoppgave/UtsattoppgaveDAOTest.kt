@@ -79,8 +79,7 @@ open class UtsattOppgaveDAOTest {
         arkivreferanse = "arkivreferanse",
         timeout = now(),
         inntektsmeldingId = UUID.randomUUID().toString(),
-        tilstand = Tilstand.Utsatt,
-		oppdatert = now()
+        tilstand = Tilstand.Utsatt
     )
 }
 
