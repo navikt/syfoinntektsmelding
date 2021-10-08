@@ -430,7 +430,7 @@
 
     {
       "title": "Antall IM for 0-fravær",
-      "description": "Siste 7 dager",
+      "description": "Siste 4 uker",
       "specType": "echart",
       "spec": {
         "url": "",
