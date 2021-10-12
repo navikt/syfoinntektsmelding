@@ -14,7 +14,7 @@ data class UtsattOppgaveEntitet(
     var tilstand: Tilstand,
     var enhet: String = "",
     var gosysOppgaveId: String = "",
-    var oppdatert: LocalDateTime = LocalDateTime.now()
+    var oppdatert: LocalDateTime? = LocalDateTime.now()
 )
 
 enum class Tilstand {

@@ -149,6 +149,43 @@ open class UtsattOppgaveRepositoryImpTest : SystemTestBase(){
         Assertions.assertEquals(1, oppgaver.size)
     }
 
+    @Test
+    fun `hent oppgaver med og uten oppdatert felt`() {
+        repository.opprett(
+            UtsattOppgaveEntitet(
+                id = 0,
+                inntektsmeldingId = "id",
+                arkivreferanse = "arkivref",
+                fnr = "fnr",
+                aktørId = "aktørId",
+                sakId = "sakId",
+                journalpostId = "journalpostId",
+                timeout = now().minusHours(1),
+                tilstand = Tilstand.Utsatt
+            )
+        )
+
+        repository.opprett(
+            UtsattOppgaveEntitet(
+                id = 1,
+                inntektsmeldingId = "id2",
+                arkivreferanse = "arkivref2",
+                fnr = "fnr2",
+                aktørId = "aktørId2",
+                sakId = "sakId2",
+                journalpostId = "journalpostId2",
+                timeout = now().minusHours(1),
+                tilstand = Tilstand.Utsatt,
+                oppdatert = null
+            )
+        )
+
+        val oppgaver =
+            repository.findUtsattOppgaveEntitetByTimeoutBeforeAndTilstandEquals(now(), Tilstand.Utsatt)
+
+        Assertions.assertEquals(2, oppgaver.size)
+    }
+
     private fun enOppgaveEntitet(
         id: Int,
         timeout: LocalDateTime,

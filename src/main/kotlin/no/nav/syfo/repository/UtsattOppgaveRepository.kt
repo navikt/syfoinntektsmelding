@@ -99,7 +99,7 @@ class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepo
             ps.setTimestamp(7, Timestamp.valueOf(uo.timeout))
             ps.setString(8, uo.tilstand.name)
             ps.setString(9, uo.gosysOppgaveId)
-			ps.setTimestamp(10, Timestamp.valueOf(uo.oppdatert))
+			if(uo.oppdatert != null) ps.setTimestamp(10,Timestamp.valueOf(uo.oppdatert)) else ps.setNull(10, 0)
             val res = ps.executeQuery()
             return resultLoop(res, utsattOppgaver).first()
         }
@@ -133,7 +133,7 @@ class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepo
             ps.setString(8, uo.tilstand.name)
             ps.setString(9, uo.enhet)
             ps.setString(10, uo.gosysOppgaveId)
-            ps.setTimestamp(11, Timestamp.valueOf(uo.oppdatert))
+            ps.setTimestamp(11, Timestamp.valueOf(uo.oppdatert ?: LocalDateTime.now()))
             ps.setInt(12, uo.id)
 
             ps.executeUpdate()
@@ -175,7 +175,7 @@ class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepo
                     tilstand = Tilstand.valueOf(res.getString("TILSTAND")),
                     enhet = res.getString("ENHET"),
                     gosysOppgaveId = res.getString("GOSYS_OPPGAVE_ID"),
-                    oppdatert = res.getTimestamp("OPPDATERT").toLocalDateTime()
+                    oppdatert = res.getTimestamp("OPPDATERT")?.toLocalDateTime()
                 )
             )
         }
