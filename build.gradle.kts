@@ -172,8 +172,8 @@ dependencies {
 
     implementation("com.google.guava:guava:30.0-jre")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3")
-    implementation("io.confluent:kafka-streams-avro-serde:6.1.2")
-    implementation("io.confluent:kafka-avro-serializer:6.1.2")
+    implementation("io.confluent:kafka-streams-avro-serde:6.2.1")
+    implementation("io.confluent:kafka-avro-serializer:6.2.1")
     implementation("org.apache.kafka:kafka-streams:2.8.0")
 
     testImplementation("io.mockk:mockk:1.11.0")
