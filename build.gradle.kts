@@ -31,7 +31,7 @@ plugins {
 }
 
 application {
-    //mainClassName = mainClass
+    mainClass.set(mainClass)
 }
 
 sonarqube {
