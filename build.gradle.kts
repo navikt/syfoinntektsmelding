@@ -265,6 +265,6 @@ task<Test>("slowTests") {
 }
 
 tasks.withType<Wrapper> {
-    gradleVersion = "0.2"
+    gradleVersion = "7.2"
 }
 
