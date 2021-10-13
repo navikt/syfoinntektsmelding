@@ -29,8 +29,9 @@ plugins {
     id("org.sonarqube") version "3.0"
     jacoco
 }
+
 application {
-    mainClassName = mainClass
+    //mainClassName = mainClass
 }
 
 sonarqube {
@@ -265,6 +266,6 @@ task<Test>("slowTests") {
 }
 
 tasks.withType<Wrapper> {
-    gradleVersion = "6.9.1"
+    gradleVersion = "7.2"
 }
 
