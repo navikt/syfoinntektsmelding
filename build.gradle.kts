@@ -30,7 +30,7 @@ plugins {
     jacoco
 }
 application {
-    mainClassName = mainClass
+    mainClass.set(mainClass)
 }
 
 sonarqube {
@@ -263,8 +263,3 @@ task<Test>("slowTests") {
     group = "verification"
 
 }
-
-tasks.withType<Wrapper> {
-    gradleVersion = "6.8.2"
-}
-
