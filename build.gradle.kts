@@ -67,11 +67,11 @@ buildscript {
 }
 
 repositories {
-    jcenter {
-        content {
-            excludeGroup("no.nav.helsearbeidsgiver")
-        }
-    }
+
+    mavenCentral()
+
+    google ()
+
     mavenCentral {
         content {
             excludeGroup("no.nav.helsearbeidsgiver")
@@ -91,7 +91,6 @@ repositories {
         }
         setUrl("https://maven.pkg.github.com/navikt/inntektsmelding-kontrakt")
     }
-    maven("https://kotlin.bintray.com/ktor")
     maven("https://packages.confluent.io/maven/")
     maven(url = "https://jitpack.io") {
         content {
@@ -171,8 +170,8 @@ dependencies {
 
     implementation("com.google.guava:guava:30.0-jre")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3")
-    implementation("io.confluent:kafka-streams-avro-serde:6.1.2")
-    implementation("io.confluent:kafka-avro-serializer:6.1.2")
+    implementation("io.confluent:kafka-streams-avro-serde:6.2.1")
+    implementation("io.confluent:kafka-avro-serializer:6.2.1")
     implementation("org.apache.kafka:kafka-streams:2.8.0")
 
     testImplementation("io.mockk:mockk:1.11.0")
@@ -190,11 +189,9 @@ dependencies {
     implementation("io.ktor:ktor-locations:$ktorVersion")
     testImplementation("io.ktor:ktor-server-tests:$ktorVersion")
 
-    implementation("org.koin:koin-core:$koinVersion")
-    implementation("org.koin:koin-ktor:$koinVersion")
-    testImplementation("org.koin:koin-test:$koinVersion")
-
-
+    implementation("io.insert-koin:koin-core:3.1.2")
+    implementation("io.insert-koin:koin-ktor:3.1.2")
+    testImplementation("io.insert-koin:koin-test:3.1.2")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.11.0")
 
