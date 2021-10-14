@@ -1,6 +1,6 @@
 # Syfoinntektsmelding
 
-[![Actions Status](https://github.com/navikt/syfoinntektsmelding/workflows/Bygg%20og%20deploy%20til%20prod/badge.svg)](https://github.com/navikt/syfoinntektsmelding/actions)  [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=navikt_syfoinntektsmelding&metric=alert_status)](https://sonarcloud.io/dashboard?id=navikt_syfoinntektsmelding)
+[![Actions Status](https://github.com/navikt/syfoinntektsmelding/workflows/Bygg%20og%20deploy%20til%20prod/badge.svg)](https://github.com/navikt/syfoinntektsmelding/actions)  [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=navikt_syfoinntektsmelding&metric=alert_status)](https://sonarcloud.io/dashboard?id=navikt_syfoinntektsmelding) [![Known Vulnerabilities](https://snyk.io/test/github/navikt/syfoinntektsmelding/badge.svg)]
 
 
 ## Formål
