@@ -2,6 +2,8 @@
 
 [![Actions Status](https://github.com/navikt/syfoinntektsmelding/workflows/Bygg%20og%20deploy%20til%20prod/badge.svg)](https://github.com/navikt/syfoinntektsmelding/actions)
 
+[![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=navikt_syfoinntektsmelding)](https://sonarcloud.io/dashboard?id=navikt_syfoinntektsmelding)
+
 ## Formål
 Applikasjonen tar imot innkommende inntektsmeldinger for sykepenger, journalfører dette og oppretter oppgaver i
 Gosys for behandlende enhet. Dersom behandlede enhet ikke er funnet blir det opprettet en fordelingsoppgave istedet.
