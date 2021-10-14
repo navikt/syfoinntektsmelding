@@ -29,9 +29,8 @@ plugins {
     id("org.sonarqube") version "3.0"
     jacoco
 }
-application {
-    mainClass.set(mainClass)
-}
+
+application.mainClass.set(mainClass)
 
 sonarqube {
     properties {
@@ -70,20 +69,14 @@ repositories {
 
     mavenCentral()
 
-    google ()
+    google()
 
-    mavenCentral {
-        content {
-            excludeGroup("no.nav.helsearbeidsgiver")
-        }
-    }
-    maven {
-        credentials {
-            username = "x-access-token"
-            password = githubPassword
-        }
-        setUrl("https://maven.pkg.github.com/navikt/helse-arbeidsgiver-felles-backend")
-    }
+
+
+    maven(url = "https://packages.confluent.io/maven/")
+
+    maven(url = "https://maven.pkg.github.com/navikt/inntektsmelding-kontrakt")
+
     maven {
         credentials {
             username = "x-access-token"
@@ -91,12 +84,15 @@ repositories {
         }
         setUrl("https://maven.pkg.github.com/navikt/inntektsmelding-kontrakt")
     }
-    maven("https://packages.confluent.io/maven/")
-    maven(url = "https://jitpack.io") {
-        content {
-            excludeGroup("no.nav.helsearbeidsgiver")
+
+    maven {
+        credentials {
+            username = "x-access-token"
+            password = githubPassword
         }
+        setUrl("https://maven.pkg.github.com/navikt/helse-arbeidsgiver-felles-backend")
     }
+
 }
 
 java {
@@ -166,6 +162,7 @@ dependencies {
     implementation("net.logstash.logback:logstash-logback-encoder:6.4")
     implementation("org.apache.httpcomponents:httpclient:4.5.13")
     implementation("io.micrometer:micrometer-core:$micrometerVersion")
+    implementation("io.insert-koin:koin-core-jvm:3.1.2")
     runtimeOnly("io.micrometer:micrometer-registry-prometheus:$micrometerVersion")
 
     implementation("com.google.guava:guava:30.0-jre")
@@ -226,7 +223,6 @@ tasks.named<Jar>("jar") {
         }
     }
 }
-tasks.named<KotlinCompile>("compileKotlin")
 
 tasks.named<KotlinCompile>("compileKotlin") {
     kotlinOptions.jvmTarget = "11"
