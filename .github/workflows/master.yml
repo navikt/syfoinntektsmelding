@@ -48,11 +48,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-cache-
       - name: test and build
-        run: ./gradlew test build jacocoTestReport sonarqube
+        run: ./gradlew test build
         env:
           ORG_GRADLE_PROJECT_githubUser: x-access-token
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Login to GitHub Packages Docker Registry
         uses: docker/login-action@v1
