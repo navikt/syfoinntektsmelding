@@ -29,9 +29,8 @@ plugins {
     id("org.sonarqube") version "3.0"
     jacoco
 }
-application {
-    mainClassName = mainClass
-}
+
+application.mainClass.set(mainClass)
 
 sonarqube {
     properties {
@@ -67,23 +66,9 @@ buildscript {
 }
 
 repositories {
-    jcenter {
-        content {
-            excludeGroup("no.nav.helsearbeidsgiver")
-        }
-    }
-    mavenCentral {
-        content {
-            excludeGroup("no.nav.helsearbeidsgiver")
-        }
-    }
-    maven {
-        credentials {
-            username = "x-access-token"
-            password = githubPassword
-        }
-        setUrl("https://maven.pkg.github.com/navikt/helse-arbeidsgiver-felles-backend")
-    }
+    mavenCentral()
+    google()
+    maven(url = "https://packages.confluent.io/maven/")
     maven {
         credentials {
             username = "x-access-token"
@@ -91,12 +76,12 @@ repositories {
         }
         setUrl("https://maven.pkg.github.com/navikt/inntektsmelding-kontrakt")
     }
-    maven("https://kotlin.bintray.com/ktor")
-    maven("https://packages.confluent.io/maven/")
-    maven(url = "https://jitpack.io") {
-        content {
-            excludeGroup("no.nav.helsearbeidsgiver")
+    maven {
+        credentials {
+            username = "x-access-token"
+            password = githubPassword
         }
+        setUrl("https://maven.pkg.github.com/navikt/helse-arbeidsgiver-felles-backend")
     }
 }
 
@@ -167,12 +152,13 @@ dependencies {
     implementation("net.logstash.logback:logstash-logback-encoder:6.4")
     implementation("org.apache.httpcomponents:httpclient:4.5.13")
     implementation("io.micrometer:micrometer-core:$micrometerVersion")
+    implementation("io.insert-koin:koin-core-jvm:3.1.2")
     runtimeOnly("io.micrometer:micrometer-registry-prometheus:$micrometerVersion")
 
     implementation("com.google.guava:guava:30.0-jre")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3")
-    implementation("io.confluent:kafka-streams-avro-serde:6.1.2")
-    implementation("io.confluent:kafka-avro-serializer:6.1.2")
+    implementation("io.confluent:kafka-streams-avro-serde:6.2.1")
+    implementation("io.confluent:kafka-avro-serializer:6.2.1")
     implementation("org.apache.kafka:kafka-streams:2.8.0")
 
     testImplementation("io.mockk:mockk:1.11.0")
@@ -190,11 +176,9 @@ dependencies {
     implementation("io.ktor:ktor-locations:$ktorVersion")
     testImplementation("io.ktor:ktor-server-tests:$ktorVersion")
 
-    implementation("org.koin:koin-core:$koinVersion")
-    implementation("org.koin:koin-ktor:$koinVersion")
-    testImplementation("org.koin:koin-test:$koinVersion")
-
-
+    implementation("io.insert-koin:koin-core:3.1.2")
+    implementation("io.insert-koin:koin-ktor:3.1.2")
+    testImplementation("io.insert-koin:koin-test:3.1.2")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.11.0")
 
@@ -229,7 +213,6 @@ tasks.named<Jar>("jar") {
         }
     }
 }
-tasks.named<KotlinCompile>("compileKotlin")
 
 tasks.named<KotlinCompile>("compileKotlin") {
     kotlinOptions.jvmTarget = "11"
@@ -240,8 +223,6 @@ tasks.named<KotlinCompile>("compileTestKotlin") {
     kotlinOptions.jvmTarget = "11"
     kotlinOptions.suppressWarnings = true
 }
-
-
 
 tasks.withType<Test> {
     useJUnitPlatform()
@@ -261,10 +242,4 @@ task<Test>("slowTests") {
     include("no/nav/syfo/slowtests/**")
     outputs.upToDateWhen { false }
     group = "verification"
-
 }
-
-tasks.withType<Wrapper> {
-    gradleVersion = "6.8.2"
-}
-

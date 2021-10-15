@@ -16,7 +16,6 @@ import no.nav.helse.arbeidsgiver.system.getString
 import no.nav.syfo.datapakke.DatapakkePublisherJob
 import no.nav.syfo.integration.kafka.PollForJoarkhendelserJob
 import no.nav.syfo.integration.kafka.PollForUtsattOppgaveVarslingsmeldingJob
-import no.nav.syfo.koin.getAllOfType
 import no.nav.syfo.koin.selectModuleBasedOnProfile
 import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
 import no.nav.syfo.prosesser.FjernInntektsmeldingByBehandletProcessor
@@ -25,11 +24,11 @@ import no.nav.syfo.utsattoppgave.FeiletUtsattOppgaveMeldingProsessor
 import no.nav.syfo.web.inntektsmeldingModule
 import no.nav.syfo.web.nais.nais
 import org.flywaydb.core.Flyway
-import org.koin.core.KoinComponent
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.koin.core.context.GlobalContext
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
-import org.koin.core.get
 import org.slf4j.LoggerFactory
 
 
@@ -109,7 +108,7 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
 
 
         Flyway.configure().baselineOnMigrate(true)
-            .dataSource(GlobalContext.get().koin.get())
+            .dataSource(GlobalContext.getKoinApplicationOrNull()?.koin?.get())
             .load()
             .migrate()
 
@@ -120,10 +119,10 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
     private fun autoDetectProbeableComponents() {
         val kubernetesProbeManager = get<KubernetesProbeManager>()
 
-        getKoin().getAllOfType<LivenessComponent>()
+        getKoin().getAll<LivenessComponent>()
             .forEach { kubernetesProbeManager.registerLivenessComponent(it) }
 
-        getKoin().getAllOfType<ReadynessComponent>()
+        getKoin().getAll<ReadynessComponent>()
             .forEach { kubernetesProbeManager.registerReadynessComponent(it) }
 
         logger.debug("La til probeable komponenter")
