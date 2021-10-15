@@ -24,7 +24,11 @@ class JoarkHendelseKafkaClient(props: MutableMap<String, Any>, topicName: String
 
         Runtime.getRuntime().addShutdownHook(Thread {
             log.debug("Got shutdown message, closing Kafka connection...")
-            stop()
+            try {
+                stop()
+            } catch (e: ConcurrentModificationException){
+                log.debug("Fikk ConcurrentModificationException når man stoppet")
+            }
             log.debug("Kafka connection closed")
         })
     }
