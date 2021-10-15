@@ -1,4 +1,4 @@
-name: Daglig snyk
+name: Snyk
 
 on:
   push:

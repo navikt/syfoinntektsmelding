@@ -1,4 +1,4 @@
-name: Bygg og deploy til prod
+name: Release
 
 on:
   push:
