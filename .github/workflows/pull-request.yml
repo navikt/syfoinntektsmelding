@@ -4,15 +4,11 @@ on: [pull_request]
 
 jobs:
   # Label of the container job
-  runner-job:
-    # You must use a Linux environment when using service containers or container jobs
+  Bygg:
     runs-on: ubuntu-latest
-
     steps:
-      # Downloads a copy of the code in your repository before running CI tests
       - name: Check out repository code
         uses: actions/checkout@v2
-
       - name: Setup Java environment
         uses: actions/setup-java@v1
         with:
@@ -31,12 +27,39 @@ jobs:
           key: ${{ runner.os }}-gradle-cache-${{ hashFiles('build.gradle') }}
           restore-keys: |
             ${{ runner.os }}-gradle-cache-
-
+      - name: Test and build
+        run: ./gradlew test jacocoTestReport sonarqube
+        env:
+          ORG_GRADLE_PROJECT_githubUser: x-access-token
+          ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  Slowtests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: Setup Java environment
+        uses: actions/setup-java@v1
+        with:
+          java-version: '11.x'
+      - name: Cache Gradle wrapper
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-wrapper-
+      - name: Cache Gradle packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-cache-${{ hashFiles('build.gradle') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-cache-
       - name: compose up
         run: cd docker/local && docker-compose up -d && sleep 10
-
       - name: Test and build
-        run: ./gradlew test slowTests jacocoTestReport sonarqube
+        run: ./gradlew slowTests
         env:
           ORG_GRADLE_PROJECT_githubUser: x-access-token
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}

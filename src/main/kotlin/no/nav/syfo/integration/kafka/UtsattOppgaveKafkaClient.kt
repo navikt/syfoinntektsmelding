@@ -25,7 +25,11 @@ class UtsattOppgaveKafkaClient(props: Map<String, Any>,
 
         Runtime.getRuntime().addShutdownHook(Thread {
             log.debug("Got shutdown message, closing Kafka connection...")
-            consumer.close()
+            try {
+                consumer.close()
+            } catch (e: ConcurrentModificationException){
+                log.debug("Fikk ConcurrentModificationException når man stoppet")
+            }
             log.debug("Kafka connection closed")
         })
     }
