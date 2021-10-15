@@ -9,7 +9,6 @@ import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.util.Metrikk
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.junit.jupiter.api.Test
-import org.mockito.ArgumentMatchers.any
 import java.time.LocalDate
 import java.time.LocalDateTime
 

@@ -16,6 +16,7 @@ import io.ktor.client.features.json.*
 import io.ktor.config.*
 import io.ktor.util.*
 import no.nav.helse.arbeidsgiver.kubernetes.KubernetesProbeManager
+import no.nav.helse.arbeidsgiver.kubernetes.LivenessComponent
 import org.koin.core.Koin
 import org.koin.core.definition.Kind
 import org.koin.core.module.Module
@@ -105,12 +106,12 @@ fun ApplicationConfig.getjdbcUrlFromProperties(): String {
 
 
 
-inline fun <reified T : Any> Koin.getAllOfType(): Collection<T> =
-    let { koin ->
-        koin.rootScope.beanRegistry
-            .getAllDefinitions()
-            .filter { it.kind == Kind.Single }
-            .map { koin.get<Any>(clazz = it.primaryType, qualifier = null, parameters = null) }
-            .filterIsInstance<T>()
-    }
+//inline fun <reified T : Any> Koin.getAllOfType(): Collection<T> =
+//    let { koin ->
+//        koin.rootScope.beanRegistry
+//            .getAllDefinitions()
+//            .filter { it.kind == Kind.Single }
+//            .map { koin.get<Any>(clazz = it.primaryType, qualifier = null, parameters = null) }
+//            .filterIsInstance<T>()
+//    }
 
