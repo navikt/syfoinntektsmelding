@@ -13,9 +13,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Run Snyk to check for vulnerabilities
-        uses: snyk/actions/gradle@master
+        uses: snyk/actions/gradle-jdk11@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
         with:
-          args: --configuration-matching=runtimeClasspath --fail-on=all
+          command: monitor
+          args: --org=helsearbeidsgiver --project-name=syfoinntektsmelding
