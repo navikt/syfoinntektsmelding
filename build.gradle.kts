@@ -66,17 +66,9 @@ buildscript {
 }
 
 repositories {
-
     mavenCentral()
-
     google()
-
-
-
     maven(url = "https://packages.confluent.io/maven/")
-
-    maven(url = "https://maven.pkg.github.com/navikt/inntektsmelding-kontrakt")
-
     maven {
         credentials {
             username = "x-access-token"
@@ -84,7 +76,6 @@ repositories {
         }
         setUrl("https://maven.pkg.github.com/navikt/inntektsmelding-kontrakt")
     }
-
     maven {
         credentials {
             username = "x-access-token"
@@ -92,7 +83,6 @@ repositories {
         }
         setUrl("https://maven.pkg.github.com/navikt/helse-arbeidsgiver-felles-backend")
     }
-
 }
 
 java {
@@ -234,8 +224,6 @@ tasks.named<KotlinCompile>("compileTestKotlin") {
     kotlinOptions.suppressWarnings = true
 }
 
-
-
 tasks.withType<Test> {
     useJUnitPlatform()
     testLogging {
@@ -254,5 +242,4 @@ task<Test>("slowTests") {
     include("no/nav/syfo/slowtests/**")
     outputs.upToDateWhen { false }
     group = "verification"
-
 }
