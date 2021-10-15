@@ -3,7 +3,6 @@ name: Pull request
 on: [pull_request]
 
 jobs:
-  # Label of the container job
   Bygg:
     runs-on: ubuntu-latest
     steps:
@@ -61,13 +60,6 @@ jobs:
             ${{ runner.os }}-gradle-cache-
       - name: compose up
         run: cd docker/local && docker-compose up -d && sleep 10
-#      - name: Test and build
-#        run: ./gradlew slowTests
-#        env:
-#          ORG_GRADLE_PROJECT_githubUser: x-access-token
-#          ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
-#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
       - name: Build and run slowTests
         uses: gradle/gradle-build-action@v2
         with:
