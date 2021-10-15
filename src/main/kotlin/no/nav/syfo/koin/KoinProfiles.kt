@@ -103,15 +103,3 @@ fun ApplicationConfig.getjdbcUrlFromProperties(): String {
         this.property("database.name").getString()
     )
 }
-
-
-
-//inline fun <reified T : Any> Koin.getAllOfType(): Collection<T> =
-//    let { koin ->
-//        koin.rootScope.beanRegistry
-//            .getAllDefinitions()
-//            .filter { it.kind == Kind.Single }
-//            .map { koin.get<Any>(clazz = it.primaryType, qualifier = null, parameters = null) }
-//            .filterIsInstance<T>()
-//    }
-
