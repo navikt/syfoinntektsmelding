@@ -26,37 +26,11 @@ plugins {
     kotlin("jvm") version "1.4.20"
     id("com.github.ben-manes.versions") version "0.27.0"
     id("org.flywaydb.flyway") version "5.1.4"
-    id("org.sonarqube") version "3.0"
-    jacoco
 }
 
 application.mainClass.set(mainClass)
 
-sonarqube {
-    properties {
-        property("sonar.projectKey", "navikt_syfoinntektsmelding")
-        property("sonar.organization", "navit")
-        property("sonar.host.url", "https://sonarcloud.io")
-        property("sonar.login", System.getenv("SONAR_TOKEN"))
-        property("sonar.exclusions", "**/Koin*,**Mock**,**/App**")
-    }
-}
 
-tasks.jacocoTestReport {
-    executionData("build/jacoco/test.exec")
-    reports {
-        xml.isEnabled = true
-        html.isEnabled = true
-    }
-}
-
-tasks.withType<JacocoReport> {
-    classDirectories.setFrom(
-        sourceSets.main.get().output.asFileTree.matching {
-            exclude("**/App**", "**Mock**")
-        }
-    )
-}
 
 
 buildscript {
