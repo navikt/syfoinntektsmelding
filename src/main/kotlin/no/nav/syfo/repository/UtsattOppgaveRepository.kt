@@ -99,7 +99,7 @@ class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepo
             ps.setTimestamp(7, Timestamp.valueOf(uo.timeout))
             ps.setString(8, uo.tilstand.name)
             ps.setString(9, uo.gosysOppgaveId)
-			if(uo.oppdatert != null) ps.setTimestamp(10,Timestamp.valueOf(uo.oppdatert)) else ps.setNull(10, 0)
+			ps.setTimestamp(10,Timestamp.valueOf(uo.oppdatert ?: LocalDateTime.now()))
             val res = ps.executeQuery()
             return resultLoop(res, utsattOppgaver).first()
         }
