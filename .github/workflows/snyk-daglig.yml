@@ -4,6 +4,8 @@ on:
   push:
     tags:
       - snyk/*
+    branches:
+      - 'snyk/**'
   schedule:
     - cron: '0 8 * * *'
 
