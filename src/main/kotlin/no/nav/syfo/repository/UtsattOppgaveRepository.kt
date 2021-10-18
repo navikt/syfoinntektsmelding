@@ -175,7 +175,7 @@ class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepo
                     tilstand = Tilstand.valueOf(res.getString("TILSTAND")),
                     enhet = res.getString("ENHET"),
                     gosysOppgaveId = res.getString("GOSYS_OPPGAVE_ID"),
-                    oppdatert = res.getTimestamp("OPPDATERT")?.toLocalDateTime()
+                    oppdatert = null
                 )
             )
         }
