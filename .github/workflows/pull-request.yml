@@ -19,6 +19,7 @@ jobs:
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONARTOKEN }}
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
   Bygg:
     runs-on: ubuntu-latest
