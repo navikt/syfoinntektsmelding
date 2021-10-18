@@ -23,6 +23,7 @@ import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
 import no.nav.syfo.utsattoppgave.FeiletUtsattOppgaveMeldingProsessor
 import no.nav.syfo.web.inntektsmeldingModule
 import no.nav.syfo.web.nais.nais
+import no.nav.syfo.web.api.systemRoutes
 import org.flywaydb.core.Flyway
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
@@ -36,11 +37,10 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
     private val logger = LoggerFactory.getLogger(SpinnApplication::class.simpleName)
     private var webserver: NettyApplicationEngine? = null
     private var appConfig: HoconApplicationConfig = HoconApplicationConfig(ConfigFactory.load())
-    @KtorExperimentalAPI
+
     private val runtimeEnvironment = appConfig.getEnvironment()
 
     @KtorExperimentalLocationsAPI
-    @KtorExperimentalAPI
     fun start() {
         if (runtimeEnvironment == AppEnv.PREPROD || runtimeEnvironment == AppEnv.PROD) {
             logger.info("Sover i 30s i påvente av SQL proxy sidecar")
@@ -79,6 +79,7 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
 
             module {
                 nais()
+
                 inntektsmeldingModule(config)
             }
         })
@@ -86,7 +87,6 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
         webserver!!.start(wait = false)
     }
 
-    @KtorExperimentalAPI
     private fun configAndStartBackgroundWorkers() {
         if (appConfig.getString("run_background_workers") == "true") {
             get<FinnAlleUtgaandeOppgaverProcessor>().startAsync(true)
@@ -131,7 +131,6 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
 
 
 @KtorExperimentalLocationsAPI
-@KtorExperimentalAPI
 fun main() {
     val logger = LoggerFactory.getLogger("main")
 

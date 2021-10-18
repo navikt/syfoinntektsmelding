@@ -115,7 +115,7 @@ dependencies {
     implementation("no.nav.syfo.sm:syfosm-common-networking:2019.09.03-10-50-64032e3b6381665e9f9c0914cef626331399e66d")
     implementation("no.nav:vault-jdbc:1.3.1")
     implementation("no.nav.common:log:2.2021.01.05_08.07-2c586ccadf95")
-    implementation("no.nav.helsearbeidsgiver:helse-arbeidsgiver-felles-backend:2021.06.28-09-42-e08ae")
+    implementation("no.nav.helsearbeidsgiver:helse-arbeidsgiver-felles-backend:2021.06.29-12-19-c8533")
     implementation("no.nav.security:token-client-core:$tokenSupportVersion")
     implementation("no.nav.security:token-validation-ktor:$tokenSupportVersion")
     implementation("no.nav.security:mock-oauth2-server:$mockOAuth2ServerVersion")

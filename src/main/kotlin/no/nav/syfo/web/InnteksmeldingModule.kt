@@ -10,6 +10,7 @@ import io.ktor.locations.*
 import io.ktor.routing.*
 import io.ktor.util.*
 import no.nav.syfo.web.api.syfoinntektsmelding
+import no.nav.syfo.web.api.systemRoutes
 import org.koin.ktor.ext.get
 import org.slf4j.event.Level
 
@@ -23,6 +24,7 @@ fun Application.inntektsmeldingModule(config: ApplicationConfig = environment.co
 
     routing {
         route("/api/v1") {
+            systemRoutes()
             syfoinntektsmelding(get(), get(), get(), get())
         }
     }
