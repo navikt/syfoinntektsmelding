@@ -12,14 +12,14 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: '11.x'
-      - name: Run Snyk to check for vulnerabilities
-        uses: snyk/actions/gradle-jdk11@master
+      - name: Snyk
+        run: ./gradlew snyk-test
         env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+          ORG_GRADLE_PROJECT_githubUser: x-access-token
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          command: monitor
-          args: --org=helsearbeidsgiver --project-name=syfoinntektsmelding
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONARTOKEN }}
+
   Bygg:
     runs-on: ubuntu-latest
     steps:
