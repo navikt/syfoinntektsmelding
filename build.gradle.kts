@@ -26,6 +26,7 @@ plugins {
     kotlin("jvm") version "1.4.20"
     id("com.github.ben-manes.versions") version "0.27.0"
     id("org.flywaydb.flyway") version "5.1.4"
+    id("io.snyk.gradle.plugin.snykplugin") version "0.4"
 }
 
 application.mainClass.set(mainClass)
@@ -217,3 +218,10 @@ task<Test>("slowTests") {
     outputs.upToDateWhen { false }
     group = "verification"
 }
+
+//snyk {
+//    severity = "low"
+//    api = "5473b422-69d5-4b60-8596-0b7402691762"
+//    autoDownload = true
+//    autoUpdate = true
+//}
