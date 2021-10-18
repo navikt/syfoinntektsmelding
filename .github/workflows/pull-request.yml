@@ -13,7 +13,7 @@ jobs:
         with:
           java-version: '11.x'
       - name: Snyk
-        run: ./gradlew snyk-test
+        run: ./gradlew clean build snyk-test
         env:
           ORG_GRADLE_PROJECT_githubUser: x-access-token
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
