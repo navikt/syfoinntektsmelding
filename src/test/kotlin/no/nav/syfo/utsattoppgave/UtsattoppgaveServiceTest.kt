@@ -49,7 +49,9 @@ open class UtsattOppgaveServiceTest {
         arkivreferanse = arkivreferanse,
         timeout = timeout,
         inntektsmeldingId = UUID.randomUUID().toString(),
-        tilstand = tilstand
+        tilstand = tilstand,
+        gosysOppgaveId = null,
+        oppdatert = null
     )
 
 }
