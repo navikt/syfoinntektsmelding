@@ -3,7 +3,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 val micrometerVersion = "1.6.3"
 val flywayVersion = "6.1.4"
 val cxfVersion = "3.4.4"
-val swaggerVersion = "2.10.0"
 val kotlinVersion = "1.4.10"
 val hikariVersion = "3.4.5"
 val ktorVersion = "1.5.3"
@@ -15,28 +14,16 @@ val jacksonVersion = "2.12.3"
 val junitJupiterVersion = "5.7.0"
 val assertJVersion = "3.12.2"
 val prometheusVersion = "0.6.0"
-
-val mainClass = "no.nav.syfo.AppKt"
-
-
 val githubPassword: String by project
 
 plugins {
-    application
-    kotlin("jvm") version "1.4.20"
+    // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
+    id("org.jetbrains.kotlin.jvm") version "1.4.20"
     id("com.github.ben-manes.versions") version "0.27.0"
     id("org.flywaydb.flyway") version "5.1.4"
-}
-
-application.mainClass.set(mainClass)
-
-
-
-
-buildscript {
-    dependencies {
-        classpath("org.junit.platform:junit-platform-gradle-plugin:1.2.0")
-    }
+    id("io.snyk.gradle.plugin.snykplugin") version "0.4"
+    // Apply the application plugin to add support for building a CLI application in Java.
+    application
 }
 
 repositories {
@@ -65,33 +52,49 @@ java {
 }
 
 dependencies {
-    constraints {
-        implementation("io.netty:netty-codec-http2") {
-            version {
-                strictly("4.1.61.Final")
-            }
-            because("snyk control")
-        }
+    // Align versions of all Kotlin components
+    implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
 
-        implementation("io.netty:netty-transport-native-epoll") {
-            version {
-                strictly("4.1.59.Final")
-            }
-            because("snyk control")
-        }
-        testImplementation("org.eclipse.jetty:jetty-io") {
-            version {
-                strictly("11.0.2")
-            }
-            because("snyk control")
-        }
-        implementation("io.ktor:ktor-client-cio") {
-            version {
-                strictly("1.3.0")
-            }
-            because("snyk control")
-        }
-    }
+    // Use the Kotlin JDK 8 standard library.
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+
+    // This dependency is used by the application.
+    implementation("com.google.guava:guava:30.1.1-jre")
+
+    // Use the Kotlin test library.
+    testImplementation("org.jetbrains.kotlin:kotlin-test")
+
+    // Use the Kotlin JUnit integration.
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
+
+    // Gammel
+//    constraints {
+//        implementation("io.netty:netty-codec-http2") {
+//            version {
+//                strictly("4.1.61.Final")
+//            }
+//            because("snyk control")
+//        }
+//
+//        implementation("io.netty:netty-transport-native-epoll") {
+//            version {
+//                strictly("4.1.59.Final")
+//            }
+//            because("snyk control")
+//        }
+//        testImplementation("org.eclipse.jetty:jetty-io") {
+//            version {
+//                strictly("11.0.2")
+//            }
+//            because("snyk control")
+//        }
+//        implementation("io.ktor:ktor-client-cio") {
+//            version {
+//                strictly("1.3.0")
+//            }
+//            because("snyk control")
+//        }
+//    }
     implementation("io.netty:netty-codec:4.1.59.Final") // overstyrer transiente 4.1.44
     implementation("io.netty:netty-codec-http:4.1.59.Final") // overstyrer transiente 4.1.51.Final gjennom ktor-server-netty
     // SNYK overrides
@@ -167,13 +170,14 @@ dependencies {
     implementation("io.prometheus:simpleclient_hotspot:$prometheusVersion")
     implementation("no.nav.tjenestespesifikasjoner:altinn-correspondence-agency-external-basic:1.2019.09.25-00.21-49b69f0625e0")
     implementation("javax.annotation:javax.annotation-api:1.3.2")
+
 }
 
 tasks.named<Jar>("jar") {
     archiveBaseName.set("app")
 
     manifest {
-        attributes["Main-Class"] = mainClass
+        attributes["Main-Class"] = application.mainClass
         attributes["Class-Path"] = configurations.runtimeClasspath.get().joinToString(separator = " ") {
             it.name
         }
@@ -217,3 +221,4 @@ task<Test>("slowTests") {
     outputs.upToDateWhen { false }
     group = "verification"
 }
+
