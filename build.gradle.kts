@@ -6,7 +6,7 @@ val cxfVersion = "3.4.4"
 val kotlinVersion = "1.4.10"
 val hikariVersion = "3.4.5"
 val ktorVersion = "1.5.3"
-val koinVersion = "2.0.1"
+val koinVersion = "3.1.2"
 val tokenSupportVersion = "1.3.1"
 val mockOAuth2ServerVersion = "0.2.1"
 val brukernotifikasjonSchemasVersion = "1.2021.01.18-11.12-b9c8c40b98d1"
@@ -68,38 +68,8 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
 
     // Gammel
-//    constraints {
-//        implementation("io.netty:netty-codec-http2") {
-//            version {
-//                strictly("4.1.61.Final")
-//            }
-//            because("snyk control")
-//        }
-//
-//        implementation("io.netty:netty-transport-native-epoll") {
-//            version {
-//                strictly("4.1.59.Final")
-//            }
-//            because("snyk control")
-//        }
-//        testImplementation("org.eclipse.jetty:jetty-io") {
-//            version {
-//                strictly("11.0.2")
-//            }
-//            because("snyk control")
-//        }
-//        implementation("io.ktor:ktor-client-cio") {
-//            version {
-//                strictly("1.3.0")
-//            }
-//            because("snyk control")
-//        }
-//    }
-    implementation("io.netty:netty-codec:4.1.59.Final") // overstyrer transiente 4.1.44
-    implementation("io.netty:netty-codec-http:4.1.59.Final") // overstyrer transiente 4.1.51.Final gjennom ktor-server-netty
-    // SNYK overrides
-    implementation("commons-collections:commons-collections:3.2.2")
-    // - end SNYK overrides
+    //implementation("io.netty:netty-codec:4.1.59.Final") // overstyrer transiente 4.1.44
+    //implementation("io.netty:netty-codec-http:4.1.59.Final") // overstyrer transiente 4.1.51.Final gjennom ktor-server-netty
 
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.4.10")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.4.10")
@@ -129,7 +99,7 @@ dependencies {
     implementation("net.logstash.logback:logstash-logback-encoder:6.4")
     implementation("org.apache.httpcomponents:httpclient:4.5.13")
     implementation("io.micrometer:micrometer-core:$micrometerVersion")
-    implementation("io.insert-koin:koin-core-jvm:3.1.2")
+
     runtimeOnly("io.micrometer:micrometer-registry-prometheus:$micrometerVersion")
 
     implementation("com.google.guava:guava:30.0-jre")
@@ -153,12 +123,12 @@ dependencies {
     implementation("io.ktor:ktor-locations:$ktorVersion")
     testImplementation("io.ktor:ktor-server-tests:$ktorVersion")
 
-    implementation("io.insert-koin:koin-core:3.1.2")
-    implementation("io.insert-koin:koin-ktor:3.1.2")
-    testImplementation("io.insert-koin:koin-test:3.1.2")
+    implementation("io.insert-koin:koin-core-jvm:$koinVersion")
+    implementation("io.insert-koin:koin-core:$koinVersion")
+    implementation("io.insert-koin:koin-ktor:$koinVersion")
+    testImplementation("io.insert-koin:koin-test:$koinVersion")
 
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.11.0")
-
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$jacksonVersion")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
 
@@ -173,7 +143,7 @@ dependencies {
 
 }
 
-tasks.named<Jar>("jar") {
+tasks.jar {
     archiveBaseName.set("app")
 
     manifest {
@@ -192,14 +162,18 @@ tasks.named<Jar>("jar") {
     }
 }
 
-tasks.named<KotlinCompile>("compileKotlin") {
-    kotlinOptions.jvmTarget = "11"
-    kotlinOptions.suppressWarnings = true
+tasks.compileKotlin {
+    kotlinOptions {
+        jvmTarget = "11"
+        suppressWarnings = true
+    }
 }
 
-tasks.named<KotlinCompile>("compileTestKotlin") {
-    kotlinOptions.jvmTarget = "11"
-    kotlinOptions.suppressWarnings = true
+tasks.compileTestKotlin {
+    kotlinOptions {
+        jvmTarget = "11"
+        suppressWarnings = true
+    }
 }
 
 tasks.withType<Test> {
@@ -222,3 +196,9 @@ task<Test>("slowTests") {
     group = "verification"
 }
 
+configure<io.snyk.gradle.plugin.SnykExtension> {
+    setSeverity("high")
+    setAutoDownload(true)
+    setAutoUpdate(true)
+    setArguments("--all-sub-projects")
+}
