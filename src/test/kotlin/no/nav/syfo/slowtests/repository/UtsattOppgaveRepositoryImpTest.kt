@@ -42,7 +42,9 @@ open class UtsattOppgaveRepositoryImpTest : SystemTestBase(){
                 sakId = "sakId",
                 journalpostId = "journalpostId",
                 timeout = now().minusHours(1),
-                tilstand = Tilstand.Utsatt
+                tilstand = Tilstand.Utsatt,
+                gosysOppgaveId = null,
+                oppdatert = null
             )
         )
 
@@ -63,7 +65,9 @@ open class UtsattOppgaveRepositoryImpTest : SystemTestBase(){
                 sakId = "sakId",
                 journalpostId = "journalpostId",
                 timeout = now().minusHours(1),
-                tilstand = Tilstand.Utsatt
+                tilstand = Tilstand.Utsatt,
+                gosysOppgaveId = null,
+                oppdatert = null
             )
         ).id
 
@@ -76,7 +80,9 @@ open class UtsattOppgaveRepositoryImpTest : SystemTestBase(){
                 sakId = "sakId",
                 journalpostId = "journalpostId",
                 timeout = now().minusHours(1),
-                tilstand = Tilstand.Utsatt
+                tilstand = Tilstand.Utsatt,
+                gosysOppgaveId = null,
+                oppdatert = null
             )
         ).id
 
@@ -97,7 +103,9 @@ open class UtsattOppgaveRepositoryImpTest : SystemTestBase(){
             journalpostId = "journalpostId",
             timeout = now().minusHours(1),
             tilstand = Tilstand.Utsatt,
-            enhet = ""
+            enhet = "",
+            gosysOppgaveId = null,
+            oppdatert = null
         ))
 
         utsattOppgave.enhet = enhet
@@ -161,7 +169,9 @@ open class UtsattOppgaveRepositoryImpTest : SystemTestBase(){
                 sakId = "sakId",
                 journalpostId = "journalpostId",
                 timeout = now().minusHours(1),
-                tilstand = Tilstand.Utsatt
+                tilstand = Tilstand.Utsatt,
+                gosysOppgaveId = null,
+                oppdatert = null
             )
         )
 
@@ -176,7 +186,8 @@ open class UtsattOppgaveRepositoryImpTest : SystemTestBase(){
                 journalpostId = "journalpostId2",
                 timeout = now().minusHours(1),
                 tilstand = Tilstand.Utsatt,
-                oppdatert = null
+                oppdatert = null,
+                gosysOppgaveId = null
             )
         )
 
@@ -201,7 +212,9 @@ open class UtsattOppgaveRepositoryImpTest : SystemTestBase(){
         timeout = timeout,
         inntektsmeldingId = inntektsmeldingsId,
         tilstand = tilstand,
-        enhet = ""
+        enhet = "",
+        gosysOppgaveId = null,
+        oppdatert = null
     )
 }
 
