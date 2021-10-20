@@ -55,7 +55,9 @@ fun getRandonUtsattOppgaveEntitet(
         sakId = sakId,
         journalpostId = journalpostId,
         timeout = timeout,
-        tilstand = tilstand
+        tilstand = tilstand,
+        gosysOppgaveId = null,
+        oppdatert = null
     )
 }
 
