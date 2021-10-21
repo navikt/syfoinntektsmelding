@@ -1,5 +1,5 @@
 ---
-title: Snyk feiler på {{ github.repository }}!
+title: Snyk fant sårbarheter
 labels: bug
 ---
-Someone just pushed, oh no! Here's who did it: {{ payload.sender.login }}.
+${{ jobs.<snyk>.outputs }}
