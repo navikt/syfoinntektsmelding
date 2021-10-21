@@ -15,14 +15,21 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Run Snyk to check for vulnerabilities
-        id: snyk
         uses: snyk/actions/gradle-jdk11@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
         with:
           args: --org=helsearbeidsgiver --project-name=syfoinntektsmelding
-      - uses: JasonEtco/create-an-issue@v2
+      - name: Create Issue on Failed workflow
         if: ${{ failure() }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: dacbd/create-issue-action@main
+        with:
+          token: ${{ github.token }}
+          title: Snyk feiler!
+          body: |
+            ### Context
+            Link til workflow som feilet:
+            [Failed Run](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            Output fra kjøring
+            ${{ jobs.<snyk>.outputs }}
