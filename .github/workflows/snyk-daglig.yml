@@ -10,7 +10,7 @@ on:
     - cron: '0 8 * * *'
 
 jobs:
-  snyk:
+  Snyk:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -26,11 +26,11 @@ jobs:
         uses: dacbd/create-issue-action@main
         with:
           token: ${{ github.token }}
-          title: Action workflow failed.
+          title: Snyk feiler!
           body: |
             ### Context
+            Link til workflow som feilet:
             [Failed Run](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
-            [Codebase](https://github.com/${{ github.repository }}/tree/${{ github.sha }})
-            Workflow name - `${{ github.workflow }}`
-            Job -           `${{ github.job }}`
-            status -        `${{ job.status }}`
+
+            Output fra kjøring
+            ${{ jobs.Snyk.outputs }}
