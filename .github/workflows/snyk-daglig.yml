@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Run Snyk to check for vulnerabilities
-        id: snyk
+        id: Snyk
         uses: snyk/actions/gradle-jdk11@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
@@ -33,4 +33,4 @@ jobs:
             Link til workflow som feilet:
             [Failed Run](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
             Output fra kjøring
-            ${{ jobs.snyk.outputs }}
+            ${{ jobs.Snyk.outputs }}
