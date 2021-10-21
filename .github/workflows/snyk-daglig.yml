@@ -21,15 +21,7 @@ jobs:
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
         with:
           args: --org=helsearbeidsgiver --project-name=syfoinntektsmelding
-      - name: Create Issue on Failed workflow
+      - uses: JasonEtco/create-an-issue@v2
         if: ${{ failure() }}
-        uses: dacbd/create-issue-action@main
-        with:
-          token: ${{ github.token }}
-          title: Snyk feiler!
-          body: |
-            ### Context
-            Link til workflow som feilet:
-            [Failed Run](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
-            Output fra kjøring
-            ${{ jobs.<Snyk>.outputs }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
