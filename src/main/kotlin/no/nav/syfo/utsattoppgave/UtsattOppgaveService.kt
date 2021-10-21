@@ -56,8 +56,6 @@ class UtsattOppgaveService(
         log.info("Oppdatering på dokumentId: ${oppdatering.id} ikke relevant")
     }
 
-
-
     fun lagre(oppgave: UtsattOppgaveEntitet) {
         utsattOppgaveDAO.lagre(oppgave)
     }
@@ -73,15 +71,26 @@ fun opprettOppgaveIGosys(utsattOppgave: UtsattOppgaveEntitet,
                          utsattOppgaveDAO: UtsattOppgaveDAO,
                          behandlendeEnhetConsumer: BehandlendeEnhetConsumer): OppgaveResultat {
     val behandlendeEnhet = behandlendeEnhetConsumer.hentBehandlendeEnhet(utsattOppgave.fnr, utsattOppgave.inntektsmeldingId)
-    val gjelderUtland = (SYKEPENGER_UTLAND == behandlendeEnhet)
-    val resultat = runBlocking {
-        oppgaveClient.opprettOppgave(
-            sakId = utsattOppgave.sakId,
-            journalpostId = utsattOppgave.journalpostId,
-            tildeltEnhetsnr = behandlendeEnhet,
-            aktoerId = utsattOppgave.aktørId,
-            gjelderUtland = gjelderUtland
-        )
+    val resultat = if (SYKEPENGER_UTLAND == behandlendeEnhet) {
+        runBlocking {
+            oppgaveClient.opprettOppgave(
+                sakId = utsattOppgave.sakId,
+                journalpostId = utsattOppgave.journalpostId,
+                tildeltEnhetsnr = behandlendeEnhet,
+                aktoerId = utsattOppgave.aktørId,
+                gjelderUtland = true
+            )
+        }
+    } else {
+        runBlocking {
+            oppgaveClient.opprettOppgave(
+                sakId = utsattOppgave.sakId,
+                journalpostId = utsattOppgave.journalpostId,
+                aktoerId = utsattOppgave.aktørId,
+                tildeltEnhetsnr = null,
+                gjelderUtland = false
+            )
+        }
     }
     utsattOppgave.enhet = behandlendeEnhet
     utsattOppgave.gosysOppgaveId = resultat.oppgaveId.toString()

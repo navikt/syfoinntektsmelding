@@ -67,7 +67,7 @@ class OppgaveClient constructor (
     suspend fun opprettOppgave(
         sakId: String,
         journalpostId: String,
-        tildeltEnhetsnr: String,
+        tildeltEnhetsnr: String?,
         aktoerId: String,
         gjelderUtland: Boolean
     ): OppgaveResultat {
