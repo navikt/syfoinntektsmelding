@@ -32,4 +32,4 @@ jobs:
             ### Link til workflow som feilet:
             [Failed Run](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
             ### Output fra kjøring
-            ${{ steps.snykstep.outputs.content }}
+            `${{ steps.snykstep.outputs.test }}`
