@@ -12,6 +12,8 @@ on:
 jobs:
   Snyk:
     runs-on: ubuntu-latest
+    outputs:
+      output1: ${{ steps.snykstep.outputs.test }}
     steps:
       - uses: actions/checkout@v2
       - name: Run Snyk to check for vulnerabilities
@@ -30,4 +32,4 @@ jobs:
           title: Snyk fant sårbarheter
           body: |
             ### Output fra kjøring
-            ${{ steps.snykstep.outputs.test }}
+            ${{ needs.job1.outputs.output1 }}
