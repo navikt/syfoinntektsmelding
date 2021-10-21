@@ -27,10 +27,9 @@ jobs:
         uses: dacbd/create-issue-action@main
         with:
           token: ${{ github.token }}
-          title: Snyk feiler!
+          title: Snyk fant sårbarheter
           body: |
-            ### Context
-            Link til workflow som feilet:
+            ### Link til workflow som feilet:
             [Failed Run](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
-            Output fra kjøring
-            ${{ steps.snykstep.outputs }}
+            ### Output fra kjøring
+            ${{ steps.snykstep.outputs.content }}
