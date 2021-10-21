@@ -31,6 +31,5 @@ jobs:
             ### Context
             Link til workflow som feilet:
             [Failed Run](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
-
             Output fra kjøring
             ${{ jobs.Snyk.outputs }}
