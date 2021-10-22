@@ -1,9 +1,8 @@
 name: Release
 
 on:
-  push:
-    tags:
-      - prod/*
+  release:
+    types: [released]
 
 env:
   IMAGE: ghcr.io/${{ github.repository }}/syfoinntektsmelding:${{ github.sha }}
