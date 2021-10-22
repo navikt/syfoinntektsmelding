@@ -23,7 +23,6 @@ open class Norg2Client (
 
     /**
      * Oppslag av informasjon om ruting av arbeidsoppgaver til enheter.
-     * Returnerer alle arbeidsfordelinger basert på et oppgitt set av søkekriterier
      */
     open suspend fun hentAlleArbeidsfordelinger(request: ArbeidsfordelingRequest, callId: String?): List<ArbeidsfordelingResponse> {
         val stsToken = stsClient.getToken()
