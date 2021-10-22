@@ -124,7 +124,7 @@ fun prodConfig(config: ApplicationConfig) = module {
 
     single { UtsattOppgaveDAO(UtsattOppgaveRepositoryImp(get()))}
     single { OppgaveClient(config.getString("oppgavebehandling_url"), get(), get(), get())} bind OppgaveClient::class
-    single { UtsattOppgaveService(get(), get(), get()) } bind UtsattOppgaveService::class
+    single { UtsattOppgaveService(get(), get(), get(), get()) } bind UtsattOppgaveService::class
     single { FeiletUtsattOppgaveMeldingProsessor(get(), get() ) }
 
     single { FjernInntektsmeldingByBehandletProcessor(InntektsmeldingRepositoryImp(get()), config.getString("lagringstidMåneder").toInt() )} bind FjernInntektsmeldingByBehandletProcessor::class

@@ -94,6 +94,18 @@ class Metrikk {
     val REKJØRERFEILET = proseseringsMetrikker("syfoinntektsmelding_rekjorer",
             "Metrikker for rekjører Feilet", "type")
 
+    val UTSATT_OPPGAVE_UKJENT = proseseringsMetrikker("syfoinntektsmelding_utsatt_oppgave_ukjent",
+        "Mottok oppdatering på en ukjent oppgave", "type")
+    val UTSATT_OPPGAVE_UTSETT = proseseringsMetrikker("syfoinntektsmelding_utsatt_oppgave_utsett",
+        "Oppdaterte timeout for inntektsmelding", "type")
+    val UTSATT_OPPGAVE_UTSETT_UTEN_DATO = proseseringsMetrikker("syfoinntektsmelding_utsatt_oppgave_ingen_dato",
+        "Timeout på utsettelse mangler", "type")
+    val UTSATT_OPPGAVE_FORKAST = proseseringsMetrikker("syfoinntektsmelding_utsatt_oppgave_forkast",
+        "Forkaster oppgave", "type")
+    val UTSATT_OPPGAVE_OPPRETT = proseseringsMetrikker("syfoinntektsmelding_utsatt_oppgave_opprett",
+        "Oppretter oppgave", "type")
+    val UTSATT_OPPGAVE_IRRELEVANT = proseseringsMetrikker("syfoinntektsmelding_utsatt_oppgave_irrelevant",
+        "Irrelevant dokumentid", "type")
 
 
     fun tellInntektsmeldingerMottatt(inntektsmelding: Inntektsmelding) {
@@ -148,6 +160,14 @@ class Metrikk {
     fun tellLagreFeiletMislykkes() = LAGREFEILETMISLYKKES.labels("warning").inc()
 
     fun tellRekjørerFeilet() = REKJØRERFEILET.labels("warning").inc()
+
+
+    fun tellUtsattOppgave_Ukjent() = UTSATT_OPPGAVE_UKJENT.labels("info").inc()
+    fun tellUtsattOppgave_Utsett() = UTSATT_OPPGAVE_UTSETT.labels("info").inc()
+    fun tellUtsattOppgave_UtenDato() = UTSATT_OPPGAVE_UTSETT_UTEN_DATO.labels("info").inc()
+    fun tellUtsattOppgave_Forkast() = UTSATT_OPPGAVE_FORKAST.labels("info").inc()
+    fun tellUtsattOppgave_Opprett() = UTSATT_OPPGAVE_OPPRETT.labels("info").inc()
+    fun tellUtsattOppgave_Irrelevant() = UTSATT_OPPGAVE_IRRELEVANT.labels("info").inc()
 
 
     companion object {

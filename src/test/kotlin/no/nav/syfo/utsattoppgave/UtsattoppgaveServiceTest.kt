@@ -7,6 +7,7 @@ import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.dto.UtsattOppgaveEntitet
 import no.nav.syfo.service.BehandlendeEnhetConsumer
+import no.nav.syfo.util.Metrikk
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
@@ -20,11 +21,11 @@ open class UtsattOppgaveServiceTest {
     private var oppgaveClient: OppgaveClient = mockk()
     private var behandlendeEnhetConsumer: BehandlendeEnhetConsumer = mockk()
     private lateinit var oppgaveService: UtsattOppgaveService
-
+    private var metrikk: Metrikk = mockk()
 
     @BeforeEach
     fun setup() {
-        oppgaveService = UtsattOppgaveService(utsattOppgaveDAO, oppgaveClient, behandlendeEnhetConsumer)
+        oppgaveService = UtsattOppgaveService(utsattOppgaveDAO, oppgaveClient, behandlendeEnhetConsumer, metrikk)
     }
 
     private val fnr = "fnr"
