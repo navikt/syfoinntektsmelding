@@ -26,5 +26,5 @@ jobs:
             plain,output=ktlint_report.txt
             json,output=ktlint_report.json
           patterns: |
-            **/**.kt
+            **/**.kt*
             !**/generated/**
