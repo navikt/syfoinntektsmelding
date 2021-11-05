@@ -16,6 +16,3 @@ jobs:
         with:
           repotoken: ${{ secrets.GITHUB_TOKEN }}
           arguments: "--disabled_rules=parameter-list-wrapping,final-newline"
-      - uses: musichin/ktlint-check@v1
-        with:
-          version: '0.43.0'
