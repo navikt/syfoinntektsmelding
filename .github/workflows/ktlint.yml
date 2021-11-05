@@ -16,6 +16,7 @@ jobs:
         with:
           version: '0.43.0'
           warn: true # warn only
+          annotate: true
 
           # ktlint
           android: true
