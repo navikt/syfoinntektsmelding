@@ -4,19 +4,19 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import io.ktor.client.*
-import io.ktor.client.engine.mock.*
-import io.ktor.http.*
-import io.ktor.http.content.*
-import io.ktor.util.*
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.mock.MockEngine
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.content.TextContent
+import io.ktor.util.KtorExperimentalAPI
 import io.mockk.mockk
+import java.time.DayOfWeek
+import java.time.LocalDate
+import java.time.Month
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.util.Metrikk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import java.time.DayOfWeek
-import java.time.LocalDate
-import java.time.Month
 
 private const val OPPGAVE_ID = 1234
 private const val FORDELINGSOPPGAVE_ID = 5678
@@ -97,8 +97,8 @@ class OppgaveClientTest {
         oppgaveClient = OppgaveClient("url", tokenConsumer, buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk)
         val onsdag = LocalDate.of(2019, Month.NOVEMBER, 27)
         val fredag = LocalDate.of(2019, Month.NOVEMBER, 29)
-        val lørdag =  LocalDate.of(2019, Month.NOVEMBER, 30)
-        val søndag =  LocalDate.of(2019, Month.DECEMBER, 1)
+        val lørdag = LocalDate.of(2019, Month.NOVEMBER, 30)
+        val søndag = LocalDate.of(2019, Month.DECEMBER, 1)
 
         assertThat(oppgaveClient.leggTilEnVirkeuke(onsdag).dayOfWeek).isEqualTo(DayOfWeek.WEDNESDAY)
         assertThat(oppgaveClient.leggTilEnVirkeuke(fredag).dayOfWeek).isEqualTo(DayOfWeek.FRIDAY)
@@ -115,28 +115,27 @@ class OppgaveClientTest {
                 mapper.registerKotlinModule()
                 mapper.registerModule(JavaTimeModule())
                 return mapper.readValue((req.body as TextContent).text)
-
             }
         }
         return null
     }
 
     private fun lagOppgaveResponse(): OppgaveResponse {
-        return OppgaveResponse (
+        return OppgaveResponse(
             antallTreffTotalt = 1,
             oppgaver = listOf(lagOppgave())
         )
     }
 
     private fun lagTomOppgaveResponse(): OppgaveResponse {
-        return OppgaveResponse (
+        return OppgaveResponse(
             antallTreffTotalt = 0,
             oppgaver = listOf()
         )
     }
 
     private fun lagFordelingsOppgaveResponse(): OppgaveResponse {
-        return OppgaveResponse (
+        return OppgaveResponse(
             antallTreffTotalt = 1,
             oppgaver = listOf(lagFordelingsOppgave())
         )

@@ -1,11 +1,14 @@
 package no.nav.syfo
 
 import com.typesafe.config.ConfigFactory
-import io.ktor.config.*
-import io.ktor.locations.*
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
-import io.ktor.util.*
+import io.ktor.config.HoconApplicationConfig
+import io.ktor.locations.KtorExperimentalLocationsAPI
+import io.ktor.server.engine.applicationEngineEnvironment
+import io.ktor.server.engine.connector
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.netty.Netty
+import io.ktor.server.netty.NettyApplicationEngine
+import io.ktor.util.KtorExperimentalAPI
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.helse.arbeidsgiver.kubernetes.KubernetesProbeManager
 import no.nav.helse.arbeidsgiver.kubernetes.LivenessComponent
@@ -31,11 +34,11 @@ import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.slf4j.LoggerFactory
 
-
 class SpinnApplication(val port: Int = 8080) : KoinComponent {
     private val logger = LoggerFactory.getLogger(SpinnApplication::class.simpleName)
     private var webserver: NettyApplicationEngine? = null
     private var appConfig: HoconApplicationConfig = HoconApplicationConfig(ConfigFactory.load())
+
     @KtorExperimentalAPI
     private val runtimeEnvironment = appConfig.getEnvironment()
 
@@ -128,7 +131,6 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
         logger.debug("La til probeable komponenter")
     }
 }
-
 
 @KtorExperimentalLocationsAPI
 @KtorExperimentalAPI

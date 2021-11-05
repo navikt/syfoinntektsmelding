@@ -1,8 +1,8 @@
 package no.nav.syfo.syfoinntektsmelding.consumer.ws
 
-import no.nav.syfo.domain.Periode
 import java.time.format.DateTimeFormatter
 import java.util.function.BinaryOperator
+import no.nav.syfo.domain.Periode
 
 fun inntektsmeldingArbeidsgiver(perioder: List<Periode>, fnr: String = "fnr"): String {
     return "<ns6:melding xmlns:ns6=\"http://seres.no/xsd/NAV/Inntektsmelding_M/20180924\">" +

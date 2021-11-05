@@ -3,6 +3,7 @@
 package no.nav.syfo.behandling
 
 import com.google.common.util.concurrent.Striped
+import java.time.LocalDateTime
 import log
 import no.nav.syfo.client.aktor.AktorClient
 import no.nav.syfo.domain.JournalStatus
@@ -17,7 +18,6 @@ import no.nav.syfo.service.SaksbehandlingService
 import no.nav.syfo.util.Metrikk
 import no.nav.syfo.util.validerInntektsmelding
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
-import java.time.LocalDateTime
 
 class InntektsmeldingBehandler(
     private val journalpostService: JournalpostService,
@@ -30,7 +30,7 @@ class InntektsmeldingBehandler(
 ) {
 
     private val consumerLocks = Striped.lock(8)
-    private val OPPRETT_OPPGAVE_FORSINKELSE = 48L;
+    private val OPPRETT_OPPGAVE_FORSINKELSE = 48L
 
     fun behandle(arkivId: String, arkivreferanse: String): String? {
         val inntektsmelding = journalpostService.hentInntektsmelding(arkivId, arkivreferanse)
@@ -40,7 +40,7 @@ class InntektsmeldingBehandler(
     fun behandle(arkivId: String, arkivreferanse: String, inntektsmelding: Inntektsmelding): String? {
 
         val log = log()
-        var ret : String? = null
+        var ret: String? = null
         val consumerLock = consumerLocks.get(inntektsmelding.fnr)
         try {
             consumerLock.lock()
@@ -88,7 +88,12 @@ class InntektsmeldingBehandler(
 
                 inntektsmeldingAivenProducer.leggMottattInntektsmeldingPåTopics(mappedInntektsmelding)
 
-                log.info("Inntektsmelding {} er journalført for {} refusjon {}", inntektsmelding.journalpostId, arkivreferanse, inntektsmelding.refusjon.beloepPrMnd)
+                log.info(
+                    "Inntektsmelding {} er journalført for {} refusjon {}",
+                    inntektsmelding.journalpostId,
+                    arkivreferanse,
+                    inntektsmelding.refusjon.beloepPrMnd
+                )
                 ret = dto.uuid
             } else {
                 log.info(
@@ -112,6 +117,5 @@ class InntektsmeldingBehandler(
         if (inntektsmelding.opphørAvNaturalYtelse.isEmpty())
             metrikk.tellNaturalytelse()
     }
-
 }
 

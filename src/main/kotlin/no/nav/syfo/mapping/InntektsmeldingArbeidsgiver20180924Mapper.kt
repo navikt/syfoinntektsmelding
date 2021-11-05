@@ -1,20 +1,36 @@
 package no.nav.syfo.mapping
 
-import log
-import no.nav.syfo.domain.JournalStatus
-import no.nav.syfo.domain.Periode
-import no.nav.syfo.domain.inntektsmelding.*
-import no.seres.xsd.nav.inntektsmelding_m._20180924.*
 import java.time.LocalDate
 import java.time.LocalDateTime
 import javax.xml.bind.JAXBElement
-
+import log
+import no.nav.syfo.domain.JournalStatus
+import no.nav.syfo.domain.Periode
+import no.nav.syfo.domain.inntektsmelding.AvsenderSystem
+import no.nav.syfo.domain.inntektsmelding.EndringIRefusjon
+import no.nav.syfo.domain.inntektsmelding.GjenopptakelseNaturalytelse
+import no.nav.syfo.domain.inntektsmelding.Gyldighetsstatus
+import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
+import no.nav.syfo.domain.inntektsmelding.Kontaktinformasjon
+import no.nav.syfo.domain.inntektsmelding.OpphoerAvNaturalytelse
+import no.nav.syfo.domain.inntektsmelding.Refusjon
+import no.seres.xsd.nav.inntektsmelding_m._20180924.XMLArbeidsforhold
+import no.seres.xsd.nav.inntektsmelding_m._20180924.XMLGjenopptakelseNaturalytelseListe
+import no.seres.xsd.nav.inntektsmelding_m._20180924.XMLInntektsmeldingM
+import no.seres.xsd.nav.inntektsmelding_m._20180924.XMLOpphoerAvNaturalytelseListe
+import no.seres.xsd.nav.inntektsmelding_m._20180924.XMLRefusjon
 
 internal object InntektsmeldingArbeidsgiver20180924Mapper {
 
     val log = log()
 
-    fun tilXMLInntektsmelding(jabxInntektsmelding: JAXBElement<Any>, journalpostId: String, mottattDato: LocalDateTime, journalStatus: JournalStatus, arkivReferanse: String): Inntektsmelding {
+    fun tilXMLInntektsmelding(
+        jabxInntektsmelding: JAXBElement<Any>,
+        journalpostId: String,
+        mottattDato: LocalDateTime,
+        journalStatus: JournalStatus,
+        arkivReferanse: String
+    ): Inntektsmelding {
         log.info("Behandling inntektsmelding på 20180924 format")
         val skjemainnhold = (jabxInntektsmelding.value as XMLInntektsmeldingM).skjemainnhold
 
@@ -67,7 +83,7 @@ internal object InntektsmeldingArbeidsgiver20180924Mapper {
     }
 
     private fun mapFerie(arbeidsforhold: JAXBElement<XMLArbeidsforhold>): List<Periode> {
-        return arbeidsforhold?.value?.avtaltFerieListe?.value?.avtaltFerie?.filter { f -> f.fom != null }?.map { f -> Periode(f.fom.value, f.tom.value) }
+        return arbeidsforhold.value?.avtaltFerieListe?.value?.avtaltFerie?.filter { f -> f.fom != null }?.map { f -> Periode(f.fom.value, f.tom.value) }
             ?: emptyList()
     }
 
@@ -77,7 +93,11 @@ internal object InntektsmeldingArbeidsgiver20180924Mapper {
 
     private fun mapXmlGjenopptakelseNaturalytelser(xmlGjenopptakelseListe: JAXBElement<XMLGjenopptakelseNaturalytelseListe>?): List<GjenopptakelseNaturalytelse> {
         return xmlGjenopptakelseListe?.value?.naturalytelseDetaljer?.map { gjenopptakelse ->
-            GjenopptakelseNaturalytelse(no.nav.syfo.consumer.ws.mapping.mapNaturalytelseType(gjenopptakelse.naturalytelseType), gjenopptakelse.fom?.value, gjenopptakelse.beloepPrMnd?.value)
+            GjenopptakelseNaturalytelse(
+                no.nav.syfo.consumer.ws.mapping.mapNaturalytelseType(gjenopptakelse.naturalytelseType),
+                gjenopptakelse.fom?.value,
+                gjenopptakelse.beloepPrMnd?.value
+            )
         }
             ?: emptyList()
     }
@@ -87,17 +107,19 @@ internal object InntektsmeldingArbeidsgiver20180924Mapper {
             OpphoerAvNaturalytelse(no.nav.syfo.consumer.ws.mapping.mapNaturalytelseType(opphør.naturalytelseType), opphør.fom?.value, opphør.beloepPrMnd.value)
         }
             ?: emptyList()
-
     }
 
     private fun mapXmlEndringRefusjon(xmlRefusjon: JAXBElement<XMLRefusjon>?): List<EndringIRefusjon> {
-        return xmlRefusjon?.value?.endringIRefusjonListe?.value?.endringIRefusjon?.map { endring -> EndringIRefusjon(endring.endringsdato?.value, endring.refusjonsbeloepPrMnd?.value) }
+        return xmlRefusjon?.value?.endringIRefusjonListe?.value?.endringIRefusjon?.map { endring ->
+            EndringIRefusjon(
+                endring.endringsdato?.value,
+                endring.refusjonsbeloepPrMnd?.value
+            )
+        }
             ?: emptyList()
     }
 
     private fun mapXmlRefusjon(refusjon: JAXBElement<XMLRefusjon>?): Refusjon {
         return Refusjon(refusjon?.value?.refusjonsbeloepPrMnd?.value, refusjon?.value?.refusjonsopphoersdato?.value)
     }
-
-
 }

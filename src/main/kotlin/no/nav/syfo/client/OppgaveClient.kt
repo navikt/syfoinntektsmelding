@@ -1,8 +1,14 @@
 package no.nav.syfo.client
 
-import io.ktor.client.*
-import io.ktor.client.request.*
-import io.ktor.http.*
+import io.ktor.client.HttpClient
+import io.ktor.client.request.get
+import io.ktor.client.request.header
+import io.ktor.client.request.parameter
+import io.ktor.client.request.post
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
+import java.time.DayOfWeek
+import java.time.LocalDate
 import no.nav.syfo.behandling.HentOppgaveException
 import no.nav.syfo.behandling.OpprettFordelingsOppgaveException
 import no.nav.syfo.behandling.OpprettOppgaveException
@@ -11,14 +17,12 @@ import no.nav.syfo.helpers.retry
 import no.nav.syfo.util.MDCOperations
 import no.nav.syfo.util.Metrikk
 import org.slf4j.LoggerFactory
-import java.time.DayOfWeek
-import java.time.LocalDate
 
 const val OPPGAVETYPE_INNTEKTSMELDING = "INNT"
 const val OPPGAVETYPE_FORDELINGSOPPGAVE = "FDR"
 const val TEMA = "SYK"
 
-class OppgaveClient constructor (
+class OppgaveClient constructor(
     val oppgavebehndlingUrl: String,
     val tokenConsumer: TokenConsumer,
     val httpClient: HttpClient,

@@ -4,14 +4,13 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
-import no.nav.syfo.domain.JournalStatus
+import java.time.LocalDateTime
 import no.nav.syfo.client.saf.SafJournalpostClient
 import no.nav.syfo.client.saf.model.Dokument
 import no.nav.syfo.client.saf.model.Journalpost
+import no.nav.syfo.domain.JournalStatus
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.junit.jupiter.api.Test
-import java.time.LocalDateTime
-
 
 class InngaaendeJournalConsumerTest {
 
@@ -39,11 +38,10 @@ class InngaaendeJournalConsumerTest {
         val inngaaendeJournal = inngaaendeJournalConsumer.hentDokumentId(journalpostId)
 
         verify {
-            safJournalpostClient.getJournalpostMetadata( capture(captor) )
+            safJournalpostClient.getJournalpostMetadata(capture(captor))
         }
 
         assertThat(inngaaendeJournal.dokumentId).isEqualTo(dokumentId1)
         assertThat(captor.captured).isEqualTo(journalpostId)
     }
-
 }

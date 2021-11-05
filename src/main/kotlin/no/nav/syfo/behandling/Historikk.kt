@@ -1,7 +1,7 @@
 package no.nav.syfo.behandling
 
-import no.nav.syfo.dto.FeiletEntitet
 import java.time.LocalDateTime
+import no.nav.syfo.dto.FeiletEntitet
 
 const val ANTALL_DAGER_FØR_ARKIVERING = 7L
 

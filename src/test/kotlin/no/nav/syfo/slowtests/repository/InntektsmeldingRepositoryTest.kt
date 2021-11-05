@@ -1,10 +1,19 @@
 package no.nav.syfo.slowtests.repository
 
 import com.zaxxer.hikari.HikariDataSource
+import java.math.BigDecimal
+import java.time.LocalDate
+import java.time.LocalDateTime
 import no.nav.inntektsmelding.kontrakt.serde.JacksonJsonConfig
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
-import no.nav.syfo.domain.inntektsmelding.*
+import no.nav.syfo.domain.inntektsmelding.EndringIRefusjon
+import no.nav.syfo.domain.inntektsmelding.GjenopptakelseNaturalytelse
+import no.nav.syfo.domain.inntektsmelding.Gyldighetsstatus
+import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
+import no.nav.syfo.domain.inntektsmelding.Naturalytelse
+import no.nav.syfo.domain.inntektsmelding.OpphoerAvNaturalytelse
+import no.nav.syfo.domain.inntektsmelding.Refusjon
 import no.nav.syfo.dto.InntektsmeldingEntitet
 import no.nav.syfo.grunnleggendeInntektsmelding
 import no.nav.syfo.repository.InntektsmeldingRepository
@@ -15,11 +24,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import java.math.BigDecimal
-import java.time.LocalDate
-import java.time.LocalDateTime
 
-open class InntektsmeldingRepositoryTest : SystemTestBase(){
+open class InntektsmeldingRepositoryTest : SystemTestBase() {
 
     lateinit var repository: InntektsmeldingRepository
 
@@ -36,7 +42,6 @@ open class InntektsmeldingRepositoryTest : SystemTestBase(){
     internal fun tearDown() {
         repository.deleteAll()
     }
-
 
     @Test
     fun findByAktorId() {
@@ -62,7 +67,7 @@ open class InntektsmeldingRepositoryTest : SystemTestBase(){
         assertThat(i.aktorId).isEqualTo("aktorId1")
         assertThat(i.behandlet).isEqualTo(LocalDateTime.of(2019, 10, 1, 5, 18, 45, 0))
         assertThat(i.arbeidsgiverperioder.size).isEqualTo(1)
-      //  assertThat(i.arbeidsgiverperioder[0].inntektsmelding).isEqualTo(i)
+        //  assertThat(i.arbeidsgiverperioder[0].inntektsmelding).isEqualTo(i)
         assertThat(i.arbeidsgiverperioder[0].uuid).isNotNull
         assertThat(i.arbeidsgiverperioder[0].fom).isEqualTo(LocalDate.of(2019, 10, 5))
         assertThat(i.arbeidsgiverperioder[0].tom).isEqualTo(LocalDate.of(2019, 10, 25))
@@ -86,7 +91,7 @@ open class InntektsmeldingRepositoryTest : SystemTestBase(){
         assertThat(inntektsmeldinger.size).isEqualTo(1)
         val i = inntektsmeldinger[0]
         assertThat(i.arbeidsgiverperioder.size).isEqualTo(2)
-       // assertThat(i.arbeidsgiverperioder[0].inntektsmelding).isEqualTo(i)
+        // assertThat(i.arbeidsgiverperioder[0].inntektsmelding).isEqualTo(i)
         assertThat(i.arbeidsgiverperioder[0].uuid).isNotNull
         assertThat(i.arbeidsgiverperioder[0].fom).isEqualTo(LocalDate.of(2019, 10, 5))
         assertThat(i.arbeidsgiverperioder[0].tom).isEqualTo(LocalDate.of(2019, 10, 25))
@@ -182,7 +187,6 @@ open class InntektsmeldingRepositoryTest : SystemTestBase(){
         assertThat(data.get("arkivRefereranse").asText()).isEqualTo("ar-123")
         assertThat(data.get("førsteFraværsdag").asText()).isEqualTo("2010-02-10")
         assertThat(data.get("arsakTilInnsending").asText()).isEqualTo("Ingen årsak")
-
     }
 
     @Test
@@ -226,6 +230,5 @@ open class InntektsmeldingRepositoryTest : SystemTestBase(){
             aktorId = "aktorId1"
         )
     }
-
 }
 

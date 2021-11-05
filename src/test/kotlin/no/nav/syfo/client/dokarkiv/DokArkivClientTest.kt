@@ -1,7 +1,7 @@
 package no.nav.syfo.client.dokarkiv
 
-import io.ktor.http.*
-import io.ktor.util.*
+import io.ktor.http.HttpStatusCode
+import io.ktor.util.KtorExperimentalAPI
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
@@ -19,7 +19,7 @@ class DokArkivClientTest {
 
     @Test
     fun `Skal ferdigstille journalpost når man får status OK`() {
-        dokArkivClient = DokArkivClient("", mockStsClient, buildHttpClientText(HttpStatusCode.OK, "") )
+        dokArkivClient = DokArkivClient("", mockStsClient, buildHttpClientText(HttpStatusCode.OK, ""))
         runBlocking {
             val resultat = dokArkivClient.ferdigstillJournalpost("111", "1001")
             Assertions.assertThat(resultat).isEqualTo("")
@@ -28,7 +28,7 @@ class DokArkivClientTest {
 
     @Test
     fun `Skal håndtere at ferdigstilling av journalpost feiler`() {
-        dokArkivClient = DokArkivClient("", mockStsClient, buildHttpClientText(HttpStatusCode.InternalServerError, "") )
+        dokArkivClient = DokArkivClient("", mockStsClient, buildHttpClientText(HttpStatusCode.InternalServerError, ""))
         runBlocking {
             assertThrows<Exception> {
                 dokArkivClient.ferdigstillJournalpost("111", "1001")
@@ -38,22 +38,21 @@ class DokArkivClientTest {
 
     @Test
     fun `Skal oppdatere journalpost når man får status OK`() {
-        dokArkivClient = DokArkivClient("", mockStsClient, buildHttpClientText(HttpStatusCode.OK) )
+        dokArkivClient = DokArkivClient("", mockStsClient, buildHttpClientText(HttpStatusCode.OK))
         runBlocking {
-            val resultat = dokArkivClient.oppdaterJournalpost("111", "123",  false,"abc123", "1001")
+            val resultat = dokArkivClient.oppdaterJournalpost("111", "123", false, "abc123", "1001")
             Assertions.assertThat(resultat.status).isEqualTo(HttpStatusCode.OK)
         }
     }
 
     @Test
     fun `Skal håndtere at oppdatering av journalpost feiler`() {
-        dokArkivClient = DokArkivClient("", mockStsClient, buildHttpClientText(HttpStatusCode.InternalServerError, "") )
+        dokArkivClient = DokArkivClient("", mockStsClient, buildHttpClientText(HttpStatusCode.InternalServerError, ""))
         runBlocking {
             assertThrows<Exception> {
-                dokArkivClient.oppdaterJournalpost("111","123", false,"abc123", "1001")
+                dokArkivClient.oppdaterJournalpost("111", "123", false, "abc123", "1001")
             }
         }
     }
-
 }
 

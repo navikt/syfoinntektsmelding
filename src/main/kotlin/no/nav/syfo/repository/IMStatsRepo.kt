@@ -1,11 +1,6 @@
 package no.nav.syfo.repository
 
-import io.ktor.util.*
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.util.*
 import javax.sql.DataSource
-import kotlin.collections.ArrayList
 
 data class IMWeeklyStats(
     val weekNumber: Int,
@@ -61,7 +56,6 @@ data class OppgaveStats(
     val antall: Int,
     val dato: String
 )
-
 
 interface IMStatsRepo {
     fun getWeeklyStats(): List<IMWeeklyStats>
@@ -184,7 +178,6 @@ class IMStatsRepoImpl(
             return returnValue
         }
     }
-
 
     override fun getWeeklyQualityStats(): List<IMWeeklyQualityStats> {
         val query = """
@@ -337,7 +330,6 @@ class IMStatsRepoImpl(
 
             return returnValue
         }
-
     }
 
     override fun getForsinkelseStats(): List<ForsinkelseStats> {
@@ -374,7 +366,7 @@ class IMStatsRepoImpl(
         }
     }
 
-    override fun getOppgaveStats(): List<OppgaveStats>{
+    override fun getOppgaveStats(): List<OppgaveStats> {
         val query = """
             select count(*) as antall,
             Date(timeout) as dato
@@ -398,7 +390,7 @@ class IMStatsRepoImpl(
                 )
             }
 
-            return  returnValue;
+            return returnValue
         }
     }
 }

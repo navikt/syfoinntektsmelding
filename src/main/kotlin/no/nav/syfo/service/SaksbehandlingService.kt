@@ -47,17 +47,23 @@ class SaksbehandlingService(
         return finnSaksId(tilhorendeInntektsmelding, inntektsmelding, aktorId, sammenslattPeriode, arkivReferanse)
     }
 
-    private fun finnSaksId(tilhorendeInntektsmelding: Inntektsmelding?, inntektsmelding: Inntektsmelding, aktorId: String, sammenslattPeriode: Periode?, msgId: String): String {
+    private fun finnSaksId(
+        tilhorendeInntektsmelding: Inntektsmelding?,
+        inntektsmelding: Inntektsmelding,
+        aktorId: String,
+        sammenslattPeriode: Periode?,
+        msgId: String
+    ): String {
         return (tilhorendeInntektsmelding
-                ?.sakId
-                ?: inntektsmelding.arbeidsgiverOrgnummer
-                        ?.let { eksisterendeSakService.finnEksisterendeSak(aktorId, sammenslattPeriode?.fom, sammenslattPeriode?.tom) }
-                ?: opprettSak(aktorId, msgId))
+            ?.sakId
+            ?: inntektsmelding.arbeidsgiverOrgnummer
+                ?.let { eksisterendeSakService.finnEksisterendeSak(aktorId, sammenslattPeriode?.fom, sammenslattPeriode?.tom) }
+            ?: opprettSak(aktorId, msgId))
     }
 
     @KtorExperimentalAPI
     private fun opprettSak(aktorId: String, msgId: String): String {
-        var saksId = "";
+        var saksId = ""
         runBlocking {
             saksId = sakClient.opprettSak(aktorId, msgId).id.toString()
         }

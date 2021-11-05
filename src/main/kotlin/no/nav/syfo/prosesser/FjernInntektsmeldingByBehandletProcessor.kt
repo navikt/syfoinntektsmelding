@@ -1,19 +1,23 @@
 package no.nav.syfo.prosesser
 
+import java.time.LocalDate
+import java.util.UUID
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbProsesserer
 import no.nav.syfo.repository.InntektsmeldingRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.time.LocalDate
-import java.util.*
 
 class FjernInntektsmeldingByBehandletProcessor(
     private val repository: InntektsmeldingRepository,
     private val lagringstidMåneder: Int
 ) : BakgrunnsjobbProsesserer {
     val log: Logger = LoggerFactory.getLogger(FjernInntektsmeldingByBehandletProcessor::class.java)
-    companion object { const val JOB_TYPE = "fjern-inntektsmelding-via-behnadling"}
+
+    companion object {
+        const val JOB_TYPE = "fjern-inntektsmelding-via-behnadling"
+    }
+
     override val type: String get() = JOB_TYPE
 
     override fun prosesser(jobb: Bakgrunnsjobb) {

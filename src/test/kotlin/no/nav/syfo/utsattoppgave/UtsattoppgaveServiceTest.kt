@@ -1,8 +1,10 @@
 package no.nav.syfo.utsattoppgave
 
-import io.ktor.util.*
+import io.ktor.util.KtorExperimentalAPI
 import io.mockk.mockk
 import io.mockk.verify
+import java.time.LocalDateTime
+import java.util.UUID
 import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.dto.UtsattOppgaveEntitet
@@ -10,9 +12,6 @@ import no.nav.syfo.service.BehandlendeEnhetConsumer
 import no.nav.syfo.util.Metrikk
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.time.LocalDateTime
-import java.util.*
-
 
 @KtorExperimentalAPI
 open class UtsattOppgaveServiceTest {
@@ -54,6 +53,5 @@ open class UtsattOppgaveServiceTest {
         gosysOppgaveId = null,
         oppdatert = null
     )
-
 }
 

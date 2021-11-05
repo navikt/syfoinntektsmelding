@@ -1,7 +1,7 @@
 package no.nav.syfo.client.saf
 
-import io.ktor.http.*
-import io.ktor.util.*
+import io.ktor.http.HttpStatusCode
+import io.ktor.util.KtorExperimentalAPI
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
@@ -24,7 +24,7 @@ class SafJournalpostClientTest {
 
     @Test
     fun `Skal hente ut gyldig respons`() {
-        client = SafJournalpostClient(buildHttpClientJson(HttpStatusCode.OK, validJson()), "http://localhost", stsClient )
+        client = SafJournalpostClient(buildHttpClientJson(HttpStatusCode.OK, validJson()), "http://localhost", stsClient)
         runBlocking {
             val journalpost = client.getJournalpostMetadata("123")
             Assertions.assertThat(journalpost?.journalstatus).isEqualTo(JournalStatus.MOTTATT)
@@ -34,7 +34,7 @@ class SafJournalpostClientTest {
 
     @Test
     fun `Skal håndtere feil`() {
-        client = SafJournalpostClient(buildHttpClientJson(HttpStatusCode.OK, errorJson()), "http://localhost", stsClient )
+        client = SafJournalpostClient(buildHttpClientJson(HttpStatusCode.OK, errorJson()), "http://localhost", stsClient)
         runBlocking {
             assertThrows<ErrorException> {
                 client.getJournalpostMetadata("123")
@@ -44,7 +44,7 @@ class SafJournalpostClientTest {
 
     @Test
     fun `Skal håndtere ikke autorisert`() {
-        client = SafJournalpostClient(buildHttpClientJson(HttpStatusCode.OK, unauthorizedJson()), "http://localhost", stsClient )
+        client = SafJournalpostClient(buildHttpClientJson(HttpStatusCode.OK, unauthorizedJson()), "http://localhost", stsClient)
         runBlocking {
             assertThrows<NotAuthorizedException> {
                 client.getJournalpostMetadata("123")
@@ -52,24 +52,23 @@ class SafJournalpostClientTest {
         }
     }
 
-
     @Test
-    fun `Skal lese gyldig JSON`(){
+    fun `Skal lese gyldig JSON`() {
         validJson()
     }
 
     @Test
-    fun `Skal lese error JSON`(){
+    fun `Skal lese error JSON`() {
         errorJson()
     }
 
     @Test
-    fun `Skal lese unauthorized JSON`(){
+    fun `Skal lese unauthorized JSON`() {
         unauthorizedJson()
     }
 
     @Test
-    fun `Skal lese not found JSON`(){
+    fun `Skal lese not found JSON`() {
         notFoundJson()
     }
 
@@ -96,5 +95,4 @@ class SafJournalpostClientTest {
     fun unauthorizedJson(): JournalResponse {
         return getJsonFile("/saf_unauthorized.json")
     }
-
 }

@@ -2,7 +2,7 @@ package no.nav.syfo.domain
 
 import java.time.LocalDate
 
-data class Oppgave (
+data class Oppgave(
     val oppgaveId: String? = null,
     val versjon: Int = 0,
     val beskrivelse: String? = null,

@@ -1,26 +1,25 @@
 package no.nav.syfo.service
 
+import java.time.LocalDateTime
+import javax.xml.bind.JAXBElement
 import kotlinx.coroutines.runBlocking
 import log
 import no.nav.syfo.behandling.HentDokumentFeiletException
 import no.nav.syfo.client.aktor.AktorClient
-import no.nav.syfo.mapping.InntektsmeldingArbeidsgiver20180924Mapper
-import no.nav.syfo.mapping.InntektsmeldingArbeidsgiverPrivat20181211Mapper
-import no.nav.syfo.domain.JournalStatus
-import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.client.saf.SafDokumentClient
 import no.nav.syfo.client.saf.SafJournalpostClient
+import no.nav.syfo.domain.JournalStatus
+import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
+import no.nav.syfo.mapping.InntektsmeldingArbeidsgiver20180924Mapper
+import no.nav.syfo.mapping.InntektsmeldingArbeidsgiverPrivat20181211Mapper
 import no.nav.syfo.util.JAXB
 import no.seres.xsd.nav.inntektsmelding_m._20180924.XMLInntektsmeldingM
-import java.lang.IllegalArgumentException
-import java.time.LocalDateTime
-import javax.xml.bind.JAXBElement
 
 class JournalConsumer(
     private val safDokumentClient: SafDokumentClient,
     private val safJournalpostClient: SafJournalpostClient,
-    private val aktorClient: AktorClient)
-{
+    private val aktorClient: AktorClient
+) {
     var log = log()
 
     /**
@@ -41,9 +40,16 @@ class JournalConsumer(
             return if (jaxbInntektsmelding.value is XMLInntektsmeldingM)
                 InntektsmeldingArbeidsgiver20180924Mapper.tilXMLInntektsmelding(jaxbInntektsmelding, journalpostId, mottattDato, journalStatus, arkivReferanse)
             else
-                InntektsmeldingArbeidsgiverPrivat20181211Mapper.tilXMLInntektsmelding(jaxbInntektsmelding, journalpostId, mottattDato, journalStatus, arkivReferanse, aktorClient)
+                InntektsmeldingArbeidsgiverPrivat20181211Mapper.tilXMLInntektsmelding(
+                    jaxbInntektsmelding,
+                    journalpostId,
+                    mottattDato,
+                    journalStatus,
+                    arkivReferanse,
+                    aktorClient
+                )
         } catch (e: RuntimeException) {
-            log.error( "Klarte ikke å hente inntektsmelding med journalpostId: $journalpostId", e )
+            log.error("Klarte ikke å hente inntektsmelding med journalpostId: $journalpostId", e)
             throw HentDokumentFeiletException(journalpostId, e)
         }
     }

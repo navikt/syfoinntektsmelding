@@ -2,14 +2,20 @@ package no.nav.syfo.slowtests.datapakke
 
 import io.mockk.every
 import io.mockk.mockk
+import java.util.UUID
 import no.nav.security.mock.oauth2.http.objectMapper
 import no.nav.syfo.datapakke.DatapakkePublisherJob
-import no.nav.syfo.repository.*
+import no.nav.syfo.repository.ArsakStats
+import no.nav.syfo.repository.ForsinkelseStats
+import no.nav.syfo.repository.IMStatsRepo
+import no.nav.syfo.repository.IMWeeklyQualityStats
+import no.nav.syfo.repository.IMWeeklyStats
+import no.nav.syfo.repository.LPSStats
+import no.nav.syfo.repository.OppgaveStats
 import no.nav.syfo.slowtests.SystemTestBase
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import java.util.*
 import kotlin.random.Random
 
 class DatapakkePublisherJobTest : SystemTestBase() {
@@ -44,22 +50,22 @@ class DatapakkePublisherJobTest : SystemTestBase() {
             }.toList()
 
         every { repo.getLPSStats() } returns listOf(
-			LPSStats(
-				"SAP [SID:QHR/002][BUILD:20210820]",
-				1,
-				6
-			),
-			LPSStats(
-				"Aditro Lønn",
-				2,
-				3
-			),
-			LPSStats(
-				"24SevenOffice",
-				1,
-				25
-			)
-		)
+            LPSStats(
+                "SAP [SID:QHR/002][BUILD:20210820]",
+                1,
+                6
+            ),
+            LPSStats(
+                "Aditro Lønn",
+                2,
+                3
+            ),
+            LPSStats(
+                "24SevenOffice",
+                1,
+                25
+            )
+        )
 
         every { repo.getWeeklyQualityStats() } returns (1..25)
             .map {
@@ -125,9 +131,8 @@ class DatapakkePublisherJobTest : SystemTestBase() {
             }.toList()
     }
 
-
     @Test
-	@Disabled
+    @Disabled
     internal fun name() = suspendableTest {
         DatapakkePublisherJob(
             repo,

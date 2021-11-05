@@ -1,8 +1,9 @@
 package no.nav.syfo.koin
 
 import com.zaxxer.hikari.HikariConfig
-import io.ktor.config.*
-import io.ktor.util.*
+import io.ktor.config.ApplicationConfig
+import io.ktor.util.KtorExperimentalAPI
+import javax.sql.DataSource
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
@@ -12,28 +13,41 @@ import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClientImpl
 import no.nav.helse.arbeidsgiver.system.getString
 import no.nav.syfo.MetrikkVarsler
 import no.nav.syfo.behandling.InntektsmeldingBehandler
-import no.nav.syfo.client.SakConsumer
-import no.nav.syfo.client.azuread.AzureAdTokenConsumer
 import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.client.SakClient
+import no.nav.syfo.client.SakConsumer
 import no.nav.syfo.client.TokenConsumer
 import no.nav.syfo.client.aktor.AktorClient
+import no.nav.syfo.client.azuread.AzureAdTokenConsumer
 import no.nav.syfo.client.dokarkiv.DokArkivClient
 import no.nav.syfo.client.norg.Norg2Client
-import no.nav.syfo.service.BehandleInngaaendeJournalConsumer
-import no.nav.syfo.service.InngaaendeJournalConsumer
-import no.nav.syfo.service.JournalConsumer
+import no.nav.syfo.client.saf.SafDokumentClient
+import no.nav.syfo.client.saf.SafJournalpostClient
 import no.nav.syfo.datapakke.DatapakkePublisherJob
-import no.nav.syfo.integration.kafka.*
+import no.nav.syfo.integration.kafka.JoarkHendelseKafkaClient
+import no.nav.syfo.integration.kafka.UtsattOppgaveKafkaClient
+import no.nav.syfo.integration.kafka.commonAivenProperties
+import no.nav.syfo.integration.kafka.joarkOnPremProperties
+import no.nav.syfo.integration.kafka.utsattOppgaveAivenProperties
 import no.nav.syfo.producer.InntektsmeldingAivenProducer
 import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
 import no.nav.syfo.prosesser.FjernInntektsmeldingByBehandletProcessor
 import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
-import no.nav.syfo.repository.*
-import no.nav.syfo.client.saf.SafDokumentClient
-import no.nav.syfo.client.saf.SafJournalpostClient
+import no.nav.syfo.repository.ArbeidsgiverperiodeRepository
+import no.nav.syfo.repository.ArbeidsgiverperiodeRepositoryImp
+import no.nav.syfo.repository.FeiletRepositoryImp
+import no.nav.syfo.repository.FeiletService
+import no.nav.syfo.repository.IMStatsRepo
+import no.nav.syfo.repository.IMStatsRepoImpl
+import no.nav.syfo.repository.InntektsmeldingRepository
+import no.nav.syfo.repository.InntektsmeldingRepositoryImp
+import no.nav.syfo.repository.InntektsmeldingService
+import no.nav.syfo.repository.UtsattOppgaveRepositoryImp
+import no.nav.syfo.service.BehandleInngaaendeJournalConsumer
 import no.nav.syfo.service.BehandlendeEnhetConsumer
 import no.nav.syfo.service.EksisterendeSakService
+import no.nav.syfo.service.InngaaendeJournalConsumer
+import no.nav.syfo.service.JournalConsumer
 import no.nav.syfo.service.JournalpostService
 import no.nav.syfo.service.SaksbehandlingService
 import no.nav.syfo.util.Metrikk
@@ -44,7 +58,6 @@ import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil
 import org.koin.core.qualifier.StringQualifier
 import org.koin.dsl.bind
 import org.koin.dsl.module
-import javax.sql.DataSource
 
 @KtorExperimentalAPI
 fun preprodConfig(config: ApplicationConfig) = module {
@@ -70,7 +83,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
             get()
         )
     } bind JoarkInntektsmeldingHendelseProsessor::class
-    single { ArbeidsgiverperiodeRepositoryImp(get())} bind ArbeidsgiverperiodeRepository::class
+    single { ArbeidsgiverperiodeRepositoryImp(get()) } bind ArbeidsgiverperiodeRepository::class
 
     single {
         AktorClient(
@@ -128,7 +141,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
 
     single { InntektsmeldingRepositoryImp(get()) } bind InntektsmeldingRepository::class
     single { EksisterendeSakService(get()) } bind EksisterendeSakService::class
-    single { InntektsmeldingService( get(), get()) } bind InntektsmeldingService::class
+    single { InntektsmeldingService(get(), get()) } bind InntektsmeldingService::class
     single { SakClient(config.getString("opprett_sak_url"), get(), get()) } bind SakClient::class
     single { SaksbehandlingService(get(), get(), get(), get()) } bind SaksbehandlingService::class
 

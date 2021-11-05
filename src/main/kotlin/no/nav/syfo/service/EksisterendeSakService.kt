@@ -1,8 +1,8 @@
 package no.nav.syfo.service
 
+import java.time.LocalDate
 import log
 import no.nav.syfo.client.SakConsumer
-import java.time.LocalDate
 
 class EksisterendeSakService(
     private val sakConsumer: SakConsumer

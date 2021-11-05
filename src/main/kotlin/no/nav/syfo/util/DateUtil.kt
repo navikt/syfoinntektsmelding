@@ -1,6 +1,7 @@
 package no.nav.syfo.util
-import no.nav.syfo.domain.Periode
+
 import java.time.LocalDate
+import no.nav.syfo.domain.Periode
 
 object DateUtil {
     fun overlapperPerioder(a: Periode, b: Periode): Boolean {

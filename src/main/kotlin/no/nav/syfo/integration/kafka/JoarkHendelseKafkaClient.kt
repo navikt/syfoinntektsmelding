@@ -1,11 +1,11 @@
 package no.nav.syfo.integration.kafka
 
 //import no.nav.helse.inntektsmeldingsvarsel.ANTALL_INNKOMMENDE_MELDINGER
+import java.time.Duration
 import no.nav.helse.arbeidsgiver.kubernetes.LivenessComponent
 import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.slf4j.LoggerFactory
-import java.time.Duration
 
 interface MeldingProvider {
     fun getMessagesToProcess(): List<String>
@@ -26,7 +26,7 @@ class JoarkHendelseKafkaClient(props: MutableMap<String, Any>, topicName: String
             log.debug("Got shutdown message, closing Kafka connection...")
             try {
                 stop()
-            } catch (e: ConcurrentModificationException){
+            } catch (e: ConcurrentModificationException) {
                 log.debug("Fikk ConcurrentModificationException når man stoppet")
             }
             log.debug("Kafka connection closed")

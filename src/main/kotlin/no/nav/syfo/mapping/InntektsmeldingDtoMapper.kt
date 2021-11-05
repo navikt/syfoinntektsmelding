@@ -1,5 +1,6 @@
 package no.nav.syfo.mapping
 
+import java.time.LocalDate
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
 import no.nav.syfo.domain.inntektsmelding.Gyldighetsstatus
@@ -7,24 +8,21 @@ import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.domain.inntektsmelding.Refusjon
 import no.nav.syfo.dto.ArbeidsgiverperiodeEntitet
 import no.nav.syfo.dto.InntektsmeldingEntitet
-import java.time.LocalDate
-import kotlin.collections.ArrayList
 
-
-fun toInntektsmeldingEntitet(inntektsmelding : Inntektsmelding) : InntektsmeldingEntitet {
+fun toInntektsmeldingEntitet(inntektsmelding: Inntektsmelding): InntektsmeldingEntitet {
     val entitet = InntektsmeldingEntitet(
-            aktorId = inntektsmelding.aktorId ?: "",
-            sakId = inntektsmelding.sakId ?: "",
-            journalpostId = inntektsmelding.journalpostId,
-            arbeidsgiverPrivat = inntektsmelding.arbeidsgiverPrivatFnr,
-            orgnummer = inntektsmelding.arbeidsgiverOrgnummer,
-            behandlet = inntektsmelding.mottattDato
+        aktorId = inntektsmelding.aktorId ?: "",
+        sakId = inntektsmelding.sakId ?: "",
+        journalpostId = inntektsmelding.journalpostId,
+        arbeidsgiverPrivat = inntektsmelding.arbeidsgiverPrivatFnr,
+        orgnummer = inntektsmelding.arbeidsgiverOrgnummer,
+        behandlet = inntektsmelding.mottattDato
     )
     inntektsmelding.arbeidsgiverperioder.forEach { p -> entitet.leggtilArbeidsgiverperiode(p.fom, p.tom) }
     return entitet
 }
 
-fun toInntektsmelding(inntektsmeldingEntitet: InntektsmeldingEntitet) : Inntektsmelding {
+fun toInntektsmelding(inntektsmeldingEntitet: InntektsmeldingEntitet): Inntektsmelding {
     return Inntektsmelding(
         id = inntektsmeldingEntitet.uuid,
         fnr = inntektsmeldingEntitet.arbeidsgiverPrivat ?: "",
@@ -53,10 +51,10 @@ fun toInntektsmelding(inntektsmeldingEntitet: InntektsmeldingEntitet) : Inntekts
     )
 }
 
-fun mapPerioder(perioder : List<ArbeidsgiverperiodeEntitet>): List<Periode> {
-    return perioder.map{ p -> mapPeriode(p) }
+fun mapPerioder(perioder: List<ArbeidsgiverperiodeEntitet>): List<Periode> {
+    return perioder.map { p -> mapPeriode(p) }
 }
 
-fun mapPeriode(p : ArbeidsgiverperiodeEntitet) : Periode{
+fun mapPeriode(p: ArbeidsgiverperiodeEntitet): Periode {
     return Periode(p.fom, p.tom)
 }

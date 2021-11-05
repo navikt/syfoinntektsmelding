@@ -1,7 +1,7 @@
 package no.nav.syfo.client.saf.model
 
-import no.nav.syfo.domain.JournalStatus
 import java.time.LocalDateTime
+import no.nav.syfo.domain.JournalStatus
 
 data class Journalpost(
     val journalstatus: JournalStatus,
@@ -9,6 +9,6 @@ data class Journalpost(
     val dokumenter: List<Dokument>
 )
 
-data class Dokument (
+data class Dokument(
     val dokumentInfoId: String
 )

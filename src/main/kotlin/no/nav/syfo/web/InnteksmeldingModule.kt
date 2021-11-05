@@ -1,17 +1,18 @@
 package no.nav.syfo.web
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.ktor.application.*
-import io.ktor.config.*
-import io.ktor.features.*
-import io.ktor.http.*
-import io.ktor.jackson.*
-import io.ktor.locations.*
-import io.ktor.routing.*
-import io.ktor.util.*
+import io.ktor.application.Application
+import io.ktor.application.install
+import io.ktor.config.ApplicationConfig
+import io.ktor.features.ContentNegotiation
+import io.ktor.http.ContentType
+import io.ktor.jackson.JacksonConverter
+import io.ktor.locations.KtorExperimentalLocationsAPI
+import io.ktor.routing.route
+import io.ktor.routing.routing
+import io.ktor.util.KtorExperimentalAPI
 import no.nav.syfo.web.api.syfoinntektsmelding
 import org.koin.ktor.ext.get
-import org.slf4j.event.Level
 
 @KtorExperimentalLocationsAPI
 @KtorExperimentalAPI

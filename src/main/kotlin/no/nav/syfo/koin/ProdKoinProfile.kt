@@ -1,8 +1,9 @@
 package no.nav.syfo.koin
 
 import com.zaxxer.hikari.HikariConfig
-import io.ktor.config.*
-import io.ktor.util.*
+import io.ktor.config.ApplicationConfig
+import io.ktor.util.KtorExperimentalAPI
+import javax.sql.DataSource
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
@@ -12,28 +13,41 @@ import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClientImpl
 import no.nav.helse.arbeidsgiver.system.getString
 import no.nav.syfo.MetrikkVarsler
 import no.nav.syfo.behandling.InntektsmeldingBehandler
-import no.nav.syfo.client.SakConsumer
-import no.nav.syfo.client.azuread.AzureAdTokenConsumer
 import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.client.SakClient
+import no.nav.syfo.client.SakConsumer
 import no.nav.syfo.client.TokenConsumer
 import no.nav.syfo.client.aktor.AktorClient
+import no.nav.syfo.client.azuread.AzureAdTokenConsumer
 import no.nav.syfo.client.dokarkiv.DokArkivClient
 import no.nav.syfo.client.norg.Norg2Client
-import no.nav.syfo.service.BehandleInngaaendeJournalConsumer
-import no.nav.syfo.service.InngaaendeJournalConsumer
-import no.nav.syfo.service.JournalConsumer
+import no.nav.syfo.client.saf.SafDokumentClient
+import no.nav.syfo.client.saf.SafJournalpostClient
 import no.nav.syfo.datapakke.DatapakkePublisherJob
-import no.nav.syfo.integration.kafka.*
+import no.nav.syfo.integration.kafka.JoarkHendelseKafkaClient
+import no.nav.syfo.integration.kafka.UtsattOppgaveKafkaClient
+import no.nav.syfo.integration.kafka.commonAivenProperties
+import no.nav.syfo.integration.kafka.joarkOnPremProperties
+import no.nav.syfo.integration.kafka.utsattOppgaveAivenProperties
 import no.nav.syfo.producer.InntektsmeldingAivenProducer
 import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
 import no.nav.syfo.prosesser.FjernInntektsmeldingByBehandletProcessor
 import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
-import no.nav.syfo.repository.*
-import no.nav.syfo.client.saf.SafDokumentClient
-import no.nav.syfo.client.saf.SafJournalpostClient
+import no.nav.syfo.repository.ArbeidsgiverperiodeRepository
+import no.nav.syfo.repository.ArbeidsgiverperiodeRepositoryImp
+import no.nav.syfo.repository.FeiletRepositoryImp
+import no.nav.syfo.repository.FeiletService
+import no.nav.syfo.repository.IMStatsRepo
+import no.nav.syfo.repository.IMStatsRepoImpl
+import no.nav.syfo.repository.InntektsmeldingRepository
+import no.nav.syfo.repository.InntektsmeldingRepositoryImp
+import no.nav.syfo.repository.InntektsmeldingService
+import no.nav.syfo.repository.UtsattOppgaveRepositoryImp
+import no.nav.syfo.service.BehandleInngaaendeJournalConsumer
 import no.nav.syfo.service.BehandlendeEnhetConsumer
 import no.nav.syfo.service.EksisterendeSakService
+import no.nav.syfo.service.InngaaendeJournalConsumer
+import no.nav.syfo.service.JournalConsumer
 import no.nav.syfo.service.JournalpostService
 import no.nav.syfo.service.SaksbehandlingService
 import no.nav.syfo.util.Metrikk
@@ -44,7 +58,6 @@ import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil
 import org.koin.core.qualifier.StringQualifier
 import org.koin.dsl.bind
 import org.koin.dsl.module
-import javax.sql.DataSource
 
 @KtorExperimentalAPI
 fun prodConfig(config: ApplicationConfig) = module {
@@ -71,7 +84,14 @@ fun prodConfig(config: ApplicationConfig) = module {
         )
     } bind JoarkInntektsmeldingHendelseProsessor::class
 
-    single { AktorClient(get(), config.getString("srvsyfoinntektsmelding.username"), config.getString("aktoerregister_api_v1_url"), get()) } bind AktorClient::class
+    single {
+        AktorClient(
+            get(),
+            config.getString("srvsyfoinntektsmelding.username"),
+            config.getString("aktoerregister_api_v1_url"),
+            get()
+        )
+    } bind AktorClient::class
     single {
         TokenConsumer(
             get(),
@@ -80,7 +100,7 @@ fun prodConfig(config: ApplicationConfig) = module {
             config.getString("srvsyfoinntektsmelding.password")
         )
     } bind TokenConsumer::class
-    single { InntektsmeldingBehandler(get(), get(),get(), get(), get(), get(), get()) } bind InntektsmeldingBehandler::class
+    single { InntektsmeldingBehandler(get(), get(), get(), get(), get(), get(), get()) } bind InntektsmeldingBehandler::class
 
 
     single { InngaaendeJournalConsumer(get()) } bind InngaaendeJournalConsumer::class
@@ -90,29 +110,38 @@ fun prodConfig(config: ApplicationConfig) = module {
     single { BehandlendeEnhetConsumer(get(), get(), get()) } bind BehandlendeEnhetConsumer::class
     single { JournalpostService(get(), get(), get(), get(), get()) } bind JournalpostService::class
 
-    single { AzureAdTokenConsumer(
-        get(StringQualifier("proxyHttpClient")),
-        config.getString("aadaccesstoken_url"),
-        config.getString("aad_syfoinntektsmelding_clientid_username"),
-        config.getString("aad_syfoinntektsmelding_clientid_password")) } bind AzureAdTokenConsumer::class
+    single {
+        AzureAdTokenConsumer(
+            get(StringQualifier("proxyHttpClient")),
+            config.getString("aadaccesstoken_url"),
+            config.getString("aad_syfoinntektsmelding_clientid_username"),
+            config.getString("aad_syfoinntektsmelding_clientid_password")
+        )
+    } bind AzureAdTokenConsumer::class
 
-    single { SakConsumer(get(),
-        get(),
-        config.getString("aad_syfogsak_clientid_username"),
-        config.getString("sakconsumer_host_url"))} bind SakConsumer::class
+    single {
+        SakConsumer(
+            get(),
+            get(),
+            config.getString("aad_syfogsak_clientid_username"),
+            config.getString("sakconsumer_host_url")
+        )
+    } bind SakConsumer::class
 
     single { EksisterendeSakService(get()) } bind EksisterendeSakService::class
     single { InntektsmeldingRepositoryImp(get()) } bind InntektsmeldingRepository::class
-    single { InntektsmeldingService(get(),get()) } bind InntektsmeldingService::class
-    single { ArbeidsgiverperiodeRepositoryImp(get())} bind ArbeidsgiverperiodeRepository::class
+    single { InntektsmeldingService(get(), get()) } bind InntektsmeldingService::class
+    single { ArbeidsgiverperiodeRepositoryImp(get()) } bind ArbeidsgiverperiodeRepository::class
     single { SakClient(config.getString("opprett_sak_url"), get(), get()) } bind SakClient::class
     single { SaksbehandlingService(get(), get(), get(), get()) } bind SaksbehandlingService::class
-    single { DatapakkePublisherJob(get(), get(), config.getString("datapakke.api_url"), config.getString("datapakke.id"),false, get()) }
+    single { DatapakkePublisherJob(get(), get(), config.getString("datapakke.api_url"), config.getString("datapakke.id"), false, get()) }
 
-    single { JoarkHendelseKafkaClient(
-        joarkOnPremProperties(config).toMutableMap(),
-        config.getString("kafka_joark_hendelse_topic")
-    ) }
+    single {
+        JoarkHendelseKafkaClient(
+            joarkOnPremProperties(config).toMutableMap(),
+            config.getString("kafka_joark_hendelse_topic")
+        )
+    }
     single {
         UtsattOppgaveKafkaClient(
             utsattOppgaveAivenProperties(config),
@@ -122,12 +151,17 @@ fun prodConfig(config: ApplicationConfig) = module {
 
     single { InntektsmeldingAivenProducer(commonAivenProperties(config)) }
 
-    single { UtsattOppgaveDAO(UtsattOppgaveRepositoryImp(get()))}
-    single { OppgaveClient(config.getString("oppgavebehandling_url"), get(), get(), get())} bind OppgaveClient::class
+    single { UtsattOppgaveDAO(UtsattOppgaveRepositoryImp(get())) }
+    single { OppgaveClient(config.getString("oppgavebehandling_url"), get(), get(), get()) } bind OppgaveClient::class
     single { UtsattOppgaveService(get(), get(), get(), get()) } bind UtsattOppgaveService::class
-    single { FeiletUtsattOppgaveMeldingProsessor(get(), get() ) }
+    single { FeiletUtsattOppgaveMeldingProsessor(get(), get()) }
 
-    single { FjernInntektsmeldingByBehandletProcessor(InntektsmeldingRepositoryImp(get()), config.getString("lagringstidMåneder").toInt() )} bind FjernInntektsmeldingByBehandletProcessor::class
+    single {
+        FjernInntektsmeldingByBehandletProcessor(
+            InntektsmeldingRepositoryImp(get()),
+            config.getString("lagringstidMåneder").toInt()
+        )
+    } bind FjernInntektsmeldingByBehandletProcessor::class
     single { FinnAlleUtgaandeOppgaverProcessor(get(), get(), get()) } bind FinnAlleUtgaandeOppgaverProcessor::class
 
 

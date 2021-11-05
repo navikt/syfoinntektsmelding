@@ -1,6 +1,8 @@
 package no.nav.syfo.integration.kafka
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import java.time.Duration
+import java.time.LocalDateTime
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
@@ -8,9 +10,6 @@ import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.utils.RecurringJob
 import no.nav.syfo.kafkamottak.InngaaendeJournalpostDTO
 import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
-import java.time.Duration
-import java.time.LocalDateTime
-import java.util.*
 
 class PollForJoarkhendelserJob(
     private val kafkaProvider: JoarkHendelseKafkaClient,

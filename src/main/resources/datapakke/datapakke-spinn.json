@@ -161,7 +161,6 @@
                 "fontSize": 20,
                 "color": "black"
               }
-
             },
             {
               "subtext": "Antall systemversjoner i bruk per LPS-system",
@@ -172,7 +171,6 @@
                 "fontSize": 20,
                 "color": "black"
               }
-
             }
           ],
           "tooltip": {
@@ -392,7 +390,6 @@
         }
       }
     },
-
     {
       "title": "Feil FF per LPS",
       "description": "Siste 7 dager",
@@ -427,7 +424,6 @@
         }
       }
     },
-
     {
       "title": "Antall IM for 0-fravær",
       "description": "Siste 4 uker",
@@ -514,8 +510,8 @@
               "Dager Forsinkelse"
             ],
             "source": [
-                @KSForsinketData
-              ]
+              @KSForsinketData
+            ]
           },
           "legend": {
             "left": "25%",
@@ -525,16 +521,18 @@
               "16 dager linje"
             ]
           },
-          "dataZoom": [{
-            "start": 0,
-            "end":  20
-          },
+          "dataZoom": [
+            {
+              "start": 0,
+              "end": 20
+            },
             {
               "orient": "vertical",
               "left": "left",
               "start": 10,
               "end": 80
-            }],
+            }
+          ],
           "toolbox": {
             "show": true,
             "left": "75%",
@@ -555,21 +553,28 @@
           },
           "tooltip": {
           },
-          "series": [{
-            "name": "Forsinkelse fra Altinn",
-            "encode": {
-              "x": 2,
-              "y": 0,
-              "tooltip": [0, 2]
+          "series": [
+            {
+              "name": "Forsinkelse fra Altinn",
+              "encode": {
+                "x": 2,
+                "y": 0,
+                "tooltip": [
+                  0,
+                  2
+                ]
+              },
+              "type": "line"
             },
-            "type": "line"
-          },
             {
               "name": "Forsinkelse fra LPS",
               "encode": {
                 "x": 2,
                 "y": 1,
-                "tooltip":[1, 2]
+                "tooltip": [
+                  1,
+                  2
+                ]
               },
               "type": "line"
             },
@@ -578,13 +583,14 @@
               "type": "line",
               "data": {},
               "markLine": {
-                "data": [{
-                  "xAxis": 16
-                }]
+                "data": [
+                  {
+                    "xAxis": 16
+                  }
+                ]
               }
             }
           ]
-
         }
       }
     },
@@ -601,14 +607,14 @@
               "encode": {
                 "x": 0
               }
-          }
+            }
           ],
           "yAxis": {
           },
           "dataset": {
             "source": [
-                @OppgStats
-              ]
+              @OppgStats
+            ]
           },
           "tooltip": {
             "trigger": "axis",
@@ -616,13 +622,14 @@
               "type": "shadow"
             }
           },
-          "series": [{
-            "name": "Antall oppgaver",
-            "encode": {
-              "x": 1
-            },
-            "type": "bar"
-          }
+          "series": [
+            {
+              "name": "Antall oppgaver",
+              "encode": {
+                "x": 1
+              },
+              "type": "bar"
+            }
           ]
         }
       }

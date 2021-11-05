@@ -1,10 +1,10 @@
 package no.nav.syfo.util
 
+import javax.xml.bind.JAXBElement
 import no.nav.syfo.util.JAXB.unmarshalInntektsmelding
 import no.seres.xsd.nav.inntektsmelding_m._20180924.XMLInntektsmeldingM
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
-import javax.xml.bind.JAXBElement
 
 class JAXBTest {
     @Test

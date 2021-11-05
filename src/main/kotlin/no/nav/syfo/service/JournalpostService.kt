@@ -28,13 +28,13 @@ class JournalpostService(
         val behandlendeEnhet = behandlendeEnhetConsumer.hentBehandlendeEnhet(inntektsmelding.fnr, inntektsmelding.id)
 
         return InngaendeJournalpost(
-                fnr = inntektsmelding.fnr,
-                gsakId = gsakId,
-                journalpostId = inntektsmelding.journalpostId,
-                dokumentId = inngaaendeJournal.dokumentId,
-                behandlendeEnhetId = behandlendeEnhet,
-                arbeidsgiverOrgnummer = inntektsmelding.arbeidsgiverOrgnummer,
-                arbeidsgiverPrivat = inntektsmelding.arbeidsgiverPrivatFnr
+            fnr = inntektsmelding.fnr,
+            gsakId = gsakId,
+            journalpostId = inntektsmelding.journalpostId,
+            dokumentId = inngaaendeJournal.dokumentId,
+            behandlendeEnhetId = behandlendeEnhet,
+            arbeidsgiverOrgnummer = inntektsmelding.arbeidsgiverOrgnummer,
+            arbeidsgiverPrivat = inntektsmelding.arbeidsgiverPrivatFnr
         )
     }
 }

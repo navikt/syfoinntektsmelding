@@ -2,7 +2,7 @@ package no.nav.syfo.dto
 
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
 
 data class InntektsmeldingEntitet(
     val uuid: String = UUID.randomUUID().toString(),

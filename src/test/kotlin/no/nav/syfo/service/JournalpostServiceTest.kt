@@ -3,14 +3,14 @@ package no.nav.syfo.service
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import java.time.LocalDate
+import java.time.LocalDateTime
 import no.nav.syfo.domain.InngaaendeJournal
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.util.Metrikk
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.junit.jupiter.api.Test
-import java.time.LocalDate
-import java.time.LocalDateTime
 
 class JournalpostServiceTest {
     private var inngaaendeJournalConsumer = mockk<InngaaendeJournalConsumer>(relaxed = true)

@@ -1,12 +1,11 @@
 package no.nav.syfo.repository
 
-import no.nav.syfo.dto.Tilstand
-import no.nav.syfo.dto.UtsattOppgaveEntitet
 import java.sql.ResultSet
 import java.sql.Timestamp
 import java.time.LocalDateTime
 import javax.sql.DataSource
-
+import no.nav.syfo.dto.Tilstand
+import no.nav.syfo.dto.UtsattOppgaveEntitet
 
 interface UtsattOppgaveRepository {
     fun findByInntektsmeldingId(inntektsmeldingId: String): UtsattOppgaveEntitet?
@@ -45,7 +44,7 @@ class UtsattOppgaveRepositoryMockk : UtsattOppgaveRepository {
     }
 
     override fun deleteAll() {
-        mockrepo.forEach { mockrepo.remove(it)}
+        mockrepo.forEach { mockrepo.remove(it) }
     }
 
     override fun findAll(): List<UtsattOppgaveEntitet> {
@@ -99,7 +98,7 @@ class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepo
             ps.setTimestamp(7, Timestamp.valueOf(uo.timeout))
             ps.setString(8, uo.tilstand.name)
             ps.setString(9, uo.gosysOppgaveId)
-			ps.setTimestamp(10,Timestamp.valueOf(uo.oppdatert ?: LocalDateTime.now()))
+            ps.setTimestamp(10, Timestamp.valueOf(uo.oppdatert ?: LocalDateTime.now()))
             val res = ps.executeQuery()
             return resultLoop(res, utsattOppgaver).first()
         }

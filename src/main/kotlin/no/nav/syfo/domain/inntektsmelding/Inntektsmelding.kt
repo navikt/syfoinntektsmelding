@@ -1,11 +1,10 @@
 package no.nav.syfo.domain.inntektsmelding
 
-import no.nav.syfo.domain.JournalStatus
-import no.nav.syfo.domain.Periode
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
-
+import no.nav.syfo.domain.JournalStatus
+import no.nav.syfo.domain.Periode
 
 data class Inntektsmelding(
     val id: String = "",

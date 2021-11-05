@@ -1,15 +1,19 @@
 package no.nav.syfo.client.saf
 
-import io.ktor.client.*
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
-import io.ktor.http.*
-import io.ktor.util.*
+import io.ktor.client.HttpClient
+import io.ktor.client.request.accept
+import io.ktor.client.request.get
+import io.ktor.client.request.header
+import io.ktor.client.statement.HttpStatement
+import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
+import io.ktor.util.KtorExperimentalAPI
+import io.ktor.util.toByteArray
+import java.util.UUID
 import kotlinx.coroutines.runBlocking
 import log
 import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
 import no.nav.syfo.util.MDCOperations
-import java.util.*
 
 /**
  * REST tjeneste for å hente fysisk dokument fra arkivet.
@@ -45,5 +49,4 @@ class SafDokumentClient constructor(
             response.content.toByteArray()
         }
     }
-
 }

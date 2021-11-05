@@ -1,9 +1,14 @@
 package no.nav.syfo.slowtests
 
-import io.ktor.client.*
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
-import io.ktor.http.*
+import io.ktor.client.HttpClient
+import io.ktor.client.request.HttpRequestBuilder
+import io.ktor.client.request.get
+import io.ktor.client.request.header
+import io.ktor.client.request.url
+import io.ktor.client.statement.HttpResponse
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
+import io.ktor.http.setCookie
 import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
@@ -31,7 +36,8 @@ open class SystemTestBase : KoinTest {
     companion object {
         const val testServerPort = 8989
         var app: SpinnApplication? = null
-        init{
+
+        init {
             System.setProperty("SECURITYTOKENSERVICE_URL", "joda")
             System.setProperty("SRVSYFOINNTEKTSMELDING_USERNAME", "joda")
             System.setProperty("SRVSYFOINNTEKTSMELDING_PASSWORD", "joda")
@@ -49,7 +55,6 @@ open class SystemTestBase : KoinTest {
 
     @AfterAll
     fun after() {
-
     }
 
     /**

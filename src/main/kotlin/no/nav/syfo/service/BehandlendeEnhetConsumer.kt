@@ -1,26 +1,26 @@
 package no.nav.syfo.service
 
+import java.time.LocalDate
 import kotlinx.coroutines.runBlocking
 import log
 import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClient
 import no.nav.syfo.behandling.BehandlendeEnhetFeiletException
 import no.nav.syfo.behandling.IngenAktivEnhetException
-import no.nav.syfo.client.norg.ArbeidsfordelingResponse
 import no.nav.syfo.client.norg.ArbeidsfordelingRequest
+import no.nav.syfo.client.norg.ArbeidsfordelingResponse
 import no.nav.syfo.client.norg.Norg2Client
 import no.nav.syfo.domain.GeografiskTilknytningData
 import no.nav.syfo.util.MDCOperations
 import no.nav.syfo.util.Metrikk
-import java.time.LocalDate
 
 const val SYKEPENGER_UTLAND = "4474"
-const val SYKEPENGER = "SYK";
+const val SYKEPENGER = "SYK"
 
 class BehandlendeEnhetConsumer(
     private val pdlClient: PdlClient,
     private val norg2Client: Norg2Client,
     private val metrikk: Metrikk
-)  {
+) {
 
     var log = log()
 
@@ -29,8 +29,8 @@ class BehandlendeEnhetConsumer(
 
         val criteria = ArbeidsfordelingRequest(
             tema = SYKEPENGER,
-            diskresjonskode = geografiskTilknytning?.diskresjonskode,
-            geografiskOmraade = geografiskTilknytning?.geografiskTilknytning
+            diskresjonskode = geografiskTilknytning.diskresjonskode,
+            geografiskOmraade = geografiskTilknytning.geografiskTilknytning
         )
 
         val callId = MDCOperations.getFromMDC(MDCOperations.MDC_CALL_ID)
@@ -39,16 +39,16 @@ class BehandlendeEnhetConsumer(
             val arbeidsfordelinger = runBlocking {
                 norg2Client.hentAlleArbeidsfordelinger(criteria, callId)
             }
-            log.info("Fant enheter: " + arbeidsfordelinger.toString() )
+            log.info("Fant enheter: " + arbeidsfordelinger.toString())
             val behandlendeEnhet = finnAktivBehandlendeEnhet(
                 arbeidsfordelinger,
-                geografiskTilknytning?.geografiskTilknytning,
+                geografiskTilknytning.geografiskTilknytning,
                 tidspunkt
             )
             if (SYKEPENGER_UTLAND == behandlendeEnhet) {
                 metrikk.tellInntektsmeldingSykepengerUtland()
             }
-            log.info("Fant geografiskTilknytning ${geografiskTilknytning.geografiskTilknytning} med behandlendeEnhet $behandlendeEnhet for inntektsmelding $uuid");
+            log.info("Fant geografiskTilknytning ${geografiskTilknytning.geografiskTilknytning} med behandlendeEnhet $behandlendeEnhet for inntektsmelding $uuid")
             return behandlendeEnhet
         } catch (e: RuntimeException) {
             log.error("Klarte ikke å hente behandlende enhet!", e)
@@ -64,7 +64,6 @@ class BehandlendeEnhetConsumer(
             )
         }
     }
-
 }
 
 fun finnAktivBehandlendeEnhet(arbeidsfordelinger: List<ArbeidsfordelingResponse>, geografiskTilknytning: String?, tidspunkt: LocalDate): String {

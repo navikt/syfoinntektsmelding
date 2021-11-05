@@ -4,6 +4,10 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZonedDateTime
+import java.util.Collections.emptyList
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.client.SakClient
@@ -17,10 +21,6 @@ import no.nav.syfo.util.Metrikk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.ZonedDateTime
-import java.util.Collections.emptyList
 
 class SaksbehandlingServiceTest {
 
@@ -31,11 +31,10 @@ class SaksbehandlingServiceTest {
     private var eksisterendeSakService = mockk<EksisterendeSakService>(relaxed = true)
     private var sakClient = mockk<SakClient>(relaxed = true)
     private val metrikk = mockk<Metrikk>(relaxed = true)
-   // var utsattOppgaveService = mockk<UtsattOppgaveService>(relaxed = true)
+    // var utsattOppgaveService = mockk<UtsattOppgaveService>(relaxed = true)
 
     private var saksbehandlingService =
         SaksbehandlingService(eksisterendeSakService, inntektsmeldingService, sakClient, metrikk)
-
 
     @io.ktor.util.KtorExperimentalAPI
     @BeforeEach
@@ -170,7 +169,6 @@ class SaksbehandlingServiceTest {
                 )
             )
 
-
         val sakId = saksbehandlingService.behandleInntektsmelding(lagInntektsmelding(), "aktorId", "")
         assertThat(sakId).isEqualTo("1")
         runBlocking {
@@ -213,7 +211,8 @@ class SaksbehandlingServiceTest {
                             tom = LocalDate.of(2019, 6, 10)
                         )
                     )
-                ), "aktor", "")
+                ), "aktor", ""
+        )
 
         verify {
             eksisterendeSakService.finnEksisterendeSak(
@@ -243,7 +242,8 @@ class SaksbehandlingServiceTest {
                             tom = LocalDate.of(2019, 6, 14)
                         )
                     )
-                ), "aktor", "")
+                ), "aktor", ""
+        )
         verify {
             eksisterendeSakService.finnEksisterendeSak(
                 "aktor",

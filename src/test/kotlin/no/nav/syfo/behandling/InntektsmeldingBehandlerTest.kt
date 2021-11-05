@@ -3,6 +3,8 @@ package no.nav.syfo.behandling
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import java.time.LocalDate
+import java.time.LocalDateTime
 import no.nav.syfo.client.aktor.AktorClient
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
@@ -15,8 +17,6 @@ import no.nav.syfo.util.Metrikk
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.time.LocalDate
-import java.time.LocalDateTime
 
 class InntektsmeldingBehandlerTest {
 
@@ -55,7 +55,6 @@ class InntektsmeldingBehandlerTest {
                 sakId = "saksId",
                 behandlet = LocalDateTime.now()
             )
-
     }
 
     @Test

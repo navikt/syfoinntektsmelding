@@ -1,8 +1,9 @@
 package no.nav.syfo.util
+
+import java.security.SecureRandom
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
-import java.security.SecureRandom
 
 class MDCOperations {
     companion object {
@@ -33,9 +34,7 @@ class MDCOperations {
         private fun getRandomNumber(): Int = RANDOM.nextInt(Int.MAX_VALUE)
         private fun getSystemTime(): Long = System.currentTimeMillis()
     }
-
 }
-
 
 inline fun <reified T> logger(): Logger {
     return LoggerFactory.getLogger(T::class.java)

@@ -10,25 +10,29 @@ class ObjectFactory {
 
     private val _forsendelsesinformasjon_QNAME = QName("", "forsendelsesinformasjon")
     private val emptyString = ""
+
     /**
      * Create an instance of {@link Tema }
      *
      */
-    fun createXMLTema(): XMLTema { return XMLTema(emptyString, emptyString, null)
+    fun createXMLTema(): XMLTema {
+        return XMLTema(emptyString, emptyString, null)
     }
 
     /**
      * Create an instance of {@link Kodeverdi }
      *
      */
-    fun createXMLKodeverdi(): XMLKodeverdi { return XMLKodeverdi(emptyString, emptyString)
+    fun createXMLKodeverdi(): XMLKodeverdi {
+        return XMLKodeverdi(emptyString, emptyString)
     }
 
     /**
      * Create an instance of {@link Behandlingstema }
      *
      */
-    fun createXMLBehandlingstema(): XMLBehandlingstema { return XMLBehandlingstema(emptyString, emptyString, null)
+    fun createXMLBehandlingstema(): XMLBehandlingstema {
+        return XMLBehandlingstema(emptyString, emptyString, null)
     }
 
     /**
@@ -36,18 +40,16 @@ class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "", name = "forsendelsesinformasjon")
-    fun createforsendelsesinformasjon(value: XMLForsendelsesinformasjon) : JAXBElement<XMLForsendelsesinformasjon> {
+    fun createforsendelsesinformasjon(value: XMLForsendelsesinformasjon): JAXBElement<XMLForsendelsesinformasjon> {
         return JAXBElement<XMLForsendelsesinformasjon>(
             _forsendelsesinformasjon_QNAME,
             XMLForsendelsesinformasjon::class.java,
             null,
             value
-        );
+        )
     }
 
-    fun createXMLForsendelsesinformasjon() : XMLForsendelsesinformasjon {
-        return XMLForsendelsesinformasjon();
+    fun createXMLForsendelsesinformasjon(): XMLForsendelsesinformasjon {
+        return XMLForsendelsesinformasjon()
     }
-
-
 }

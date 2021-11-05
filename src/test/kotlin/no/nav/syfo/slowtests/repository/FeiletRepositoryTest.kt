@@ -1,6 +1,7 @@
 package no.nav.syfo.slowtests.repository
 
 import com.zaxxer.hikari.HikariDataSource
+import java.time.LocalDateTime
 import no.nav.syfo.behandling.Feiltype
 import no.nav.syfo.dto.FeiletEntitet
 import no.nav.syfo.repository.FeiletRepository
@@ -11,10 +12,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import java.time.LocalDateTime
 
-
-open class FeiletRepositoryTest : SystemTestBase(){
+open class FeiletRepositoryTest : SystemTestBase() {
 
     private lateinit var respository: FeiletRepository
 
@@ -81,24 +80,26 @@ open class FeiletRepositoryTest : SystemTestBase(){
     }
 
     @Test
-    fun `Skal ikke finne entitet dersom arkivReferansen ikke er lagret tidligere`(){
+    fun `Skal ikke finne entitet dersom arkivReferansen ikke er lagret tidligere`() {
         val ARKIV_REFERANSE = "ar-finnes-ikke"
-        respository.lagreInnteksmelding(FeiletEntitet(
-            id = 3,
-            arkivReferanse = "ar-333",
-            tidspunkt = DAYS_8,
-            feiltype = Feiltype.BEHANDLENDE_IKKE_FUNNET
-        ))
-        respository.lagreInnteksmelding(FeiletEntitet(
-            id = 4,
-            arkivReferanse = "ar-444",
-            tidspunkt = DAYS_14,
-            feiltype = Feiltype.BEHANDLENDE_IKKE_FUNNET
-        ))
+        respository.lagreInnteksmelding(
+            FeiletEntitet(
+                id = 3,
+                arkivReferanse = "ar-333",
+                tidspunkt = DAYS_8,
+                feiltype = Feiltype.BEHANDLENDE_IKKE_FUNNET
+            )
+        )
+        respository.lagreInnteksmelding(
+            FeiletEntitet(
+                id = 4,
+                arkivReferanse = "ar-444",
+                tidspunkt = DAYS_14,
+                feiltype = Feiltype.BEHANDLENDE_IKKE_FUNNET
+            )
+        )
         val liste = respository.findByArkivReferanse(ARKIV_REFERANSE)
         assertThat(liste.size).isEqualTo(0)
     }
-
-
 }
 

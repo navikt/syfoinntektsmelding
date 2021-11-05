@@ -2,7 +2,7 @@ package no.nav.syfo.domain
 
 import java.time.LocalDate
 
-data class Sykepengesoknad (
+data class Sykepengesoknad(
     val uuid: String? = null,
     val status: String? = null,
     val saksId: String? = null,

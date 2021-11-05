@@ -1,11 +1,10 @@
 package no.nav.syfo.repository
 
-import no.nav.syfo.behandling.Feiltype
-import no.nav.syfo.dto.FeiletEntitet
 import java.sql.ResultSet
 import java.sql.Timestamp
 import javax.sql.DataSource
-
+import no.nav.syfo.behandling.Feiltype
+import no.nav.syfo.dto.FeiletEntitet
 
 interface FeiletRepository {
     fun findByArkivReferanse(arkivReferanse: String): List<FeiletEntitet>

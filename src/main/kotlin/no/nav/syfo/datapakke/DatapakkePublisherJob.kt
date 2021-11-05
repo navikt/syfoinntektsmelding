@@ -1,11 +1,15 @@
 package no.nav.syfo.datapakke
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.ktor.client.*
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
+import io.ktor.client.HttpClient
+import io.ktor.client.request.put
+import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.readText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
+import java.time.DayOfWeek
+import java.time.Duration
+import java.time.LocalDateTime
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -13,9 +17,6 @@ import no.nav.helse.arbeidsgiver.utils.RecurringJob
 import no.nav.helse.arbeidsgiver.utils.loadFromResources
 import no.nav.syfo.repository.IMStatsRepo
 import no.nav.syfo.util.DatapakkeUtil
-import java.time.DayOfWeek
-import java.time.Duration
-import java.time.LocalDateTime
 
 class DatapakkePublisherJob(
     private val imRepo: IMStatsRepo,
@@ -32,7 +33,7 @@ class DatapakkePublisherJob(
 
     override fun doJob() {
         val now = LocalDateTime.now()
-        if(applyWeeklyOnly && now.dayOfWeek != DayOfWeek.MONDAY && now.hour != 0) {
+        if (applyWeeklyOnly && now.dayOfWeek != DayOfWeek.MONDAY && now.hour != 0) {
             return // Ikke kjør jobben med mindre det er natt til mandag
         }
 
@@ -91,15 +92,19 @@ class DatapakkePublisherJob(
             .replace("@ingenRefusjon", timeseries.map { it.ingenRefusjon }.joinToString())
 
             .replace("@lpsAntallIM", filteredLpsStats.map { //language=JSON
-                """{"value": ${it.antallInntektsmeldinger}, "name": "${it.lpsNavn}"}""" }.joinToString())
+                """{"value": ${it.antallInntektsmeldinger}, "name": "${it.lpsNavn}"}"""
+            }.joinToString())
 
             .replace("@lpsAntallVersjoner", filteredLpsStats.map { //language=JSON
-                """{"value": ${it.antallVersjoner}, "name": "${it.lpsNavn}"}""" }.joinToString())
+                """{"value": ${it.antallVersjoner}, "name": "${it.lpsNavn}"}"""
+            }.joinToString())
 
             .replace("@arsak", arsakStats
                 .filter { it.arsak.isNotBlank() }
                 .map { //language=JSON
-                """{"value": ${it.antall}, "name": "${it.arsak}"}""" }.joinToString())
+                    """{"value": ${it.antall}, "name": "${it.arsak}"}"""
+                }.joinToString()
+            )
 
             .replace("@KSukeSerie", timeseriesKS.map { it.weekNumber }.joinToString())
             .replace("@KStotal", timeseriesKS.map { it.total }.joinToString())
@@ -114,15 +119,16 @@ class DatapakkePublisherJob(
             .replace("@KSikkeFravaerMedRef", timeseriesKS.map { it.ingen_fravaer_med_refusjon }.joinToString())
 
             .replace("@KSlpsAntallFeilFF", lpsFeilFF.map { //language=JSON
-                """{"value": ${it.antallInntektsmeldinger}, "name": "${it.lpsNavn}"}""" }.joinToString())
-
+                """{"value": ${it.antallInntektsmeldinger}, "name": "${it.lpsNavn}"}"""
+            }.joinToString())
 
             .replace("@KSlpsAntallNullFra", lpsIngenFravaer.map { //language=JSON
-                """{"value": ${it.antallInntektsmeldinger}, "name": "${it.lpsNavn}"}""" }.joinToString())
+                """{"value": ${it.antallInntektsmeldinger}, "name": "${it.lpsNavn}"}"""
+            }.joinToString())
 
             .replace("@KSlpsAntallBackToBack", lpsBackToBack.map { //language=JSON
-                """{"value": ${it.antallInntektsmeldinger}, "name": "${it.lpsNavn}"}""" }.joinToString())
-
+                """{"value": ${it.antallInntektsmeldinger}, "name": "${it.lpsNavn}"}"""
+            }.joinToString())
 
             .replace("@KSForsinketData", forsinket.map { //language=JSON
                 """[${it.antall_med_forsinkelsen_altinn},${it.antall_med_forsinkelsen_lps},${it.dager_etter_ff}]"""

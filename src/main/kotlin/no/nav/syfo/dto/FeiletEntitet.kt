@@ -1,7 +1,7 @@
 package no.nav.syfo.dto
 
-import no.nav.syfo.behandling.Feiltype
 import java.time.LocalDateTime
+import no.nav.syfo.behandling.Feiltype
 
 data class FeiletEntitet(
     var id: Int = 0,
