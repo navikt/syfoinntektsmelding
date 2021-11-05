@@ -1,0 +1,30 @@
+name: Pull request
+
+on: [pull_request]
+
+jobs:
+  Ktlint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: Setup Java environment
+        uses: actions/setup-java@v1
+        with:
+          java-version: '11.x'
+      - uses: musichin/ktlint-check@v1
+        with:
+          version: '0.43.0'
+          warn: false # warn only
+          annotate: true
+
+          # ktlint
+          android: true
+          relative: true
+          experimental: true
+          reporter: |
+            plain,output=ktlint_report.txt
+            json,output=ktlint_report.json
+          patterns: |
+            **/**.kt
+            !**/generated/**
