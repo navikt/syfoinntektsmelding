@@ -106,7 +106,7 @@ class OppgaveClient constructor (
         log.info("Oppretter journalføringsoppgave på enhet $tildeltEnhetsnr")
         try {
             return OppgaveResultat(opprettOppgave(opprettOppgaveRequest).id, false)
-        } catch (ex : Exception) {
+        } catch (ex: Exception) {
             throw OpprettOppgaveException(journalpostId, ex)
         }
     }
@@ -138,12 +138,12 @@ class OppgaveClient constructor (
         log.info("Oppretter fordelingsoppgave")
         try {
             return OppgaveResultat(opprettOppgave(opprettOppgaveRequest).id, false)
-        } catch (ex : Exception) {
+        } catch (ex: Exception) {
             throw OpprettFordelingsOppgaveException(journalpostId, ex)
         }
     }
 
-    fun leggTilEnVirkeuke(dato : LocalDate) : LocalDate {
+    fun leggTilEnVirkeuke(dato: LocalDate): LocalDate {
         return when (dato.dayOfWeek) {
             DayOfWeek.SATURDAY -> dato.plusDays(9)
             DayOfWeek.SUNDAY -> dato.plusDays(8)
@@ -153,36 +153,36 @@ class OppgaveClient constructor (
 }
 
 data class OpprettOppgaveRequest(
-        val tildeltEnhetsnr: String? = null,
-        val aktoerId: String? = null,
-        val journalpostId: String? = null,
-        val behandlesAvApplikasjon: String? = null,
-        val saksreferanse: String? = null,
-        val beskrivelse: String? = null,
-        val tema: String? = null,
-        val oppgavetype: String,
-        val behandlingstype: String? = null,
-        val behandlingstema: String? = null,
-        val aktivDato: LocalDate,
-        val fristFerdigstillelse: LocalDate? = null,
-        val prioritet: String
+    val tildeltEnhetsnr: String? = null,
+    val aktoerId: String? = null,
+    val journalpostId: String? = null,
+    val behandlesAvApplikasjon: String? = null,
+    val saksreferanse: String? = null,
+    val beskrivelse: String? = null,
+    val tema: String? = null,
+    val oppgavetype: String,
+    val behandlingstype: String? = null,
+    val behandlingstema: String? = null,
+    val aktivDato: LocalDate,
+    val fristFerdigstillelse: LocalDate? = null,
+    val prioritet: String
 )
 
 data class OpprettOppgaveResponse(
-        val id: Int
+    val id: Int
 )
 
 data class OppgaveResponse(
-        val antallTreffTotalt: Int,
-        val oppgaver: List<Oppgave>
+    val antallTreffTotalt: Int,
+    val oppgaver: List<Oppgave>
 )
 
 data class Oppgave(
-        val id: Int,
-        val tildeltEnhetsnr: String?,
-        val aktoerId: String?,
-        val journalpostId: String?,
-        val saksreferanse: String?,
-        val tema: String?,
-        val oppgavetype: String?
+    val id: Int,
+    val tildeltEnhetsnr: String?,
+    val aktoerId: String?,
+    val journalpostId: String?,
+    val saksreferanse: String?,
+    val tema: String?,
+    val oppgavetype: String?
 )
