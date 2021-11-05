@@ -12,7 +12,18 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: '11.x'
-      - uses: le0nidas/ktlint-pr-comments@v1.1
+      - uses: musichin/ktlint-check@v1
         with:
-          repotoken: ${{ secrets.GITHUB_TOKEN }}
-          arguments: "--disabled_rules=parameter-list-wrapping,final-newline"
+          version: '0.43.0'
+          warn: true # warn only
+
+          # ktlint
+          android: true
+          relative: true
+          experimental: true
+          reporter: |
+            plain,output=ktlint_report.txt
+            json,output=ktlint_report.json
+          patterns: |
+            **/**.kt
+            !**/generated/**
