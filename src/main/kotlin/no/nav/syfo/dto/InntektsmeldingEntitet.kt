@@ -1,6 +1,5 @@
 package no.nav.syfo.dto
 
-
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
@@ -21,6 +20,5 @@ data class InntektsmeldingEntitet(
         val periode = ArbeidsgiverperiodeEntitet(fom = fom, tom = tom)
         periode.inntektsmelding = this
         arbeidsgiverperioder.add(periode)
-
     }
 }
