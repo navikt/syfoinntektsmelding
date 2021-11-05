@@ -14,7 +14,6 @@ import no.nav.security.token.support.ktor.TokenValidationContextPrincipal
 import org.slf4j.LoggerFactory
 import java.util.*
 
-
 class DefaultOAuth2HttpClient(private val httpClient: HttpClient) : OAuth2HttpClient {
     val logger = LoggerFactory.getLogger(this::class.java)
 

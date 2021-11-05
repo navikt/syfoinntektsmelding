@@ -30,7 +30,7 @@ class InntektsmeldingBehandler(
 ) {
 
     private val consumerLocks = Striped.lock(8)
-    private val OPPRETT_OPPGAVE_FORSINKELSE = 48L;
+    private val OPPRETT_OPPGAVE_FORSINKELSE = 48L
 
     fun behandle(arkivId: String, arkivreferanse: String): String? {
         val inntektsmelding = journalpostService.hentInntektsmelding(arkivId, arkivreferanse)
@@ -40,7 +40,7 @@ class InntektsmeldingBehandler(
     fun behandle(arkivId: String, arkivreferanse: String, inntektsmelding: Inntektsmelding): String? {
 
         val log = log()
-        var ret : String? = null
+        var ret: String? = null
         val consumerLock = consumerLocks.get(inntektsmelding.fnr)
         try {
             consumerLock.lock()
@@ -112,6 +112,4 @@ class InntektsmeldingBehandler(
         if (inntektsmelding.opphørAvNaturalYtelse.isEmpty())
             metrikk.tellNaturalytelse()
     }
-
 }
-

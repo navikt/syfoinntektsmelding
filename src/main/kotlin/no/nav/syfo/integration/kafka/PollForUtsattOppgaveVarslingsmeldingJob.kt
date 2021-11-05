@@ -25,36 +25,35 @@ class PollForUtsattOppgaveVarslingsmeldingJob(
     override fun doJob() {
         do {
             val wasEmpty = kafkaProvider
-                    .getMessagesToProcess()
-                    .onEach {
-                        MDCOperations.putToMDC(MDCOperations.MDC_CALL_ID, UUID.randomUUID().toString())
-                        val hendelse = om.readValue<UtsattOppgaveDTO>(it)
-                        if (DokumentTypeDTO.Inntektsmelding != hendelse.dokumentType) {
-                            return@onEach
-                        }
-
-                        try {
-                            oppgaveService.prosesser(
-                                OppgaveOppdatering(
-                                    hendelse.dokumentId,
-                                    hendelse.oppdateringstype.tilHandling(),
-                                    hendelse.timeout
-                                )
-                            )
-                        } catch (ex: Exception) {
-                            bakgrunnsjobbRepo.save(
-                                Bakgrunnsjobb(
-                                    type = FeiletUtsattOppgaveMeldingProsessor.JOB_TYPE,
-                                    kjoeretid = LocalDateTime.now().plusMinutes(30),
-                                    maksAntallForsoek = 10,
-                                    data = it
-                                )
-                            )
-                        }
-                        MDCOperations.remove(MDCOperations.MDC_CALL_ID)
-
+                .getMessagesToProcess()
+                .onEach {
+                    MDCOperations.putToMDC(MDCOperations.MDC_CALL_ID, UUID.randomUUID().toString())
+                    val hendelse = om.readValue<UtsattOppgaveDTO>(it)
+                    if (DokumentTypeDTO.Inntektsmelding != hendelse.dokumentType) {
+                        return@onEach
                     }
-                    .isEmpty()
+
+                    try {
+                        oppgaveService.prosesser(
+                            OppgaveOppdatering(
+                                hendelse.dokumentId,
+                                hendelse.oppdateringstype.tilHandling(),
+                                hendelse.timeout
+                            )
+                        )
+                    } catch (ex: Exception) {
+                        bakgrunnsjobbRepo.save(
+                            Bakgrunnsjobb(
+                                type = FeiletUtsattOppgaveMeldingProsessor.JOB_TYPE,
+                                kjoeretid = LocalDateTime.now().plusMinutes(30),
+                                maksAntallForsoek = 10,
+                                data = it
+                            )
+                        )
+                    }
+                    MDCOperations.remove(MDCOperations.MDC_CALL_ID)
+                }
+                .isEmpty()
 
             if (!wasEmpty) {
                 kafkaProvider.confirmProcessingDone()

@@ -13,7 +13,7 @@ class FjernInntektsmeldingByBehandletProcessor(
     private val lagringstidMåneder: Int
 ) : BakgrunnsjobbProsesserer {
     val log: Logger = LoggerFactory.getLogger(FjernInntektsmeldingByBehandletProcessor::class.java)
-    companion object { const val JOB_TYPE = "fjern-inntektsmelding-via-behnadling"}
+    companion object { const val JOB_TYPE = "fjern-inntektsmelding-via-behnadling" }
     override val type: String get() = JOB_TYPE
 
     override fun prosesser(jobb: Bakgrunnsjobb) {

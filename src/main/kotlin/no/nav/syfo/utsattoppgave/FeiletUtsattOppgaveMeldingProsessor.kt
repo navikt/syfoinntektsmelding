@@ -16,14 +16,15 @@ import java.util.*
 @KtorExperimentalAPI
 class FeiletUtsattOppgaveMeldingProsessor(
     private val om: ObjectMapper,
-    val oppgaveService: UtsattOppgaveService):
+    val oppgaveService: UtsattOppgaveService
+) :
     BakgrunnsjobbProsesserer {
     val log: Logger = LoggerFactory.getLogger(FeiletUtsattOppgaveMeldingProsessor::class.java)
     override val type: String get() = JOB_TYPE
     companion object {
         const val JOB_TYPE = "feilet-utsatt-oppgave"
     }
-    override fun prosesser(jobb: Bakgrunnsjobb){
+    override fun prosesser(jobb: Bakgrunnsjobb) {
         try {
             val utsattOppgaveOppdatering = om.readValue<UtsattOppgaveDTO>(jobb.data)
             val oppdatering = OppgaveOppdatering(

@@ -8,16 +8,15 @@ import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.system.getString
 import no.nav.syfo.behandling.InntektsmeldingBehandler
-import no.nav.syfo.client.SakConsumer
-import no.nav.syfo.client.azuread.AzureAdTokenConsumer
 import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.client.SakClient
+import no.nav.syfo.client.SakConsumer
 import no.nav.syfo.client.TokenConsumer
 import no.nav.syfo.client.aktor.AktorClient
+import no.nav.syfo.client.azuread.AzureAdTokenConsumer
 import no.nav.syfo.client.dokarkiv.DokArkivClient
-import no.nav.syfo.service.BehandleInngaaendeJournalConsumer
-import no.nav.syfo.service.InngaaendeJournalConsumer
-import no.nav.syfo.service.JournalConsumer
+import no.nav.syfo.client.saf.SafDokumentClient
+import no.nav.syfo.client.saf.SafJournalpostClient
 import no.nav.syfo.datapakke.DatapakkePublisherJob
 import no.nav.syfo.integration.kafka.*
 import no.nav.syfo.producer.InntektsmeldingAivenProducer
@@ -25,10 +24,11 @@ import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
 import no.nav.syfo.prosesser.FjernInntektsmeldingByBehandletProcessor
 import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
 import no.nav.syfo.repository.*
-import no.nav.syfo.client.saf.SafDokumentClient
-import no.nav.syfo.client.saf.SafJournalpostClient
+import no.nav.syfo.service.BehandleInngaaendeJournalConsumer
 import no.nav.syfo.service.BehandlendeEnhetConsumer
 import no.nav.syfo.service.EksisterendeSakService
+import no.nav.syfo.service.InngaaendeJournalConsumer
+import no.nav.syfo.service.JournalConsumer
 import no.nav.syfo.service.JournalpostService
 import no.nav.syfo.service.SaksbehandlingService
 import no.nav.syfo.util.Metrikk
@@ -75,10 +75,12 @@ fun localDevConfig(config: ApplicationConfig) = module {
 
     single { FinnAlleUtgaandeOppgaverProcessor(get(), get(), get()) } bind FinnAlleUtgaandeOppgaverProcessor::class
 
-    single { JoarkHendelseKafkaClient(
-         joarkLocalProperties().toMutableMap(),
-        config.getString("kafka_joark_hendelse_topic")
-    ) }
+    single {
+        JoarkHendelseKafkaClient(
+            joarkLocalProperties().toMutableMap(),
+            config.getString("kafka_joark_hendelse_topic")
+        )
+    }
     single {
         UtsattOppgaveKafkaClient(
             utsattOppgaveLocalProperties().toMutableMap(),
@@ -173,6 +175,5 @@ fun localDevConfig(config: ApplicationConfig) = module {
             config.getString("aad_syfoinntektsmelding_clientid_password")
         )
     } bind AzureAdTokenConsumer::class
-    single { ArbeidsgiverperiodeRepositoryImp(get())} bind ArbeidsgiverperiodeRepository::class
-
+    single { ArbeidsgiverperiodeRepositoryImp(get()) } bind ArbeidsgiverperiodeRepository::class
 }

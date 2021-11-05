@@ -32,7 +32,7 @@ class DatapakkePublisherJob(
 
     override fun doJob() {
         val now = LocalDateTime.now()
-        if(applyWeeklyOnly && now.dayOfWeek != DayOfWeek.MONDAY && now.hour != 0) {
+        if (applyWeeklyOnly && now.dayOfWeek != DayOfWeek.MONDAY && now.hour != 0) {
             return // Ikke kjør jobben med mindre det er natt til mandag
         }
 
@@ -76,31 +76,35 @@ class DatapakkePublisherJob(
         val populatedDatapakke = datapakkeTemplate
             .replace("@ukeSerie", timeseries.map { it.weekNumber }.joinToString())
             .replace("@total", timeseries.map { it.total }.joinToString())
-
             .replace("@fraLPS", timeseries.map { it.fraLPS }.joinToString())
             .replace("@fraAltinnPortal", timeseries.map { it.fraAltinnPortal }.joinToString())
-
             .replace("@fravaer", timeseries.map { it.fravaer }.joinToString())
             .replace("@ikkeFravaer", timeseries.map { it.ikkeFravaer }.joinToString())
-
             .replace("@arsakEndring", timeseries.map { it.arsakEndring }.joinToString())
             .replace("@arsakNy", timeseries.map { it.arsakNy }.joinToString())
-
             .replace("@delvisRefusjon", timeseries.map { it.delvisRefusjon }.joinToString())
             .replace("@fullRefusjon", timeseries.map { it.fullRefusjon }.joinToString())
             .replace("@ingenRefusjon", timeseries.map { it.ingenRefusjon }.joinToString())
-
-            .replace("@lpsAntallIM", filteredLpsStats.map { //language=JSON
-                """{"value": ${it.antallInntektsmeldinger}, "name": "${it.lpsNavn}"}""" }.joinToString())
-
-            .replace("@lpsAntallVersjoner", filteredLpsStats.map { //language=JSON
-                """{"value": ${it.antallVersjoner}, "name": "${it.lpsNavn}"}""" }.joinToString())
-
-            .replace("@arsak", arsakStats
-                .filter { it.arsak.isNotBlank() }
-                .map { //language=JSON
-                """{"value": ${it.antall}, "name": "${it.arsak}"}""" }.joinToString())
-
+            .replace(
+                "@lpsAntallIM",
+                filteredLpsStats.map { //language=JSON
+                    """{"value": ${it.antallInntektsmeldinger}, "name": "${it.lpsNavn}"}"""
+                }.joinToString()
+            )
+            .replace(
+                "@lpsAntallVersjoner",
+                filteredLpsStats.map { //language=JSON
+                    """{"value": ${it.antallVersjoner}, "name": "${it.lpsNavn}"}"""
+                }.joinToString()
+            )
+            .replace(
+                "@arsak",
+                arsakStats
+                    .filter { it.arsak.isNotBlank() }
+                    .map { //language=JSON
+                        """{"value": ${it.antall}, "name": "${it.arsak}"}"""
+                    }.joinToString()
+            )
             .replace("@KSukeSerie", timeseriesKS.map { it.weekNumber }.joinToString())
             .replace("@KStotal", timeseriesKS.map { it.total }.joinToString())
             .replace("@KSingenArbeid", timeseriesKS.map { it.ingen_arbeidsforhold_id }.joinToString())
@@ -112,25 +116,36 @@ class DatapakkePublisherJob(
             .replace("@KSfeilFF", timeseriesKS.map { it.feil_ff }.joinToString())
             .replace("@KSikkeFravaerUtenRef", timeseriesKS.map { it.ingen_fravaer }.joinToString())
             .replace("@KSikkeFravaerMedRef", timeseriesKS.map { it.ingen_fravaer_med_refusjon }.joinToString())
-
-            .replace("@KSlpsAntallFeilFF", lpsFeilFF.map { //language=JSON
-                """{"value": ${it.antallInntektsmeldinger}, "name": "${it.lpsNavn}"}""" }.joinToString())
-
-
-            .replace("@KSlpsAntallNullFra", lpsIngenFravaer.map { //language=JSON
-                """{"value": ${it.antallInntektsmeldinger}, "name": "${it.lpsNavn}"}""" }.joinToString())
-
-            .replace("@KSlpsAntallBackToBack", lpsBackToBack.map { //language=JSON
-                """{"value": ${it.antallInntektsmeldinger}, "name": "${it.lpsNavn}"}""" }.joinToString())
-
-
-            .replace("@KSForsinketData", forsinket.map { //language=JSON
-                """[${it.antall_med_forsinkelsen_altinn},${it.antall_med_forsinkelsen_lps},${it.dager_etter_ff}]"""
-            }.joinToString())
-
-            .replace("@OppgStats", oppgaveStats.map { //language=JSON
-                """[${it.antall},"${it.dato}"]"""
-            }.joinToString())
+            .replace(
+                "@KSlpsAntallFeilFF",
+                lpsFeilFF.map { //language=JSON
+                    """{"value": ${it.antallInntektsmeldinger}, "name": "${it.lpsNavn}"}"""
+                }.joinToString()
+            )
+            .replace(
+                "@KSlpsAntallNullFra",
+                lpsIngenFravaer.map { //language=JSON
+                    """{"value": ${it.antallInntektsmeldinger}, "name": "${it.lpsNavn}"}"""
+                }.joinToString()
+            )
+            .replace(
+                "@KSlpsAntallBackToBack",
+                lpsBackToBack.map { //language=JSON
+                    """{"value": ${it.antallInntektsmeldinger}, "name": "${it.lpsNavn}"}"""
+                }.joinToString()
+            )
+            .replace(
+                "@KSForsinketData",
+                forsinket.map { //language=JSON
+                    """[${it.antall_med_forsinkelsen_altinn},${it.antall_med_forsinkelsen_lps},${it.dager_etter_ff}]"""
+                }.joinToString()
+            )
+            .replace(
+                "@OppgStats",
+                oppgaveStats.map { //language=JSON
+                    """[${it.antall},"${it.dato}"]"""
+                }.joinToString()
+            )
 
         runBlocking {
             val response = httpClient.put<HttpResponse>("$datapakkeApiUrl/$datapakkeId") {

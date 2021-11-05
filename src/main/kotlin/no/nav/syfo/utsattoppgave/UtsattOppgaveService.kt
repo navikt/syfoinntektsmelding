@@ -10,7 +10,6 @@ import no.nav.syfo.service.BehandlendeEnhetConsumer
 import no.nav.syfo.service.SYKEPENGER_UTLAND
 import no.nav.syfo.util.Metrikk
 import org.slf4j.LoggerFactory
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
 
@@ -33,7 +32,7 @@ class UtsattOppgaveService(
         }
 
         if (oppgave.tilstand == Tilstand.Utsatt && oppdatering.handling == Handling.Utsett) {
-            if (oppgave.timeout == null){
+            if (oppgave.timeout == null) {
                 metrikk.tellUtsattOppgave_UtenDato()
             }
             oppdatering.timeout ?: error("Timeout på utsettelse mangler")
@@ -66,8 +65,6 @@ class UtsattOppgaveService(
         log.info("Oppdatering på dokumentId: ${oppdatering.id} ikke relevant")
     }
 
-
-
     fun lagre(oppgave: UtsattOppgaveEntitet) {
         utsattOppgaveDAO.lagre(oppgave)
     }
@@ -78,10 +75,12 @@ class UtsattOppgaveService(
 }
 
 @KtorExperimentalAPI
-fun opprettOppgaveIGosys(utsattOppgave: UtsattOppgaveEntitet,
-                         oppgaveClient: OppgaveClient,
-                         utsattOppgaveDAO: UtsattOppgaveDAO,
-                         behandlendeEnhetConsumer: BehandlendeEnhetConsumer): OppgaveResultat {
+fun opprettOppgaveIGosys(
+    utsattOppgave: UtsattOppgaveEntitet,
+    oppgaveClient: OppgaveClient,
+    utsattOppgaveDAO: UtsattOppgaveDAO,
+    behandlendeEnhetConsumer: BehandlendeEnhetConsumer
+): OppgaveResultat {
     val behandlendeEnhet = behandlendeEnhetConsumer.hentBehandlendeEnhet(utsattOppgave.fnr, utsattOppgave.inntektsmeldingId)
     val gjelderUtland = (SYKEPENGER_UTLAND == behandlendeEnhet)
     val resultat = runBlocking {

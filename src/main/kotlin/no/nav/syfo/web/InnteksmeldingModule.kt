@@ -11,7 +11,6 @@ import io.ktor.routing.*
 import io.ktor.util.*
 import no.nav.syfo.web.api.syfoinntektsmelding
 import org.koin.ktor.ext.get
-import org.slf4j.event.Level
 
 @KtorExperimentalLocationsAPI
 @KtorExperimentalAPI

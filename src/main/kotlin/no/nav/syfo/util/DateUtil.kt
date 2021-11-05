@@ -4,10 +4,12 @@ import java.time.LocalDate
 
 object DateUtil {
     fun overlapperPerioder(a: Periode, b: Periode): Boolean {
-        return (compare(a.fom).isBetweenOrEqual(b)
-            || compare(a.tom).isBetweenOrEqual(b)
-            || compare(b.fom).isBetweenOrEqual(a)
-            || compare(b.tom).isBetweenOrEqual(a))
+        return (
+            compare(a.fom).isBetweenOrEqual(b) ||
+                compare(a.tom).isBetweenOrEqual(b) ||
+                compare(b.fom).isBetweenOrEqual(a) ||
+                compare(b.tom).isBetweenOrEqual(a)
+            )
     }
 
     fun compare(localDate: LocalDate): LocalDateComparator {

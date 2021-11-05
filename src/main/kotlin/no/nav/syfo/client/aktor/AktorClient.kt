@@ -42,7 +42,6 @@ class AktorClient(
                     header("Nav-Consumer-Id", "$username")
                     header("Nav-Personidenter", "$sokeIdent")
                 }[sokeIdent]
-
             } catch (cause: ClientRequestException) {
                 val status = cause.response?.status?.value
                 log.error("Kall mot aktørregister på $endpointUrl feiler med HTTP-$status")
@@ -53,7 +52,7 @@ class AktorClient(
             }
             if (aktor?.identer == null) {
                 log.error("Fant ikke aktøren: ${aktor?.feilmelding}")
-                throw FantIkkeAktørException(null);
+                throw FantIkkeAktørException(null)
             }
         }
         return aktor?.identer?.firstOrNull()?.ident.toString()

@@ -44,7 +44,6 @@ class OAuth2ClientPropertiesConfig(
     @KtorExperimentalAPI
     internal fun ApplicationConfig.propertyToStringOrNull(prop: String) = this.propertyOrNull(prop)?.getString()
 
-
     companion object CommonConfigurationAttributes {
         private const val COMMON_PREFIX = "no.nav.security.jwt.client.registration"
         const val CLIENTS_PATH = "$COMMON_PREFIX.clients"

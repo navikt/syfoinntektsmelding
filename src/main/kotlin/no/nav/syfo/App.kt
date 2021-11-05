@@ -31,7 +31,6 @@ import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.slf4j.LoggerFactory
 
-
 class SpinnApplication(val port: Int = 8080) : KoinComponent {
     private val logger = LoggerFactory.getLogger(SpinnApplication::class.simpleName)
     private var webserver: NettyApplicationEngine? = null
@@ -71,17 +70,20 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
     @KtorExperimentalAPI
     @KtorExperimentalLocationsAPI
     private fun configAndStartWebserver() {
-        webserver = embeddedServer(Netty, applicationEngineEnvironment {
-            config = appConfig
-            connector {
-                port = this@SpinnApplication.port
-            }
+        webserver = embeddedServer(
+            Netty,
+            applicationEngineEnvironment {
+                config = appConfig
+                connector {
+                    port = this@SpinnApplication.port
+                }
 
-            module {
-                nais()
-                inntektsmeldingModule(config)
+                module {
+                    nais()
+                    inntektsmeldingModule(config)
+                }
             }
-        })
+        )
 
         webserver!!.start(wait = false)
     }
@@ -106,12 +108,10 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
     private fun migrateDatabase() {
         logger.info("Starter databasemigrering")
 
-
         Flyway.configure().baselineOnMigrate(true)
             .dataSource(GlobalContext.getKoinApplicationOrNull()?.koin?.get())
             .load()
             .migrate()
-
 
         logger.info("Databasemigrering slutt")
     }
@@ -129,7 +129,6 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
     }
 }
 
-
 @KtorExperimentalLocationsAPI
 @KtorExperimentalAPI
 fun main() {
@@ -142,10 +141,11 @@ fun main() {
     val application = SpinnApplication()
     application.start()
 
-    Runtime.getRuntime().addShutdownHook(Thread {
-        logger.info("Fikk shutdown-signal, avslutter...")
-        application.shutdown()
-        logger.info("Avsluttet OK")
-    })
+    Runtime.getRuntime().addShutdownHook(
+        Thread {
+            logger.info("Fikk shutdown-signal, avslutter...")
+            application.shutdown()
+            logger.info("Avsluttet OK")
+        }
+    )
 }
-

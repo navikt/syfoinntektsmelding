@@ -1,6 +1,6 @@
 package no.nav.syfo.integration.kafka
 
-//import no.nav.helse.inntektsmeldingsvarsel.ANTALL_INNKOMMENDE_MELDINGER
+// import no.nav.helse.inntektsmeldingsvarsel.ANTALL_INNKOMMENDE_MELDINGER
 import no.nav.helse.arbeidsgiver.kubernetes.LivenessComponent
 import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.clients.consumer.KafkaConsumer
@@ -22,15 +22,17 @@ class JoarkHendelseKafkaClient(props: MutableMap<String, Any>, topicName: String
     init {
         consumer.subscribe(listOf(topicName))
 
-        Runtime.getRuntime().addShutdownHook(Thread {
-            log.debug("Got shutdown message, closing Kafka connection...")
-            try {
-                stop()
-            } catch (e: ConcurrentModificationException){
-                log.debug("Fikk ConcurrentModificationException når man stoppet")
+        Runtime.getRuntime().addShutdownHook(
+            Thread {
+                log.debug("Got shutdown message, closing Kafka connection...")
+                try {
+                    stop()
+                } catch (e: ConcurrentModificationException) {
+                    log.debug("Fikk ConcurrentModificationException når man stoppet")
+                }
+                log.debug("Kafka connection closed")
             }
-            log.debug("Kafka connection closed")
-        })
+        )
     }
 
     fun stop() = consumer.close()
@@ -64,4 +66,3 @@ class JoarkHendelseKafkaClient(props: MutableMap<String, Any>, topicName: String
         lastThrown?.let { throw lastThrown as Exception }
     }
 }
-

@@ -14,26 +14,23 @@ const val validOrgNr = "917404437"
 fun getRandomNumber(fra: Int, til: Int) = (fra..til).shuffled().first()
 fun getRandomFeiltype() = Feiltype.values().toList().shuffled().first()
 fun getRandomTilstand() = Tilstand.values().toList().shuffled().first()
-fun addLeadingZeroIfLessThanTen(num : Int) : String = if ( num < 10 ) String.format("%02d", num) else num.toString()
-
-
+fun addLeadingZeroIfLessThanTen(num: Int): String = if (num < 10) String.format("%02d", num) else num.toString()
 
 fun getRandomDate(before: LocalDateTime?): String {
-    return if(before == null)
+    return if (before == null)
         "${(2000..LocalDate.now().year).shuffled().first()}-${addLeadingZeroIfLessThanTen((1..12).shuffled().first())}-${addLeadingZeroIfLessThanTen((1..28).shuffled().first())}"
     else
         "${(2000 until before.year).shuffled().first()}-${addLeadingZeroIfLessThanTen((1 until before.monthValue).shuffled().first())}-${addLeadingZeroIfLessThanTen((1 until before.dayOfMonth).shuffled().first())}"
 }
 
-fun getRandomTime(before: LocalDateTime?) : String {
-    return if(before == null)
+fun getRandomTime(before: LocalDateTime?): String {
+    return if (before == null)
         "${addLeadingZeroIfLessThanTen((0..24).shuffled().first())}:${addLeadingZeroIfLessThanTen((0..60).shuffled().first())}:${addLeadingZeroIfLessThanTen((0..60).shuffled().first())}"
     else
         "${addLeadingZeroIfLessThanTen((0 until before.hour).shuffled().first())}:${addLeadingZeroIfLessThanTen((0 until before.minute).shuffled().first())}:${addLeadingZeroIfLessThanTen((0 until before.second).shuffled().first())}"
 }
 
 fun getRandonDateTime(before: LocalDateTime?) = "${getRandomDate(before)}T${getRandomTime(before)}"
-
 
 fun getRandonUtsattOppgaveEntitet(
     id: Int = getRandomNumber(100, 1000),
@@ -62,13 +59,13 @@ fun getRandonUtsattOppgaveEntitet(
 }
 
 fun getRandonInntektsmeldingEntitet(
-    uuid :String = UUID.randomUUID().toString(),
-    aktorId : String = validIdentitetsnummer,
-    sakId : String = getRandomNumber(1000, 5000).toString(),
-    journalpostId : String = getRandomNumber(10, 50).toString(),
+    uuid: String = UUID.randomUUID().toString(),
+    aktorId: String = validIdentitetsnummer,
+    sakId: String = getRandomNumber(1000, 5000).toString(),
+    journalpostId: String = getRandomNumber(10, 50).toString(),
     orgnummer: String = validOrgNr,
     arbeidsgiverPrivat: String? = null,
-    behandlet : LocalDateTime = LocalDateTime.parse(getRandonDateTime(null)),
+    behandlet: LocalDateTime = LocalDateTime.parse(getRandonDateTime(null)),
     data: String? = null
 ): InntektsmeldingEntitet {
     return InntektsmeldingEntitet(
@@ -79,5 +76,6 @@ fun getRandonInntektsmeldingEntitet(
         orgnummer = orgnummer,
         arbeidsgiverPrivat = arbeidsgiverPrivat,
         behandlet = behandlet,
-        data = data)
+        data = data
+    )
 }

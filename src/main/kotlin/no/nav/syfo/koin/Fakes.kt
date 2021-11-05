@@ -20,12 +20,12 @@ import java.time.LocalDate
 import java.time.LocalDate.now
 
 fun Module.mockExternalDependecies() {
-    //single { MockAltinnRepo(get()) } bind AltinnOrganisationsRepository::class
+    // single { MockAltinnRepo(get()) } bind AltinnOrganisationsRepository::class
 
     single {
         object : AccessTokenProvider {
             override fun getToken(): String {
-                return "token";
+                return "token"
             }
         }
     } bind AccessTokenProvider::class
@@ -78,7 +78,6 @@ fun Module.mockExternalDependecies() {
                     )
                 )
         }
-
     } bind PdlClient::class
 
     single {
@@ -89,44 +88,50 @@ fun Module.mockExternalDependecies() {
             ): OpprettOppgaveResponse = OpprettOppgaveResponse(
                 1234,
                 "321",
-            "awdawd",
-            "SYK",
-            1,
-            now(),
-            Prioritet.NORM,
-            Status.OPPRETTET)
+                "awdawd",
+                "SYK",
+                1,
+                now(),
+                Prioritet.NORM,
+                Status.OPPRETTET
+            )
         }
     } bind OppgaveKlient::class
 
     single {
-        object : Norg2Client("",
+        object : Norg2Client(
+            "",
             object : AccessTokenProvider {
                 override fun getToken(): String {
-                    return "token";
+                    return "token"
                 }
             },
-            get()) {
+            get()
+        ) {
             override suspend fun hentAlleArbeidsfordelinger(
-                request: ArbeidsfordelingRequest, callId: String?
-            ): List<ArbeidsfordelingResponse> = listOf(ArbeidsfordelingResponse(
-                aktiveringsdato = LocalDate.of(2020,11,31),
-                antallRessurser = 0,
-                enhetId = 123456789,
-                enhetNr = "1234",
-                kanalstrategi = null,
-                navn = "NAV Område",
-                nedleggelsesdato = null,
-                oppgavebehandler = false,
-                orgNivaa = "SPESEN",
-                orgNrTilKommunaltNavKontor = "",
-                organisasjonsnummer = null,
-                sosialeTjenester = "",
-                status = "Aktiv",
-                type = "KO",
-                underAvviklingDato = null,
-                underEtableringDato = LocalDate.of(2020,11,30),
-                versjon=1
-            ))
+                request: ArbeidsfordelingRequest,
+                callId: String?
+            ): List<ArbeidsfordelingResponse> = listOf(
+                ArbeidsfordelingResponse(
+                    aktiveringsdato = LocalDate.of(2020, 11, 31),
+                    antallRessurser = 0,
+                    enhetId = 123456789,
+                    enhetNr = "1234",
+                    kanalstrategi = null,
+                    navn = "NAV Område",
+                    nedleggelsesdato = null,
+                    oppgavebehandler = false,
+                    orgNivaa = "SPESEN",
+                    orgNrTilKommunaltNavKontor = "",
+                    organisasjonsnummer = null,
+                    sosialeTjenester = "",
+                    status = "Aktiv",
+                    type = "KO",
+                    underAvviklingDato = null,
+                    underEtableringDato = LocalDate.of(2020, 11, 30),
+                    versjon = 1
+                )
+            )
         }
     } bind Norg2Client::class
 }

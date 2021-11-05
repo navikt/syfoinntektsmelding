@@ -17,9 +17,11 @@ import java.time.LocalDate
  * https://norg2.dev.adeo.no/norg2/swagger-ui.html#/arbeidsfordeling/findArbeidsfordelingByCriteriaUsingPOST
  *
  */
-open class Norg2Client (
-    private val url: String, private val stsClient: AccessTokenProvider, private val httpClient: HttpClient
-)  {
+open class Norg2Client(
+    private val url: String,
+    private val stsClient: AccessTokenProvider,
+    private val httpClient: HttpClient
+) {
 
     /**
      * Oppslag av informasjon om ruting av arbeidsoppgaver til enheter.
@@ -38,15 +40,15 @@ open class Norg2Client (
 }
 
 data class ArbeidsfordelingRequest(
-    var behandlingstema	: String? = null,
-    var behandlingstype	: String? = null,
-    var diskresjonskode	: String? = null,
-    var enhetNummer	: String? = null,
-    var geografiskOmraade	: String? = null,
-    var oppgavetype	: String? = null,
+    var behandlingstema: String? = null,
+    var behandlingstype: String? = null,
+    var diskresjonskode: String? = null,
+    var enhetNummer: String? = null,
+    var geografiskOmraade: String? = null,
+    var oppgavetype: String? = null,
     var skjermet:	Boolean? = null,
-    var tema	: String? = null,
-    var temagruppe	: String? = null
+    var tema: String? = null,
+    var temagruppe: String? = null
 )
 
 data class ArbeidsfordelingResponse(

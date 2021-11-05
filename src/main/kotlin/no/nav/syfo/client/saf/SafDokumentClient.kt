@@ -45,5 +45,4 @@ class SafDokumentClient constructor(
             response.content.toByteArray()
         }
     }
-
 }

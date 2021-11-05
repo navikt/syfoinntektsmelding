@@ -37,18 +37,20 @@ private fun consumerLocalProperties() = mutableMapOf<String, Any>(
     CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG to LOCALHOSTBOOTSTRAPSERVER,
 )
 
-fun joarkLocalProperties() = consumerLocalProperties() +  mapOf(
+fun joarkLocalProperties() = consumerLocalProperties() + mapOf(
     ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to GenericAvroDeserializer::class.java,
     "schema.registry.url" to "http://kafka-schema-registry.tpa.svc.nais.local:8081",
     ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
-    ConsumerConfig.GROUP_ID_CONFIG to "syfoinntektsmelding-v2")
+    ConsumerConfig.GROUP_ID_CONFIG to "syfoinntektsmelding-v2"
+)
 
-fun joarkOnPremProperties(config: ApplicationConfig) = consumerOnPremProperties(config) +  mapOf(
+fun joarkOnPremProperties(config: ApplicationConfig) = consumerOnPremProperties(config) + mapOf(
     ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to GenericAvroDeserializer::class.java,
     AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG to config.getString("kafka_schema_registry_url_config"),
     ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
     ConsumerConfig.CLIENT_ID_CONFIG to "syfoinntektsmelding",
-    ConsumerConfig.GROUP_ID_CONFIG to "syfoinntektsmelding-v2")
+    ConsumerConfig.GROUP_ID_CONFIG to "syfoinntektsmelding-v2"
+)
 
 fun utsattOppgaveLocalProperties() = consumerLocalProperties() + mapOf(
     ConsumerConfig.GROUP_ID_CONFIG to "syfoinntektsmelding-v1",
@@ -62,7 +64,7 @@ fun utsattOppgaveAivenProperties(config: ApplicationConfig) = commonAivenPropert
     ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to UtsattOppgaveDTODeserializer::class.java
 )
 
-fun producerLocalProperties(bootstrapServers: String) =  mutableMapOf<String, Any>().apply {
+fun producerLocalProperties(bootstrapServers: String) = mutableMapOf<String, Any>().apply {
     put(ProducerConfig.ACKS_CONFIG, "all")
     put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "true")
     put(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, "1")
@@ -72,7 +74,6 @@ fun producerLocalProperties(bootstrapServers: String) =  mutableMapOf<String, An
     put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer")
     put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers)
 }
-
 
 fun commonAivenProperties(config: ApplicationConfig) = mutableMapOf<String, Any>().apply {
     val PKCS12 = "PKCS12"

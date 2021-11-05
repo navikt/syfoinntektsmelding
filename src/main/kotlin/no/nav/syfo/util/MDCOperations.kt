@@ -33,9 +33,7 @@ class MDCOperations {
         private fun getRandomNumber(): Int = RANDOM.nextInt(Int.MAX_VALUE)
         private fun getSystemTime(): Long = System.currentTimeMillis()
     }
-
 }
-
 
 inline fun <reified T> logger(): Logger {
     return LoggerFactory.getLogger(T::class.java)

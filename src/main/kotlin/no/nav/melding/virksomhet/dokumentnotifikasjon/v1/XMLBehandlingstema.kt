@@ -6,26 +6,25 @@ import javax.xml.bind.annotation.*
  * Kodeverk for behandlingstema
  */
 
-
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Behandlingstema")
 class XMLBehandlingstema : XMLKodeverdi {
     @XmlAttribute(name = "kodeverksRef")
     @XmlSchemaType(name = "anyURI")
-    var kodeverksRef : String? = null
-    get() {
-        return if (kodeverksRef == null) {
-            "http://nav.no/kodeverk/Kodeverk/Behandlingstema"
-        } else {
-            kodeverksRef
+    var kodeverksRef: String? = null
+        get() {
+            return if (kodeverksRef == null) {
+                "http://nav.no/kodeverk/Kodeverk/Behandlingstema"
+            } else {
+                kodeverksRef
+            }
         }
-    }
 
-    constructor(value: String, kodeRef: String, kodeverksRef : String?) : super(value, kodeRef) {
+    constructor(value: String, kodeRef: String, kodeverksRef: String?) : super(value, kodeRef) {
         this.kodeverksRef = kodeverksRef
     }
 
-    fun withKodeverksRef(value :String) : XMLBehandlingstema {
+    fun withKodeverksRef(value: String): XMLBehandlingstema {
         this.kodeverksRef = value
         return this
     }
@@ -39,5 +38,4 @@ class XMLBehandlingstema : XMLKodeverdi {
         super.withKodeRef(value)
         return this
     }
-
 }

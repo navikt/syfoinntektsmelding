@@ -9,12 +9,17 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import javax.xml.bind.JAXBElement
 
-
 internal object InntektsmeldingArbeidsgiver20180924Mapper {
 
     val log = log()
 
-    fun tilXMLInntektsmelding(jabxInntektsmelding: JAXBElement<Any>, journalpostId: String, mottattDato: LocalDateTime, journalStatus: JournalStatus, arkivReferanse: String): Inntektsmelding {
+    fun tilXMLInntektsmelding(
+        jabxInntektsmelding: JAXBElement<Any>,
+        journalpostId: String,
+        mottattDato: LocalDateTime,
+        journalStatus: JournalStatus,
+        arkivReferanse: String
+    ): Inntektsmelding {
         log.info("Behandling inntektsmelding på 20180924 format")
         val skjemainnhold = (jabxInntektsmelding.value as XMLInntektsmeldingM).skjemainnhold
 
@@ -87,7 +92,6 @@ internal object InntektsmeldingArbeidsgiver20180924Mapper {
             OpphoerAvNaturalytelse(no.nav.syfo.consumer.ws.mapping.mapNaturalytelseType(opphør.naturalytelseType), opphør.fom?.value, opphør.beloepPrMnd.value)
         }
             ?: emptyList()
-
     }
 
     private fun mapXmlEndringRefusjon(xmlRefusjon: JAXBElement<XMLRefusjon>?): List<EndringIRefusjon> {
@@ -98,6 +102,4 @@ internal object InntektsmeldingArbeidsgiver20180924Mapper {
     private fun mapXmlRefusjon(refusjon: JAXBElement<XMLRefusjon>?): Refusjon {
         return Refusjon(refusjon?.value?.refusjonsbeloepPrMnd?.value, refusjon?.value?.refusjonsopphoersdato?.value)
     }
-
-
 }

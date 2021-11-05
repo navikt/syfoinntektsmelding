@@ -16,9 +16,6 @@ import io.ktor.client.features.json.*
 import io.ktor.config.*
 import io.ktor.util.*
 import no.nav.helse.arbeidsgiver.kubernetes.KubernetesProbeManager
-import no.nav.helse.arbeidsgiver.kubernetes.LivenessComponent
-import org.koin.core.Koin
-import org.koin.core.definition.Kind
 import org.koin.core.module.Module
 import org.koin.core.qualifier.StringQualifier
 import org.koin.dsl.module
@@ -44,10 +41,12 @@ fun buildObjectMapper(): ObjectMapper {
         configure(SerializationFeature.INDENT_OUTPUT, true)
         configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
         configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-        setDefaultPrettyPrinter(DefaultPrettyPrinter().apply {
-            indentArraysWith(DefaultPrettyPrinter.FixedSpaceIndenter.instance)
-            indentObjectsWith(DefaultIndenter("  ", "\n"))
-        })
+        setDefaultPrettyPrinter(
+            DefaultPrettyPrinter().apply {
+                indentArraysWith(DefaultPrettyPrinter.FixedSpaceIndenter.instance)
+                indentObjectsWith(DefaultIndenter("  ", "\n"))
+            }
+        )
     }
 }
 
@@ -89,7 +88,7 @@ val common = module {
     }
 
     single { httpClient }
-    single(qualifier = StringQualifier("proxyHttpClient")) {proxiedHttpClient}
+    single(qualifier = StringQualifier("proxyHttpClient")) { proxiedHttpClient }
 }
 
 // utils

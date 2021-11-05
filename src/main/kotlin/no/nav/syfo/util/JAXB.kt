@@ -2,11 +2,11 @@ package no.nav.syfo.util
 import no.nav.melding.virksomhet.dokumentnotifikasjon.v1.ObjectFactory
 import java.io.StringReader
 import java.io.StringWriter
-import javax.xml.bind.JAXBContext
-import javax.xml.transform.stream.StreamResult
-import javax.xml.bind.JAXBException
 import java.lang.RuntimeException
+import javax.xml.bind.JAXBContext
+import javax.xml.bind.JAXBException
 import javax.xml.bind.Marshaller
+import javax.xml.transform.stream.StreamResult
 
 object JAXB {
     private var FORSENDELSESINFORMASJON: JAXBContext? = null
