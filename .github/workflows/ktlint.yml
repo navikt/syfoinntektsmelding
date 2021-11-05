@@ -15,7 +15,7 @@ jobs:
       - uses: musichin/ktlint-check@v1
         with:
           version: '0.43.0'
-          warn: true # warn only
+          warn: false # warn only
           annotate: true
 
           # ktlint
