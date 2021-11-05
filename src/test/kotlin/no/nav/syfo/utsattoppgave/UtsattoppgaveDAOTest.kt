@@ -1,6 +1,5 @@
 package no.nav.syfo.utsattoppgave
 
-
 import junit.framework.Assert.assertEquals
 import junit.framework.Assert.assertNotNull
 import no.nav.syfo.dto.Tilstand
@@ -10,17 +9,14 @@ import no.nav.syfo.repository.UtsattOppgaveRepositoryMockk
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-
 import java.time.LocalDateTime.now
 import java.util.UUID
-
 
 open class UtsattOppgaveDAOTest {
 
     private var repository: UtsattOppgaveRepository = UtsattOppgaveRepositoryMockk()
 
     private lateinit var utsattOppgaveDAO: UtsattOppgaveDAO
-
 
     @BeforeEach
     fun setup() {
@@ -84,4 +80,3 @@ open class UtsattOppgaveDAOTest {
         oppdatert = null
     )
 }
-

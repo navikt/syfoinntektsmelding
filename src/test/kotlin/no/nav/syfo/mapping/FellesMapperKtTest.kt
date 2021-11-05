@@ -11,11 +11,10 @@ class FellesMapperKtTest {
 
     @Test
     fun skal_mappe_ytelse_til_riktig_verdi() {
-        assertEquals(mapNaturalytelseType(opprettJaxbElement("kostDoegn")), Naturalytelse.KOSTDOEGN);
-        assertEquals(mapNaturalytelseType(opprettJaxbElement("tull")), Naturalytelse.ANNET);
-        assertEquals(mapNaturalytelseType(opprettJaxbElement("skattepliktigDelForsikringer")), Naturalytelse.SKATTEPLIKTIGDELFORSIKRINGER);
+        assertEquals(mapNaturalytelseType(opprettJaxbElement("kostDoegn")), Naturalytelse.KOSTDOEGN)
+        assertEquals(mapNaturalytelseType(opprettJaxbElement("tull")), Naturalytelse.ANNET)
+        assertEquals(mapNaturalytelseType(opprettJaxbElement("skattepliktigDelForsikringer")), Naturalytelse.SKATTEPLIKTIGDELFORSIKRINGER)
     }
 
     private fun opprettJaxbElement(verdi: String) = JAXBElement(QName.valueOf("naturalYtelse"), String::class.java, verdi)
-
 }

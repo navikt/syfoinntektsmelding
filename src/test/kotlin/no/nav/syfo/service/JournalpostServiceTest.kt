@@ -71,7 +71,6 @@ class JournalpostServiceTest {
                 mottattDato = LocalDateTime.now()
             )
 
-
         val (_, fnr, _, arbeidsgiverPrivat) = journalpostService.hentInntektsmelding("journalpostId", "AR-1234")
 
         assertThat(fnr).isEqualTo("fnr")

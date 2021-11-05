@@ -4,7 +4,6 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.client.dokarkiv.DokArkivClient
-import no.nav.syfo.service.BehandleInngaaendeJournalConsumer
 import no.nav.syfo.domain.InngaendeJournalpost
 import org.junit.jupiter.api.Test
 
@@ -20,11 +19,11 @@ class BehandleInngaaendeJournalConsumerTest {
         val behandlendeEngetId = "behandlendeEngetId"
         val journalpostId = "journalpostId"
         behandleInngaaendeJournalConsumer.ferdigstillJournalpost(
-                InngaendeJournalpost(behandlendeEnhetId = behandlendeEngetId, journalpostId = journalpostId, dokumentId = "dokumentId", fnr = "fnr", gsakId = "id")
+            InngaendeJournalpost(behandlendeEnhetId = behandlendeEngetId, journalpostId = journalpostId, dokumentId = "dokumentId", fnr = "fnr", gsakId = "id")
         )
         verify {
             runBlocking {
-                dokArkivClient.ferdigstillJournalpost( journalpostId, any() )
+                dokArkivClient.ferdigstillJournalpost(journalpostId, any())
             }
         }
     }
@@ -32,17 +31,17 @@ class BehandleInngaaendeJournalConsumerTest {
     @Test
     fun oppdaterJournalpostMedPrivatAvsender() {
         val inngaendeJournalpost = InngaendeJournalpost(
-                fnr = "fnr",
-                gsakId = "saksID",
-                behandlendeEnhetId = "enhet",
-                dokumentId = "dokumentId",
-                journalpostId = "journalpostId",
-                arbeidsgiverPrivat = "10101033333"
+            fnr = "fnr",
+            gsakId = "saksID",
+            behandlendeEnhetId = "enhet",
+            dokumentId = "dokumentId",
+            journalpostId = "journalpostId",
+            arbeidsgiverPrivat = "10101033333"
         )
         behandleInngaaendeJournalConsumer.oppdaterJournalpost(inngaendeJournalpost)
         verify {
             runBlocking {
-                dokArkivClient.oppdaterJournalpost( "journalpostId", any(), any(), any(), any() )
+                dokArkivClient.oppdaterJournalpost("journalpostId", any(), any(), any(), any())
             }
         }
         // TODO - Asserten under må virke

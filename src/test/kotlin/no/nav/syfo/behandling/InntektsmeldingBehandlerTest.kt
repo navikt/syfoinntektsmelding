@@ -42,9 +42,11 @@ class InntektsmeldingBehandlerTest {
     fun setup() {
         every { aktorClient.getAktorId("fnr") } returns "aktorId" // inntektsmelding.fnr
         every {
-            saksbehandlingService.behandleInntektsmelding(any(),
+            saksbehandlingService.behandleInntektsmelding(
+                any(),
                 match { it.contentEquals("aktorId") },
-                match { it.contentEquals("AR-123") })
+                match { it.contentEquals("AR-123") }
+            )
         } returns "saksId"
         every { inntektsmeldingService.lagreBehandling(any(), any(), any(), any()) } returns
             InntektsmeldingEntitet(
@@ -55,7 +57,6 @@ class InntektsmeldingBehandlerTest {
                 sakId = "saksId",
                 behandlet = LocalDateTime.now()
             )
-
     }
 
     @Test
@@ -124,4 +125,3 @@ class InntektsmeldingBehandlerTest {
         verify(exactly = 0) { journalpostService.ferdigstillJournalpost(any(), any()) }
     }
 }
-

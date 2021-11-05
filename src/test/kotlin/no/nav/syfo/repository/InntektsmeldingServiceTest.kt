@@ -14,7 +14,6 @@ import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-
 class InntektsmeldingServiceTest {
     private val objectMapper = ObjectMapper().registerModules(KotlinModule(), JavaTimeModule())
 
@@ -126,6 +125,4 @@ class InntektsmeldingServiceTest {
         assertThat(node.get("opphørAvNaturalYtelse")[1].get("fom").toString()).isEqualTo("[2016,6,6]")
         assertThat(node.get("opphørAvNaturalYtelse")[1].get("beloepPrMnd").asLong()).isEqualTo(666666666666)
     }
-
 }
-

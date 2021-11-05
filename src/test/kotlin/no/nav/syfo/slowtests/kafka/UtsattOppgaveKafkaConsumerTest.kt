@@ -30,17 +30,21 @@ class UtsattOppgaveKafkaConsumerTest : SystemTestBase() {
         .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
-    private val utsattmeldingConsumer = UtsattOppgaveKafkaClient(utsattOppgaveLocalProperties().toMutableMap(),
-        topicName)
+    private val utsattmeldingConsumer = UtsattOppgaveKafkaClient(
+        utsattOppgaveLocalProperties().toMutableMap(),
+        topicName
+    )
 
     @BeforeAll
     internal fun setUp() {
-        kafkaProdusent = KafkaAdminForTests(utsattOppgaveLocalProperties().toMutableMap(),topicName )
-        kafkaProdusent = KafkaAdminForTests(joarkLocalProperties().toMutableMap(),topicName)
+        kafkaProdusent = KafkaAdminForTests(utsattOppgaveLocalProperties().toMutableMap(), topicName)
+        kafkaProdusent = KafkaAdminForTests(joarkLocalProperties().toMutableMap(), topicName)
         kafkaProdusent.createTopicIfNotExists()
-        kafkaProdusent.addRecordeToKafka(objectMapper.writeValueAsString(utsattOppgaveKakaData),
+        kafkaProdusent.addRecordeToKafka(
+            objectMapper.writeValueAsString(utsattOppgaveKakaData),
             topicName,
-            producerLocalProperties( "localhost:9092"))
+            producerLocalProperties("localhost:9092")
+        )
     }
 
     @AfterAll
@@ -50,7 +54,7 @@ class UtsattOppgaveKafkaConsumerTest : SystemTestBase() {
 
     @Test
     fun `Skal lese utsattoppgave`() {
-        val meldinger =  utsattmeldingConsumer.getMessagesToProcess()
+        val meldinger = utsattmeldingConsumer.getMessagesToProcess()
         Assertions.assertThat(meldinger.size).isEqualTo(1)
         Assertions.assertThat(meldinger[0]).isEqualTo(objectMapper.writeValueAsString(utsattOppgaveKakaData))
     }

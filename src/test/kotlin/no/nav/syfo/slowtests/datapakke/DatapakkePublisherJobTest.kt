@@ -44,22 +44,22 @@ class DatapakkePublisherJobTest : SystemTestBase() {
             }.toList()
 
         every { repo.getLPSStats() } returns listOf(
-			LPSStats(
-				"SAP [SID:QHR/002][BUILD:20210820]",
-				1,
-				6
-			),
-			LPSStats(
-				"Aditro Lønn",
-				2,
-				3
-			),
-			LPSStats(
-				"24SevenOffice",
-				1,
-				25
-			)
-		)
+            LPSStats(
+                "SAP [SID:QHR/002][BUILD:20210820]",
+                1,
+                6
+            ),
+            LPSStats(
+                "Aditro Lønn",
+                2,
+                3
+            ),
+            LPSStats(
+                "24SevenOffice",
+                1,
+                25
+            )
+        )
 
         every { repo.getWeeklyQualityStats() } returns (1..25)
             .map {
@@ -114,8 +114,6 @@ class DatapakkePublisherJobTest : SystemTestBase() {
                 )
             }.toList()
 
-
-
         every { repo.getOppgaveStats() } returns (1..10)
             .map {
                 OppgaveStats(
@@ -125,9 +123,8 @@ class DatapakkePublisherJobTest : SystemTestBase() {
             }.toList()
     }
 
-
     @Test
-	@Disabled
+    @Disabled
     internal fun name() = suspendableTest {
         DatapakkePublisherJob(
             repo,
@@ -136,6 +133,5 @@ class DatapakkePublisherJobTest : SystemTestBase() {
             "fb74c8d14d9c579e05b0b4b587843e6b",
             om = objectMapper
         ).doJob()
-
     }
 }

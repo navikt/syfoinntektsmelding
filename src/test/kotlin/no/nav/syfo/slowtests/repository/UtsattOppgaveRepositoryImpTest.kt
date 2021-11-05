@@ -7,13 +7,13 @@ import no.nav.syfo.grunnleggendeInntektsmelding
 import no.nav.syfo.repository.*
 import no.nav.syfo.slowtests.SystemTestBase
 import org.junit.jupiter.api.*
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.time.LocalDateTime.now
 import java.util.UUID
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Test
 
-open class UtsattOppgaveRepositoryImpTest : SystemTestBase(){
+open class UtsattOppgaveRepositoryImpTest : SystemTestBase() {
 
     lateinit var repository: UtsattOppgaveRepository
 
@@ -51,7 +51,7 @@ open class UtsattOppgaveRepositoryImpTest : SystemTestBase(){
         val oppgaver =
             repository.findUtsattOppgaveEntitetByTimeoutBeforeAndTilstandEquals(now(), Tilstand.Utsatt)
 
-       Assertions.assertEquals(1, oppgaver.size)
+        Assertions.assertEquals(1, oppgaver.size)
     }
 
     @Test
@@ -86,27 +86,28 @@ open class UtsattOppgaveRepositoryImpTest : SystemTestBase(){
             )
         ).id
 
-
-       Assertions.assertNotEquals(firstId, secondId)
+        Assertions.assertNotEquals(firstId, secondId)
     }
 
     @Test
     fun `oppdaterer oppgaver med enhet`() {
         val enhet = "Test123"
 
-        val utsattOppgave = repository.opprett(UtsattOppgaveEntitet(
-            inntektsmeldingId = "id3",
-            arkivreferanse = "arkivref",
-            fnr = "fnr",
-            aktørId = "aktørId",
-            sakId = "sakId",
-            journalpostId = "journalpostId",
-            timeout = now().minusHours(1),
-            tilstand = Tilstand.Utsatt,
-            enhet = "",
-            gosysOppgaveId = null,
-            oppdatert = null
-        ))
+        val utsattOppgave = repository.opprett(
+            UtsattOppgaveEntitet(
+                inntektsmeldingId = "id3",
+                arkivreferanse = "arkivref",
+                fnr = "fnr",
+                aktørId = "aktørId",
+                sakId = "sakId",
+                journalpostId = "journalpostId",
+                timeout = now().minusHours(1),
+                tilstand = Tilstand.Utsatt,
+                enhet = "",
+                gosysOppgaveId = null,
+                oppdatert = null
+            )
+        )
 
         utsattOppgave.enhet = enhet
         repository.oppdater(utsattOppgave)
@@ -119,7 +120,7 @@ open class UtsattOppgaveRepositoryImpTest : SystemTestBase(){
     fun `ignorerer oppgaver i andre tilstander`() {
         repository.opprett(
             enOppgaveEntitet(
-                id= 0,
+                id = 0,
                 timeout = now().minusHours(1),
                 tilstand = Tilstand.Utsatt,
                 inntektsmeldingsId = "id1"
@@ -128,7 +129,7 @@ open class UtsattOppgaveRepositoryImpTest : SystemTestBase(){
 
         repository.opprett(
             enOppgaveEntitet(
-                id= 1,
+                id = 1,
                 timeout = now().minusHours(1),
                 tilstand = Tilstand.Forkastet,
                 inntektsmeldingsId = "id2"
@@ -136,7 +137,7 @@ open class UtsattOppgaveRepositoryImpTest : SystemTestBase(){
         )
         repository.opprett(
             enOppgaveEntitet(
-                id= 2,
+                id = 2,
                 timeout = now().plusHours(1),
                 tilstand = Tilstand.Utsatt,
                 inntektsmeldingsId = "id3"
@@ -145,14 +146,15 @@ open class UtsattOppgaveRepositoryImpTest : SystemTestBase(){
 
         repository.opprett(
             enOppgaveEntitet(
-                id= 3,
+                id = 3,
                 timeout = now().minusHours(1),
                 tilstand = Tilstand.Opprettet,
                 inntektsmeldingsId = "id4"
-            ))
+            )
+        )
 
-            val oppgaver =
-        repository.findUtsattOppgaveEntitetByTimeoutBeforeAndTilstandEquals(now(), Tilstand.Utsatt)
+        val oppgaver =
+            repository.findUtsattOppgaveEntitetByTimeoutBeforeAndTilstandEquals(now(), Tilstand.Utsatt)
 
         Assertions.assertEquals(1, oppgaver.size)
     }
@@ -217,4 +219,3 @@ open class UtsattOppgaveRepositoryImpTest : SystemTestBase(){
         oppdatert = null
     )
 }
-
