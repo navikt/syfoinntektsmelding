@@ -1,9 +1,9 @@
-name: Test
+name: Slow tests
 
 on: [pull_request]
 
 jobs:
-  Bygg:
+  Slowtests:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
@@ -26,10 +26,12 @@ jobs:
           key: ${{ runner.os }}-gradle-cache-${{ hashFiles('build.gradle') }}
           restore-keys: |
             ${{ runner.os }}-gradle-cache-
-      - name: Build and test
+      - name: compose up
+        run: cd docker/local && docker-compose up -d && sleep 10
+      - name: Build and run slowTests
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: --console=plain build test
+          arguments: --console=plain build slowTests
         env:
           ORG_GRADLE_PROJECT_githubUser: x-access-token
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}

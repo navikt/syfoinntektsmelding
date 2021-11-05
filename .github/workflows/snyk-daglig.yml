@@ -2,8 +2,6 @@ name: Snyk
 
 on:
   push:
-    tags:
-      - snyk/*
     branches:
       - 'snyk/**'
   schedule:
