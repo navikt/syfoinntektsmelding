@@ -4,11 +4,11 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import io.ktor.client.*
-import io.ktor.client.engine.mock.*
-import io.ktor.http.*
-import io.ktor.http.content.*
-import io.ktor.util.*
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.mock.MockEngine
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.content.TextContent
+import io.ktor.util.KtorExperimentalAPI
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.util.Metrikk

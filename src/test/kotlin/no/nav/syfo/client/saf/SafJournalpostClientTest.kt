@@ -1,7 +1,7 @@
 package no.nav.syfo.client.saf
 
-import io.ktor.http.*
-import io.ktor.util.*
+import io.ktor.http.HttpStatusCode
+import io.ktor.util.KtorExperimentalAPI
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider

@@ -10,7 +10,7 @@ import no.nav.syfo.utsattoppgave.OppdateringstypeDTO
 import no.nav.syfo.utsattoppgave.UtsattOppgaveDTO
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
 
 val FØRSTE_JANUAR: LocalDate = LocalDate.of(2019, 1, 1)
 val FØRSTE_FEBRUAR: LocalDate = LocalDate.of(2019, 2, 1)

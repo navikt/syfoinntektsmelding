@@ -1,8 +1,9 @@
 package no.nav.syfo.slowtests.datapakke
 
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
-import io.ktor.http.*
+import io.ktor.client.request.put
+import io.ktor.client.statement.HttpResponse
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.utils.loadFromResources
 import no.nav.security.mock.oauth2.http.objectMapper
