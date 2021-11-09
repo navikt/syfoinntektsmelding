@@ -6,13 +6,13 @@ import java.sql.ResultSet
 import javax.sql.DataSource
 
 interface ArbeidsgiverperiodeRepository {
-    fun lagreData(agp: ArbeidsgiverperiodeEntitet, connection: Connection) : List<ArbeidsgiverperiodeEntitet>
+    fun lagreData(agp: ArbeidsgiverperiodeEntitet, connection: Connection): List<ArbeidsgiverperiodeEntitet>
     fun deleteAll()
 }
 
-class ArbeidsgiverperiodeRepositoryImp(private val ds: DataSource) : ArbeidsgiverperiodeRepository{
+class ArbeidsgiverperiodeRepositoryImp(private val ds: DataSource) : ArbeidsgiverperiodeRepository {
 
-    override fun lagreData(agp: ArbeidsgiverperiodeEntitet, connection: Connection) : List<ArbeidsgiverperiodeEntitet>{
+    override fun lagreData(agp: ArbeidsgiverperiodeEntitet, connection: Connection): List<ArbeidsgiverperiodeEntitet> {
         val insertStatement =
             """INSERT INTO ARBEIDSGIVERPERIODE (PERIODE_UUID, INNTEKTSMELDING_UUID, FOM, TOM)
         VALUES (?, ?, ?::date, ?::date)
@@ -68,10 +68,12 @@ class ArbeidsgiverperiodeRepositoryImp(private val ds: DataSource) : Arbeidsgive
             returnValue.add(
                 ArbeidsgiverperiodeEntitet(
                     uuid = res.getString("PERIODE_UUID"),
-                    inntektsmelding = null, //inntektsmeldingRepository.findByUuid(res.getString("INNTEKTSMELDING_UUID") ),
+                    inntektsmelding = null, // inntektsmeldingRepository.findByUuid(res.getString("INNTEKTSMELDING_UUID") ),
                     fom = res.getDate("FOM").toLocalDate(),
                     tom = res.getDate("TOM").toLocalDate(),
-                    inntektsmelding_uuid = res.getString("INNTEKTSMELDING_UUID")))
+                    inntektsmelding_uuid = res.getString("INNTEKTSMELDING_UUID")
+                )
+            )
         }
         return returnValue
     }

@@ -19,28 +19,29 @@ import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 @Disabled("WIP: For at denne testen skal være verdifull måvi sette opp et schema registry eller en mock av en")
-class JoarkHendelseKafkaConsumerTest : SystemTestBase(){
+class JoarkHendelseKafkaConsumerTest : SystemTestBase() {
     private lateinit var kafkaProdusent: KafkaAdminForTests
     private val topicName = "aapen-dok-journalfoering-v1-q1"
 
     private val objectMapper = ObjectMapper()
-    .registerModule(KotlinModule())
-    .registerModule(Jdk8Module())
-    .registerModule(JavaTimeModule())
-    .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-    .configure(SerializationFeature.INDENT_OUTPUT, true)
-    .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
-    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+        .registerModule(KotlinModule())
+        .registerModule(Jdk8Module())
+        .registerModule(JavaTimeModule())
+        .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+        .configure(SerializationFeature.INDENT_OUTPUT, true)
+        .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
+        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
-    private val joarkHendleseConsumer =  JoarkHendelseKafkaClient(joarkLocalProperties().toMutableMap(), topicName)
+    private val joarkHendleseConsumer = JoarkHendelseKafkaClient(joarkLocalProperties().toMutableMap(), topicName)
 
     @BeforeAll
     internal fun setUp() {
-        kafkaProdusent = KafkaAdminForTests(joarkLocalProperties().toMutableMap(),topicName )
+        kafkaProdusent = KafkaAdminForTests(joarkLocalProperties().toMutableMap(), topicName)
         kafkaProdusent.createTopicIfNotExists()
-        kafkaProdusent.addRecordeToKafka(objectMapper.writeValueAsString(journalPostKafkaData),
+        kafkaProdusent.addRecordeToKafka(
+            objectMapper.writeValueAsString(journalPostKafkaData),
             topicName,
-            producerLocalProperties( "localhost:9092")
+            producerLocalProperties("localhost:9092")
         )
     }
 

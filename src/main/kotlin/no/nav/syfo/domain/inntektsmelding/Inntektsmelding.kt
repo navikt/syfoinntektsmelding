@@ -6,7 +6,6 @@ import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-
 data class Inntektsmelding(
     val id: String = "",
     var fnr: String,
@@ -38,4 +37,3 @@ data class Inntektsmelding(
     val bruttoUtbetalt: BigDecimal? = null,
     val årsakEndring: String? = null
 )
-

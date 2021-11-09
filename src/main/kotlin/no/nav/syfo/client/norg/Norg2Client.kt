@@ -1,8 +1,11 @@
 package no.nav.syfo.client.norg
 
-import io.ktor.client.*
-import io.ktor.client.request.*
-import io.ktor.http.*
+import io.ktor.client.HttpClient
+import io.ktor.client.request.header
+import io.ktor.client.request.post
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
+import io.ktor.http.withCharset
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
 import java.time.LocalDate
@@ -17,9 +20,11 @@ import java.time.LocalDate
  * https://norg2.dev.adeo.no/norg2/swagger-ui.html#/arbeidsfordeling/findArbeidsfordelingByCriteriaUsingPOST
  *
  */
-open class Norg2Client (
-    private val url: String, private val stsClient: AccessTokenProvider, private val httpClient: HttpClient
-)  {
+open class Norg2Client(
+    private val url: String,
+    private val stsClient: AccessTokenProvider,
+    private val httpClient: HttpClient
+) {
 
     /**
      * Oppslag av informasjon om ruting av arbeidsoppgaver til enheter.
@@ -38,15 +43,15 @@ open class Norg2Client (
 }
 
 data class ArbeidsfordelingRequest(
-    var behandlingstema	: String? = null,
-    var behandlingstype	: String? = null,
-    var diskresjonskode	: String? = null,
-    var enhetNummer	: String? = null,
-    var geografiskOmraade	: String? = null,
-    var oppgavetype	: String? = null,
+    var behandlingstema: String? = null,
+    var behandlingstype: String? = null,
+    var diskresjonskode: String? = null,
+    var enhetNummer: String? = null,
+    var geografiskOmraade: String? = null,
+    var oppgavetype: String? = null,
     var skjermet:	Boolean? = null,
-    var tema	: String? = null,
-    var temagruppe	: String? = null
+    var tema: String? = null,
+    var temagruppe: String? = null
 )
 
 data class ArbeidsfordelingResponse(

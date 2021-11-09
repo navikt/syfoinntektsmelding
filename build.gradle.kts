@@ -18,7 +18,6 @@ val prometheusVersion = "0.6.0"
 
 val mainClass = "no.nav.syfo.AppKt"
 
-
 val githubPassword: String by project
 
 plugins {
@@ -29,9 +28,6 @@ plugins {
 }
 
 application.mainClass.set(mainClass)
-
-
-
 
 buildscript {
     dependencies {

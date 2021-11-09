@@ -1,10 +1,23 @@
 package no.nav.syfo.mapping
 
-import no.nav.inntektsmeldingkontrakt.*
+import no.nav.inntektsmeldingkontrakt.Arbeidsgivertype
+import no.nav.inntektsmeldingkontrakt.EndringIRefusjon
+import no.nav.inntektsmeldingkontrakt.GjenopptakelseNaturalytelse
+import no.nav.inntektsmeldingkontrakt.Naturalytelse
+import no.nav.inntektsmeldingkontrakt.OpphoerAvNaturalytelse
+import no.nav.inntektsmeldingkontrakt.Periode
+import no.nav.inntektsmeldingkontrakt.Refusjon
+import no.nav.inntektsmeldingkontrakt.Status
 import no.nav.syfo.domain.inntektsmelding.Gyldighetsstatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 
-fun mapInntektsmeldingKontrakt(inntektsmelding: Inntektsmelding, arbeidstakerAktørId: String, gyldighetsstatus: Gyldighetsstatus, arkivreferanse: String, uuid: String): no.nav.inntektsmeldingkontrakt.Inntektsmelding {
+fun mapInntektsmeldingKontrakt(
+    inntektsmelding: Inntektsmelding,
+    arbeidstakerAktørId: String,
+    gyldighetsstatus: Gyldighetsstatus,
+    arkivreferanse: String,
+    uuid: String
+): no.nav.inntektsmeldingkontrakt.Inntektsmelding {
     return no.nav.inntektsmeldingkontrakt.Inntektsmelding(
         inntektsmeldingId = uuid,
         arbeidstakerFnr = inntektsmelding.fnr,
@@ -37,7 +50,6 @@ fun mapStatus(status: Gyldighetsstatus): Status {
     if (status == Gyldighetsstatus.GYLDIG)
         return Status.GYLDIG
     return Status.MANGELFULL
-
 }
 
 fun mapArbeidsgiverperioder(inntektsmelding: Inntektsmelding): List<Periode> {

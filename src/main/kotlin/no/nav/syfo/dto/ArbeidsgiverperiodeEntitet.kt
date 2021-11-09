@@ -1,7 +1,7 @@
 package no.nav.syfo.dto
 
 import java.time.LocalDate
-import java.util.*
+import java.util.UUID
 
 data class ArbeidsgiverperiodeEntitet(
     var uuid: String = UUID.randomUUID().toString(),

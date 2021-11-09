@@ -1,7 +1,6 @@
 package no.nav.syfo.domain
 
-
-data class Sykmelding (
+data class Sykmelding(
     val id: Int,
     val orgnummer: String? = null
 )

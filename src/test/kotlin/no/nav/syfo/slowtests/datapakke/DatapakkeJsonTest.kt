@@ -5,17 +5,15 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.utils.loadFromResources
-import no.nav.security.mock.oauth2.http.json
 import no.nav.security.mock.oauth2.http.objectMapper
 import no.nav.syfo.slowtests.SystemTestBase
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
-class DatapakkeJsonTest : SystemTestBase(){
+class DatapakkeJsonTest : SystemTestBase() {
 
     val testData = "datapakke/datapakke.json".loadFromResources()
 
@@ -29,8 +27,8 @@ class DatapakkeJsonTest : SystemTestBase(){
     }
 
     @Test
-	@Disabled
-    fun `prøv å sende request`(){
+    @Disabled
+    fun `prøv å sende request`() {
         runBlocking {
             val response = httpClient.put<HttpResponse>("https://datakatalog-api.dev.intern.nav.no/v1/datapackage/fb74c8d14d9c579e05b0b4b587843e6b") {
                 contentType(ContentType.Application.Json)

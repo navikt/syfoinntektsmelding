@@ -3,8 +3,8 @@ package no.nav.syfo.client.saf
 import io.ktor.client.HttpClient
 import io.ktor.client.request.header
 import io.ktor.client.request.post
-import io.ktor.http.*
 import io.ktor.http.ContentType
+import io.ktor.http.contentType
 import kotlinx.coroutines.runBlocking
 import log
 import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
@@ -28,7 +28,7 @@ class SafJournalpostClient(
                 contentType(ContentType.Application.Json)
                 header("Authorization", "Bearer $token")
                 header("X-Correlation-ID", journalpostId)
-                body = GetJournalpostRequest(query=lagQuery(journalpostId))
+                body = GetJournalpostRequest(query = lagQuery(journalpostId))
             }
         }
         if (response.status == 401) {
@@ -44,5 +44,5 @@ class SafJournalpostClient(
 open class SafJournalpostException(journalpostId: String) : Exception(journalpostId)
 
 open class NotAuthorizedException(journalpostId: String) : SafJournalpostException("SAF ga ikke tilgang til å lese ut journalpost '$journalpostId'")
-open class ErrorException(journalpostId: String, errors: String) : SafJournalpostException("SAF returnerte feil journalpost '$journalpostId': $errors" )
+open class ErrorException(journalpostId: String, errors: String) : SafJournalpostException("SAF returnerte feil journalpost '$journalpostId': $errors")
 open class EmptyException(journalpostId: String) : SafJournalpostException("SAF returnerte tom journalpost '$journalpostId'")

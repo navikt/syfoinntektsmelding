@@ -1,13 +1,13 @@
 package no.nav.syfo.service
 
-import log
-import no.nav.syfo.domain.InngaaendeJournal
 import kotlinx.coroutines.runBlocking
+import log
 import no.nav.syfo.client.saf.SafJournalpostClient
+import no.nav.syfo.domain.InngaaendeJournal
 
 class InngaaendeJournalConsumer(
     private val safJournalpostClient: SafJournalpostClient,
-    ) {
+) {
 
     var log = log()
 

@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.util.*
 
-
 @KtorExperimentalAPI
 open class UtsattOppgaveServiceTest {
 
@@ -54,6 +53,4 @@ open class UtsattOppgaveServiceTest {
         gosysOppgaveId = null,
         oppdatert = null
     )
-
 }
-

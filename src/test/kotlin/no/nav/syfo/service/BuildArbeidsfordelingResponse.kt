@@ -20,7 +20,7 @@ fun buildArbeidsfordelingResponse(enhetNr: String, fra: LocalDate, til: LocalDat
         status = status,
         type = "KO",
         underAvviklingDato = null,
-        underEtableringDato = LocalDate.of(2020,12,30),
-        versjon=1
+        underEtableringDato = LocalDate.of(2020, 12, 30),
+        versjon = 1
     )
 }

@@ -8,4 +8,3 @@ data class GetJournalpostRequest(
 data class GetJournalpostVariables(
     val id: String
 )
-

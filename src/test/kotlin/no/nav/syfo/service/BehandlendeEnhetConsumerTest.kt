@@ -5,7 +5,6 @@ import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClient
 import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlHentFullPerson
-import no.nav.syfo.behandling.BehandlendeEnhetFeiletException
 import no.nav.syfo.behandling.IngenAktivEnhetException
 import no.nav.syfo.client.norg.ArbeidsfordelingResponse
 import no.nav.syfo.client.norg.Norg2Client
@@ -32,7 +31,7 @@ class BehandlendeEnhetConsumerTest {
         every {
             pdlClient.fullPerson(FNR)
         } returns buildPdlHentFullPerson(DISKRESJONSKODE)
-        val arbeidsfordelinger = listOf<ArbeidsfordelingResponse>(buildArbeidsfordelingResponse(ENHET_NR, LocalDate.of(2000,1, 1), LocalDate.of(2030,1,1)))
+        val arbeidsfordelinger = listOf<ArbeidsfordelingResponse>(buildArbeidsfordelingResponse(ENHET_NR, LocalDate.of(2000, 1, 1), LocalDate.of(2030, 1, 1)))
         every {
             runBlocking {
                 norg2Client.hentAlleArbeidsfordelinger(any(), any())
@@ -44,7 +43,7 @@ class BehandlendeEnhetConsumerTest {
 
     @Test
     fun skal_finne_aktiv_arbeidsfordeling() {
-        val fordelinger = listOf(buildArbeidsfordelingResponse(ENHET_NR, LocalDate.of(2021,1,1), LocalDate.of(2022,1,1), "Aktiv"))
+        val fordelinger = listOf(buildArbeidsfordelingResponse(ENHET_NR, LocalDate.of(2021, 1, 1), LocalDate.of(2022, 1, 1), "Aktiv"))
         val enhet = finnAktivBehandlendeEnhet(fordelinger, "", TIDSPUNKT)
         Assertions.assertThat(enhet).isEqualTo(ENHET_NR)
     }
@@ -79,5 +78,4 @@ class BehandlendeEnhetConsumerTest {
             hentIdenter = null
         )
     }
-
 }

@@ -5,7 +5,6 @@ import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsvarsler
 
 const val METRICS_NS = "spinn"
 
-
 class MetrikkVarsler : Bakgrunnsvarsler {
     override fun rapporterPermanentFeiletJobb() {
         FEILET_JOBB_COUNTER.inc()
@@ -13,11 +12,10 @@ class MetrikkVarsler : Bakgrunnsvarsler {
 }
 
 val FEILET_JOBB_COUNTER = Counter.build()
-        .namespace(METRICS_NS)
-        .name("feilet_jobb")
-        .help("Counts the number of permanently failed jobs")
-        .register()
-
+    .namespace(METRICS_NS)
+    .name("feilet_jobb")
+    .help("Counts the number of permanently failed jobs")
+    .register()
 
 val BrukernotifikasjonerMetrics = Counter.build()
     .namespace(METRICS_NS)
@@ -25,7 +23,6 @@ val BrukernotifikasjonerMetrics = Counter.build()
     .labelNames("skjematype")
     .help("Antall brukernotifikasjoner sendt")
     .register()
-
 
 object GravidKravMetrics :
     ProseseringsMetrikker("gravid_krav", "Metrikker for krav, gravid")
@@ -38,8 +35,6 @@ object GravidSoeknadMetrics :
 
 object KroniskSoeknadMetrics :
     ProseseringsMetrikker("kronisk_soeknad", "Metrikker for søknader, kronisk")
-
-
 
 abstract class ProseseringsMetrikker(metricName: String, metricHelpText: String) {
     private val counter: Counter = Counter.build()

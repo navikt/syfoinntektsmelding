@@ -2,7 +2,7 @@ package no.nav.syfo.prosesser
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import io.ktor.util.*
+import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbProsesserer
@@ -16,8 +16,6 @@ import no.nav.syfo.repository.FeiletService
 import no.nav.syfo.util.MDCOperations
 import no.nav.syfo.util.Metrikk
 import org.slf4j.LoggerFactory
-import java.net.ConnectException
-import java.util.*
 
 /**
  * En bakgrunnsjobb som kan prosessere bakgrunnsjobber med inntektsmeldinger fra Joark
@@ -29,7 +27,8 @@ class JoarkInntektsmeldingHendelseProsessor(
     private val metrikk: Metrikk,
     private val inntektsmeldingBehandler: InntektsmeldingBehandler,
     private val feiletService: FeiletService,
-    private val oppgaveClient: OppgaveClient): BakgrunnsjobbProsesserer {
+    private val oppgaveClient: OppgaveClient
+) : BakgrunnsjobbProsesserer {
 
     val log = LoggerFactory.getLogger(JoarkInntektsmeldingHendelseProsessor::class.java)!!
     companion object {
@@ -54,7 +53,7 @@ class JoarkInntektsmeldingHendelseProsessor(
             log.info("Bakgrunnsbehandler $arkivReferanse")
             val historikk = feiletService.finnHistorikk(arkivReferanse)
 
-            if (historikk.feiletList.isNotEmpty()){
+            if (historikk.feiletList.isNotEmpty()) {
                 metrikk.tellRekjørerFeilet()
             }
 
@@ -67,7 +66,7 @@ class JoarkInntektsmeldingHendelseProsessor(
             }
 
             inntektsmeldingBehandler.behandle(journalpostDTO.journalpostId.toString(), arkivReferanse)
-        } catch(e: IllegalArgumentException) {
+        } catch (e: IllegalArgumentException) {
             metrikk.tellInntektsmeldingUtenArkivReferanse()
             throw InntektsmeldingConsumerException(arkivReferanse, e, Feiltype.INNGÅENDE_MANGLER_KANALREFERANSE)
         } catch (e: BehandlingException) {
@@ -86,7 +85,6 @@ class JoarkInntektsmeldingHendelseProsessor(
         }
     }
 
-
     private suspend fun opprettFordelingsoppgave(journalpostId: String): Boolean {
         oppgaveClient.opprettFordelingsOppgave(journalpostId)
         return true
@@ -96,7 +94,7 @@ class JoarkInntektsmeldingHendelseProsessor(
         try {
             feiletService.lagreFeilet(arkivReferanse, feiltype)
         } catch (e: Exception) {
-            metrikk.tellLagreFeiletMislykkes();
+            metrikk.tellLagreFeiletMislykkes()
         }
     }
 }

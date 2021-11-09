@@ -19,7 +19,7 @@ class SakClientTest {
 
     @Test
     fun `Skal opprette sak`() {
-        sakClient = SakClient("http://localhost", tokenConsumer, buildHttpClientJson(HttpStatusCode.OK, RESPONSE_EXAMPLE) )
+        sakClient = SakClient("http://localhost", tokenConsumer, buildHttpClientJson(HttpStatusCode.OK, RESPONSE_EXAMPLE))
         runBlocking {
             val response = sakClient.opprettSak("1234", "msgid")
             Assertions.assertThat(response.id).isEqualTo(1)
@@ -28,7 +28,7 @@ class SakClientTest {
 
     @Test
     fun `Skal håndtere feil`() {
-        sakClient = SakClient("http://localhost", tokenConsumer, buildHttpClientText(HttpStatusCode.BadRequest, "") )
+        sakClient = SakClient("http://localhost", tokenConsumer, buildHttpClientText(HttpStatusCode.BadRequest, ""))
         runBlocking {
             assertThrows<Exception> {
                 sakClient.opprettSak("1234", "msgid")
@@ -36,5 +36,3 @@ class SakClientTest {
         }
     }
 }
-
-

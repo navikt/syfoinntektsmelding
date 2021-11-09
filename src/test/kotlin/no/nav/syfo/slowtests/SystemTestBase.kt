@@ -31,7 +31,7 @@ open class SystemTestBase : KoinTest {
     companion object {
         const val testServerPort = 8989
         var app: SpinnApplication? = null
-        init{
+        init {
             System.setProperty("SECURITYTOKENSERVICE_URL", "joda")
             System.setProperty("SRVSYFOINNTEKTSMELDING_USERNAME", "joda")
             System.setProperty("SRVSYFOINNTEKTSMELDING_PASSWORD", "joda")
@@ -49,7 +49,6 @@ open class SystemTestBase : KoinTest {
 
     @AfterAll
     fun after() {
-
     }
 
     /**

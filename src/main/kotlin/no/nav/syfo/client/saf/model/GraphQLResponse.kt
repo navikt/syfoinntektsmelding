@@ -2,7 +2,7 @@ package no.nav.syfo.client.saf
 
 import no.nav.syfo.client.saf.model.Journalpost
 
-data class SafJournalData (
+data class SafJournalData(
     val journalpost: Journalpost? = null
 )
 

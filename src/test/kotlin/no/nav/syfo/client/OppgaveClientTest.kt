@@ -97,8 +97,8 @@ class OppgaveClientTest {
         oppgaveClient = OppgaveClient("url", tokenConsumer, buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk)
         val onsdag = LocalDate.of(2019, Month.NOVEMBER, 27)
         val fredag = LocalDate.of(2019, Month.NOVEMBER, 29)
-        val lørdag =  LocalDate.of(2019, Month.NOVEMBER, 30)
-        val søndag =  LocalDate.of(2019, Month.DECEMBER, 1)
+        val lørdag = LocalDate.of(2019, Month.NOVEMBER, 30)
+        val søndag = LocalDate.of(2019, Month.DECEMBER, 1)
 
         assertThat(oppgaveClient.leggTilEnVirkeuke(onsdag).dayOfWeek).isEqualTo(DayOfWeek.WEDNESDAY)
         assertThat(oppgaveClient.leggTilEnVirkeuke(fredag).dayOfWeek).isEqualTo(DayOfWeek.FRIDAY)
@@ -115,28 +115,27 @@ class OppgaveClientTest {
                 mapper.registerKotlinModule()
                 mapper.registerModule(JavaTimeModule())
                 return mapper.readValue((req.body as TextContent).text)
-
             }
         }
         return null
     }
 
     private fun lagOppgaveResponse(): OppgaveResponse {
-        return OppgaveResponse (
+        return OppgaveResponse(
             antallTreffTotalt = 1,
             oppgaver = listOf(lagOppgave())
         )
     }
 
     private fun lagTomOppgaveResponse(): OppgaveResponse {
-        return OppgaveResponse (
+        return OppgaveResponse(
             antallTreffTotalt = 0,
             oppgaver = listOf()
         )
     }
 
     private fun lagFordelingsOppgaveResponse(): OppgaveResponse {
-        return OppgaveResponse (
+        return OppgaveResponse(
             antallTreffTotalt = 1,
             oppgaver = listOf(lagFordelingsOppgave())
         )

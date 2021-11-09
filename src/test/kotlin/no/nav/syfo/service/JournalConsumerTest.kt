@@ -4,12 +4,12 @@ import io.mockk.every
 import io.mockk.mockk
 import no.nav.syfo.behandling.HentDokumentFeiletException
 import no.nav.syfo.client.aktor.AktorClient
-import no.nav.syfo.domain.JournalStatus
-import no.nav.syfo.domain.Periode
 import no.nav.syfo.client.saf.SafDokumentClient
 import no.nav.syfo.client.saf.SafJournalpostClient
 import no.nav.syfo.client.saf.model.Dokument
 import no.nav.syfo.client.saf.model.Journalpost
+import no.nav.syfo.domain.JournalStatus
+import no.nav.syfo.domain.Periode
 import no.nav.syfo.syfoinntektsmelding.consumer.ws.inntektsmeldingArbeidsgiver
 import no.nav.syfo.syfoinntektsmelding.consumer.ws.inntektsmeldingArbeidsgiverPrivat
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
@@ -30,18 +30,18 @@ class JournalConsumerTest {
     @Test
     fun hentInntektsmelding() {
         val periode = Periode(
-            LocalDate.of(2021,7,1),
-            LocalDate.of(2021,7,19)
+            LocalDate.of(2021, 7, 1),
+            LocalDate.of(2021, 7, 19)
         )
         val journalpost = Journalpost(
             JournalStatus.MOTTATT,
             LocalDateTime.now(),
-            dokumenter = listOf(Dokument(dokumentInfoId="dokumentId"))
+            dokumenter = listOf(Dokument(dokumentInfoId = "dokumentId"))
         )
         every {
             safJournalpostClient.getJournalpostMetadata(any())
         } returns journalpost
-        val fakeInntekt = inntektsmeldingArbeidsgiver( listOf(periode), "18018522868")
+        val fakeInntekt = inntektsmeldingArbeidsgiver(listOf(periode), "18018522868")
         every {
             dokumentClient.hentDokument(any(), any())
         } returns fakeInntekt.toByteArray()
@@ -55,12 +55,12 @@ class JournalConsumerTest {
         val journalresponse = Journalpost(
             JournalStatus.MOTTATT,
             LocalDateTime.now(),
-            dokumenter = listOf(Dokument(dokumentInfoId="dokumentId"))
+            dokumenter = listOf(Dokument(dokumentInfoId = "dokumentId"))
         )
         every {
             safJournalpostClient.getJournalpostMetadata(any())
         } returns journalresponse
-        val fakeInntekt = inntektsmeldingArbeidsgiver( emptyList(), "18018522868")
+        val fakeInntekt = inntektsmeldingArbeidsgiver(emptyList(), "18018522868")
         every {
             dokumentClient.hentDokument(any(), any())
         } returns fakeInntekt.toByteArray()
@@ -72,13 +72,13 @@ class JournalConsumerTest {
     @Test
     fun parseInntektsmeldingV7() {
         val periode = Periode(
-            LocalDate.of(2021,7,1),
-            LocalDate.of(2021,7,19)
+            LocalDate.of(2021, 7, 1),
+            LocalDate.of(2021, 7, 19)
         )
         val journalresponse = Journalpost(
             JournalStatus.MOTTATT,
             LocalDateTime.now(),
-            dokumenter = listOf(Dokument(dokumentInfoId="dokumentId"))
+            dokumenter = listOf(Dokument(dokumentInfoId = "dokumentId"))
         )
         every {
             safJournalpostClient.getJournalpostMetadata(any())
@@ -102,7 +102,7 @@ class JournalConsumerTest {
         val journalresponse = Journalpost(
             JournalStatus.MOTTATT,
             LocalDateTime.now(),
-            dokumenter = listOf(Dokument(dokumentInfoId="dokumentId"))
+            dokumenter = listOf(Dokument(dokumentInfoId = "dokumentId"))
         )
         every {
             safJournalpostClient.getJournalpostMetadata(any())
@@ -132,7 +132,7 @@ class JournalConsumerTest {
         val journalresponse = Journalpost(
             JournalStatus.MOTTATT,
             LocalDateTime.now(),
-            dokumenter = listOf(Dokument(dokumentInfoId="dokumentId"))
+            dokumenter = listOf(Dokument(dokumentInfoId = "dokumentId"))
         )
         every {
             safJournalpostClient.getJournalpostMetadata(any())
@@ -141,5 +141,4 @@ class JournalConsumerTest {
             journalConsumer.hentInntektsmelding("12345", "AR-123")
         }
     }
-
 }
