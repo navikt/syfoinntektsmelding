@@ -6,8 +6,8 @@ import io.ktor.client.request.post
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.util.KtorExperimentalAPI
-import no.nav.syfo.helpers.retry
 import java.time.ZonedDateTime
+import no.nav.syfo.helpers.retry
 
 @KtorExperimentalAPI
 class SakClient constructor(
@@ -30,24 +30,23 @@ class SakClient constructor(
             )
         }
     }
-
 }
 
 data class OpprettSakRequest(
-        val tema: String,
-        val applikasjon: String,
-        val aktoerId: String,
-        val orgnr: String?,
-        val fagsakNr: String?
+    val tema: String,
+    val applikasjon: String,
+    val aktoerId: String,
+    val orgnr: String?,
+    val fagsakNr: String?
 )
 
 data class SakResponse(
-        val id: Long,
-        val tema: String,
-        val aktoerId: String,
-        val orgnr: String?,
-        val fagsakNr: String?,
-        val applikasjon: String,
-        val opprettetAv: String,
-        val opprettetTidspunkt: ZonedDateTime
+    val id: Long,
+    val tema: String,
+    val aktoerId: String,
+    val orgnr: String?,
+    val fagsakNr: String?,
+    val applikasjon: String,
+    val opprettetAv: String,
+    val opprettetTidspunkt: ZonedDateTime
 )

@@ -1,10 +1,11 @@
 package no.nav.syfo.client.aktor
 
-import io.ktor.client.*
-import io.ktor.client.features.*
-import io.ktor.client.request.*
-import io.ktor.http.*
-import io.ktor.util.*
+import io.ktor.client.HttpClient
+import io.ktor.client.features.ClientRequestException
+import io.ktor.client.request.get
+import io.ktor.client.request.header
+import io.ktor.client.request.url
+import java.net.ConnectException
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.behandling.AktørException
 import no.nav.syfo.behandling.AktørKallResponseException
@@ -13,7 +14,6 @@ import no.nav.syfo.client.TokenConsumer
 import no.nav.syfo.util.MDCOperations.Companion.MDC_CALL_ID
 import no.nav.syfo.util.MDCOperations.Companion.getFromMDC
 import org.slf4j.LoggerFactory
-import java.net.ConnectException
 
 class AktorClient(
     private val tokenConsumer: TokenConsumer,
@@ -42,9 +42,8 @@ class AktorClient(
                     header("Nav-Consumer-Id", "$username")
                     header("Nav-Personidenter", "$sokeIdent")
                 }[sokeIdent]
-
             } catch (cause: ClientRequestException) {
-                val status = cause.response?.status?.value
+                val status = cause.response.status.value
                 log.error("Kall mot aktørregister på $endpointUrl feiler med HTTP-$status")
                 throw AktørKallResponseException(status, null)
             } catch (cause: ConnectException) {
@@ -53,7 +52,7 @@ class AktorClient(
             }
             if (aktor?.identer == null) {
                 log.error("Fant ikke aktøren: ${aktor?.feilmelding}")
-                throw FantIkkeAktørException(null);
+                throw FantIkkeAktørException(null)
             }
         }
         return aktor?.identer?.firstOrNull()?.ident.toString()
