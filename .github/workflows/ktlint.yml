@@ -8,26 +8,9 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
-      - name: Setup Java environment
-        uses: actions/setup-java@v1
+      - name: "Install ktlint"
+        uses: nbadal/action-ktlint-setup@v1
         with:
-          java-version: '11.x'
-      - uses: musichin/ktlint-check@v1
-        with:
-          version: '0.43.0'
-          warn: false # warn only
-          annotate: true
-
-          # ktlint
-          android: true
-          relative: true
-          experimental: true
-          reporter: |
-            plain,output=ktlint_report.txt
-            json,output=ktlint_report.json
-          patterns: |
-            **/**.kt*
-            !**/generated/**
-            !**/resources/**
-            !**/webapp/**
-            !**/wsdl/**
+          ktlint_version: '0.42.1'
+      - run: ktlint --version
+        shell: bash
