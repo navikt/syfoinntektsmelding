@@ -1,4 +1,4 @@
-name: Slow tests
+name: Snyk
 
 on: [pull_request]
 
