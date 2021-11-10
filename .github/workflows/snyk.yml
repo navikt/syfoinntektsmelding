@@ -3,15 +3,14 @@ name: Snyk
 on: [pull_request]
 
 jobs:
-  Snyk:
+  security:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - uses: snyk/actions/setup@master
-      - uses: actions/setup-go@v1
-        with:
-          go-version: '1.13'
-      - name: Snyk
-        run: snyk test
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/gradle-jdk11@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+          ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          args: --org=helsearbeidsgiver --project-name=syfoinntektsmelding
