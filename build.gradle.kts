@@ -114,14 +114,12 @@ dependencies {
 
 tasks.jar {
     archiveBaseName.set("app")
-
     manifest {
         attributes["Main-Class"] = application.mainClass
         attributes["Class-Path"] = configurations.runtimeClasspath.get().joinToString(separator = " ") {
             it.name
         }
     }
-
     doLast {
         configurations.runtimeClasspath.get().forEach {
             val file = File("$buildDir/libs/${it.name}")
