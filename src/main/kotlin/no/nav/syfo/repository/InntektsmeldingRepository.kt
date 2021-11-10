@@ -25,12 +25,12 @@ class InntektsmeldingRepositoryMock : InntektsmeldingRepository {
     }
 
     override fun findFirst100ByBehandletBefore(førDato: LocalDateTime): List<InntektsmeldingEntitet> {
-        return mockrepo.filter { it.behandlet!!.isBefore(førDato)  }.take(100)
+        return mockrepo.filter { it.behandlet!!.isBefore(førDato) }.take(100)
     }
 
     override fun deleteByBehandletBefore(førDato: LocalDateTime): Int {
         mockrepo.filter { it.behandlet!!.isBefore(førDato) }
-            .forEach { mockrepo.remove(it)}
+            .forEach { mockrepo.remove(it) }
         return (mockrepo.size)
     }
 
@@ -58,7 +58,7 @@ class InntektsmeldingRepositoryImp(
     override fun findByUuid(uuid: String): InntektsmeldingEntitet {
         val findByAktorId = "SELECT * FROM INNTEKTSMELDING WHERE INNTEKTSMELDING_UUID = ?;"
         val inntektsmeldinger = ArrayList<InntektsmeldingEntitet>()
-        val result : InntektsmeldingEntitet
+        val result: InntektsmeldingEntitet
         ds.connection.use {
             val res = it.prepareStatement(findByAktorId).apply {
                 setString(1, uuid)
@@ -72,7 +72,7 @@ class InntektsmeldingRepositoryImp(
     override fun findByAktorId(id: String): List<InntektsmeldingEntitet> {
         val findByAktorId = "SELECT * FROM INNTEKTSMELDING WHERE AKTOR_ID = ?;"
         val inntektsmeldinger = ArrayList<InntektsmeldingEntitet>()
-        val results : ArrayList<InntektsmeldingEntitet>
+        val results: ArrayList<InntektsmeldingEntitet>
         ds.connection.use {
             val res = it.prepareStatement(findByAktorId).apply {
                 setString(1, id.toString())
@@ -85,7 +85,7 @@ class InntektsmeldingRepositoryImp(
     override fun findFirst100ByBehandletBefore(førDato: LocalDateTime): ArrayList<InntektsmeldingEntitet> {
         val findFirst100ByBehandletBefore = " SELECT * FROM INNTEKTSMELDING WHERE BEHANDLET < ? LIMIT 100;"
         val inntektsmeldinger = ArrayList<InntektsmeldingEntitet>()
-        val results : ArrayList<InntektsmeldingEntitet>
+        val results: ArrayList<InntektsmeldingEntitet>
         ds.connection.use {
             val prepareStatement = it.prepareStatement(findFirst100ByBehandletBefore)
             prepareStatement.setTimestamp(1, Timestamp.valueOf(førDato))
@@ -111,7 +111,7 @@ class InntektsmeldingRepositoryImp(
         VALUES (?, ?, ?, ?, ?, ?, ?, ?::jsonb)
         RETURNING *;""".trimMargin()
         val inntektsmeldinger = ArrayList<InntektsmeldingEntitet>()
-        var result : InntektsmeldingEntitet
+        var result: InntektsmeldingEntitet
         ds.connection.use {
             val ps = it.prepareStatement(insertStatement)
             ps.setString(1, innteksmelding.uuid)
@@ -135,8 +135,8 @@ class InntektsmeldingRepositoryImp(
         return agpRepo.find(imUuid)
     }
 
-    private fun addArbeidsgiverperioderTilInnteksmelding(results : ArrayList<InntektsmeldingEntitet>) : ArrayList<InntektsmeldingEntitet>{
-        results.forEach{ inntek ->
+    private fun addArbeidsgiverperioderTilInnteksmelding(results: ArrayList<InntektsmeldingEntitet>): ArrayList<InntektsmeldingEntitet> {
+        results.forEach { inntek ->
             val aperioder = finnAgpForIm(inntek.uuid)
             inntek.arbeidsgiverperioder = aperioder.filter { it.inntektsmelding_uuid == inntek.uuid }.toMutableList()
         }
@@ -186,4 +186,3 @@ class InntektsmeldingRepositoryImp(
         return returnValue
     }
 }
-

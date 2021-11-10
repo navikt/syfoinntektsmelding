@@ -5,7 +5,7 @@ import java.time.LocalDate
 
 data class GjenopptakelseNaturalytelse(
 
-        val naturalytelse: Naturalytelse? = null,
-        val fom: LocalDate? = null,
-        val beloepPrMnd: BigDecimal? = null
+    val naturalytelse: Naturalytelse? = null,
+    val fom: LocalDate? = null,
+    val beloepPrMnd: BigDecimal? = null
 )

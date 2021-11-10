@@ -1,7 +1,7 @@
 package no.nav.syfo.client.norg
 
-import io.ktor.http.*
-import io.ktor.util.*
+import io.ktor.http.HttpStatusCode
+import io.ktor.util.KtorExperimentalAPI
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
@@ -30,7 +30,7 @@ class Norg2ClientTest {
 
     private fun lagResponse(): List<ArbeidsfordelingResponse> {
         val a = ArbeidsfordelingResponse(
-            aktiveringsdato = LocalDate.of(2020,12,31),
+            aktiveringsdato = LocalDate.of(2020, 12, 31),
             antallRessurser = 0,
             enhetId = 123456789,
             enhetNr = "1234",
@@ -45,8 +45,8 @@ class Norg2ClientTest {
             status = "Aktiv",
             type = "KO",
             underAvviklingDato = null,
-            underEtableringDato = LocalDate.of(2020,11,30),
-            versjon=1
+            underEtableringDato = LocalDate.of(2020, 11, 30),
+            versjon = 1
         )
         return listOf(a)
     }
@@ -57,5 +57,4 @@ class Norg2ClientTest {
             oppgavetype = "INNT"
         )
     }
-
 }

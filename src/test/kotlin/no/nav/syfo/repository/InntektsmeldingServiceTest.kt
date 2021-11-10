@@ -6,14 +6,19 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import no.nav.inntektsmelding.kontrakt.serde.JacksonJsonConfig
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
-import no.nav.syfo.domain.inntektsmelding.*
+import no.nav.syfo.domain.inntektsmelding.EndringIRefusjon
+import no.nav.syfo.domain.inntektsmelding.GjenopptakelseNaturalytelse
+import no.nav.syfo.domain.inntektsmelding.Gyldighetsstatus
+import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
+import no.nav.syfo.domain.inntektsmelding.Naturalytelse
+import no.nav.syfo.domain.inntektsmelding.OpphoerAvNaturalytelse
+import no.nav.syfo.domain.inntektsmelding.Refusjon
 import no.nav.syfo.repository.asJsonString
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
-
 
 class InntektsmeldingServiceTest {
     private val objectMapper = ObjectMapper().registerModules(KotlinModule(), JavaTimeModule())
@@ -126,6 +131,4 @@ class InntektsmeldingServiceTest {
         assertThat(node.get("opphørAvNaturalYtelse")[1].get("fom").toString()).isEqualTo("[2016,6,6]")
         assertThat(node.get("opphørAvNaturalYtelse")[1].get("beloepPrMnd").asLong()).isEqualTo(666666666666)
     }
-
 }
-

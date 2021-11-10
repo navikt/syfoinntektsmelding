@@ -2,8 +2,6 @@ package no.nav.syfo.prosesser
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
-import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbProsesserer
 import no.nav.helse.arbeidsgiver.utils.RecurringJob
 import no.nav.syfo.behandling.OpprettOppgaveException
 import no.nav.syfo.client.OppgaveClient
@@ -14,13 +12,13 @@ import no.nav.syfo.utsattoppgave.UtsattOppgaveDAO
 import no.nav.syfo.utsattoppgave.opprettOppgaveIGosys
 import org.slf4j.LoggerFactory
 import java.time.Duration
-import java.util.*
+import java.util.UUID
 
 class FinnAlleUtgaandeOppgaverProcessor(
-    private  val utsattOppgaveDAO: UtsattOppgaveDAO,
+    private val utsattOppgaveDAO: UtsattOppgaveDAO,
     private val oppgaveClient: OppgaveClient,
     private val behandlendeEnhetConsumer: BehandlendeEnhetConsumer
-) : RecurringJob(CoroutineScope(Dispatchers.IO),  Duration.ofHours(6).toMillis()) {
+) : RecurringJob(CoroutineScope(Dispatchers.IO), Duration.ofHours(6).toMillis()) {
     val log = LoggerFactory.getLogger(FinnAlleUtgaandeOppgaverProcessor::class.java)!!
 
     override fun doJob() {

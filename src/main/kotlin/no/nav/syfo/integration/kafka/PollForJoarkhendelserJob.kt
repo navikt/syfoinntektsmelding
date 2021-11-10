@@ -10,7 +10,6 @@ import no.nav.syfo.kafkamottak.InngaaendeJournalpostDTO
 import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
 import java.time.Duration
 import java.time.LocalDateTime
-import java.util.*
 
 class PollForJoarkhendelserJob(
     private val kafkaProvider: JoarkHendelseKafkaClient,

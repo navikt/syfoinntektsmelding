@@ -16,19 +16,18 @@ data class OppdaterJournalpostRequest(
     val sak: Sak?
 )
 
-data class Bruker (
+data class Bruker(
     val id: String,
     val idType: String
 )
 
-data class AvsenderMottaker (
+data class AvsenderMottaker(
     val id: String,
     val navn: String
 )
 
-data class Sak (
+data class Sak(
     val sakstype: String,
     val arkivsaksystem: String,
     val arkivsaksnummer: String
 )
-

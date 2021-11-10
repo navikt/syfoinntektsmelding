@@ -7,7 +7,6 @@ import java.sql.Timestamp
 import java.time.LocalDateTime
 import javax.sql.DataSource
 
-
 interface UtsattOppgaveRepository {
     fun findByInntektsmeldingId(inntektsmeldingId: String): UtsattOppgaveEntitet?
     fun findUtsattOppgaveEntitetByTimeoutBeforeAndTilstandEquals(
@@ -45,7 +44,7 @@ class UtsattOppgaveRepositoryMockk : UtsattOppgaveRepository {
     }
 
     override fun deleteAll() {
-        mockrepo.forEach { mockrepo.remove(it)}
+        mockrepo.forEach { mockrepo.remove(it) }
     }
 
     override fun findAll(): List<UtsattOppgaveEntitet> {
@@ -99,7 +98,7 @@ class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepo
             ps.setTimestamp(7, Timestamp.valueOf(uo.timeout))
             ps.setString(8, uo.tilstand.name)
             ps.setString(9, uo.gosysOppgaveId)
-			ps.setTimestamp(10,Timestamp.valueOf(uo.oppdatert ?: LocalDateTime.now()))
+            ps.setTimestamp(10, Timestamp.valueOf(uo.oppdatert ?: LocalDateTime.now()))
             val res = ps.executeQuery()
             return resultLoop(res, utsattOppgaver).first()
         }
@@ -183,4 +182,3 @@ class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepo
         return returnValue
     }
 }
-

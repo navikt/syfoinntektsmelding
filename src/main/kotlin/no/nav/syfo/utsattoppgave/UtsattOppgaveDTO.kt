@@ -18,8 +18,6 @@ enum class DokumentTypeDTO {
     Inntektsmelding, Søknad
 }
 
-
-
 fun OppdateringstypeDTO.tilHandling() = when (this) {
     OppdateringstypeDTO.Utsett -> Handling.Utsett
     OppdateringstypeDTO.Opprett -> Handling.Opprett

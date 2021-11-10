@@ -9,6 +9,6 @@ data class Journalpost(
     val dokumenter: List<Dokument>
 )
 
-data class Dokument (
+data class Dokument(
     val dokumentInfoId: String
 )

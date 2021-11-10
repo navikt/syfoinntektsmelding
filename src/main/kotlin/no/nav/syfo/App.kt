@@ -1,11 +1,14 @@
 package no.nav.syfo
 
 import com.typesafe.config.ConfigFactory
-import io.ktor.config.*
-import io.ktor.locations.*
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
-import io.ktor.util.*
+import io.ktor.config.HoconApplicationConfig
+import io.ktor.locations.KtorExperimentalLocationsAPI
+import io.ktor.server.engine.applicationEngineEnvironment
+import io.ktor.server.engine.connector
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.netty.Netty
+import io.ktor.server.netty.NettyApplicationEngine
+import io.ktor.util.KtorExperimentalAPI
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.helse.arbeidsgiver.kubernetes.KubernetesProbeManager
 import no.nav.helse.arbeidsgiver.kubernetes.LivenessComponent
@@ -30,7 +33,6 @@ import org.koin.core.context.GlobalContext
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.slf4j.LoggerFactory
-
 
 class SpinnApplication(val port: Int = 8080) : KoinComponent {
     private val logger = LoggerFactory.getLogger(SpinnApplication::class.simpleName)
@@ -71,17 +73,20 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
     @KtorExperimentalAPI
     @KtorExperimentalLocationsAPI
     private fun configAndStartWebserver() {
-        webserver = embeddedServer(Netty, applicationEngineEnvironment {
-            config = appConfig
-            connector {
-                port = this@SpinnApplication.port
-            }
+        webserver = embeddedServer(
+            Netty,
+            applicationEngineEnvironment {
+                config = appConfig
+                connector {
+                    port = this@SpinnApplication.port
+                }
 
-            module {
-                nais()
-                inntektsmeldingModule(config)
+                module {
+                    nais()
+                    inntektsmeldingModule(config)
+                }
             }
-        })
+        )
 
         webserver!!.start(wait = false)
     }
@@ -106,12 +111,10 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
     private fun migrateDatabase() {
         logger.info("Starter databasemigrering")
 
-
         Flyway.configure().baselineOnMigrate(true)
             .dataSource(GlobalContext.getKoinApplicationOrNull()?.koin?.get())
             .load()
             .migrate()
-
 
         logger.info("Databasemigrering slutt")
     }
@@ -129,7 +132,6 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
     }
 }
 
-
 @KtorExperimentalLocationsAPI
 @KtorExperimentalAPI
 fun main() {
@@ -142,10 +144,11 @@ fun main() {
     val application = SpinnApplication()
     application.start()
 
-    Runtime.getRuntime().addShutdownHook(Thread {
-        logger.info("Fikk shutdown-signal, avslutter...")
-        application.shutdown()
-        logger.info("Avsluttet OK")
-    })
+    Runtime.getRuntime().addShutdownHook(
+        Thread {
+            logger.info("Fikk shutdown-signal, avslutter...")
+            application.shutdown()
+            logger.info("Avsluttet OK")
+        }
+    )
 }
-

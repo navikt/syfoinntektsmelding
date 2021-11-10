@@ -4,8 +4,19 @@ import log
 import no.nav.syfo.client.aktor.AktorClient
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
-import no.nav.syfo.domain.inntektsmelding.*
-import no.seres.xsd.nav.inntektsmelding_m._20181211.*
+import no.nav.syfo.domain.inntektsmelding.AvsenderSystem
+import no.nav.syfo.domain.inntektsmelding.EndringIRefusjon
+import no.nav.syfo.domain.inntektsmelding.GjenopptakelseNaturalytelse
+import no.nav.syfo.domain.inntektsmelding.Gyldighetsstatus
+import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
+import no.nav.syfo.domain.inntektsmelding.Kontaktinformasjon
+import no.nav.syfo.domain.inntektsmelding.OpphoerAvNaturalytelse
+import no.nav.syfo.domain.inntektsmelding.Refusjon
+import no.seres.xsd.nav.inntektsmelding_m._20181211.XMLArbeidsforhold
+import no.seres.xsd.nav.inntektsmelding_m._20181211.XMLGjenopptakelseNaturalytelseListe
+import no.seres.xsd.nav.inntektsmelding_m._20181211.XMLInntektsmeldingM
+import no.seres.xsd.nav.inntektsmelding_m._20181211.XMLOpphoerAvNaturalytelseListe
+import no.seres.xsd.nav.inntektsmelding_m._20181211.XMLRefusjon
 import java.time.LocalDate
 import java.time.LocalDateTime
 import javax.xml.bind.JAXBElement
@@ -14,8 +25,13 @@ internal object InntektsmeldingArbeidsgiverPrivat20181211Mapper {
 
     val log = log()
 
-    fun tilXMLInntektsmelding(jaxbInntektsmelding: JAXBElement<Any>, journalpostId: String, mottattDato: LocalDateTime, journalStatus: JournalStatus,
-                              arkivReferanse: String, aktorClient: AktorClient
+    fun tilXMLInntektsmelding(
+        jaxbInntektsmelding: JAXBElement<Any>,
+        journalpostId: String,
+        mottattDato: LocalDateTime,
+        journalStatus: JournalStatus,
+        arkivReferanse: String,
+        aktorClient: AktorClient
     ): Inntektsmelding {
         log.info("Behandling inntektsmelding på 20181211 format")
         val skjemainnhold = (jaxbInntektsmelding.value as XMLInntektsmeldingM).skjemainnhold
@@ -78,7 +94,6 @@ internal object InntektsmeldingArbeidsgiverPrivat20181211Mapper {
         return arbeidsforhold?.value?.foersteFravaersdag?.value
     }
 
-
     private fun mapXmlGjenopptakelseNaturalytelser(xmlGjenopptakelseListe: JAXBElement<XMLGjenopptakelseNaturalytelseListe>?): List<GjenopptakelseNaturalytelse> {
         return xmlGjenopptakelseListe?.value?.naturalytelseDetaljer?.map { gjenopptakelse ->
             GjenopptakelseNaturalytelse(no.nav.syfo.consumer.ws.mapping.mapNaturalytelseType(gjenopptakelse.naturalytelseType), gjenopptakelse.fom?.value, gjenopptakelse.beloepPrMnd?.value)
@@ -91,7 +106,6 @@ internal object InntektsmeldingArbeidsgiverPrivat20181211Mapper {
             OpphoerAvNaturalytelse(no.nav.syfo.consumer.ws.mapping.mapNaturalytelseType(opphør.naturalytelseType), opphør.fom?.value, opphør.beloepPrMnd.value)
         }
             ?: emptyList()
-
     }
 
     private fun mapXmlEndringRefusjon(xmlRefusjon: JAXBElement<XMLRefusjon>?): List<EndringIRefusjon> {

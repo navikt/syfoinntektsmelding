@@ -10,7 +10,14 @@ import javax.xml.bind.JAXBElement
 
 class XmlInntektsmeldingMapper {
 
-    fun mapInntektsmelding(inntektsmeldingRAW: ByteArray, aktorClient: AktorClient, mottattDato: LocalDateTime, journalpostId: String, journalStatus: JournalStatus, arkivReferanse: String): Inntektsmelding {
+    fun mapInntektsmelding(
+        inntektsmeldingRAW: ByteArray,
+        aktorClient: AktorClient,
+        mottattDato: LocalDateTime,
+        journalpostId: String,
+        journalStatus: JournalStatus,
+        arkivReferanse: String
+    ): Inntektsmelding {
         val inntektsmelding = String(inntektsmeldingRAW)
         val jaxbInntektsmelding = JAXB.unmarshalInntektsmelding<JAXBElement<Any>>(inntektsmelding)
         return if (jaxbInntektsmelding.value is XMLInntektsmeldingM)
@@ -19,5 +26,4 @@ class XmlInntektsmeldingMapper {
             InntektsmeldingArbeidsgiverPrivat20181211Mapper.tilXMLInntektsmelding(jaxbInntektsmelding, journalpostId, mottattDato, journalStatus, arkivReferanse, aktorClient)
         }
     }
-
 }

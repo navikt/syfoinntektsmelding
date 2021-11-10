@@ -21,7 +21,7 @@ class BehandleInngaaendeJournalConsumer(private val dokArkivClient: DokArkivClie
 
         val isFnr = avsenderNr != inngaendeJournalpost.arbeidsgiverOrgnummer
         runBlocking {
-            dokArkivClient.oppdaterJournalpost( journalpostId, avsenderNr, isFnr, inngaendeJournalpost.gsakId, MDCOperations.generateCallId())
+            dokArkivClient.oppdaterJournalpost(journalpostId, avsenderNr, isFnr, inngaendeJournalpost.gsakId, MDCOperations.generateCallId())
         }
     }
 
@@ -33,8 +33,7 @@ class BehandleInngaaendeJournalConsumer(private val dokArkivClient: DokArkivClie
         val journalpostId = inngaendeJournalpost.journalpostId
 
         runBlocking {
-            dokArkivClient.ferdigstillJournalpost( journalpostId, MDCOperations.generateCallId() )
+            dokArkivClient.ferdigstillJournalpost(journalpostId, MDCOperations.generateCallId())
         }
-
     }
 }

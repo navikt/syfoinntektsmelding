@@ -6,7 +6,6 @@ import java.sql.ResultSet
 import java.sql.Timestamp
 import javax.sql.DataSource
 
-
 interface FeiletRepository {
     fun findByArkivReferanse(arkivReferanse: String): List<FeiletEntitet>
     fun lagreInnteksmelding(utsattOppgave: FeiletEntitet): FeiletEntitet
@@ -78,4 +77,3 @@ class FeiletRepositoryImp(private val ds: DataSource) : FeiletRepository {
         return returnValue
     }
 }
-

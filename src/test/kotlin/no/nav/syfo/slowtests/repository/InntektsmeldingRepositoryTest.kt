@@ -4,7 +4,13 @@ import com.zaxxer.hikari.HikariDataSource
 import no.nav.inntektsmelding.kontrakt.serde.JacksonJsonConfig
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
-import no.nav.syfo.domain.inntektsmelding.*
+import no.nav.syfo.domain.inntektsmelding.EndringIRefusjon
+import no.nav.syfo.domain.inntektsmelding.GjenopptakelseNaturalytelse
+import no.nav.syfo.domain.inntektsmelding.Gyldighetsstatus
+import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
+import no.nav.syfo.domain.inntektsmelding.Naturalytelse
+import no.nav.syfo.domain.inntektsmelding.OpphoerAvNaturalytelse
+import no.nav.syfo.domain.inntektsmelding.Refusjon
 import no.nav.syfo.dto.InntektsmeldingEntitet
 import no.nav.syfo.grunnleggendeInntektsmelding
 import no.nav.syfo.repository.InntektsmeldingRepository
@@ -19,7 +25,7 @@ import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-open class InntektsmeldingRepositoryTest : SystemTestBase(){
+open class InntektsmeldingRepositoryTest : SystemTestBase() {
 
     lateinit var repository: InntektsmeldingRepository
 
@@ -36,7 +42,6 @@ open class InntektsmeldingRepositoryTest : SystemTestBase(){
     internal fun tearDown() {
         repository.deleteAll()
     }
-
 
     @Test
     fun findByAktorId() {
@@ -62,7 +67,7 @@ open class InntektsmeldingRepositoryTest : SystemTestBase(){
         assertThat(i.aktorId).isEqualTo("aktorId1")
         assertThat(i.behandlet).isEqualTo(LocalDateTime.of(2019, 10, 1, 5, 18, 45, 0))
         assertThat(i.arbeidsgiverperioder.size).isEqualTo(1)
-      //  assertThat(i.arbeidsgiverperioder[0].inntektsmelding).isEqualTo(i)
+        //  assertThat(i.arbeidsgiverperioder[0].inntektsmelding).isEqualTo(i)
         assertThat(i.arbeidsgiverperioder[0].uuid).isNotNull
         assertThat(i.arbeidsgiverperioder[0].fom).isEqualTo(LocalDate.of(2019, 10, 5))
         assertThat(i.arbeidsgiverperioder[0].tom).isEqualTo(LocalDate.of(2019, 10, 25))
@@ -86,7 +91,7 @@ open class InntektsmeldingRepositoryTest : SystemTestBase(){
         assertThat(inntektsmeldinger.size).isEqualTo(1)
         val i = inntektsmeldinger[0]
         assertThat(i.arbeidsgiverperioder.size).isEqualTo(2)
-       // assertThat(i.arbeidsgiverperioder[0].inntektsmelding).isEqualTo(i)
+        // assertThat(i.arbeidsgiverperioder[0].inntektsmelding).isEqualTo(i)
         assertThat(i.arbeidsgiverperioder[0].uuid).isNotNull
         assertThat(i.arbeidsgiverperioder[0].fom).isEqualTo(LocalDate.of(2019, 10, 5))
         assertThat(i.arbeidsgiverperioder[0].tom).isEqualTo(LocalDate.of(2019, 10, 25))
@@ -182,12 +187,11 @@ open class InntektsmeldingRepositoryTest : SystemTestBase(){
         assertThat(data.get("arkivRefereranse").asText()).isEqualTo("ar-123")
         assertThat(data.get("førsteFraværsdag").asText()).isEqualTo("2010-02-10")
         assertThat(data.get("arsakTilInnsending").asText()).isEqualTo("Ingen årsak")
-
     }
 
     @Test
     fun `skal kun slette inntektsmeldinger eldre enn gitt dato`() {
-        //Lagre 5 inntektsmeldinger i 2019
+        // Lagre 5 inntektsmeldinger i 2019
         val imMedPeriodeGammel = lagInntektsmelding(LocalDate.of(2019, 12, 31).atStartOfDay())
         imMedPeriodeGammel.leggtilArbeidsgiverperiode(LocalDate.of(2019, 1, 1), LocalDate.of(2019, 2, 1))
         repository.lagreInnteksmelding(imMedPeriodeGammel)
@@ -196,7 +200,7 @@ open class InntektsmeldingRepositoryTest : SystemTestBase(){
         repository.lagreInnteksmelding(lagInntektsmelding(LocalDate.of(2019, 10, 14).atStartOfDay()))
         repository.lagreInnteksmelding(lagInntektsmelding(LocalDate.of(2019, 3, 15).atStartOfDay()))
 
-        //Lagre 5 inntektsmeldinger i 2020
+        // Lagre 5 inntektsmeldinger i 2020
         val imMedPeriodeNy = lagInntektsmelding(LocalDate.of(2020, 1, 1).atStartOfDay())
         imMedPeriodeNy.leggtilArbeidsgiverperiode(LocalDate.of(2019, 1, 1), LocalDate.of(2019, 2, 1))
         repository.lagreInnteksmelding(imMedPeriodeNy)
@@ -205,14 +209,14 @@ open class InntektsmeldingRepositoryTest : SystemTestBase(){
         repository.lagreInnteksmelding(lagInntektsmelding(LocalDate.of(2020, 4, 14).atStartOfDay()))
         repository.lagreInnteksmelding(lagInntektsmelding(LocalDate.of(2020, 5, 15).atStartOfDay()))
 
-        //10 tilsammen
+        // 10 tilsammen
         assertThat(repository.findAll().size).isEqualTo(10)
-        //5 før 2020
+        // 5 før 2020
         assertThat(repository.findFirst100ByBehandletBefore(LocalDate.of(2020, 1, 1).atStartOfDay()).size).isEqualTo(5)
 
-        //Slett alle før 2020
+        // Slett alle før 2020
         repository.deleteByBehandletBefore(LocalDate.of(2020, 1, 1).atStartOfDay())
-        //Nå skal det bare være 5 treff
+        // Nå skal det bare være 5 treff
         assertThat(repository.findAll().size).isEqualTo(5)
     }
 
@@ -226,6 +230,4 @@ open class InntektsmeldingRepositoryTest : SystemTestBase(){
             aktorId = "aktorId1"
         )
     }
-
 }
-

@@ -7,16 +7,22 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import io.ktor.util.*
-import io.mockk.*
+import io.ktor.util.KtorExperimentalAPI
+import io.mockk.MockKAnnotations
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.client.SakClient
 import no.nav.syfo.client.SakResponse
 import no.nav.syfo.client.aktor.AktorClient
-import no.nav.syfo.service.BehandleInngaaendeJournalConsumer
-import no.nav.syfo.service.InngaaendeJournalConsumer
-import no.nav.syfo.service.JournalConsumer
+import no.nav.syfo.client.saf.SafDokumentClient
+import no.nav.syfo.client.saf.SafJournalpostClient
+import no.nav.syfo.client.saf.model.Dokument
+import no.nav.syfo.client.saf.model.Journalpost
 import no.nav.syfo.domain.GeografiskTilknytningData
 import no.nav.syfo.domain.InngaaendeJournal
 import no.nav.syfo.domain.JournalStatus
@@ -25,12 +31,11 @@ import no.nav.syfo.producer.InntektsmeldingAivenProducer
 import no.nav.syfo.repository.InntektsmeldingRepository
 import no.nav.syfo.repository.InntektsmeldingRepositoryMock
 import no.nav.syfo.repository.InntektsmeldingService
-import no.nav.syfo.client.saf.SafDokumentClient
-import no.nav.syfo.client.saf.SafJournalpostClient
-import no.nav.syfo.client.saf.model.Dokument
-import no.nav.syfo.client.saf.model.Journalpost
+import no.nav.syfo.service.BehandleInngaaendeJournalConsumer
 import no.nav.syfo.service.BehandlendeEnhetConsumer
 import no.nav.syfo.service.EksisterendeSakService
+import no.nav.syfo.service.InngaaendeJournalConsumer
+import no.nav.syfo.service.JournalConsumer
 import no.nav.syfo.service.JournalpostService
 import no.nav.syfo.service.SaksbehandlingService
 import no.nav.syfo.syfoinntektsmelding.consumer.ws.inntektsmeldingArbeidsgiver
@@ -68,14 +73,12 @@ class InntektsmeldingBehandlerTest2 {
     private var eksisterendeSakService = mockk<EksisterendeSakService>(relaxed = true)
     private var journalpostService = mockk<JournalpostService>(relaxed = true)
 
-
     private var inntektsmeldingRepository = mockk<InntektsmeldingRepository>(relaxed = true)
     private var mockInnteksmeldingRepo = InntektsmeldingRepositoryMock()
-    private var inntektsmeldingService = InntektsmeldingService(mockInnteksmeldingRepo, objectMapper)  //mockk<InntektsmeldingService>(relaxed = true)
+    private var inntektsmeldingService = InntektsmeldingService(mockInnteksmeldingRepo, objectMapper) // mockk<InntektsmeldingService>(relaxed = true)
 
     lateinit var utsattOppgaveDAO: UtsattOppgaveDAO
     private var utsattOppgaveService = mockk<UtsattOppgaveService>(relaxed = true)
-
 
     private var journalConsumer = mockk<JournalConsumer>(relaxed = true)
     private var safDokumentClient = mockk<SafDokumentClient>(relaxed = true)
@@ -143,7 +146,7 @@ class InntektsmeldingBehandlerTest2 {
         val journalpost = Journalpost(
             JournalStatus.MOTTATT,
             LocalDateTime.now(),
-            dokumenter = listOf(Dokument(dokumentInfoId="dokumentId"))
+            dokumenter = listOf(Dokument(dokumentInfoId = "dokumentId"))
         )
         every {
             safJournalpostClient.getJournalpostMetadata(any())
@@ -160,7 +163,7 @@ class InntektsmeldingBehandlerTest2 {
         val dokumentResponse2 = lagDokumentRespons(LocalDate.of(2019, 1, 2), LocalDate.of(2019, 1, 16))
         every {
             safDokumentClient.hentDokument(any(), any())
-        } returnsMany listOf( dokumentResponse1.toByteArray(), dokumentResponse2.toByteArray() )
+        } returnsMany listOf(dokumentResponse1.toByteArray(), dokumentResponse2.toByteArray())
         inntektsmeldingBehandler.behandle("arkivId1", "AR-1")
         inntektsmeldingBehandler.behandle("arkivId2", "AR-2")
 
@@ -215,7 +218,6 @@ class InntektsmeldingBehandlerTest2 {
             safDokumentClient.hentDokument(any(), any())
         } returnsMany listOf(dokumentResponse1.toByteArray(), dokumentResponse2.toByteArray())
 
-
         every { aktorClient.getAktorId(any()) } returnsMany listOf("999", "999")
 
         inntektsmeldingBehandler.behandle("arkivId5", "AR-5")
@@ -241,7 +243,6 @@ class InntektsmeldingBehandlerTest2 {
         every {
             safDokumentClient.hentDokument("arkivId7", any())
         } returns lagDokumentRespons().toByteArray()
-
 
         inntektsmeldingBehandler.behandle("arkivId7", "AR-7")
         val inntektsmeldinger = inntektsmeldingService.finnBehandledeInntektsmeldinger("aktorId_for_7")
@@ -280,8 +281,7 @@ class InntektsmeldingBehandlerTest2 {
         every { aktorClient.getAktorId(any()) } returnsMany listOf("aktorId_for_9", "aktorId_for_9")
         every {
             safDokumentClient.hentDokument(any(), any())
-        } returns inntektsmeldingArbeidsgiverPrivat( ).toByteArray()
-
+        } returns inntektsmeldingArbeidsgiverPrivat().toByteArray()
 
         every { inngaaendeJournalConsumer.hentDokumentId("arkivId_9") } returns inngaaendeJournal("arkivId_9")
 
@@ -346,7 +346,7 @@ class InntektsmeldingBehandlerTest2 {
 
         repeat(numThreads) {
             Thread {
-                inntektsmeldingBehandler.behandle(arkivId, "ar-${numThreads.toString()}")
+                inntektsmeldingBehandler.behandle(arkivId, "ar-$numThreads")
                 countdown.countDown()
             }.start()
         }
@@ -383,5 +383,4 @@ class InntektsmeldingBehandlerTest2 {
             mottattDato = LocalDateTime.now()
         )
     }
-
 }
