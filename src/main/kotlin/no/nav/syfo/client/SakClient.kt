@@ -10,6 +10,7 @@ import log
 import no.nav.syfo.behandling.SakFeilException
 import no.nav.syfo.behandling.SakResponseException
 import no.nav.syfo.client.azuread.AzureAdTokenConsumer
+import no.nav.syfo.mask.maskLast
 import java.time.LocalDate
 
 class SakConsumer(
@@ -35,7 +36,7 @@ class SakConsumer(
                         log.error("Kall mot syfonarmesteleder mot $url feiler med HTTP-${cause.response.status.value}")
                         throw SakResponseException(aktorId, cause.response.status.value, null)
                     } else -> {
-                        log.error("Uventet feil ved henting av nærmeste leder på url $url")
+                        log.error("Uventet feil ved henting av nærmeste leder for ${aktorId.maskLast(3)} for perioden $fom til $tom")
                         throw SakFeilException(aktorId, Exception(cause.message))
                     }
                 }
