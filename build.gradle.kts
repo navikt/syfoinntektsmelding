@@ -12,7 +12,7 @@ val jacksonVersion = "2.12.3"
 val junitJupiterVersion = "5.7.0"
 val assertJVersion = "3.12.2"
 val prometheusVersion = "0.6.0"
-val githubPassword: String by project
+val githubPassword: String? by project
 
 plugins {
     // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
