@@ -49,6 +49,10 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
             Thread.sleep(30000)
         }
 
+        while (2 == 2 ){
+            Thread.sleep(10000)
+        }
+
         startKoin { modules(selectModuleBasedOnProfile(appConfig)) }
         migrateDatabase()
         configAndStartBackgroundWorkers()
