@@ -21,7 +21,7 @@ plugins {
     id("org.flywaydb.flyway") version "5.1.4"
     id("io.snyk.gradle.plugin.snykplugin") version "0.4"
     id("org.sonarqube") version "3.0"
-    jacoco
+    id("org.jetbrains.kotlinx.kover") version "0.4.1"
     // Apply the application plugin to add support for building a CLI application in Java.
     application
 }
@@ -180,20 +180,4 @@ sonarqube {
         property("sonar.login", System.getenv("SONAR_TOKEN"))
         property("sonar.exclusions", "**/Koin*,**Mock**,**/App**")
     }
-}
-
-tasks.jacocoTestReport {
-    executionData("build/jacoco/test.exec")
-    reports {
-        xml.isEnabled = true
-        html.isEnabled = true
-    }
-}
-
-tasks.withType<JacocoReport> {
-    classDirectories.setFrom(
-        sourceSets.main.get().output.asFileTree.matching {
-            exclude("**/App**", "**Mock**")
-        }
-    )
 }
