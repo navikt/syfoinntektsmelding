@@ -23,5 +23,4 @@ class MaskingKtTest {
     fun maskNumber3() {
         assertEquals("", "".maskLast(3))
     }
-
 }
