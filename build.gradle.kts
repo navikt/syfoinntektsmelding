@@ -20,9 +20,13 @@ plugins {
     id("com.github.ben-manes.versions") version "0.27.0"
     id("org.flywaydb.flyway") version "5.1.4"
     id("io.snyk.gradle.plugin.snykplugin") version "0.4"
+    id("org.sonarqube") version "3.0"
+    jacoco
     // Apply the application plugin to add support for building a CLI application in Java.
     application
 }
+
+
 
 repositories {
     mavenCentral()
@@ -50,6 +54,7 @@ java {
 }
 
 dependencies {
+    implementation("org.jetbrains.kotlinx:kover:0.3.0")
     implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("com.google.guava:guava:30.1.1-jre")
@@ -168,4 +173,30 @@ configure<io.snyk.gradle.plugin.SnykExtension> {
     setAutoDownload(true)
     setAutoUpdate(true)
     setArguments("--all-sub-projects")
+}
+
+sonarqube {
+    properties {
+        property("sonar.projectKey", "navikt_syfoinntektsmelding")
+        property("sonar.organization", "navit")
+        property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.login", System.getenv("SONAR_TOKEN"))
+        property("sonar.exclusions", "**/Koin*,**Mock**,**/App**")
+    }
+}
+
+tasks.jacocoTestReport {
+    executionData("build/jacoco/test.exec")
+    reports {
+        xml.isEnabled = true
+        html.isEnabled = true
+    }
+}
+
+tasks.withType<JacocoReport> {
+    classDirectories.setFrom(
+        sourceSets.main.get().output.asFileTree.matching {
+            exclude("**/App**", "**Mock**")
+        }
+    )
 }
