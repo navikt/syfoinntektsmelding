@@ -73,7 +73,7 @@ interface IMStatsRepo {
     fun getBackToBackPerLPS(): List<LPSStats>
     fun getForsinkelseStats(): List<ForsinkelseStats>
     fun getOppgaveStats(): List<OppgaveStats>
-    fun getIkkeOpprettetOppgaveStats(): List<OppgaveStats>
+    fun getIkkeOpprettetOppgaveStats(): List<IkkeOppretetOppgaveStats>
 }
 
 /**
