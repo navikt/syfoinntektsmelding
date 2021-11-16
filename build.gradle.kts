@@ -25,7 +25,7 @@ plugins {
     id("com.github.ben-manes.versions") version "0.27.0"
     id("org.flywaydb.flyway") version "5.1.4"
     id("io.snyk.gradle.plugin.snykplugin") version "0.4"
-    id("org.sonarqube") version "3.0"
+    id("org.sonarqube") version "3.3"
     jacoco
     application
 }
