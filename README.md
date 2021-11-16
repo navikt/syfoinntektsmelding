@@ -1,6 +1,10 @@
 # Syfoinntektsmelding
 
-[![Actions Status](https://github.com/navikt/syfoinntektsmelding/workflows/Bygg%20og%20deploy%20til%20prod/badge.svg)](https://github.com/navikt/syfoinntektsmelding/actions)  [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=navikt_syfoinntektsmelding&metric=alert_status)](https://sonarcloud.io/dashboard?id=navikt_syfoinntektsmelding) [![Known Vulnerabilities](https://snyk.io/test/github/navikt/syfoinntektsmelding/badge.svg)] [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=navikt_syfoinntektsmelding&metric=coverage)](https://sonarcloud.io/dashboard?id=navikt_syfoinntektsmelding) [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=navikt_syfoinntektsmelding&metric=security_rating)](https://sonarcloud.io/dashboard?id=navikt_syfoinntektsmelding)
+[![Actions Status](https://github.com/navikt/syfoinntektsmelding/workflows/Bygg%20og%20deploy%20til%20prod/badge.svg)](https://github.com/navikt/syfoinntektsmelding/actions)  
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=navikt_syfoinntektsmelding&metric=alert_status)](https://sonarcloud.io/dashboard?id=navikt_syfoinntektsmelding) 
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=navikt_syfoinntektsmelding&metric=coverage)](https://sonarcloud.io/dashboard?id=navikt_syfoinntektsmelding) 
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=navikt_syfoinntektsmelding&metric=security_rating)](https://sonarcloud.io/dashboard?id=navikt_syfoinntektsmelding)
+[![Known Vulnerabilities](https://snyk.io/test/github/navikt/syfoinntektsmelding/badge.svg)](https://app.snyk.io/org/helsearbeidsgiver/project/5473b422-69d5-4b60-8596-0b7402691762) 
 
 ## Formål
 Applikasjonen tar imot innkommende inntektsmeldinger for sykepenger, journalfører dette og oppretter oppgaver i
