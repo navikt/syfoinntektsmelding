@@ -160,11 +160,11 @@ tasks.withType<JacocoReport> {
 
 tasks.withType<Test> {
     useJUnitPlatform()
-    // testLogging {
-    //     events("passed", "skipped", "failed")
-    //     showStackTraces = true
-    //     exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
-    // }
+    testLogging {
+        events("passed", "skipped", "failed")
+        showStackTraces = true
+        exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+    }
 }
 
 tasks.named<Test>("test") {
@@ -177,4 +177,3 @@ task<Test>("slowTests") {
     outputs.upToDateWhen { false }
     group = "verification"
 }
-
