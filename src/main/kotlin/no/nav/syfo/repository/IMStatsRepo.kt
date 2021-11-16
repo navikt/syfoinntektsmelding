@@ -67,6 +67,7 @@ interface IMStatsRepo {
     fun getBackToBackPerLPS(): List<LPSStats>
     fun getForsinkelseStats(): List<ForsinkelseStats>
     fun getOppgaveStats(): List<OppgaveStats>
+    fun getForkastetOppgaveStats(): List<OppgaveStats>
 }
 
 /**
@@ -376,6 +377,34 @@ class IMStatsRepoImpl(
 			and timeout < NOW()::DATE
             GROUP BY Date(timeout)
             Order by Date(timeout);
+        """.trimIndent()
+
+        ds.connection.use {
+            val res = it.prepareStatement(query).executeQuery()
+            val returnValue = ArrayList<OppgaveStats>()
+            while (res.next()) {
+                returnValue.add(
+                    OppgaveStats(
+                        res.getInt("antall"),
+                        res.getDate("dato").toString()
+                    )
+                )
+            }
+
+            return returnValue
+        }
+    }
+
+    override fun getForkastetOppgaveStats(): List<OppgaveStats> {
+        val query = """
+            select
+                count(*) as antall,
+                Date(oppdatert) as dato
+            from utsatt_oppgave
+            where tilstand = 'Forkastet'
+                and oppdatert > NOW()::DATE - EXTRACT(DOW FROM NOW())::INTEGER - 30
+            group by Date(oppdatert)
+            order by Date(oppdatert);
         """.trimIndent()
 
         ds.connection.use {
