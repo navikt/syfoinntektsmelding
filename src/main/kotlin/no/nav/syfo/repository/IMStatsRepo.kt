@@ -57,6 +57,12 @@ data class OppgaveStats(
     val dato: String
 )
 
+data class IkkeOppretetOppgaveStats(
+    val antall_forkastet: Int,
+    val antall_utsatt: Int,
+    val dato: String
+)
+
 interface IMStatsRepo {
     fun getWeeklyStats(): List<IMWeeklyStats>
     fun getLPSStats(): List<LPSStats>
@@ -67,7 +73,7 @@ interface IMStatsRepo {
     fun getBackToBackPerLPS(): List<LPSStats>
     fun getForsinkelseStats(): List<ForsinkelseStats>
     fun getOppgaveStats(): List<OppgaveStats>
-    fun getForkastetOppgaveStats(): List<OppgaveStats>
+    fun getIkkeOpprettetOppgaveStats(): List<OppgaveStats>
 }
 
 /**
@@ -395,25 +401,26 @@ class IMStatsRepoImpl(
         }
     }
 
-    override fun getForkastetOppgaveStats(): List<OppgaveStats> {
+    override fun getIkkeOpprettetOppgaveStats(): List<IkkeOppretetOppgaveStats> {
         val query = """
             select
-                count(*) as antall,
+                count(*) filter ( where tilstand = 'Forkastet') as antall_forkastet,
+                count(*) filter ( where tilstand = 'Utsatt') as antall_utsatt,
                 Date(oppdatert) as dato
             from utsatt_oppgave
-            where tilstand = 'Forkastet'
-                and oppdatert > NOW()::DATE - EXTRACT(DOW FROM NOW())::INTEGER - 30
+            where oppdatert > NOW()::DATE - EXTRACT(DOW FROM NOW())::INTEGER - 30
             group by Date(oppdatert)
             order by Date(oppdatert);
         """.trimIndent()
 
         ds.connection.use {
             val res = it.prepareStatement(query).executeQuery()
-            val returnValue = ArrayList<OppgaveStats>()
+            val returnValue = ArrayList<IkkeOppretetOppgaveStats>()
             while (res.next()) {
                 returnValue.add(
-                    OppgaveStats(
-                        res.getInt("antall"),
+                    IkkeOppretetOppgaveStats(
+                        res.getInt("antall_forkastet"),
+                        res.getInt("antall_utsatt"),
                         res.getDate("dato").toString()
                     )
                 )
