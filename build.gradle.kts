@@ -6,7 +6,7 @@ val group = "no.nav.syfo"
 // Dependencies
 val micrometerVersion = "1.7.5"
 val flywayVersion = "8.0.2"
-val cxfVersion = "3.4.4"
+val cxfVersion = "3.4.5"
 val kotlinVersion = "1.4.10"
 val hikariVersion = "5.0.0"
 val ktorVersion = "1.6.5"
@@ -25,8 +25,7 @@ plugins {
     id("com.github.ben-manes.versions") version "0.27.0"
     id("org.flywaydb.flyway") version "5.1.4"
     id("io.snyk.gradle.plugin.snykplugin") version "0.4"
-    id("org.sonarqube") version "3.3"
-    jacoco
+    id("org.jetbrains.kotlinx.kover") version "0.4.1"
     application
 }
 
@@ -73,7 +72,7 @@ dependencies {
     implementation("no.nav.syfo.sm:syfosm-common-rest-sts:2019.09.25-05-44-08e26429f4e37cd57d99ba4d39fc74099a078b97")
     implementation("no.nav.syfo.sm:syfosm-common-networking:2019.09.25-05-44-08e26429f4e37cd57d99ba4d39fc74099a078b97")
     implementation("no.nav:vault-jdbc:1.3.7")
-    implementation("no.nav.common:log:2.2021.09.17_07.09-67428a6422cc")
+    implementation("no.nav.common:log:2.2021.11.09_13.09-604966c636b6")
     implementation("no.nav.helsearbeidsgiver:helse-arbeidsgiver-felles-backend:2021.06.28-09-42-e08ae")
     implementation("no.nav.security:token-client-core:$tokenSupportVersion")
     implementation("no.nav.security:token-validation-ktor:$tokenSupportVersion")
@@ -140,22 +139,6 @@ configure<io.snyk.gradle.plugin.SnykExtension> {
     setAutoDownload(true)
     setAutoUpdate(true)
     setArguments("--all-sub-projects")
-}
-
-tasks.jacocoTestReport {
-    executionData("build/jacoco/test.exec")
-    reports {
-        xml.isEnabled = true
-        html.isEnabled = true
-    }
-}
-
-tasks.withType<JacocoReport> {
-    classDirectories.setFrom(
-        sourceSets.main.get().output.asFileTree.matching {
-            exclude("**/App**", "**Mock**")
-        }
-    )
 }
 
 tasks.withType<Test> {
