@@ -30,11 +30,10 @@ class FinnAlleUtgaandeOppgaverProcessor(
             .finnAlleUtgåtteOppgaver()
             .forEach {
                 try {
-                    // TODO: tell metrikker
                     opprettOppgaveIGosys(it, oppgaveClient, utsattOppgaveDAO, behandlendeEnhetConsumer)
                     it.tilstand = Tilstand.OpprettetTimeout
                     it.oppdatert = LocalDateTime.now()
-                    //metrikk.tellUtsattOppgave_OpprettTimout()
+                    metrikk.tellUtsattOppgave_OpprettTimeout()
                     utsattOppgaveDAO.lagre(it)
                     log.info("Oppgave opprettet i gosys pga timeout for inntektsmelding: ${it.inntektsmeldingId}")
                 } catch (e: OpprettOppgaveException) {
