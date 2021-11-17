@@ -18,5 +18,5 @@ data class UtsattOppgaveEntitet(
 )
 
 enum class Tilstand {
-    Utsatt, Forkastet, Opprettet
+    Utsatt, Forkastet, Opprettet, OpprettetTimeout
 }
