@@ -156,6 +156,11 @@ class Metrikk {
         "syfoinntektsmelding_utsatt_oppgave_opprett",
         "Oppretter oppgave", "type"
     )
+
+    val UTSATT_OPPGAVE_OPPRETT_TIMEOUT = proseseringsMetrikker(
+        "syfoinntektsmelding_utsatt_oppgave_opprett_timeout",
+        "Oppretter oppgave pga timeout", "type"
+    )
     val UTSATT_OPPGAVE_IRRELEVANT = proseseringsMetrikker(
         "syfoinntektsmelding_utsatt_oppgave_irrelevant",
         "Irrelevant dokumentid", "type"
@@ -221,6 +226,7 @@ class Metrikk {
     fun tellUtsattOppgave_UtenDato() = UTSATT_OPPGAVE_UTSETT_UTEN_DATO.labels("info").inc()
     fun tellUtsattOppgave_Forkast() = UTSATT_OPPGAVE_FORKAST.labels("info").inc()
     fun tellUtsattOppgave_Opprett() = UTSATT_OPPGAVE_OPPRETT.labels("info").inc()
+    fun tellUtsattOppgave_OpprettTimeout() = UTSATT_OPPGAVE_OPPRETT_TIMEOUT.labels("info").inc()
     fun tellUtsattOppgave_Irrelevant() = UTSATT_OPPGAVE_IRRELEVANT.labels("info").inc()
 
     companion object {
