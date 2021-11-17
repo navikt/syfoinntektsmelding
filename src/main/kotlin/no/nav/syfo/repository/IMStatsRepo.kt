@@ -57,9 +57,10 @@ data class OppgaveStats(
     val dato: String
 )
 
-data class IkkeOppretetOppgaveStats(
+data class AntallOppgaveStats(
     val antall_forkastet: Int,
     val antall_utsatt: Int,
+    val antall_opprettet: Int,
     val dato: String
 )
 
@@ -73,7 +74,7 @@ interface IMStatsRepo {
     fun getBackToBackPerLPS(): List<LPSStats>
     fun getForsinkelseStats(): List<ForsinkelseStats>
     fun getOppgaveStats(): List<OppgaveStats>
-    fun getIkkeOpprettetOppgaveStats(): List<IkkeOppretetOppgaveStats>
+    fun getIkkeOpprettetOppgaveStats(): List<AntallOppgaveStats>
 }
 
 /**
@@ -401,11 +402,12 @@ class IMStatsRepoImpl(
         }
     }
 
-    override fun getIkkeOpprettetOppgaveStats(): List<IkkeOppretetOppgaveStats> {
+    override fun getIkkeOpprettetOppgaveStats(): List<AntallOppgaveStats> {
         val query = """
             select
                 count(*) filter ( where tilstand = 'Forkastet') as antall_forkastet,
                 count(*) filter ( where tilstand = 'Utsatt') as antall_utsatt,
+                count(*) filter ( where tilstand = 'Opprettet') as antall_opprettet,
                 Date(oppdatert) as dato
             from utsatt_oppgave
             where oppdatert > NOW()::DATE - EXTRACT(DOW FROM NOW())::INTEGER - 30
@@ -415,12 +417,13 @@ class IMStatsRepoImpl(
 
         ds.connection.use {
             val res = it.prepareStatement(query).executeQuery()
-            val returnValue = ArrayList<IkkeOppretetOppgaveStats>()
+            val returnValue = ArrayList<AntallOppgaveStats>()
             while (res.next()) {
                 returnValue.add(
-                    IkkeOppretetOppgaveStats(
+                    AntallOppgaveStats(
                         res.getInt("antall_forkastet"),
                         res.getInt("antall_utsatt"),
+                        res.getInt("antall_opprettet"),
                         res.getDate("dato").toString()
                     )
                 )
