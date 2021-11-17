@@ -61,6 +61,7 @@ data class AntallOppgaveStats(
     val antall_forkastet: Int,
     val antall_utsatt: Int,
     val antall_opprettet: Int,
+    val antall_opprettet_timeout: Int,
     val dato: String
 )
 
@@ -408,6 +409,7 @@ class IMStatsRepoImpl(
                 count(*) filter ( where tilstand = 'Forkastet') as antall_forkastet,
                 count(*) filter ( where tilstand = 'Utsatt') as antall_utsatt,
                 count(*) filter ( where tilstand = 'Opprettet') as antall_opprettet,
+                count(*) filter ( where tilstand = 'OpprettetTimeout') as antall_opprettet_timeout,
                 Date(oppdatert) as dato
             from utsatt_oppgave
             where oppdatert > NOW()::DATE - EXTRACT(DOW FROM NOW())::INTEGER - 30
@@ -424,6 +426,7 @@ class IMStatsRepoImpl(
                         res.getInt("antall_forkastet"),
                         res.getInt("antall_utsatt"),
                         res.getInt("antall_opprettet"),
+                        res.getInt("antall_opprettet_timeout"),
                         res.getDate("dato").toString()
                     )
                 )
