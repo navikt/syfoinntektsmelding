@@ -1,17 +1,8 @@
 package no.nav.syfo.slowtests.datapakke
 
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.MapperFeature
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.mockk.every
 import io.mockk.mockk
-import no.nav.security.mock.oauth2.http.objectMapper
 import no.nav.syfo.datapakke.DatapakkePublisherJob
-import no.nav.syfo.koin.buildJacksonSerializer
 import no.nav.syfo.koin.buildObjectMapper
 import no.nav.syfo.repository.ArsakStats
 import no.nav.syfo.repository.ForsinkelseStats
@@ -24,8 +15,6 @@ import no.nav.syfo.slowtests.SystemTestBase
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import java.sql.Date
-import java.time.LocalDate
 import java.util.UUID
 import kotlin.random.Random
 
