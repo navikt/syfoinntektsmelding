@@ -72,7 +72,7 @@ class DatapakkePublisherJob(
 
         val forsinket = imRepo.getForsinkelseStats()
 
-        val oppgaveStats = imRepo.getOppgaveStats()
+        val oppgaveStats = imRepo.getOppgaveStats().sortedBy { it.dato }
 
         val populatedDatapakke = datapakkeTemplate
             .replace("@ukeSerie", timeseries.map { it.weekNumber }.joinToString())
@@ -141,12 +141,13 @@ class DatapakkePublisherJob(
                     """[${it.antall_med_forsinkelsen_altinn},${it.antall_med_forsinkelsen_lps},${it.dager_etter_ff}]"""
                 }.joinToString()
             )
-            .replace(
-                "@OppgStats",
-                oppgaveStats.map { //language=JSON
-                    """[${it.antall},"${it.dato}"]"""
-                }.joinToString()
-            )
+            .replace("@oppgDato", oppgaveStats.map { "\"${it.dato}\"" }.joinToString())
+            .replace("@oppgForkastet", oppgaveStats.map { it.antall_forkastet }.joinToString())
+            .replace("@oppgUtsatt", oppgaveStats.map { it.antall_utsatt }.joinToString())
+            .replace("@oppgOpprettet", oppgaveStats.map { it.antall_opprettet }.joinToString())
+            .replace("@oppgTimeout", oppgaveStats.map { it.antall_opprettet_timeout }.joinToString())
+
+        println(populatedDatapakke)
 
         runBlocking {
             val response = httpClient.put<HttpResponse>("$datapakkeApiUrl/$datapakkeId") {

@@ -589,41 +589,91 @@
       }
     },
     {
-      "title": "Gosysoppgaver opprettet",
-      "description": "Gosys oppgaver opprettet siste 30 dager",
+      "title": "Gosysoppgaver",
+      "description": "Gosys oppgaver status siste 30 dager",
       "specType": "echart",
       "spec": {
         "url": "",
         "option": {
-          "xAxis": [
-            {
-              "type": "category",
-              "encode": {
-                "x": 0
-              }
-          }
-          ],
-          "yAxis": {
-          },
-          "dataset": {
-            "source": [
-                @OppgStats
-              ]
-          },
           "tooltip": {
             "trigger": "axis",
             "axisPointer": {
-              "type": "shadow"
+              "type": "cross",
+              "crossStyle": {
+                "color": "#999"
+              }
             }
           },
-          "series": [{
-            "name": "Antall oppgaver",
-            "encode": {
-              "x": 1
+          "legend": {
+            "left": "center",
+            "data": [
+              "Forkastet",
+              "Utsatt",
+              "Opprettet",
+              "Opprettet pga Timeout"
+            ]
+          },
+          "xAxis": {
+            "type": "category",
+            "name": "Uke",
+            "data": [
+              @oppgDato
+            ]
+          },
+          "yAxis": [
+            {
+              "type": "value",
+              "name": "Antall"
+            }
+          ],
+          "series": [
+            {
+              "name": "Forkastet",
+              "data": [
+                @oppgForkastet
+              ],
+              "type": "line"
             },
-            "type": "bar"
+            {
+              "data": [
+                @oppgUtsatt
+              ],
+              "name": "Utsatt",
+              "type": "line"
+            },
+            {
+              "data": [
+                @oppgOpprettet
+              ],
+              "name": "Opprettet",
+              "type": "line"
+            },
+            {
+              "data": [
+                @oppgTimeout
+              ],
+              "name": "Opprettet pga Timeout",
+              "type": "line"
+            }
+          ],
+          "toolbox": {
+            "show": true,
+            "left": "center",
+            "top": "bottom",
+            "feature": {
+              "magicType": {
+                "type": [
+                  "line",
+                  "bar"
+                ]
+              },
+              "dataView": {
+                "show": true,
+                "readOnly": true
+              },
+              "saveAsImage": {}
+            }
           }
-          ]
         }
       }
     }

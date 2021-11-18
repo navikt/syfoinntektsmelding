@@ -53,11 +53,6 @@ data class ForsinkelseStats(
 )
 
 data class OppgaveStats(
-    val antall: Int,
-    val dato: String
-)
-
-data class AntallOppgaveStats(
     val antall_forkastet: Int,
     val antall_utsatt: Int,
     val antall_opprettet: Int,
@@ -75,7 +70,6 @@ interface IMStatsRepo {
     fun getBackToBackPerLPS(): List<LPSStats>
     fun getForsinkelseStats(): List<ForsinkelseStats>
     fun getOppgaveStats(): List<OppgaveStats>
-    fun getIkkeOpprettetOppgaveStats(): List<AntallOppgaveStats>
 }
 
 /**
@@ -377,34 +371,6 @@ class IMStatsRepoImpl(
 
     override fun getOppgaveStats(): List<OppgaveStats> {
         val query = """
-            select count(*) as antall,
-            Date(timeout) as dato
-            from utsatt_oppgave
-            where tilstand = 'Opprettet'
-			and timeout > NOW()::DATE - EXTRACT(DOW FROM NOW())::INTEGER - 30
-			and timeout < NOW()::DATE
-            GROUP BY Date(timeout)
-            Order by Date(timeout);
-        """.trimIndent()
-
-        ds.connection.use {
-            val res = it.prepareStatement(query).executeQuery()
-            val returnValue = ArrayList<OppgaveStats>()
-            while (res.next()) {
-                returnValue.add(
-                    OppgaveStats(
-                        res.getInt("antall"),
-                        res.getDate("dato").toString()
-                    )
-                )
-            }
-
-            return returnValue
-        }
-    }
-
-    override fun getIkkeOpprettetOppgaveStats(): List<AntallOppgaveStats> {
-        val query = """
             select
                 count(*) filter ( where tilstand = 'Forkastet') as antall_forkastet,
                 count(*) filter ( where tilstand = 'Utsatt') as antall_utsatt,
@@ -419,10 +385,10 @@ class IMStatsRepoImpl(
 
         ds.connection.use {
             val res = it.prepareStatement(query).executeQuery()
-            val returnValue = ArrayList<AntallOppgaveStats>()
+            val returnValue = ArrayList<OppgaveStats>()
             while (res.next()) {
                 returnValue.add(
-                    AntallOppgaveStats(
+                    OppgaveStats(
                         res.getInt("antall_forkastet"),
                         res.getInt("antall_utsatt"),
                         res.getInt("antall_opprettet"),
