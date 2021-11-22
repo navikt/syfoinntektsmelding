@@ -53,7 +53,10 @@ data class ForsinkelseStats(
 )
 
 data class OppgaveStats(
-    val antall: Int,
+    val antall_forkastet: Int,
+    val antall_utsatt: Int,
+    val antall_opprettet: Int,
+    val antall_opprettet_timeout: Int,
     val dato: String
 )
 
@@ -128,7 +131,7 @@ class IMStatsRepoImpl(
             	data -> 'avsenderSystem' ->> 'navn'  as lps_navn
             from inntektsmelding i
             where
-            	behandlet > NOW()::DATE-EXTRACT(DOW FROM NOW())::INTEGER-7
+            	behandlet > NOW()::DATE - INTERVAL '6 DAYS'
             group by
             	data -> 'avsenderSystem' ->> 'navn';
         """.trimIndent()
@@ -158,7 +161,7 @@ class IMStatsRepoImpl(
                 data ->> 'begrunnelseRedusert' as begrunnelse
             from inntektsmelding i
             where
-                behandlet > NOW()::DATE-EXTRACT(DOW FROM NOW())::INTEGER-7
+                behandlet > NOW()::DATE - INTERVAL '6 DAYS'
             group by
                 data ->> 'begrunnelseRedusert';
         """.trimIndent()
@@ -242,7 +245,7 @@ class IMStatsRepoImpl(
                 data -> 'avsenderSystem' ->> 'navn'  as lps_navn
             from inntektsmelding i
             where (
-                behandlet > NOW()::DATE-EXTRACT(DOW FROM NOW())::INTEGER-7 and
+                behandlet > NOW()::DATE - INTERVAL '6 DAYS' and
                 date(data ->> 'førsteFraværsdag') - date((data -> 'arbeidsgiverperioder' ->> -1)::jsonb ->> 'tom') < 2 and
                 data ->> 'begrunnelseRedusert' != 'IkkeFravaer' and
                 date(data ->> 'førsteFraværsdag') != date((data -> 'arbeidsgiverperioder' ->> -1)::jsonb ->> 'fom')
@@ -275,7 +278,7 @@ class IMStatsRepoImpl(
                 data -> 'avsenderSystem' ->> 'navn'  as lps_navn
             from inntektsmelding i
             where (
-                  behandlet > NOW()::DATE-EXTRACT(DOW FROM NOW())::INTEGER-28
+                  behandlet > NOW()::DATE - INTERVAL '27 DAYS'
               and
                   (data -> 'refusjon' ->> 'beloepPrMnd')::numeric > 0
               and
@@ -344,7 +347,7 @@ class IMStatsRepoImpl(
             where
                     data ->> 'førsteFraværsdag' = data -> 'arbeidsgiverperioder' -> 0 ->> 'fom' and
                     (date(data -> 'arbeidsgiverperioder' -> 0 ->> 'tom') - date(data -> 'arbeidsgiverperioder' -> 0 ->> 'fom')) = 15
-					and behandlet > NOW()::DATE - EXTRACT(DOW FROM NOW())::INTEGER - 90
+                    behandlet > NOW()::DATE - INTERVAL '89 DAYS'
             GROUP BY
                 DATE_PART('day', behandlet - DATE(data ->> 'førsteFraværsdag'));
         """.trimIndent()
@@ -368,14 +371,16 @@ class IMStatsRepoImpl(
 
     override fun getOppgaveStats(): List<OppgaveStats> {
         val query = """
-            select count(*) as antall,
-            Date(timeout) as dato
+            select
+                count(*) filter ( where tilstand = 'Forkastet') as antall_forkastet,
+                count(*) filter ( where tilstand = 'Utsatt') as antall_utsatt,
+                count(*) filter ( where tilstand = 'Opprettet') as antall_opprettet,
+                count(*) filter ( where tilstand = 'OpprettetTimeout') as antall_opprettet_timeout,
+                Date(oppdatert) as dato
             from utsatt_oppgave
-            where tilstand = 'Opprettet'
-			and timeout > NOW()::DATE - EXTRACT(DOW FROM NOW())::INTEGER - 30
-			and timeout < NOW()::DATE
-            GROUP BY Date(timeout)
-            Order by Date(timeout);
+            where behandlet > NOW()::DATE - INTERVAL '29 DAYS'
+            group by Date(oppdatert)
+            order by Date(oppdatert);
         """.trimIndent()
 
         ds.connection.use {
@@ -384,7 +389,10 @@ class IMStatsRepoImpl(
             while (res.next()) {
                 returnValue.add(
                     OppgaveStats(
-                        res.getInt("antall"),
+                        res.getInt("antall_forkastet"),
+                        res.getInt("antall_utsatt"),
+                        res.getInt("antall_opprettet"),
+                        res.getInt("antall_opprettet_timeout"),
                         res.getDate("dato").toString()
                     )
                 )

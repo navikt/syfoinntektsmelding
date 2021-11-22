@@ -2,8 +2,8 @@ package no.nav.syfo.slowtests.datapakke
 
 import io.mockk.every
 import io.mockk.mockk
-import no.nav.security.mock.oauth2.http.objectMapper
 import no.nav.syfo.datapakke.DatapakkePublisherJob
+import no.nav.syfo.koin.buildObjectMapper
 import no.nav.syfo.repository.ArsakStats
 import no.nav.syfo.repository.ForsinkelseStats
 import no.nav.syfo.repository.IMStatsRepo
@@ -124,7 +124,10 @@ class DatapakkePublisherJobTest : SystemTestBase() {
             .map {
                 OppgaveStats(
                     Random.nextInt(100),
-                    "2021-08-14"
+                    Random.nextInt(100),
+                    Random.nextInt(100),
+                    Random.nextInt(100),
+                    "2021-08-$it"
                 )
             }.toList()
     }
@@ -132,12 +135,14 @@ class DatapakkePublisherJobTest : SystemTestBase() {
     @Test
     @Disabled
     internal fun name() = suspendableTest {
+        val om = buildObjectMapper()
+
         DatapakkePublisherJob(
             repo,
             httpClient,
             "https://datakatalog-api.dev.intern.nav.no/v1/datapackage",
             "fb74c8d14d9c579e05b0b4b587843e6b",
-            om = objectMapper
+            om = om
         ).doJob()
     }
 }
