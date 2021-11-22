@@ -346,7 +346,7 @@ class IMStatsRepoImpl(
                 inntektsmelding i2
             where
                     data ->> 'førsteFraværsdag' = data -> 'arbeidsgiverperioder' -> 0 ->> 'fom' and
-                    (date(data -> 'arbeidsgiverperioder' -> 0 ->> 'tom') - date(data -> 'arbeidsgiverperioder' -> 0 ->> 'fom')) = 15
+                    (date(data -> 'arbeidsgiverperioder' -> 0 ->> 'tom') - date(data -> 'arbeidsgiverperioder' -> 0 ->> 'fom')) = 15 and
                     behandlet > NOW()::DATE - INTERVAL '89 DAYS'
             GROUP BY
                 DATE_PART('day', behandlet - DATE(data ->> 'førsteFraværsdag'));
