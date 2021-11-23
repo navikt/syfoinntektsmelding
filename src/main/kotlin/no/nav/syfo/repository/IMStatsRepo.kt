@@ -378,7 +378,7 @@ class IMStatsRepoImpl(
                 count(*) filter ( where tilstand = 'OpprettetTimeout') as antall_opprettet_timeout,
                 Date(oppdatert) as dato
             from utsatt_oppgave
-            where behandlet > NOW()::DATE - INTERVAL '29 DAYS'
+            where oppdatert > NOW()::DATE - INTERVAL '29 DAYS'
             group by Date(oppdatert)
             order by Date(oppdatert);
         """.trimIndent()
