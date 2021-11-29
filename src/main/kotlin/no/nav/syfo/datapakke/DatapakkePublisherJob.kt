@@ -147,8 +147,6 @@ class DatapakkePublisherJob(
             .replace("@oppgOpprettet", oppgaveStats.map { it.antall_opprettet }.joinToString())
             .replace("@oppgTimeout", oppgaveStats.map { it.antall_opprettet_timeout }.joinToString())
 
-        println(populatedDatapakke)
-
         runBlocking {
             val response = httpClient.put<HttpResponse>("$datapakkeApiUrl/$datapakkeId") {
                 contentType(ContentType.Application.Json)
