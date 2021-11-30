@@ -33,6 +33,7 @@ class FeiletUtsattOppgaveMeldingProsessor(
             )
 
             MDCOperations.putToMDC(MDCOperations.MDC_CALL_ID, MDCOperations.generateCallId())
+            log.info("Prosesserer inntekstmelding " + oppdatering.id)
             oppgaveService.prosesser(oppdatering)
         } finally {
             MDCOperations.remove(MDCOperations.MDC_CALL_ID)
