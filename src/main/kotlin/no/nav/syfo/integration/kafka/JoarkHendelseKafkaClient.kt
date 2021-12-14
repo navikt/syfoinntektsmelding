@@ -1,6 +1,5 @@
 package no.nav.syfo.integration.kafka
 
-// import no.nav.helse.inntektsmeldingsvarsel.ANTALL_INNKOMMENDE_MELDINGER
 import no.nav.helse.arbeidsgiver.kubernetes.LivenessComponent
 import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.clients.consumer.KafkaConsumer
@@ -47,7 +46,9 @@ class JoarkHendelseKafkaClient(props: MutableMap<String, Any>, topicName: String
 
             lastThrown = null
 
-            log.info("Fikk ${records?.count()} meldinger med offsets ${records?.map { it.offset() }?.joinToString(", ")}")
+            if (records?.count() != null && records?.count() > 0){
+                log.info("Fikk ${records?.count()} meldinger med offsets ${records?.map { it.offset() }?.joinToString(", ")}")
+            }
             return currentBatch
         } catch (e: Exception) {
             stop()
@@ -58,7 +59,6 @@ class JoarkHendelseKafkaClient(props: MutableMap<String, Any>, topicName: String
 
     override fun confirmProcessingDone() {
         consumer.commitSync()
-//        ANTALL_INNKOMMENDE_MELDINGER.inc(currentBatch.size.toDouble())
         currentBatch = emptyList()
     }
 

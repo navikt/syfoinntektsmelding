@@ -1,6 +1,5 @@
 package no.nav.syfo.integration.kafka
 
-// import no.nav.helse.inntektsmeldingsvarsel.ANTALL_INNKOMMENDE_MELDINGER
 import no.nav.helse.arbeidsgiver.kubernetes.LivenessComponent
 import org.apache.kafka.clients.consumer.ConsumerRecords
 import org.apache.kafka.clients.consumer.KafkaConsumer
@@ -52,7 +51,9 @@ class UtsattOppgaveKafkaClient(
 
             lastThrown = null
 
-            log.debug("Fikk ${records?.count()} meldinger med offsets ${records?.map { it.offset() }?.joinToString(", ")}")
+            if (records?.count() != null && records.count() > 0) {
+                log.debug("Fikk ${records.count()} meldinger med offsets ${records.map { it.offset() }.joinToString(", ")}")
+            }
             return payloads!!
         } catch (e: Exception) {
             lastThrown = e
@@ -62,7 +63,6 @@ class UtsattOppgaveKafkaClient(
 
     override fun confirmProcessingDone() {
         consumer.commitSync()
-//        ANTALL_INNKOMMENDE_MELDINGER.inc(currentBatch.size.toDouble())
         currentBatch = emptyList()
     }
 
