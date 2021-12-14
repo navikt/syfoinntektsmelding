@@ -52,7 +52,7 @@ class UtsattOppgaveKafkaClient(
             lastThrown = null
 
             if (records?.count() != null && records.count() > 0) {
-                log.debug("Fikk ${records.count()} meldinger med offsets ${records.map { it.offset() }.joinToString(", ")}")
+                log.debug("UtsattOppgave: Fikk ${records.count()} meldinger med offsets ${records.map { it.offset() }.joinToString(", ")}")
             }
             return payloads!!
         } catch (e: Exception) {
