@@ -15,6 +15,16 @@ Andre applikasjoner kan be om utsettelse eller ignorering av opprettelser av dis
 
 ![image](docs/hovedflyt.svg)
 
+## Meldingsinnhold om JoarkHendelse
+Illustrasjonen viser innholdet i kafka meldingen (InngaaendeJournalpostDTO).
+
+![image](docs/InngaaendeJournalpostDTO.png)
+
+## Detaljer om inntektsmelding
+Illustrasjonen viser inntektsmeldingen i sin helhet
+
+![image](docs/inntektsmelding.png)
+
 ## Robusthet
 Applikasjonen er laget med tanke på aldri miste noen inntektsmeldinger. Dette er løst med disse tiltakene:
 
@@ -65,7 +75,7 @@ SRVSYFOINNTEKTSMELDING_PASSWORD=dummy
 
 
 ## Database
-Applikasjonen bruker Postgres database med JPA grensesnitt. Skjermbildet nedenfor viser samtlige 
+Applikasjonen bruker Postgres database med JPA grensesnitt OG et JDBC grensesnitt. Skjermbildet nedenfor viser samtlige 
 tabeller som er brukt.
 Flyway blir brukt til versjonering i databasen. Passord mot databasen ligger i vault. 
 
