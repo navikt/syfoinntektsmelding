@@ -32,8 +32,8 @@ class SaksbehandlingService(
     private fun finnInntektsmeldingMedArbeidsgiverperioder(arbeidsgiverperioder: List<Periode>, aktorId: String): Inntektsmelding? {
         return inntektsmeldingService.finnBehandledeInntektsmeldinger(aktorId)
             .firstOrNull { im ->
-                im.arbeidsgiverperioder.any {
-                    p -> harOverlappendePerioder(arbeidsgiverperioder, p)
+                im.arbeidsgiverperioder.any { p ->
+                    harOverlappendePerioder(arbeidsgiverperioder, p)
                 }
             }
     }
@@ -49,7 +49,7 @@ class SaksbehandlingService(
         if (tilhorendeInntektsmelding?.sakId.isNullOrEmpty()) {
             val sammenslattPeriode = sammenslattPeriode(inntektsmelding.arbeidsgiverperioder)
             val saksId = finnSaksId(inntektsmelding, aktorId, sammenslattPeriode)
-            if (saksId.isNullOrEmpty()){
+            if (saksId.isNullOrEmpty()) {
                 metrikk.tellInntektsmeldingNySak()
                 return opprettSak(aktorId, arkivReferanse)
             }
