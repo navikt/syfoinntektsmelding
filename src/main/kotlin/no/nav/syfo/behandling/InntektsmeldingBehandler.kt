@@ -53,7 +53,7 @@ class InntektsmeldingBehandler(
             if (JournalStatus.MOTTATT == inntektsmelding.journalStatus) {
                 metrikk.tellInntektsmeldingerMottatt(inntektsmelding)
 
-                val saksId = saksbehandlingService.behandleInntektsmelding(inntektsmelding, aktorid, arkivreferanse)
+                val saksId = saksbehandlingService.finnEllerOpprettSakForInntektsmelding(inntektsmelding, aktorid, arkivreferanse)
                 log.info("fant sak $saksId")
 
                 journalpostService.ferdigstillJournalpost(saksId, inntektsmelding)

@@ -46,6 +46,11 @@ class Metrikk {
         "Metrikker for inntektsmeldinger kobling", "type", "kobling"
     )
 
+    val INNTEKTSMELDINGSAKSIDFRADB = proseseringsMetrikker(
+        "syfoinntektsmelding_inntektsmeldinger_kobling",
+        "Metrikker for inntektsmeldinger kobling", "type", "kobling"
+    )
+
     val INNTEKTSMELDINGNYSAK = proseseringsMetrikker(
         "syfoinntektsmelding_inntektsmeldinger_kobling",
         "Metrikker for inntektsmeldinger kobling", "type", "kobling"
@@ -180,6 +185,7 @@ class Metrikk {
     fun tellOverlappendeInntektsmelding() = OVERLAPPENDEINNTEKTSMELDING.labels("info", OVERLAPPENDE).inc()
 
     fun tellInntektsmeldingSaksIdFraSyfo() = INNTEKTSMELDINGSAKSIDFRASYFO.labels("info", SAK_FRA_SYFO).inc()
+    fun tellInntektsmeldingSaksIdFraDB() = INNTEKTSMELDINGSAKSIDFRADB.labels("info", SAK_FRA_SYFO).inc()
 
     fun tellInntektsmeldingNySak() = INNTEKTSMELDINGNYSAK.labels("info", NY_SAK).inc()
 

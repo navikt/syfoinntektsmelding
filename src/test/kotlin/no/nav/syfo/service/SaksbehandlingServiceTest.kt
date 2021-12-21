@@ -81,7 +81,7 @@ class SaksbehandlingServiceTest {
 
     @Test
     fun returnererSaksIdOmSakFinnes() {
-        val saksId = saksbehandlingService.behandleInntektsmelding(lagInntektsmelding(), "aktorId", "")
+        val saksId = saksbehandlingService.finnEllerOpprettSakForInntektsmelding(lagInntektsmelding(), "aktorId", "")
 
         assertThat(saksId).isEqualTo("saksId")
     }
@@ -90,7 +90,7 @@ class SaksbehandlingServiceTest {
     fun oppretterSakOmSakIkkeFinnes() {
         every { eksisterendeSakService.finnEksisterendeSak(any(), any(), any()) } returns null
 
-        val saksId = saksbehandlingService.behandleInntektsmelding(lagInntektsmelding(), "aktorId", "")
+        val saksId = saksbehandlingService.finnEllerOpprettSakForInntektsmelding(lagInntektsmelding(), "aktorId", "")
 
         assertThat(saksId).isEqualTo("987")
     }
@@ -98,7 +98,7 @@ class SaksbehandlingServiceTest {
     @io.ktor.util.KtorExperimentalAPI
     @Test
     fun oppretterIkkeOppgaveForSak() {
-        saksbehandlingService.behandleInntektsmelding(lagInntektsmelding(), "aktorId", "")
+        saksbehandlingService.finnEllerOpprettSakForInntektsmelding(lagInntektsmelding(), "aktorId", "")
 
         runBlocking {
             coVerify(exactly = 0) { oppgaveClient.opprettOppgave(any(), any(), any(), any(), any()) }
@@ -122,7 +122,7 @@ class SaksbehandlingServiceTest {
                 )
             )
 
-        val sakId = saksbehandlingService.behandleInntektsmelding(lagInntektsmelding(), "aktorId", "")
+        val sakId = saksbehandlingService.finnEllerOpprettSakForInntektsmelding(lagInntektsmelding(), "aktorId", "")
         assertThat(sakId).isEqualTo("1")
         runBlocking {
             coVerify(exactly = 0) { sakClient.opprettSak(any(), any()) }
@@ -169,7 +169,7 @@ class SaksbehandlingServiceTest {
                 )
             )
 
-        val sakId = saksbehandlingService.behandleInntektsmelding(lagInntektsmelding(), "aktorId", "")
+        val sakId = saksbehandlingService.finnEllerOpprettSakForInntektsmelding(lagInntektsmelding(), "aktorId", "")
         assertThat(sakId).isEqualTo("1")
         runBlocking {
             coVerify(exactly = 0) { sakClient.opprettSak(any(), any()) }
@@ -193,7 +193,7 @@ class SaksbehandlingServiceTest {
                 )
             )
 
-        val sakId = saksbehandlingService.behandleInntektsmelding(lagInntektsmelding(), "aktorId", "")
+        val sakId = saksbehandlingService.finnEllerOpprettSakForInntektsmelding(lagInntektsmelding(), "aktorId", "")
         assertThat(sakId).isEqualTo("1")
         runBlocking {
             coVerify(exactly = 0) { sakClient.opprettSak(any(), any()) }
@@ -202,7 +202,7 @@ class SaksbehandlingServiceTest {
 
     @Test
     fun kallerHentSakMedFomTomFraArbeidsgiverperiodeIInntektsmeldingMedEnPeriode() {
-        saksbehandlingService.behandleInntektsmelding(
+        saksbehandlingService.finnEllerOpprettSakForInntektsmelding(
             lagInntektsmelding()
                 .copy(
                     arbeidsgiverperioder = listOf(
@@ -226,7 +226,7 @@ class SaksbehandlingServiceTest {
 
     @Test
     fun kallerHentSakMedTidligsteFomOgSenesteTomFraArbeidsgiverperiodeIInntektsmeldingFlerePerioder() {
-        saksbehandlingService.behandleInntektsmelding(
+        saksbehandlingService.finnEllerOpprettSakForInntektsmelding(
             lagInntektsmelding()
                 .copy(
                     arbeidsgiverperioder = listOf(

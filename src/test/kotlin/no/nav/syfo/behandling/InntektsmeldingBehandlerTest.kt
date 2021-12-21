@@ -42,7 +42,7 @@ class InntektsmeldingBehandlerTest {
     fun setup() {
         every { aktorClient.getAktorId("fnr") } returns "aktorId" // inntektsmelding.fnr
         every {
-            saksbehandlingService.behandleInntektsmelding(
+            saksbehandlingService.finnEllerOpprettSakForInntektsmelding(
                 any(),
                 match { it.contentEquals("aktorId") },
                 match { it.contentEquals("AR-123") }
@@ -78,7 +78,7 @@ class InntektsmeldingBehandlerTest {
 
         inntektsmeldingBehandler.behandle("arkivId", "AR-123")
 
-        verify { saksbehandlingService.behandleInntektsmelding(any(), any(), any()) }
+        verify { saksbehandlingService.finnEllerOpprettSakForInntektsmelding(any(), any(), any()) }
         verify { journalpostService.ferdigstillJournalpost(match { it.contentEquals("saksId") }, any()) }
         verify { aivenInntektsmeldingProducer.leggMottattInntektsmeldingPåTopics(any()) }
     }
@@ -100,7 +100,7 @@ class InntektsmeldingBehandlerTest {
 
         inntektsmeldingBehandler.behandle("arkivId", "AR-123")
 
-        verify(exactly = 0) { saksbehandlingService.behandleInntektsmelding(any(), any(), any()) }
+        verify(exactly = 0) { saksbehandlingService.finnEllerOpprettSakForInntektsmelding(any(), any(), any()) }
         verify(exactly = 0) { journalpostService.ferdigstillJournalpost(any(), any()) }
     }
 
@@ -121,7 +121,7 @@ class InntektsmeldingBehandlerTest {
 
         inntektsmeldingBehandler.behandle("arkivId", "AR-123")
 
-        verify(exactly = 0) { saksbehandlingService.behandleInntektsmelding(any(), any(), any()) }
+        verify(exactly = 0) { saksbehandlingService.finnEllerOpprettSakForInntektsmelding(any(), any(), any()) }
         verify(exactly = 0) { journalpostService.ferdigstillJournalpost(any(), any()) }
     }
 }
