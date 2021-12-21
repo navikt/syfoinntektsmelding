@@ -41,19 +41,9 @@ class Metrikk {
         "Metrikker for inntektsmeldinger kobling", "type"
     )
 
-    val INNTEKTSMELDINGSAKSIDFRASYFO = proseseringsMetrikker(
-        "syfoinntektsmelding_sak_syfo",
-        "Henter eksisterende sak", "type"
-    )
-
-    val INNTEKTSMELDINGSAKSIDFRADB = proseseringsMetrikker(
-        "syfoinntektsmelding_sak_db",
-        "Bruker sakId som er lagret i db", "type"
-    )
-
-    val INNTEKTSMELDINGNYSAK = proseseringsMetrikker(
-        "syfoinntektsmelding_sak_ny",
-        "Oppretter ny sak", "type"
+    val SAK = proseseringsMetrikker(
+        "syfoinntektsmelding_sak",
+        "Henter eksisterende sak", "type", "syfo", "ny", "db"
     )
 
     val INNTEKTSMELDINGSYKEPENGERUTLAND = proseseringsMetrikker(
@@ -184,9 +174,9 @@ class Metrikk {
 
     fun tellOverlappendeInntektsmelding() = OVERLAPPENDEINNTEKTSMELDING.labels("info", OVERLAPPENDE).inc()
 
-    fun tellInntektsmeldingSaksIdFraSyfo() = INNTEKTSMELDINGSAKSIDFRASYFO.labels("info", SAK_FRA_SYFO).inc()
-    fun tellInntektsmeldingSaksIdFraDB() = INNTEKTSMELDINGSAKSIDFRADB.labels("info", SAK_FRA_SYFO).inc()
-    fun tellInntektsmeldingNySak() = INNTEKTSMELDINGNYSAK.labels("info", NY_SAK).inc()
+    fun tellInntektsmeldingSaksIdFraSyfo() = SAK.labels("info", SAK_FRA_SYFO).inc()
+    fun tellInntektsmeldingSaksIdFraDB() = SAK.labels("info", FRA_DB).inc()
+    fun tellInntektsmeldingNySak() = SAK.labels("info", NY_SAK).inc()
 
     fun tellInntektsmeldingSykepengerUtland() = INNTEKTSMELDINGSYKEPENGERUTLAND.labels("info").inc()
 
@@ -236,7 +226,8 @@ class Metrikk {
 
     companion object {
         private const val OVERLAPPENDE = "overlappende"
-        private const val SAK_FRA_SYFO = "sakFraSyfo"
-        private const val NY_SAK = "nySak"
+        private const val SAK_FRA_SYFO = "syfo"
+        private const val NY_SAK = "ny"
+        private const val FRA_DB = "db"
     }
 }

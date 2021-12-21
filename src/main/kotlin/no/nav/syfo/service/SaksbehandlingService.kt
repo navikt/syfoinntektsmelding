@@ -48,7 +48,7 @@ class SaksbehandlingService(
         }
         if (tilhorendeInntektsmelding?.sakId.isNullOrEmpty()) {
             val sammenslattPeriode = sammenslattPeriode(inntektsmelding.arbeidsgiverperioder)
-            val saksId = finnSaksId(inntektsmelding, aktorId, sammenslattPeriode)
+            val saksId = hentSakId(inntektsmelding, aktorId, sammenslattPeriode)
             if (saksId.isNullOrEmpty()) {
                 metrikk.tellInntektsmeldingNySak()
                 return opprettSak(aktorId, arkivReferanse)
@@ -61,7 +61,7 @@ class SaksbehandlingService(
         }
     }
 
-    private fun finnSaksId(
+    private fun hentSakId(
         inntektsmelding: Inntektsmelding,
         aktorId: String,
         sammenslattPeriode: Periode?
