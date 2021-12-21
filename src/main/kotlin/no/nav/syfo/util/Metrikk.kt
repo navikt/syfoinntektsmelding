@@ -38,22 +38,22 @@ class Metrikk {
 
     val OVERLAPPENDEINNTEKTSMELDING = proseseringsMetrikker(
         "syfoinntektsmelding_inntektsmeldinger_kobling",
-        "Metrikker for inntektsmeldinger kobling", "type", "kobling"
+        "Metrikker for inntektsmeldinger kobling", "type"
     )
 
     val INNTEKTSMELDINGSAKSIDFRASYFO = proseseringsMetrikker(
-        "syfoinntektsmelding_inntektsmeldinger_kobling",
-        "Metrikker for inntektsmeldinger kobling", "type", "kobling"
+        "syfoinntektsmelding_sak_syfo",
+        "Henter eksisterende sak", "type"
     )
 
     val INNTEKTSMELDINGSAKSIDFRADB = proseseringsMetrikker(
-        "syfoinntektsmelding_inntektsmeldinger_kobling",
-        "Metrikker for inntektsmeldinger kobling", "type", "kobling"
+        "syfoinntektsmelding_sak_db",
+        "Bruker sakId som er lagret i db", "type"
     )
 
     val INNTEKTSMELDINGNYSAK = proseseringsMetrikker(
-        "syfoinntektsmelding_inntektsmeldinger_kobling",
-        "Metrikker for inntektsmeldinger kobling", "type", "kobling"
+        "syfoinntektsmelding_sak_ny",
+        "Oppretter ny sak", "type"
     )
 
     val INNTEKTSMELDINGSYKEPENGERUTLAND = proseseringsMetrikker(
@@ -186,7 +186,6 @@ class Metrikk {
 
     fun tellInntektsmeldingSaksIdFraSyfo() = INNTEKTSMELDINGSAKSIDFRASYFO.labels("info", SAK_FRA_SYFO).inc()
     fun tellInntektsmeldingSaksIdFraDB() = INNTEKTSMELDINGSAKSIDFRADB.labels("info", SAK_FRA_SYFO).inc()
-
     fun tellInntektsmeldingNySak() = INNTEKTSMELDINGNYSAK.labels("info", NY_SAK).inc()
 
     fun tellInntektsmeldingSykepengerUtland() = INNTEKTSMELDINGSYKEPENGERUTLAND.labels("info").inc()

@@ -53,6 +53,7 @@ class SaksbehandlingService(
                 metrikk.tellInntektsmeldingNySak()
                 return opprettSak(aktorId, arkivReferanse)
             }
+            metrikk.tellInntektsmeldingSaksIdFraSyfo()
             return saksId
         } else {
             metrikk.tellInntektsmeldingSaksIdFraDB()
