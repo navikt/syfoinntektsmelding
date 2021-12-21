@@ -46,7 +46,7 @@ class JoarkHendelseKafkaClient(props: MutableMap<String, Any>, topicName: String
 
             lastThrown = null
 
-            if (records?.count() != null && records.count() > 0){
+            if (records?.count() != null && records.count() > 0) {
                 log.info("JoarkHendelse: Fikk ${records.count()} meldinger med offsets ${records.map { it.offset() }.joinToString(", ")}")
             }
             return currentBatch

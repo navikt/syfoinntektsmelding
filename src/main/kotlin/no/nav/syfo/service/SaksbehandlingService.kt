@@ -21,54 +21,60 @@ class SaksbehandlingService(
 
     val log = log()
 
-    private fun helper(perioder: List<Periode>, periode: Periode): Boolean {
+    private fun harOverlappendePerioder(perioder: List<Periode>, periode: Periode): Boolean {
         return perioder.stream()
             .anyMatch { p -> DateUtil.overlapperPerioder(p, periode) }
     }
 
-    private fun finnTilhorendeInntektsmelding(inntektsmelding: Inntektsmelding, aktorId: String): Inntektsmelding? {
+    /**
+     * Finner første inntektsmelding for aktørId som matcher arbeidsgiverperiodene
+     */
+    private fun finnInntektsmeldingMedArbeidsgiverperioder(arbeidsgiverperioder: List<Periode>, aktorId: String): Inntektsmelding? {
         return inntektsmeldingService.finnBehandledeInntektsmeldinger(aktorId)
             .firstOrNull { im ->
-                im.arbeidsgiverperioder
-                    .any { p -> helper(inntektsmelding.arbeidsgiverperioder, p) }
+                im.arbeidsgiverperioder.any { p ->
+                    harOverlappendePerioder(arbeidsgiverperioder, p)
+                }
             }
     }
 
-    fun behandleInntektsmelding(inntektsmelding: Inntektsmelding, aktorId: String, arkivReferanse: String): String {
-
-        val tilhorendeInntektsmelding = finnTilhorendeInntektsmelding(inntektsmelding, aktorId)
-            ?.apply {
-                log.info("Fant overlappende inntektsmelding, bruker samme saksId: {}", this.sakId)
-                metrikk.tellOverlappendeInntektsmelding()
+    /**
+     * Returnerer saksId
+     */
+    fun finnEllerOpprettSakForInntektsmelding(inntektsmelding: Inntektsmelding, aktorId: String, arkivReferanse: String): String {
+        val tilhorendeInntektsmelding = finnInntektsmeldingMedArbeidsgiverperioder(inntektsmelding.arbeidsgiverperioder, aktorId)?.apply {
+            log.info("Fant overlappende inntektsmelding, bruker samme saksId: {}", this.sakId)
+            metrikk.tellOverlappendeInntektsmelding()
+        }
+        if (tilhorendeInntektsmelding?.sakId.isNullOrEmpty()) {
+            val sammenslattPeriode = sammenslattPeriode(inntektsmelding.arbeidsgiverperioder)
+            val saksId = hentSakId(inntektsmelding, aktorId, sammenslattPeriode)
+            if (saksId.isNullOrEmpty()) {
+                metrikk.tellInntektsmeldingNySak()
+                return opprettSak(aktorId, arkivReferanse)
             }
-
-        val sammenslattPeriode = sammenslattPeriode(inntektsmelding.arbeidsgiverperioder)
-
-        return finnSaksId(tilhorendeInntektsmelding, inntektsmelding, aktorId, sammenslattPeriode, arkivReferanse)
+            metrikk.tellInntektsmeldingSaksIdFraSyfo()
+            return saksId
+        } else {
+            metrikk.tellInntektsmeldingSaksIdFraDB()
+            return tilhorendeInntektsmelding?.sakId!!
+        }
     }
 
-    private fun finnSaksId(
-        tilhorendeInntektsmelding: Inntektsmelding?,
+    private fun hentSakId(
         inntektsmelding: Inntektsmelding,
         aktorId: String,
-        sammenslattPeriode: Periode?,
-        msgId: String
-    ): String {
+        sammenslattPeriode: Periode?
+    ): String? {
         return (
-            tilhorendeInntektsmelding
-                ?.sakId
-                ?: inntektsmelding.arbeidsgiverOrgnummer
-                    ?.let { eksisterendeSakService.finnEksisterendeSak(aktorId, sammenslattPeriode?.fom, sammenslattPeriode?.tom) }
-                ?: opprettSak(aktorId, msgId)
+            inntektsmelding.arbeidsgiverOrgnummer?.let { eksisterendeSakService.finnEksisterendeSak(aktorId, sammenslattPeriode?.fom, sammenslattPeriode?.tom) }
             )
     }
 
     @KtorExperimentalAPI
     private fun opprettSak(aktorId: String, msgId: String): String {
-        var saksId = ""
-        runBlocking {
-            saksId = sakClient.opprettSak(aktorId, msgId).id.toString()
+        return runBlocking {
+            sakClient.opprettSak(aktorId, msgId).id.toString()
         }
-        return saksId
     }
 }
