@@ -43,7 +43,7 @@ class Metrikk {
 
     val SAK = proseseringsMetrikker(
         "syfoinntektsmelding_sak",
-        "Henter eksisterende sak", "type", "syfo", "ny", "db"
+        "Hvordan man finner sakId", "type", "hent", "opprett", "eksisterer"
     )
 
     val INNTEKTSMELDINGSYKEPENGERUTLAND = proseseringsMetrikker(
@@ -61,29 +61,14 @@ class Metrikk {
         "Metrikker for stoppet bakgrunnsjob", "type"
     )
 
-    val INNTEKTSMELDINGFEIL = proseseringsMetrikker(
-        "syfoinntektsmelding_inntektsmeldingfeil",
-        "Metrikker for inntektsmelding feiler", "type"
-    )
-
     val BEHANDLINGSFEIL = proseseringsMetrikker(
         "syfoinntektsmelding_behandlingsfeil",
         "Metrikker for behandlet feiler", "type"
     )
 
-    val IKKEBEHANDLET = proseseringsMetrikker(
-        "syfoinntektsmelding_ikkebehandlet",
-        "Metrikker for ikke behandlet", "type"
-    )
-
     val JOURNALPOSTSTATUS = proseseringsMetrikker(
         "syfoinntektsmelding_journalpost",
         "Metrikk for journal post status", "type", "status"
-    )
-
-    val INNTEKTSMELDINGLAGTPÅTOPIC = proseseringsMetrikker(
-        "syfoinntektsmelding_inntektsmelding_lagt_pa_topic",
-        "Metrikker for InntektsmeldingLagt På topic", "type"
     )
 
     val INNTEKTSMELDINGUTENARKIVREFERANSE = proseseringsMetrikker(
@@ -174,9 +159,9 @@ class Metrikk {
 
     fun tellOverlappendeInntektsmelding() = OVERLAPPENDEINNTEKTSMELDING.labels("info", OVERLAPPENDE).inc()
 
-    fun tellInntektsmeldingSaksIdFraSyfo() = SAK.labels("info", SAK_FRA_SYFO).inc()
-    fun tellInntektsmeldingSaksIdFraDB() = SAK.labels("info", FRA_DB).inc()
-    fun tellInntektsmeldingNySak() = SAK.labels("info", NY_SAK).inc()
+    fun tellInntektsmeldingSaksIdFraSyfo() = SAK.labels("info", HENT).inc()
+    fun tellInntektsmeldingSaksIdFraDB() = SAK.labels("info", EKSISTERER).inc()
+    fun tellInntektsmeldingNySak() = SAK.labels("info", OPPRETT).inc()
 
     fun tellInntektsmeldingSykepengerUtland() = INNTEKTSMELDINGSYKEPENGERUTLAND.labels("info").inc()
 
@@ -184,15 +169,9 @@ class Metrikk {
 
     fun tellStoppetBakgrunnsjobb() = STOPPETBAKGRUNNSJOBB.labels("info").inc()
 
-    fun tellInntektsmeldingfeil() = INNTEKTSMELDINGFEIL.labels("error").inc()
-
     fun tellBehandlingsfeil(feiltype: Feiltype) = BEHANDLINGSFEIL.labels("${feiltype.navn}").inc()
 
-    fun tellIkkebehandlet() = IKKEBEHANDLET.labels("info").inc()
-
     fun tellJournalpoststatus(status: JournalStatus) = JOURNALPOSTSTATUS.labels("info", "${status.name}").inc()
-
-    fun tellInntektsmeldingLagtPåTopic() = INNTEKTSMELDINGLAGTPÅTOPIC.labels("info").inc()
 
     fun tellInntektsmeldingUtenArkivReferanse() = INNTEKTSMELDINGUTENARKIVREFERANSE.labels("info").inc()
 
@@ -226,8 +205,8 @@ class Metrikk {
 
     companion object {
         private const val OVERLAPPENDE = "overlappende"
-        private const val SAK_FRA_SYFO = "syfo"
-        private const val NY_SAK = "ny"
-        private const val FRA_DB = "db"
+        private const val HENT = "hent"
+        private const val OPPRETT = "opprett"
+        private const val EKSISTERER = "eksisterer"
     }
 }
