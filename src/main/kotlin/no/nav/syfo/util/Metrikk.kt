@@ -43,7 +43,7 @@ class Metrikk {
 
     val SAK = proseseringsMetrikker(
         "syfoinntektsmelding_sak",
-        "Hvordan man finner sakId", "type", "hent", "opprett", "eksisterer"
+        "Hvordan man finner sakId", "type"
     )
 
     val INNTEKTSMELDINGSYKEPENGERUTLAND = proseseringsMetrikker(
