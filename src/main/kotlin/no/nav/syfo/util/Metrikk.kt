@@ -38,7 +38,7 @@ class Metrikk {
 
     val OVERLAPPENDEINNTEKTSMELDING = proseseringsMetrikker(
         "syfoinntektsmelding_inntektsmeldinger_kobling",
-        "Metrikker for inntektsmeldinger kobling", "type"
+        "Metrikker for inntektsmeldinger kobling", "type", "kobling"
     )
 
     val SAK = proseseringsMetrikker(
