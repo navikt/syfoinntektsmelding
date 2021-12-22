@@ -1,4 +1,4 @@
-name: Slow tests
+name: Integrasjonstest
 
 on: [pull_request]
 

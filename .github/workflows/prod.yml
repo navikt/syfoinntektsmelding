@@ -1,4 +1,4 @@
-name: Release
+name: Produksjon
 
 on:
   release:
