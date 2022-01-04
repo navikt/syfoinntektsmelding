@@ -1,7 +1,6 @@
 package no.nav.syfo.client.dokarkiv
 
 import io.ktor.http.HttpStatusCode
-import io.ktor.util.KtorExperimentalAPI
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
@@ -14,7 +13,6 @@ class DokArkivClientTest {
 
     private val mockStsClient = mockk<AccessTokenProvider>(relaxed = true)
 
-    @KtorExperimentalAPI
     private lateinit var dokArkivClient: DokArkivClient
 
     @Test

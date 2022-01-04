@@ -22,7 +22,7 @@ const val OPPGAVETYPE_INNTEKTSMELDING = "INNT"
 const val OPPGAVETYPE_FORDELINGSOPPGAVE = "FDR"
 const val TEMA = "SYK"
 
-class OppgaveClient constructor (
+class OppgaveClient constructor(
     val oppgavebehndlingUrl: String,
     val tokenConsumer: TokenConsumer,
     val httpClient: HttpClient,

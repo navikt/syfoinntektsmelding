@@ -1,6 +1,5 @@
 package no.nav.syfo.service
 
-import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.runBlocking
 import log
 import no.nav.syfo.client.SakClient
@@ -11,7 +10,6 @@ import no.nav.syfo.util.DateUtil
 import no.nav.syfo.util.Metrikk
 import no.nav.syfo.util.sammenslattPeriode
 
-@KtorExperimentalAPI
 class SaksbehandlingService(
     private val eksisterendeSakService: EksisterendeSakService,
     private val inntektsmeldingService: InntektsmeldingService,
@@ -71,7 +69,6 @@ class SaksbehandlingService(
             )
     }
 
-    @KtorExperimentalAPI
     private fun opprettSak(aktorId: String, msgId: String): String {
         return runBlocking {
             sakClient.opprettSak(aktorId, msgId).id.toString()

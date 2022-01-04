@@ -10,7 +10,6 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
-import io.ktor.util.KtorExperimentalAPI
 import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
 import no.nav.syfo.helpers.retry
 import org.slf4j.LoggerFactory
@@ -20,7 +19,6 @@ import java.io.IOException
 // mennesker involvert, skal enhet settes til "9999".
 val AUTOMATISK_JOURNALFOERING_ENHET = "9999"
 
-@KtorExperimentalAPI
 class DokArkivClient(
     private val url: String,
     private val accessTokenProvider: AccessTokenProvider,
