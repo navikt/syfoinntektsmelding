@@ -159,7 +159,6 @@ class Metrikk {
 
     fun tellOverlappendeInntektsmelding() = OVERLAPPENDEINNTEKTSMELDING.labels("info", OVERLAPPENDE).inc()
 
-    fun tellInntektsmeldingSaksIdFraSyfo() = SAK.labels("info", HENT).inc()
     fun tellInntektsmeldingSaksIdFraDB() = SAK.labels("info", EKSISTERER).inc()
     fun tellInntektsmeldingNySak() = SAK.labels("info", OPPRETT).inc()
 

@@ -33,7 +33,6 @@ import no.nav.syfo.repository.InntektsmeldingRepositoryMock
 import no.nav.syfo.repository.InntektsmeldingService
 import no.nav.syfo.service.BehandleInngaaendeJournalConsumer
 import no.nav.syfo.service.BehandlendeEnhetConsumer
-import no.nav.syfo.service.EksisterendeSakService
 import no.nav.syfo.service.InngaaendeJournalConsumer
 import no.nav.syfo.service.JournalConsumer
 import no.nav.syfo.service.JournalpostService
@@ -70,7 +69,6 @@ class InntektsmeldingBehandlerTest2 {
     private var behandlendeEnhetConsumer = mockk<BehandlendeEnhetConsumer>(relaxed = true)
     var oppgaveClient = mockk<OppgaveClient>(relaxed = true)
     private var sakClient = mockk<SakClient>(relaxed = true)
-    private var eksisterendeSakService = mockk<EksisterendeSakService>(relaxed = true)
     private var journalpostService = mockk<JournalpostService>(relaxed = true)
 
     private var inntektsmeldingRepository = mockk<InntektsmeldingRepository>(relaxed = true)
@@ -100,7 +98,7 @@ class InntektsmeldingBehandlerTest2 {
             metrikk
         )
         saksbehandlingService =
-            SaksbehandlingService(eksisterendeSakService, inntektsmeldingService, sakClient, metrikk)
+            SaksbehandlingService(inntektsmeldingService, sakClient, metrikk)
         inntektsmeldingBehandler = InntektsmeldingBehandler(
             journalpostService,
             saksbehandlingService,
@@ -139,7 +137,6 @@ class InntektsmeldingBehandlerTest2 {
 
         every { aktorClient.getAktorId(any()) } answers { "aktorId_for_" + firstArg() }
 
-        every { eksisterendeSakService.finnEksisterendeSak(any(), any(), any()) } returns null
         every { behandlendeEnhetConsumer.hentBehandlendeEnhet(any(), any()) } returns "enhet"
         every { behandlendeEnhetConsumer.hentGeografiskTilknytning(any()) } returns
             GeografiskTilknytningData(geografiskTilknytning = "tilknytning", diskresjonskode = "")
@@ -201,37 +198,6 @@ class InntektsmeldingBehandlerTest2 {
 
         runBlocking {
             coVerify(exactly = 2) { sakClient.opprettSak(eq("778"), any()) }
-        }
-    }
-
-    @Test
-    fun `Bruker saksId fra sykeforløp om vi ikke har overlappende inntektsmelding`() {
-        every { eksisterendeSakService.finnEksisterendeSak(any(), any(), any()) } returnsMany listOf(null, "syfosak")
-
-        every { inngaaendeJournalConsumer.hentDokumentId("arkivId5") } returns inngaaendeJournal("arkivId5")
-        every { inngaaendeJournalConsumer.hentDokumentId("arkivId6") } returns inngaaendeJournal("arkivId6")
-
-        val dokumentResponse1 = lagDokumentRespons(LocalDate.of(2019, 1, 1), LocalDate.of(2019, 1, 16))
-        val dokumentResponse2 = lagDokumentRespons(LocalDate.of(2019, 2, 2), LocalDate.of(2019, 2, 16))
-
-        every {
-            safDokumentClient.hentDokument(any(), any())
-        } returnsMany listOf(dokumentResponse1.toByteArray(), dokumentResponse2.toByteArray())
-
-        every { aktorClient.getAktorId(any()) } returnsMany listOf("999", "999")
-
-        inntektsmeldingBehandler.behandle("arkivId5", "AR-5")
-        inntektsmeldingBehandler.behandle("arkivId6", "AR-6")
-
-        val inntektsmeldingMetas = inntektsmeldingService.finnBehandledeInntektsmeldinger("999")
-        Assertions.assertThat(inntektsmeldingMetas.size).isEqualTo(2)
-        Assertions.assertThat(inntektsmeldingMetas[0].sakId).isNotEqualTo(inntektsmeldingMetas[1].sakId)
-
-        Assertions.assertThat(inntektsmeldingMetas[0].sakId).isEqualTo("987")
-        Assertions.assertThat(inntektsmeldingMetas[1].sakId).isEqualTo("syfosak")
-
-        runBlocking {
-            coVerify(exactly = 1) { sakClient.opprettSak(any(), any()) }
         }
     }
 

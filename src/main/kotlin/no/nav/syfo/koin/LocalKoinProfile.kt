@@ -10,10 +10,8 @@ import no.nav.helse.arbeidsgiver.system.getString
 import no.nav.syfo.behandling.InntektsmeldingBehandler
 import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.client.SakClient
-import no.nav.syfo.client.SakConsumer
 import no.nav.syfo.client.TokenConsumer
 import no.nav.syfo.client.aktor.AktorClient
-import no.nav.syfo.client.azuread.AzureAdTokenConsumer
 import no.nav.syfo.client.dokarkiv.DokArkivClient
 import no.nav.syfo.client.saf.SafDokumentClient
 import no.nav.syfo.client.saf.SafJournalpostClient
@@ -44,7 +42,6 @@ import no.nav.syfo.repository.UtsattOppgaveRepositoryMockk
 import no.nav.syfo.repository.createHikariConfig
 import no.nav.syfo.service.BehandleInngaaendeJournalConsumer
 import no.nav.syfo.service.BehandlendeEnhetConsumer
-import no.nav.syfo.service.EksisterendeSakService
 import no.nav.syfo.service.InngaaendeJournalConsumer
 import no.nav.syfo.service.JournalConsumer
 import no.nav.syfo.service.JournalpostService
@@ -133,10 +130,9 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single { JournalConsumer(get(), get(), get()) } bind JournalConsumer::class
     single { Metrikk() } bind Metrikk::class
     single { JournalpostService(get(), get(), get(), get(), get()) } bind JournalpostService::class
-    single { EksisterendeSakService(get()) } bind EksisterendeSakService::class
     single { InntektsmeldingService(InntektsmeldingRepositoryImp(get()), get()) } bind InntektsmeldingService::class
     single { SakClient(config.getString("opprett_sak_url"), get(), get()) } bind SakClient::class
-    single { SaksbehandlingService(get(), get(), get(), get()) } bind SaksbehandlingService::class
+    single { SaksbehandlingService(get(), get(), get()) } bind SaksbehandlingService::class
     single { FeiletService(get()) } bind FeiletService::class
     single {
         JoarkInntektsmeldingHendelseProsessor(
@@ -176,22 +172,5 @@ fun localDevConfig(config: ApplicationConfig) = module {
         )
     } bind DokArkivClient::class
 
-    single {
-
-        SakConsumer(
-            get(),
-            get(),
-            config.getString("aad_syfoinntektsmelding_clientid_username"),
-            config.getString("sakconsumer_host_url")
-        )
-    } bind SakConsumer::class
-    single {
-        AzureAdTokenConsumer(
-            get(),
-            config.getString("aadaccesstoken_url"),
-            config.getString("aad_syfogsak_clientid_username"),
-            config.getString("aad_syfoinntektsmelding_clientid_password")
-        )
-    } bind AzureAdTokenConsumer::class
     single { ArbeidsgiverperiodeRepositoryImp(get()) } bind ArbeidsgiverperiodeRepository::class
 }
