@@ -14,10 +14,8 @@ import no.nav.syfo.MetrikkVarsler
 import no.nav.syfo.behandling.InntektsmeldingBehandler
 import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.client.SakClient
-import no.nav.syfo.client.SakConsumer
 import no.nav.syfo.client.TokenConsumer
 import no.nav.syfo.client.aktor.AktorClient
-import no.nav.syfo.client.azuread.AzureAdTokenConsumer
 import no.nav.syfo.client.dokarkiv.DokArkivClient
 import no.nav.syfo.client.norg.Norg2Client
 import no.nav.syfo.client.saf.SafDokumentClient
@@ -44,7 +42,6 @@ import no.nav.syfo.repository.InntektsmeldingService
 import no.nav.syfo.repository.UtsattOppgaveRepositoryImp
 import no.nav.syfo.service.BehandleInngaaendeJournalConsumer
 import no.nav.syfo.service.BehandlendeEnhetConsumer
-import no.nav.syfo.service.EksisterendeSakService
 import no.nav.syfo.service.InngaaendeJournalConsumer
 import no.nav.syfo.service.JournalConsumer
 import no.nav.syfo.service.JournalpostService
@@ -54,7 +51,6 @@ import no.nav.syfo.utsattoppgave.FeiletUtsattOppgaveMeldingProsessor
 import no.nav.syfo.utsattoppgave.UtsattOppgaveDAO
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil
-import org.koin.core.qualifier.StringQualifier
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import javax.sql.DataSource
@@ -101,26 +97,6 @@ fun prodConfig(config: ApplicationConfig) = module {
     single { Metrikk() } bind Metrikk::class
     single { BehandlendeEnhetConsumer(get(), get(), get()) } bind BehandlendeEnhetConsumer::class
     single { JournalpostService(get(), get(), get(), get(), get()) } bind JournalpostService::class
-
-    single {
-        AzureAdTokenConsumer(
-            get(StringQualifier("proxyHttpClient")),
-            config.getString("aadaccesstoken_url"),
-            config.getString("aad_syfoinntektsmelding_clientid_username"),
-            config.getString("aad_syfoinntektsmelding_clientid_password")
-        )
-    } bind AzureAdTokenConsumer::class
-
-    single {
-        SakConsumer(
-            get(),
-            get(),
-            config.getString("aad_syfogsak_clientid_username"),
-            config.getString("sakconsumer_host_url")
-        )
-    } bind SakConsumer::class
-
-    single { EksisterendeSakService(get()) } bind EksisterendeSakService::class
     single { InntektsmeldingRepositoryImp(get()) } bind InntektsmeldingRepository::class
     single { InntektsmeldingService(get(), get()) } bind InntektsmeldingService::class
     single { ArbeidsgiverperiodeRepositoryImp(get()) } bind ArbeidsgiverperiodeRepository::class
