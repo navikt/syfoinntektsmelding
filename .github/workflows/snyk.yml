@@ -3,7 +3,7 @@ name: Snyk
 on: [pull_request]
 
 jobs:
-  security:
+  Dependencies:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
@@ -13,4 +13,4 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
         with:
-          args: --org=helsearbeidsgiver --project-name=syfoinntektsmelding
+          args: --org=helsearbeidsgiver --project-name=syfoinntektsmelding --fail-on=patchable
