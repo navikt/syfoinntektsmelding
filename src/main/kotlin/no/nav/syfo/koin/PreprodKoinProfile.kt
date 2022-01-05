@@ -143,7 +143,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
     single { EksisterendeSakService(get()) } bind EksisterendeSakService::class
     single { InntektsmeldingService(get(), get()) } bind InntektsmeldingService::class
     single { SakClient(config.getString("opprett_sak_url"), get(), get()) } bind SakClient::class
-    single { SaksbehandlingService(get(), get(), get(), get()) } bind SaksbehandlingService::class
+    single { SaksbehandlingService(get(), get(), get()) } bind SaksbehandlingService::class
 
     single {
         JoarkHendelseKafkaClient(

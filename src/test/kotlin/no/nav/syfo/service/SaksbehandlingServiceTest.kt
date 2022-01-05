@@ -3,7 +3,6 @@ package no.nav.syfo.service
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.verify
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.client.SakClient
@@ -28,20 +27,17 @@ class SaksbehandlingServiceTest {
     var behandlendeEnhetConsumer = mockk<BehandlendeEnhetConsumer>(relaxed = true)
     private var aktoridConsumer = mockk<AktorClient>(relaxed = true)
     private var inntektsmeldingService = mockk<InntektsmeldingService>(relaxed = true)
-    private var eksisterendeSakService = mockk<EksisterendeSakService>(relaxed = true)
     private var sakClient = mockk<SakClient>(relaxed = true)
     private val metrikk = mockk<Metrikk>(relaxed = true)
-    // var utsattOppgaveService = mockk<UtsattOppgaveService>(relaxed = true)
 
     private var saksbehandlingService =
-        SaksbehandlingService(eksisterendeSakService, inntektsmeldingService, sakClient, metrikk)
+        SaksbehandlingService(inntektsmeldingService, sakClient, metrikk)
 
     @io.ktor.util.KtorExperimentalAPI
     @BeforeEach
     fun setup() {
         every { inntektsmeldingService.finnBehandledeInntektsmeldinger(any()) } returns emptyList()
         every { aktoridConsumer.getAktorId(any()) } returns "aktorid"
-        every { eksisterendeSakService.finnEksisterendeSak(any(), any(), any()) } returns "saksId"
         every {
             runBlocking {
                 sakClient.opprettSak(any(), any())
@@ -77,22 +73,6 @@ class SaksbehandlingServiceTest {
             førsteFraværsdag = LocalDate.now(),
             mottattDato = LocalDateTime.now()
         )
-    }
-
-    @Test
-    fun returnererSaksIdOmSakFinnes() {
-        val saksId = saksbehandlingService.finnEllerOpprettSakForInntektsmelding(lagInntektsmelding(), "aktorId", "")
-
-        assertThat(saksId).isEqualTo("saksId")
-    }
-
-    @Test
-    fun oppretterSakOmSakIkkeFinnes() {
-        every { eksisterendeSakService.finnEksisterendeSak(any(), any(), any()) } returns null
-
-        val saksId = saksbehandlingService.finnEllerOpprettSakForInntektsmelding(lagInntektsmelding(), "aktorId", "")
-
-        assertThat(saksId).isEqualTo("987")
     }
 
     @io.ktor.util.KtorExperimentalAPI
@@ -197,61 +177,6 @@ class SaksbehandlingServiceTest {
         assertThat(sakId).isEqualTo("1")
         runBlocking {
             coVerify(exactly = 0) { sakClient.opprettSak(any(), any()) }
-        }
-    }
-
-    @Test
-    fun kallerHentSakMedFomTomFraArbeidsgiverperiodeIInntektsmeldingMedEnPeriode() {
-        saksbehandlingService.finnEllerOpprettSakForInntektsmelding(
-            lagInntektsmelding()
-                .copy(
-                    arbeidsgiverperioder = listOf(
-                        Periode(
-                            fom = LocalDate.of(2019, 6, 6),
-                            tom = LocalDate.of(2019, 6, 10)
-                        )
-                    )
-                ),
-            "aktor", ""
-        )
-
-        verify {
-            eksisterendeSakService.finnEksisterendeSak(
-                "aktor",
-                LocalDate.of(2019, 6, 6),
-                LocalDate.of(2019, 6, 10)
-            )
-        }
-    }
-
-    @Test
-    fun kallerHentSakMedTidligsteFomOgSenesteTomFraArbeidsgiverperiodeIInntektsmeldingFlerePerioder() {
-        saksbehandlingService.finnEllerOpprettSakForInntektsmelding(
-            lagInntektsmelding()
-                .copy(
-                    arbeidsgiverperioder = listOf(
-                        Periode(
-                            fom = LocalDate.of(2019, 6, 6),
-                            tom = LocalDate.of(2019, 6, 10)
-                        ),
-                        Periode(
-                            fom = LocalDate.of(2019, 6, 1),
-                            tom = LocalDate.of(2019, 6, 5)
-                        ),
-                        Periode(
-                            fom = LocalDate.of(2019, 6, 11),
-                            tom = LocalDate.of(2019, 6, 14)
-                        )
-                    )
-                ),
-            "aktor", ""
-        )
-        verify {
-            eksisterendeSakService.finnEksisterendeSak(
-                "aktor",
-                LocalDate.of(2019, 6, 1),
-                LocalDate.of(2019, 6, 14)
-            )
         }
     }
 }

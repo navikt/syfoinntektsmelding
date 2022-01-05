@@ -13,7 +13,6 @@ import no.nav.syfo.util.sammenslattPeriode
 
 @KtorExperimentalAPI
 class SaksbehandlingService(
-    private val eksisterendeSakService: EksisterendeSakService,
     private val inntektsmeldingService: InntektsmeldingService,
     private val sakClient: SakClient,
     private val metrikk: Metrikk
@@ -47,28 +46,12 @@ class SaksbehandlingService(
             metrikk.tellOverlappendeInntektsmelding()
         }
         if (tilhorendeInntektsmelding?.sakId.isNullOrEmpty()) {
-            val sammenslattPeriode = sammenslattPeriode(inntektsmelding.arbeidsgiverperioder)
-            val saksId = hentSakId(inntektsmelding, aktorId, sammenslattPeriode)
-            if (saksId.isNullOrEmpty()) {
-                metrikk.tellInntektsmeldingNySak()
-                return opprettSak(aktorId, arkivReferanse)
-            }
-            metrikk.tellInntektsmeldingSaksIdFraSyfo()
-            return saksId
+            metrikk.tellInntektsmeldingNySak()
+            return opprettSak(aktorId, arkivReferanse)
         } else {
             metrikk.tellInntektsmeldingSaksIdFraDB()
             return tilhorendeInntektsmelding?.sakId!!
         }
-    }
-
-    private fun hentSakId(
-        inntektsmelding: Inntektsmelding,
-        aktorId: String,
-        sammenslattPeriode: Periode?
-    ): String? {
-        return (
-            inntektsmelding.arbeidsgiverOrgnummer?.let { eksisterendeSakService.finnEksisterendeSak(aktorId, sammenslattPeriode?.fom, sammenslattPeriode?.tom) }
-            )
     }
 
     @KtorExperimentalAPI
