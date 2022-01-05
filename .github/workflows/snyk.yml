@@ -3,7 +3,7 @@ name: Snyk
 on: [pull_request]
 
 jobs:
-  security:
+  Dependencies:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
