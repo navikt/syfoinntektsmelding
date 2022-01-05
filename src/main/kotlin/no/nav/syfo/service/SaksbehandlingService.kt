@@ -9,7 +9,6 @@ import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.repository.InntektsmeldingService
 import no.nav.syfo.util.DateUtil
 import no.nav.syfo.util.Metrikk
-import no.nav.syfo.util.sammenslattPeriode
 
 @KtorExperimentalAPI
 class SaksbehandlingService(
