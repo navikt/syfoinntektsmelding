@@ -4,7 +4,7 @@ val version = "1.0"
 val mainClass = "no.nav.syfo.AppKt"
 val group = "no.nav.syfo"
 // Dependencies
-val micrometerVersion = "1.7.5"
+val micrometerVersion = "1.8.1"
 val flywayVersion = "8.0.2"
 val cxfVersion = "3.4.4"
 val kotlinVersion = "1.4.10"
