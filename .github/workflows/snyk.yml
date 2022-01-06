@@ -1,6 +1,9 @@
 name: Snyk
 
-on: [pull_request]
+on:
+  push:
+    branches:
+      - '!dependabot/*'
 
 jobs:
   snyk:
