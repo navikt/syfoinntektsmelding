@@ -590,7 +590,7 @@
     },
     {
       "title": "Gosysoppgaver",
-      "description": "Gosys oppgaver status siste 30 dager",
+      "description": "Gosys oppgaver status siste 30 dager.",
       "specType": "echart",
       "spec": {
         "url": "",
@@ -607,7 +607,7 @@
           "legend": {
             "left": "center",
             "data": [
-              "Forkastet",
+              "Ferdigbehandlet/Forkastet",
               "Utsatt",
               "Opprettet",
               "Opprettet pga Timeout"
@@ -628,7 +628,7 @@
           ],
           "series": [
             {
-              "name": "Forkastet",
+              "name": "Ferdigbehandlet/Forkastet",
               "data": [
                 @oppgForkastet
               ],

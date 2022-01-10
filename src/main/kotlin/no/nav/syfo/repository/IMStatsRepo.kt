@@ -82,7 +82,8 @@ class IMStatsRepoImpl(
     override fun getWeeklyStats(): List<IMWeeklyStats> {
         val query = """
             SELECT
-            	extract('week' from behandlet) as uke,
+                extract('week' from date_trunc('week',behandlet)) as uke,
+                extract('year' from date_trunc('week',behandlet)) as year,
                 count(*) as total,
                 count(*) filter (where data -> 'avsenderSystem' ->> 'navn' = 'AltinnPortal') as fra_altinn, -- O1A
                 count(*) filter (where data -> 'avsenderSystem' ->> 'navn' != 'AltinnPortal') as fra_lps, -- O1B
@@ -94,7 +95,8 @@ class IMStatsRepoImpl(
                 count(*) filter (where data ->> 'arsakTilInnsending' = 'Ny') as arsak_ny, -- 05A
                 count(*) filter (where data ->> 'arsakTilInnsending' = 'Endring') as arsak_endring -- 05B
             from inntektsmelding
-            group by extract('week' from behandlet);
+            group by  extract('year' from date_trunc('week',behandlet)), extract('week' from date_trunc('week',behandlet))
+            order by  extract('year' from date_trunc('week',behandlet)), extract('week' from date_trunc('week',behandlet));
         """.trimIndent()
 
         ds.connection.use {
@@ -185,7 +187,8 @@ class IMStatsRepoImpl(
     override fun getWeeklyQualityStats(): List<IMWeeklyQualityStats> {
         val query = """
             select
-                extract('week' from behandlet) as uke,
+                extract('week' from date_trunc('week',behandlet)) as uke,
+                extract('year' from date_trunc('week',behandlet)) as year,
                 count(*) as total,
                 count(*) filter (where (data ->> 'arbeidsforholdId') is null or (data ->> 'arbeidsforholdId') = '') as ingen_arbeidsforhold_id, -- K1A
                     count(*) filter (where (data ->> 'arbeidsforholdId') is not null and (data ->> 'arbeidsforholdId') != '') as har_arbeidsforhold_id, -- K1B
@@ -209,7 +212,8 @@ class IMStatsRepoImpl(
                     count(*) filter (where (data -> 'refusjon' ->> 'beloepPrMnd')::numeric = 0 and data ->> 'begrunnelseRedusert' = 'IkkeFravaer') as ingen_fravaer, -- K6A
                     count(*) filter (where (data -> 'refusjon' ->> 'beloepPrMnd')::numeric > 0 and data ->> 'begrunnelseRedusert' = 'IkkeFravaer') as ingen_fravaer_med_refusjon -- K6B
             from inntektsmelding
-            group by extract('week' from behandlet);
+            group by  extract('year' from date_trunc('week',behandlet)), extract('week' from date_trunc('week',behandlet))
+            order by  extract('year' from date_trunc('week',behandlet)), extract('week' from date_trunc('week',behandlet));
         """.trimIndent()
 
         ds.connection.use {
