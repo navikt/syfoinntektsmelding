@@ -47,7 +47,8 @@ open class UtsattOppgaveRepositoryImpTest : SystemTestBase() {
                 timeout = now().minusHours(1),
                 tilstand = Tilstand.Utsatt,
                 gosysOppgaveId = null,
-                oppdatert = null
+                oppdatert = null,
+                speil = false
             )
         )
 
@@ -70,7 +71,8 @@ open class UtsattOppgaveRepositoryImpTest : SystemTestBase() {
                 timeout = now().minusHours(1),
                 tilstand = Tilstand.Utsatt,
                 gosysOppgaveId = null,
-                oppdatert = null
+                oppdatert = null,
+                speil = false
             )
         ).id
 
@@ -85,7 +87,8 @@ open class UtsattOppgaveRepositoryImpTest : SystemTestBase() {
                 timeout = now().minusHours(1),
                 tilstand = Tilstand.Utsatt,
                 gosysOppgaveId = null,
-                oppdatert = null
+                oppdatert = null,
+                speil = false
             )
         ).id
 
@@ -108,7 +111,8 @@ open class UtsattOppgaveRepositoryImpTest : SystemTestBase() {
                 tilstand = Tilstand.Utsatt,
                 enhet = "",
                 gosysOppgaveId = null,
-                oppdatert = null
+                oppdatert = null,
+                speil = false
             )
         )
 
@@ -176,7 +180,8 @@ open class UtsattOppgaveRepositoryImpTest : SystemTestBase() {
                 timeout = now().minusHours(1),
                 tilstand = Tilstand.Utsatt,
                 gosysOppgaveId = null,
-                oppdatert = null
+                oppdatert = null,
+                speil = false
             )
         )
 
@@ -192,7 +197,8 @@ open class UtsattOppgaveRepositoryImpTest : SystemTestBase() {
                 timeout = now().minusHours(1),
                 tilstand = Tilstand.Utsatt,
                 oppdatert = null,
-                gosysOppgaveId = null
+                gosysOppgaveId = null,
+                speil = false
             )
         )
 
@@ -219,6 +225,7 @@ open class UtsattOppgaveRepositoryImpTest : SystemTestBase() {
         tilstand = tilstand,
         enhet = "",
         gosysOppgaveId = null,
-        oppdatert = null
+        oppdatert = null,
+        speil = false
     )
 }

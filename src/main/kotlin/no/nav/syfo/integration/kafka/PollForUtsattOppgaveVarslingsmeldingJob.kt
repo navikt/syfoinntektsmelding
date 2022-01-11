@@ -43,7 +43,8 @@ class PollForUtsattOppgaveVarslingsmeldingJob(
                             OppgaveOppdatering(
                                 hendelse.dokumentId,
                                 hendelse.oppdateringstype.tilHandling(),
-                                hendelse.timeout
+                                hendelse.timeout,
+                                hendelse.oppdateringstype
                             )
                         )
                     } catch (ex: Exception) {

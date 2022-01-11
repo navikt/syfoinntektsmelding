@@ -73,7 +73,8 @@ class InntektsmeldingBehandler(
                         tilstand = Tilstand.Utsatt,
                         timeout = LocalDateTime.now().plusHours(OPPRETT_OPPGAVE_FORSINKELSE),
                         gosysOppgaveId = null,
-                        oppdatert = null
+                        oppdatert = null,
+                        speil = false
                     )
                 )
                 log.info("opprettet utsatt oppgave på ${inntektsmelding.arkivRefereranse}")

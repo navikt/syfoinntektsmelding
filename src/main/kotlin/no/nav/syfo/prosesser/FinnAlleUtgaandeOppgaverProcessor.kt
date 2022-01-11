@@ -30,7 +30,7 @@ class FinnAlleUtgaandeOppgaverProcessor(
             .finnAlleUtgåtteOppgaver()
             .forEach {
                 try {
-                    opprettOppgaveIGosys(it, oppgaveClient, utsattOppgaveDAO, behandlendeEnhetConsumer)
+                    opprettOppgaveIGosys(it, oppgaveClient, utsattOppgaveDAO, behandlendeEnhetConsumer, it.speil)
                     it.tilstand = Tilstand.OpprettetTimeout
                     it.oppdatert = LocalDateTime.now()
                     metrikk.tellUtsattOppgave_OpprettTimeout()

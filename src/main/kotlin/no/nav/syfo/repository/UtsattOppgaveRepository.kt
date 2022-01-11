@@ -81,8 +81,8 @@ class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepo
 
     override fun opprett(uo: UtsattOppgaveEntitet): UtsattOppgaveEntitet {
         val insertStatement =
-            """INSERT INTO UTSATT_OPPGAVE (INNTEKTSMELDING_ID, ARKIVREFERANSE, FNR, AKTOR_ID, SAK_ID, JOURNALPOST_ID, TIMEOUT, TILSTAND, GOSYS_OPPGAVE_ID, OPPDATERT)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """INSERT INTO UTSATT_OPPGAVE (INNTEKTSMELDING_ID, ARKIVREFERANSE, FNR, AKTOR_ID, SAK_ID, JOURNALPOST_ID, TIMEOUT, TILSTAND, GOSYS_OPPGAVE_ID, OPPDATERT, SPEIL)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         RETURNING *;""".trimMargin()
 
         val utsattOppgaver = ArrayList<UtsattOppgaveEntitet>()
@@ -99,6 +99,7 @@ class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepo
             ps.setString(8, uo.tilstand.name)
             ps.setString(9, uo.gosysOppgaveId)
             ps.setTimestamp(10, Timestamp.valueOf(uo.oppdatert ?: LocalDateTime.now()))
+            ps.setBoolean(11, uo.speil)
             val res = ps.executeQuery()
             return resultLoop(res, utsattOppgaver).first()
         }
@@ -117,7 +118,8 @@ class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepo
                 TILSTAND =  ?,
                 ENHET = ?,
                 GOSYS_OPPGAVE_ID = ?,
-                OPPDATERT = ?
+                OPPDATERT = ?,
+                SPEIL = ?
             WHERE OPPGAVE_ID = ?""".trimMargin()
 
         ds.connection.use {
@@ -134,7 +136,7 @@ class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepo
             ps.setString(10, uo.gosysOppgaveId)
             ps.setTimestamp(11, Timestamp.valueOf(uo.oppdatert ?: LocalDateTime.now()))
             ps.setInt(12, uo.id)
-
+            ps.setBoolean(13, uo.speil)
             ps.executeUpdate()
             return uo
         }
@@ -174,7 +176,8 @@ class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepo
                     tilstand = Tilstand.valueOf(res.getString("TILSTAND")),
                     enhet = res.getString("ENHET"),
                     gosysOppgaveId = res.getString("GOSYS_OPPGAVE_ID"),
-                    oppdatert = null
+                    oppdatert = null,
+                    speil = res.getBoolean("SPEIL")
                 )
             )
         }

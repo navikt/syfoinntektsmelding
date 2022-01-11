@@ -21,8 +21,12 @@ import java.time.LocalDate
 const val OPPGAVETYPE_INNTEKTSMELDING = "INNT"
 const val OPPGAVETYPE_FORDELINGSOPPGAVE = "FDR"
 const val TEMA = "SYK"
+const val BEHANDLINGSTEMA_SPEIL = "ab0455"
+const val BEHANDLINGSTYPE_UTLAND = "ae0106"
+const val BEHANDLINGSTYPE_NORMAL = "ab0061"
 
-class OppgaveClient constructor (
+
+class OppgaveClient constructor(
     val oppgavebehndlingUrl: String,
     val tokenConsumer: TokenConsumer,
     val httpClient: HttpClient,
@@ -73,7 +77,8 @@ class OppgaveClient constructor (
         journalpostId: String,
         tildeltEnhetsnr: String,
         aktoerId: String,
-        gjelderUtland: Boolean
+        gjelderUtland: Boolean,
+        gjelderSpeil: Boolean
     ): OppgaveResultat {
         val eksisterendeOppgave = hentHvisOppgaveFinnes(OPPGAVETYPE_INNTEKTSMELDING, journalpostId)
         metrikk.tellOpprettOppgave(eksisterendeOppgave != null)
@@ -81,17 +86,19 @@ class OppgaveClient constructor (
             log.info("Det finnes allerede journalføringsoppgave for journalpost $journalpostId")
             return eksisterendeOppgave
         }
-
         var behandlingstype: String? = null
         var behandlingstema: String? = null
-
-        if (gjelderUtland) {
-            log.info("Gjelder utland")
-            behandlingstype = "ae0106"
+        if (gjelderSpeil) {
+            log.info("Gjelder speil")
+            behandlingstema = BEHANDLINGSTEMA_SPEIL
         } else {
-            behandlingstema = "ab0061"
+            if (gjelderUtland) {
+                log.info("Gjelder utland")
+                behandlingstype = BEHANDLINGSTYPE_UTLAND
+            } else {
+                behandlingstema = BEHANDLINGSTYPE_NORMAL
+            }
         }
-
         val opprettOppgaveRequest = OpprettOppgaveRequest(
             tildeltEnhetsnr = tildeltEnhetsnr,
             aktoerId = aktoerId,

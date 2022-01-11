@@ -7,5 +7,6 @@ create table UTSATT_OPPGAVE (
     SAK_ID VARCHAR(50) not null,
     JOURNALPOST_ID VARCHAR(100) not null,
     TIMEOUT timestamp not null,
-    TILSTAND VARCHAR(100) not null
+    TILSTAND VARCHAR(100) not null,
+    SPEIL BOOL NOT NULL
 )

@@ -34,7 +34,7 @@ class OppgaveClientTest {
     fun henterEksisterendeOppgave() {
         runBlocking {
             oppgaveClient = OppgaveClient("url", tokenConsumer, buildHttpClientJson(HttpStatusCode.OK, lagOppgaveResponse()), metrikk)
-            val resultat = oppgaveClient.opprettOppgave("sakId", "123", "tildeltEnhet", "aktoerid", false)
+            val resultat = oppgaveClient.opprettOppgave("sakId", "123", "tildeltEnhet", "aktoerid", false, false)
             assertThat(resultat.oppgaveId).isEqualTo(OPPGAVE_ID)
             assertThat(resultat.duplikat).isTrue
         }
@@ -45,7 +45,7 @@ class OppgaveClientTest {
     fun oppretterNyOppgave() {
         runBlocking {
             oppgaveClient = OppgaveClient("url", tokenConsumer, buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk)
-            val resultat = oppgaveClient.opprettOppgave("sakId", "123", "tildeltEnhet", "aktoerid", false)
+            val resultat = oppgaveClient.opprettOppgave("sakId", "123", "tildeltEnhet", "aktoerid", false, false)
             val requestVerdier = hentRequestInnhold(oppgaveClient.httpClient)
             assertThat(resultat.oppgaveId).isNotEqualTo(OPPGAVE_ID)
             assertThat(resultat.duplikat).isFalse
@@ -85,9 +85,20 @@ class OppgaveClientTest {
     fun gjelderUtlandFårBehandlingstype() {
         runBlocking {
             oppgaveClient = OppgaveClient("url", tokenConsumer, buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk)
-            oppgaveClient.opprettOppgave("sakId", "123", "tildeltEnhet", "aktoerid", true)
+            oppgaveClient.opprettOppgave("sakId", "123", "tildeltEnhet", "aktoerid", true, false)
             val requestVerdier = hentRequestInnhold(oppgaveClient.httpClient)
             assertThat(requestVerdier?.behandlingstype).isEqualTo("ae0106")
+        }
+    }
+
+    @Test
+    @KtorExperimentalAPI
+    fun gjelderSpeilBehandlingstype() {
+        runBlocking {
+            oppgaveClient = OppgaveClient("url", tokenConsumer, buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk)
+            oppgaveClient.opprettOppgave("sakId", "123", "tildeltEnhet", "aktoerid", true, true)
+            val requestVerdier = hentRequestInnhold(oppgaveClient.httpClient)
+            assertThat(requestVerdier?.behandlingstema).isEqualTo("ab0455")
         }
     }
 

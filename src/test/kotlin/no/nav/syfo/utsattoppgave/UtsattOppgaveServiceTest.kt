@@ -51,6 +51,7 @@ open class UtsattOppgaveServiceTest {
         inntektsmeldingId = UUID.randomUUID().toString(),
         tilstand = tilstand,
         gosysOppgaveId = null,
-        oppdatert = null
+        oppdatert = null,
+        speil = false
     )
 }
