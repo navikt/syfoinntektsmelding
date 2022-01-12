@@ -25,7 +25,6 @@ const val BEHANDLINGSTEMA_SPEIL = "ab0455"
 const val BEHANDLINGSTYPE_UTLAND = "ae0106"
 const val BEHANDLINGSTYPE_NORMAL = "ab0061"
 
-
 class OppgaveClient constructor(
     val oppgavebehndlingUrl: String,
     val tokenConsumer: TokenConsumer,

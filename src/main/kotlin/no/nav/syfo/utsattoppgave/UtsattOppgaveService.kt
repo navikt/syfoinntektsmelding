@@ -21,8 +21,6 @@ class UtsattOppgaveService(
     private val metrikk: Metrikk
 ) {
 
-
-
     val log = LoggerFactory.getLogger(UtsattOppgaveService::class.java)!!
 
     fun prosesser(oppdatering: OppgaveOppdatering) {
@@ -78,8 +76,6 @@ class UtsattOppgaveService(
         utsattOppgaveDAO.opprett(utsattOppgave)
     }
 }
-
-
 
 @KtorExperimentalAPI
 fun opprettOppgaveIGosys(
