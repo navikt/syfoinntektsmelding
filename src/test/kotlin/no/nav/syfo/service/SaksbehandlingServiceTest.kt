@@ -81,7 +81,7 @@ class SaksbehandlingServiceTest {
         saksbehandlingService.finnEllerOpprettSakForInntektsmelding(lagInntektsmelding(), "aktorId", "")
 
         runBlocking {
-            coVerify(exactly = 0) { oppgaveClient.opprettOppgave(any(), any(), any(), any(), any()) }
+            coVerify(exactly = 0) { oppgaveClient.opprettOppgave(any(), any(), any(), any(), any(), any()) }
         }
     }
 

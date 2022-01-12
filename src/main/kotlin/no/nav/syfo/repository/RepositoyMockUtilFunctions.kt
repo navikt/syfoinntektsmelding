@@ -54,7 +54,8 @@ fun getRandonUtsattOppgaveEntitet(
         timeout = timeout,
         tilstand = tilstand,
         gosysOppgaveId = null,
-        oppdatert = null
+        oppdatert = null,
+        speil = false
     )
 }
 

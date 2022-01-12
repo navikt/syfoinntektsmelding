@@ -29,7 +29,8 @@ class FeiletUtsattOppgaveMeldingProsessor(
             val oppdatering = OppgaveOppdatering(
                 utsattOppgaveOppdatering.dokumentId,
                 utsattOppgaveOppdatering.oppdateringstype.tilHandling(),
-                utsattOppgaveOppdatering.timeout
+                utsattOppgaveOppdatering.timeout,
+                utsattOppgaveOppdatering.oppdateringstype
             )
 
             MDCOperations.putToMDC(MDCOperations.MDC_CALL_ID, MDCOperations.generateCallId())

@@ -77,6 +77,7 @@ open class UtsattOppgaveDAOTest {
         inntektsmeldingId = UUID.randomUUID().toString(),
         tilstand = Tilstand.Utsatt,
         gosysOppgaveId = null,
-        oppdatert = null
+        oppdatert = null,
+        speil = false
     )
 }

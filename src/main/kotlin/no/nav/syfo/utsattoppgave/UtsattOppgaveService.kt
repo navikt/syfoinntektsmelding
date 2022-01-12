@@ -31,6 +31,8 @@ class UtsattOppgaveService(
             return
         }
 
+        val gjelderSpeil = oppdatering.oppdateringstype == OppdateringstypeDTO.OpprettSpeilRelatert
+
         if (oppgave.tilstand == Tilstand.Utsatt && oppdatering.handling == Handling.Utsett) {
             if (oppgave.timeout == null) {
                 metrikk.tellUtsattOppgave_UtenDato()
@@ -38,6 +40,7 @@ class UtsattOppgaveService(
             oppdatering.timeout ?: error("Timeout på utsettelse mangler")
             oppgave.timeout = oppdatering.timeout
             oppgave.oppdatert = LocalDateTime.now()
+            oppgave.speil = gjelderSpeil
             lagre(oppgave)
             metrikk.tellUtsattOppgave_Utsett()
             log.info("Oppdaterte timeout på inntektsmelding: ${oppgave.inntektsmeldingId} til ${oppdatering.timeout}")
@@ -46,16 +49,16 @@ class UtsattOppgaveService(
 
         if (oppgave.tilstand == Tilstand.Utsatt && oppdatering.handling == Handling.Forkast) {
             oppgave.oppdatert = LocalDateTime.now()
-            lagre(oppgave.copy(tilstand = Tilstand.Forkastet))
+            lagre(oppgave.copy(tilstand = Tilstand.Forkastet, speil = gjelderSpeil))
             metrikk.tellUtsattOppgave_Forkast()
             log.info("Endret oppgave: ${oppgave.inntektsmeldingId} til tilstand: ${Tilstand.Forkastet.name}")
             return
         }
 
         if ((oppgave.tilstand == Tilstand.Utsatt || oppgave.tilstand == Tilstand.Forkastet) && oppdatering.handling == Handling.Opprett) {
-            val resultat = opprettOppgaveIGosys(oppgave, oppgaveClient, utsattOppgaveDAO, behandlendeEnhetConsumer)
+            val resultat = opprettOppgaveIGosys(oppgave, oppgaveClient, utsattOppgaveDAO, behandlendeEnhetConsumer, gjelderSpeil)
             oppgave.oppdatert = LocalDateTime.now()
-            lagre(oppgave.copy(tilstand = Tilstand.Opprettet))
+            lagre(oppgave.copy(tilstand = Tilstand.Opprettet, speil = gjelderSpeil))
             metrikk.tellUtsattOppgave_Opprett()
             log.info("Endret oppgave: ${oppgave.inntektsmeldingId} til tilstand: ${Tilstand.Opprettet.name} gosys oppgaveID: ${resultat.oppgaveId} duplikat? ${resultat.duplikat}")
             return
@@ -79,7 +82,8 @@ fun opprettOppgaveIGosys(
     utsattOppgave: UtsattOppgaveEntitet,
     oppgaveClient: OppgaveClient,
     utsattOppgaveDAO: UtsattOppgaveDAO,
-    behandlendeEnhetConsumer: BehandlendeEnhetConsumer
+    behandlendeEnhetConsumer: BehandlendeEnhetConsumer,
+    speil: Boolean
 ): OppgaveResultat {
     val behandlendeEnhet = behandlendeEnhetConsumer.hentBehandlendeEnhet(utsattOppgave.fnr, utsattOppgave.inntektsmeldingId)
     val gjelderUtland = (SYKEPENGER_UTLAND == behandlendeEnhet)
@@ -89,7 +93,8 @@ fun opprettOppgaveIGosys(
             journalpostId = utsattOppgave.journalpostId,
             tildeltEnhetsnr = behandlendeEnhet,
             aktoerId = utsattOppgave.aktørId,
-            gjelderUtland = gjelderUtland
+            gjelderUtland = gjelderUtland,
+            gjelderSpeil = speil
         )
     }
     utsattOppgave.enhet = behandlendeEnhet
@@ -101,7 +106,8 @@ fun opprettOppgaveIGosys(
 class OppgaveOppdatering(
     val id: UUID,
     val handling: Handling,
-    val timeout: LocalDateTime?
+    val timeout: LocalDateTime?,
+    val oppdateringstype: OppdateringstypeDTO
 )
 
 enum class Handling {
