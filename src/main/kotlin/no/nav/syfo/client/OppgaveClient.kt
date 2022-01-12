@@ -88,13 +88,14 @@ class OppgaveClient constructor(
         var behandlingstype: String? = null
         var behandlingstema: String? = null
         if (gjelderSpeil) {
-            log.info("Gjelder speil")
+            log.info("Oppretter oppgave: Speil")
             behandlingstema = BEHANDLINGSTEMA_SPEIL
         } else {
             if (gjelderUtland) {
-                log.info("Gjelder utland")
+                log.info("Oppretter oppgave: Utland")
                 behandlingstype = BEHANDLINGSTYPE_UTLAND
             } else {
+                log.info("Oppretter oppgave: Normal")
                 behandlingstema = BEHANDLINGSTYPE_NORMAL
             }
         }
