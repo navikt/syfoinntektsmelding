@@ -135,8 +135,8 @@ class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepo
             ps.setString(9, uo.enhet)
             ps.setString(10, uo.gosysOppgaveId)
             ps.setTimestamp(11, Timestamp.valueOf(uo.oppdatert ?: LocalDateTime.now()))
-            ps.setInt(12, uo.id)
-            ps.setBoolean(13, uo.speil)
+            ps.setBoolean(12, uo.speil)
+            ps.setInt(13, uo.id)
             ps.executeUpdate()
             return uo
         }
