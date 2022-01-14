@@ -73,7 +73,7 @@ dependencies {
     implementation("no.nav.syfo.sm:syfosm-common-rest-sts:2019.09.25-05-44-08e26429f4e37cd57d99ba4d39fc74099a078b97")
     implementation("no.nav.syfo.sm:syfosm-common-networking:2019.09.25-05-44-08e26429f4e37cd57d99ba4d39fc74099a078b97")
     implementation("no.nav:vault-jdbc:1.3.7")
-    implementation("no.nav.common:log:2.2021.09.17_07.09-67428a6422cc")
+    implementation("no.nav.common:log:2.2022.01.14_09.11-1d258a7225ea")
     implementation("no.nav.helsearbeidsgiver:helse-arbeidsgiver-felles-backend:2021.06.28-09-42-e08ae")
     implementation("no.nav.security:token-client-core:$tokenSupportVersion")
     implementation("no.nav.security:token-validation-ktor:$tokenSupportVersion")
