@@ -6,6 +6,7 @@ import no.nav.syfo.datapakke.DatapakkePublisherJob
 import no.nav.syfo.koin.buildObjectMapper
 import no.nav.syfo.repository.ArsakStats
 import no.nav.syfo.repository.ForsinkelseStats
+import no.nav.syfo.repository.ForsinkelseWeeklyStats
 import no.nav.syfo.repository.IMStatsRepo
 import no.nav.syfo.repository.IMWeeklyQualityStats
 import no.nav.syfo.repository.IMWeeklyStats
@@ -130,6 +131,14 @@ class DatapakkePublisherJobTest : SystemTestBase() {
                     "2021-08-$it"
                 )
             }.toList()
+
+        val list = ArrayList<ForsinkelseWeeklyStats>()
+        (1..10).map { uke ->
+            (1..6).map { bucket ->
+                list.add(ForsinkelseWeeklyStats(Random.nextInt(100), Random.nextInt(100), bucket, uke))
+            }
+        }
+        every { repo.getForsinkelseWeeklyStats() } returns list
     }
 
     @Test
