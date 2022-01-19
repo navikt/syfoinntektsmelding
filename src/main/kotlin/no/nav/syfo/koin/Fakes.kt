@@ -8,6 +8,7 @@ import no.nav.helse.arbeidsgiver.integrasjoner.dokarkiv.DokarkivKlient
 import no.nav.helse.arbeidsgiver.integrasjoner.dokarkiv.JournalpostRequest
 import no.nav.helse.arbeidsgiver.integrasjoner.dokarkiv.JournalpostResponse
 import no.nav.helse.arbeidsgiver.integrasjoner.oppgave.OppgaveKlient
+import no.nav.helse.arbeidsgiver.integrasjoner.oppgave.OppgaveResponse
 import no.nav.helse.arbeidsgiver.integrasjoner.oppgave.OpprettOppgaveRequest
 import no.nav.helse.arbeidsgiver.integrasjoner.oppgave.OpprettOppgaveResponse
 import no.nav.helse.arbeidsgiver.integrasjoner.oppgave.Prioritet
@@ -26,6 +27,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.bind
 import java.time.LocalDate
 import java.time.LocalDate.now
+import java.time.LocalDateTime
 
 fun Module.mockExternalDependecies() {
     // single { MockAltinnRepo(get()) } bind AltinnOrganisationsRepository::class
@@ -90,6 +92,9 @@ fun Module.mockExternalDependecies() {
 
     single {
         object : OppgaveKlient {
+            override suspend fun hentOppgave(oppgaveId: Int, callId: String): OppgaveResponse {
+                return OppgaveResponse(oppgaveId, 1, oppgavetype = "SYK", aktivDato = LocalDateTime.now().minusDays(3).toLocalDate(), prioritet = Prioritet.NORM.toString())
+            }
             override suspend fun opprettOppgave(
                 opprettOppgaveRequest: OpprettOppgaveRequest,
                 callId: String
