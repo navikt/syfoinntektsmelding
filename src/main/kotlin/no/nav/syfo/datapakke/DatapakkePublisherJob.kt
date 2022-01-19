@@ -148,10 +148,10 @@ class DatapakkePublisherJob(
             .replace("@oppgOpprettet", oppgaveStats.map { it.antall_opprettet }.joinToString())
             .replace("@oppgTimeout", oppgaveStats.map { it.antall_opprettet_timeout }.joinToString())
             .replace("@FF_forsinkelse_uker", forsinkelseWeeklyStats.map { it.uke }.distinct().joinToString())
-            .replace("@FF_bucket1", forsinkelseWeeklyStats.filter { it.bucket == 1 } .map { it.antall_med_forsinkelsen_lps }.joinToString())
-            .replace("@FF_bucket2", forsinkelseWeeklyStats.filter { it.bucket == 2 } .map { it.antall_med_forsinkelsen_lps }.joinToString())
-            .replace("@FF_bucket3", forsinkelseWeeklyStats.filter { it.bucket == 3 } .map { it.antall_med_forsinkelsen_lps }.joinToString())
-            .replace("@FF_bucket4", forsinkelseWeeklyStats.filter { it.bucket == 4 } .map { it.antall_med_forsinkelsen_lps }.joinToString())
+            .replace("@FF_bucket1", forsinkelseWeeklyStats.filter { it.bucket == 1 }.map { it.antall_med_forsinkelsen_lps }.joinToString())
+            .replace("@FF_bucket2", forsinkelseWeeklyStats.filter { it.bucket == 2 }.map { it.antall_med_forsinkelsen_lps }.joinToString())
+            .replace("@FF_bucket3", forsinkelseWeeklyStats.filter { it.bucket == 3 }.map { it.antall_med_forsinkelsen_lps }.joinToString())
+            .replace("@FF_bucket4", forsinkelseWeeklyStats.filter { it.bucket == 4 }.map { it.antall_med_forsinkelsen_lps }.joinToString())
 
         runBlocking {
             val response = httpClient.put<HttpResponse>("$datapakkeApiUrl/$datapakkeId") {

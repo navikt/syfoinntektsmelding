@@ -133,8 +133,8 @@ class DatapakkePublisherJobTest : SystemTestBase() {
             }.toList()
 
         val list = ArrayList<ForsinkelseWeeklyStats>()
-        (1 .. 10) . map { uke ->
-            (1 .. 6) .map { bucket ->
+        (1..10).map { uke ->
+            (1..6).map { bucket ->
                 list.add(ForsinkelseWeeklyStats(Random.nextInt(100), Random.nextInt(100), bucket, uke))
             }
         }
