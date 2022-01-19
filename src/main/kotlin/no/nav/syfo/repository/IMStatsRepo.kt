@@ -60,6 +60,13 @@ data class OppgaveStats(
     val dato: String
 )
 
+data class ForsinkelseWeeklyStats(
+    val antall_med_forsinkelsen_altinn: Int,
+    val antall_med_forsinkelsen_lps: Int,
+    val bucket: Int,
+    val uke: Int
+)
+
 interface IMStatsRepo {
     fun getWeeklyStats(): List<IMWeeklyStats>
     fun getLPSStats(): List<LPSStats>
@@ -70,6 +77,7 @@ interface IMStatsRepo {
     fun getBackToBackPerLPS(): List<LPSStats>
     fun getForsinkelseStats(): List<ForsinkelseStats>
     fun getOppgaveStats(): List<OppgaveStats>
+    fun getForsinkelseWeeklyStats(): List<ForsinkelseWeeklyStats>
 }
 
 /**
@@ -402,6 +410,29 @@ class IMStatsRepoImpl(
                 )
             }
 
+            return returnValue
+        }
+    }
+
+    override fun getForsinkelseWeeklyStats(): List<ForsinkelseWeeklyStats> {
+
+        val query = """
+            SELECT width_bucket(DATE_PART('day', behandlet - DATE(data ->> 'førsteFraværsdag'))::int, array[15, 30, 90]) as bucket FROM inntektsmelding;
+        """.trimIndent()
+
+        ds.connection.use {
+            val res = it.prepareStatement(query).executeQuery()
+            val returnValue = ArrayList<ForsinkelseWeeklyStats>()
+            while (res.next()) {
+                returnValue.add(
+                    ForsinkelseWeeklyStats(
+                        res.getInt("antall_med_forsinkelsen_altinn"),
+                        res.getInt("antall_med_forsinkelsen_lps"),
+                        res.getInt("uke"),
+                        res.getInt("bucket")
+                    )
+                )
+            }
             return returnValue
         }
     }

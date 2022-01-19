@@ -590,11 +590,14 @@
     },
     {
       "title": "Gosysoppgaver",
-      "description": "Gosys oppgaver status siste 30 dager.",
+      "description": "Graf viser status for utsatte oppgaver på kafkatopic tbd.spre.oppgaver siste 30 Dager. \n Forkastet: Oppgave opprettelse kasellert pga besked på kafka, \nUtsatt: Oppgaveopprettelse utsatt pga besked på kafka, \n Opprett: Oppgave opprettet pga besked på kafka, \nOpprettet pga timeout: Oppgaver opprettet fordi timeout har gått ut på dato og ingen utsettelse fra kafka",
       "specType": "echart",
       "spec": {
         "url": "",
         "option": {
+          "title": {
+            "text": "Graf"
+          },
           "tooltip": {
             "trigger": "axis",
             "axisPointer": {
@@ -608,8 +611,8 @@
             "left": "center",
             "data": [
               "Ferdigbehandlet/Forkastet",
-              "Utsatt",
-              "Opprettet",
+              "Utsett/Utsatt",
+              "Opprett/Opprettet",
               "Opprettet pga Timeout"
             ]
           },
@@ -674,6 +677,135 @@
               "saveAsImage": {}
             }
           }
+        }
+      }
+    },
+    {
+      "title": "Forinkelse ff over tid",
+      "description": "Grafen viser fordelingen av innsendingstidspunkt opp mot første fraværsdag. Uke for uke. Forventet innsendingstidspunkt er 16 dager etter første fraværsdag. Over 16 dager kan anses som Forsinkelse.",
+      "specType": "echart",
+      "spec": {
+        "url": "",
+        "option":    {
+          "color": ["#80FFA5", "#00DDFF", "#37A2FF", "#FF0087", "#FFBF00"],
+          "title": {
+            "text": "Fordeling av innsendingstidspunkt opp mot første fraværsdag"
+          },
+          "tooltip": {
+            "trigger": "axis",
+            "axisPointer": {
+              "type": "cross",
+              "label": {
+                "backgroundColor": "#6a7985"
+              }
+            }
+          },
+          "legend": {
+            "data": [0, 1, 2, 3]
+          },
+          "toolbox": {
+            "feature": {
+              "saveAsImage": {}
+            }
+          },
+          "grid": {
+            "left": "3%",
+            "right": "4%",
+            "bottom": "3%",
+            "containLabel": true
+          },
+          "xAxis": [
+            {
+              "type": "category",
+              "boundaryGap": false,
+              "data": [
+                @FF_forsinkelse_uker
+              ]
+            }
+          ],
+          "yAxis": [
+            {
+              "type": "value"
+            }
+          ],
+          "series": [
+            {
+              "name": "Under 15 dager forsinket",
+              "type": "line",
+              "stack": "Total",
+              "smooth": true,
+              "lineStyle": {
+                "width": 0
+              },
+              "showSymbol": false,
+              "areaStyle": {
+                "opacity": 0.8
+              },
+              "emphasis": {
+                "focus": "series"
+              },
+              "data": [
+                @FF_bucket1
+              ]
+            },
+            {
+              "name": "15 - 30 dager forsinket",
+              "type": "line",
+              "stack": "Total",
+              "smooth": true,
+              "lineStyle": {
+                "width": 0
+              },
+              "showSymbol": false,
+              "areaStyle": {
+                "opacity": 0.8
+              },
+              "emphasis": {
+                "focus": "series"
+              },
+              "data": [
+                @FF_bucket2
+              ]
+            },
+            {
+              "name": "30 - 90 dager forsinket",
+              "type": "line",
+              "stack": "Total",
+              "smooth": true,
+              "lineStyle": {
+                "width": 0
+              },
+              "showSymbol": false,
+              "areaStyle": {
+                "opacity": 0.8
+              },
+              "emphasis": {
+                "focus": "series"
+              },
+              "data": [
+                @FF_bucket3
+              ]
+            },
+            {
+              "name": "Over 90 dager forsinket",
+              "type": "line",
+              "stack": "Total",
+              "smooth": true,
+              "lineStyle": {
+                "width": 0
+              },
+              "showSymbol": false,
+              "areaStyle": {
+                "opacity": 0.8
+              },
+              "emphasis": {
+                "focus": "series"
+              },
+              "data": [
+                @FF_bucket4
+              ]
+            }
+          ]
         }
       }
     }
