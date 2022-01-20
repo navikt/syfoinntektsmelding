@@ -417,7 +417,20 @@ class IMStatsRepoImpl(
     override fun getForsinkelseWeeklyStats(): List<ForsinkelseWeeklyStats> {
 
         val query = """
-            SELECT width_bucket(DATE_PART('day', behandlet - DATE(data ->> 'førsteFraværsdag'))::int, array[15, 30, 90]) as bucket FROM inntektsmelding;
+            select
+                count(*) filter (where data -> 'avsenderSystem' ->> 'navn' = 'AltinnPortal') as antall_med_forsinkelsen_altinn, -- K3A
+                count(*) filter (where data -> 'avsenderSystem' ->> 'navn' != 'AltinnPortal') as antall_med_forsinkelsen_lps, --K3B
+                extract('week' from date_trunc('week',behandlet)) as uke,
+                width_bucket(DATE_PART('day', behandlet - DATE(data ->> 'førsteFraværsdag'))::int, array[15, 30, 90]) as bucket
+            from
+                inntektsmelding
+            where
+                        data ->> 'førsteFraværsdag' = data -> 'arbeidsgiverperioder' -> 0 ->> 'fom' and
+                    (date(data -> 'arbeidsgiverperioder' -> 0 ->> 'tom') - date(data -> 'arbeidsgiverperioder' -> 0 ->> 'fom')) = 15 and
+                    behandlet > NOW()::DATE - INTERVAL '89 DAYS'
+            GROUP BY
+                width_bucket(DATE_PART('day', behandlet - DATE(data ->> 'førsteFraværsdag'))::int, array[15, 30, 90]),
+                extract('week' from date_trunc('week',behandlet));
         """.trimIndent()
 
         ds.connection.use {
