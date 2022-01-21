@@ -430,6 +430,7 @@ class IMStatsRepoImpl(
                     behandlet > NOW()::DATE - INTERVAL '89 DAYS'
             GROUP BY
                 width_bucket(DATE_PART('day', behandlet - DATE(data ->> 'førsteFraværsdag'))::int, array[15, 30, 90]),
+                extract('year' from date_trunc('week',behandlet)),
                 extract('week' from date_trunc('week',behandlet));
         """.trimIndent()
 
