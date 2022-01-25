@@ -44,7 +44,7 @@ class PollForJoarkhendelserJob(
                             )
                         )
                     } else {
-                        log.info("Fant journalpost ${hendelse.journalpostId} men ignorerer.")
+                        log.debug("Fant journalpost ${hendelse.journalpostId} men ignorerer.")
                     }
                 }
                 .isEmpty()
