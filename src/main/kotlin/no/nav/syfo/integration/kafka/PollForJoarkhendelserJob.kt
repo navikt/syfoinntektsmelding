@@ -8,6 +8,7 @@ import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.utils.RecurringJob
 import no.nav.syfo.kafkamottak.InngaaendeJournalpostDTO
 import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
+import org.slf4j.LoggerFactory
 import java.time.Duration
 import java.time.LocalDateTime
 
@@ -19,6 +20,7 @@ class PollForJoarkhendelserJob(
     waitTimeWhenEmptyQueue: Duration = Duration.ofSeconds(30)
 ) : RecurringJob(coroutineScope, waitTimeWhenEmptyQueue.toMillis()) {
 
+    private val log = LoggerFactory.getLogger(PollForJoarkhendelserJob::class.java)
     override fun doJob() {
         do {
             val wasEmpty = kafkaProvider
@@ -32,6 +34,7 @@ class PollForJoarkhendelserJob(
                             hendelse.journalpostStatus == "M"
 
                     if (isSyketemaOgFraAltinnMidlertidig) {
+                        log.info("Fant journalpost ${hendelse.journalpostId} fra ALTINN for syk med status midlertidig.")
                         bakgrunnsjobbRepo.save(
                             Bakgrunnsjobb(
                                 type = JoarkInntektsmeldingHendelseProsessor.JOB_TYPE,
@@ -40,6 +43,8 @@ class PollForJoarkhendelserJob(
                                 data = it
                             )
                         )
+                    } else {
+                        log.info("Fant journalpost ${hendelse.journalpostId} men ignorerer.")
                     }
                 }
                 .isEmpty()
