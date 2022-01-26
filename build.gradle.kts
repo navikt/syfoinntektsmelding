@@ -5,7 +5,7 @@ val mainClass = "no.nav.syfo.AppKt"
 val group = "no.nav.syfo"
 // Dependencies
 val micrometerVersion = "1.7.5"
-val flywayVersion = "8.0.2"
+val flywayVersion = "8.4.2"
 val cxfVersion = "3.4.4"
 val kotlinVersion = "1.4.10"
 val hikariVersion = "5.0.0"
@@ -23,7 +23,7 @@ val githubPassword: String by project
 plugins {
     kotlin("jvm") version "1.5.30"
     id("com.github.ben-manes.versions") version "0.27.0"
-    id("org.flywaydb.flyway") version "5.1.4"
+    id("org.flywaydb.flyway") version "8.4.2"
     id("io.snyk.gradle.plugin.snykplugin") version "0.4"
     id("org.sonarqube") version "3.3"
     jacoco
