@@ -60,7 +60,11 @@ class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepo
             val res = it.prepareStatement(findByInnteksmeldingId).apply {
                 setString(1, inntektsmeldingId)
             }.executeQuery()
-            return resultLoop(res, inntektsmeldinger).first()
+            val list: ArrayList<UtsattOppgaveEntitet> = resultLoop(res, inntektsmeldinger)
+            if (list.isEmpty()) {
+                return null
+            }
+            return list.first()
         }
     }
 
