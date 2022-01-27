@@ -8,7 +8,6 @@ import io.ktor.server.engine.connector
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.netty.NettyApplicationEngine
-
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.helse.arbeidsgiver.kubernetes.KubernetesProbeManager
 import no.nav.helse.arbeidsgiver.kubernetes.LivenessComponent
@@ -70,7 +69,6 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
         stopKoin()
     }
 
-
     @KtorExperimentalLocationsAPI
     private fun configAndStartWebserver() {
         webserver = embeddedServer(
@@ -90,7 +88,6 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
 
         webserver!!.start(wait = false)
     }
-
 
     private fun configAndStartBackgroundWorkers() {
         if (appConfig.getString("run_background_workers") == "true") {

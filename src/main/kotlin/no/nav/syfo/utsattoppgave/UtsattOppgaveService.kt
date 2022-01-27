@@ -1,6 +1,5 @@
 package no.nav.syfo.utsattoppgave
 
-
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.domain.OppgaveResultat
@@ -12,7 +11,6 @@ import no.nav.syfo.util.Metrikk
 import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
 import java.util.UUID
-
 
 class UtsattOppgaveService(
     private val utsattOppgaveDAO: UtsattOppgaveDAO,
@@ -76,7 +74,6 @@ class UtsattOppgaveService(
         utsattOppgaveDAO.opprett(utsattOppgave)
     }
 }
-
 
 fun opprettOppgaveIGosys(
     utsattOppgave: UtsattOppgaveEntitet,

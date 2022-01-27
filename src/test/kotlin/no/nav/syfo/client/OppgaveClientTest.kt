@@ -8,7 +8,6 @@ import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.TextContent
-
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.util.Metrikk
@@ -25,7 +24,6 @@ class OppgaveClientTest {
 
     private var tokenConsumer = mockk<TokenConsumer>(relaxed = true)
     private var metrikk = mockk<Metrikk>(relaxed = true)
-
 
     private lateinit var oppgaveClient: OppgaveClient
 

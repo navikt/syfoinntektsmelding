@@ -5,10 +5,8 @@ import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
-
 import no.nav.syfo.helpers.retry
 import java.time.ZonedDateTime
-
 
 class SakClient constructor(
     val opprettsakUrl: String,

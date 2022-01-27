@@ -2,12 +2,10 @@ package no.nav.syfo.integration.oauth2
 
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod
 import io.ktor.config.ApplicationConfig
-
 import no.nav.security.token.support.client.core.ClientAuthenticationProperties
 import no.nav.security.token.support.client.core.ClientProperties
 import no.nav.security.token.support.client.core.OAuth2GrantType
 import java.net.URI
-
 
 class OAuth2ClientPropertiesConfig(
     applicationConfig: ApplicationConfig
@@ -38,9 +36,7 @@ class OAuth2ClientPropertiesConfig(
                 )
             }
 
-
     internal fun ApplicationConfig.propertyToString(prop: String) = this.property(prop).getString()
-
 
     internal fun ApplicationConfig.propertyToStringOrNull(prop: String) = this.propertyOrNull(prop)?.getString()
 

@@ -2,7 +2,6 @@ package no.nav.syfo.prosesser
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbProsesserer
@@ -20,7 +19,6 @@ import org.slf4j.LoggerFactory
 /**
  * En bakgrunnsjobb som kan prosessere bakgrunnsjobber med inntektsmeldinger fra Joark
  */
-
 
 class JoarkInntektsmeldingHendelseProsessor(
     private val om: ObjectMapper,
