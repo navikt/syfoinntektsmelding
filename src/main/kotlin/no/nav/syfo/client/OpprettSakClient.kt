@@ -5,11 +5,11 @@ import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
-import io.ktor.util.KtorExperimentalAPI
+
 import no.nav.syfo.helpers.retry
 import java.time.ZonedDateTime
 
-@KtorExperimentalAPI
+
 class SakClient constructor(
     val opprettsakUrl: String,
     val tokenConsumer: TokenConsumer,

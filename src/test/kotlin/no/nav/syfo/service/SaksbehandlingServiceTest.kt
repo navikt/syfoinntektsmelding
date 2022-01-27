@@ -33,7 +33,6 @@ class SaksbehandlingServiceTest {
     private var saksbehandlingService =
         SaksbehandlingService(inntektsmeldingService, sakClient, metrikk)
 
-    @io.ktor.util.KtorExperimentalAPI
     @BeforeEach
     fun setup() {
         every { inntektsmeldingService.finnBehandledeInntektsmeldinger(any()) } returns emptyList()
@@ -75,7 +74,6 @@ class SaksbehandlingServiceTest {
         )
     }
 
-    @io.ktor.util.KtorExperimentalAPI
     @Test
     fun oppretterIkkeOppgaveForSak() {
         saksbehandlingService.finnEllerOpprettSakForInntektsmelding(lagInntektsmelding(), "aktorId", "")

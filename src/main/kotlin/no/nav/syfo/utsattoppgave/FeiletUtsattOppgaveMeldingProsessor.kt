@@ -2,7 +2,7 @@ package no.nav.syfo.utsattoppgave
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import io.ktor.util.KtorExperimentalAPI
+
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbProsesserer
 import no.nav.syfo.util.MDCOperations
@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory
 /**
  * En bakgrunnsjobb som tar feilede meldinger ang utsatt oppgave og prøver å prosessere dem på nytt
  */
-@KtorExperimentalAPI
+
 class FeiletUtsattOppgaveMeldingProsessor(
     private val om: ObjectMapper,
     val oppgaveService: UtsattOppgaveService
