@@ -48,14 +48,16 @@ class InntektsmeldingBehandlerTest {
                 match { it.contentEquals("AR-123") }
             )
         } returns "saksId"
-        every { inntektsmeldingService.lagreBehandling(any(), any(), any(), any()) } returns
+        every { inntektsmeldingService.lagreBehandling(any(), any(), any()) } returns
             InntektsmeldingEntitet(
                 orgnummer = "orgnummer",
                 arbeidsgiverPrivat = "123",
                 aktorId = "aktorId",
                 journalpostId = "arkivId",
                 sakId = "saksId",
-                behandlet = LocalDateTime.now()
+                behandlet = LocalDateTime.now(),
+                fnr = "fnr123",
+                arkivReferanse = "AR-123"
             )
     }
 

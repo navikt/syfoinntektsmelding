@@ -13,16 +13,15 @@ class InntektsmeldingService(
 ) {
     val log = LoggerFactory.getLogger(InntektsmeldingService::class.java)
 
-    fun finnBehandledeInntektsmeldinger(aktoerId: String): List<Inntektsmelding> {
-        val liste = repository.findByAktorId(aktoerId)
+    fun finnBehandledeInntektsmeldinger(fnr: String): List<Inntektsmelding> {
+        val liste = repository.findByFnr(fnr)
         return liste.map { InntektsmeldingMeta -> toInntektsmelding(InntektsmeldingMeta) }
     }
 
     fun lagreBehandling(
         inntektsmelding: Inntektsmelding,
         aktorid: String,
-        saksId: String,
-        arkivReferanse: String
+        saksId: String
     ): InntektsmeldingEntitet {
         val dto = toInntektsmeldingEntitet(inntektsmelding)
         dto.aktorId = aktorid
@@ -33,6 +32,5 @@ class InntektsmeldingService(
 }
 
 fun Inntektsmelding.asJsonString(objectMapper: ObjectMapper): String {
-    val im = this.copy(fnr = "") // La stå! Ikke lagre fødselsnummer
-    return objectMapper.writeValueAsString(im)
+    return objectMapper.writeValueAsString(this)
 }

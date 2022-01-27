@@ -10,7 +10,7 @@ import javax.sql.DataSource
 
 interface InntektsmeldingRepository {
     fun findByUuid(uuid: String): InntektsmeldingEntitet
-    fun findByAktorId(aktoerId: String): List<InntektsmeldingEntitet>
+    fun findByFnr(fnr: String): List<InntektsmeldingEntitet>
     fun findFirst100ByBehandletBefore(førDato: LocalDateTime): List<InntektsmeldingEntitet>
     fun deleteByBehandletBefore(førDato: LocalDateTime): Int
     fun lagreInnteksmelding(innteksmelding: InntektsmeldingEntitet): InntektsmeldingEntitet
@@ -20,8 +20,8 @@ interface InntektsmeldingRepository {
 
 class InntektsmeldingRepositoryMock : InntektsmeldingRepository {
     private val mockrepo = mutableSetOf<InntektsmeldingEntitet>()
-    override fun findByAktorId(aktoerId: String): List<InntektsmeldingEntitet> {
-        return mockrepo.filter { it.aktorId == aktoerId }
+    override fun findByFnr(fnr: String): List<InntektsmeldingEntitet> {
+        return mockrepo.filter { it.fnr == fnr }
     }
 
     override fun findFirst100ByBehandletBefore(førDato: LocalDateTime): List<InntektsmeldingEntitet> {
@@ -69,13 +69,13 @@ class InntektsmeldingRepositoryImp(
         return result
     }
 
-    override fun findByAktorId(id: String): List<InntektsmeldingEntitet> {
-        val findByAktorId = "SELECT * FROM INNTEKTSMELDING WHERE AKTOR_ID = ?;"
+    override fun findByFnr(fnr: String): List<InntektsmeldingEntitet> {
+        val findByAktorId = "SELECT * FROM INNTEKTSMELDING WHERE FNR = ?;"
         val inntektsmeldinger = ArrayList<InntektsmeldingEntitet>()
         val results: ArrayList<InntektsmeldingEntitet>
         ds.connection.use {
             val res = it.prepareStatement(findByAktorId).apply {
-                setString(1, id.toString())
+                setString(1, fnr)
             }.executeQuery()
             results = resultLoop(res, inntektsmeldinger)
         }
@@ -107,8 +107,8 @@ class InntektsmeldingRepositoryImp(
 
     override fun lagreInnteksmelding(innteksmelding: InntektsmeldingEntitet): InntektsmeldingEntitet {
         val insertStatement =
-            """INSERT INTO INNTEKTSMELDING (INNTEKTSMELDING_UUID, AKTOR_ID, ORGNUMMER, SAK_ID, JOURNALPOST_ID, BEHANDLET, ARBEIDSGIVER_PRIVAT, DATA)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?::jsonb)
+            """INSERT INTO INNTEKTSMELDING (INNTEKTSMELDING_UUID, AKTOR_ID, ORGNUMMER, SAK_ID, JOURNALPOST_ID, BEHANDLET, ARBEIDSGIVER_PRIVAT, DATA, FNR, ARKIVREFERANSE)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?::jsonb, ?, ?)
         RETURNING *;""".trimMargin()
         val inntektsmeldinger = ArrayList<InntektsmeldingEntitet>()
         var result: InntektsmeldingEntitet
@@ -122,6 +122,8 @@ class InntektsmeldingRepositoryImp(
             ps.setTimestamp(6, Timestamp.valueOf(innteksmelding.behandlet))
             ps.setString(7, innteksmelding.arbeidsgiverPrivat)
             ps.setString(8, innteksmelding.data)
+            ps.setString(9, innteksmelding.fnr)
+            ps.setString(10, innteksmelding.arkivReferanse)
 
             val res = ps.executeQuery()
             result = resultLoop(res, inntektsmeldinger).first()
@@ -178,7 +180,9 @@ class InntektsmeldingRepositoryImp(
                     journalpostId = res.getString("JOURNALPOST_ID"),
                     behandlet = res.getTimestamp("BEHANDLET").toLocalDateTime(),
                     arbeidsgiverPrivat = res.getString("ARBEIDSGIVER_PRIVAT"),
-                    data = res.getString("data")
+                    data = res.getString("data"),
+                    fnr = res.getString("FNR"),
+                    arkivReferanse = res.getString("ARKIVREFERANSE")
                 )
             )
         }

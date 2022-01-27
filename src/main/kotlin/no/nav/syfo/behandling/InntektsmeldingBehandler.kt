@@ -38,8 +38,8 @@ class InntektsmeldingBehandler(
     }
 
     fun behandle(arkivId: String, arkivreferanse: String, inntektsmelding: Inntektsmelding): String? {
-
         val log = log()
+        log.info("Skal behandle inntektsmelding ${inntektsmelding.arkivRefereranse}")
         var ret: String? = null
         val consumerLock = consumerLocks.get(inntektsmelding.fnr)
         try {
@@ -59,7 +59,7 @@ class InntektsmeldingBehandler(
                 journalpostService.ferdigstillJournalpost(saksId, inntektsmelding)
                 log.info("ferdigstilte ${inntektsmelding.arkivRefereranse}")
 
-                val dto = inntektsmeldingService.lagreBehandling(inntektsmelding, aktorid, saksId, arkivreferanse)
+                val dto = inntektsmeldingService.lagreBehandling(inntektsmelding, aktorid, saksId)
                 log.info("lagret ${inntektsmelding.arkivRefereranse}")
 
                 utsattOppgaveService.opprett(

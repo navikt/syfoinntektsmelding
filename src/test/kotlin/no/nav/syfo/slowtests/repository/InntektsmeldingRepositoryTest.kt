@@ -44,7 +44,7 @@ open class InntektsmeldingRepositoryTest : SystemTestBase() {
     }
 
     @Test
-    fun findByAktorId() {
+    fun findByFnr() {
         val behandlet = LocalDateTime.of(2019, 10, 1, 5, 18, 45, 0)
         val inntektsmelding = InntektsmeldingEntitet(
             journalpostId = "journalpostId",
@@ -52,11 +52,13 @@ open class InntektsmeldingRepositoryTest : SystemTestBase() {
             sakId = "sakId",
             orgnummer = "orgnummer",
             arbeidsgiverPrivat = "arbeidsgiverPrivat",
-            aktorId = "aktorId1"
+            aktorId = "aktorId1",
+            fnr = "fnr1",
+            arkivReferanse = "AR-123"
         )
         inntektsmelding.leggtilArbeidsgiverperiode(fom = LocalDate.of(2019, 10, 5), tom = LocalDate.of(2019, 10, 25))
         repository.lagreInnteksmelding(inntektsmelding)
-        val inntektsmeldinger = repository.findByAktorId("aktorId1")
+        val inntektsmeldinger = repository.findByFnr("fnr1")
         assertThat(inntektsmeldinger.size).isEqualTo(1)
         val i = inntektsmeldinger[0]
         assertThat(i.uuid).isNotNull
@@ -82,12 +84,14 @@ open class InntektsmeldingRepositoryTest : SystemTestBase() {
             sakId = "sakId",
             orgnummer = "orgnummer",
             arbeidsgiverPrivat = "arbeidsgiverPrivat",
-            aktorId = "aktorId2"
+            aktorId = "aktorId2",
+            fnr = "fnr2",
+            arkivReferanse = "AR-123"
         )
         inntektsmelding.leggtilArbeidsgiverperiode(fom = LocalDate.of(2019, 10, 5), tom = LocalDate.of(2019, 10, 25))
         inntektsmelding.leggtilArbeidsgiverperiode(fom = LocalDate.of(2018, 10, 5), tom = LocalDate.of(2018, 10, 25))
         repository.lagreInnteksmelding(inntektsmelding)
-        val inntektsmeldinger = repository.findByAktorId("aktorId2")
+        val inntektsmeldinger = repository.findByFnr("fnr2")
         assertThat(inntektsmeldinger.size).isEqualTo(1)
         val i = inntektsmeldinger[0]
         assertThat(i.arbeidsgiverperioder.size).isEqualTo(2)
@@ -106,10 +110,12 @@ open class InntektsmeldingRepositoryTest : SystemTestBase() {
             sakId = "sakId",
             orgnummer = "orgnummer",
             arbeidsgiverPrivat = "arbeidsgiverPrivat",
-            aktorId = "aktorId3"
+            aktorId = "aktorId3",
+            fnr = "fnr3",
+            arkivReferanse = "AR-123"
         )
         repository.lagreInnteksmelding(inntektsmelding)
-        val inntektsmeldinger = repository.findByAktorId("aktorId3")
+        val inntektsmeldinger = repository.findByFnr("fnr3")
         val i = inntektsmeldinger[0]
         assertThat(inntektsmeldinger.size).isEqualTo(1)
         assertThat(i.arbeidsgiverperioder.size).isEqualTo(0)
@@ -166,10 +172,12 @@ open class InntektsmeldingRepositoryTest : SystemTestBase() {
             orgnummer = "orgnummer",
             arbeidsgiverPrivat = "arbeidsgiverPrivat",
             aktorId = "aktorId-repo-test",
-            data = mapper.writeValueAsString(im)
+            data = mapper.writeValueAsString(im),
+            fnr = "fnr-repo-test",
+            arkivReferanse = "AR-123"
         )
         repository.lagreInnteksmelding(inntektsmelding)
-        val inntektsmeldinger = repository.findByAktorId("aktorId-repo-test")
+        val inntektsmeldinger = repository.findByFnr("fnr-repo-test")
         val i = inntektsmeldinger[0]
         assertThat(inntektsmeldinger.size).isEqualTo(1)
 
@@ -227,7 +235,9 @@ open class InntektsmeldingRepositoryTest : SystemTestBase() {
             sakId = "sakId",
             orgnummer = "orgnummer",
             arbeidsgiverPrivat = "arbeidsgiverPrivat",
-            aktorId = "aktorId1"
+            aktorId = "aktorId1",
+            fnr = "fnr",
+            arkivReferanse = "AR123"
         )
     }
 }

@@ -58,25 +58,3 @@ fun getRandonUtsattOppgaveEntitet(
         speil = false
     )
 }
-
-fun getRandonInntektsmeldingEntitet(
-    uuid: String = UUID.randomUUID().toString(),
-    aktorId: String = validIdentitetsnummer,
-    sakId: String = getRandomNumber(1000, 5000).toString(),
-    journalpostId: String = getRandomNumber(10, 50).toString(),
-    orgnummer: String = validOrgNr,
-    arbeidsgiverPrivat: String? = null,
-    behandlet: LocalDateTime = LocalDateTime.parse(getRandonDateTime(null)),
-    data: String? = null
-): InntektsmeldingEntitet {
-    return InntektsmeldingEntitet(
-        uuid = uuid,
-        aktorId = aktorId,
-        sakId = sakId,
-        journalpostId = journalpostId,
-        orgnummer = orgnummer,
-        arbeidsgiverPrivat = arbeidsgiverPrivat,
-        behandlet = behandlet,
-        data = data
-    )
-}

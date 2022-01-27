@@ -52,7 +52,9 @@ class InntektsmeldingKontraktMapperKtTest {
             sakId = "sakId",
             orgnummer = "orgnummer",
             arbeidsgiverPrivat = "arbeidsgiverPrivat",
-            aktorId = "aktorId"
+            aktorId = "aktorId",
+            fnr = "fnr123",
+            arkivReferanse = "AR-123"
         )
         val i = toInntektsmelding(dto)
         assertThat(i.journalpostId).isEqualTo("journalpostId")

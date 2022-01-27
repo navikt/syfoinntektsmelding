@@ -16,7 +16,9 @@ fun toInntektsmeldingEntitet(inntektsmelding: Inntektsmelding): InntektsmeldingE
         journalpostId = inntektsmelding.journalpostId,
         arbeidsgiverPrivat = inntektsmelding.arbeidsgiverPrivatFnr,
         orgnummer = inntektsmelding.arbeidsgiverOrgnummer,
-        behandlet = inntektsmelding.mottattDato
+        behandlet = inntektsmelding.mottattDato,
+        arkivReferanse = inntektsmelding.arkivRefereranse,
+        fnr = inntektsmelding.fnr
     )
     inntektsmelding.arbeidsgiverperioder.forEach { p -> entitet.leggtilArbeidsgiverperiode(p.fom, p.tom) }
     return entitet

@@ -8,6 +8,8 @@ data class InntektsmeldingEntitet(
     val uuid: String = UUID.randomUUID().toString(),
     var aktorId: String,
     var sakId: String,
+    var fnr: String,
+    var arkivReferanse: String,
     var journalpostId: String,
     var orgnummer: String? = null,
     var arbeidsgiverPrivat: String? = null,
