@@ -14,7 +14,6 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.runBlocking
-import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.client.SakClient
 import no.nav.syfo.client.SakResponse
 import no.nav.syfo.client.aktor.AktorClient
@@ -39,8 +38,6 @@ import no.nav.syfo.service.SaksbehandlingService
 import no.nav.syfo.syfoinntektsmelding.consumer.ws.inntektsmeldingArbeidsgiver
 import no.nav.syfo.syfoinntektsmelding.consumer.ws.inntektsmeldingArbeidsgiverPrivat
 import no.nav.syfo.util.Metrikk
-import no.nav.syfo.utsattoppgave.FeiletUtsattOppgaveMeldingProsessor
-import no.nav.syfo.utsattoppgave.UtsattOppgaveDAO
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -66,7 +63,6 @@ class InntektsmeldingBehandlerTest2 {
     private var metrikk = mockk<Metrikk>(relaxed = true)
     private var behandleInngaaendeJournalConsumer = mockk<BehandleInngaaendeJournalConsumer>(relaxed = true)
     private var behandlendeEnhetConsumer = mockk<BehandlendeEnhetConsumer>(relaxed = true)
-    var oppgaveClient = mockk<OppgaveClient>(relaxed = true)
     private var sakClient = mockk<SakClient>(relaxed = true)
     private var journalpostService = mockk<JournalpostService>(relaxed = true)
 
@@ -74,7 +70,6 @@ class InntektsmeldingBehandlerTest2 {
     private var mockInnteksmeldingRepo = InntektsmeldingRepositoryMock()
     private var inntektsmeldingService = InntektsmeldingService(mockInnteksmeldingRepo, objectMapper) // mockk<InntektsmeldingService>(relaxed = true)
 
-    lateinit var utsattOppgaveDAO: UtsattOppgaveDAO
     private var utsattOppgaveService = mockk<UtsattOppgaveService>(relaxed = true)
 
     private var journalConsumer = mockk<JournalConsumer>(relaxed = true)
@@ -83,7 +78,6 @@ class InntektsmeldingBehandlerTest2 {
     private var saksbehandlingService = mockk<SaksbehandlingService>(relaxed = true)
     private var inntektsmeldingBehandler = mockk<InntektsmeldingBehandler>(relaxed = true)
     private var aivenInntektsmeldingBehandler = mockk<InntektsmeldingAivenProducer>(relaxed = true)
-    var feiletUtsattOppgaveMeldingProsessor = mockk<FeiletUtsattOppgaveMeldingProsessor>(relaxed = true)
 
     @BeforeEach
     fun setup() {
