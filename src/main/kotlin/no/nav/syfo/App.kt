@@ -2,7 +2,6 @@ package no.nav.syfo
 
 import com.typesafe.config.ConfigFactory
 import io.ktor.config.HoconApplicationConfig
-import io.ktor.locations.KtorExperimentalLocationsAPI
 import io.ktor.server.engine.applicationEngineEnvironment
 import io.ktor.server.engine.connector
 import io.ktor.server.engine.embeddedServer
@@ -40,8 +39,6 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
 
     private val runtimeEnvironment = appConfig.getEnvironment()
 
-    @KtorExperimentalLocationsAPI
-
     fun start() {
         if (runtimeEnvironment == AppEnv.PREPROD || runtimeEnvironment == AppEnv.PROD) {
             logger.info("Sover i 30s i påvente av SQL proxy sidecar")
@@ -69,7 +66,6 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
         stopKoin()
     }
 
-    @KtorExperimentalLocationsAPI
     private fun configAndStartWebserver() {
         webserver = embeddedServer(
             Netty,
@@ -129,7 +125,7 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
     }
 }
 
-@KtorExperimentalLocationsAPI
+
 
 fun main() {
     val logger = LoggerFactory.getLogger("main")
