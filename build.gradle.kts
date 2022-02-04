@@ -22,7 +22,7 @@ val githubPassword: String by project
 
 plugins {
     kotlin("jvm") version "1.5.30"
-    id("com.github.ben-manes.versions") version "0.27.0"
+    id("com.github.ben-manes.versions") version "0.42.0"
     id("org.flywaydb.flyway") version "8.4.2"
     id("io.snyk.gradle.plugin.snykplugin") version "0.4"
     id("org.sonarqube") version "3.3"
