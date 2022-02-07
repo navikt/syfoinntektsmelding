@@ -53,7 +53,6 @@ class InntektsmeldingRepositoryMock : InntektsmeldingRepository {
     override fun findByArkivReferanse(arkivRefereanse: String): InntektsmeldingEntitet {
         TODO("Not yet implemented")
     }
-
 }
 
 class InntektsmeldingRepositoryImp(
