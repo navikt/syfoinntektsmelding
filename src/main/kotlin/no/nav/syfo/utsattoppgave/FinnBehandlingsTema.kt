@@ -13,23 +13,14 @@ enum class BehandlingsTema(var navn: String) {
 fun finnBehandlingsTema(inntektsmelding: Inntektsmelding): BehandlingsTema {
     val refusjon = inntektsmelding.refusjon
     if (refusjon.beloepPrMnd == null || refusjon.beloepPrMnd < BigDecimal(1)) {
-        // 1). Ikke refusjon
         return BehandlingsTema.IKKE_REFUSJON
-    } else {
-        // Krever refusjon
-        if (refusjon.opphoersdato == null) {
-            // Uten dato
-            if (refusjon.beloepPrMnd < inntektsmelding.beregnetInntekt) {
-                // 3). Refusjon mindre enn månedslønn
-                return BehandlingsTema.REFUSJON_LITEN_LØNN
-            } else {
-                // 0). Normal
-                return BehandlingsTema.REFUSJON_UTEN_DATO
-            }
+    }
+    if (refusjon.opphoersdato == null) {
+        if (refusjon.beloepPrMnd < inntektsmelding.beregnetInntekt) {
+            return BehandlingsTema.REFUSJON_LITEN_LØNN
         } else {
-            // 2). Med dato
-            return BehandlingsTema.REFUSJON_MED_DATO
+            return BehandlingsTema.REFUSJON_UTEN_DATO
         }
     }
+    return BehandlingsTema.REFUSJON_MED_DATO
 }
-
