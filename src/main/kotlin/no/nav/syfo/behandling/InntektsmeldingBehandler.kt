@@ -33,6 +33,8 @@ class InntektsmeldingBehandler(
     private val OPPRETT_OPPGAVE_FORSINKELSE = 48L
 
     fun behandle(arkivId: String, arkivreferanse: String): String? {
+        val log = log()
+        log.info("Henter inntektsmelding for $arkivreferanse")
         val inntektsmelding = journalpostService.hentInntektsmelding(arkivId, arkivreferanse)
         return behandle(arkivId, arkivreferanse, inntektsmelding)
     }
@@ -46,7 +48,7 @@ class InntektsmeldingBehandler(
             consumerLock.lock()
             log.info("Slår opp aktørID for ${inntektsmelding.arkivRefereranse}")
             val aktorid = aktorClient.getAktorId(inntektsmelding.fnr)
-            log.info("fant aktørid for ${inntektsmelding.arkivRefereranse}")
+            log.info("Fant aktørid for ${inntektsmelding.arkivRefereranse}")
 
             tellMetrikker(inntektsmelding)
 
@@ -54,13 +56,16 @@ class InntektsmeldingBehandler(
                 metrikk.tellInntektsmeldingerMottatt(inntektsmelding)
 
                 val saksId = saksbehandlingService.finnEllerOpprettSakForInntektsmelding(inntektsmelding, aktorid, arkivreferanse)
-                log.info("fant sak $saksId")
+                log.info("Fant sak $saksId for ${inntektsmelding.arkivRefereranse}")
 
                 journalpostService.ferdigstillJournalpost(saksId, inntektsmelding)
-                log.info("ferdigstilte ${inntektsmelding.arkivRefereranse}")
+                log.info("Ferdigstilte ${inntektsmelding.arkivRefereranse}")
 
                 val dto = inntektsmeldingService.lagreBehandling(inntektsmelding, aktorid, saksId, arkivreferanse)
-                log.info("lagret ${inntektsmelding.arkivRefereranse}")
+                log.info("Lagret inntektsmelding ${inntektsmelding.arkivRefereranse}")
+
+                val umiddelbarOpprettelseAvOppgave = inntektsmelding.refusjon == null
+                log.info("Opprette oppgave umiddelbart: $umiddelbarOpprettelseAvOppgave for ${inntektsmelding.arkivRefereranse}")
 
                 utsattOppgaveService.opprett(
                     UtsattOppgaveEntitet(
@@ -71,13 +76,13 @@ class InntektsmeldingBehandler(
                         arkivreferanse = inntektsmelding.arkivRefereranse,
                         inntektsmeldingId = dto.uuid,
                         tilstand = Tilstand.Utsatt,
-                        timeout = LocalDateTime.now().plusHours(OPPRETT_OPPGAVE_FORSINKELSE),
+                        timeout = if (umiddelbarOpprettelseAvOppgave) { LocalDateTime.now() } else { LocalDateTime.now().plusHours(OPPRETT_OPPGAVE_FORSINKELSE) },
                         gosysOppgaveId = null,
                         oppdatert = null,
                         speil = false
                     )
                 )
-                log.info("opprettet utsatt oppgave på ${inntektsmelding.arkivRefereranse}")
+                log.info("Opprettet utsatt oppgave for ${inntektsmelding.arkivRefereranse}")
 
                 val mappedInntektsmelding = mapInntektsmeldingKontrakt(
                     inntektsmelding,
