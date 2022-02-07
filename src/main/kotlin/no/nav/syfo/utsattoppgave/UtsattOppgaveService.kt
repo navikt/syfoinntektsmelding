@@ -105,7 +105,8 @@ fun opprettOppgaveIGosys(
             tildeltEnhetsnr = behandlendeEnhet,
             aktoerId = utsattOppgave.aktørId,
             gjelderUtland = gjelderUtland,
-            gjelderSpeil = speil
+            gjelderSpeil = speil,
+            tema = behandlingsTema
         )
     }
     utsattOppgave.enhet = behandlendeEnhet

@@ -3,11 +3,11 @@ package no.nav.syfo.utsattoppgave
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import java.math.BigDecimal
 
-enum class BehandlingsTema(var navn: String) {
-    IKKE_REFUSJON("1"),
-    REFUSJON_UTEN_DATO("0"),
-    REFUSJON_MED_DATO("2"),
-    REFUSJON_LITEN_LØNN("3")
+enum class BehandlingsTema{
+    IKKE_REFUSJON,
+    REFUSJON_UTEN_DATO,
+    REFUSJON_MED_DATO,
+    REFUSJON_LITEN_LØNN
 }
 
 fun finnBehandlingsTema(inntektsmelding: Inntektsmelding): BehandlingsTema {

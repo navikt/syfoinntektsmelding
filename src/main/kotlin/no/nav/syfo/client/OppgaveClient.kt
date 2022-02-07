@@ -14,6 +14,7 @@ import no.nav.syfo.domain.OppgaveResultat
 import no.nav.syfo.helpers.retry
 import no.nav.syfo.util.MDCOperations
 import no.nav.syfo.util.Metrikk
+import no.nav.syfo.utsattoppgave.BehandlingsTema
 import org.slf4j.LoggerFactory
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -22,6 +23,7 @@ const val OPPGAVETYPE_INNTEKTSMELDING = "INNT"
 const val OPPGAVETYPE_FORDELINGSOPPGAVE = "FDR"
 const val TEMA = "SYK"
 const val BEHANDLINGSTEMA_SPEIL = "ab0455"
+const val BEHANDLINGSTEMA_UTBETALING_TIL_BRUKER = "ab0458"
 const val BEHANDLINGSTYPE_UTLAND = "ae0106"
 const val BEHANDLINGSTYPE_NORMAL = "ab0061"
 
@@ -77,7 +79,8 @@ class OppgaveClient constructor(
         tildeltEnhetsnr: String,
         aktoerId: String,
         gjelderUtland: Boolean,
-        gjelderSpeil: Boolean
+        gjelderSpeil: Boolean,
+        tema: BehandlingsTema
     ): OppgaveResultat {
         val eksisterendeOppgave = hentHvisOppgaveFinnes(OPPGAVETYPE_INNTEKTSMELDING, journalpostId)
         metrikk.tellOpprettOppgave(eksisterendeOppgave != null)
@@ -98,6 +101,10 @@ class OppgaveClient constructor(
                 log.info("Oppretter oppgave: Normal for journalpost $journalpostId")
                 behandlingstema = BEHANDLINGSTYPE_NORMAL
             }
+        }
+        if (tema != BehandlingsTema.REFUSJON_UTEN_DATO) {
+            log.info("Oppretter oppgave: Utbetaling til bruker for journalpost $journalpostId")
+            behandlingstema = BEHANDLINGSTEMA_UTBETALING_TIL_BRUKER
         }
         val opprettOppgaveRequest = OpprettOppgaveRequest(
             tildeltEnhetsnr = tildeltEnhetsnr,
