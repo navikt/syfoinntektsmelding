@@ -1,11 +1,13 @@
 package no.nav.syfo.utsattoppgave
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.ktor.util.KtorExperimentalAPI
 import io.mockk.mockk
 import io.mockk.verify
 import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.dto.UtsattOppgaveEntitet
+import no.nav.syfo.repository.InntektsmeldingRepository
 import no.nav.syfo.service.BehandlendeEnhetConsumer
 import no.nav.syfo.util.Metrikk
 import org.junit.jupiter.api.BeforeEach
@@ -21,10 +23,12 @@ open class UtsattOppgaveServiceTest {
     private var behandlendeEnhetConsumer: BehandlendeEnhetConsumer = mockk()
     private lateinit var oppgaveService: UtsattOppgaveService
     private var metrikk: Metrikk = mockk()
+    private var inntektsmeldingRepository: InntektsmeldingRepository = mockk()
+    private var om: ObjectMapper = mockk()
 
     @BeforeEach
     fun setup() {
-        oppgaveService = UtsattOppgaveService(utsattOppgaveDAO, oppgaveClient, behandlendeEnhetConsumer, metrikk)
+        oppgaveService = UtsattOppgaveService(utsattOppgaveDAO, oppgaveClient, behandlendeEnhetConsumer, inntektsmeldingRepository, om, metrikk)
     }
 
     private val fnr = "fnr"

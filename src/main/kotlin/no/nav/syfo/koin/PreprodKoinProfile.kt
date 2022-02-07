@@ -143,7 +143,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
 
     single { UtsattOppgaveDAO(UtsattOppgaveRepositoryImp(get())) }
     single { OppgaveClient(config.getString("oppgavebehandling_url"), get(), get(), get()) } bind OppgaveClient::class
-    single { UtsattOppgaveService(get(), get(), get(), get()) } bind UtsattOppgaveService::class
+    single { UtsattOppgaveService(get(), get(), get(), get(), get(), get()) } bind UtsattOppgaveService::class
     single { FeiletUtsattOppgaveMeldingProsessor(get(), get()) }
 
     single {
@@ -152,7 +152,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
             config.getString("lagringstidMåneder").toInt()
         )
     } bind FjernInntektsmeldingByBehandletProcessor::class
-    single { FinnAlleUtgaandeOppgaverProcessor(get(), get(), get(), get()) } bind FinnAlleUtgaandeOppgaverProcessor::class
+    single { FinnAlleUtgaandeOppgaverProcessor(get(), get(), get(), get(), get(), get()) } bind FinnAlleUtgaandeOppgaverProcessor::class
 
     single { FeiletService(FeiletRepositoryImp(get())) } bind FeiletService::class
 

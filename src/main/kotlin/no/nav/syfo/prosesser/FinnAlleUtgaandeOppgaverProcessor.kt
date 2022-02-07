@@ -1,11 +1,13 @@
 package no.nav.syfo.prosesser
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import no.nav.helse.arbeidsgiver.utils.RecurringJob
 import no.nav.syfo.behandling.OpprettOppgaveException
 import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.dto.Tilstand
+import no.nav.syfo.repository.InntektsmeldingRepository
 import no.nav.syfo.service.BehandlendeEnhetConsumer
 import no.nav.syfo.util.MDCOperations
 import no.nav.syfo.util.Metrikk
@@ -20,7 +22,9 @@ class FinnAlleUtgaandeOppgaverProcessor(
     private val utsattOppgaveDAO: UtsattOppgaveDAO,
     private val oppgaveClient: OppgaveClient,
     private val behandlendeEnhetConsumer: BehandlendeEnhetConsumer,
-    private val metrikk: Metrikk
+    private val metrikk: Metrikk,
+    private val inntektsmeldingRepository: InntektsmeldingRepository,
+    private val om: ObjectMapper
 ) : RecurringJob(CoroutineScope(Dispatchers.IO), Duration.ofHours(6).toMillis()) {
     val log = LoggerFactory.getLogger(FinnAlleUtgaandeOppgaverProcessor::class.java)!!
 
@@ -30,7 +34,7 @@ class FinnAlleUtgaandeOppgaverProcessor(
             .finnAlleUtgåtteOppgaver()
             .forEach {
                 try {
-                    opprettOppgaveIGosys(it, oppgaveClient, utsattOppgaveDAO, behandlendeEnhetConsumer, it.speil)
+                    opprettOppgaveIGosys(it, oppgaveClient, utsattOppgaveDAO, behandlendeEnhetConsumer, it.speil, inntektsmeldingRepository, om)
                     it.tilstand = Tilstand.OpprettetTimeout
                     it.oppdatert = LocalDateTime.now()
                     metrikk.tellUtsattOppgave_OpprettTimeout()
