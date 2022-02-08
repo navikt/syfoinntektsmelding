@@ -64,9 +64,6 @@ class InntektsmeldingBehandler(
                 val dto = inntektsmeldingService.lagreBehandling(inntektsmelding, aktorid, saksId, arkivreferanse)
                 log.info("Lagret inntektsmelding ${inntektsmelding.arkivRefereranse}")
 
-                val umiddelbarOpprettelseAvOppgave = inntektsmelding.refusjon == null
-                log.info("Opprette oppgave umiddelbart: $umiddelbarOpprettelseAvOppgave for ${inntektsmelding.arkivRefereranse}")
-
                 utsattOppgaveService.opprett(
                     UtsattOppgaveEntitet(
                         fnr = inntektsmelding.fnr,
@@ -76,7 +73,7 @@ class InntektsmeldingBehandler(
                         arkivreferanse = inntektsmelding.arkivRefereranse,
                         inntektsmeldingId = dto.uuid,
                         tilstand = Tilstand.Utsatt,
-                        timeout = if (umiddelbarOpprettelseAvOppgave) { LocalDateTime.now() } else { LocalDateTime.now().plusHours(OPPRETT_OPPGAVE_FORSINKELSE) },
+                        timeout = LocalDateTime.now().plusHours(OPPRETT_OPPGAVE_FORSINKELSE),
                         gosysOppgaveId = null,
                         oppdatert = null,
                         speil = false

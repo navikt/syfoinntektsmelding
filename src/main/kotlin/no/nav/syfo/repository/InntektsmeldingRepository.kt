@@ -75,7 +75,7 @@ class InntektsmeldingRepositoryImp(
     }
 
     override fun findByArkivReferanse(arkivRefereanse: String): InntektsmeldingEntitet {
-        val sqlQuery = "SELECT * FROM INNTEKTSMELDING WHERE data -> 'arkivRefereranse' = ?;"
+        val sqlQuery = "SELECT * FROM INNTEKTSMELDING WHERE data ->> 'arkivRefereranse' = ?;"
         val inntektsmeldinger = ArrayList<InntektsmeldingEntitet>()
         val result: InntektsmeldingEntitet
         ds.connection.use {
