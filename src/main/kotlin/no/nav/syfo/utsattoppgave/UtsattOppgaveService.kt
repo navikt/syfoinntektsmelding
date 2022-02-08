@@ -93,11 +93,13 @@ fun opprettOppgaveIGosys(
     inntektsmeldingRepository: InntektsmeldingRepository,
     om: ObjectMapper
 ): OppgaveResultat {
+    val log = LoggerFactory.getLogger(UtsattOppgaveService::class.java)!!
     val behandlendeEnhet = behandlendeEnhetConsumer.hentBehandlendeEnhet(utsattOppgave.fnr, utsattOppgave.inntektsmeldingId)
     val gjelderUtland = (SYKEPENGER_UTLAND == behandlendeEnhet)
     val imEntitet = inntektsmeldingRepository.findByArkivReferanse(utsattOppgave.arkivreferanse)
     val inntektsmelding = om.readValue<Inntektsmelding>(imEntitet.data!!)
     val behandlingsTema = finnBehandlingsTema(inntektsmelding)
+    log.info("Fant enhet $behandlendeEnhet for ${utsattOppgave.arkivreferanse}")
     val resultat = runBlocking {
         oppgaveClient.opprettOppgave(
             sakId = utsattOppgave.sakId,
