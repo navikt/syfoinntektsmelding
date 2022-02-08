@@ -98,13 +98,14 @@ class OppgaveClient constructor(
                 log.info("Oppretter oppgave: Utland for journalpost $journalpostId")
                 behandlingstype = BEHANDLINGSTYPE_UTLAND
             } else {
-                log.info("Oppretter oppgave: Normal for journalpost $journalpostId")
-                behandlingstema = BEHANDLINGSTYPE_NORMAL
+                if (tema != BehandlingsTema.REFUSJON_UTEN_DATO) {
+                    log.info("Oppretter oppgave: Utbetaling til bruker for journalpost $journalpostId")
+                    behandlingstema = BEHANDLINGSTEMA_UTBETALING_TIL_BRUKER
+                } else {
+                    log.info("Oppretter oppgave: Normal for journalpost $journalpostId")
+                    behandlingstema = BEHANDLINGSTYPE_NORMAL
+                }
             }
-        }
-        if (tema != BehandlingsTema.REFUSJON_UTEN_DATO) {
-            log.info("Oppretter oppgave: Utbetaling til bruker for journalpost $journalpostId")
-            behandlingstema = BEHANDLINGSTEMA_UTBETALING_TIL_BRUKER
         }
         val opprettOppgaveRequest = OpprettOppgaveRequest(
             tildeltEnhetsnr = tildeltEnhetsnr,
