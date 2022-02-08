@@ -3,7 +3,7 @@ package no.nav.syfo.utsattoppgave
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import java.math.BigDecimal
 
-enum class BehandlingsTema{
+enum class BehandlingsTema {
     IKKE_REFUSJON,
     REFUSJON_UTEN_DATO,
     REFUSJON_MED_DATO,
