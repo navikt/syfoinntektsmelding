@@ -1,11 +1,15 @@
 package no.nav.syfo.utsattoppgave
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.domain.OppgaveResultat
+import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.dto.UtsattOppgaveEntitet
+import no.nav.syfo.repository.InntektsmeldingRepository
 import no.nav.syfo.service.BehandlendeEnhetConsumer
 import no.nav.syfo.service.SYKEPENGER_UTLAND
 import no.nav.syfo.util.Metrikk
@@ -18,6 +22,8 @@ class UtsattOppgaveService(
     private val utsattOppgaveDAO: UtsattOppgaveDAO,
     private val oppgaveClient: OppgaveClient,
     private val behandlendeEnhetConsumer: BehandlendeEnhetConsumer,
+    private val inntektsmeldingRepository: InntektsmeldingRepository,
+    private val om: ObjectMapper,
     private val metrikk: Metrikk
 ) {
 
@@ -33,7 +39,7 @@ class UtsattOppgaveService(
 
         val gjelderSpeil = oppdatering.oppdateringstype == OppdateringstypeDTO.OpprettSpeilRelatert
 
-        if (oppgave.tilstand == Tilstand.Utsatt && oppdatering.handling == Handling.Utsett) {
+        if (oppgave.tilstand == Tilstand.Utsatt && oppdatering.handling == no.nav.syfo.utsattoppgave.Handling.Utsett) {
             if (oppgave.timeout == null) {
                 metrikk.tellUtsattOppgave_UtenDato()
             }
@@ -47,7 +53,7 @@ class UtsattOppgaveService(
             return
         }
 
-        if (oppgave.tilstand == Tilstand.Utsatt && oppdatering.handling == Handling.Forkast) {
+        if (oppgave.tilstand == Tilstand.Utsatt && oppdatering.handling == no.nav.syfo.utsattoppgave.Handling.Forkast) {
             oppgave.oppdatert = LocalDateTime.now()
             lagre(oppgave.copy(tilstand = Tilstand.Forkastet, speil = gjelderSpeil))
             metrikk.tellUtsattOppgave_Forkast()
@@ -56,7 +62,7 @@ class UtsattOppgaveService(
         }
 
         if ((oppgave.tilstand == Tilstand.Utsatt || oppgave.tilstand == Tilstand.Forkastet) && oppdatering.handling == Handling.Opprett) {
-            val resultat = opprettOppgaveIGosys(oppgave, oppgaveClient, utsattOppgaveDAO, behandlendeEnhetConsumer, gjelderSpeil)
+            val resultat = opprettOppgaveIGosys(oppgave, oppgaveClient, utsattOppgaveDAO, behandlendeEnhetConsumer, gjelderSpeil, inntektsmeldingRepository, om)
             oppgave.oppdatert = LocalDateTime.now()
             lagre(oppgave.copy(tilstand = Tilstand.Opprettet, speil = gjelderSpeil))
             metrikk.tellUtsattOppgave_Opprett()
@@ -83,10 +89,17 @@ fun opprettOppgaveIGosys(
     oppgaveClient: OppgaveClient,
     utsattOppgaveDAO: UtsattOppgaveDAO,
     behandlendeEnhetConsumer: BehandlendeEnhetConsumer,
-    speil: Boolean
+    speil: Boolean,
+    inntektsmeldingRepository: InntektsmeldingRepository,
+    om: ObjectMapper
 ): OppgaveResultat {
+    val log = LoggerFactory.getLogger(UtsattOppgaveService::class.java)!!
     val behandlendeEnhet = behandlendeEnhetConsumer.hentBehandlendeEnhet(utsattOppgave.fnr, utsattOppgave.inntektsmeldingId)
     val gjelderUtland = (SYKEPENGER_UTLAND == behandlendeEnhet)
+    val imEntitet = inntektsmeldingRepository.findByArkivReferanse(utsattOppgave.arkivreferanse)
+    val inntektsmelding = om.readValue<Inntektsmelding>(imEntitet.data!!)
+    val behandlingsTema = finnBehandlingsTema(inntektsmelding)
+    log.info("Fant enhet $behandlendeEnhet for ${utsattOppgave.arkivreferanse}")
     val resultat = runBlocking {
         oppgaveClient.opprettOppgave(
             sakId = utsattOppgave.sakId,
@@ -94,7 +107,8 @@ fun opprettOppgaveIGosys(
             tildeltEnhetsnr = behandlendeEnhet,
             aktoerId = utsattOppgave.aktørId,
             gjelderUtland = gjelderUtland,
-            gjelderSpeil = speil
+            gjelderSpeil = speil,
+            tema = behandlingsTema
         )
     }
     utsattOppgave.enhet = behandlendeEnhet

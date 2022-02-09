@@ -12,6 +12,7 @@ import io.ktor.util.KtorExperimentalAPI
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.util.Metrikk
+import no.nav.syfo.utsattoppgave.BehandlingsTema
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.DayOfWeek
@@ -34,7 +35,7 @@ class OppgaveClientTest {
     fun henterEksisterendeOppgave() {
         runBlocking {
             oppgaveClient = OppgaveClient("url", tokenConsumer, buildHttpClientJson(HttpStatusCode.OK, lagOppgaveResponse()), metrikk)
-            val resultat = oppgaveClient.opprettOppgave("sakId", "123", "tildeltEnhet", "aktoerid", false, false)
+            val resultat = oppgaveClient.opprettOppgave("sakId", "123", "tildeltEnhet", "aktoerid", false, false, BehandlingsTema.REFUSJON_MED_DATO)
             assertThat(resultat.oppgaveId).isEqualTo(OPPGAVE_ID)
             assertThat(resultat.duplikat).isTrue
         }
@@ -45,7 +46,7 @@ class OppgaveClientTest {
     fun oppretterNyOppgave() {
         runBlocking {
             oppgaveClient = OppgaveClient("url", tokenConsumer, buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk)
-            val resultat = oppgaveClient.opprettOppgave("sakId", "123", "tildeltEnhet", "aktoerid", false, false)
+            val resultat = oppgaveClient.opprettOppgave("sakId", "123", "tildeltEnhet", "aktoerid", false, false, BehandlingsTema.REFUSJON_MED_DATO)
             val requestVerdier = hentRequestInnhold(oppgaveClient.httpClient)
             assertThat(resultat.oppgaveId).isNotEqualTo(OPPGAVE_ID)
             assertThat(resultat.duplikat).isFalse
@@ -82,10 +83,16 @@ class OppgaveClientTest {
 
     @Test
     @KtorExperimentalAPI
-    fun gjelderUtlandFårBehandlingstype() {
+    fun skal_opprette_utland() {
         runBlocking {
             oppgaveClient = OppgaveClient("url", tokenConsumer, buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk)
-            oppgaveClient.opprettOppgave("sakId", "123", "tildeltEnhet", "aktoerid", true, false)
+            oppgaveClient.opprettOppgave("sakId", "123", "tildeltEnhet", "aktoerid", true, false, BehandlingsTema.REFUSJON_MED_DATO)
+            val requestVerdier = hentRequestInnhold(oppgaveClient.httpClient)
+            assertThat(requestVerdier?.behandlingstype).isEqualTo("ae0106")
+        }
+        runBlocking {
+            oppgaveClient = OppgaveClient("url", tokenConsumer, buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk)
+            oppgaveClient.opprettOppgave("sakId", "123", "tildeltEnhet", "aktoerid", true, false, BehandlingsTema.REFUSJON_UTEN_DATO)
             val requestVerdier = hentRequestInnhold(oppgaveClient.httpClient)
             assertThat(requestVerdier?.behandlingstype).isEqualTo("ae0106")
         }
@@ -93,10 +100,10 @@ class OppgaveClientTest {
 
     @Test
     @KtorExperimentalAPI
-    fun gjelderSpeilBehandlingstype() {
+    fun skal_opprette_speil() {
         runBlocking {
             oppgaveClient = OppgaveClient("url", tokenConsumer, buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk)
-            oppgaveClient.opprettOppgave("sakId", "123", "tildeltEnhet", "aktoerid", true, true)
+            oppgaveClient.opprettOppgave("sakId", "123", "tildeltEnhet", "aktoerid", true, true, BehandlingsTema.REFUSJON_UTEN_DATO)
             val requestVerdier = hentRequestInnhold(oppgaveClient.httpClient)
             assertThat(requestVerdier?.behandlingstema).isEqualTo("ab0455")
         }
@@ -115,6 +122,29 @@ class OppgaveClientTest {
         assertThat(oppgaveClient.leggTilEnVirkeuke(fredag).dayOfWeek).isEqualTo(DayOfWeek.FRIDAY)
         assertThat(oppgaveClient.leggTilEnVirkeuke(lørdag).dayOfWeek).isEqualTo(DayOfWeek.MONDAY)
         assertThat(oppgaveClient.leggTilEnVirkeuke(søndag).dayOfWeek).isEqualTo(DayOfWeek.MONDAY)
+    }
+
+    @Test
+    @KtorExperimentalAPI
+    fun skal_utbetale_til_bruker() {
+        runBlocking {
+            oppgaveClient = OppgaveClient("url", tokenConsumer, buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk)
+            oppgaveClient.opprettOppgave("sakId", "123", "tildeltEnhet", "aktoerid", false, false, BehandlingsTema.REFUSJON_MED_DATO)
+            val requestVerdier = hentRequestInnhold(oppgaveClient.httpClient)
+            assertThat(requestVerdier?.behandlingstema).isEqualTo("ab0458")
+        }
+        runBlocking {
+            oppgaveClient = OppgaveClient("url", tokenConsumer, buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk)
+            oppgaveClient.opprettOppgave("sakId", "123", "tildeltEnhet", "aktoerid", false, false, BehandlingsTema.IKKE_REFUSJON)
+            val requestVerdier = hentRequestInnhold(oppgaveClient.httpClient)
+            assertThat(requestVerdier?.behandlingstema).isEqualTo("ab0458")
+        }
+        runBlocking {
+            oppgaveClient = OppgaveClient("url", tokenConsumer, buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk)
+            oppgaveClient.opprettOppgave("sakId", "123", "tildeltEnhet", "aktoerid", false, false, BehandlingsTema.REFUSJON_LITEN_LØNN)
+            val requestVerdier = hentRequestInnhold(oppgaveClient.httpClient)
+            assertThat(requestVerdier?.behandlingstema).isEqualTo("ab0458")
+        }
     }
 
     private fun hentRequestInnhold(client: HttpClient): OpprettOppgaveRequest? {
