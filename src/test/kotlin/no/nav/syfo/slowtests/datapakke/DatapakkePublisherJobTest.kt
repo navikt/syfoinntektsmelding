@@ -25,7 +25,9 @@ class DatapakkePublisherJobTest : SystemTestBase() {
 
     @BeforeAll
     internal fun setUp() {
-        every { repo.getWeeklyStats() } returns (1..25)
+        val weeks = (7..52) + (1..6)
+
+        every { repo.getWeeklyStats() } returns weeks
             .map {
                 IMWeeklyStats(
                     it,
@@ -68,7 +70,7 @@ class DatapakkePublisherJobTest : SystemTestBase() {
             )
         )
 
-        every { repo.getWeeklyQualityStats() } returns (1..25)
+        every { repo.getWeeklyQualityStats() } returns weeks
             .map {
                 IMWeeklyQualityStats(
                     it,
@@ -133,6 +135,11 @@ class DatapakkePublisherJobTest : SystemTestBase() {
             }.toList()
 
         val list = ArrayList<ForsinkelseWeeklyStats>()
+        (42..52).map { uke ->
+            (1..6).map { bucket ->
+                list.add(ForsinkelseWeeklyStats(Random.nextInt(100), Random.nextInt(100), bucket, uke))
+            }
+        }
         (1..10).map { uke ->
             (1..6).map { bucket ->
                 list.add(ForsinkelseWeeklyStats(Random.nextInt(100), Random.nextInt(100), bucket, uke))

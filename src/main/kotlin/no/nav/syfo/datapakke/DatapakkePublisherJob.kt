@@ -38,7 +38,7 @@ class DatapakkePublisherJob(
         }
 
         val datapakkeTemplate = "datapakke/datapakke-spinn.json".loadFromResources()
-        val timeseries = imRepo.getWeeklyStats().sortedBy { it.weekNumber }
+        val timeseries = imRepo.getWeeklyStats()
         val lpsStats = imRepo.getLPSStats()
 
         val sapList = lpsStats.filter { it.lpsNavn.startsWith("SAP") }
@@ -53,7 +53,7 @@ class DatapakkePublisherJob(
 
         val arsakStats = imRepo.getArsakStats()
 
-        val timeseriesKS = imRepo.getWeeklyQualityStats().sortedBy { it.weekNumber }
+        val timeseriesKS = imRepo.getWeeklyQualityStats()
 
         val lpsFeilFF = imRepo.getFeilFFPerLPS()
             .filter { !it.lpsNavn.startsWith("Altinn") }
