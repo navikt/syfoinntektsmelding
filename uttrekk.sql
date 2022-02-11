@@ -103,5 +103,16 @@ data -> 'feriePerioder' -> 0  ->> 'fom' is not null
 --    dager_mellom_agp_og_ff
 
 
-
-
+---------------Finne utbetaling til bruker-----------------
+SELECT
+    (i.data ->> 'arkivRefereranse') as arkivReferanse,
+    (i.data -> 'refusjon' ->> 'beloepPrMnd') as beloep,
+    (i.data -> 'refusjon' ->> 'opphoersdato') as opphoer,
+    (i.data -> 'refusjon' ->> 'beregnetInntekt') as inntekt,
+    u.gosys_oppgave_id,
+    u.speil,
+    i.behandlet
+FROM INNTEKTSMELDING i
+LEFT JOIN utsatt_oppgave u ON (u.arkivreferanse = i.data ->> 'arkivRefereranse')
+ORDER BY i.behandlet DESC
+LIMIT 100;
