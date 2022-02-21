@@ -103,16 +103,52 @@ data -> 'feriePerioder' -> 0  ->> 'fom' is not null
 --    dager_mellom_agp_og_ff
 
 
----------------Finne utbetaling til bruker-----------------
-SELECT
-    (i.data ->> 'arkivRefereranse') as arkivReferanse,
-    (i.data -> 'refusjon' ->> 'beloepPrMnd') as beloep,
-    (i.data -> 'refusjon' ->> 'opphoersdato') as opphoer,
-    (i.data -> 'refusjon' ->> 'beregnetInntekt') as inntekt,
-    u.gosys_oppgave_id,
-    u.speil,
-    i.behandlet
+---------------Finne totalt antall utbetaling til bruker-----------------
+SELECT COUNT(*)
 FROM INNTEKTSMELDING i
-LEFT JOIN utsatt_oppgave u ON (u.arkivreferanse = i.data ->> 'arkivRefereranse')
-ORDER BY i.behandlet DESC
-LIMIT 100;
+         INNER JOIN utsatt_oppgave u ON (u.arkivreferanse = i.data ->> 'arkivRefereranse')
+WHERE
+  -- Må ha gosys_oppgave_id
+    u.gosys_oppgave_id IS NOT NULL
+  AND
+  -- Ikke fra speil
+        u.speil = false
+  AND NOT
+    -- Ikke SYKEPENGER_UTLAND
+        u.enhet = '4474'
+  AND
+  -- refusjon.beloepPrMnd er over 0
+        (i.data -> 'refusjon' ->> 'beloepPrMnd')::FLOAT > 0
+  AND (
+    -- Beregnet inntekt er større enn refusjon.belopPrMnd
+            (i.data ->> 'beregnetInntekt')::FLOAT > (i.data -> 'refusjon' ->> 'beloepPrMnd')::FLOAT
+        -- Eller opphørsdato er satt
+        OR (i.data -> 'refusjon' ->> 'opphoersdato') IS NOT NULL
+    )
+;
+
+
+---------------Dato for den eldste utbetaling til bruker-----------------
+SELECT i.behandlet
+FROM INNTEKTSMELDING i
+         INNER JOIN utsatt_oppgave u ON (u.arkivreferanse = i.data ->> 'arkivRefereranse')
+WHERE
+  -- Må ha gosys_oppgave_id
+    u.gosys_oppgave_id IS NOT NULL
+  AND
+  -- Ikke fra speil
+    u.speil = false
+  AND NOT
+    -- Ikke SYKEPENGER_UTLAND
+    u.enhet = '4474'
+  AND
+  -- refusjon.beloepPrMnd er over 0
+    (i.data -> 'refusjon' ->> 'beloepPrMnd')::FLOAT > 0
+  AND (
+    -- Beregnet inntekt er større enn refusjon.belopPrMnd
+            (i.data ->> 'beregnetInntekt')::FLOAT > (i.data -> 'refusjon' ->> 'beloepPrMnd')::FLOAT
+        -- Eller opphørsdato er satt
+        OR (i.data -> 'refusjon' ->> 'opphoersdato') IS NOT NULL
+    )
+ORDER BY i.behandlet ASC
+LIMIT 1;
