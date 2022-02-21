@@ -82,7 +82,7 @@ class InntektsmeldingRepositoryImp(
             val res = it.prepareStatement(sqlQuery).apply {
                 setString(1, arkivRefereanse)
             }.executeQuery()
-            result = resultLoop(res, inntektsmeldinger).first()
+            result = resultLoop(res, inntektsmeldinger).firstOrNull()!!
         }
         result.arbeidsgiverperioder = finnAgpForIm(result.uuid).toMutableList()
         return result

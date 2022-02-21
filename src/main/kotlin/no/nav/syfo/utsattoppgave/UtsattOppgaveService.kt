@@ -97,6 +97,9 @@ fun opprettOppgaveIGosys(
     val behandlendeEnhet = behandlendeEnhetConsumer.hentBehandlendeEnhet(utsattOppgave.fnr, utsattOppgave.inntektsmeldingId)
     val gjelderUtland = (SYKEPENGER_UTLAND == behandlendeEnhet)
     val imEntitet = inntektsmeldingRepository.findByArkivReferanse(utsattOppgave.arkivreferanse)
+    if (imEntitet == null) {
+        log.error("Inntektsmelding med arkivreferanse ${utsattOppgave.arkivreferanse} ikke funnet")
+    }
     val inntektsmelding = om.readValue<Inntektsmelding>(imEntitet.data!!)
     val behandlingsTema = finnBehandlingsTema(inntektsmelding)
     log.info("Fant enhet $behandlendeEnhet for ${utsattOppgave.arkivreferanse}")
