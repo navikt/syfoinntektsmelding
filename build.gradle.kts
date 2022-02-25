@@ -68,7 +68,7 @@ dependencies {
     implementation("org.postgresql:postgresql:42.3.1")
     implementation("org.apache.neethi:neethi:3.1.1")
     implementation("org.flywaydb:flyway-core:$flywayVersion")
-    implementation("no.nav.sykepenger.kontrakter:inntektsmelding-kontrakt:2020.04.06-12-19-94de1")
+    implementation("no.nav.sykepenger.kontrakter:inntektsmelding-kontrakt:2022.02.25-10-37-3934b")
     implementation("no.nav.tjenestespesifikasjoner:nav-altinn-inntektsmelding:1.2021.02.22-10.45-4201aaea72fb")
     implementation("no.nav.syfo.sm:syfosm-common-rest-sts:2019.09.25-05-44-08e26429f4e37cd57d99ba4d39fc74099a078b97")
     implementation("no.nav.syfo.sm:syfosm-common-networking:2019.09.25-05-44-08e26429f4e37cd57d99ba4d39fc74099a078b97")

@@ -38,7 +38,8 @@ fun mapInntektsmeldingKontrakt(
         ferieperioder = mapFerieperioder(inntektsmelding),
         foersteFravaersdag = inntektsmelding.førsteFraværsdag,
         mottattDato = inntektsmelding.mottattDato,
-        begrunnelseForReduksjonEllerIkkeUtbetalt = inntektsmelding.begrunnelseRedusert
+        begrunnelseForReduksjonEllerIkkeUtbetalt = inntektsmelding.begrunnelseRedusert,
+        naerRelasjon = inntektsmelding.nærRelasjon
     )
 }
 
