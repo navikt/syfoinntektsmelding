@@ -54,7 +54,7 @@ dependencies {
     implementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
     implementation("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
     testImplementation("io.insert-koin:koin-test:$koinVersion")
-    testImplementation("io.mockk:mockk:1.12.0")
+    testImplementation("io.mockk:mockk:1.12.2")
     testImplementation("io.ktor:ktor-client-mock:$ktorVersion")
     testImplementation("io.ktor:ktor-client-mock-jvm:$ktorVersion")
     testImplementation("io.ktor:ktor-server-tests:$ktorVersion")
