@@ -10,7 +10,7 @@ val cxfVersion = "3.4.4"
 val kotlinVersion = "1.4.10"
 val hikariVersion = "5.0.0"
 val ktorVersion = "1.6.7"
-val koinVersion = "3.1.3"
+val koinVersion = "3.1.5"
 val tokenSupportVersion = "1.3.9"
 val mockOAuth2ServerVersion = "0.3.6"
 val brukernotifikasjonSchemasVersion = "1.2021.01.18-11.12-b9c8c40b98d1"
@@ -88,7 +88,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2-native-mt")
     implementation("io.confluent:kafka-streams-avro-serde:6.2.1")
     implementation("io.confluent:kafka-avro-serializer:6.2.1")
-    implementation("org.apache.kafka:kafka-streams:2.8.0")
+    implementation("org.apache.kafka:kafka-streams:7.0.1-ce")
     implementation("io.ktor:ktor-client-core:$ktorVersion")
     implementation("io.ktor:ktor-client-apache:$ktorVersion")
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
