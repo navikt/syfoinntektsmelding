@@ -17,12 +17,12 @@ val brukernotifikasjonSchemasVersion = "1.2021.01.18-11.12-b9c8c40b98d1"
 val jacksonVersion = "2.13.1"
 val junitJupiterVersion = "5.8.1"
 val assertJVersion = "3.22.0"
-val prometheusVersion = "0.12.0"
+val prometheusVersion = "0.14.1"
 val githubPassword: String by project
 
 plugins {
     kotlin("jvm") version "1.5.30"
-    id("com.github.ben-manes.versions") version "0.27.0"
+    id("com.github.ben-manes.versions") version "0.42.0"
     id("org.flywaydb.flyway") version "8.4.2"
     id("io.snyk.gradle.plugin.snykplugin") version "0.4"
     id("org.sonarqube") version "3.3"
@@ -85,7 +85,7 @@ dependencies {
     implementation("io.micrometer:micrometer-core:$micrometerVersion")
     runtimeOnly("io.micrometer:micrometer-registry-prometheus:$micrometerVersion")
     implementation("com.google.guava:guava:31.0.1-jre")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2-native-mt")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-native-mt")
     implementation("io.confluent:kafka-streams-avro-serde:6.2.1")
     implementation("io.confluent:kafka-avro-serializer:6.2.1")
     implementation("org.apache.kafka:kafka-streams:7.0.1-ce")
