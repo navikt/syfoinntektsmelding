@@ -85,7 +85,7 @@ dependencies {
     implementation("io.micrometer:micrometer-core:$micrometerVersion")
     runtimeOnly("io.micrometer:micrometer-registry-prometheus:$micrometerVersion")
     implementation("com.google.guava:guava:31.0.1-jre")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2-native-mt")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-native-mt")
     implementation("io.confluent:kafka-streams-avro-serde:6.2.1")
     implementation("io.confluent:kafka-avro-serializer:6.2.1")
     implementation("org.apache.kafka:kafka-streams:7.0.1-ce")
