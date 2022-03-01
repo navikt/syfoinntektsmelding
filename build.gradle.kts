@@ -15,7 +15,7 @@ val tokenSupportVersion = "2.0.0"
 val mockOAuth2ServerVersion = "0.3.6"
 val brukernotifikasjonSchemasVersion = "1.2021.01.18-11.12-b9c8c40b98d1"
 val jacksonVersion = "2.13.1"
-val junitJupiterVersion = "5.8.1"
+val junitJupiterVersion = "5.8.2"
 val assertJVersion = "3.22.0"
 val prometheusVersion = "0.14.1"
 val githubPassword: String by project
