@@ -62,7 +62,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("com.google.guava:guava:31.0.1-jre")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.4.10")
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.4.10")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:1.6.10")
     implementation("org.apache.cxf:cxf-core:$cxfVersion")
     implementation("org.apache.cxf:cxf-rt-databinding-jaxb:$cxfVersion")
     implementation("org.postgresql:postgresql:42.3.1")
