@@ -66,7 +66,7 @@ dependencies {
     implementation("org.apache.cxf:cxf-core:$cxfVersion")
     implementation("org.apache.cxf:cxf-rt-databinding-jaxb:$cxfVersion")
     implementation("org.postgresql:postgresql:42.3.1")
-    implementation("org.apache.neethi:neethi:3.1.1")
+    implementation("org.apache.neethi:neethi:3.2.0")
     implementation("org.flywaydb:flyway-core:$flywayVersion")
     implementation("no.nav.sykepenger.kontrakter:inntektsmelding-kontrakt:2022.02.25-10-37-3934b")
     implementation("no.nav.tjenestespesifikasjoner:nav-altinn-inntektsmelding:1.2021.02.22-10.45-4201aaea72fb")
