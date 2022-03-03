@@ -1,3 +1,3 @@
 UPDATE inntektsmelding
-SET data ->> 'journalStatus' = 'MOTTATT'
-WHERE data ->> 'journalStatus' = 'MIDLERTIDIG'
+SET data -> 'journalStatus' = 'MOTTATT'
+WHERE data -> 'journalStatus' = 'MIDLERTIDIG'
