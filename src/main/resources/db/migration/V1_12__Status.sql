@@ -1,3 +1,3 @@
 UPDATE inntektsmelding
-SET data ->> 'journalStatus' = 'MOTTATT'
+SET data = jsonb_set(personb, '{journalStatus}', '"MOTTATT"', false)
 WHERE data ->> 'journalStatus' = 'MIDLERTIDIG'
