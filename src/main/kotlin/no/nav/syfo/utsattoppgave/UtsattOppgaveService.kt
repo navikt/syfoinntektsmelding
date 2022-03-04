@@ -104,7 +104,7 @@ fun opprettOppgaveIGosys(
         oppgaveClient.opprettOppgave(
             sakId = utsattOppgave.sakId,
             journalpostId = utsattOppgave.journalpostId,
-            tildeltEnhetsnr = behandlendeEnhet,
+            tildeltEnhetsnr = null,
             aktoerId = utsattOppgave.aktørId,
             gjelderUtland = gjelderUtland,
             gjelderSpeil = speil,
