@@ -21,6 +21,8 @@ import no.nav.syfo.client.norg.Norg2Client
 import no.nav.syfo.client.saf.SafDokumentClient
 import no.nav.syfo.client.saf.SafJournalpostClient
 import no.nav.syfo.datapakke.DatapakkePublisherJob
+import no.nav.syfo.integration.brreg.BrregClient
+import no.nav.syfo.integration.brreg.BrregClientImp
 import no.nav.syfo.integration.kafka.JoarkHendelseKafkaClient
 import no.nav.syfo.integration.kafka.UtsattOppgaveKafkaClient
 import no.nav.syfo.integration.kafka.commonAivenProperties
@@ -51,6 +53,7 @@ import no.nav.syfo.utsattoppgave.FeiletUtsattOppgaveMeldingProsessor
 import no.nav.syfo.utsattoppgave.UtsattOppgaveDAO
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil
+import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import javax.sql.DataSource
@@ -96,7 +99,7 @@ fun prodConfig(config: ApplicationConfig) = module {
     single { JournalConsumer(get(), get(), get()) } bind JournalConsumer::class
     single { Metrikk() } bind Metrikk::class
     single { BehandlendeEnhetConsumer(get(), get(), get()) } bind BehandlendeEnhetConsumer::class
-    single { JournalpostService(get(), get(), get(), get(), get()) } bind JournalpostService::class
+    single { JournalpostService(get(), get(), get(), get(), get(), get()) } bind JournalpostService::class
     single { InntektsmeldingRepositoryImp(get()) } bind InntektsmeldingRepository::class
     single { InntektsmeldingService(get(), get()) } bind InntektsmeldingService::class
     single { ArbeidsgiverperiodeRepositoryImp(get()) } bind ArbeidsgiverperiodeRepository::class
@@ -198,4 +201,6 @@ fun prodConfig(config: ApplicationConfig) = module {
             get()
         )
     } bind DokArkivClient::class
+
+    single { BrregClientImp(get(qualifier = named("proxyHttpClient")), config.getString("berreg_enhet_url")) } bind BrregClient::class
 }

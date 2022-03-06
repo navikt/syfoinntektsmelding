@@ -10,15 +10,15 @@ class BrregService(
     var log = log()
 
     fun hentVirksomhetsNavn(orgnr: String): String {
-        try {
+        return try {
             val virksomhetsNavn = runBlocking {
                 brregClient.getVirksomhetsNavn(orgnr)
             }
             log.info("Fant virksomhet:  " + virksomhetsNavn)
-            return virksomhetsNavn
+            virksomhetsNavn
         } catch (e: RuntimeException) {
             log.error("Klarte ikke å hente virksomhet!", e)
-            return "Ukjent arbeidsgiver"
+            "Ukjent arbeidsgiver"
         }
     }
 }

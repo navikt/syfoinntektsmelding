@@ -31,12 +31,7 @@ import no.nav.syfo.producer.InntektsmeldingAivenProducer
 import no.nav.syfo.repository.InntektsmeldingRepository
 import no.nav.syfo.repository.InntektsmeldingRepositoryMock
 import no.nav.syfo.repository.InntektsmeldingService
-import no.nav.syfo.service.BehandleInngaaendeJournalConsumer
-import no.nav.syfo.service.BehandlendeEnhetConsumer
-import no.nav.syfo.service.InngaaendeJournalConsumer
-import no.nav.syfo.service.JournalConsumer
-import no.nav.syfo.service.JournalpostService
-import no.nav.syfo.service.SaksbehandlingService
+import no.nav.syfo.service.*
 import no.nav.syfo.syfoinntektsmelding.consumer.ws.inntektsmeldingArbeidsgiver
 import no.nav.syfo.syfoinntektsmelding.consumer.ws.inntektsmeldingArbeidsgiverPrivat
 import no.nav.syfo.util.Metrikk
@@ -85,6 +80,9 @@ class InntektsmeldingBehandlerTest2 {
     private var inntektsmeldingBehandler = mockk<InntektsmeldingBehandler>(relaxed = true)
     private var aivenInntektsmeldingBehandler = mockk<InntektsmeldingAivenProducer>(relaxed = true)
     var feiletUtsattOppgaveMeldingProsessor = mockk<FeiletUtsattOppgaveMeldingProsessor>(relaxed = true)
+    val brregService = mockk<BrregService>(relaxed = true) {
+        coEvery { hentVirksomhetsNavn(any()) } returns "Stark Industries"
+    }
 
     @BeforeEach
     fun setup() {
@@ -95,6 +93,7 @@ class InntektsmeldingBehandlerTest2 {
             behandleInngaaendeJournalConsumer,
             journalConsumer,
             behandlendeEnhetConsumer,
+            brregService,
             metrikk
         )
         saksbehandlingService =

@@ -9,6 +9,7 @@ class JournalpostService(
     private val behandleInngaaendeJournalConsumer: BehandleInngaaendeJournalConsumer,
     private val journalConsumer: JournalConsumer,
     private val behandlendeEnhetConsumer: BehandlendeEnhetConsumer,
+    private val brregService: BrregService,
     private val metrikk: Metrikk
 ) {
 
@@ -26,6 +27,9 @@ class JournalpostService(
     private fun hentInngaendeJournalpost(gsakId: String, inntektsmelding: Inntektsmelding): InngaendeJournalpost {
         val inngaaendeJournal = inngaaendeJournalConsumer.hentDokumentId(inntektsmelding.journalpostId)
         val behandlendeEnhet = behandlendeEnhetConsumer.hentBehandlendeEnhet(inntektsmelding.fnr, inntektsmelding.id)
+        val arbeidsgiverNavn = inntektsmelding.arbeidsgiverOrgnummer?.let {
+            brregService.hentVirksomhetsNavn(inntektsmelding.arbeidsgiverOrgnummer)
+        }
 
         return InngaendeJournalpost(
             fnr = inntektsmelding.fnr,
@@ -34,6 +38,7 @@ class JournalpostService(
             dokumentId = inngaaendeJournal.dokumentId,
             behandlendeEnhetId = behandlendeEnhet,
             arbeidsgiverOrgnummer = inntektsmelding.arbeidsgiverOrgnummer,
+            arbeidsgiverNavn = arbeidsgiverNavn,
             arbeidsgiverPrivat = inntektsmelding.arbeidsgiverPrivatFnr
         )
     }

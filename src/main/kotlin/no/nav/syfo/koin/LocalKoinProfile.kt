@@ -16,6 +16,8 @@ import no.nav.syfo.client.dokarkiv.DokArkivClient
 import no.nav.syfo.client.saf.SafDokumentClient
 import no.nav.syfo.client.saf.SafJournalpostClient
 import no.nav.syfo.datapakke.DatapakkePublisherJob
+import no.nav.syfo.integration.brreg.BrregClient
+import no.nav.syfo.integration.brreg.MockBrregClient
 import no.nav.syfo.integration.kafka.JoarkHendelseKafkaClient
 import no.nav.syfo.integration.kafka.UtsattOppgaveKafkaClient
 import no.nav.syfo.integration.kafka.joarkLocalProperties
@@ -129,7 +131,7 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single { BehandleInngaaendeJournalConsumer(get()) } bind BehandleInngaaendeJournalConsumer::class
     single { JournalConsumer(get(), get(), get()) } bind JournalConsumer::class
     single { Metrikk() } bind Metrikk::class
-    single { JournalpostService(get(), get(), get(), get(), get()) } bind JournalpostService::class
+    single { JournalpostService(get(), get(), get(), get(), get(), get()) } bind JournalpostService::class
     single { InntektsmeldingService(InntektsmeldingRepositoryImp(get()), get()) } bind InntektsmeldingService::class
     single { SakClient(config.getString("opprett_sak_url"), get(), get()) } bind SakClient::class
     single { SaksbehandlingService(get(), get(), get()) } bind SaksbehandlingService::class
@@ -173,4 +175,6 @@ fun localDevConfig(config: ApplicationConfig) = module {
     } bind DokArkivClient::class
 
     single { ArbeidsgiverperiodeRepositoryImp(get()) } bind ArbeidsgiverperiodeRepository::class
+
+    single { MockBrregClient() } bind BrregClient::class
 }

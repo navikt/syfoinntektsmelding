@@ -1,5 +1,6 @@
 package no.nav.syfo.service
 
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -17,6 +18,9 @@ class JournalpostServiceTest {
     private var behandlendeEnhetConsumer = mockk<BehandlendeEnhetConsumer>(relaxed = true)
     private var journalConsumer = mockk<JournalConsumer>(relaxed = true)
     private var behandleInngaaendeJournalConsumer = mockk<BehandleInngaaendeJournalConsumer>(relaxed = true)
+    private val brregService = mockk<BrregService>(relaxed = true) {
+        coEvery { hentVirksomhetsNavn(any()) } returns "Stark Industries"
+    }
     private val metrikk = mockk<Metrikk>(relaxed = true)
 
     private val journalpostService = JournalpostService(
@@ -24,6 +28,7 @@ class JournalpostServiceTest {
         behandleInngaaendeJournalConsumer,
         journalConsumer,
         behandlendeEnhetConsumer,
+        brregService,
         metrikk
     )
 
