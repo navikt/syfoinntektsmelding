@@ -64,7 +64,8 @@ data class ForsinkelseWeeklyStats(
     val antall_med_forsinkelsen_altinn: Int,
     val antall_med_forsinkelsen_lps: Int,
     val bucket: Int,
-    val uke: Int
+    val uke: Int,
+    val year: Int
 )
 
 interface IMStatsRepo {
@@ -421,6 +422,7 @@ class IMStatsRepoImpl(
                 count(*) filter (where data -> 'avsenderSystem' ->> 'navn' = 'AltinnPortal') as antall_med_forsinkelsen_altinn, -- K3A
                 count(*) filter (where data -> 'avsenderSystem' ->> 'navn' != 'AltinnPortal') as antall_med_forsinkelsen_lps, --K3B
                 extract('week' from date_trunc('week',behandlet)) as uke,
+                extract('year' from date_trunc('week',behandlet)) as year,
                 width_bucket(DATE_PART('day', behandlet - DATE(data ->> 'førsteFraværsdag'))::int, array[15, 30, 90]) as bucket
             from
                 inntektsmelding
@@ -442,8 +444,9 @@ class IMStatsRepoImpl(
                     ForsinkelseWeeklyStats(
                         res.getInt("antall_med_forsinkelsen_altinn"),
                         res.getInt("antall_med_forsinkelsen_lps"),
+                        res.getInt("bucket"),
                         res.getInt("uke"),
-                        res.getInt("bucket")
+                        res.getInt("year"),
                     )
                 )
             }
