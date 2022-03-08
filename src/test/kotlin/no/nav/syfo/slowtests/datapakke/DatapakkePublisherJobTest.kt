@@ -134,17 +134,19 @@ class DatapakkePublisherJobTest : SystemTestBase() {
                 )
             }.toList()
 
-        val list = ArrayList<ForsinkelseWeeklyStats>()
+        val list = mutableListOf<ForsinkelseWeeklyStats>()
         (42..52).map { uke ->
             (1..6).map { bucket ->
-                list.add(ForsinkelseWeeklyStats(Random.nextInt(100), Random.nextInt(100), bucket, uke))
+                list.add(ForsinkelseWeeklyStats(Random.nextInt(100), Random.nextInt(100), bucket, uke, 2021))
             }
         }
         (1..10).map { uke ->
             (1..6).map { bucket ->
-                list.add(ForsinkelseWeeklyStats(Random.nextInt(100), Random.nextInt(100), bucket, uke))
+                list.add(ForsinkelseWeeklyStats(Random.nextInt(100), Random.nextInt(100), bucket, uke, 2022))
             }
         }
+        list.remove(list.filter { it.bucket == 1 }.filter { it.uke == 3 }[0])
+        list.remove(list.filter { it.bucket == 2 }.filter { it.uke == 6 }[0])
         every { repo.getForsinkelseWeeklyStats() } returns list
     }
 
