@@ -429,7 +429,7 @@ class IMStatsRepoImpl(
             where
                         data ->> 'førsteFraværsdag' = data -> 'arbeidsgiverperioder' -> 0 ->> 'fom' and
                     (date(data -> 'arbeidsgiverperioder' -> 0 ->> 'tom') - date(data -> 'arbeidsgiverperioder' -> 0 ->> 'fom')) = 15 and
-                    behandlet > NOW()::DATE - INTERVAL '89 DAYS'
+                    behandlet > NOW()::DATE - INTERVAL '179 DAYS'
             GROUP BY
                 width_bucket(DATE_PART('day', behandlet - DATE(data ->> 'førsteFraværsdag'))::int, array[15, 30, 90]),
                 extract('year' from date_trunc('week',behandlet)),
