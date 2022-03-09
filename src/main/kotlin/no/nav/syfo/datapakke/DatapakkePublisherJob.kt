@@ -80,7 +80,7 @@ class DatapakkePublisherJob(
         val end = forsinkelseWeeklyStats.sortedWith(compareBy({ it.year }, { it.uke }))[forsinkelseWeeklyStats.lastIndex]
         val weekList = if (start.uke > end.uke) (start.uke..52) + (1..end.uke) else (start.uke..end.uke)
         val forsinkelseWeeklyStatsMutable = forsinkelseWeeklyStats.toMutableList()
-        for (i in 1..4) {
+        for (i in 0..3) {
             val forsinketBuckets = forsinkelseWeeklyStats.filter { it.bucket == i }
             weekList.minus(forsinketBuckets.map { it.uke }.toSet()).forEach {
                 forsinkelseWeeklyStatsMutable.add(ForsinkelseWeeklyStats(0, 0, i, it, if (end.uke >= it) end.year else start.year))
@@ -162,19 +162,19 @@ class DatapakkePublisherJob(
             .replace("@FF_forsinkelse_uker", weekList.joinToString())
             .replace(
                 "@FF_bucket1",
-                forsinkelseWeeklyStatsMutable.filter { it.bucket == 1 }.sortedWith(compareBy({ it.year }, { it.uke })).map { it.antall_med_forsinkelsen_lps + it.antall_med_forsinkelsen_altinn }.joinToString()
+                forsinkelseWeeklyStatsMutable.filter { it.bucket == 0 }.sortedWith(compareBy({ it.year }, { it.uke })).map { it.antall_med_forsinkelsen_lps + it.antall_med_forsinkelsen_altinn }.joinToString()
             )
             .replace(
                 "@FF_bucket2",
-                forsinkelseWeeklyStatsMutable.filter { it.bucket == 2 }.sortedWith(compareBy({ it.year }, { it.uke })).map { it.antall_med_forsinkelsen_lps + it.antall_med_forsinkelsen_altinn }.joinToString()
+                forsinkelseWeeklyStatsMutable.filter { it.bucket == 1 }.sortedWith(compareBy({ it.year }, { it.uke })).map { it.antall_med_forsinkelsen_lps + it.antall_med_forsinkelsen_altinn }.joinToString()
             )
             .replace(
                 "@FF_bucket3",
-                forsinkelseWeeklyStatsMutable.filter { it.bucket == 3 }.sortedWith(compareBy({ it.year }, { it.uke })).map { it.antall_med_forsinkelsen_lps + it.antall_med_forsinkelsen_altinn }.joinToString()
+                forsinkelseWeeklyStatsMutable.filter { it.bucket == 2 }.sortedWith(compareBy({ it.year }, { it.uke })).map { it.antall_med_forsinkelsen_lps + it.antall_med_forsinkelsen_altinn }.joinToString()
             )
             .replace(
                 "@FF_bucket4",
-                forsinkelseWeeklyStatsMutable.filter { it.bucket == 4 }.sortedWith(compareBy({ it.year }, { it.uke })).map { it.antall_med_forsinkelsen_lps + it.antall_med_forsinkelsen_altinn }.joinToString()
+                forsinkelseWeeklyStatsMutable.filter { it.bucket == 3 }.sortedWith(compareBy({ it.year }, { it.uke })).map { it.antall_med_forsinkelsen_lps + it.antall_med_forsinkelsen_altinn }.joinToString()
             )
 
         runBlocking {
