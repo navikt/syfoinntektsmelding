@@ -80,7 +80,7 @@ dependencies {
     implementation("no.nav.security:mock-oauth2-server:$mockOAuth2ServerVersion")
     implementation("com.zaxxer:HikariCP:$hikariVersion")
     implementation("org.slf4j:slf4j-api:1.7.32")
-    implementation("net.logstash.logback:logstash-logback-encoder:6.6")
+    implementation("net.logstash.logback:logstash-logback-encoder:7.0.1")
     implementation("org.apache.httpcomponents:httpclient:4.5.13")
     implementation("io.micrometer:micrometer-core:$micrometerVersion")
     runtimeOnly("io.micrometer:micrometer-registry-prometheus:$micrometerVersion")
