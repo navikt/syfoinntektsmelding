@@ -6,21 +6,19 @@ import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.slf4j.LoggerFactory
 import java.time.Duration
 
-interface MeldingProvider {
-    fun getMessagesToProcess(): List<String>
+interface JoarkHendelseProvider {
+    fun getMessagesToProcess(): List<JoarkHendelse>
     fun confirmProcessingDone()
 }
 
-class JoarkHendelseKafkaClient(props: MutableMap<String, Any>, topicName: String) : MeldingProvider, LivenessComponent {
-    private var currentBatch: List<String> = emptyList()
+class JoarkHendelseKafkaClient(props: MutableMap<String, Any>, topicName: String) : JoarkHendelseProvider, LivenessComponent {
+    private var currentBatch: List<JoarkHendelse> = emptyList()
     private var lastThrown: Exception? = null
     private val consumer: KafkaConsumer<String, GenericRecord> = KafkaConsumer(props)
-
     private val log = LoggerFactory.getLogger(JoarkHendelseKafkaClient::class.java)
 
     init {
         consumer.subscribe(listOf(topicName))
-
         Runtime.getRuntime().addShutdownHook(
             Thread {
                 log.debug("Got shutdown message, closing Kafka connection...")
@@ -36,16 +34,14 @@ class JoarkHendelseKafkaClient(props: MutableMap<String, Any>, topicName: String
 
     fun stop() = consumer.close()
 
-    override fun getMessagesToProcess(): List<String> {
+    override fun getMessagesToProcess(): List<JoarkHendelse> {
         if (currentBatch.isNotEmpty()) {
             return currentBatch
         }
         try {
             val records = consumer.poll(Duration.ofMillis(10000))
-            currentBatch = records.map { it.value().toString() }
-
+            currentBatch = records.map { JoarkHendelse(it.key(), it.value().toString()) }
             lastThrown = null
-
             if (records?.count() != null && records.count() > 0) {
                 log.debug("JoarkHendelse: Fikk ${records.count()} meldinger med offsets ${records.map { it.offset() }.joinToString(", ")}")
             }

@@ -26,7 +26,7 @@ class PollForJoarkhendelserJob(
             val wasEmpty = kafkaProvider
                 .getMessagesToProcess()
                 .onEach {
-                    val hendelse = om.readValue(it, InngaaendeJournalpostDTO::class.java)
+                    val hendelse = om.readValue(it.data, InngaaendeJournalpostDTO::class.java)
                     // https://confluence.adeo.no/display/BOA/Tema https://confluence.adeo.no/display/BOA/Mottakskanal
                     val isSyketemaOgFraAltinnMidlertidig =
                         hendelse.temaNytt == "SYK" &&
@@ -34,17 +34,17 @@ class PollForJoarkhendelserJob(
                             hendelse.journalpostStatus == "M"
 
                     if (isSyketemaOgFraAltinnMidlertidig) {
-                        log.info("Fant journalpost ${hendelse.journalpostId} fra ALTINN for syk med status midlertidig.")
+                        log.info("Fant journalpost ${it.journalpostId} fra ALTINN for syk med status midlertidig.")
                         bakgrunnsjobbRepo.save(
                             Bakgrunnsjobb(
                                 type = JoarkInntektsmeldingHendelseProsessor.JOB_TYPE,
                                 kjoeretid = LocalDateTime.now(),
                                 maksAntallForsoek = 10,
-                                data = it
+                                data = it.data
                             )
                         )
                     } else {
-                        log.debug("Fant journalpost ${hendelse.journalpostId} men ignorerer.")
+                        log.debug("Fant journalpost ${it.journalpostId} men ignorerer.")
                     }
                 }
                 .isEmpty()

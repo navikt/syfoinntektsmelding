@@ -7,6 +7,11 @@ import org.apache.kafka.common.serialization.StringDeserializer
 import org.slf4j.LoggerFactory
 import java.time.Duration
 
+interface MeldingProvider {
+    fun getMessagesToProcess(): List<String>
+    fun confirmProcessingDone()
+}
+
 class UtsattOppgaveKafkaClient(
     props: Map<String, Any>,
     topicName: String
