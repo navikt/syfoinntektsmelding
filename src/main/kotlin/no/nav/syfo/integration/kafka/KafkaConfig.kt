@@ -56,7 +56,8 @@ fun joarkAivenProperties(config: ApplicationConfig) = commonAivenProperties(conf
     // AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG to config.getString("kafka_schema_registry_url_config"),
     ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
     ConsumerConfig.CLIENT_ID_CONFIG to "syfoinntektsmelding",
-    ConsumerConfig.GROUP_ID_CONFIG to "syfoinntektsmelding-v1"
+    ConsumerConfig.GROUP_ID_CONFIG to "syfoinntektsmelding-v1",
+    ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java
 )
 
 fun utsattOppgaveLocalProperties() = consumerLocalProperties() + mapOf(
