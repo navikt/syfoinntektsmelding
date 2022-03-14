@@ -1,8 +1,8 @@
 package no.nav.syfo.integration.kafka
 
 import no.nav.helse.arbeidsgiver.kubernetes.LivenessComponent
-import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.clients.consumer.KafkaConsumer
+import org.apache.kafka.common.serialization.StringDeserializer
 import org.slf4j.LoggerFactory
 import java.time.Duration
 
@@ -14,7 +14,7 @@ interface JoarkHendelseProvider {
 class JoarkHendelseKafkaClient(props: MutableMap<String, Any>, topicName: String) : JoarkHendelseProvider, LivenessComponent {
     private var currentBatch: List<JoarkHendelse> = emptyList()
     private var lastThrown: Exception? = null
-    private val consumer: KafkaConsumer<String, GenericRecord> = KafkaConsumer(props)
+    private val consumer: KafkaConsumer<String, StringDeserializer> = KafkaConsumer(props)
     private val log = LoggerFactory.getLogger(JoarkHendelseKafkaClient::class.java)
 
     init {

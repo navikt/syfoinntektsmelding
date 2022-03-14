@@ -51,8 +51,9 @@ fun joarkOnPremProperties(config: ApplicationConfig) = consumerOnPremProperties(
     ConsumerConfig.CLIENT_ID_CONFIG to "syfoinntektsmelding",
     ConsumerConfig.GROUP_ID_CONFIG to "syfoinntektsmelding-v2"
 )
+
 fun joarkAivenProperties(config: ApplicationConfig) = commonAivenProperties(config) + mapOf(
-    ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to GenericAvroDeserializer::class.java,
+    ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
     AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG to config.getString("kafka_schema_registry_url_config"),
     ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
     ConsumerConfig.CLIENT_ID_CONFIG to "syfoinntektsmelding",
