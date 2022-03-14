@@ -24,6 +24,7 @@ import no.nav.syfo.datapakke.DatapakkePublisherJob
 import no.nav.syfo.integration.kafka.JoarkHendelseKafkaClient
 import no.nav.syfo.integration.kafka.UtsattOppgaveKafkaClient
 import no.nav.syfo.integration.kafka.commonAivenProperties
+import no.nav.syfo.integration.kafka.joarkAivenProperties
 import no.nav.syfo.integration.kafka.joarkOnPremProperties
 import no.nav.syfo.integration.kafka.utsattOppgaveAivenProperties
 import no.nav.syfo.producer.InntektsmeldingAivenProducer
@@ -124,7 +125,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
 
     single {
         JoarkHendelseKafkaClient(
-            joarkOnPremProperties(config).toMutableMap(),
+            joarkAivenProperties(config).toMutableMap(),
             config.getString("kafka_joark_hendelse_topic")
         )
     }
