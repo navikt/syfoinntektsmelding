@@ -18,7 +18,9 @@ class JoarkHendelseKafkaClient(props: MutableMap<String, Any>, topicName: String
     private val log = LoggerFactory.getLogger(JoarkHendelseKafkaClient::class.java)
 
     init {
+        log.info("Subscribing to topic $topicName ...")
         consumer.subscribe(listOf(topicName))
+        log.info("Successfully subscribed to topic $topicName ...")
         Runtime.getRuntime().addShutdownHook(
             Thread {
                 log.debug("Got shutdown message, closing Kafka connection...")
