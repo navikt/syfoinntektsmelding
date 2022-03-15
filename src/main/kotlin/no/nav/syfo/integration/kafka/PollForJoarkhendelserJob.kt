@@ -26,6 +26,7 @@ class PollForJoarkhendelserJob(
             val wasEmpty = kafkaProvider
                 .getMessagesToProcess()
                 .onEach {
+                    log.info("Data ${it.data} og ${it.journalpostId}")
                     val hendelse = om.readValue(it.data, InngaaendeJournalpostDTO::class.java)
                     // https://confluence.adeo.no/display/BOA/Tema https://confluence.adeo.no/display/BOA/Mottakskanal
                     val isSyketemaOgFraAltinnMidlertidig =
