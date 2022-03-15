@@ -21,19 +21,19 @@ class UtsattOppgaveKafkaClient(
 
     private var currentBatch: List<String> = emptyList()
     private var lastThrown: Exception? = null
-    private val consumer: KafkaConsumer<String, String> =
-        KafkaConsumer<String, String>(props, StringDeserializer(), StringDeserializer())
+    private val consumer: KafkaConsumer<String, String> = KafkaConsumer(props, StringDeserializer(), StringDeserializer())
 
     private val log = LoggerFactory.getLogger(UtsattOppgaveKafkaClient::class.java)
 
     init {
+        log.info("Subscribing to topic $topicName ...")
         consumer.subscribe(listOf(topicName))
-
+        log.info("Successfully subscribed to topic $topicName")
         Runtime.getRuntime().addShutdownHook(
             Thread {
                 log.debug("Got shutdown message, closing Kafka connection...")
                 try {
-                    consumer.close()
+                    stop()
                 } catch (e: ConcurrentModificationException) {
                     log.debug("Fikk ConcurrentModificationException når man stoppet")
                 }
