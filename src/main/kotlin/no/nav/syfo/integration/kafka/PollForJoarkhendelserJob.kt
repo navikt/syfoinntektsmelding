@@ -17,7 +17,7 @@ class PollForJoarkhendelserJob(
     private val bakgrunnsjobbRepo: BakgrunnsjobbRepository,
     private val om: ObjectMapper,
     coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO),
-    waitTimeWhenEmptyQueue: Duration = Duration.ofSeconds(30)
+    waitTimeWhenEmptyQueue: Duration = Duration.ofSeconds(60)
 ) : RecurringJob(coroutineScope, waitTimeWhenEmptyQueue.toMillis()) {
 
     private val log = LoggerFactory.getLogger(PollForJoarkhendelserJob::class.java)
