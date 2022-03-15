@@ -36,7 +36,7 @@ class JoarkHendelseKafkaClient(props: MutableMap<String, Any>, topicName: String
     fun stop() = consumer.close()
 
     override fun getMessagesToProcess(): List<JoarkHendelse> {
-        if (!isOpen){
+        if (!isOpen) {
             log.info("Subscribing to topic $topic ...")
             consumer.subscribe(listOf(topic))
             log.info("Successfully subscribed to topic $topic")
@@ -54,7 +54,6 @@ class JoarkHendelseKafkaClient(props: MutableMap<String, Any>, topicName: String
             }
             return currentBatch
         } catch (e: Exception) {
-            stop()
             lastThrown = e
             throw e
         }
