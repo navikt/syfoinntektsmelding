@@ -1,3 +1,5 @@
 package no.nav.syfo.integration.kafka
 
-data class JoarkHendelse(val journalpostId: String, val data: String)
+import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
+
+data class JoarkHendelse(val journalpostId: String, val record: JournalfoeringHendelseRecord)
