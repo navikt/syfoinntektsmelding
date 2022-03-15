@@ -16,11 +16,10 @@ class JoarkHendelseKafkaClient(props: MutableMap<String, Any>, topicName: String
     private var lastThrown: Exception? = null
     private val consumer: KafkaConsumer<String, GenericRecord> = KafkaConsumer(props)
     private val log = LoggerFactory.getLogger(JoarkHendelseKafkaClient::class.java)
+    private var isOpen = false
+    private var topic = topicName
 
     init {
-        log.info("Subscribing to topic $topicName ...")
-        consumer.subscribe(listOf(topicName))
-        log.info("Successfully subscribed to topic $topicName ...")
         Runtime.getRuntime().addShutdownHook(
             Thread {
                 log.debug("Got shutdown message, closing Kafka connection...")
@@ -37,6 +36,12 @@ class JoarkHendelseKafkaClient(props: MutableMap<String, Any>, topicName: String
     fun stop() = consumer.close()
 
     override fun getMessagesToProcess(): List<JoarkHendelse> {
+        if (!isOpen){
+            log.info("Subscribing to topic $topic ...")
+            consumer.subscribe(listOf(topic))
+            log.info("Successfully subscribed to topic $topic")
+            isOpen = true
+        }
         if (currentBatch.isNotEmpty()) {
             return currentBatch
         }
