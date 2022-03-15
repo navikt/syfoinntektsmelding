@@ -125,7 +125,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
 
     single {
         JoarkHendelseKafkaClient(
-            joarkAivenProperties(config).toMutableMap(),
+            joarkAivenProperties(config),
             config.getString("kafka_joark_hendelse_topic")
         )
     }

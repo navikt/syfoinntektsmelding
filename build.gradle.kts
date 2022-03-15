@@ -59,7 +59,7 @@ dependencies {
     testImplementation("io.ktor:ktor-client-mock-jvm:$ktorVersion")
     testImplementation("io.ktor:ktor-server-tests:$ktorVersion")
     testImplementation("org.assertj:assertj-core:$assertJVersion")
-    //implementation("no.nav.teamdokumenthandtering:teamdokumenthandtering-avro-schemas:96ec5ebb")
+    implementation("no.nav.teamdokumenthandtering:teamdokumenthandtering-avro-schemas:96ec5ebb")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("com.google.guava:guava:31.0.1-jre")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.6.10")
