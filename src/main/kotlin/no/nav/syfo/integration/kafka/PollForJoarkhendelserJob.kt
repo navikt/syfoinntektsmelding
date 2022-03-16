@@ -49,7 +49,7 @@ class PollForJoarkhendelserJob(
                             it.journalpostStatus == "M"
 
                     if (isSyketemaOgFraAltinnMidlertidig) {
-                        log.info("Fant journalpost ${it.journalpostId} fra ALTINN for syk med status midlertidig.")
+                        log.info("Fant journalpost AR${it.journalpostId} fra ALTINN for syk med status midlertidig.")
                         bakgrunnsjobbRepo.save(
                             Bakgrunnsjobb(
                                 type = JoarkInntektsmeldingHendelseProsessor.JOB_TYPE,
@@ -59,7 +59,7 @@ class PollForJoarkhendelserJob(
                             )
                         )
                     } else {
-                        log.info("Fant journalpost ${it.journalpostId} men ignorerer.")
+                        log.info("Fant journalpost AR${it.journalpostId} men ignorerer (tema: ${it.temaNytt} kanal: ${it.mottaksKanal} status: ${it.journalpostStatus})")
                     }
                 }
                 .isEmpty()
