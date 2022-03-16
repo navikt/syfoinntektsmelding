@@ -56,9 +56,9 @@ fun joarkOnPremProperties(config: ApplicationConfig) = consumerOnPremProperties(
 
 fun joarkAivenProperties(config: ApplicationConfig) = commonAivenProperties(config) + mapOf(
     ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to GenericAvroDeserializer::class.java,
-    KafkaAvroSerializerConfig.SCHEMA_REGISTRY_URL_CONFIG to System.getenv("kafka_schema_registry"),
-    SchemaRegistryClientConfig.BASIC_AUTH_CREDENTIALS_SOURCE to "user_info",
-    SchemaRegistryClientConfig.USER_INFO_CONFIG to System.getenv("kafka_schema_registry_user") + ":" + System.getenv("kafka_schema_registry_password"),
+    KafkaAvroSerializerConfig.SCHEMA_REGISTRY_URL_CONFIG to System.getenv("KAFKA_SCHEMA_REGISTRY"),
+    SchemaRegistryClientConfig.BASIC_AUTH_CREDENTIALS_SOURCE to "USER_INFO",
+    SchemaRegistryClientConfig.USER_INFO_CONFIG to System.getenv("KAFKA_SCHEMA_REGISTRY_USER") + ":" + System.getenv("KAFKA_SCHEMA_REGISTRY_PASSWORD"),
     ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
     ConsumerConfig.CLIENT_ID_CONFIG to "syfoinntektsmelding",
     ConsumerConfig.GROUP_ID_CONFIG to "syfoinntektsmelding-v1",
