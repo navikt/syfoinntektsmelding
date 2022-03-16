@@ -101,7 +101,7 @@ spec:
     - name: KAFKA_UTSATT_OPPGAVE_TOPIC
       value: "tbd.spre-oppgaver"
     - name: KAFKA_SCHEMA_REGISTRY_URL_CONFIG
-      value: "https://kafka-schema-registry.nais.preprod.local"
+      value: "https://kafka-schema-registry.nais-q.adeo.no"
     - name: DOKARKIV_URL
       value: "https://dokarkiv-q1.nais.preprod.local/rest/journalpostapi/v1"
     - name: DATAPAKKE_ID
