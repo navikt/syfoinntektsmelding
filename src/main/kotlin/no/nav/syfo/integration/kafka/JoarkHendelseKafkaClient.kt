@@ -1,20 +1,21 @@
 package no.nav.syfo.integration.kafka
 
 import no.nav.helse.arbeidsgiver.kubernetes.LivenessComponent
-import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
+import no.nav.syfo.kafkamottak.InngaaendeJournalpostDTO
+import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.slf4j.LoggerFactory
 import java.time.Duration
 
 interface JoarkHendelseProvider {
-    fun getMessagesToProcess(): List<JoarkHendelse>
+    fun getMessagesToProcess(): List<InngaaendeJournalpostDTO>
     fun confirmProcessingDone()
 }
 
 class JoarkHendelseKafkaClient(props: Map<String, Any>, topicName: String) : JoarkHendelseProvider, LivenessComponent {
-    private var currentBatch: List<JoarkHendelse> = emptyList()
+    private var currentBatch: List<InngaaendeJournalpostDTO> = emptyList()
     private var lastThrown: Exception? = null
-    private val consumer: KafkaConsumer<String, JournalfoeringHendelseRecord> = KafkaConsumer(props)
+    private val consumer: KafkaConsumer<String, GenericRecord> = KafkaConsumer(props)
     private val log = LoggerFactory.getLogger(JoarkHendelseKafkaClient::class.java)
     private var isOpen = false
     private var topic = topicName
@@ -35,7 +36,7 @@ class JoarkHendelseKafkaClient(props: Map<String, Any>, topicName: String) : Joa
 
     fun stop() = consumer.close()
 
-    override fun getMessagesToProcess(): List<JoarkHendelse> {
+    override fun getMessagesToProcess(): List<InngaaendeJournalpostDTO> {
         if (!isOpen) {
             log.info("Subscribing to topic $topic ...")
             consumer.subscribe(listOf(topic))
@@ -46,8 +47,9 @@ class JoarkHendelseKafkaClient(props: Map<String, Any>, topicName: String) : Joa
             return currentBatch
         }
         try {
+
             val records = consumer.poll(Duration.ofMillis(10000))
-            currentBatch = records.map { JoarkHendelse(it.key(), it.value()) }
+            currentBatch = records.map { mapInngaaendeJournalpostDTO(it.value()) }
             lastThrown = null
             if (records?.count() != null && records.count() > 0) {
                 log.debug("JoarkHendelse: Fikk ${records.count()} meldinger med offsets ${records.map { it.offset() }.joinToString(", ")}")
@@ -68,3 +70,4 @@ class JoarkHendelseKafkaClient(props: Map<String, Any>, topicName: String) : Joa
         lastThrown?.let { throw lastThrown as Exception }
     }
 }
+

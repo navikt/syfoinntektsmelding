@@ -6,17 +6,25 @@ import kotlinx.coroutines.Dispatchers
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.utils.RecurringJob
-import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
 import no.nav.syfo.kafkamottak.InngaaendeJournalpostDTO
 import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
+import org.apache.avro.generic.GenericRecord
 import org.slf4j.LoggerFactory
 import java.time.Duration
 import java.time.LocalDateTime
 
-fun mapInngaaendeJournalpostDTO(record: JournalfoeringHendelseRecord): InngaaendeJournalpostDTO {
+fun mapInngaaendeJournalpostDTO(record: GenericRecord): InngaaendeJournalpostDTO {
     return InngaaendeJournalpostDTO(
-        record.hendelsesId, record.versjon, record.hendelsesType, record.journalpostId,
-        record.journalpostStatus, record.temaGammelt, record.temaNytt, record.mottaksKanal, record.kanalReferanseId, record.behandlingstema
+        record.get("hendelsesId") as String,
+        record.get("versjon") as Int,
+        record.get("hendelsesType") as String,
+        record.get("journalpostId") as Long,
+        record.get("journalpostStatus") as String,
+        record.get("temaGammelt") as String,
+        record.get("temaNytt") as String,
+        record.get("mottaksKanal") as String,
+        record.get("kanalReferanseId") as String,
+        record.get("behandlingstema") as String
     )
 }
 
@@ -37,9 +45,9 @@ class PollForJoarkhendelserJob(
                     log.info("JournalpostID ${it.journalpostId}")
                     // https://confluence.adeo.no/display/BOA/Tema https://confluence.adeo.no/display/BOA/Mottakskanal
                     val isSyketemaOgFraAltinnMidlertidig =
-                        it.record.temaNytt == "SYK" &&
-                            it.record.mottaksKanal == "ALTINN" &&
-                            it.record.journalpostStatus == "M"
+                        it.temaNytt == "SYK" &&
+                            it.mottaksKanal == "ALTINN" &&
+                            it.journalpostStatus == "M"
 
                     if (isSyketemaOgFraAltinnMidlertidig) {
                         log.info("Fant journalpost ${it.journalpostId} fra ALTINN for syk med status midlertidig.")
@@ -48,7 +56,7 @@ class PollForJoarkhendelserJob(
                                 type = JoarkInntektsmeldingHendelseProsessor.JOB_TYPE,
                                 kjoeretid = LocalDateTime.now(),
                                 maksAntallForsoek = 10,
-                                data = om.writeValueAsString(mapInngaaendeJournalpostDTO(it.record))
+                                data = om.writeValueAsString(it)
                             )
                         )
                     } else {

@@ -1,5 +1,5 @@
 package no.nav.syfo.integration.kafka
 
-import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
+import org.apache.avro.generic.GenericRecord
 
-data class JoarkHendelse(val journalpostId: String, val record: JournalfoeringHendelseRecord)
+data class JoarkHendelse(val journalpostId: String, val record: GenericRecord)
