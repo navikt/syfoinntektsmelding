@@ -57,7 +57,6 @@ fun joarkOnPremProperties(config: ApplicationConfig) = consumerOnPremProperties(
 fun joarkAivenProperties(config: ApplicationConfig) = commonAivenProperties(config) + mapOf(
     ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to GenericAvroDeserializer::class.java,
     KafkaAvroSerializerConfig.SCHEMA_REGISTRY_URL_CONFIG to config.getString("KAFKA_SCHEMA_REGISTRY"),
-    SchemaRegistryClientConfig.USER_INFO_CONFIG to config.getString("KAFKA_SCHEMA_REGISTRY"),
     SchemaRegistryClientConfig.BASIC_AUTH_CREDENTIALS_SOURCE to "USER_INFO",
     SchemaRegistryClientConfig.USER_INFO_CONFIG to config.getString("KAFKA_SCHEMA_REGISTRY_USER") + ":" + config.getString("KAFKA_SCHEMA_REGISTRY_PASSWORD"),
     ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
