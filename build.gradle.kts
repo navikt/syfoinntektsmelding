@@ -18,6 +18,7 @@ val jacksonVersion = "2.13.1"
 val junitJupiterVersion = "5.8.2"
 val assertJVersion = "3.22.0"
 val prometheusVersion = "0.15.0"
+val joarkHendelseVersion = "96ec5ebb"
 val githubPassword: String by project
 
 plugins {
@@ -59,7 +60,7 @@ dependencies {
     testImplementation("io.ktor:ktor-client-mock-jvm:$ktorVersion")
     testImplementation("io.ktor:ktor-server-tests:$ktorVersion")
     testImplementation("org.assertj:assertj-core:$assertJVersion")
-    implementation("no.nav.teamdokumenthandtering:teamdokumenthandtering-avro-schemas:96ec5ebb")
+    implementation("no.nav.teamdokumenthandtering:teamdokumenthandtering-avro-schemas:$joarkHendelseVersion")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("com.google.guava:guava:31.0.1-jre")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.6.10")
