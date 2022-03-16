@@ -42,7 +42,6 @@ class PollForJoarkhendelserJob(
             val wasEmpty = kafkaProvider
                 .getMessagesToProcess()
                 .onEach {
-                    log.info("JournalpostID ${it.journalpostId}")
                     // https://confluence.adeo.no/display/BOA/Tema https://confluence.adeo.no/display/BOA/Mottakskanal
                     val isSyketemaOgFraAltinnMidlertidig =
                         it.temaNytt == "SYK" &&
@@ -60,7 +59,7 @@ class PollForJoarkhendelserJob(
                             )
                         )
                     } else {
-                        log.debug("Fant journalpost ${it.journalpostId} men ignorerer.")
+                        log.info("Fant journalpost ${it.journalpostId} men ignorerer.")
                     }
                 }
                 .isEmpty()
