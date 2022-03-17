@@ -46,7 +46,7 @@ class PollForJoarkhendelserJob(
                     val isSyketemaOgFraAltinnMidlertidig =
                         it.temaNytt == "SYK" &&
                             it.mottaksKanal == "ALTINN" &&
-                            it.journalpostStatus == "M"
+                            it.journalpostStatus == "MOTTATT"
 
                     if (isSyketemaOgFraAltinnMidlertidig) {
                         log.info("Fant journalpost AR${it.journalpostId} fra ALTINN for syk med status midlertidig.")
@@ -59,7 +59,7 @@ class PollForJoarkhendelserJob(
                             )
                         )
                     } else {
-                        log.info("Fant journalpost AR${it.journalpostId} men ignorerer (tema: ${it.temaNytt} kanal: ${it.mottaksKanal} status: ${it.journalpostStatus})")
+                        log.info("Fant journalpost AR${it.journalpostId} men ignorerer (tema: ${it.temaNytt}, kanal: ${it.mottaksKanal}, status: ${it.journalpostStatus})")
                     }
                 }
                 .isEmpty()
