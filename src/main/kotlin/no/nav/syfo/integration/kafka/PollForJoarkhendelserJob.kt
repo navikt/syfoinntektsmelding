@@ -48,8 +48,8 @@ class PollForJoarkhendelserJob(
         } while (!wasEmpty)
     }
 
-    fun processAll(list: List<InngaaendeJournalpostDTO>): Boolean {
-        return list
+    fun processAll(journalposter: List<InngaaendeJournalpostDTO>): Boolean {
+        return journalposter
             .filter {
                 isInntektsmelding(it)
             }
@@ -71,11 +71,11 @@ class PollForJoarkhendelserJob(
             .isEmpty()
     }
 
-    fun isInntektsmelding(it: InngaaendeJournalpostDTO): Boolean {
-        return it.temaNytt == "SYK" && it.mottaksKanal == "ALTINN" && it.journalpostStatus == "MOTTATT"
+    fun isInntektsmelding(journalpost: InngaaendeJournalpostDTO): Boolean {
+        return journalpost.temaNytt == "SYK" && journalpost.mottaksKanal == "ALTINN" && journalpost.journalpostStatus == "MOTTATT"
     }
 
-    fun isDuplicate(it: InngaaendeJournalpostDTO): Boolean {
-        return duplikatRepository.findByHendelsesId(it.hendelsesId)
+    fun isDuplicate(journalpost: InngaaendeJournalpostDTO): Boolean {
+        return duplikatRepository.findByHendelsesId(journalpost.hendelsesId)
     }
 }
