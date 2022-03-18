@@ -16,8 +16,6 @@ import no.nav.syfo.client.dokarkiv.DokArkivClient
 import no.nav.syfo.client.saf.SafDokumentClient
 import no.nav.syfo.client.saf.SafJournalpostClient
 import no.nav.syfo.datapakke.DatapakkePublisherJob
-import no.nav.syfo.integration.kafka.DuplikatRepository
-import no.nav.syfo.integration.kafka.DuplikatRepositoryImpl
 import no.nav.syfo.integration.kafka.JoarkHendelseKafkaClient
 import no.nav.syfo.integration.kafka.UtsattOppgaveKafkaClient
 import no.nav.syfo.integration.kafka.joarkLocalProperties
@@ -29,6 +27,8 @@ import no.nav.syfo.prosesser.FjernInntektsmeldingByBehandletProcessor
 import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
 import no.nav.syfo.repository.ArbeidsgiverperiodeRepository
 import no.nav.syfo.repository.ArbeidsgiverperiodeRepositoryImp
+import no.nav.syfo.repository.DuplikatRepository
+import no.nav.syfo.repository.DuplikatRepositoryImpl
 import no.nav.syfo.repository.FeiletRepository
 import no.nav.syfo.repository.FeiletRepositoryImp
 import no.nav.syfo.repository.FeiletService

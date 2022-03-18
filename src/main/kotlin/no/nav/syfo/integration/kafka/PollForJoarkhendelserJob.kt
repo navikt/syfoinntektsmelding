@@ -8,6 +8,7 @@ import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.utils.RecurringJob
 import no.nav.syfo.kafkamottak.InngaaendeJournalpostDTO
 import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
+import no.nav.syfo.repository.DuplikatRepository
 import org.apache.avro.generic.GenericRecord
 import org.slf4j.LoggerFactory
 import java.time.Duration

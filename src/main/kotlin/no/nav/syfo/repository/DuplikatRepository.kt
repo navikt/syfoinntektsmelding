@@ -1,4 +1,4 @@
-package no.nav.syfo.integration.kafka
+package no.nav.syfo.repository
 
 import javax.sql.DataSource
 

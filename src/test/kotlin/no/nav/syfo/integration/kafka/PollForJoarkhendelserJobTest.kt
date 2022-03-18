@@ -5,6 +5,7 @@ import io.mockk.every
 import io.mockk.mockk
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.syfo.kafkamottak.InngaaendeJournalpostDTO
+import no.nav.syfo.repository.DuplikatRepository
 import org.junit.jupiter.api.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
