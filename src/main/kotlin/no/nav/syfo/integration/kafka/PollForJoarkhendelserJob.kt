@@ -40,31 +40,41 @@ class PollForJoarkhendelserJob(
     private val log = LoggerFactory.getLogger(PollForJoarkhendelserJob::class.java)
     override fun doJob() {
         do {
-            val wasEmpty = kafkaProvider
-                .getMessagesToProcess()
-                .filter {
-                    it.temaNytt == "SYK" && it.mottaksKanal == "ALTINN" && it.journalpostStatus == "MOTTATT"
-                }
-                .filter {
-                    !duplikatRepository.findByHendelsesId(it.hendelsesId)
-                }
-                .onEach {
-                    // https://confluence.adeo.no/display/BOA/Tema https://confluence.adeo.no/display/BOA/Mottakskanal
-                    log.info("Fant journalpost AR${it.journalpostId} fra ALTINN for syk med status midlertidig.")
-                    bakgrunnsjobbRepo.save(
-                        Bakgrunnsjobb(
-                            type = JoarkInntektsmeldingHendelseProsessor.JOB_TYPE,
-                            kjoeretid = LocalDateTime.now(),
-                            maksAntallForsoek = 10,
-                            data = om.writeValueAsString(it)
-                        )
-                    )
-                }
-                .isEmpty()
-
+            val wasEmpty = processAll(kafkaProvider.getMessagesToProcess())
             if (!wasEmpty) {
                 kafkaProvider.confirmProcessingDone()
             }
         } while (!wasEmpty)
+    }
+
+    fun processAll(list: List<InngaaendeJournalpostDTO>): Boolean {
+        return list
+            .filter {
+                isInntektsmelding(it)
+            }
+            .filter {
+                !isDuplicate(it)
+            }
+            .onEach {
+                // https://confluence.adeo.no/display/BOA/Tema https://confluence.adeo.no/display/BOA/Mottakskanal
+                log.info("Fant journalpost AR${it.journalpostId} fra ALTINN for syk med status midlertidig.")
+                bakgrunnsjobbRepo.save(
+                    Bakgrunnsjobb(
+                        type = JoarkInntektsmeldingHendelseProsessor.JOB_TYPE,
+                        kjoeretid = LocalDateTime.now(),
+                        maksAntallForsoek = 10,
+                        data = om.writeValueAsString(it)
+                    )
+                )
+            }
+            .isEmpty()
+    }
+
+    fun isInntektsmelding(it: InngaaendeJournalpostDTO): Boolean {
+        return it.temaNytt == "SYK" && it.mottaksKanal == "ALTINN" && it.journalpostStatus == "MOTTATT"
+    }
+
+    fun isDuplicate(it: InngaaendeJournalpostDTO): Boolean {
+        return duplikatRepository.findByHendelsesId(it.hendelsesId)
     }
 }
