@@ -36,7 +36,10 @@ internal class PollForJoarkhendelserJobTest {
     @Test
     fun skal_akseptere_gyldig_journalpost_som_ikke_er_duplikat() {
         every { duplikatRepository.findByHendelsesId(any()) } returns false
-        assertTrue(job.isInntektsmelding(gyldige.first()))
+        gyldige.forEach {
+            assertFalse(job.isDuplicate(it))
+            assertTrue(job.isInntektsmelding(it))
+        }
     }
 
     @Test
@@ -48,13 +51,18 @@ internal class PollForJoarkhendelserJobTest {
 
     @Test
     fun skal_godta_gyldige_journalposter() {
-        assertTrue(job.isInntektsmelding(gyldige.first()))
+        gyldige.forEach {
+            assertTrue(job.isInntektsmelding(it))
+        }
     }
 
     @Test
     fun skal_ignorere_tidligere_behandlede_journalposter() {
         every { duplikatRepository.findByHendelsesId(any()) } returns true
-        assertTrue(job.isDuplicate(duplikater.first()))
+        duplikater.forEach {
+            assertTrue(job.isInntektsmelding(it))
+            assertTrue(job.isDuplicate(it))
+        }
     }
 
     fun mockJournalpost(hendelseId: String, tema: String, kanal: String, status: String): InngaaendeJournalpostDTO {
