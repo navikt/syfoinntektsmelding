@@ -16,6 +16,8 @@ import no.nav.syfo.client.dokarkiv.DokArkivClient
 import no.nav.syfo.client.saf.SafDokumentClient
 import no.nav.syfo.client.saf.SafJournalpostClient
 import no.nav.syfo.datapakke.DatapakkePublisherJob
+import no.nav.syfo.integration.kafka.DuplikatRepository
+import no.nav.syfo.integration.kafka.DuplikatRepositoryImpl
 import no.nav.syfo.integration.kafka.JoarkHendelseKafkaClient
 import no.nav.syfo.integration.kafka.UtsattOppgaveKafkaClient
 import no.nav.syfo.integration.kafka.joarkLocalProperties
@@ -107,6 +109,7 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single { IMStatsRepoImpl(get()) } bind IMStatsRepo::class
     single { DatapakkePublisherJob(get(), get(), config.getString("datapakke.api_url"), config.getString("datapakke.id"), om = get()) }
     single { BehandlendeEnhetConsumer(get(), get(), get()) } bind BehandlendeEnhetConsumer::class
+    single { DuplikatRepositoryImpl(get()) } bind DuplikatRepository::class
     single { UtsattOppgaveDAO(UtsattOppgaveRepositoryMockk()) }
     single { OppgaveClient(config.getString("oppgavebehandling_url"), get(), get(), get()) } bind OppgaveClient::class
     single { UtsattOppgaveService(get(), get(), get(), get(), get(), get()) } bind UtsattOppgaveService::class

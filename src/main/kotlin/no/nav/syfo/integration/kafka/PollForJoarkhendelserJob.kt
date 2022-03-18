@@ -31,6 +31,7 @@ fun mapInngaaendeJournalpostDTO(record: GenericRecord): InngaaendeJournalpostDTO
 class PollForJoarkhendelserJob(
     private val kafkaProvider: JoarkHendelseKafkaClient,
     private val bakgrunnsjobbRepo: BakgrunnsjobbRepository,
+    private val duplikatRepository: DuplikatRepository,
     private val om: ObjectMapper,
     coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO),
     waitTimeWhenEmptyQueue: Duration = Duration.ofSeconds(30)
@@ -41,26 +42,23 @@ class PollForJoarkhendelserJob(
         do {
             val wasEmpty = kafkaProvider
                 .getMessagesToProcess()
+                .filter {
+                    it.temaNytt == "SYK" && it.mottaksKanal == "ALTINN" && it.journalpostStatus == "MOTTATT"
+                }
+                .filter {
+                    !duplikatRepository.findByHendelsesId(it.hendelsesId)
+                }
                 .onEach {
                     // https://confluence.adeo.no/display/BOA/Tema https://confluence.adeo.no/display/BOA/Mottakskanal
-                    val isSyketemaOgFraAltinnMidlertidig =
-                        it.temaNytt == "SYK" &&
-                            it.mottaksKanal == "ALTINN" &&
-                            it.journalpostStatus == "MOTTATT"
-
-                    if (isSyketemaOgFraAltinnMidlertidig) {
-                        log.info("Fant journalpost AR${it.journalpostId} fra ALTINN for syk med status midlertidig.")
-                        bakgrunnsjobbRepo.save(
-                            Bakgrunnsjobb(
-                                type = JoarkInntektsmeldingHendelseProsessor.JOB_TYPE,
-                                kjoeretid = LocalDateTime.now(),
-                                maksAntallForsoek = 10,
-                                data = om.writeValueAsString(it)
-                            )
+                    log.info("Fant journalpost AR${it.journalpostId} fra ALTINN for syk med status midlertidig.")
+                    bakgrunnsjobbRepo.save(
+                        Bakgrunnsjobb(
+                            type = JoarkInntektsmeldingHendelseProsessor.JOB_TYPE,
+                            kjoeretid = LocalDateTime.now(),
+                            maksAntallForsoek = 10,
+                            data = om.writeValueAsString(it)
                         )
-                    } else {
-                        log.info("Fant journalpost AR${it.journalpostId} men ignorerer (tema: ${it.temaNytt}, kanal: ${it.mottaksKanal}, status: ${it.journalpostStatus})")
-                    }
+                    )
                 }
                 .isEmpty()
 

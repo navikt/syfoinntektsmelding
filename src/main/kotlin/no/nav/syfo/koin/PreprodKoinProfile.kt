@@ -21,11 +21,12 @@ import no.nav.syfo.client.norg.Norg2Client
 import no.nav.syfo.client.saf.SafDokumentClient
 import no.nav.syfo.client.saf.SafJournalpostClient
 import no.nav.syfo.datapakke.DatapakkePublisherJob
+import no.nav.syfo.integration.kafka.DuplikatRepository
+import no.nav.syfo.integration.kafka.DuplikatRepositoryImpl
 import no.nav.syfo.integration.kafka.JoarkHendelseKafkaClient
 import no.nav.syfo.integration.kafka.UtsattOppgaveKafkaClient
 import no.nav.syfo.integration.kafka.commonAivenProperties
 import no.nav.syfo.integration.kafka.joarkAivenProperties
-import no.nav.syfo.integration.kafka.joarkOnPremProperties
 import no.nav.syfo.integration.kafka.utsattOppgaveAivenProperties
 import no.nav.syfo.producer.InntektsmeldingAivenProducer
 import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
@@ -142,6 +143,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
         )
     }
 
+    single { DuplikatRepositoryImpl(get()) } bind DuplikatRepository::class
     single { UtsattOppgaveDAO(UtsattOppgaveRepositoryImp(get())) }
     single { OppgaveClient(config.getString("oppgavebehandling_url"), get(), get(), get()) } bind OppgaveClient::class
     single { UtsattOppgaveService(get(), get(), get(), get(), get(), get()) } bind UtsattOppgaveService::class

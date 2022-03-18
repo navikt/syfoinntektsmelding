@@ -21,6 +21,8 @@ import no.nav.syfo.client.norg.Norg2Client
 import no.nav.syfo.client.saf.SafDokumentClient
 import no.nav.syfo.client.saf.SafJournalpostClient
 import no.nav.syfo.datapakke.DatapakkePublisherJob
+import no.nav.syfo.integration.kafka.DuplikatRepository
+import no.nav.syfo.integration.kafka.DuplikatRepositoryImpl
 import no.nav.syfo.integration.kafka.JoarkHendelseKafkaClient
 import no.nav.syfo.integration.kafka.UtsattOppgaveKafkaClient
 import no.nav.syfo.integration.kafka.commonAivenProperties
@@ -119,6 +121,7 @@ fun prodConfig(config: ApplicationConfig) = module {
 
     single { InntektsmeldingAivenProducer(commonAivenProperties(config)) }
 
+    single { DuplikatRepositoryImpl(get()) } bind DuplikatRepository::class
     single { UtsattOppgaveDAO(UtsattOppgaveRepositoryImp(get())) }
     single { OppgaveClient(config.getString("oppgavebehandling_url"), get(), get(), get()) } bind OppgaveClient::class
     single { UtsattOppgaveService(get(), get(), get(), get(), get(), get()) } bind UtsattOppgaveService::class
