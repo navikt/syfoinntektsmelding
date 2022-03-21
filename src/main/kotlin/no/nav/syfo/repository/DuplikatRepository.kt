@@ -9,13 +9,14 @@ interface DuplikatRepository {
 class DuplikatRepositoryImpl(private val ds: DataSource) : DuplikatRepository {
 
     override fun findByHendelsesId(value: String): Boolean {
-        val sql = "select * from bakgrunnsjobb where data ->> 'hendelsesId' = ? limit 1"
+        val sql = "select count(*) from bakgrunnsjobb where data ->> 'hendelsesId' = ?"
         var found: Boolean
         ds.connection.use {
             val res = it.prepareStatement(sql).apply {
                 setString(1, value)
             }.executeQuery()
-            found = res.next()
+            res.next()
+            found = res.getInt(1) > 0
         }
         return found
     }
