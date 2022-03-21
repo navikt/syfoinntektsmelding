@@ -70,4 +70,3 @@ class JoarkHendelseKafkaClient(props: Map<String, Any>, topicName: String) : Joa
         lastThrown?.let { throw lastThrown as Exception }
     }
 }
-
