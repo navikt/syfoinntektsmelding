@@ -1,7 +1,6 @@
 package no.nav.syfo.integration.kafka
 
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClientConfig
-import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig
 import io.confluent.kafka.serializers.KafkaAvroSerializerConfig
 import io.confluent.kafka.streams.serdes.avro.GenericAvroDeserializer
 import io.ktor.config.ApplicationConfig
