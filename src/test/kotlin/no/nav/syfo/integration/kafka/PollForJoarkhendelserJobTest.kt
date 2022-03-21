@@ -24,7 +24,6 @@ internal class PollForJoarkhendelserJobTest {
         mockJournalpost("hendelse-3", "OMS", "SYSTEM_A", "MOTTATT"),
         mockJournalpost("hendelse-4", "SYK", "SYSTEM_B", "MIDLERTIDIG")
     )
-
     val kafkaProvider = mockk<JoarkHendelseKafkaClient>(relaxed = true)
     val bakgrunnsjobbRepo = mockk<BakgrunnsjobbRepository>(relaxed = true)
     val duplikatRepository = mockk<DuplikatRepository>(relaxed = true)
