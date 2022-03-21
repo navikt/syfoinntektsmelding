@@ -15,11 +15,9 @@ internal class PollForJoarkhendelserJobTest {
     val gyldige = listOf(
         mockJournalpost("hendelse-0", "SYK", "ALTINN", "MOTTATT"),
     )
-
     val duplikater = listOf(
         mockJournalpost("hendelse-finnes", "SYK", "ALTINN", "MOTTATT"),
     )
-
     val ugyldige = listOf(
         mockJournalpost("hendelse-1", "FOR", "ALTINN", "MOTTATT"),
         mockJournalpost("hendelse-2", "SYK", "ALTINN", "MIDLERTIDIG"),
