@@ -60,7 +60,7 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
     private fun startKafkaConsumer() {
         val utsattOppgavePoll = PollForUtsattOppgaveVarslingsmeldingJob(get(), get(), get(), get())
         utsattOppgavePoll.startAsync(retryOnFail = true)
-        val joarkPoll = PollForJoarkhendelserJob(get(), get(), get())
+        val joarkPoll = PollForJoarkhendelserJob(get(), get(), get(), get())
         joarkPoll.startAsync(retryOnFail = true)
     }
 

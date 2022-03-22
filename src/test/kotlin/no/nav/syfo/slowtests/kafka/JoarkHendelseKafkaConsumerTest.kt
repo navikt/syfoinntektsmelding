@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Test
 @Disabled("WIP: For at denne testen skal være verdifull måvi sette opp et schema registry eller en mock av en")
 class JoarkHendelseKafkaConsumerTest : SystemTestBase() {
     private lateinit var kafkaProdusent: KafkaAdminForTests
-    private val topicName = "aapen-dok-journalfoering-v1-q1"
+    private val topicName = "teamdokumenthandtering.aapen-dok-journalfoering-q1"
 
     private val objectMapper = ObjectMapper()
         .registerModule(KotlinModule())

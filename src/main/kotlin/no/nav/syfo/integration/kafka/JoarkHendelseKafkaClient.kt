@@ -1,26 +1,26 @@
 package no.nav.syfo.integration.kafka
 
 import no.nav.helse.arbeidsgiver.kubernetes.LivenessComponent
+import no.nav.syfo.kafkamottak.InngaaendeJournalpostDTO
 import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.slf4j.LoggerFactory
 import java.time.Duration
 
-interface MeldingProvider {
-    fun getMessagesToProcess(): List<String>
+interface JoarkHendelseProvider {
+    fun getMessagesToProcess(): List<InngaaendeJournalpostDTO>
     fun confirmProcessingDone()
 }
 
-class JoarkHendelseKafkaClient(props: MutableMap<String, Any>, topicName: String) : MeldingProvider, LivenessComponent {
-    private var currentBatch: List<String> = emptyList()
+class JoarkHendelseKafkaClient(props: Map<String, Any>, topicName: String) : JoarkHendelseProvider, LivenessComponent {
+    private var currentBatch: List<InngaaendeJournalpostDTO> = emptyList()
     private var lastThrown: Exception? = null
     private val consumer: KafkaConsumer<String, GenericRecord> = KafkaConsumer(props)
-
     private val log = LoggerFactory.getLogger(JoarkHendelseKafkaClient::class.java)
+    private var isOpen = false
+    private var topic = topicName
 
     init {
-        consumer.subscribe(listOf(topicName))
-
         Runtime.getRuntime().addShutdownHook(
             Thread {
                 log.debug("Got shutdown message, closing Kafka connection...")
@@ -36,22 +36,26 @@ class JoarkHendelseKafkaClient(props: MutableMap<String, Any>, topicName: String
 
     fun stop() = consumer.close()
 
-    override fun getMessagesToProcess(): List<String> {
+    override fun getMessagesToProcess(): List<InngaaendeJournalpostDTO> {
+        if (!isOpen) {
+            log.info("Subscribing to topic $topic ...")
+            consumer.subscribe(listOf(topic))
+            log.info("Successfully subscribed to topic $topic")
+            isOpen = true
+        }
         if (currentBatch.isNotEmpty()) {
             return currentBatch
         }
         try {
+
             val records = consumer.poll(Duration.ofMillis(10000))
-            currentBatch = records.map { it.value().toString() }
-
+            currentBatch = records.map { mapInngaaendeJournalpostDTO(it.value()) }
             lastThrown = null
-
             if (records?.count() != null && records.count() > 0) {
                 log.debug("JoarkHendelse: Fikk ${records.count()} meldinger med offsets ${records.map { it.offset() }.joinToString(", ")}")
             }
             return currentBatch
         } catch (e: Exception) {
-            stop()
             lastThrown = e
             throw e
         }

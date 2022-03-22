@@ -97,11 +97,9 @@ spec:
     - name: VAULT_MOUNTPATH
       value: "postgresql/preprod-fss/"
     - name: KAFKA_JOARK_HENDELSE_TOPIC
-      value: "aapen-dok-journalfoering-v1-q1"
+      value: "teamdokumenthandtering.aapen-dok-journalfoering-q1"
     - name: KAFKA_UTSATT_OPPGAVE_TOPIC
       value: "tbd.spre-oppgaver"
-    - name: KAFKA_SCHEMA_REGISTRY_URL_CONFIG
-      value: "http://kafka-schema-registry.tpa.svc.nais.local:8081"
     - name: DOKARKIV_URL
       value: "https://dokarkiv-q1.nais.preprod.local/rest/journalpostapi/v1"
     - name: DATAPAKKE_ID
@@ -118,4 +116,3 @@ spec:
       value: "https://saf-q1.nais.preprod.local/rest"
     - name: SAF_JOURNAL_URL
       value: "https://saf-q1.nais.preprod.local/graphql"
-
