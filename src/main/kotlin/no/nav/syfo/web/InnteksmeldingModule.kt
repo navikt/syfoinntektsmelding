@@ -10,7 +10,6 @@ import io.ktor.jackson.JacksonConverter
 import io.ktor.locations.KtorExperimentalLocationsAPI
 import io.ktor.routing.route
 import io.ktor.routing.routing
-
 import no.nav.syfo.web.api.syfoinntektsmelding
 import org.koin.ktor.ext.get
 

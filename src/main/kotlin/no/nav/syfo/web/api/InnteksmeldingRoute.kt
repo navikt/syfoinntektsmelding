@@ -13,11 +13,9 @@ import io.ktor.response.respond
 import io.ktor.routing.Route
 import io.ktor.routing.post
 import io.ktor.routing.route
-
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.syfo.behandling.InntektsmeldingBehandler
 import javax.sql.DataSource
-
 
 fun Route.syfoinntektsmelding(
     inntektsmeldingBehandler: InntektsmeldingBehandler,

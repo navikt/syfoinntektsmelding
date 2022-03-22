@@ -16,12 +16,10 @@ import io.ktor.client.engine.http
 import io.ktor.client.features.json.JacksonSerializer
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.config.ApplicationConfig
-
 import no.nav.helse.arbeidsgiver.kubernetes.KubernetesProbeManager
 import org.koin.core.module.Module
 import org.koin.core.qualifier.StringQualifier
 import org.koin.dsl.module
-
 
 fun selectModuleBasedOnProfile(config: ApplicationConfig): List<Module> {
     val envModule = when (config.property("koin.profile").getString()) {
@@ -94,7 +92,6 @@ val common = module {
 }
 
 // utils
-
 
 fun ApplicationConfig.getjdbcUrlFromProperties(): String {
     return String.format(

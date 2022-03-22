@@ -2,7 +2,6 @@ package no.nav.syfo.koin
 
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.config.ApplicationConfig
-
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
@@ -55,7 +54,6 @@ import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import javax.sql.DataSource
-
 
 fun localDevConfig(config: ApplicationConfig) = module {
     mockExternalDependecies()
