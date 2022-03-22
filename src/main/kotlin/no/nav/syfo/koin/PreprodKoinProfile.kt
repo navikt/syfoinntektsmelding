@@ -12,9 +12,7 @@ import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClientImpl
 import no.nav.helse.arbeidsgiver.system.getString
 import no.nav.syfo.MetrikkVarsler
 import no.nav.syfo.behandling.InntektsmeldingBehandler
-import no.nav.syfo.client.OppgaveClient
-import no.nav.syfo.client.SakClient
-import no.nav.syfo.client.TokenConsumer
+import no.nav.syfo.client.*
 import no.nav.syfo.client.aktor.AktorClient
 import no.nav.syfo.client.dokarkiv.DokArkivClient
 import no.nav.syfo.client.norg.Norg2Client
@@ -53,6 +51,7 @@ import no.nav.syfo.utsattoppgave.FeiletUtsattOppgaveMeldingProsessor
 import no.nav.syfo.utsattoppgave.UtsattOppgaveDAO
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil
+import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import javax.sql.DataSource
@@ -116,7 +115,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
     single { JournalConsumer(get(), get(), get()) } bind JournalConsumer::class
     single { Metrikk() } bind Metrikk::class
     single { BehandlendeEnhetConsumer(get(), get(), get()) } bind BehandlendeEnhetConsumer::class
-    single { JournalpostService(get(), get(), get(), get(), get()) } bind JournalpostService::class
+    single { JournalpostService(get(), get(), get(), get(), get(), get()) } bind JournalpostService::class
     single { DatapakkePublisherJob(get(), get(), config.getString("datapakke.api_url"), config.getString("datapakke.id"), om = get()) }
 
     single { InntektsmeldingRepositoryImp(get()) } bind InntektsmeldingRepository::class
@@ -228,4 +227,6 @@ fun preprodConfig(config: ApplicationConfig) = module {
             get()
         )
     } bind DokArkivClient::class
+
+    single { BrregClientImp(get(qualifier = named("proxyHttpClient")), config.getString("berreg_enhet_url")) } bind BrregClient::class
 }

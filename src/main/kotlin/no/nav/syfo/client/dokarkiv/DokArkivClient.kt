@@ -125,11 +125,19 @@ class DokArkivClient(
         fnr: String,
         isFnr: Boolean,
         gsakId: String,
+        arbeidsgiverNavn: String,
         msgId: String
     ): HttpResponse {
         val req = OppdaterJournalpostRequest(
-            bruker = Bruker(fnr, if (isFnr) { "FNR" } else { "ORGNR" }),
-            avsenderMottaker = AvsenderMottaker(fnr, "Arbeidsgiver"),
+            bruker = Bruker(
+                fnr,
+                if (isFnr) {
+                    "FNR"
+                } else {
+                    "ORGNR"
+                }
+            ),
+            avsenderMottaker = AvsenderMottaker(fnr, arbeidsgiverNavn),
             sak = Sak("ARKIVSAK", "GSAK", gsakId)
         )
         return oppdaterJournalpost(journalpostId, req, msgId)

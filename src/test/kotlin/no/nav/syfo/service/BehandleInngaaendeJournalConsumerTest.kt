@@ -36,12 +36,13 @@ class BehandleInngaaendeJournalConsumerTest {
             behandlendeEnhetId = "enhet",
             dokumentId = "dokumentId",
             journalpostId = "journalpostId",
+            arbeidsgiverNavn = "Stark Industries",
             arbeidsgiverPrivat = "10101033333"
         )
         behandleInngaaendeJournalConsumer.oppdaterJournalpost(inngaendeJournalpost)
         verify {
             runBlocking {
-                dokArkivClient.oppdaterJournalpost("journalpostId", any(), any(), any(), any())
+                dokArkivClient.oppdaterJournalpost("journalpostId", any(), any(), any(), any(), any())
             }
         }
         // TODO - Asserten under må virke

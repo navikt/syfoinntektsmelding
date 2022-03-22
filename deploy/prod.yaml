@@ -112,3 +112,5 @@ spec:
       value: "https://saf.nais.adeo.no/rest"
     - name: SAF_JOURNAL_URL
       value: "https://saf.nais.adeo.no/graphql"
+    - name: ENHETSREGISTERET
+      value: https://data.brreg.no/enhetsregisteret/api/underenheter/
