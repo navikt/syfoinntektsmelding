@@ -8,7 +8,6 @@ import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.TextContent
-import io.ktor.util.KtorExperimentalAPI
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.util.Metrikk
@@ -27,11 +26,10 @@ class OppgaveClientTest {
     private var tokenConsumer = mockk<TokenConsumer>(relaxed = true)
     private var metrikk = mockk<Metrikk>(relaxed = true)
 
-    @KtorExperimentalAPI
     private lateinit var oppgaveClient: OppgaveClient
 
     @Test
-    @KtorExperimentalAPI
+
     fun henterEksisterendeOppgave() {
         runBlocking {
             oppgaveClient = OppgaveClient("url", tokenConsumer, buildHttpClientJson(HttpStatusCode.OK, lagOppgaveResponse()), metrikk)
@@ -42,7 +40,7 @@ class OppgaveClientTest {
     }
 
     @Test
-    @KtorExperimentalAPI
+
     fun oppretterNyOppgave() {
         runBlocking {
             oppgaveClient = OppgaveClient("url", tokenConsumer, buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk)
@@ -57,7 +55,7 @@ class OppgaveClientTest {
     }
 
     @Test
-    @KtorExperimentalAPI
+
     fun oppretterNyFordelingsOppgave() {
         runBlocking {
             oppgaveClient = OppgaveClient("url", tokenConsumer, buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk)
@@ -71,7 +69,7 @@ class OppgaveClientTest {
     }
 
     @Test
-    @KtorExperimentalAPI
+
     fun henterEksisterendeFordelingsOppgave() {
         runBlocking {
             oppgaveClient = OppgaveClient("url", tokenConsumer, buildHttpClientJson(HttpStatusCode.OK, lagFordelingsOppgaveResponse()), metrikk)
@@ -82,7 +80,7 @@ class OppgaveClientTest {
     }
 
     @Test
-    @KtorExperimentalAPI
+
     fun skal_opprette_utland() {
         runBlocking {
             oppgaveClient = OppgaveClient("url", tokenConsumer, buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk)
@@ -99,7 +97,7 @@ class OppgaveClientTest {
     }
 
     @Test
-    @KtorExperimentalAPI
+
     fun skal_opprette_speil() {
         runBlocking {
             oppgaveClient = OppgaveClient("url", tokenConsumer, buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk)
@@ -110,7 +108,7 @@ class OppgaveClientTest {
     }
 
     @Test
-    @KtorExperimentalAPI
+
     fun henterRiktigFerdigstillelsesFrist() {
         oppgaveClient = OppgaveClient("url", tokenConsumer, buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk)
         val onsdag = LocalDate.of(2019, Month.NOVEMBER, 27)
@@ -125,7 +123,7 @@ class OppgaveClientTest {
     }
 
     @Test
-    @KtorExperimentalAPI
+
     fun skal_utbetale_til_bruker() {
         runBlocking {
             oppgaveClient = OppgaveClient("url", tokenConsumer, buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk)

@@ -1,7 +1,6 @@
 package no.nav.syfo.client.norg
 
 import io.ktor.http.HttpStatusCode
-import io.ktor.util.KtorExperimentalAPI
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
@@ -12,13 +11,12 @@ import java.time.LocalDate
 
 class Norg2ClientTest {
 
-    @KtorExperimentalAPI
     private lateinit var norgClient: Norg2Client
 
     private val mockStsClient = mockk<AccessTokenProvider>(relaxed = true)
 
     @Test
-    @KtorExperimentalAPI
+
     fun hentAlleArbeidsfordelinger() {
         runBlocking {
             norgClient = Norg2Client("url", mockStsClient, buildHttpClientJson(HttpStatusCode.OK, lagResponse()))

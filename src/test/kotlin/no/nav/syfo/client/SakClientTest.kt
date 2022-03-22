@@ -1,7 +1,6 @@
 package no.nav.syfo.client
 
 import io.ktor.http.HttpStatusCode
-import io.ktor.util.KtorExperimentalAPI
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions
@@ -12,7 +11,6 @@ class SakClientTest {
 
     private val tokenConsumer = mockk<TokenConsumer>(relaxed = true)
 
-    @KtorExperimentalAPI
     private lateinit var sakClient: SakClient
 
     val RESPONSE_EXAMPLE = "{\"id\":1, \"tema\":\"tema\", \"aktoerId\":\"aktør-id\", \"orgnr\":\"orgnr\", \"fagsakNr\":\"faksak-nr\", \"applikasjon\":\"app\", \"opprettetAv\":\"av\", \"opprettetTidspunkt\": \"2007-12-03T10:15:30+01:00\"}"

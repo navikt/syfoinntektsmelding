@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import io.ktor.util.KtorExperimentalAPI
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -150,7 +149,6 @@ class InntektsmeldingBehandlerTest2 {
         } returns journalpost
     }
 
-    @OptIn(KtorExperimentalAPI::class)
     @Test
     fun `Gjenbruker saksId hvis vi får to overlappende inntektsmeldinger`() {
         every { aktorClient.getAktorId(any()) } returnsMany listOf("aktorId_for_1", "aktorId_for_1")
