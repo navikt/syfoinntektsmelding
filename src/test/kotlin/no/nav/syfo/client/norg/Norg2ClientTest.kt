@@ -1,7 +1,6 @@
 package no.nav.syfo.client.norg
 
 import io.ktor.http.HttpStatusCode
-
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
@@ -11,7 +10,6 @@ import org.junit.jupiter.api.Test
 import java.time.LocalDate
 
 class Norg2ClientTest {
-
 
     private lateinit var norgClient: Norg2Client
 

@@ -1,7 +1,6 @@
 package no.nav.syfo.utsattoppgave
 
 import com.fasterxml.jackson.databind.ObjectMapper
-
 import io.mockk.mockk
 import io.mockk.verify
 import no.nav.syfo.client.OppgaveClient
@@ -14,7 +13,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.util.UUID
-
 
 open class UtsattOppgaveServiceTest {
 

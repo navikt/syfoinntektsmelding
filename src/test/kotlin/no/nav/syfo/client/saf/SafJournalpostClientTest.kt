@@ -1,7 +1,6 @@
 package no.nav.syfo.client.saf
 
 import io.ktor.http.HttpStatusCode
-
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
@@ -18,7 +17,6 @@ class SafJournalpostClientTest {
     private val stsClient = mockk<AccessTokenProvider>(relaxed = true)
 
     val objectMapper = buildObjectMapper()
-
 
     private lateinit var client: SafJournalpostClient
 
