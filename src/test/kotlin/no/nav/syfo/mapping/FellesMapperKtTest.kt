@@ -1,8 +1,7 @@
 package no.nav.syfo.mapping
 
-import junit.framework.Assert.assertEquals
-import no.nav.syfo.consumer.ws.mapping.mapNaturalytelseType
 import no.nav.syfo.domain.inntektsmelding.Naturalytelse
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import javax.xml.bind.JAXBElement
 import javax.xml.namespace.QName

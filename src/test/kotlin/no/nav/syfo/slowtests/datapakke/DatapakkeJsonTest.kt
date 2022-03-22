@@ -29,7 +29,7 @@ class DatapakkeJsonTest : SystemTestBase() {
     @Disabled
     fun `prøv å sende request`() {
         runBlocking {
-            val response = httpClient.put<HttpResponse>("https://datakatalog-api.dev.intern.nav.no/v1/datapackage/fb74c8d14d9c579e05b0b4b587843e6b") {
+            httpClient.put<HttpResponse>("https://datakatalog-api.dev.intern.nav.no/v1/datapackage/fb74c8d14d9c579e05b0b4b587843e6b") {
                 contentType(ContentType.Application.Json)
                 body = objectMapper.readTree(testData)
             }
