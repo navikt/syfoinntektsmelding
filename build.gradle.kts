@@ -144,14 +144,6 @@ configure<io.snyk.gradle.plugin.SnykExtension> {
     setArguments("--all-sub-projects")
 }
 
-tasks.test {
-    extensions.configure(kotlinx.kover.api.KoverTaskExtension::class) {
-        isDisabled = false
-        binaryReportFile.set(file("$buildDir/custom/result.bin"))
-        includes = listOf("no.nav.syfo.*")
-        excludes = listOf("no.nav.melding.virksomhet.*")
-    }
-}
 
 tasks.withType<Test> {
     useJUnitPlatform()
@@ -165,6 +157,12 @@ tasks.withType<Test> {
 tasks.named<Test>("test") {
     include("no/nav/syfo/**")
     exclude("no/nav/syfo/slowtests/**")
+    extensions.configure(kotlinx.kover.api.KoverTaskExtension::class) {
+        isDisabled = false
+        binaryReportFile.set(file("$buildDir/custom/result.bin"))
+        includes = listOf("no.nav.syfo.*")
+        excludes = listOf("no.nav.melding.virksomhet.*")
+    }
 }
 
 task<Test>("slowTests") {
