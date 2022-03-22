@@ -42,7 +42,7 @@ class KafkaAdminForTests(private val props: MutableMap<String, Any>, private val
 
     fun addRecordeToKafka(record: String, topicName: String, props: Map<String, Any>) {
         val kafkaproducer = KafkaProducer<String, String>(props)
-        val res = kafkaproducer.send(ProducerRecord(topicName, record)).get()
+        kafkaproducer.send(ProducerRecord(topicName, record)).get()
         kafkaproducer.flush()
         kafkaproducer.close()
     }

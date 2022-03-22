@@ -1,12 +1,12 @@
 package no.nav.syfo.utsattoppgave
 
-import junit.framework.Assert.assertEquals
-import junit.framework.Assert.assertNotNull
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.dto.UtsattOppgaveEntitet
 import no.nav.syfo.repository.UtsattOppgaveRepository
 import no.nav.syfo.repository.UtsattOppgaveRepositoryMockk
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime.now
