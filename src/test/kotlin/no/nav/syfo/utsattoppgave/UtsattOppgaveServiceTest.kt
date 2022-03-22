@@ -1,7 +1,7 @@
 package no.nav.syfo.utsattoppgave
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.ktor.util.KtorExperimentalAPI
+
 import io.mockk.mockk
 import io.mockk.verify
 import no.nav.syfo.client.OppgaveClient
@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.util.UUID
 
-@KtorExperimentalAPI
+
 open class UtsattOppgaveServiceTest {
 
     private var utsattOppgaveDAO: UtsattOppgaveDAO = mockk(relaxed = true)

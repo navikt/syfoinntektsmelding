@@ -7,8 +7,7 @@ import io.ktor.client.request.header
 import io.ktor.client.statement.HttpStatement
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
-import io.ktor.util.KtorExperimentalAPI
-import io.ktor.util.toByteArray
+import io.ktor.util.*
 import kotlinx.coroutines.runBlocking
 import log
 import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
@@ -20,7 +19,6 @@ import java.util.UUID
  *
  * https://confluence.adeo.no/display/BOA/saf+-+REST+hentdokument
  */
-@KtorExperimentalAPI
 class SafDokumentClient constructor(
     private val url: String,
     private val httpClient: HttpClient,

@@ -10,12 +10,12 @@ import io.ktor.jackson.JacksonConverter
 import io.ktor.locations.KtorExperimentalLocationsAPI
 import io.ktor.routing.route
 import io.ktor.routing.routing
-import io.ktor.util.KtorExperimentalAPI
+
 import no.nav.syfo.web.api.syfoinntektsmelding
 import org.koin.ktor.ext.get
 
 @KtorExperimentalLocationsAPI
-@KtorExperimentalAPI
+
 fun Application.inntektsmeldingModule(config: ApplicationConfig = environment.config) {
     install(ContentNegotiation) {
         val commonObjectMapper = get<ObjectMapper>()

@@ -2,7 +2,7 @@ package no.nav.syfo.utsattoppgave
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import io.ktor.util.KtorExperimentalAPI
+
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.domain.OppgaveResultat
@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
 import java.util.UUID
 
-@KtorExperimentalAPI
+
 class UtsattOppgaveService(
     private val utsattOppgaveDAO: UtsattOppgaveDAO,
     private val oppgaveClient: OppgaveClient,
@@ -85,7 +85,7 @@ class UtsattOppgaveService(
     }
 }
 
-@KtorExperimentalAPI
+
 fun opprettOppgaveIGosys(
     utsattOppgave: UtsattOppgaveEntitet,
     oppgaveClient: OppgaveClient,

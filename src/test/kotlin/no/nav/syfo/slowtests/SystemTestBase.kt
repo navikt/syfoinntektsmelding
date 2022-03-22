@@ -9,7 +9,7 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.http.setCookie
-import io.ktor.util.KtorExperimentalAPI
+
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.SpinnApplication
@@ -19,7 +19,7 @@ import org.junit.jupiter.api.TestInstance
 import org.koin.test.KoinTest
 import org.koin.test.inject
 
-@KtorExperimentalAPI
+
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 
 /**

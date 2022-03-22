@@ -16,13 +16,13 @@ import io.ktor.client.engine.http
 import io.ktor.client.features.json.JacksonSerializer
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.config.ApplicationConfig
-import io.ktor.util.KtorExperimentalAPI
+
 import no.nav.helse.arbeidsgiver.kubernetes.KubernetesProbeManager
 import org.koin.core.module.Module
 import org.koin.core.qualifier.StringQualifier
 import org.koin.dsl.module
 
-@KtorExperimentalAPI
+
 fun selectModuleBasedOnProfile(config: ApplicationConfig): List<Module> {
     val envModule = when (config.property("koin.profile").getString()) {
         "LOCAL" -> localDevConfig(config)
@@ -95,7 +95,7 @@ val common = module {
 
 // utils
 
-@KtorExperimentalAPI
+
 fun ApplicationConfig.getjdbcUrlFromProperties(): String {
     return String.format(
         "jdbc:postgresql://%s:%s/%s",
