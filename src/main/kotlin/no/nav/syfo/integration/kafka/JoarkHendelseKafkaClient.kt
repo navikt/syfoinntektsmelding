@@ -52,7 +52,7 @@ class JoarkHendelseKafkaClient(props: Map<String, Any>, topicName: String) : Joa
             currentBatch = records.map { mapInngaaendeJournalpostDTO(it.value()) }
             lastThrown = null
             if (records?.count() != null && records.count() > 0) {
-                log.debug("JoarkHendelse: Fikk ${records.count()} meldinger med offsets ${records.map { it.offset() }.joinToString(", ")}")
+                log.info("JoarkHendelse: Fikk ${records.count()} meldinger med offsets ${records.map { it.offset() }.joinToString(", ")}")
             }
             return currentBatch
         } catch (e: Exception) {
