@@ -8,7 +8,7 @@ import javax.sql.DataSource
 
 interface FeiletRepository {
     fun findByArkivReferanse(arkivReferanse: String): List<FeiletEntitet>
-    fun lagreInnteksmelding(utsattOppgave: FeiletEntitet): FeiletEntitet
+    fun lagreInnteksmelding(feiletEntitet: FeiletEntitet): FeiletEntitet
     fun deleteAll()
 }
 
@@ -18,9 +18,9 @@ class FeiletRepositoryMock : FeiletRepository {
         return mockrep.filter { it.arkivReferanse == arkivReferanse }
     }
 
-    override fun lagreInnteksmelding(utsattOppgave: FeiletEntitet): FeiletEntitet {
-        mockrep.add(utsattOppgave)
-        return utsattOppgave
+    override fun lagreInnteksmelding(feiletEntitet: FeiletEntitet): FeiletEntitet {
+        mockrep.add(feiletEntitet)
+        return feiletEntitet
     }
 
     override fun deleteAll() {
@@ -38,16 +38,16 @@ class FeiletRepositoryImp(private val ds: DataSource) : FeiletRepository {
         }
     }
 
-    override fun lagreInnteksmelding(feil: FeiletEntitet): FeiletEntitet {
+    override fun lagreInnteksmelding(feiletEntitet: FeiletEntitet): FeiletEntitet {
         val insertStatement = """INSERT INTO FEILET (FEILET_ID, ARKIVREFERANSE, TIDSPUNKT, FEILTYPE)
         VALUES (?, ?, ?, ?)
         RETURNING *;""".trimMargin()
         ds.connection.use {
             val prepareStatement = it.prepareStatement(insertStatement)
-            prepareStatement.setInt(1, feil.id)
-            prepareStatement.setString(2, feil.arkivReferanse)
-            prepareStatement.setTimestamp(3, Timestamp.valueOf(feil.tidspunkt))
-            prepareStatement.setString(4, feil.feiltype.name)
+            prepareStatement.setInt(1, feiletEntitet.id)
+            prepareStatement.setString(2, feiletEntitet.arkivReferanse)
+            prepareStatement.setTimestamp(3, Timestamp.valueOf(feiletEntitet.tidspunkt))
+            prepareStatement.setString(4, feiletEntitet.feiltype.name)
 
             val res = prepareStatement.executeQuery()
             return resultLoop(res).first()
@@ -61,15 +61,15 @@ class FeiletRepositoryImp(private val ds: DataSource) : FeiletRepository {
         }
     }
 
-    private fun resultLoop(res: ResultSet): ArrayList<FeiletEntitet> {
+    private fun resultLoop(resultSet: ResultSet): ArrayList<FeiletEntitet> {
         val returnValue = ArrayList<FeiletEntitet>()
-        while (res.next()) {
+        while (resultSet.next()) {
             returnValue.add(
                 FeiletEntitet(
-                    id = res.getInt("FEILET_ID"),
-                    arkivReferanse = res.getString("ARKIVREFERANSE"),
-                    tidspunkt = res.getTimestamp("TIDSPUNKT").toLocalDateTime(),
-                    feiltype = Feiltype.valueOf(res.getString("FEILTYPE"))
+                    id = resultSet.getInt("FEILET_ID"),
+                    arkivReferanse = resultSet.getString("ARKIVREFERANSE"),
+                    tidspunkt = resultSet.getTimestamp("TIDSPUNKT").toLocalDateTime(),
+                    feiltype = Feiltype.valueOf(resultSet.getString("FEILTYPE"))
                 )
             )
         }

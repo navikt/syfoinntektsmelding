@@ -11,7 +11,6 @@ import no.nav.syfo.client.norg.Norg2Client
 import no.nav.syfo.domain.GeografiskTilknytningData
 import no.nav.syfo.util.MDCOperations
 import no.nav.syfo.util.Metrikk
-import java.time.LocalDate
 
 const val SYKEPENGER_UTLAND = "4474"
 const val SYKEPENGER = "SYK"
@@ -24,13 +23,13 @@ class BehandlendeEnhetConsumer(
 
     var log = log()
 
-    fun hentBehandlendeEnhet(fnr: String, uuid: String, tidspunkt: LocalDate = LocalDate.now()): String {
+    fun hentBehandlendeEnhet(fnr: String, uuid: String): String {
         val geografiskTilknytning = hentGeografiskTilknytning(fnr)
 
         val criteria = ArbeidsfordelingRequest(
             tema = SYKEPENGER,
-            diskresjonskode = geografiskTilknytning?.diskresjonskode,
-            geografiskOmraade = geografiskTilknytning?.geografiskTilknytning
+            diskresjonskode = geografiskTilknytning.diskresjonskode,
+            geografiskOmraade = geografiskTilknytning.geografiskTilknytning
         )
 
         val callId = MDCOperations.getFromMDC(MDCOperations.MDC_CALL_ID)
@@ -42,8 +41,7 @@ class BehandlendeEnhetConsumer(
             log.info("Fant enheter: " + arbeidsfordelinger.toString())
             val behandlendeEnhet = finnAktivBehandlendeEnhet(
                 arbeidsfordelinger,
-                geografiskTilknytning?.geografiskTilknytning,
-                tidspunkt
+                geografiskTilknytning.geografiskTilknytning
             )
             if (SYKEPENGER_UTLAND == behandlendeEnhet) {
                 metrikk.tellInntektsmeldingSykepengerUtland()
@@ -66,7 +64,7 @@ class BehandlendeEnhetConsumer(
     }
 }
 
-fun finnAktivBehandlendeEnhet(arbeidsfordelinger: List<ArbeidsfordelingResponse>, geografiskTilknytning: String?, tidspunkt: LocalDate): String {
+fun finnAktivBehandlendeEnhet(arbeidsfordelinger: List<ArbeidsfordelingResponse>, geografiskTilknytning: String?): String {
     return arbeidsfordelinger
         .stream()
         .findFirst().orElseThrow { IngenAktivEnhetException(geografiskTilknytning, null) }.enhetNr!!

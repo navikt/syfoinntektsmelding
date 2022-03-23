@@ -36,10 +36,10 @@ class InntektsmeldingBehandler(
         val log = log()
         log.info("Henter inntektsmelding for $arkivreferanse")
         val inntektsmelding = journalpostService.hentInntektsmelding(arkivId, arkivreferanse)
-        return behandle(arkivId, arkivreferanse, inntektsmelding)
+        return behandleInntektsmelding(arkivreferanse, inntektsmelding)
     }
 
-    fun behandle(arkivId: String, arkivreferanse: String, inntektsmelding: Inntektsmelding): String? {
+    fun behandleInntektsmelding(arkivreferanse: String, inntektsmelding: Inntektsmelding): String? {
 
         val log = log()
         var ret: String? = null
