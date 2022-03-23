@@ -88,13 +88,13 @@ class InntektsmeldingRepositoryImp(
         return result
     }
 
-    override fun findByAktorId(id: String): List<InntektsmeldingEntitet> {
+    override fun findByAktorId(aktoerId: String): List<InntektsmeldingEntitet> {
         val findByAktorId = "SELECT * FROM INNTEKTSMELDING WHERE AKTOR_ID = ?;"
         val inntektsmeldinger = ArrayList<InntektsmeldingEntitet>()
         val results: ArrayList<InntektsmeldingEntitet>
         ds.connection.use {
             val res = it.prepareStatement(findByAktorId).apply {
-                setString(1, id.toString())
+                setString(1, aktoerId.toString())
             }.executeQuery()
             results = resultLoop(res, inntektsmeldinger)
         }

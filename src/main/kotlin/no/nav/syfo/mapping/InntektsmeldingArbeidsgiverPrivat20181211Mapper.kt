@@ -86,7 +86,7 @@ internal object InntektsmeldingArbeidsgiverPrivat20181211Mapper {
     }
 
     private fun mapFerie(arbeidsforhold: JAXBElement<XMLArbeidsforhold>): List<Periode> {
-        return arbeidsforhold?.value?.avtaltFerieListe?.value?.avtaltFerie?.map { f -> Periode(f.fom.value, f.tom.value) }
+        return arbeidsforhold.value?.avtaltFerieListe?.value?.avtaltFerie?.map { f -> Periode(f.fom.value, f.tom.value) }
             ?: emptyList()
     }
 

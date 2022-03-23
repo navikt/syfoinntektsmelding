@@ -29,8 +29,8 @@ class BehandlendeEnhetConsumer(
 
         val criteria = ArbeidsfordelingRequest(
             tema = SYKEPENGER,
-            diskresjonskode = geografiskTilknytning?.diskresjonskode,
-            geografiskOmraade = geografiskTilknytning?.geografiskTilknytning
+            diskresjonskode = geografiskTilknytning.diskresjonskode,
+            geografiskOmraade = geografiskTilknytning.geografiskTilknytning
         )
 
         val callId = MDCOperations.getFromMDC(MDCOperations.MDC_CALL_ID)
@@ -42,8 +42,7 @@ class BehandlendeEnhetConsumer(
             log.info("Fant enheter: " + arbeidsfordelinger.toString())
             val behandlendeEnhet = finnAktivBehandlendeEnhet(
                 arbeidsfordelinger,
-                geografiskTilknytning?.geografiskTilknytning,
-                tidspunkt
+                geografiskTilknytning.geografiskTilknytning
             )
             if (SYKEPENGER_UTLAND == behandlendeEnhet) {
                 metrikk.tellInntektsmeldingSykepengerUtland()
@@ -66,7 +65,7 @@ class BehandlendeEnhetConsumer(
     }
 }
 
-fun finnAktivBehandlendeEnhet(arbeidsfordelinger: List<ArbeidsfordelingResponse>, geografiskTilknytning: String?, tidspunkt: LocalDate): String {
+fun finnAktivBehandlendeEnhet(arbeidsfordelinger: List<ArbeidsfordelingResponse>, geografiskTilknytning: String?): String {
     return arbeidsfordelinger
         .stream()
         .findFirst().orElseThrow { IngenAktivEnhetException(geografiskTilknytning, null) }.enhetNr!!
