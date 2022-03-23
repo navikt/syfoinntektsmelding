@@ -42,7 +42,7 @@ class PollForJoarkhendelserJob(
     override fun doJob() {
         do {
             val wasEmpty = processAll(kafkaProvider.getMessagesToProcess())
-            if (!wasEmpty) {
+            if (wasEmpty) {
                 kafkaProvider.confirmProcessingDone()
             }
         } while (!wasEmpty)
