@@ -48,7 +48,7 @@ class JoarkHendelseKafkaClient(props: Map<String, Any>, topicName: String) : Joa
         }
         try {
 
-            val records = consumer.poll(Duration.ofMillis(10000))
+            val records = consumer.poll(Duration.ofMillis(1000))
             currentBatch = records.map { mapInngaaendeJournalpostDTO(it.value()) }
             lastThrown = null
             if (records?.count() != null && records.count() > 0) {
