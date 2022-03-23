@@ -37,7 +37,7 @@ class BehandlendeEnhetConsumerTest {
                 norg2Client.hentAlleArbeidsfordelinger(any(), any())
             }
         } returns arbeidsfordelinger
-        val enhet = BehandlendeEnhetConsumer(pdlClient, norg2Client, metrikk).hentBehandlendeEnhet(FNR, UUID, TIDSPUNKT)
+        val enhet = BehandlendeEnhetConsumer(pdlClient, norg2Client, metrikk).hentBehandlendeEnhet(FNR, UUID)
         Assertions.assertThat(enhet).isEqualTo(ENHET_NR)
     }
 

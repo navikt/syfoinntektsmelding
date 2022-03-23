@@ -93,7 +93,10 @@ fun opprettOppgaveIGosys(
     om: ObjectMapper
 ): OppgaveResultat {
     val log = LoggerFactory.getLogger(UtsattOppgaveService::class.java)!!
-    val behandlendeEnhet = behandlendeEnhetConsumer.hentBehandlendeEnhet(utsattOppgave.fnr, utsattOppgave.inntektsmeldingId)
+    val behandlendeEnhet = behandlendeEnhetConsumer.hentBehandlendeEnhet(
+        utsattOppgave.fnr,
+        utsattOppgave.inntektsmeldingId
+    )
     val gjelderUtland = (SYKEPENGER_UTLAND == behandlendeEnhet)
     val inntektsmelding = om.readValue<Inntektsmelding>(imEntitet.data!!)
     val behandlingsTema = finnBehandlingsTema(inntektsmelding)
