@@ -160,7 +160,7 @@ tasks.named<Test>("test") {
         isDisabled = false
         binaryReportFile.set(file("$buildDir/custom/result.bin"))
         includes = listOf("no.nav.syfo.*")
-        excludes = listOf("no.nav.melding.virksomhet.*")
+        excludes = listOf("no.nav.melding.virksomhet.*", "no.nav.syfo,slowtests.*")
     }
 }
 
