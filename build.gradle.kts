@@ -27,7 +27,7 @@ plugins {
     id("org.flywaydb.flyway") version "8.4.2"
     id("io.snyk.gradle.plugin.snykplugin") version "0.4"
     id("org.sonarqube") version "3.3"
-    jacoco
+    id("org.jetbrains.kotlinx.kover") version "0.5.0"
     application
 }
 
@@ -144,21 +144,6 @@ configure<io.snyk.gradle.plugin.SnykExtension> {
     setArguments("--all-sub-projects")
 }
 
-tasks.jacocoTestReport {
-    executionData("build/jacoco/test.exec")
-    reports {
-        xml.isEnabled = true
-        html.isEnabled = true
-    }
-}
-
-tasks.withType<JacocoReport> {
-    classDirectories.setFrom(
-        sourceSets.main.get().output.asFileTree.matching {
-            exclude("**/App**", "**Mock**")
-        }
-    )
-}
 
 tasks.withType<Test> {
     useJUnitPlatform()
@@ -172,6 +157,12 @@ tasks.withType<Test> {
 tasks.named<Test>("test") {
     include("no/nav/syfo/**")
     exclude("no/nav/syfo/slowtests/**")
+    extensions.configure(kotlinx.kover.api.KoverTaskExtension::class) {
+        isDisabled = false
+        binaryReportFile.set(file("$buildDir/custom/result.bin"))
+        includes = listOf("no.nav.syfo.*")
+        excludes = listOf("no.nav.melding.virksomhet.*")
+    }
 }
 
 task<Test>("slowTests") {
