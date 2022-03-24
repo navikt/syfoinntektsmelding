@@ -144,7 +144,6 @@ configure<io.snyk.gradle.plugin.SnykExtension> {
     setArguments("--all-sub-projects")
 }
 
-
 tasks.withType<Test> {
     useJUnitPlatform()
     testLogging {
