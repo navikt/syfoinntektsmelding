@@ -36,8 +36,7 @@ fun Route.syfoinntektsmelding(
             val request = call.receive<InntektsmeldingRequest>()
             val uuid = inntektsmeldingBehandler.behandle(
                 request.inntektsmelding.journalpostId,
-                request.inntektsmelding.arkivRefereranse,
-                request.inntektsmelding
+                request.inntektsmelding.arkivRefereranse
             )
             uuid?.let {
                 call.respond(HttpStatusCode.Created, Resultat(uuid))
