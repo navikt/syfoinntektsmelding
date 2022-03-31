@@ -15,7 +15,8 @@ data class UtsattOppgaveEntitet(
     var enhet: String = "",
     var gosysOppgaveId: String?,
     var oppdatert: LocalDateTime?,
-    var speil: Boolean
+    var speil: Boolean,
+    var utbetalingBruker: Double?
 )
 
 enum class Tilstand {

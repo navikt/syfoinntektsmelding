@@ -48,7 +48,8 @@ open class UtsattOppgaveRepositoryImpTest : SystemTestBase() {
                 tilstand = Tilstand.Utsatt,
                 gosysOppgaveId = null,
                 oppdatert = null,
-                speil = false
+                speil = false,
+                utbetalingBruker = null
             )
         )
 
@@ -72,7 +73,8 @@ open class UtsattOppgaveRepositoryImpTest : SystemTestBase() {
                 tilstand = Tilstand.Utsatt,
                 gosysOppgaveId = null,
                 oppdatert = null,
-                speil = false
+                speil = false,
+                utbetalingBruker = null
             )
         ).id
 
@@ -88,7 +90,8 @@ open class UtsattOppgaveRepositoryImpTest : SystemTestBase() {
                 tilstand = Tilstand.Utsatt,
                 gosysOppgaveId = null,
                 oppdatert = null,
-                speil = false
+                speil = false,
+                utbetalingBruker = null
             )
         ).id
 
@@ -112,7 +115,8 @@ open class UtsattOppgaveRepositoryImpTest : SystemTestBase() {
                 enhet = "",
                 gosysOppgaveId = null,
                 oppdatert = null,
-                speil = false
+                speil = false,
+                utbetalingBruker = null
             )
         )
 
@@ -181,7 +185,8 @@ open class UtsattOppgaveRepositoryImpTest : SystemTestBase() {
                 tilstand = Tilstand.Utsatt,
                 gosysOppgaveId = null,
                 oppdatert = null,
-                speil = false
+                speil = false,
+                utbetalingBruker = null
             )
         )
 
@@ -198,7 +203,8 @@ open class UtsattOppgaveRepositoryImpTest : SystemTestBase() {
                 tilstand = Tilstand.Utsatt,
                 oppdatert = null,
                 gosysOppgaveId = null,
-                speil = false
+                speil = false,
+                utbetalingBruker = null
             )
         )
 
@@ -226,6 +232,7 @@ open class UtsattOppgaveRepositoryImpTest : SystemTestBase() {
         enhet = "",
         gosysOppgaveId = null,
         oppdatert = null,
-        speil = false
+        speil = false,
+        utbetalingBruker = null
     )
 }

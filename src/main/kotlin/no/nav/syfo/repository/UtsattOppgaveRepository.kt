@@ -181,7 +181,8 @@ class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepo
                     enhet = res.getString("ENHET"),
                     gosysOppgaveId = res.getString("GOSYS_OPPGAVE_ID"),
                     oppdatert = null,
-                    speil = res.getBoolean("SPEIL")
+                    speil = res.getBoolean("SPEIL"),
+                    utbetalingBruker = null
                 )
             )
         }
