@@ -56,7 +56,7 @@ fun getRandonUtsattOppgaveEntitet(
         gosysOppgaveId = null,
         oppdatert = null,
         speil = false,
-        utbetalingBruker = null
+        utbetalingBruker = false
     )
 }
 

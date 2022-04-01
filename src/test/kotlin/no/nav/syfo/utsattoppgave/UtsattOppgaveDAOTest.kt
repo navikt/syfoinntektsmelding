@@ -79,6 +79,6 @@ open class UtsattOppgaveDAOTest {
         gosysOppgaveId = null,
         oppdatert = null,
         speil = false,
-        utbetalingBruker = null
+        utbetalingBruker = false
     )
 }

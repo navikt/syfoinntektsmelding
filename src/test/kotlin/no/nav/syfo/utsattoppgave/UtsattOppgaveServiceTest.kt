@@ -55,6 +55,6 @@ open class UtsattOppgaveServiceTest {
         gosysOppgaveId = null,
         oppdatert = null,
         speil = false,
-        utbetalingBruker = null
+        utbetalingBruker = false
     )
 }

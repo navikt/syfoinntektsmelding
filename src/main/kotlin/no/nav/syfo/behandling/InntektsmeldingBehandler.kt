@@ -77,7 +77,7 @@ class InntektsmeldingBehandler(
                         gosysOppgaveId = null,
                         oppdatert = null,
                         speil = false,
-                        utbetalingBruker = null
+                        utbetalingBruker = false
                     )
                 )
                 log.info("Opprettet utsatt oppgave for ${inntektsmelding.arkivRefereranse}")

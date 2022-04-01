@@ -49,7 +49,7 @@ open class UtsattOppgaveRepositoryImpTest : SystemTestBase() {
                 gosysOppgaveId = null,
                 oppdatert = null,
                 speil = false,
-                utbetalingBruker = null
+                utbetalingBruker = false
             )
         )
 
@@ -74,7 +74,7 @@ open class UtsattOppgaveRepositoryImpTest : SystemTestBase() {
                 gosysOppgaveId = null,
                 oppdatert = null,
                 speil = false,
-                utbetalingBruker = null
+                utbetalingBruker = false
             )
         ).id
 
@@ -91,7 +91,7 @@ open class UtsattOppgaveRepositoryImpTest : SystemTestBase() {
                 gosysOppgaveId = null,
                 oppdatert = null,
                 speil = false,
-                utbetalingBruker = null
+                utbetalingBruker = false
             )
         ).id
 
@@ -116,7 +116,7 @@ open class UtsattOppgaveRepositoryImpTest : SystemTestBase() {
                 gosysOppgaveId = null,
                 oppdatert = null,
                 speil = false,
-                utbetalingBruker = null
+                utbetalingBruker = false
             )
         )
 
@@ -186,7 +186,7 @@ open class UtsattOppgaveRepositoryImpTest : SystemTestBase() {
                 gosysOppgaveId = null,
                 oppdatert = null,
                 speil = false,
-                utbetalingBruker = null
+                utbetalingBruker = false
             )
         )
 
@@ -204,7 +204,7 @@ open class UtsattOppgaveRepositoryImpTest : SystemTestBase() {
                 oppdatert = null,
                 gosysOppgaveId = null,
                 speil = false,
-                utbetalingBruker = null
+                utbetalingBruker = false
             )
         )
 
@@ -233,6 +233,6 @@ open class UtsattOppgaveRepositoryImpTest : SystemTestBase() {
         gosysOppgaveId = null,
         oppdatert = null,
         speil = false,
-        utbetalingBruker = null
+        utbetalingBruker = false
     )
 }
