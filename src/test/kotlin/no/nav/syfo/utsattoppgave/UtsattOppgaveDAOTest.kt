@@ -78,6 +78,7 @@ open class UtsattOppgaveDAOTest {
         tilstand = Tilstand.Utsatt,
         gosysOppgaveId = null,
         oppdatert = null,
-        speil = false
+        speil = false,
+        utbetalingBruker = false
     )
 }
