@@ -89,7 +89,7 @@ dependencies {
     implementation("com.google.guava:guava:31.0.1-jre")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-native-mt")
     implementation("io.confluent:kafka-streams-avro-serde:6.2.1")
-    implementation("io.confluent:kafka-avro-serializer:6.2.1")
+    implementation("io.confluent:kafka-avro-serializer:7.1.0")
     implementation("org.apache.kafka:kafka-streams:7.0.1-ce")
     implementation("io.ktor:ktor-client-core:$ktorVersion")
     implementation("io.ktor:ktor-client-apache:$ktorVersion")
