@@ -71,10 +71,6 @@ class JournalConsumerTest {
 
     @Test
     fun parseInntektsmeldingV7() {
-        val periode = Periode(
-            LocalDate.of(2021, 7, 1),
-            LocalDate.of(2021, 7, 19)
-        )
         val journalresponse = Journalpost(
             JournalStatus.MOTTATT,
             LocalDateTime.now(),

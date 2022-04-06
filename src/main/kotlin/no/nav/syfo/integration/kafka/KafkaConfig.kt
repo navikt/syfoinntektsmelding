@@ -1,13 +1,12 @@
 package no.nav.syfo.integration.kafka
 
-import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig
+import io.confluent.kafka.schemaregistry.client.SchemaRegistryClientConfig
+import io.confluent.kafka.serializers.KafkaAvroSerializerConfig
 import io.confluent.kafka.streams.serdes.avro.GenericAvroDeserializer
 import io.ktor.config.ApplicationConfig
-import no.nav.helse.arbeidsgiver.system.getString
 import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.producer.ProducerConfig
-import org.apache.kafka.common.config.SaslConfigs
 import org.apache.kafka.common.config.SslConfigs
 import org.apache.kafka.common.security.auth.SecurityProtocol
 import org.apache.kafka.common.serialization.StringDeserializer
@@ -15,19 +14,6 @@ import org.apache.kafka.common.serialization.StringDeserializer
 private const val LOCALHOSTBOOTSTRAPSERVER = "localhost:9092"
 private fun envOrThrow(envVar: String) =
     System.getenv()[envVar] ?: throw IllegalStateException("$envVar er påkrevd miljøvariabel")
-
-private fun consumerOnPremProperties(config: ApplicationConfig) = mutableMapOf<String, Any>(
-    ConsumerConfig.MAX_POLL_RECORDS_CONFIG to "1",
-    ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG to false,
-    ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
-    CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG to config.getString("kafka_bootstrap_servers"),
-    CommonClientConfigs.SECURITY_PROTOCOL_CONFIG to "SASL_SSL",
-    CommonClientConfigs.RETRY_BACKOFF_MS_CONFIG to 1000,
-    CommonClientConfigs.RECONNECT_BACKOFF_MS_CONFIG to 5000,
-    SaslConfigs.SASL_MECHANISM to "PLAIN",
-    SaslConfigs.SASL_JAAS_CONFIG to "org.apache.kafka.common.security.plain.PlainLoginModule required " +
-        "username=\"${config.getString("srvsyfoinntektsmelding.username")}\" password=\"${envOrThrow("SRVSYFOINNTEKTSMELDING_PASSWORD")}\";"
-)
 
 private fun consumerLocalProperties() = mutableMapOf<String, Any>(
     ConsumerConfig.MAX_POLL_RECORDS_CONFIG to "1",
@@ -44,12 +30,15 @@ fun joarkLocalProperties() = consumerLocalProperties() + mapOf(
     ConsumerConfig.GROUP_ID_CONFIG to "syfoinntektsmelding-v2"
 )
 
-fun joarkOnPremProperties(config: ApplicationConfig) = consumerOnPremProperties(config) + mapOf(
+fun joarkAivenProperties(config: ApplicationConfig) = commonAivenProperties(config) + mapOf(
     ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to GenericAvroDeserializer::class.java,
-    AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG to config.getString("kafka_schema_registry_url_config"),
+    KafkaAvroSerializerConfig.SCHEMA_REGISTRY_URL_CONFIG to System.getenv("KAFKA_SCHEMA_REGISTRY"),
+    SchemaRegistryClientConfig.BASIC_AUTH_CREDENTIALS_SOURCE to "USER_INFO",
+    SchemaRegistryClientConfig.USER_INFO_CONFIG to System.getenv("KAFKA_SCHEMA_REGISTRY_USER") + ":" + System.getenv("KAFKA_SCHEMA_REGISTRY_PASSWORD"),
     ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
     ConsumerConfig.CLIENT_ID_CONFIG to "syfoinntektsmelding",
-    ConsumerConfig.GROUP_ID_CONFIG to "syfoinntektsmelding-v2"
+    ConsumerConfig.GROUP_ID_CONFIG to "syfoinntektsmelding-v1",
+    ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java
 )
 
 fun utsattOppgaveLocalProperties() = consumerLocalProperties() + mapOf(

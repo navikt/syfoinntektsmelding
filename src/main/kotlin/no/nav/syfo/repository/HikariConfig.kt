@@ -26,7 +26,7 @@ fun createHikariConfig(
 enum class Role {
     admin, user, readonly;
 
-    override fun toString() = name.toLowerCase()
+    override fun toString() = name.lowercase()
 }
 
 fun createTestHikariConfig() =

@@ -2,11 +2,11 @@ package no.nav.syfo.utsattoppgave
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.domain.OppgaveResultat
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
+import no.nav.syfo.dto.InntektsmeldingEntitet
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.dto.UtsattOppgaveEntitet
 import no.nav.syfo.repository.InntektsmeldingRepository
@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
 import java.util.UUID
 
-@KtorExperimentalAPI
 class UtsattOppgaveService(
     private val utsattOppgaveDAO: UtsattOppgaveDAO,
     private val oppgaveClient: OppgaveClient,
@@ -36,20 +35,20 @@ class UtsattOppgaveService(
             log.warn("Mottok oppdatering på en ukjent oppgave")
             return
         }
-
+        log.info("Fant oppgave for inntektsmelding: ${oppgave.arkivreferanse} med tilstand: ${Tilstand.Forkastet.name}")
         val gjelderSpeil = oppdatering.oppdateringstype == OppdateringstypeDTO.OpprettSpeilRelatert
 
         if (oppgave.tilstand == Tilstand.Utsatt && oppdatering.handling == no.nav.syfo.utsattoppgave.Handling.Utsett) {
             if (oppgave.timeout == null) {
                 metrikk.tellUtsattOppgave_UtenDato()
             }
-            oppdatering.timeout ?: error("Timeout på utsettelse mangler")
+            oppdatering.timeout ?: error("Timeout på utsettelse mangler for inntektsmelding: ${oppgave.arkivreferanse}")
             oppgave.timeout = oppdatering.timeout
             oppgave.oppdatert = LocalDateTime.now()
             oppgave.speil = gjelderSpeil
             lagre(oppgave)
             metrikk.tellUtsattOppgave_Utsett()
-            log.info("Oppdaterte timeout på inntektsmelding: ${oppgave.inntektsmeldingId} til ${oppdatering.timeout}")
+            log.info("Oppdaterte timeout på inntektsmelding: ${oppgave.arkivreferanse} til ${oppdatering.timeout}")
             return
         }
 
@@ -57,12 +56,13 @@ class UtsattOppgaveService(
             oppgave.oppdatert = LocalDateTime.now()
             lagre(oppgave.copy(tilstand = Tilstand.Forkastet, speil = gjelderSpeil))
             metrikk.tellUtsattOppgave_Forkast()
-            log.info("Endret oppgave: ${oppgave.inntektsmeldingId} til tilstand: ${Tilstand.Forkastet.name}")
+            log.info("Endret oppgave: ${oppgave.arkivreferanse} til tilstand: ${Tilstand.Forkastet.name}")
             return
         }
 
         if ((oppgave.tilstand == Tilstand.Utsatt || oppgave.tilstand == Tilstand.Forkastet) && oppdatering.handling == Handling.Opprett) {
-            val resultat = opprettOppgaveIGosys(oppgave, oppgaveClient, utsattOppgaveDAO, behandlendeEnhetConsumer, gjelderSpeil, inntektsmeldingRepository, om)
+            val inntektsmeldingEntitet = inntektsmeldingRepository.findByArkivReferanse(oppgave.arkivreferanse)
+            val resultat = opprettOppgaveIGosys(oppgave, oppgaveClient, utsattOppgaveDAO, behandlendeEnhetConsumer, gjelderSpeil, inntektsmeldingEntitet, om)
             oppgave.oppdatert = LocalDateTime.now()
             lagre(oppgave.copy(tilstand = Tilstand.Opprettet, speil = gjelderSpeil))
             metrikk.tellUtsattOppgave_Opprett()
@@ -83,20 +83,21 @@ class UtsattOppgaveService(
     }
 }
 
-@KtorExperimentalAPI
 fun opprettOppgaveIGosys(
     utsattOppgave: UtsattOppgaveEntitet,
     oppgaveClient: OppgaveClient,
     utsattOppgaveDAO: UtsattOppgaveDAO,
     behandlendeEnhetConsumer: BehandlendeEnhetConsumer,
     speil: Boolean,
-    inntektsmeldingRepository: InntektsmeldingRepository,
+    imEntitet: InntektsmeldingEntitet,
     om: ObjectMapper
 ): OppgaveResultat {
     val log = LoggerFactory.getLogger(UtsattOppgaveService::class.java)!!
-    val behandlendeEnhet = behandlendeEnhetConsumer.hentBehandlendeEnhet(utsattOppgave.fnr, utsattOppgave.inntektsmeldingId)
+    val behandlendeEnhet = behandlendeEnhetConsumer.hentBehandlendeEnhet(
+        utsattOppgave.fnr,
+        utsattOppgave.inntektsmeldingId
+    )
     val gjelderUtland = (SYKEPENGER_UTLAND == behandlendeEnhet)
-    val imEntitet = inntektsmeldingRepository.findByArkivReferanse(utsattOppgave.arkivreferanse)
     val inntektsmelding = om.readValue<Inntektsmelding>(imEntitet.data!!)
     val behandlingsTema = finnBehandlingsTema(inntektsmelding)
     log.info("Fant enhet $behandlendeEnhet for ${utsattOppgave.arkivreferanse}")

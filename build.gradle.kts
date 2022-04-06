@@ -8,16 +8,17 @@ val micrometerVersion = "1.8.3"
 val flywayVersion = "8.4.2"
 val cxfVersion = "3.4.4"
 val kotlinVersion = "1.4.10"
-val hikariVersion = "5.0.0"
+val hikariVersion = "5.0.1"
 val ktorVersion = "1.6.7"
 val koinVersion = "3.1.5"
-val tokenSupportVersion = "2.0.0"
-val mockOAuth2ServerVersion = "0.3.6"
+val tokenSupportVersion = "2.0.8"
+val mockOAuth2ServerVersion = "0.4.4"
 val brukernotifikasjonSchemasVersion = "1.2021.01.18-11.12-b9c8c40b98d1"
 val jacksonVersion = "2.13.1"
-val junitJupiterVersion = "5.8.1"
+val junitJupiterVersion = "5.8.2"
 val assertJVersion = "3.22.0"
-val prometheusVersion = "0.14.1"
+val prometheusVersion = "0.15.0"
+val joarkHendelseVersion = "96ec5ebb"
 val githubPassword: String by project
 
 plugins {
@@ -59,14 +60,15 @@ dependencies {
     testImplementation("io.ktor:ktor-client-mock-jvm:$ktorVersion")
     testImplementation("io.ktor:ktor-server-tests:$ktorVersion")
     testImplementation("org.assertj:assertj-core:$assertJVersion")
+    implementation("no.nav.teamdokumenthandtering:teamdokumenthandtering-avro-schemas:$joarkHendelseVersion")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("com.google.guava:guava:31.0.1-jre")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.4.10")
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.4.10")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.6.10")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:1.6.10")
     implementation("org.apache.cxf:cxf-core:$cxfVersion")
     implementation("org.apache.cxf:cxf-rt-databinding-jaxb:$cxfVersion")
     implementation("org.postgresql:postgresql:42.3.1")
-    implementation("org.apache.neethi:neethi:3.1.1")
+    implementation("org.apache.neethi:neethi:3.2.0")
     implementation("org.flywaydb:flyway-core:$flywayVersion")
     implementation("no.nav.sykepenger.kontrakter:inntektsmelding-kontrakt:2022.02.25-10-37-3934b")
     implementation("no.nav.tjenestespesifikasjoner:nav-altinn-inntektsmelding:1.2021.02.22-10.45-4201aaea72fb")
@@ -80,7 +82,7 @@ dependencies {
     implementation("no.nav.security:mock-oauth2-server:$mockOAuth2ServerVersion")
     implementation("com.zaxxer:HikariCP:$hikariVersion")
     implementation("org.slf4j:slf4j-api:1.7.32")
-    implementation("net.logstash.logback:logstash-logback-encoder:6.6")
+    implementation("net.logstash.logback:logstash-logback-encoder:7.0.1")
     implementation("org.apache.httpcomponents:httpclient:4.5.13")
     implementation("io.micrometer:micrometer-core:$micrometerVersion")
     runtimeOnly("io.micrometer:micrometer-registry-prometheus:$micrometerVersion")

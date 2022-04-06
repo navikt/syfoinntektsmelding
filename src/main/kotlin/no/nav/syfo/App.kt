@@ -2,13 +2,11 @@ package no.nav.syfo
 
 import com.typesafe.config.ConfigFactory
 import io.ktor.config.HoconApplicationConfig
-import io.ktor.locations.KtorExperimentalLocationsAPI
 import io.ktor.server.engine.applicationEngineEnvironment
 import io.ktor.server.engine.connector
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.netty.NettyApplicationEngine
-import io.ktor.util.KtorExperimentalAPI
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.helse.arbeidsgiver.kubernetes.KubernetesProbeManager
 import no.nav.helse.arbeidsgiver.kubernetes.LivenessComponent
@@ -38,11 +36,9 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
     private val logger = LoggerFactory.getLogger(SpinnApplication::class.simpleName)
     private var webserver: NettyApplicationEngine? = null
     private var appConfig: HoconApplicationConfig = HoconApplicationConfig(ConfigFactory.load())
-    @KtorExperimentalAPI
+
     private val runtimeEnvironment = appConfig.getEnvironment()
 
-    @KtorExperimentalLocationsAPI
-    @KtorExperimentalAPI
     fun start() {
         if (runtimeEnvironment == AppEnv.PREPROD || runtimeEnvironment == AppEnv.PROD) {
             logger.info("Sover i 30s i påvente av SQL proxy sidecar")
@@ -60,7 +56,7 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
     private fun startKafkaConsumer() {
         val utsattOppgavePoll = PollForUtsattOppgaveVarslingsmeldingJob(get(), get(), get(), get())
         utsattOppgavePoll.startAsync(retryOnFail = true)
-        val joarkPoll = PollForJoarkhendelserJob(get(), get(), get())
+        val joarkPoll = PollForJoarkhendelserJob(get(), get(), get(), get())
         joarkPoll.startAsync(retryOnFail = true)
     }
 
@@ -70,8 +66,6 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
         stopKoin()
     }
 
-    @KtorExperimentalAPI
-    @KtorExperimentalLocationsAPI
     private fun configAndStartWebserver() {
         webserver = embeddedServer(
             Netty,
@@ -91,7 +85,6 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
         webserver!!.start(wait = false)
     }
 
-    @KtorExperimentalAPI
     private fun configAndStartBackgroundWorkers() {
         if (appConfig.getString("run_background_workers") == "true") {
             get<FinnAlleUtgaandeOppgaverProcessor>().startAsync(true)
@@ -132,8 +125,6 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
     }
 }
 
-@KtorExperimentalLocationsAPI
-@KtorExperimentalAPI
 fun main() {
     val logger = LoggerFactory.getLogger("main")
 

@@ -24,7 +24,7 @@ import no.nav.syfo.datapakke.DatapakkePublisherJob
 import no.nav.syfo.integration.kafka.JoarkHendelseKafkaClient
 import no.nav.syfo.integration.kafka.UtsattOppgaveKafkaClient
 import no.nav.syfo.integration.kafka.commonAivenProperties
-import no.nav.syfo.integration.kafka.joarkOnPremProperties
+import no.nav.syfo.integration.kafka.joarkAivenProperties
 import no.nav.syfo.integration.kafka.utsattOppgaveAivenProperties
 import no.nav.syfo.producer.InntektsmeldingAivenProducer
 import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
@@ -32,6 +32,8 @@ import no.nav.syfo.prosesser.FjernInntektsmeldingByBehandletProcessor
 import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
 import no.nav.syfo.repository.ArbeidsgiverperiodeRepository
 import no.nav.syfo.repository.ArbeidsgiverperiodeRepositoryImp
+import no.nav.syfo.repository.DuplikatRepository
+import no.nav.syfo.repository.DuplikatRepositoryImpl
 import no.nav.syfo.repository.FeiletRepositoryImp
 import no.nav.syfo.repository.FeiletService
 import no.nav.syfo.repository.IMStatsRepo
@@ -55,7 +57,7 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 import javax.sql.DataSource
 
-@KtorExperimentalAPI
+@OptIn(KtorExperimentalAPI::class)
 fun prodConfig(config: ApplicationConfig) = module {
     externalSystemClients(config)
     single {
@@ -106,7 +108,7 @@ fun prodConfig(config: ApplicationConfig) = module {
 
     single {
         JoarkHendelseKafkaClient(
-            joarkOnPremProperties(config).toMutableMap(),
+            joarkAivenProperties(config).toMutableMap(),
             config.getString("kafka_joark_hendelse_topic")
         )
     }
@@ -119,6 +121,7 @@ fun prodConfig(config: ApplicationConfig) = module {
 
     single { InntektsmeldingAivenProducer(commonAivenProperties(config)) }
 
+    single { DuplikatRepositoryImpl(get()) } bind DuplikatRepository::class
     single { UtsattOppgaveDAO(UtsattOppgaveRepositoryImp(get())) }
     single { OppgaveClient(config.getString("oppgavebehandling_url"), get(), get(), get()) } bind OppgaveClient::class
     single { UtsattOppgaveService(get(), get(), get(), get(), get(), get()) } bind UtsattOppgaveService::class

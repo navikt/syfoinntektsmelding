@@ -34,14 +34,16 @@ class FinnAlleUtgaandeOppgaverProcessor(
             .finnAlleUtgåtteOppgaver()
             .forEach {
                 try {
-                    opprettOppgaveIGosys(it, oppgaveClient, utsattOppgaveDAO, behandlendeEnhetConsumer, it.speil, inntektsmeldingRepository, om)
+                    log.info("Skal opprette oppgave for inntektsmelding: ${it.arkivreferanse}")
+                    val inntektsmeldingEntitet = inntektsmeldingRepository.findByArkivReferanse(it.arkivreferanse)
+                    opprettOppgaveIGosys(it, oppgaveClient, utsattOppgaveDAO, behandlendeEnhetConsumer, it.speil, inntektsmeldingEntitet, om)
                     it.tilstand = Tilstand.OpprettetTimeout
                     it.oppdatert = LocalDateTime.now()
                     metrikk.tellUtsattOppgave_OpprettTimeout()
                     utsattOppgaveDAO.lagre(it)
-                    log.info("Oppgave opprettet i gosys pga timeout for inntektsmelding: ${it.inntektsmeldingId}")
+                    log.info("Oppgave opprettet i gosys pga timeout for inntektsmelding: ${it.arkivreferanse}")
                 } catch (e: OpprettOppgaveException) {
-                    log.error("feil ved opprettelse av oppgave ved timeout i gosys. InntektsmeldingId: ${it.inntektsmeldingId}")
+                    log.error("Feilet ved opprettelse av oppgave ved timeout i gosys for inntektsmelding: ${it.arkivreferanse}")
                 }
             }
         MDCOperations.remove(MDCOperations.MDC_CALL_ID)

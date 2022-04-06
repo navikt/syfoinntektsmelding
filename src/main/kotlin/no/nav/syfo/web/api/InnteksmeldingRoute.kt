@@ -13,12 +13,10 @@ import io.ktor.response.respond
 import io.ktor.routing.Route
 import io.ktor.routing.post
 import io.ktor.routing.route
-import io.ktor.util.KtorExperimentalAPI
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.syfo.behandling.InntektsmeldingBehandler
 import javax.sql.DataSource
 
-@KtorExperimentalAPI
 fun Route.syfoinntektsmelding(
     inntektsmeldingBehandler: InntektsmeldingBehandler,
     bakgunnsjobbService: BakgrunnsjobbService,
@@ -38,8 +36,7 @@ fun Route.syfoinntektsmelding(
             val request = call.receive<InntektsmeldingRequest>()
             val uuid = inntektsmeldingBehandler.behandle(
                 request.inntektsmelding.journalpostId,
-                request.inntektsmelding.arkivRefereranse,
-                request.inntektsmelding
+                request.inntektsmelding.arkivRefereranse
             )
             uuid?.let {
                 call.respond(HttpStatusCode.Created, Resultat(uuid))

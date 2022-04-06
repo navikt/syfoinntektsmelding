@@ -1,16 +1,10 @@
-package no.nav.syfo.consumer.ws.mapping
+package no.nav.syfo.mapping
 
 import no.nav.syfo.domain.inntektsmelding.Naturalytelse
-import java.time.LocalDateTime
 import javax.xml.bind.JAXBElement
-import javax.xml.datatype.XMLGregorianCalendar
 
 fun mapNaturalytelseType(naturalytelseType: JAXBElement<String>) =
-    naturalytelseType?.value?.let { n ->
-        if (Naturalytelse.values().map { it.name }.contains(n.toUpperCase())) Naturalytelse.valueOf(n.toUpperCase()) else Naturalytelse.ANNET
+    naturalytelseType.value?.let { n ->
+        if (Naturalytelse.values().map { it.name }.contains(n.uppercase())) Naturalytelse.valueOf(n.uppercase()) else Naturalytelse.ANNET
     }
         ?: Naturalytelse.ANNET
-
-fun mapXmlGregorianTilLocalDate(xmlGreg: XMLGregorianCalendar): LocalDateTime {
-    return xmlGreg.toGregorianCalendar().toZonedDateTime().toLocalDateTime()
-}

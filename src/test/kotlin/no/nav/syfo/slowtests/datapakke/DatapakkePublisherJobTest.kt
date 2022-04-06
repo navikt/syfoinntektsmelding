@@ -136,12 +136,12 @@ class DatapakkePublisherJobTest : SystemTestBase() {
 
         val list = mutableListOf<ForsinkelseWeeklyStats>()
         (42..52).map { uke ->
-            (1..6).map { bucket ->
+            (0..3).map { bucket ->
                 list.add(ForsinkelseWeeklyStats(Random.nextInt(100), Random.nextInt(100), bucket, uke, 2021))
             }
         }
         (1..10).map { uke ->
-            (1..6).map { bucket ->
+            (0..3).map { bucket ->
                 list.add(ForsinkelseWeeklyStats(Random.nextInt(100), Random.nextInt(100), bucket, uke, 2022))
             }
         }

@@ -2,13 +2,11 @@ package no.nav.syfo.integration.oauth2
 
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod
 import io.ktor.config.ApplicationConfig
-import io.ktor.util.KtorExperimentalAPI
 import no.nav.security.token.support.client.core.ClientAuthenticationProperties
 import no.nav.security.token.support.client.core.ClientProperties
 import no.nav.security.token.support.client.core.OAuth2GrantType
 import java.net.URI
 
-@KtorExperimentalAPI
 class OAuth2ClientPropertiesConfig(
     applicationConfig: ApplicationConfig
 ) {
@@ -38,10 +36,8 @@ class OAuth2ClientPropertiesConfig(
                 )
             }
 
-    @KtorExperimentalAPI
     internal fun ApplicationConfig.propertyToString(prop: String) = this.property(prop).getString()
 
-    @KtorExperimentalAPI
     internal fun ApplicationConfig.propertyToStringOrNull(prop: String) = this.propertyOrNull(prop)?.getString()
 
     companion object CommonConfigurationAttributes {
