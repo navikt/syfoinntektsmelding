@@ -12,7 +12,11 @@ import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClientImpl
 import no.nav.helse.arbeidsgiver.system.getString
 import no.nav.syfo.MetrikkVarsler
 import no.nav.syfo.behandling.InntektsmeldingBehandler
-import no.nav.syfo.client.*
+import no.nav.syfo.client.BrregClient
+import no.nav.syfo.client.BrregClientImp
+import no.nav.syfo.client.OppgaveClient
+import no.nav.syfo.client.SakClient
+import no.nav.syfo.client.TokenConsumer
 import no.nav.syfo.client.aktor.AktorClient
 import no.nav.syfo.client.dokarkiv.DokArkivClient
 import no.nav.syfo.client.norg.Norg2Client
