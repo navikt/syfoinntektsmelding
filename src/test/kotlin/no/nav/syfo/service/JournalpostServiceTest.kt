@@ -1,8 +1,10 @@
 package no.nav.syfo.service
 
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import no.nav.syfo.client.BrregClient
 import no.nav.syfo.domain.InngaaendeJournal
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
@@ -18,13 +20,17 @@ class JournalpostServiceTest {
     private var journalConsumer = mockk<JournalConsumer>(relaxed = true)
     private var behandleInngaaendeJournalConsumer = mockk<BehandleInngaaendeJournalConsumer>(relaxed = true)
     private val metrikk = mockk<Metrikk>(relaxed = true)
+    val brregClient = mockk<BrregClient>(relaxed = true) {
+        coEvery { getVirksomhetsNavn(any()) } returns "Stark Industries"
+    }
 
     private val journalpostService = JournalpostService(
         inngaaendeJournalConsumer,
         behandleInngaaendeJournalConsumer,
         journalConsumer,
         behandlendeEnhetConsumer,
-        metrikk
+        metrikk,
+        brregClient
     )
 
     @Test

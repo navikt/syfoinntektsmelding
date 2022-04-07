@@ -41,7 +41,7 @@ class BehandleInngaaendeJournalConsumerTest {
         behandleInngaaendeJournalConsumer.oppdaterJournalpost(inngaendeJournalpost)
         verify {
             runBlocking {
-                dokArkivClient.oppdaterJournalpost("journalpostId", any(), any(), any(), any())
+                dokArkivClient.oppdaterJournalpost("journalpostId", any(), any(), any(), any(), any())
             }
         }
         // TODO - Asserten under må virke
