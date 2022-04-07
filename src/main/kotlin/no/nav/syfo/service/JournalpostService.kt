@@ -30,7 +30,7 @@ class JournalpostService(
         val behandlendeEnhet = behandlendeEnhetConsumer.hentBehandlendeEnhet(inntektsmelding.fnr, inntektsmelding.id)
         val arbeidsgiverNavn = inntektsmelding.arbeidsgiverOrgnummer?.let {
             brregClient.getVirksomhetsNavn(inntektsmelding.arbeidsgiverOrgnummer)
-        } ?: "Ukjent "
+        }
 
         return InngaendeJournalpost(
             fnr = inntektsmelding.fnr,
