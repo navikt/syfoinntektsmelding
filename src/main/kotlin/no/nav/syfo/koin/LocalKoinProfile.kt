@@ -132,7 +132,7 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single { BehandleInngaaendeJournalConsumer(get()) } bind BehandleInngaaendeJournalConsumer::class
     single { JournalConsumer(get(), get(), get()) } bind JournalConsumer::class
     single { Metrikk() } bind Metrikk::class
-    single { JournalpostService(get(), get(), get(), get(), get()) } bind JournalpostService::class
+    single { JournalpostService(get(), get(), get(), get(), get(), get()) } bind JournalpostService::class
     single { InntektsmeldingService(InntektsmeldingRepositoryImp(get()), get()) } bind InntektsmeldingService::class
     single { SakClient(config.getString("opprett_sak_url"), get(), get()) } bind SakClient::class
     single { SaksbehandlingService(get(), get(), get()) } bind SaksbehandlingService::class

@@ -38,7 +38,7 @@ class DokArkivClientTest {
     fun `Skal oppdatere journalpost når man får status OK`() {
         dokArkivClient = DokArkivClient("", mockStsClient, buildHttpClientText(HttpStatusCode.OK))
         runBlocking {
-            val resultat = dokArkivClient.oppdaterJournalpost("111", "123", false, "abc123", "1001")
+            val resultat = dokArkivClient.oppdaterJournalpost("111", "123", false, "abc123", "Stark industries", "1001")
             Assertions.assertThat(resultat.status).isEqualTo(HttpStatusCode.OK)
         }
     }
@@ -48,7 +48,7 @@ class DokArkivClientTest {
         dokArkivClient = DokArkivClient("", mockStsClient, buildHttpClientText(HttpStatusCode.InternalServerError, ""))
         runBlocking {
             assertThrows<Exception> {
-                dokArkivClient.oppdaterJournalpost("111", "123", false, "abc123", "1001")
+                dokArkivClient.oppdaterJournalpost("111", "123", false, "abc123", "Stark industries", "1001")
             }
         }
     }

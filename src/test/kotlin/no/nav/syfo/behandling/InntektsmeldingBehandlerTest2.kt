@@ -14,6 +14,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.runBlocking
+import no.nav.syfo.client.BrregClient
 import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.client.SakClient
 import no.nav.syfo.client.SakResponse
@@ -84,7 +85,9 @@ class InntektsmeldingBehandlerTest2 {
     private var inntektsmeldingBehandler = mockk<InntektsmeldingBehandler>(relaxed = true)
     private var aivenInntektsmeldingBehandler = mockk<InntektsmeldingAivenProducer>(relaxed = true)
     var feiletUtsattOppgaveMeldingProsessor = mockk<FeiletUtsattOppgaveMeldingProsessor>(relaxed = true)
-
+    val brregClient = mockk<BrregClient>(relaxed = true) {
+        coEvery { getVirksomhetsNavn(any()) } returns "Stark Industries"
+    }
     @BeforeEach
     fun setup() {
         inntektsmeldingRepository.deleteAll()
@@ -94,7 +97,8 @@ class InntektsmeldingBehandlerTest2 {
             behandleInngaaendeJournalConsumer,
             journalConsumer,
             behandlendeEnhetConsumer,
-            metrikk
+            metrikk,
+            brregClient
         )
         saksbehandlingService =
             SaksbehandlingService(inntektsmeldingService, sakClient, metrikk)
