@@ -66,7 +66,7 @@ class OppgaveClient constructor(
     private suspend fun hentHvisOppgaveFinnes(oppgavetype: String, journalpostId: String): OppgaveResultat? {
         try {
             val oppgaveResponse = hentOppgave(oppgavetype = oppgavetype, journalpostId = journalpostId)
-            return if (oppgaveResponse.antallTreffTotalt > 0) OppgaveResultat(oppgaveResponse.oppgaver.first().id, true) else null
+            return if (oppgaveResponse.antallTreffTotalt > 0) OppgaveResultat(oppgaveResponse.oppgaver.first().id, true, false) else null
         } catch (ex: Exception) {
             log.error("Feil ved sjekking av eksisterende oppgave", ex)
             throw HentOppgaveException(journalpostId, oppgavetype, ex)
@@ -90,6 +90,7 @@ class OppgaveClient constructor(
         }
         var behandlingstype: String? = null
         var behandlingstema: String? = null
+        var utbetalingBruker = false
         if (gjelderSpeil) {
             log.info("Oppretter oppgave: Speil for journalpost $journalpostId")
             behandlingstema = BEHANDLINGSTEMA_SPEIL
@@ -101,6 +102,7 @@ class OppgaveClient constructor(
                 if (tema != BehandlingsTema.REFUSJON_UTEN_DATO) {
                     log.info("Oppretter oppgave: Utbetaling til bruker for journalpost $journalpostId")
                     behandlingstema = BEHANDLINGSTEMA_UTBETALING_TIL_BRUKER
+                    utbetalingBruker = true
                 } else {
                     log.info("Oppretter oppgave: Normal for journalpost $journalpostId")
                     behandlingstema = BEHANDLINGSTYPE_NORMAL
@@ -124,7 +126,7 @@ class OppgaveClient constructor(
         )
         log.info("Oppretter journalføringsoppgave på enhet $tildeltEnhetsnr")
         try {
-            return OppgaveResultat(opprettOppgave(opprettOppgaveRequest).id, false)
+            return OppgaveResultat(opprettOppgave(opprettOppgaveRequest).id, false, utbetalingBruker)
         } catch (ex: Exception) {
             throw OpprettOppgaveException(journalpostId, ex)
         }
@@ -156,7 +158,7 @@ class OppgaveClient constructor(
         )
         log.info("Oppretter fordelingsoppgave")
         try {
-            return OppgaveResultat(opprettOppgave(opprettOppgaveRequest).id, false)
+            return OppgaveResultat(opprettOppgave(opprettOppgaveRequest).id, false, false)
         } catch (ex: Exception) {
             throw OpprettFordelingsOppgaveException(journalpostId, ex)
         }

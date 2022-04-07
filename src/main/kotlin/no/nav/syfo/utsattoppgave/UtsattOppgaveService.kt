@@ -114,6 +114,7 @@ fun opprettOppgaveIGosys(
     }
     utsattOppgave.enhet = behandlendeEnhet
     utsattOppgave.gosysOppgaveId = resultat.oppgaveId.toString()
+    utsattOppgave.utbetalingBruker = resultat.utbetalingBruker
     utsattOppgaveDAO.lagre(utsattOppgave)
     return resultat
 }

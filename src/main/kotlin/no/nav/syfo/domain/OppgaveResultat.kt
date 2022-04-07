@@ -2,5 +2,6 @@ package no.nav.syfo.domain
 
 data class OppgaveResultat(
     val oppgaveId: Int,
-    val duplikat: Boolean
+    val duplikat: Boolean,
+    val utbetalingBruker: Boolean,
 )
