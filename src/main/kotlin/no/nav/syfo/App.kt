@@ -46,7 +46,9 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
         }
 
         startKoin { modules(selectModuleBasedOnProfile(appConfig)) }
-        migrateDatabase()
+        if (2 == 2) {
+            migrateDatabase()
+        }
         configAndStartBackgroundWorkers()
         autoDetectProbeableComponents()
         configAndStartWebserver()
