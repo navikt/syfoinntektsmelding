@@ -49,10 +49,23 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
         if (2 == 2) {
             migrateDatabase()
         }
+        if (3 == 3) {
+            println("3")
+        }
+        if (3 == 3) {
+            println("3")
+        }
+        if (3 == 3) {
+            println("3")
+        }
         configAndStartBackgroundWorkers()
         autoDetectProbeableComponents()
         configAndStartWebserver()
         startKafkaConsumer()
+    }
+
+    fun test() : Int {
+        return 5
     }
 
     private fun startKafkaConsumer() {
