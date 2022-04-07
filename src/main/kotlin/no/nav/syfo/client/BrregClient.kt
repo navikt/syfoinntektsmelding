@@ -34,7 +34,7 @@ class BrregClientImp(private val httpClient: HttpClient, private val brregUrl: S
         } catch (cause: ClientRequestException) {
             if (404 == cause.response.status.value) {
                 log.error("Fant ikke virksomhet i brreg med orgnr: $orgnr")
-                "Ukjent arbeidsgiver"
+                "Arbeidsgiver"
             } else {
                 log.error("Klarte ikke å hente virksomhet!", cause)
                 throw cause
