@@ -185,36 +185,7 @@ tasks.koverVerify {
     rule {
         name = "Minimal line coverage rate in percent"
         bound {
-            minValue = 75
+            minValue = 10
         }
     }
 }
-
-tasks.koverMergedVerify {
-    includes = listOf("no/nav/syfo/**")
-    excludes = listOf("no/nav/syfo/slowtests/**")
-
-    rule {
-        name = "Minimum number of lines covered"
-        bound {
-            minValue = 100000
-            valueType = kotlinx.kover.api.VerificationValueType.COVERED_LINES_COUNT
-        }
-    }
-    rule {
-        // rule without a custom name
-        bound {
-            minValue = 1
-            maxValue = 1000
-            valueType = kotlinx.kover.api.VerificationValueType.MISSED_LINES_COUNT
-        }
-    }
-    rule {
-        name = "Minimal line coverage rate in percent"
-        bound {
-            minValue = 90
-            // valueType is kotlinx.kover.api.VerificationValueType.COVERED_LINES_PERCENTAGE by default
-        }
-    }
-}
-
