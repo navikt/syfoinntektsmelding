@@ -163,6 +163,17 @@ task<Test>("slowTests") {
     group = "verification"
 }
 
+tasks.koverVerify {
+    includes = listOf("no/nav/syfo/**")
+    excludes = listOf("no/nav/syfo/slowtests/**")
+    rule {
+        name = "Minimal line coverage rate in percent"
+        bound {
+            minValue = 75
+        }
+    }
+}
+
 tasks.koverMergedVerify {
     includes = listOf("no/nav/syfo/**")
     excludes = listOf("no/nav/syfo/slowtests/**")
