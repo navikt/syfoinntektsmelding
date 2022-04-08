@@ -58,7 +58,7 @@ open class SystemTestBase : KoinTest {
      * Hjelpefunksjon for å kalle HTTP-endepunktene med riktig port i testene
      */
     private fun HttpRequestBuilder.appUrl(relativePath: String) {
-        url("http://localhost:$testServerPort$relativePath")
+        url("http://localhost:${no.nav.syfo.slowtests.SystemTestBase.testServerPort}$relativePath")
     }
 
     /**
