@@ -178,14 +178,3 @@ sonarqube {
         property("sonar.exclusions", "**/*Test.kt")
     }
 }
-
-tasks.koverVerify {
-    includes = listOf("no/nav/syfo/**")
-    excludes = listOf("no/nav/syfo/slowtests/**")
-    rule {
-        name = "Minimal line coverage rate in percent"
-        bound {
-            minValue = 10
-        }
-    }
-}
