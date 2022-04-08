@@ -28,7 +28,6 @@ plugins {
     id("io.snyk.gradle.plugin.snykplugin") version "0.4"
     id("org.sonarqube") version "3.3"
     id("org.jetbrains.kotlinx.kover") version "0.5.0"
-    jacoco
     application
 }
 
@@ -113,17 +112,6 @@ dependencies {
     implementation("javax.annotation:javax.annotation-api:1.3.2")
 }
 
-sourceSets {
-    main {
-        java.srcDir("src/main/kotlin")
-    }
-    test {
-        java.srcDir("src/test/kotlin")
-    }
-    test {
-        java.srcDir("src/integration-test/kotlin")
-    }
-}
 
 tasks.withType<KotlinCompile>() {
     kotlinOptions.jvmTarget = "11"
@@ -172,6 +160,11 @@ tasks.named<Test>("test") {
     exclude("no/nav/syfo/slowtests/**")
 }
 
+task<Test>("slowTests") {
+    include("no/nav/syfo/slowtests/**")
+    outputs.upToDateWhen { false }
+    group = "verification"
+}
 
 sonarqube {
     properties {
