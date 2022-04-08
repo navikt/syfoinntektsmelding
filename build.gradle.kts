@@ -166,10 +166,7 @@ task<Test>("slowTests") {
 
 sonarqube {
     properties {
-        // Include Kover Coverage
-        val koverPath = "reports/kover/report.xml"
-        println("Kover report: $koverPath")
-        property("sonar.coverage.jacoco.xmlReportPaths", "reports/kover/project-xml/report.xml" )
+        property("sonar.coverage.jacoco.xmlReportPaths", "reports/kover/project-xml/report.xml")
         property("sonar.projectKey", "navikt_syfoinntektsmelding")
         property("sonar.organization", "navit")
         property("sonar.host.url", "https://sonarcloud.io")
