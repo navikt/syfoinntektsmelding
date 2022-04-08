@@ -112,7 +112,6 @@ dependencies {
     implementation("javax.annotation:javax.annotation-api:1.3.2")
 }
 
-
 tasks.withType<KotlinCompile>() {
     kotlinOptions.jvmTarget = "11"
 }
@@ -144,7 +143,6 @@ configure<io.snyk.gradle.plugin.SnykExtension> {
     setAutoUpdate(true)
     setArguments("--all-sub-projects")
 }
-
 
 tasks.withType<Test> {
     useJUnitPlatform()
