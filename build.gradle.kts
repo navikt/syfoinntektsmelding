@@ -26,6 +26,7 @@ plugins {
     id("com.github.ben-manes.versions") version "0.42.0"
     id("org.flywaydb.flyway") version "8.4.2"
     id("io.snyk.gradle.plugin.snykplugin") version "0.4"
+    id("org.sonarqube") version "3.3"
     id("org.jetbrains.kotlinx.kover") version "0.5.0"
     application
 }
@@ -163,6 +164,21 @@ task<Test>("slowTests") {
     group = "verification"
 }
 
+sonarqube {
+    properties {
+        property("sonar.coverage.jacoco.xmlReportPaths", "reports/kover/project-xml/report.xml")
+        property("sonar.projectKey", "navikt_syfoinntektsmelding")
+        property("sonar.organization", "navit")
+        property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.sourceEncoding", "UTF-8")
+        property("sonar.sources", "src/main/kotlin")
+        property("sonar.tests", "src/test/kotlin")
+        property("sonar.coverage.exclusions", "**/*Test.kt")
+        property("sonar.cpd.exclusions", "**/*Test.kt")
+        property("sonar.exclusions", "**/*Test.kt")
+    }
+}
+
 tasks.koverVerify {
     includes = listOf("no/nav/syfo/**")
     excludes = listOf("no/nav/syfo/slowtests/**")
@@ -201,3 +217,4 @@ tasks.koverMergedVerify {
         }
     }
 }
+
