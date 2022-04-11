@@ -19,6 +19,7 @@ val junitJupiterVersion = "5.8.2"
 val assertJVersion = "3.22.0"
 val prometheusVersion = "0.15.0"
 val joarkHendelseVersion = "96ec5ebb"
+val fellesBackendVersion = "2022.01.18-08-47-f6aa0"
 val githubPassword: String by project
 
 plugins {
@@ -27,8 +28,10 @@ plugins {
     id("org.flywaydb.flyway") version "8.4.2"
     id("io.snyk.gradle.plugin.snykplugin") version "0.4"
     id("org.sonarqube") version "3.3"
-    jacoco
+    id("org.jetbrains.kotlinx.kover") version "0.5.0"
     application
+    java
+    `jvm-test-suite`
 }
 
 repositories {
@@ -52,14 +55,6 @@ repositories {
 }
 
 dependencies {
-    implementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
-    implementation("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
-    testImplementation("io.insert-koin:koin-test:$koinVersion")
-    testImplementation("io.mockk:mockk:1.12.2")
-    testImplementation("io.ktor:ktor-client-mock:$ktorVersion")
-    testImplementation("io.ktor:ktor-client-mock-jvm:$ktorVersion")
-    testImplementation("io.ktor:ktor-server-tests:$ktorVersion")
-    testImplementation("org.assertj:assertj-core:$assertJVersion")
     implementation("no.nav.teamdokumenthandtering:teamdokumenthandtering-avro-schemas:$joarkHendelseVersion")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("com.google.guava:guava:31.0.1-jre")
@@ -76,7 +71,7 @@ dependencies {
     implementation("no.nav.syfo.sm:syfosm-common-networking:2019.09.25-05-44-08e26429f4e37cd57d99ba4d39fc74099a078b97")
     implementation("no.nav:vault-jdbc:1.3.7")
     implementation("no.nav.common:log:2.2022.02.18_14.38-8d8bb494bd41")
-    implementation("no.nav.helsearbeidsgiver:helse-arbeidsgiver-felles-backend:2022.01.18-08-47-f6aa0")
+    implementation("no.nav.helsearbeidsgiver:helse-arbeidsgiver-felles-backend:$fellesBackendVersion")
     implementation("no.nav.security:token-client-core:$tokenSupportVersion")
     implementation("no.nav.security:token-validation-ktor:$tokenSupportVersion")
     implementation("no.nav.security:mock-oauth2-server:$mockOAuth2ServerVersion")
@@ -112,14 +107,6 @@ dependencies {
     implementation("javax.annotation:javax.annotation-api:1.3.2")
 }
 
-tasks.withType<KotlinCompile>() {
-    kotlinOptions.jvmTarget = "11"
-}
-
-tasks.test {
-    useJUnitPlatform()
-}
-
 tasks.jar {
     archiveBaseName.set("app")
     manifest {
@@ -144,38 +131,51 @@ configure<io.snyk.gradle.plugin.SnykExtension> {
     setArguments("--all-sub-projects")
 }
 
-tasks.jacocoTestReport {
-    executionData("build/jacoco/test.exec")
-    reports {
-        xml.isEnabled = true
-        html.isEnabled = true
-    }
+tasks.withType<KotlinCompile>() {
+    kotlinOptions.jvmTarget = "12"
 }
 
-tasks.withType<JacocoReport> {
-    classDirectories.setFrom(
-        sourceSets.main.get().output.asFileTree.matching {
-            exclude("**/App**", "**Mock**")
+testing {
+    suites {
+        val test by getting(JvmTestSuite::class) {
+            dependencies {
+                useJUnitJupiter()
+                implementation("io.mockk:mockk:1.12.2")
+                implementation("org.assertj:assertj-core:$assertJVersion")
+                implementation("io.ktor:ktor-client-mock:$ktorVersion")
+                implementation("io.ktor:ktor-client-mock-jvm:$ktorVersion")
+                implementation("no.nav.helsearbeidsgiver:helse-arbeidsgiver-felles-backend:$fellesBackendVersion")
+            }
+
         }
-    )
-}
+        val integrationTest by registering(JvmTestSuite::class) {
+            dependencies {
+                implementation(project)
+                useJUnitJupiter()
+                implementation("io.confluent:kafka-streams-avro-serde:6.2.1")
+                implementation("io.confluent:kafka-avro-serializer:6.2.1")
+                implementation("org.apache.kafka:kafka-streams:7.0.1-ce")
+                implementation("no.nav.sykepenger.kontrakter:inntektsmelding-kontrakt:2022.02.25-10-37-3934b")
+                implementation("io.insert-koin:koin-test:$koinVersion")
+                implementation("io.mockk:mockk:1.12.2")
+                implementation("io.ktor:ktor-client-mock:$ktorVersion")
+                implementation("io.ktor:ktor-client-mock-jvm:$ktorVersion")
+                implementation("io.ktor:ktor-server-tests:$ktorVersion")
+                implementation("org.assertj:assertj-core:$assertJVersion")
+                implementation("com.zaxxer:HikariCP:$hikariVersion")
+                implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
+                implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$jacksonVersion")
+                implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
+                implementation("no.nav.helsearbeidsgiver:helse-arbeidsgiver-felles-backend:$fellesBackendVersion")
+            }
 
-tasks.withType<Test> {
-    useJUnitPlatform()
-    testLogging {
-        events("passed", "skipped", "failed")
-        showStackTraces = true
-        exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+            targets {
+                all {
+                    testTask.configure {
+                        // shouldRunAfter(test)
+                    }
+                }
+            }
+        }
     }
-}
-
-tasks.named<Test>("test") {
-    include("no/nav/syfo/**")
-    exclude("no/nav/syfo/slowtests/**")
-}
-
-task<Test>("slowTests") {
-    include("no/nav/syfo/slowtests/**")
-    outputs.upToDateWhen { false }
-    group = "verification"
 }

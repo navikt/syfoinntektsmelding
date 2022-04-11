@@ -10,9 +10,11 @@ import no.nav.syfo.slowtests.SystemTestBase
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 
+@Tag("it")
 open class FeiletRepositoryTest : SystemTestBase() {
 
     private lateinit var respository: FeiletRepository

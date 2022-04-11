@@ -1,8 +1,8 @@
 package no.nav.syfo.util
 
 import no.nav.syfo.repository.LPSStats
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import kotlin.test.assertEquals
 
 class DatapakkeUtilTest {
 
