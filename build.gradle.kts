@@ -146,7 +146,6 @@ testing {
                 implementation("io.ktor:ktor-client-mock-jvm:$ktorVersion")
                 implementation("no.nav.helsearbeidsgiver:helse-arbeidsgiver-felles-backend:$fellesBackendVersion")
             }
-
         }
         val integrationTest by registering(JvmTestSuite::class) {
             dependencies {
