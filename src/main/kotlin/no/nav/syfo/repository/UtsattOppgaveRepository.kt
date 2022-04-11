@@ -85,8 +85,8 @@ class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepo
 
     override fun opprett(uo: UtsattOppgaveEntitet): UtsattOppgaveEntitet {
         val insertStatement =
-            """INSERT INTO UTSATT_OPPGAVE (INNTEKTSMELDING_ID, ARKIVREFERANSE, FNR, AKTOR_ID, SAK_ID, JOURNALPOST_ID, TIMEOUT, TILSTAND, GOSYS_OPPGAVE_ID, OPPDATERT, SPEIL)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """INSERT INTO UTSATT_OPPGAVE (INNTEKTSMELDING_ID, ARKIVREFERANSE, FNR, AKTOR_ID, SAK_ID, JOURNALPOST_ID, TIMEOUT, TILSTAND, GOSYS_OPPGAVE_ID, OPPDATERT, SPEIL, UTBETALING_BRUKER)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)
         RETURNING *;""".trimMargin()
 
         val utsattOppgaver = ArrayList<UtsattOppgaveEntitet>()
@@ -104,6 +104,7 @@ class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepo
             ps.setString(9, uo.gosysOppgaveId)
             ps.setTimestamp(10, Timestamp.valueOf(uo.oppdatert ?: LocalDateTime.now()))
             ps.setBoolean(11, uo.speil)
+            ps.setBoolean(12, uo.utbetalingBruker)
             val res = ps.executeQuery()
             return resultLoop(res, utsattOppgaver).first()
         }
@@ -123,7 +124,8 @@ class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepo
                 ENHET = ?,
                 GOSYS_OPPGAVE_ID = ?,
                 OPPDATERT = ?,
-                SPEIL = ?
+                SPEIL = ?,
+                UTBETALING_BRUKER = ?
             WHERE OPPGAVE_ID = ?""".trimMargin()
 
         ds.connection.use {
@@ -140,6 +142,7 @@ class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepo
             ps.setString(10, uo.gosysOppgaveId)
             ps.setTimestamp(11, Timestamp.valueOf(uo.oppdatert ?: LocalDateTime.now()))
             ps.setBoolean(12, uo.speil)
+            ps.setBoolean(13, uo.utbetalingBruker)
             ps.setInt(13, uo.id)
             ps.executeUpdate()
             return uo
