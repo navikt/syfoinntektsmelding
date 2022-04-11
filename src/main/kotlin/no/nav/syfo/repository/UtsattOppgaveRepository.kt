@@ -86,7 +86,7 @@ class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepo
     override fun opprett(uo: UtsattOppgaveEntitet): UtsattOppgaveEntitet {
         val insertStatement =
             """INSERT INTO UTSATT_OPPGAVE (INNTEKTSMELDING_ID, ARKIVREFERANSE, FNR, AKTOR_ID, SAK_ID, JOURNALPOST_ID, TIMEOUT, TILSTAND, GOSYS_OPPGAVE_ID, OPPDATERT, SPEIL, UTBETALING_BRUKER)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         RETURNING *;""".trimMargin()
 
         val utsattOppgaver = ArrayList<UtsattOppgaveEntitet>()
@@ -143,7 +143,7 @@ class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepo
             ps.setTimestamp(11, Timestamp.valueOf(uo.oppdatert ?: LocalDateTime.now()))
             ps.setBoolean(12, uo.speil)
             ps.setBoolean(13, uo.utbetalingBruker)
-            ps.setInt(13, uo.id)
+            ps.setInt(14, uo.id)
             ps.executeUpdate()
             return uo
         }
