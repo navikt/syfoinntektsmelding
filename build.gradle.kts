@@ -179,3 +179,16 @@ testing {
         }
     }
 }
+
+tasks.koverVerify {
+    includes = listOf("no.nav.syfo.*")            // inclusion rules for classes
+    //excludes = listOf("com.example.subpackage.*") // exclusion rules for classes
+
+    rule {
+        name = "Minimal line coverage rate in percent"
+        bound {
+            minValue = 75
+        }
+    }
+}
+
