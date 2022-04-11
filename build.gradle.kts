@@ -131,8 +131,8 @@ configure<io.snyk.gradle.plugin.SnykExtension> {
     setArguments("--all-sub-projects")
 }
 
-tasks.withType<KotlinCompile>() {
-    kotlinOptions.jvmTarget = "12"
+tasks.withType<KotlinCompile> {
+    kotlinOptions.jvmTarget = "11"
 }
 
 testing {
@@ -180,9 +180,8 @@ testing {
 }
 
 tasks.koverVerify {
-    includes = listOf("no.nav.syfo.*")            // inclusion rules for classes
-    //excludes = listOf("com.example.subpackage.*") // exclusion rules for classes
-
+    includes = listOf("no.nav.syfo.*") // inclusion rules for classes
+    excludes = listOf("no.nav.melding.*") // exclusion rules for classes
     rule {
         name = "Minimal line coverage rate in percent"
         bound {
@@ -190,4 +189,3 @@ tasks.koverVerify {
         }
     }
 }
-
