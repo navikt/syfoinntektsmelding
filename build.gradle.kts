@@ -179,3 +179,25 @@ task<Test>("slowTests") {
     outputs.upToDateWhen { false }
     group = "verification"
 }
+
+sonarqube {
+    properties {
+        property( "sonar.projectKey", "navikt_syfoinntektsmelding")
+        property( "sonar.organization", "navit")
+        property( "sonar.host.url", "https://sonarcloud.io")
+        property("sonar.sourceEncoding", "UTF-8")
+        property("sonar.login", "navikt")
+        property("sonar.sources", "src/main/kotlin")
+        property("sonar.tests", "src/test/kotlin")
+        property("sonar.coverage.exclusions", "**/*Test.kt")
+        property("sonar.cpd.exclusions", "**/*Test.kt")
+        property("sonar.exclusions", "**/*Test.kt")
+    }
+}
+
+tasks.test {
+    finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
+}
+tasks.jacocoTestReport {
+    dependsOn(tasks.test) // tests are required to run before generating the report
+}
