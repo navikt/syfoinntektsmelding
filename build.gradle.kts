@@ -191,11 +191,11 @@ testing {
 
 tasks.koverVerify {
     includes = listOf("no.nav.syfo.*") // inclusion rules for classes
-    excludes = listOf("?Test", "?Spec") // exclusion rules for classes
+    //excludes = listOf("?Test", "?Spec") // exclusion rules for classes
     rule {
         name = "Minimal line coverage rate in percent"
         bound {
-            minValue = 75
+            minValue = 50
         }
     }
 }
