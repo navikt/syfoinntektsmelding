@@ -138,6 +138,11 @@ tasks.withType<KotlinCompile> {
 testing {
     suites {
         val test by getting(JvmTestSuite::class) {
+            sources {
+                java {
+                    setSrcDirs(listOf("src/test/kotlin"))
+                }
+            }
             dependencies {
                 useJUnitJupiter()
                 implementation("io.mockk:mockk:1.12.2")
@@ -148,6 +153,11 @@ testing {
             }
         }
         val integrationTest by registering(JvmTestSuite::class) {
+            sources {
+                java {
+                    setSrcDirs(listOf("src/integrationTest/kotlin"))
+                }
+            }
             dependencies {
                 implementation(project)
                 useJUnitJupiter()
