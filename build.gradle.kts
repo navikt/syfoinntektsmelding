@@ -185,12 +185,12 @@ sonarqube {
         property("sonar.projectKey", "navikt_syfoinntektsmelding")
         property("sonar.organization", "navit")
         property("sonar.host.url", "https://sonarcloud.io")
-        property("sonar.sourceEncoding", "UTF-8")
-        property("sonar.sources", "src/main/kotlin")
-        property("sonar.tests", "src/test/kotlin")
-        property("sonar.coverage.exclusions", "**/*Test.kt")
-        property("sonar.cpd.exclusions", "**/*Test.kt")
-        property("sonar.exclusions", "**/*Test.kt")
+//        property("sonar.sourceEncoding", "UTF-8")
+//        property("sonar.sources", "src/main/kotlin")
+//        property("sonar.tests", "src/test/kotlin")
+//        property("sonar.coverage.exclusions", "**/*Test.kt")
+//        property("sonar.cpd.exclusions", "**/*Test.kt")
+//        property("sonar.exclusions", "**/*Test.kt")
     }
 }
 
