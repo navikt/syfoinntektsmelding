@@ -26,8 +26,8 @@ plugins {
     id("com.github.ben-manes.versions") version "0.42.0"
     id("org.flywaydb.flyway") version "8.4.2"
     id("io.snyk.gradle.plugin.snykplugin") version "0.4"
-    id("org.sonarqube") version "3.3"
     jacoco
+    id("org.sonarqube") version "3.3"
     application
 }
 
@@ -178,4 +178,36 @@ task<Test>("slowTests") {
     include("no/nav/syfo/slowtests/**")
     outputs.upToDateWhen { false }
     group = "verification"
+}
+
+sonarqube {
+    properties {
+        property("sonar.projectKey", "navikt_syfoinntektsmelding")
+        property("sonar.organization", "navit")
+        property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.sourceEncoding", "UTF-8")
+//        property("sonar.sources", "src/main/kotlin")
+//        property("sonar.tests", "src/test/kotlin")
+//        property("sonar.coverage.exclusions", "**/*Test.kt")
+//        property("sonar.cpd.exclusions", "**/*Test.kt")
+//        property("sonar.exclusions", "**/*Test.kt")
+//        property("sonar.java.binaries", "getStringArray")
+    }
+}
+
+tasks.test {
+    finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
+}
+tasks.jacocoTestReport {
+    dependsOn(tasks.test) // tests are required to run before generating the report
+}
+
+tasks.jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                minimum = "0.2".toBigDecimal()
+            }
+        }
+    }
 }
