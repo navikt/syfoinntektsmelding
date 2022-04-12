@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test
 import java.util.UUID
 import kotlin.random.Random
 
-class DatapakkePublisherJobTest : SystemTestBase() {
+class DatapakkePublisherJobSpec : SystemTestBase() {
 
     val repo = mockk<IMStatsRepo>()
 

@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class DatapakkeJsonTest : SystemTestBase() {
+class DatapakkeJsonSpec : SystemTestBase() {
 
     val testData = "datapakke/datapakke.json".loadFromResources()
 
