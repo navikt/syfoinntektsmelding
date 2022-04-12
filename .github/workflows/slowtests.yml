@@ -31,7 +31,7 @@ jobs:
       - name: Build and run slowTests
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: --console=plain build integrationTest koverVerify
+          arguments: --console=plain build integrationTest
         env:
           ORG_GRADLE_PROJECT_githubUser: x-access-token
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
