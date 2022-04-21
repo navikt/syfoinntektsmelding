@@ -1,9 +1,8 @@
 name: Snyk
 
 on:
-  push:
-    branches:
-      - '!dependabot/*'
+  schedule:
+    - cron:  "0 13 * * 1"
 
 jobs:
   snyk:
