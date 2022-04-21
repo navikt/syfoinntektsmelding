@@ -145,19 +145,26 @@ configure<io.snyk.gradle.plugin.SnykExtension> {
 }
 
 tasks.jacocoTestReport {
-    executionData("build/jacoco/test.exec")
+    dependsOn(tasks.test)
     reports {
-        xml.isEnabled = true
-        html.isEnabled = true
+        xml.required.set(true)
+        csv.required.set(false)
+        html.outputLocation.set(layout.buildDirectory.dir("jacocoHtml"))
     }
 }
 
-tasks.withType<JacocoReport> {
-    classDirectories.setFrom(
-        sourceSets.main.get().output.asFileTree.matching {
-            exclude("**/App**", "**Mock**")
+tasks.jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                minimum = "0.5".toBigDecimal()
+            }
         }
-    )
+    }
+}
+
+tasks.test {
+    finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
 }
 
 tasks.withType<Test> {
@@ -186,12 +193,7 @@ sonarqube {
         property("sonar.organization", "navit")
         property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.sourceEncoding", "UTF-8")
-//        property("sonar.sources", "src/main/kotlin")
-//        property("sonar.tests", "src/test/kotlin")
-//        property("sonar.coverage.exclusions", "**/*Test.kt")
-//        property("sonar.cpd.exclusions", "**/*Test.kt")
-//        property("sonar.exclusions", "**/*Test.kt")
-//        property("sonar.java.binaries", "getStringArray")
+        property("sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test")
     }
 }
 
