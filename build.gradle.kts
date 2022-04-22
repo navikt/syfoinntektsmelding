@@ -112,14 +112,6 @@ dependencies {
     implementation("javax.annotation:javax.annotation-api:1.3.2")
 }
 
-tasks.withType<KotlinCompile>() {
-    kotlinOptions.jvmTarget = "11"
-}
-
-tasks.test {
-    useJUnitPlatform()
-}
-
 tasks.jar {
     archiveBaseName.set("app")
     manifest {
@@ -144,26 +136,12 @@ configure<io.snyk.gradle.plugin.SnykExtension> {
     setArguments("--all-sub-projects")
 }
 
-tasks.jacocoTestReport {
-    dependsOn(tasks.test)
-    reports {
-        xml.required.set(true)
-        csv.required.set(false)
-        html.outputLocation.set(layout.buildDirectory.dir("jacocoHtml"))
-    }
-}
-
-tasks.jacocoTestCoverageVerification {
-    violationRules {
-        rule {
-            limit {
-                minimum = "0.5".toBigDecimal()
-            }
-        }
-    }
+tasks.withType<KotlinCompile>() {
+    kotlinOptions.jvmTarget = "11"
 }
 
 tasks.test {
+    useJUnitPlatform()
     finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
 }
 
@@ -187,6 +165,25 @@ task<Test>("slowTests") {
     group = "verification"
 }
 
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+    reports {
+        xml.required.set(true)
+        csv.required.set(false)
+        html.outputLocation.set(layout.buildDirectory.dir("jacocoHtml"))
+    }
+}
+
+tasks.jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                minimum = "0.5".toBigDecimal()
+            }
+        }
+    }
+}
+
 sonarqube {
     properties {
         property("sonar.projectKey", "navikt_syfoinntektsmelding")
@@ -194,22 +191,5 @@ sonarqube {
         property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.sourceEncoding", "UTF-8")
         property("sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test")
-    }
-}
-
-tasks.test {
-    finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
-}
-tasks.jacocoTestReport {
-    dependsOn(tasks.test) // tests are required to run before generating the report
-}
-
-tasks.jacocoTestCoverageVerification {
-    violationRules {
-        rule {
-            limit {
-                minimum = "0.2".toBigDecimal()
-            }
-        }
     }
 }
