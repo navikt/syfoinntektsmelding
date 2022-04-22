@@ -26,7 +26,6 @@ plugins {
     id("org.sonarqube") version "3.3"
     id("com.github.ben-manes.versions") version "0.42.0"
     id("org.flywaydb.flyway") version "8.4.2"
-    id("io.snyk.gradle.plugin.snykplugin") version "0.4"
     jacoco
     application
 }
@@ -129,13 +128,6 @@ tasks.jar {
     }
 }
 
-configure<io.snyk.gradle.plugin.SnykExtension> {
-    setSeverity("high")
-    setAutoDownload(true)
-    setAutoUpdate(true)
-    setArguments("--all-sub-projects")
-}
-
 tasks.withType<KotlinCompile>() {
     kotlinOptions.jvmTarget = "11"
 }
@@ -143,15 +135,6 @@ tasks.withType<KotlinCompile>() {
 tasks.test {
     useJUnitPlatform()
     finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
-}
-
-tasks.withType<Test> {
-    useJUnitPlatform()
-    testLogging {
-        events("passed", "skipped", "failed")
-        showStackTraces = true
-        exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
-    }
 }
 
 tasks.named<Test>("test") {
@@ -189,7 +172,6 @@ sonarqube {
         property("sonar.projectKey", "navikt_syfoinntektsmelding")
         property("sonar.organization", "navit")
         property("sonar.host.url", "https://sonarcloud.io")
-        property("sonar.sourceEncoding", "UTF-8")
         property("sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test")
         property("sonar.login", System.getenv("SONAR_TOKEN"))
     }
