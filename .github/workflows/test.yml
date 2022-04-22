@@ -38,7 +38,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           ORG_GRADLE_PROJECT_githubUser: x-access-token
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
-        run: ./gradlew build --info
+        run: ./gradlew build --console=plain
       - name: Test
         run: ./gradlew --console=plain test sonarqube
         env:
