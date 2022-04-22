@@ -1,9 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val version = "1.0"
 val mainClass = "no.nav.syfo.AppKt"
-val group = "no.nav.syfo"
-// Dependencies
+
 val micrometerVersion = "1.8.3"
 val flywayVersion = "8.4.2"
 val cxfVersion = "3.4.4"
@@ -28,6 +26,16 @@ plugins {
     id("com.github.ben-manes.versions") version "0.42.0"
     id("org.flywaydb.flyway") version "8.4.2"
     jacoco
+}
+
+application {
+    mainClass.set("no.nav.syfo.AppKt")
+}
+
+buildscript {
+    dependencies {
+        classpath("org.junit.platform:junit-platform-gradle-plugin:1.2.0")
+    }
 }
 
 sonarqube {
