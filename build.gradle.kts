@@ -21,31 +21,38 @@ val githubPassword: String by project
 
 plugins {
     application
-    kotlin("jvm") version "1.5.30"
+    kotlin("jvm") version "1.6.10"
     id("org.sonarqube") version "3.3"
     id("com.github.ben-manes.versions") version "0.42.0"
     id("org.flywaydb.flyway") version "8.4.2"
     jacoco
 }
 
-application {
-    mainClass.set("no.nav.syfo.AppKt")
+tasks.withType<Wrapper> {
+    gradleVersion = "7.4.2"
 }
 
-buildscript {
-    dependencies {
-        classpath("org.junit.platform:junit-platform-gradle-plugin:1.2.0")
-    }
+tasks.named<KotlinCompile>("compileKotlin") {
+    kotlinOptions.jvmTarget = "11"
 }
 
-sonarqube {
-    properties {
-        property("sonar.projectKey", "navikt_syfoinntektsmelding")
-        property("sonar.organization", "navit")
-        property("sonar.host.url", "https://sonarcloud.io")
-        property("sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test")
-        property("sonar.login", System.getenv("SONAR_TOKEN"))
-    }
+tasks.named<KotlinCompile>("compileTestKotlin") {
+    kotlinOptions.jvmTarget = "11"
+}
+
+tasks.test {
+    finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
+}
+
+tasks.named<Test>("test") {
+    include("no/nav/syfo/**")
+    exclude("no/nav/syfo/slowtests/**")
+}
+
+task<Test>("slowTests") {
+    include("no/nav/syfo/slowtests/**")
+    outputs.upToDateWhen { false }
+    group = "verification"
 }
 
 tasks.jacocoTestReport {
@@ -67,9 +74,51 @@ tasks.jacocoTestCoverageVerification {
     }
 }
 
-tasks.test {
-    useJUnitPlatform()
-    finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
+tasks.jar {
+    archiveBaseName.set("app")
+    manifest {
+        attributes["Main-Class"] = mainClass
+        attributes["Class-Path"] = configurations.runtimeClasspath.get().joinToString(separator = " ") {
+            it.name
+        }
+    }
+    doLast {
+        configurations.runtimeClasspath.get().forEach {
+            val file = File("$buildDir/libs/${it.name}")
+            if (!file.exists())
+                it.copyTo(file)
+        }
+    }
+}
+
+sonarqube {
+    properties {
+        property("sonar.projectKey", "navikt_syfoinntektsmelding")
+        property("sonar.organization", "navit")
+        property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test")
+        property("sonar.login", System.getenv("SONAR_TOKEN"))
+    }
+}
+
+repositories {
+    mavenCentral()
+    google()
+    maven(url = "https://packages.confluent.io/maven/")
+    maven {
+        credentials {
+            username = "x-access-token"
+            password = githubPassword
+        }
+        setUrl("https://maven.pkg.github.com/navikt/inntektsmelding-kontrakt")
+    }
+    maven {
+        credentials {
+            username = "x-access-token"
+            password = githubPassword
+        }
+        setUrl("https://maven.pkg.github.com/navikt/helse-arbeidsgiver-felles-backend")
+    }
 }
 
 dependencies {
@@ -131,72 +180,4 @@ dependencies {
     implementation("io.prometheus:simpleclient_hotspot:$prometheusVersion")
     implementation("no.nav.tjenestespesifikasjoner:altinn-correspondence-agency-external-basic:1.2019.09.25-00.21-49b69f0625e0")
     implementation("javax.annotation:javax.annotation-api:1.3.2")
-}
-
-tasks.named<KotlinCompile>("compileKotlin") {
-    kotlinOptions.jvmTarget = "11"
-}
-
-tasks.named<KotlinCompile>("compileTestKotlin") {
-    kotlinOptions.jvmTarget = "11"
-}
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
-
-    withJavadocJar()
-    withSourcesJar()
-}
-
-repositories {
-    mavenCentral()
-    google()
-    maven(url = "https://packages.confluent.io/maven/")
-    maven {
-        credentials {
-            username = "x-access-token"
-            password = githubPassword
-        }
-        setUrl("https://maven.pkg.github.com/navikt/inntektsmelding-kontrakt")
-    }
-    maven {
-        credentials {
-            username = "x-access-token"
-            password = githubPassword
-        }
-        setUrl("https://maven.pkg.github.com/navikt/helse-arbeidsgiver-felles-backend")
-    }
-}
-
-tasks.jar {
-    archiveBaseName.set("app")
-    manifest {
-        attributes["Main-Class"] = mainClass
-        attributes["Class-Path"] = configurations.runtimeClasspath.get().joinToString(separator = " ") {
-            it.name
-        }
-    }
-    doLast {
-        configurations.runtimeClasspath.get().forEach {
-            val file = File("$buildDir/libs/${it.name}")
-            if (!file.exists())
-                it.copyTo(file)
-        }
-    }
-}
-
-tasks.named<Test>("test") {
-    include("no/nav/syfo/**")
-    exclude("no/nav/syfo/slowtests/**")
-}
-
-task<Test>("slowTests") {
-    include("no/nav/syfo/slowtests/**")
-    outputs.upToDateWhen { false }
-    group = "verification"
-}
-
-tasks.withType<Wrapper> {
-    gradleVersion = "7.4.2"
 }
