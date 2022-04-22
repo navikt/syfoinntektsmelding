@@ -3,32 +3,34 @@ package no.nav.syfo.client
 import io.ktor.http.HttpStatusCode
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
-import org.assertj.core.api.Assertions
 import org.junit.Test
 import org.junit.jupiter.api.assertThrows
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import kotlin.test.assertEquals
 
 class SakClientTest {
 
     private val tokenConsumer = mockk<TokenConsumer>(relaxed = true)
-
-    private lateinit var sakClient: SakClient
-
-    val RESPONSE_EXAMPLE = "{\"id\":1, \"tema\":\"tema\", \"aktoerId\":\"aktør-id\", \"orgnr\":\"orgnr\", \"fagsakNr\":\"faksak-nr\", \"applikasjon\":\"app\", \"opprettetAv\":\"av\", \"opprettetTidspunkt\": \"2007-12-03T10:15:30+01:00\"}"
+    val RESPONSE_EXAMPLE = SakResponse(
+        1, "tema", "aktør-id", "orgnr", "fagsakNr", "app", "av",
+        ZonedDateTime.of(2007, 12, 3, 15, 0, 0, 0, ZoneId.of("UTC+1"))
+    )
 
     @Test
     fun `Skal opprette sak`() {
-        sakClient = SakClient("http://localhost", tokenConsumer, buildHttpClientJson(HttpStatusCode.OK, RESPONSE_EXAMPLE))
-        runBlocking {
-            val response = sakClient.opprettSak("1234", "msgid")
-            Assertions.assertThat(response.id).isEqualTo(1)
+        val sakClient = SakClient("http://localhost", tokenConsumer, buildHttpClientJson(HttpStatusCode.OK, RESPONSE_EXAMPLE))
+        val response = runBlocking {
+            sakClient.opprettSak("1234", "msgid")
         }
+        assertEquals(1, response.id)
     }
 
     @Test
     fun `Skal håndtere feil`() {
-        sakClient = SakClient("http://localhost", tokenConsumer, buildHttpClientText(HttpStatusCode.BadRequest, ""))
-        runBlocking {
-            assertThrows<Exception> {
+        val sakClient = SakClient("http://localhost", tokenConsumer, buildHttpClientJson(HttpStatusCode.BadRequest, RESPONSE_EXAMPLE))
+        assertThrows<Exception> {
+            runBlocking {
                 sakClient.opprettSak("1234", "msgid")
             }
         }

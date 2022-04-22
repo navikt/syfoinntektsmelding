@@ -90,9 +90,9 @@ class DokArkivClient(
         journalpostId: String,
         oppdaterJournalpostRequest: OppdaterJournalpostRequest,
         msgId: String
-    ) = retry("oppdater_journalpost") {
+    ): HttpResponse {
         try {
-            httpClient.put<HttpResponse>("$url/journalpost/$journalpostId") {
+            return httpClient.put<HttpResponse>("$url/journalpost/$journalpostId") {
                 contentType(ContentType.Application.Json)
                 accept(ContentType.Application.Json)
                 header("Authorization", "Bearer ${accessTokenProvider.getToken()}")

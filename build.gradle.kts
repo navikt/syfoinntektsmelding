@@ -21,15 +21,11 @@ val githubPassword: String by project
 
 plugins {
     application
-    kotlin("jvm") version "1.6.10"
+    kotlin("jvm") version "1.5.30"
     id("org.sonarqube") version "3.3"
     id("com.github.ben-manes.versions") version "0.42.0"
     id("org.flywaydb.flyway") version "8.4.2"
     jacoco
-}
-
-tasks.withType<Wrapper> {
-    gradleVersion = "7.4.2"
 }
 
 tasks.named<KotlinCompile>("compileKotlin") {
@@ -38,6 +34,11 @@ tasks.named<KotlinCompile>("compileKotlin") {
 
 tasks.named<KotlinCompile>("compileTestKotlin") {
     kotlinOptions.jvmTarget = "11"
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 }
 
 tasks.test {

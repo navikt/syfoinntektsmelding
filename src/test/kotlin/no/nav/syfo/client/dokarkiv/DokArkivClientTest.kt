@@ -46,8 +46,8 @@ class DokArkivClientTest {
     @Test
     fun `Skal håndtere at oppdatering av journalpost feiler`() {
         dokArkivClient = DokArkivClient("", mockStsClient, buildHttpClientText(HttpStatusCode.InternalServerError, ""))
-        runBlocking {
-            assertThrows<Exception> {
+        assertThrows<Exception> {
+            runBlocking {
                 dokArkivClient.oppdaterJournalpost("111", "123", false, "abc123", "Stark industries", "1001")
             }
         }
