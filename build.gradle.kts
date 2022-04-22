@@ -30,24 +30,38 @@ plugins {
     application
 }
 
-repositories {
-    mavenCentral()
-    google()
-    maven(url = "https://packages.confluent.io/maven/")
-    maven {
-        credentials {
-            username = "x-access-token"
-            password = githubPassword
-        }
-        setUrl("https://maven.pkg.github.com/navikt/inntektsmelding-kontrakt")
+sonarqube {
+    properties {
+        property("sonar.projectKey", "navikt_syfoinntektsmelding")
+        property("sonar.organization", "navit")
+        property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test")
+        property("sonar.login", System.getenv("SONAR_TOKEN"))
     }
-    maven {
-        credentials {
-            username = "x-access-token"
-            password = githubPassword
-        }
-        setUrl("https://maven.pkg.github.com/navikt/helse-arbeidsgiver-felles-backend")
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+    reports {
+        xml.required.set(true)
+        csv.required.set(false)
+        html.outputLocation.set(layout.buildDirectory.dir("jacocoHtml"))
     }
+}
+
+tasks.jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                minimum = "0.5".toBigDecimal()
+            }
+        }
+    }
+}
+
+tasks.test {
+    useJUnitPlatform()
+    finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
 }
 
 dependencies {
@@ -111,6 +125,42 @@ dependencies {
     implementation("javax.annotation:javax.annotation-api:1.3.2")
 }
 
+tasks.named<KotlinCompile>("compileKotlin") {
+    kotlinOptions.jvmTarget = "11"
+}
+
+tasks.named<KotlinCompile>("compileTestKotlin") {
+    kotlinOptions.jvmTarget = "11"
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+
+    withJavadocJar()
+    withSourcesJar()
+}
+
+repositories {
+    mavenCentral()
+    google()
+    maven(url = "https://packages.confluent.io/maven/")
+    maven {
+        credentials {
+            username = "x-access-token"
+            password = githubPassword
+        }
+        setUrl("https://maven.pkg.github.com/navikt/inntektsmelding-kontrakt")
+    }
+    maven {
+        credentials {
+            username = "x-access-token"
+            password = githubPassword
+        }
+        setUrl("https://maven.pkg.github.com/navikt/helse-arbeidsgiver-felles-backend")
+    }
+}
+
 tasks.jar {
     archiveBaseName.set("app")
     manifest {
@@ -128,14 +178,6 @@ tasks.jar {
     }
 }
 
-tasks.withType<KotlinCompile>() {
-    kotlinOptions.jvmTarget = "11"
-}
-
-tasks.test {
-    useJUnitPlatform()
-    finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
-}
 
 tasks.named<Test>("test") {
     include("no/nav/syfo/**")
@@ -148,31 +190,6 @@ task<Test>("slowTests") {
     group = "verification"
 }
 
-tasks.jacocoTestReport {
-    dependsOn(tasks.test)
-    reports {
-        xml.required.set(true)
-        csv.required.set(false)
-        html.outputLocation.set(layout.buildDirectory.dir("jacocoHtml"))
-    }
-}
-
-tasks.jacocoTestCoverageVerification {
-    violationRules {
-        rule {
-            limit {
-                minimum = "0.5".toBigDecimal()
-            }
-        }
-    }
-}
-
-sonarqube {
-    properties {
-        property("sonar.projectKey", "navikt_syfoinntektsmelding")
-        property("sonar.organization", "navit")
-        property("sonar.host.url", "https://sonarcloud.io")
-        property("sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test")
-        property("sonar.login", System.getenv("SONAR_TOKEN"))
-    }
+tasks.withType<Wrapper> {
+    gradleVersion = "7.4.2"
 }
