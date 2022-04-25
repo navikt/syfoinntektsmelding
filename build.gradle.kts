@@ -75,7 +75,7 @@ sonarqube {
         property("sonar.projectKey", "navikt_syfoinntektsmelding")
         property("sonar.organization", "navit")
         property("sonar.host.url", "https://sonarcloud.io")
-        property("sonar.coverage.jacoco.xmlReportPaths", layout.buildDirectory.dir("jacocoXml"))
+        property("sonar.coverage.jacoco.xmlReportPaths", "build/jacocoXml")
         property("sonar.login", System.getenv("SONAR_TOKEN"))
         property("sonar.java.binaries", "getStringArray")
     }
