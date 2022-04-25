@@ -29,7 +29,7 @@ jobs:
       - name: Test
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: test koverXmlReport
+          arguments: test koverXmlReport --console=plain
         env:
           ORG_GRADLE_PROJECT_githubUser: x-access-token
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
@@ -38,7 +38,7 @@ jobs:
       - name: Sonarcube
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: sonarqube
+          arguments: sonarqube --console=plain
         env:
           ORG_GRADLE_PROJECT_githubUser: x-access-token
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
@@ -47,7 +47,7 @@ jobs:
       - name: Coverage
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: koverVerify
+          arguments: koverVerify --console=plain
         env:
           ORG_GRADLE_PROJECT_githubUser: x-access-token
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}

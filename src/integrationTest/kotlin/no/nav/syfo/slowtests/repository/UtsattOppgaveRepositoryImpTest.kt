@@ -3,11 +3,11 @@ package no.nav.syfo.slowtests.repository
 import com.zaxxer.hikari.HikariDataSource
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.dto.UtsattOppgaveEntitet
+import no.nav.syfo.grunnleggendeInntektsmelding
 import no.nav.syfo.repository.UtsattOppgaveRepository
 import no.nav.syfo.repository.UtsattOppgaveRepositoryImp
 import no.nav.syfo.repository.createTestHikariConfig
 import no.nav.syfo.slowtests.SystemTestBase
-import no.nav.syfo.grunnleggendeInntektsmelding
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
