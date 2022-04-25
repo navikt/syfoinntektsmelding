@@ -1,4 +1,4 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 
 val version = "1.0"
 val group = "no.nav.syfo"
