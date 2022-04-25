@@ -58,7 +58,7 @@ testing {
 }
 
 tasks.koverVerify {
-    exclude("no/nav/syfo/repository/**")
+    excludes("no/nav/syfo/repository/**")
     rule {
         name = "Minimal line coverage rate in percent"
         bound {
