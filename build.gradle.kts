@@ -38,15 +38,6 @@ tasks.test {
     useJUnitPlatform()
 }
 
-tasks.jacocoTestReport {
-    dependsOn(tasks.test)
-    reports {
-        xml.required.set(true)
-        csv.required.set(false)
-        html.outputLocation.set(layout.buildDirectory.dir("jacocoHtml"))
-    }
-}
-
 tasks.named<Test>("test") {
     include("no/nav/syfo/**")
     exclude("no/nav/syfo/slowtests/**")
@@ -63,6 +54,7 @@ tasks.jacocoTestReport {
     dependsOn(tasks.test)
     reports {
         xml.required.set(true)
+        xml.outputLocation.set(layout.buildDirectory.dir("jacocoXml"))
         csv.required.set(false)
         html.outputLocation.set(layout.buildDirectory.dir("jacocoHtml"))
     }
@@ -83,8 +75,9 @@ sonarqube {
         property("sonar.projectKey", "navikt_syfoinntektsmelding")
         property("sonar.organization", "navit")
         property("sonar.host.url", "https://sonarcloud.io")
-        property("sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test")
+        property("sonar.coverage.jacoco.xmlReportPaths", layout.buildDirectory.dir("jacocoXml"))
         property("sonar.login", System.getenv("SONAR_TOKEN"))
+        property("sonar.java.binaries", "getStringArray")
     }
 }
 
