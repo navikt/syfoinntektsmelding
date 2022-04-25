@@ -1,4 +1,4 @@
-package no.nav.syfo.slowtests
+package no.nav.syfo
 
 import io.ktor.client.HttpClient
 import io.ktor.client.request.HttpRequestBuilder
@@ -11,7 +11,6 @@ import io.ktor.http.contentType
 import io.ktor.http.setCookie
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
-import no.nav.syfo.SpinnApplication
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.TestInstance

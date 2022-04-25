@@ -28,7 +28,7 @@ jobs:
             ${{ runner.os }}-gradle-cache-
       - name: compose up
         run: cd docker/local && docker-compose up -d && sleep 10
-      - name: Build and run slowTests
+      - name: Test
         uses: gradle/gradle-build-action@v2
         with:
           arguments: --console=plain build integrationTest
