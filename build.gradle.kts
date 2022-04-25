@@ -22,12 +22,12 @@ val joarkHendelseVersion = "96ec5ebb"
 val githubPassword: String by project
 
 plugins {
-    application
     kotlin("jvm") version "1.5.30"
-    id("org.sonarqube") version "3.3"
     id("com.github.ben-manes.versions") version "0.42.0"
     id("org.flywaydb.flyway") version "8.4.2"
     jacoco
+    id("org.sonarqube") version "3.3"
+    application
 }
 
 repositories {
@@ -50,22 +50,12 @@ repositories {
     }
 }
 
-tasks.named<KotlinCompile>("compileKotlin") {
+tasks.withType<KotlinCompile>() {
     kotlinOptions.jvmTarget = "11"
-}
-
-tasks.named<KotlinCompile>("compileTestKotlin") {
-    kotlinOptions.jvmTarget = "11"
-}
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
 }
 
 tasks.test {
     useJUnitPlatform()
-    finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
 }
 
 tasks.jar {
@@ -86,21 +76,27 @@ tasks.jar {
 }
 
 tasks.jacocoTestReport {
-    dependsOn(tasks.test)
+    executionData("build/jacoco/test.exec")
     reports {
-        xml.required.set(true)
-        csv.required.set(false)
-        html.outputLocation.set(layout.buildDirectory.dir("jacocoHtml"))
+        xml.isEnabled = true
+        html.isEnabled = true
     }
 }
 
-tasks.jacocoTestCoverageVerification {
-    violationRules {
-        rule {
-            limit {
-                minimum = "0.5".toBigDecimal()
-            }
+tasks.withType<JacocoReport> {
+    classDirectories.setFrom(
+        sourceSets.main.get().output.asFileTree.matching {
+            exclude("**/App**", "**Mock**")
         }
+    )
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
+    testLogging {
+        events("passed", "skipped", "failed")
+        showStackTraces = true
+        exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
     }
 }
 
@@ -127,6 +123,10 @@ sonarqube {
 
 tasks.test {
     finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test) // tests are required to run before generating the report
 }
 
 tasks.jacocoTestCoverageVerification {
