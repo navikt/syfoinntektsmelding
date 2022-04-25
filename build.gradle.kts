@@ -25,9 +25,9 @@ plugins {
     kotlin("jvm") version "1.5.30"
     id("com.github.ben-manes.versions") version "0.42.0"
     id("org.flywaydb.flyway") version "8.4.2"
-    jacoco
     id("org.sonarqube") version "3.3"
     application
+    jacoco
 }
 
 tasks.withType<KotlinCompile>() {
@@ -35,13 +35,12 @@ tasks.withType<KotlinCompile>() {
 }
 
 tasks.test {
-    useJUnitPlatform()
+    finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
 }
 
 tasks.named<Test>("test") {
     include("no/nav/syfo/**")
     exclude("no/nav/syfo/slowtests/**")
-    finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
 }
 
 task<Test>("slowTests") {
@@ -74,7 +73,7 @@ sonarqube {
         property("sonar.projectKey", "navikt_syfoinntektsmelding")
         property("sonar.organization", "navit")
         property("sonar.host.url", "https://sonarcloud.io")
-        property("sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test")
+        property("sonar.coverage.jacoco.xmlReportPaths", "$buildDir/reports/jacoco/test")
         property("sonar.login", System.getenv("SONAR_TOKEN"))
         property("sonar.java.binaries", "getStringArray")
     }
