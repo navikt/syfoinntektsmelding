@@ -39,12 +39,19 @@ testing {
         }
 
         val integrationTest by registering(JvmTestSuite::class) {
+            useJUnitJupiter()
             dependencies {
                 implementation(project)
                 implementation("no.nav.helsearbeidsgiver:helse-arbeidsgiver-felles-backend:2022.01.18-08-47-f6aa0")
                 implementation("io.mockk:mockk:1.12.2")
                 implementation("io.insert-koin:koin-test:$koinVersion")
                 implementation("org.assertj:assertj-core:$assertJVersion")
+                implementation("com.zaxxer:HikariCP:$hikariVersion")
+                implementation("io.ktor:ktor-client-mock:$ktorVersion")
+                implementation("io.ktor:ktor-client-mock-jvm:$ktorVersion")
+                implementation("io.ktor:ktor-server-tests:$ktorVersion")
+                implementation("io.confluent:kafka-streams-avro-serde:6.2.1")
+                implementation("no.nav.sykepenger.kontrakter:inntektsmelding-kontrakt:2022.02.25-10-37-3934b")
             }
         }
     }
