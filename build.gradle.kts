@@ -25,17 +25,22 @@ plugins {
     kotlin("jvm") version "1.5.30"
     id("com.github.ben-manes.versions") version "0.42.0"
     id("org.flywaydb.flyway") version "8.4.2"
+    jacoco
     id("org.sonarqube") version "3.3"
     application
-    jacoco
 }
 
-tasks.withType<KotlinCompile>() {
+tasks.named<KotlinCompile>("compileKotlin") {
     kotlinOptions.jvmTarget = "11"
 }
 
-tasks.test {
-    finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
+tasks.named<KotlinCompile>("compileTestKotlin") {
+    kotlinOptions.jvmTarget = "11"
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 }
 
 tasks.named<Test>("test") {
@@ -47,6 +52,10 @@ task<Test>("slowTests") {
     include("no/nav/syfo/slowtests/**")
     outputs.upToDateWhen { false }
     group = "verification"
+}
+
+tasks.test {
+    finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
 }
 
 tasks.jacocoTestReport {
