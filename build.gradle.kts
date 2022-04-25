@@ -30,32 +30,57 @@ plugins {
     application
 }
 
-repositories {
-    mavenCentral()
-    google()
-    maven(url = "https://packages.confluent.io/maven/")
-    maven {
-        credentials {
-            username = "x-access-token"
-            password = githubPassword
-        }
-        setUrl("https://maven.pkg.github.com/navikt/inntektsmelding-kontrakt")
-    }
-    maven {
-        credentials {
-            username = "x-access-token"
-            password = githubPassword
-        }
-        setUrl("https://maven.pkg.github.com/navikt/helse-arbeidsgiver-felles-backend")
-    }
-}
-
 tasks.withType<KotlinCompile>() {
     kotlinOptions.jvmTarget = "11"
 }
 
 tasks.test {
     useJUnitPlatform()
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+    reports {
+        xml.required.set(true)
+        csv.required.set(false)
+        html.outputLocation.set(layout.buildDirectory.dir("jacocoHtml"))
+    }
+}
+
+tasks.named<Test>("test") {
+    include("no/nav/syfo/**")
+    exclude("no/nav/syfo/slowtests/**")
+    finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
+}
+
+task<Test>("slowTests") {
+    include("no/nav/syfo/slowtests/**")
+    outputs.upToDateWhen { false }
+    group = "verification"
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test) // tests are required to run before generating the report
+}
+
+tasks.jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                minimum = "0.2".toBigDecimal()
+            }
+        }
+    }
+}
+
+sonarqube {
+    properties {
+        property("sonar.projectKey", "navikt_syfoinntektsmelding")
+        property("sonar.organization", "navit")
+        property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test")
+        property("sonar.login", System.getenv("SONAR_TOKEN"))
+    }
 }
 
 tasks.jar {
@@ -75,67 +100,23 @@ tasks.jar {
     }
 }
 
-tasks.jacocoTestReport {
-    executionData("build/jacoco/test.exec")
-    reports {
-        xml.isEnabled = true
-        html.isEnabled = true
-    }
-}
-
-tasks.withType<JacocoReport> {
-    classDirectories.setFrom(
-        sourceSets.main.get().output.asFileTree.matching {
-            exclude("**/App**", "**Mock**")
+repositories {
+    mavenCentral()
+    google()
+    maven(url = "https://packages.confluent.io/maven/")
+    maven {
+        credentials {
+            username = "x-access-token"
+            password = githubPassword
         }
-    )
-}
-
-tasks.withType<Test> {
-    useJUnitPlatform()
-    testLogging {
-        events("passed", "skipped", "failed")
-        showStackTraces = true
-        exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+        setUrl("https://maven.pkg.github.com/navikt/inntektsmelding-kontrakt")
     }
-}
-
-tasks.named<Test>("test") {
-    include("no/nav/syfo/**")
-    exclude("no/nav/syfo/slowtests/**")
-}
-
-task<Test>("slowTests") {
-    include("no/nav/syfo/slowtests/**")
-    outputs.upToDateWhen { false }
-    group = "verification"
-}
-
-sonarqube {
-    properties {
-        property("sonar.projectKey", "navikt_syfoinntektsmelding")
-        property("sonar.organization", "navit")
-        property("sonar.host.url", "https://sonarcloud.io")
-        property("sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test")
-        property("sonar.login", System.getenv("SONAR_TOKEN"))
-    }
-}
-
-tasks.test {
-    finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
-}
-
-tasks.jacocoTestReport {
-    dependsOn(tasks.test) // tests are required to run before generating the report
-}
-
-tasks.jacocoTestCoverageVerification {
-    violationRules {
-        rule {
-            limit {
-                minimum = "0.2".toBigDecimal()
-            }
+    maven {
+        credentials {
+            username = "x-access-token"
+            password = githubPassword
         }
+        setUrl("https://maven.pkg.github.com/navikt/helse-arbeidsgiver-felles-backend")
     }
 }
 
