@@ -40,7 +40,6 @@ testing {
 
         val integrationTest by registering(JvmTestSuite::class) {
             useJUnitJupiter()
-            dependsOn(tasks.test)
             dependencies {
                 implementation(project)
                 implementation("no.nav.helsearbeidsgiver:helse-arbeidsgiver-felles-backend:2022.01.18-08-47-f6aa0")
