@@ -35,7 +35,6 @@ testing {
             useJUnitJupiter()
             dependencies {
                 implementation(project)
-                implementation("io.insert-koin:koin-test:$koinVersion")
             }
         }
 
@@ -47,20 +46,8 @@ testing {
                 implementation("io.insert-koin:koin-test:$koinVersion")
                 implementation("org.assertj:assertj-core:$assertJVersion")
             }
-
-            targets {
-                all {
-                    testTask.configure {
-                        shouldRunAfter(test)
-                    }
-                }
-            }
         }
     }
-}
-
-tasks.named("check") {
-    dependsOn(testing.suites.named("integrationTest"))
 }
 
 tasks.koverVerify {
