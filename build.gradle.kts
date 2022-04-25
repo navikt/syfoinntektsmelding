@@ -1,7 +1,6 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val version = "1.0"
-val mainClass = "no.nav.syfo.AppKt"
 val group = "no.nav.syfo"
 // Dependencies
 val micrometerVersion = "1.8.3"
@@ -22,13 +21,65 @@ val joarkHendelseVersion = "96ec5ebb"
 val githubPassword: String by project
 
 plugins {
-    kotlin("jvm") version "1.5.30"
+    kotlin("jvm") version "1.6.21"
     id("com.github.ben-manes.versions") version "0.42.0"
     id("org.flywaydb.flyway") version "8.4.2"
-    id("io.snyk.gradle.plugin.snykplugin") version "0.4"
-    jacoco
+    id("org.jetbrains.kotlinx.kover") version "0.5.0"
     id("org.sonarqube") version "3.3"
     application
+}
+
+testing {
+    suites {
+        val test by getting(JvmTestSuite::class) {
+            useJUnitJupiter()
+            dependencies {
+                implementation(project)
+                implementation("io.insert-koin:koin-test:$koinVersion")
+            }
+        }
+
+        val integrationTest by registering(JvmTestSuite::class) {
+            dependencies {
+                implementation(project)
+                implementation("no.nav.helsearbeidsgiver:helse-arbeidsgiver-felles-backend:2022.01.18-08-47-f6aa0")
+                implementation("io.mockk:mockk:1.12.2")
+                implementation("io.insert-koin:koin-test:$koinVersion")
+                implementation("org.assertj:assertj-core:$assertJVersion")
+            }
+
+            targets {
+                all {
+                    testTask.configure {
+                        shouldRunAfter(test)
+                    }
+                }
+            }
+        }
+    }
+}
+
+tasks.named("check") {
+    dependsOn(testing.suites.named("integrationTest"))
+}
+
+tasks.koverVerify {
+    rule {
+        name = "Minimal line coverage rate in percent"
+        bound {
+            minValue = 50
+        }
+    }
+}
+
+sonarqube {
+    properties {
+        property("sonar.projectKey", "navikt_syfoinntektsmelding")
+        property("sonar.organization", "navit")
+        property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.coverage.jacoco.xmlReportPaths", "build/reports/kover/project-xml")
+        property("sonar.login", System.getenv("SONAR_TOKEN"))
+    }
 }
 
 repositories {
@@ -54,12 +105,12 @@ repositories {
 dependencies {
     implementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
     implementation("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
-    testImplementation("io.insert-koin:koin-test:$koinVersion")
     testImplementation("io.mockk:mockk:1.12.2")
     testImplementation("io.ktor:ktor-client-mock:$ktorVersion")
     testImplementation("io.ktor:ktor-client-mock-jvm:$ktorVersion")
     testImplementation("io.ktor:ktor-server-tests:$ktorVersion")
     testImplementation("org.assertj:assertj-core:$assertJVersion")
+    testImplementation("io.insert-koin:koin-test:$koinVersion")
     implementation("no.nav.teamdokumenthandtering:teamdokumenthandtering-avro-schemas:$joarkHendelseVersion")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("com.google.guava:guava:31.0.1-jre")
@@ -110,104 +161,4 @@ dependencies {
     implementation("io.prometheus:simpleclient_hotspot:$prometheusVersion")
     implementation("no.nav.tjenestespesifikasjoner:altinn-correspondence-agency-external-basic:1.2019.09.25-00.21-49b69f0625e0")
     implementation("javax.annotation:javax.annotation-api:1.3.2")
-}
-
-tasks.withType<KotlinCompile>() {
-    kotlinOptions.jvmTarget = "11"
-}
-
-tasks.test {
-    useJUnitPlatform()
-}
-
-tasks.jar {
-    archiveBaseName.set("app")
-    manifest {
-        attributes["Main-Class"] = mainClass
-        attributes["Class-Path"] = configurations.runtimeClasspath.get().joinToString(separator = " ") {
-            it.name
-        }
-    }
-    doLast {
-        configurations.runtimeClasspath.get().forEach {
-            val file = File("$buildDir/libs/${it.name}")
-            if (!file.exists())
-                it.copyTo(file)
-        }
-    }
-}
-
-configure<io.snyk.gradle.plugin.SnykExtension> {
-    setSeverity("high")
-    setAutoDownload(true)
-    setAutoUpdate(true)
-    setArguments("--all-sub-projects")
-}
-
-tasks.jacocoTestReport {
-    executionData("build/jacoco/test.exec")
-    reports {
-        xml.isEnabled = true
-        html.isEnabled = true
-    }
-}
-
-tasks.withType<JacocoReport> {
-    classDirectories.setFrom(
-        sourceSets.main.get().output.asFileTree.matching {
-            exclude("**/App**", "**Mock**")
-        }
-    )
-}
-
-tasks.withType<Test> {
-    useJUnitPlatform()
-    testLogging {
-        events("passed", "skipped", "failed")
-        showStackTraces = true
-        exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
-    }
-}
-
-tasks.named<Test>("test") {
-    include("no/nav/syfo/**")
-    exclude("no/nav/syfo/slowtests/**")
-}
-
-task<Test>("slowTests") {
-    include("no/nav/syfo/slowtests/**")
-    outputs.upToDateWhen { false }
-    group = "verification"
-}
-
-sonarqube {
-    properties {
-        property("sonar.projectKey", "navikt_syfoinntektsmelding")
-        property("sonar.organization", "navit")
-        property("sonar.host.url", "https://sonarcloud.io")
-        property("sonar.sourceEncoding", "UTF-8")
-//        property("sonar.sources", "src/main/kotlin")
-//        property("sonar.tests", "src/test/kotlin")
-//        property("sonar.coverage.exclusions", "**/*Test.kt")
-//        property("sonar.cpd.exclusions", "**/*Test.kt")
-//        property("sonar.exclusions", "**/*Test.kt")
-//        property("sonar.java.binaries", "getStringArray")
-    }
-}
-
-tasks.test {
-    finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
-}
-tasks.jacocoTestReport {
-    dependsOn(tasks.test) // tests are required to run before generating the report
-}
-
-tasks.jacocoTestCoverageVerification {
-    violationRules {
-        rule {
-            limit {
-                minimum = "0.2".toBigDecimal()
-            }
-        }
-    }
 }
