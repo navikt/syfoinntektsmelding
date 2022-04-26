@@ -26,6 +26,8 @@ jobs:
           key: ${{ runner.os }}-gradle-cache-${{ hashFiles('build.gradle') }}
           restore-keys: |
             ${{ runner.os }}-gradle-cache-
+      - name: compose up
+        run: cd docker/local && docker-compose up -d && sleep 10
       - name: Test
         uses: gradle/gradle-build-action@v2
         with:
@@ -47,7 +49,7 @@ jobs:
       - name: Coverage
         uses: gradle/gradle-build-action@v2
         with:
-          arguments:  --console=plain --exclude-task integrationTest koverVerify
+          arguments:  --console=plain koverVerify
         env:
           ORG_GRADLE_PROJECT_githubUser: x-access-token
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
