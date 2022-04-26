@@ -57,6 +57,10 @@ testing {
     }
 }
 
+kover {
+    coverageEngine.set(kotlinx.kover.api.CoverageEngine.INTELLIJ) // change instrumentation agent and reporter
+}
+
 tasks.koverVerify {
     rule {
         name = "Minimal line coverage rate in percent"
