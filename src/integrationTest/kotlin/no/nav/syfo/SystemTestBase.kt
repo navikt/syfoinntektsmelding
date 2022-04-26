@@ -26,7 +26,7 @@ import org.koin.test.inject
  * 2) Kjøre tester mot systemet (bakgrunnsjobber feks) mens de er realistisk  konfigurert
  * 3) Kjøre ende til ende-tester (feks teste at en søknad send inn på HTTP-endepunktet havner i databasen riktig)
  */
-class SystemTestBase : KoinTest {
+open class SystemTestBase : KoinTest {
 
     protected val httpClient by inject<HttpClient>()
 
