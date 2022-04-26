@@ -38,22 +38,6 @@ tasks.test {
     useJUnitPlatform()
 }
 
-tasks.jacocoTestReport {
-    executionData("build/jacoco/test.exec")
-    reports {
-        xml.isEnabled = true
-        html.isEnabled = true
-    }
-}
-
-tasks.withType<JacocoReport> {
-    classDirectories.setFrom(
-        sourceSets.main.get().output.asFileTree.matching {
-            exclude("**/App**", "**Mock**")
-        }
-    )
-}
-
 tasks.withType<Test> {
     useJUnitPlatform()
     testLogging {
@@ -64,31 +48,28 @@ tasks.withType<Test> {
 }
 
 tasks.named<Test>("test") {
-    include("no/nav/syfo/**")
-    exclude("no/nav/syfo/slowtests/**")
+    include("**/*Test.class")
+    exclude("**/*Spec.class")
 }
 
 task<Test>("slowTests") {
-    include("no/nav/syfo/slowtests/**")
+    include("**/*Spec.class")
+    exclude("**/*Test.class")
     outputs.upToDateWhen { false }
     group = "verification"
 }
 
-tasks.test {
-    finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
-}
 tasks.jacocoTestReport {
-    dependsOn(tasks.test) // tests are required to run before generating the report
+    dependsOn(tasks.test)
+    reports {
+        xml.required.set(true)
+        csv.required.set(false)
+        html.outputLocation.set(layout.buildDirectory.dir("jacocoHtml"))
+    }
 }
 
-tasks.jacocoTestCoverageVerification {
-    violationRules {
-        rule {
-            limit {
-                minimum = "0.2".toBigDecimal()
-            }
-        }
-    }
+tasks.test {
+    finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
 }
 
 sonarqube {
@@ -97,12 +78,6 @@ sonarqube {
         property("sonar.organization", "navit")
         property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.sourceEncoding", "UTF-8")
-//        property("sonar.sources", "src/main/kotlin")
-//        property("sonar.tests", "src/test/kotlin")
-//        property("sonar.coverage.exclusions", "**/*Test.kt")
-//        property("sonar.cpd.exclusions", "**/*Test.kt")
-//        property("sonar.exclusions", "**/*Test.kt")
-//        property("sonar.java.binaries", "getStringArray")
     }
 }
 

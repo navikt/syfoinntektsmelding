@@ -13,7 +13,7 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 
-open class FeiletRepositoryTest : SystemTestBase() {
+open class FeiletRepositorySpec : SystemTestBase() {
 
     private lateinit var respository: FeiletRepository
 

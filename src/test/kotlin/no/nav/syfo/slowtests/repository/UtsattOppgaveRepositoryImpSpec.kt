@@ -16,7 +16,7 @@ import java.time.LocalDateTime
 import java.time.LocalDateTime.now
 import java.util.UUID
 
-open class UtsattOppgaveRepositoryImpTest : SystemTestBase() {
+open class UtsattOppgaveRepositoryImpSpec : SystemTestBase() {
 
     lateinit var repository: UtsattOppgaveRepository
 

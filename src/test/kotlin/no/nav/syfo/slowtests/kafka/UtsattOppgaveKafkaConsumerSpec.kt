@@ -18,7 +18,7 @@ import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 
-class UtsattOppgaveKafkaConsumerTest : SystemTestBase() {
+class UtsattOppgaveKafkaConsumerSpec : SystemTestBase() {
     private lateinit var kafkaProdusent: KafkaAdminForTests
     private val topicName = "topic"
     private val objectMapper = ObjectMapper()
