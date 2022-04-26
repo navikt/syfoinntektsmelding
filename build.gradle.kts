@@ -39,19 +39,12 @@ tasks.test {
 }
 
 tasks.jacocoTestReport {
-    executionData("build/jacoco/test.exec")
+    dependsOn(tasks.test)
     reports {
-        xml.isEnabled = true
-        html.isEnabled = true
+        xml.required.set(true)
+        csv.required.set(false)
+        html.outputLocation.set(layout.buildDirectory.dir("jacocoHtml"))
     }
-}
-
-tasks.withType<JacocoReport> {
-    classDirectories.setFrom(
-        sourceSets.main.get().output.asFileTree.matching {
-            exclude("**/App**", "**Mock**")
-        }
-    )
 }
 
 tasks.withType<Test> {
@@ -63,13 +56,21 @@ tasks.withType<Test> {
     }
 }
 
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+    reports {
+        xml.required.set(true)
+        csv.required.set(false)
+        html.outputLocation.set(layout.buildDirectory.dir("jacocoHtml"))
+    }
+}
+
 tasks.named<Test>("test") {
-    include("no/nav/syfo/**")
-    exclude("no/nav/syfo/slowtests/**")
+    exclude("*Spec*")
 }
 
 task<Test>("slowTests") {
-    include("no/nav/syfo/slowtests/**")
+    include("*Spec*")
     outputs.upToDateWhen { false }
     group = "verification"
 }
@@ -81,28 +82,12 @@ tasks.jacocoTestReport {
     dependsOn(tasks.test) // tests are required to run before generating the report
 }
 
-tasks.jacocoTestCoverageVerification {
-    violationRules {
-        rule {
-            limit {
-                minimum = "0.2".toBigDecimal()
-            }
-        }
-    }
-}
-
 sonarqube {
     properties {
         property("sonar.projectKey", "navikt_syfoinntektsmelding")
         property("sonar.organization", "navit")
         property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.sourceEncoding", "UTF-8")
-//        property("sonar.sources", "src/main/kotlin")
-//        property("sonar.tests", "src/test/kotlin")
-//        property("sonar.coverage.exclusions", "**/*Test.kt")
-//        property("sonar.cpd.exclusions", "**/*Test.kt")
-//        property("sonar.exclusions", "**/*Test.kt")
-//        property("sonar.java.binaries", "getStringArray")
     }
 }
 
