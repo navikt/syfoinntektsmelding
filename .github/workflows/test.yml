@@ -47,7 +47,7 @@ jobs:
       - name: Coverage
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: koverVerify --console=plain
+          arguments:  --console=plain --exclude-task integrationTest koverVerify
         env:
           ORG_GRADLE_PROJECT_githubUser: x-access-token
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}

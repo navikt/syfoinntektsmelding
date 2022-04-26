@@ -2,6 +2,7 @@ package no.nav.syfo.repository
 
 import com.zaxxer.hikari.HikariDataSource
 import no.nav.inntektsmelding.kontrakt.serde.JacksonJsonConfig
+import no.nav.syfo.SystemTestBase
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
 import no.nav.syfo.domain.inntektsmelding.EndringIRefusjon
@@ -13,7 +14,6 @@ import no.nav.syfo.domain.inntektsmelding.OpphoerAvNaturalytelse
 import no.nav.syfo.domain.inntektsmelding.Refusjon
 import no.nav.syfo.dto.InntektsmeldingEntitet
 import no.nav.syfo.grunnleggendeInntektsmelding
-import no.nav.syfo.SystemTestBase
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll

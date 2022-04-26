@@ -1,9 +1,9 @@
 package no.nav.syfo.repository
 
 import com.zaxxer.hikari.HikariDataSource
+import no.nav.syfo.SystemTestBase
 import no.nav.syfo.behandling.Feiltype
 import no.nav.syfo.dto.FeiletEntitet
-import no.nav.syfo.SystemTestBase
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
