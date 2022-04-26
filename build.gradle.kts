@@ -66,13 +66,13 @@ tasks.jacocoTestReport {
 }
 
 tasks.named<Test>("test") {
-    include("**/*Test")
-    exclude("**/*Spec")
+    include("**/*Test.class")
+    exclude("**/*Spec.class")
 }
 
 task<Test>("slowTests") {
-    include("**/*Spec")
-    exclude("**/*Test")
+    include("**/*Spec.class")
+    exclude("**/*Test.class")
     outputs.upToDateWhen { false }
     group = "verification"
 }

@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 @Disabled("WIP: For at denne testen skal være verdifull måvi sette opp et schema registry eller en mock av en")
-class JoarkHendelseKafkaConsumerTest : SystemTestBase() {
+class JoarkHendelseKafkaConsumerSpec : SystemTestBase() {
     private lateinit var kafkaProdusent: KafkaAdminForTests
     private val topicName = "teamdokumenthandtering.aapen-dok-journalfoering-q1"
 
