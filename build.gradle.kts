@@ -25,10 +25,102 @@ plugins {
     kotlin("jvm") version "1.5.30"
     id("com.github.ben-manes.versions") version "0.42.0"
     id("org.flywaydb.flyway") version "8.4.2"
-    id("io.snyk.gradle.plugin.snykplugin") version "0.4"
     jacoco
     id("org.sonarqube") version "3.3"
     application
+}
+
+tasks.withType<KotlinCompile>() {
+    kotlinOptions.jvmTarget = "11"
+}
+
+tasks.test {
+    useJUnitPlatform()
+}
+
+tasks.jacocoTestReport {
+    executionData("build/jacoco/test.exec")
+    reports {
+        xml.isEnabled = true
+        html.isEnabled = true
+    }
+}
+
+tasks.withType<JacocoReport> {
+    classDirectories.setFrom(
+        sourceSets.main.get().output.asFileTree.matching {
+            exclude("**/App**", "**Mock**")
+        }
+    )
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
+    testLogging {
+        events("passed", "skipped", "failed")
+        showStackTraces = true
+        exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+    }
+}
+
+tasks.named<Test>("test") {
+    include("no/nav/syfo/**")
+    exclude("no/nav/syfo/slowtests/**")
+}
+
+task<Test>("slowTests") {
+    include("no/nav/syfo/slowtests/**")
+    outputs.upToDateWhen { false }
+    group = "verification"
+}
+
+tasks.test {
+    finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
+}
+tasks.jacocoTestReport {
+    dependsOn(tasks.test) // tests are required to run before generating the report
+}
+
+tasks.jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                minimum = "0.2".toBigDecimal()
+            }
+        }
+    }
+}
+
+sonarqube {
+    properties {
+        property("sonar.projectKey", "navikt_syfoinntektsmelding")
+        property("sonar.organization", "navit")
+        property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.sourceEncoding", "UTF-8")
+//        property("sonar.sources", "src/main/kotlin")
+//        property("sonar.tests", "src/test/kotlin")
+//        property("sonar.coverage.exclusions", "**/*Test.kt")
+//        property("sonar.cpd.exclusions", "**/*Test.kt")
+//        property("sonar.exclusions", "**/*Test.kt")
+//        property("sonar.java.binaries", "getStringArray")
+    }
+}
+
+tasks.jar {
+    archiveBaseName.set("app")
+    manifest {
+        attributes["Main-Class"] = mainClass
+        attributes["Class-Path"] = configurations.runtimeClasspath.get().joinToString(separator = " ") {
+            it.name
+        }
+    }
+    doLast {
+        configurations.runtimeClasspath.get().forEach {
+            val file = File("$buildDir/libs/${it.name}")
+            if (!file.exists())
+                it.copyTo(file)
+        }
+    }
 }
 
 repositories {
@@ -110,104 +202,4 @@ dependencies {
     implementation("io.prometheus:simpleclient_hotspot:$prometheusVersion")
     implementation("no.nav.tjenestespesifikasjoner:altinn-correspondence-agency-external-basic:1.2019.09.25-00.21-49b69f0625e0")
     implementation("javax.annotation:javax.annotation-api:1.3.2")
-}
-
-tasks.withType<KotlinCompile>() {
-    kotlinOptions.jvmTarget = "11"
-}
-
-tasks.test {
-    useJUnitPlatform()
-}
-
-tasks.jar {
-    archiveBaseName.set("app")
-    manifest {
-        attributes["Main-Class"] = mainClass
-        attributes["Class-Path"] = configurations.runtimeClasspath.get().joinToString(separator = " ") {
-            it.name
-        }
-    }
-    doLast {
-        configurations.runtimeClasspath.get().forEach {
-            val file = File("$buildDir/libs/${it.name}")
-            if (!file.exists())
-                it.copyTo(file)
-        }
-    }
-}
-
-configure<io.snyk.gradle.plugin.SnykExtension> {
-    setSeverity("high")
-    setAutoDownload(true)
-    setAutoUpdate(true)
-    setArguments("--all-sub-projects")
-}
-
-tasks.jacocoTestReport {
-    executionData("build/jacoco/test.exec")
-    reports {
-        xml.isEnabled = true
-        html.isEnabled = true
-    }
-}
-
-tasks.withType<JacocoReport> {
-    classDirectories.setFrom(
-        sourceSets.main.get().output.asFileTree.matching {
-            exclude("**/App**", "**Mock**")
-        }
-    )
-}
-
-tasks.withType<Test> {
-    useJUnitPlatform()
-    testLogging {
-        events("passed", "skipped", "failed")
-        showStackTraces = true
-        exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
-    }
-}
-
-tasks.named<Test>("test") {
-    include("no/nav/syfo/**")
-    exclude("no/nav/syfo/slowtests/**")
-}
-
-task<Test>("slowTests") {
-    include("no/nav/syfo/slowtests/**")
-    outputs.upToDateWhen { false }
-    group = "verification"
-}
-
-sonarqube {
-    properties {
-        property("sonar.projectKey", "navikt_syfoinntektsmelding")
-        property("sonar.organization", "navit")
-        property("sonar.host.url", "https://sonarcloud.io")
-        property("sonar.sourceEncoding", "UTF-8")
-//        property("sonar.sources", "src/main/kotlin")
-//        property("sonar.tests", "src/test/kotlin")
-//        property("sonar.coverage.exclusions", "**/*Test.kt")
-//        property("sonar.cpd.exclusions", "**/*Test.kt")
-//        property("sonar.exclusions", "**/*Test.kt")
-//        property("sonar.java.binaries", "getStringArray")
-    }
-}
-
-tasks.test {
-    finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
-}
-tasks.jacocoTestReport {
-    dependsOn(tasks.test) // tests are required to run before generating the report
-}
-
-tasks.jacocoTestCoverageVerification {
-    violationRules {
-        rule {
-            limit {
-                minimum = "0.2".toBigDecimal()
-            }
-        }
-    }
 }
