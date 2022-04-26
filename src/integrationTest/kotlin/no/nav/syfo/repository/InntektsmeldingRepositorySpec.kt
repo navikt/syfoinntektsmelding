@@ -22,7 +22,7 @@ import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-open class InntektsmeldingRepositoryTest : SystemTestBase() {
+open class InntektsmeldingRepositorySpec : SystemTestBase() {
 
     lateinit var repository: InntektsmeldingRepository
 

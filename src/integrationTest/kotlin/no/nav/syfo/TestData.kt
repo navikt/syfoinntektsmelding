@@ -8,7 +8,7 @@ import java.time.LocalDate
 val FØRSTE_JANUAR: LocalDate = LocalDate.of(2019, 1, 1)
 val FØRSTE_FEBRUAR: LocalDate = LocalDate.of(2019, 2, 1)
 
-val grunnleggendeInntektsmelding = Inntektsmelding(
+internal val grunnleggendeInntektsmelding = Inntektsmelding(
     id = "ID",
     fnr = "12345678901",
     arbeidsgiverOrgnummer = "1234",
