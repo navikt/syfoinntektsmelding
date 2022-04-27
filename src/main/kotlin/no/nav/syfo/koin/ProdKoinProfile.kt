@@ -6,9 +6,8 @@ import io.ktor.util.KtorExperimentalAPI
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
-import no.nav.helse.arbeidsgiver.integrasjoner.RestSTSAccessTokenProvider
+import no.nav.helse.arbeidsgiver.integrasjoner.accesstoken.RestSTSAccessTokenProvider
 import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClient
-import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClientImpl
 import no.nav.helse.arbeidsgiver.system.getString
 import no.nav.syfo.MetrikkVarsler
 import no.nav.syfo.behandling.InntektsmeldingBehandler
@@ -152,7 +151,7 @@ fun prodConfig(config: ApplicationConfig) = module {
     single { BakgrunnsjobbService(get(), bakgrunnsvarsler = MetrikkVarsler()) }
 
     single {
-        PdlClientImpl(
+        PdlClient(
             config.getString("pdl_url"),
             RestSTSAccessTokenProvider(
                 config.getString("security_token.username"),

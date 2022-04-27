@@ -2,7 +2,7 @@ package no.nav.syfo.koin
 
 import io.ktor.config.ApplicationConfig
 import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
-import no.nav.helse.arbeidsgiver.integrasjoner.OAuth2TokenProvider
+import no.nav.helse.arbeidsgiver.integrasjoner.accesstoken.OAuth2TokenProvider
 import no.nav.security.token.support.client.core.oauth2.ClientCredentialsTokenClient
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.core.oauth2.OnBehalfOfTokenClient

@@ -19,6 +19,8 @@ val junitJupiterVersion = "5.8.2"
 val assertJVersion = "3.22.0"
 val prometheusVersion = "0.15.0"
 val joarkHendelseVersion = "96ec5ebb"
+// val fellesVersion = "2022.01.18-08-47-f6aa0"
+val fellesVersion = "2022.04.21-15-49-5028e"
 val githubPassword: String by project
 
 plugins {
@@ -143,7 +145,7 @@ dependencies {
     implementation("no.nav.syfo.sm:syfosm-common-networking:2019.09.25-05-44-08e26429f4e37cd57d99ba4d39fc74099a078b97")
     implementation("no.nav:vault-jdbc:1.3.7")
     implementation("no.nav.common:log:2.2022.02.18_14.38-8d8bb494bd41")
-    implementation("no.nav.helsearbeidsgiver:helse-arbeidsgiver-felles-backend:2022.01.18-08-47-f6aa0")
+    implementation("no.nav.helsearbeidsgiver:helse-arbeidsgiver-felles-backend:$fellesVersion")
     implementation("no.nav.security:token-client-core:$tokenSupportVersion")
     implementation("no.nav.security:token-validation-ktor:$tokenSupportVersion")
     implementation("no.nav.security:mock-oauth2-server:$mockOAuth2ServerVersion")
