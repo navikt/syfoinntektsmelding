@@ -29,11 +29,11 @@ class BrregClientImp(private val httpClient: HttpClient, private val brregUrl: S
             val (navn) = runBlocking {
                 httpClient.get<UnderenheterNavnResponse>(brregUrl + orgnr)
             }
-            log.info("Fant virksomhet: $navn")
+            log.info("Fant virksomheten")
             navn
         } catch (cause: ClientRequestException) {
             if (404 == cause.response.status.value) {
-                log.error("Fant ikke virksomhet i brreg med orgnr: $orgnr")
+                log.error("Fant ikke virksomhet i brreg")
                 "Arbeidsgiver"
             } else {
                 log.error("Klarte ikke å hente virksomhet!", cause)
