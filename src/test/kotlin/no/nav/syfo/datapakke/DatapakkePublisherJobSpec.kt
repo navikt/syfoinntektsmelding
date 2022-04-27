@@ -1,8 +1,7 @@
-package no.nav.syfo.slowtests.datapakke
+package no.nav.syfo.datapakke
 
 import io.mockk.every
 import io.mockk.mockk
-import no.nav.syfo.datapakke.DatapakkePublisherJob
 import no.nav.syfo.koin.buildObjectMapper
 import no.nav.syfo.repository.ArsakStats
 import no.nav.syfo.repository.ForsinkelseStats
