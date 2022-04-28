@@ -57,6 +57,9 @@ data class OppgaveStats(
     val antall_utsatt: Int,
     val antall_opprettet: Int,
     val antall_opprettet_timeout: Int,
+    val antall_speil: Int,
+    val antall_utbetaling_bruker: Int,
+    val antall_normal: Int,
     val dato: String
 )
 
@@ -389,6 +392,9 @@ class IMStatsRepoImpl(
                 count(*) filter ( where tilstand = 'Utsatt') as antall_utsatt,
                 count(*) filter ( where tilstand = 'Opprettet') as antall_opprettet,
                 count(*) filter ( where tilstand = 'OpprettetTimeout') as antall_opprettet_timeout,
+                count(*) filter ( where tilstand in ('Opprettet', 'OpprettetTimeout') and speil = TRUE ) as antall_speil,
+                count(*) filter ( where tilstand in ('Opprettet', 'OpprettetTimeout') and utbetaling_bruker = TRUE) as antall_utbetaling_bruker,
+                count(*) filter ( where tilstand in ('Opprettet', 'OpprettetTimeout') and utbetaling_bruker = FALSE AND speil = FALSE) as antall_normal,
                 Date(oppdatert) as dato
             from utsatt_oppgave
             where oppdatert > NOW()::DATE - INTERVAL '29 DAYS'
@@ -406,6 +412,9 @@ class IMStatsRepoImpl(
                         res.getInt("antall_utsatt"),
                         res.getInt("antall_opprettet"),
                         res.getInt("antall_opprettet_timeout"),
+                        res.getInt("antall_speil"),
+                        res.getInt("antall_utbetaling_bruker"),
+                        res.getInt("antall_normal"),
                         res.getDate("dato").toString()
                     )
                 )
@@ -414,7 +423,6 @@ class IMStatsRepoImpl(
             return returnValue
         }
     }
-
     override fun getForsinkelseWeeklyStats(): List<ForsinkelseWeeklyStats> {
 
         val query = """
