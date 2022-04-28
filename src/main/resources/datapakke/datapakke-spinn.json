@@ -613,7 +613,10 @@
               "Ferdigbehandlet/Forkastet",
               "Utsett/Utsatt",
               "Opprett/Opprettet",
-              "Opprettet pga Timeout"
+              "Opprettet pga Timeout",
+              "Speil",
+              "Utbetaling bruker",
+              "Normal/Sykepenger"
             ]
           },
           "xAxis": {
@@ -641,14 +644,14 @@
               "data": [
                 @oppgUtsatt
               ],
-              "name": "Utsatt",
+              "name": "Utsett/Utsatt",
               "type": "line"
             },
             {
               "data": [
                 @oppgOpprettet
               ],
-              "name": "Opprettet",
+              "name": "Opprett/Opprettet",
               "type": "line"
             },
             {
@@ -656,6 +659,27 @@
                 @oppgTimeout
               ],
               "name": "Opprettet pga Timeout",
+              "type": "line"
+            },
+            {
+              "name": "Speil",
+              "data": [
+                @oppgSpeil
+              ],
+              "type": "line"
+            },
+            {
+              "data": [
+                @oppgBruker
+              ],
+              "name": "Utbetaling bruker",
+              "type": "line"
+            },
+            {
+              "data": [
+                @oppgNormal
+              ],
+              "name": "Normal/Sykepenger",
               "type": "line"
             }
           ],
