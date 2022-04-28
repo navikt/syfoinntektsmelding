@@ -129,6 +129,9 @@ class DatapakkePublisherJobSpec : SystemTestBase() {
                     Random.nextInt(100),
                     Random.nextInt(100),
                     Random.nextInt(100),
+                    Random.nextInt(100),
+                    Random.nextInt(100),
+                    Random.nextInt(100),
                     "2021-08-$it"
                 )
             }.toList()

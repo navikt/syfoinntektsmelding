@@ -159,6 +159,9 @@ class DatapakkePublisherJob(
             .replace("@oppgUtsatt", oppgaveStats.map { it.antall_utsatt }.joinToString())
             .replace("@oppgOpprettet", oppgaveStats.map { it.antall_opprettet }.joinToString())
             .replace("@oppgTimeout", oppgaveStats.map { it.antall_opprettet_timeout }.joinToString())
+            .replace("@oppgSpeil", oppgaveStats.map { it.antall_speil }.joinToString())
+            .replace("@oppgBruker", oppgaveStats.map { it.antall_utbetaling_bruker }.joinToString())
+            .replace("@oppgNormal", oppgaveStats.map { it.antall_normal }.joinToString())
             .replace("@FF_forsinkelse_uker", weekList.joinToString())
             .replace(
                 "@FF_bucket1",
