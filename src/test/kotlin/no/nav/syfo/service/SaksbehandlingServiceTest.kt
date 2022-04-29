@@ -11,7 +11,6 @@ import no.nav.syfo.client.aktor.AktorClient
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
-import no.nav.syfo.repository.InntektsmeldingService
 import no.nav.syfo.util.Metrikk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -24,7 +23,6 @@ import java.util.Collections.emptyList
 class SaksbehandlingServiceTest {
 
     private var oppgaveClient = mockk<OppgaveClient>(relaxed = true)
-    var behandlendeEnhetConsumer = mockk<BehandlendeEnhetConsumer>(relaxed = true)
     private var aktoridConsumer = mockk<AktorClient>(relaxed = true)
     private var inntektsmeldingService = mockk<InntektsmeldingService>(relaxed = true)
     private var sakClient = mockk<SakClient>(relaxed = true)

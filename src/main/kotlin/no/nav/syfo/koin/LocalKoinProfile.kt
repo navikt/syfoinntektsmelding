@@ -39,7 +39,7 @@ import no.nav.syfo.repository.IMStatsRepoImpl
 import no.nav.syfo.repository.InntektsmeldingRepository
 import no.nav.syfo.repository.InntektsmeldingRepositoryImp
 import no.nav.syfo.repository.InntektsmeldingRepositoryMock
-import no.nav.syfo.repository.InntektsmeldingService
+import no.nav.syfo.service.InntektsmeldingService
 import no.nav.syfo.repository.UtsattOppgaveRepository
 import no.nav.syfo.repository.UtsattOppgaveRepositoryImp
 import no.nav.syfo.repository.UtsattOppgaveRepositoryMockk

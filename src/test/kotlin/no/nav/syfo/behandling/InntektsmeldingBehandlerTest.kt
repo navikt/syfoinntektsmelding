@@ -8,7 +8,7 @@ import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.dto.InntektsmeldingEntitet
 import no.nav.syfo.producer.InntektsmeldingAivenProducer
-import no.nav.syfo.repository.InntektsmeldingService
+import no.nav.syfo.service.InntektsmeldingService
 import no.nav.syfo.service.JournalpostService
 import no.nav.syfo.service.SaksbehandlingService
 import no.nav.syfo.util.Metrikk

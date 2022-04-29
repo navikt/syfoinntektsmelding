@@ -5,7 +5,6 @@ import log
 import no.nav.syfo.client.SakClient
 import no.nav.syfo.domain.Periode
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
-import no.nav.syfo.repository.InntektsmeldingService
 import no.nav.syfo.util.DateUtil
 import no.nav.syfo.util.Metrikk
 

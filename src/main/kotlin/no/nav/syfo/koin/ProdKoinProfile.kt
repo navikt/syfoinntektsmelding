@@ -42,7 +42,7 @@ import no.nav.syfo.repository.IMStatsRepo
 import no.nav.syfo.repository.IMStatsRepoImpl
 import no.nav.syfo.repository.InntektsmeldingRepository
 import no.nav.syfo.repository.InntektsmeldingRepositoryImp
-import no.nav.syfo.repository.InntektsmeldingService
+import no.nav.syfo.service.InntektsmeldingService
 import no.nav.syfo.repository.UtsattOppgaveRepositoryImp
 import no.nav.syfo.service.BehandleInngaaendeJournalConsumer
 import no.nav.syfo.service.BehandlendeEnhetConsumer
