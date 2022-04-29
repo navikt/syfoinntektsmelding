@@ -705,7 +705,7 @@
       }
     },
     {
-      "title": "Forinkelse ff over tid",
+      "title": "Forsinkelse ff over tid",
       "description": "Grafen viser fordelingen av innsendingstidspunkt opp mot første fraværsdag. Uke for uke, siste 180 dager. Forventet innsendingstidspunkt er 16 dager etter første fraværsdag. Over 16 dager kan anses som Forsinkelse.",
       "specType": "echart",
       "spec": {
