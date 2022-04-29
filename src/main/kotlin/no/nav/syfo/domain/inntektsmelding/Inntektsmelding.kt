@@ -37,3 +37,7 @@ data class Inntektsmelding(
     val bruttoUtbetalt: BigDecimal? = null,
     val årsakEndring: String? = null
 )
+
+fun Inntektsmelding.isDuplicate(inntektsmelding: Inntektsmelding): Boolean {
+    return this.copy(id="").equals( inntektsmelding.copy(id="") )
+}
