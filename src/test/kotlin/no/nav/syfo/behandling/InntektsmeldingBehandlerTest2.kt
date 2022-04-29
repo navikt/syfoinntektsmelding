@@ -30,10 +30,10 @@ import no.nav.syfo.domain.Periode
 import no.nav.syfo.producer.InntektsmeldingAivenProducer
 import no.nav.syfo.repository.InntektsmeldingRepository
 import no.nav.syfo.repository.InntektsmeldingRepositoryMock
-import no.nav.syfo.service.InntektsmeldingService
 import no.nav.syfo.service.BehandleInngaaendeJournalConsumer
 import no.nav.syfo.service.BehandlendeEnhetConsumer
 import no.nav.syfo.service.InngaaendeJournalConsumer
+import no.nav.syfo.service.InntektsmeldingService
 import no.nav.syfo.service.JournalConsumer
 import no.nav.syfo.service.JournalpostService
 import no.nav.syfo.service.SaksbehandlingService

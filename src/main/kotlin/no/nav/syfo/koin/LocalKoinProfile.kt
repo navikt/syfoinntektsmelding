@@ -39,7 +39,6 @@ import no.nav.syfo.repository.IMStatsRepoImpl
 import no.nav.syfo.repository.InntektsmeldingRepository
 import no.nav.syfo.repository.InntektsmeldingRepositoryImp
 import no.nav.syfo.repository.InntektsmeldingRepositoryMock
-import no.nav.syfo.service.InntektsmeldingService
 import no.nav.syfo.repository.UtsattOppgaveRepository
 import no.nav.syfo.repository.UtsattOppgaveRepositoryImp
 import no.nav.syfo.repository.UtsattOppgaveRepositoryMockk
@@ -47,6 +46,7 @@ import no.nav.syfo.repository.createHikariConfig
 import no.nav.syfo.service.BehandleInngaaendeJournalConsumer
 import no.nav.syfo.service.BehandlendeEnhetConsumer
 import no.nav.syfo.service.InngaaendeJournalConsumer
+import no.nav.syfo.service.InntektsmeldingService
 import no.nav.syfo.service.JournalConsumer
 import no.nav.syfo.service.JournalpostService
 import no.nav.syfo.service.SaksbehandlingService
