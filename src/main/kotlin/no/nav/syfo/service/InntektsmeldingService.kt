@@ -1,10 +1,11 @@
-package no.nav.syfo.repository
+package no.nav.syfo.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.dto.InntektsmeldingEntitet
 import no.nav.syfo.mapping.toInntektsmelding
 import no.nav.syfo.mapping.toInntektsmeldingEntitet
+import no.nav.syfo.repository.InntektsmeldingRepository
 import org.slf4j.LoggerFactory
 
 class InntektsmeldingService(
