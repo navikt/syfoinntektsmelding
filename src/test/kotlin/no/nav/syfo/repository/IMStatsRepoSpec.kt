@@ -5,7 +5,6 @@ import no.nav.syfo.slowtests.SystemTestBase
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
-import kotlin.test.assertEquals
 
 class IMStatsRepoSpec : SystemTestBase() {
 
@@ -21,42 +20,51 @@ class IMStatsRepoSpec : SystemTestBase() {
 
     @Test
     internal fun `Test getWeeklyStats`() {
-        assertEquals(0, repo.getWeeklyStats().size)
+        assertDoesNotThrow { repo.getWeeklyStats() }
     }
+
     @Test
     internal fun `Test getLPSStats`() {
-        assertEquals(0, repo.getLPSStats().size)
+        assertDoesNotThrow { repo.getLPSStats() }
     }
+
     @Test
     internal fun `Test getArsakStats`() {
-        assertEquals(0, repo.getArsakStats().size)
+        assertDoesNotThrow { repo.getArsakStats() }
     }
+
     @Test
     internal fun `Test getWeeklyQualityStats`() {
-        assertEquals(0, repo.getWeeklyQualityStats().size)
+        assertDoesNotThrow { repo.getWeeklyQualityStats() }
     }
+
     @Test
     internal fun `Test getLPgetFeilFFPerLPSSStats`() {
-        assertEquals(0, repo.getLPSStats().size)
+        assertDoesNotThrow { repo.getLPSStats() }
     }
+
     @Test
     internal fun `Test getIngenFravaerPerLPS`() {
-        assertEquals(0, repo.getLPSStats().size)
+        assertDoesNotThrow { repo.getLPSStats() }
     }
+
     @Test
     internal fun `Test getBackToBackPerLPS`() {
-        assertEquals(0, repo.getBackToBackPerLPS().size)
+        assertDoesNotThrow { repo.getBackToBackPerLPS() }
     }
+
     @Test
     internal fun `Test getForsinkelseStats`() {
-        assertEquals(0, repo.getForsinkelseStats().size)
+        assertDoesNotThrow { repo.getForsinkelseStats() }
     }
+
     @Test
     internal fun `Test getOppgaveStats`() {
         assertDoesNotThrow { repo.getOppgaveStats() }
     }
+
     @Test
     internal fun `Test getForsinkelseWeeklyStats`() {
-        assertEquals(0, repo.getForsinkelseWeeklyStats().size)
+        assertDoesNotThrow { repo.getForsinkelseWeeklyStats() }
     }
 }
