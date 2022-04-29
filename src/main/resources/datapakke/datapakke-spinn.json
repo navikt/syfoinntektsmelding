@@ -590,7 +590,7 @@
     },
     {
       "title": "Gosysoppgaver",
-      "description": "Graf viser status for utsatte oppgaver på kafkatopic tbd.spre.oppgaver siste 30 Dager. \n Forkastet: Oppgave opprettelse kasellert pga besked på kafka, \nUtsatt: Oppgaveopprettelse utsatt pga besked på kafka, \n Opprett: Oppgave opprettet pga besked på kafka, \nOpprettet pga timeout: Oppgaver opprettet fordi timeout har gått ut på dato og ingen utsettelse fra kafka",
+      "description": "Graf viser status for utsatte oppgaver på kafkatopic tbd.spre.oppgaver siste 30 Dager. \n Forkastet: Oppgave opprettelse kasellert pga besked på kafka, \nUtsatt: Oppgaveopprettelse utsatt pga besked på kafka, \n Opprett: Oppgave opprettet pga besked på kafka, \nOpprettet pga timeout: Oppgaver opprettet fordi timeout har gått ut på dato og ingen utsettelse fra kafka, \nSpeil: Oppgaver opprettet fra speil, \nUtbetaling bruker: Oppgaver opprettet som gjelder utbetaling bruker, \nNormal/Sykepenger: Oppgaver opprettet som gjelder normalt løp / Sykepenger",
       "specType": "echart",
       "spec": {
         "url": "",
