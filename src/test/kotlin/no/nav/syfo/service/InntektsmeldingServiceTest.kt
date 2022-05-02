@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
-import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
@@ -24,7 +23,6 @@ class InntektsmeldingServiceTest {
 
     val objectMapper = ObjectMapper().registerModules(KotlinModule(), JavaTimeModule())
     val AKTOR_ID_FOUND = "aktør-123"
-    val AKTOR_ID_NOT_FOUND = "xyz"
 
     @Test
     fun `Skal finne inntektsmeldinger og mappe de om til domene objekter`() {
@@ -146,5 +144,4 @@ class InntektsmeldingServiceTest {
             data = objectMapper.writeValueAsString(im)
         )
     }
-
 }

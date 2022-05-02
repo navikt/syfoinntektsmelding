@@ -39,5 +39,5 @@ data class Inntektsmelding(
 )
 
 fun Inntektsmelding.isDuplicate(inntektsmelding: Inntektsmelding): Boolean {
-    return this.copy(id="",fnr="").equals( inntektsmelding.copy(id="", fnr="") )
+    return this.copy(id = "").equals(inntektsmelding.copy(id = ""))
 }
