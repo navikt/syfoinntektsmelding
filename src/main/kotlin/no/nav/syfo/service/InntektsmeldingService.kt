@@ -22,7 +22,8 @@ class InntektsmeldingService(
 
     fun isDuplicate(inntektsmelding: Inntektsmelding): Boolean {
         inntektsmelding.aktorId?.let {
-            findPresent(inntektsmelding, it).apply {
+            val im = findPresent(inntektsmelding, it)
+            if (im != null) {
                 log.info("Inntektsmelding finnes fra før $inntektsmelding")
                 return true
             }

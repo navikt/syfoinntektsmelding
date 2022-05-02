@@ -6,7 +6,9 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.mockk.every
 import io.mockk.mockk
 import no.nav.inntektsmelding.kontrakt.serde.JacksonJsonConfig
+import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.dto.InntektsmeldingEntitet
+import no.nav.syfo.mapping.toInntektsmelding
 import no.nav.syfo.repository.InntektsmeldingRepository
 import no.nav.syfo.repository.buildIM
 import org.assertj.core.api.Assertions.assertThat
@@ -28,7 +30,7 @@ class InntektsmeldingServiceTest {
     fun `Skal finne inntektsmeldinger og mappe de om til domene objekter`() {
         val repository = mockk<InntektsmeldingRepository>(relaxed = true)
         val service = InntektsmeldingService(repository, objectMapper)
-        every { repository.findByAktorId(any()) } returns listOf(buildEntitet(AKTOR_ID_FOUND))
+        every { repository.findByAktorId(any()) } returns listOf(buildEntitet(AKTOR_ID_FOUND, buildIM()))
         assertEquals(1, service.finnBehandledeInntektsmeldinger(AKTOR_ID_FOUND).size)
     }
 
@@ -36,8 +38,20 @@ class InntektsmeldingServiceTest {
     fun `isDuplicate - Skal detektere eksisterende inntektsmeldingene som allerede er lagret`() {
         val repository = mockk<InntektsmeldingRepository>(relaxed = true)
         val service = InntektsmeldingService(repository, objectMapper)
-        every { repository.findByAktorId(any()) } returns listOf(buildEntitet(AKTOR_ID_FOUND))
-        assertTrue(service.isDuplicate(buildIM().copy(aktorId = AKTOR_ID_FOUND)))
+        val ent = buildEntitet(AKTOR_ID_FOUND, buildIM())
+        val im = toInntektsmelding(ent)
+        every { repository.findByAktorId(any()) } returns listOf(ent)
+        assertTrue(service.isDuplicate(im))
+    }
+
+    @Test
+    fun `isDuplicate - Skal detektere at de er litt ulike`() {
+        val repository = mockk<InntektsmeldingRepository>(relaxed = true)
+        val service = InntektsmeldingService(repository, objectMapper)
+        val ent = buildEntitet(AKTOR_ID_FOUND, buildIM())
+        val im = toInntektsmelding(ent).copy(arbeidsforholdId = "abc")
+        every { repository.findByAktorId(any()) } returns listOf(ent)
+        assertFalse(service.isDuplicate(im))
     }
 
     @Test
@@ -52,7 +66,7 @@ class InntektsmeldingServiceTest {
     fun `findPresent - Skal kunne finne eksisterende duplikater når inntektsmeldingene er like`() {
         val repository = mockk<InntektsmeldingRepository>(relaxed = true)
         val service = InntektsmeldingService(repository, objectMapper)
-        every { repository.findByAktorId(any()) } returns listOf(buildEntitet(AKTOR_ID_FOUND))
+        every { repository.findByAktorId(any()) } returns listOf(buildEntitet(AKTOR_ID_FOUND, buildIM()))
         assertNull(service.findPresent(buildIM().copy(aktorId = AKTOR_ID_FOUND), AKTOR_ID_FOUND))
     }
 
@@ -122,13 +136,14 @@ class InntektsmeldingServiceTest {
         assertThat(node.get("opphørAvNaturalYtelse")[1].get("beloepPrMnd").asLong()).isEqualTo(666666666666)
     }
 
-    fun buildEntitet(aktorId: String): InntektsmeldingEntitet {
+    fun buildEntitet(aktorId: String, im: Inntektsmelding): InntektsmeldingEntitet {
         return InntektsmeldingEntitet(
             aktorId = aktorId,
             behandlet = LocalDateTime.now(),
             sakId = "sak-123",
             orgnummer = "arb-org-123",
-            journalpostId = "jp-123"
+            journalpostId = "jp-123",
+            data = objectMapper.writeValueAsString(im)
         )
     }
 
