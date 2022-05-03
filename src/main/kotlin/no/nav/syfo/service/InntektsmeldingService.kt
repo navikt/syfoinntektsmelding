@@ -2,7 +2,6 @@ package no.nav.syfo.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
-import no.nav.syfo.domain.inntektsmelding.isDuplicate
 import no.nav.syfo.dto.InntektsmeldingEntitet
 import no.nav.syfo.mapping.toInntektsmelding
 import no.nav.syfo.mapping.toInntektsmeldingEntitet
@@ -31,14 +30,10 @@ class InntektsmeldingService(
         return false
     }
 
-    fun findPresent(inntektsmelding: Inntektsmelding, aktoerId: String): Inntektsmelding? {
-        finnBehandledeInntektsmeldinger(aktoerId).forEach {
-            if (it.isDuplicate(inntektsmelding)) {
-                return it
-            }
-        }
-        return null
-    }
+    /**
+     * Finner inntektsmelding som er lik tidligere innsendt som ikke trengs å behandles på nytt
+     */
+    fun findPresent(inntektsmelding: Inntektsmelding, aktoerId: String): Inntektsmelding? = finnBehandledeInntektsmeldinger(aktoerId).find { it.isDuplicate(inntektsmelding) }
 
     fun lagreBehandling(
         inntektsmelding: Inntektsmelding,

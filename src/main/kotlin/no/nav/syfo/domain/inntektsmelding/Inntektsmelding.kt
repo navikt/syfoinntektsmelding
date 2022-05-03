@@ -35,9 +35,20 @@ data class Inntektsmelding(
     val kontaktinformasjon: Kontaktinformasjon = Kontaktinformasjon(),
     val innsendingstidspunkt: LocalDateTime? = null,
     val bruttoUtbetalt: BigDecimal? = null,
-    val årsakEndring: String? = null
-)
-
-fun Inntektsmelding.isDuplicate(inntektsmelding: Inntektsmelding): Boolean {
-    return this.copy(id = "").equals(inntektsmelding.copy(id = ""))
+    val årsakEndring: String? = null,
+) {
+    fun isDuplicate(inntektsmelding: Inntektsmelding): Boolean {
+        return this.equals(
+            inntektsmelding.copy(
+                id = this.id,
+                mottattDato = this.mottattDato,
+                journalpostId = this.journalpostId,
+                journalStatus = this.journalStatus,
+                arkivRefereranse = this.arkivRefereranse,
+                sakId = this.sakId,
+                innsendingstidspunkt = this.innsendingstidspunkt,
+                avsenderSystem = this.avsenderSystem
+            )
+        )
+    }
 }

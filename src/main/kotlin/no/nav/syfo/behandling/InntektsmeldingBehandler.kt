@@ -36,7 +36,9 @@ class InntektsmeldingBehandler(
         val log = log()
         log.info("Henter inntektsmelding for $arkivreferanse")
         val inntektsmelding = journalpostService.hentInntektsmelding(arkivId, arkivreferanse)
-        inntektsmeldingService.isDuplicate(inntektsmelding)
+        if (inntektsmeldingService.isDuplicate(inntektsmelding)) {
+            log.info("Inntektsmelding med like detaljer finnes fra før $inntektsmelding")
+        }
         return behandleInntektsmelding(arkivreferanse, inntektsmelding)
     }
 
