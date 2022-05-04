@@ -119,6 +119,7 @@ repositories {
 }
 
 dependencies {
+    implementation("org.jetbrains.exposed:exposed:0.17.14")
     implementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
     implementation("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
     testImplementation("io.insert-koin:koin-test:$koinVersion")

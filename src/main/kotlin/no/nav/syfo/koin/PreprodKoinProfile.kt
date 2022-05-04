@@ -122,7 +122,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
     single { JournalpostService(get(), get(), get(), get(), get(), get()) } bind JournalpostService::class
     single { DatapakkePublisherJob(get(), get(), config.getString("datapakke.api_url"), config.getString("datapakke.id"), om = get()) }
 
-    single { InntektsmeldingRepositoryImp(get()) } bind InntektsmeldingRepository::class
+    single { InntektsmeldingRepositoryImp(get(), get()) } bind InntektsmeldingRepository::class
     single { InntektsmeldingService(get(), get()) } bind InntektsmeldingService::class
     single { SakClient(config.getString("opprett_sak_url"), get(), get()) } bind SakClient::class
     single { SaksbehandlingService(get(), get(), get()) } bind SaksbehandlingService::class
@@ -154,7 +154,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
 
     single {
         FjernInntektsmeldingByBehandletProcessor(
-            InntektsmeldingRepositoryImp(get()),
+            InntektsmeldingRepositoryImp(get(), get()),
             config.getString("lagringstidMåneder").toInt()
         )
     } bind FjernInntektsmeldingByBehandletProcessor::class
@@ -233,4 +233,5 @@ fun preprodConfig(config: ApplicationConfig) = module {
     } bind DokArkivClient::class
 
     single { BrregClientImp(get(qualifier = named("proxyHttpClient")), config.getString("berreg_enhet_url")) } bind BrregClient::class
+
 }

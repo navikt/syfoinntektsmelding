@@ -109,7 +109,7 @@ fun prodConfig(config: ApplicationConfig) = module {
     single { Metrikk() } bind Metrikk::class
     single { BehandlendeEnhetConsumer(get(), get(), get()) } bind BehandlendeEnhetConsumer::class
     single { JournalpostService(get(), get(), get(), get(), get(), get()) } bind JournalpostService::class
-    single { InntektsmeldingRepositoryImp(get()) } bind InntektsmeldingRepository::class
+    single { InntektsmeldingRepositoryImp(get(), get()) } bind InntektsmeldingRepository::class
     single { InntektsmeldingService(get(), get()) } bind InntektsmeldingService::class
     single { ArbeidsgiverperiodeRepositoryImp(get()) } bind ArbeidsgiverperiodeRepository::class
     single { SakClient(config.getString("opprett_sak_url"), get(), get()) } bind SakClient::class
@@ -139,7 +139,7 @@ fun prodConfig(config: ApplicationConfig) = module {
 
     single {
         FjernInntektsmeldingByBehandletProcessor(
-            InntektsmeldingRepositoryImp(get()),
+            InntektsmeldingRepositoryImp(get(), get()),
             config.getString("lagringstidMåneder").toInt()
         )
     } bind FjernInntektsmeldingByBehandletProcessor::class

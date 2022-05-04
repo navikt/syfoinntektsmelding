@@ -1,11 +1,25 @@
 package no.nav.syfo.repository
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import no.nav.syfo.db.Inntektsmeldinger
 import no.nav.syfo.dto.ArbeidsgiverperiodeEntitet
 import no.nav.syfo.dto.InntektsmeldingEntitet
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.less
+import org.jetbrains.exposed.sql.deleteAll
+import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.transactions.transaction
+import org.joda.time.DateTime
 import java.sql.Connection
 import java.sql.ResultSet
 import java.sql.Timestamp
 import java.time.LocalDateTime
+import java.util.UUID
 import javax.sql.DataSource
 
 interface InntektsmeldingRepository {
@@ -56,152 +70,108 @@ class InntektsmeldingRepositoryMock : InntektsmeldingRepository {
 }
 
 class InntektsmeldingRepositoryImp(
-    private val ds: DataSource
+    val datasource: DataSource,
+    val objectMapper: ObjectMapper
 ) : InntektsmeldingRepository {
-    private val agpRepo = ArbeidsgiverperiodeRepositoryImp(ds)
+
+    fun add(aktor_id: String, sak_id: String, journalpost_id: String, orgnr: String, arbeidsgiverPriv: String): InntektsmeldingEntitet {
+        Database.connect(datasource)
+        return transaction {
+            Inntektsmeldinger.insert {
+                it[ uuid ] = UUID.randomUUID().toString()
+                it[ aktorId ] = aktor_id
+                it[ sakId ] = sak_id
+                it[ journalpostId ] = journalpost_id
+                it[ orgnummer ] = orgnr
+                it[ arbeidsgiverPrivat ] = arbeidsgiverPriv
+                it[ behandlet ] = DateTime.now()
+            }.resultedValues!!.first().toEntitet()
+        }
+    }
+
+    fun ResultRow.toEntitet() : InntektsmeldingEntitet {
+        return InntektsmeldingEntitet(
+            uuid= this[ Inntektsmeldinger.uuid],
+            aktorId= this[ Inntektsmeldinger.aktorId],
+            sakId= this[ Inntektsmeldinger.sakId],
+            journalpostId= this[ Inntektsmeldinger.journalpostId],
+            orgnummer= this[ Inntektsmeldinger.orgnummer],
+            arbeidsgiverPrivat= this[ Inntektsmeldinger.arbeidsgiverPrivat],
+            behandlet= LocalDateTime.now(),
+            data= this[ Inntektsmeldinger.data]
+        )
+    }
 
     override fun findByUuid(uuid: String): InntektsmeldingEntitet {
-        val findByAktorId = "SELECT * FROM INNTEKTSMELDING WHERE INNTEKTSMELDING_UUID = ?;"
-        val inntektsmeldinger = ArrayList<InntektsmeldingEntitet>()
-        val result: InntektsmeldingEntitet
-        ds.connection.use {
-            val res = it.prepareStatement(findByAktorId).apply {
-                setString(1, uuid)
-            }.executeQuery()
-            result = resultLoop(res, inntektsmeldinger).first()
+        Database.connect(datasource)
+        return transaction {
+            Inntektsmeldinger.select { Inntektsmeldinger.uuid eq uuid }.mapNotNull { it.toEntitet() }.first()
         }
-        result.arbeidsgiverperioder = finnAgpForIm(uuid).toMutableList()
-        return result
     }
 
     override fun findByArkivReferanse(arkivRefereanse: String): InntektsmeldingEntitet {
-        val sqlQuery = "SELECT * FROM INNTEKTSMELDING WHERE data ->> 'arkivRefereranse' = ?;"
-        val inntektsmeldinger = ArrayList<InntektsmeldingEntitet>()
-        val result: InntektsmeldingEntitet
-        ds.connection.use {
-            val res = it.prepareStatement(sqlQuery).apply {
-                setString(1, arkivRefereanse)
-            }.executeQuery()
-            result = resultLoop(res, inntektsmeldinger).first()
+        Database.connect(datasource)
+        val uuid: String? = transaction {
+            exec("SELECT * FROM INNTEKTSMELDING WHERE data ->> 'arkivRefereranse' = ?" ) {
+                if (it.next()) {
+                    it.getString("inntektsmelding_uuid")
+                }
+            }
+            null
         }
-        result.arbeidsgiverperioder = finnAgpForIm(result.uuid).toMutableList()
-        return result
+        if (uuid == null) {
+            throw java.lang.IllegalStateException("")
+        }
+        return findByUuid(uuid)
     }
 
     override fun findByAktorId(aktoerId: String): List<InntektsmeldingEntitet> {
-        val findByAktorId = "SELECT * FROM INNTEKTSMELDING WHERE AKTOR_ID = ?;"
-        val inntektsmeldinger = ArrayList<InntektsmeldingEntitet>()
-        val results: ArrayList<InntektsmeldingEntitet>
-        ds.connection.use {
-            val res = it.prepareStatement(findByAktorId).apply {
-                setString(1, aktoerId.toString())
-            }.executeQuery()
-            results = resultLoop(res, inntektsmeldinger)
+        Database.connect(datasource)
+        return transaction {
+            Inntektsmeldinger.select { Inntektsmeldinger.aktorId eq aktoerId }.mapNotNull { it.toEntitet() }
         }
-        return addArbeidsgiverperioderTilInnteksmelding(results)
     }
 
-    override fun findFirst100ByBehandletBefore(førDato: LocalDateTime): ArrayList<InntektsmeldingEntitet> {
-        val findFirst100ByBehandletBefore = " SELECT * FROM INNTEKTSMELDING WHERE BEHANDLET < ? LIMIT 100;"
-        val inntektsmeldinger = ArrayList<InntektsmeldingEntitet>()
-        val results: ArrayList<InntektsmeldingEntitet>
-        ds.connection.use {
-            val prepareStatement = it.prepareStatement(findFirst100ByBehandletBefore)
-            prepareStatement.setTimestamp(1, Timestamp.valueOf(førDato))
-            val res = prepareStatement.executeQuery()
-            results = resultLoop(res, inntektsmeldinger)
+    override fun findFirst100ByBehandletBefore(førDato: LocalDateTime): List<InntektsmeldingEntitet> {
+        Database.connect(datasource)
+        return transaction {
+            Inntektsmeldinger.select { Inntektsmeldinger.behandlet less førDato }.limit(100).mapNotNull { it.toEntitet() }
         }
-
-        return addArbeidsgiverperioderTilInnteksmelding(results)
     }
 
     override fun deleteByBehandletBefore(førDato: LocalDateTime): Int {
-        val deleteFirst100ByBehandletBefore = "DELETE FROM INNTEKTSMELDING WHERE BEHANDLET < ?;"
-        ds.connection.use {
-            val prepareStatement = it.prepareStatement(deleteFirst100ByBehandletBefore)
-            prepareStatement.setTimestamp(1, Timestamp.valueOf(førDato))
-            return prepareStatement.executeUpdate()
+        Database.connect(datasource)
+        return transaction {
+            Inntektsmeldinger.deleteWhere { Inntektsmeldinger.behandlet less førDato }
         }
     }
 
-    override fun lagreInnteksmelding(innteksmelding: InntektsmeldingEntitet): InntektsmeldingEntitet {
-        val insertStatement =
-            """INSERT INTO INNTEKTSMELDING (INNTEKTSMELDING_UUID, AKTOR_ID, ORGNUMMER, SAK_ID, JOURNALPOST_ID, BEHANDLET, ARBEIDSGIVER_PRIVAT, DATA)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?::jsonb)
-        RETURNING *;""".trimMargin()
-        val inntektsmeldinger = ArrayList<InntektsmeldingEntitet>()
-        var result: InntektsmeldingEntitet
-        ds.connection.use {
-            val ps = it.prepareStatement(insertStatement)
-            ps.setString(1, innteksmelding.uuid)
-            ps.setString(2, innteksmelding.aktorId)
-            ps.setString(3, innteksmelding.orgnummer)
-            ps.setString(4, innteksmelding.sakId)
-            ps.setString(5, innteksmelding.journalpostId)
-            ps.setTimestamp(6, Timestamp.valueOf(innteksmelding.behandlet))
-            ps.setString(7, innteksmelding.arbeidsgiverPrivat)
-            ps.setString(8, innteksmelding.data)
-
-            val res = ps.executeQuery()
-            result = resultLoop(res, inntektsmeldinger).first()
-            lagreArbeidsgiverperioder(innteksmelding.arbeidsgiverperioder, it)
+    override fun lagreInnteksmelding(im: InntektsmeldingEntitet): InntektsmeldingEntitet {
+        Database.connect(datasource)
+        return transaction {
+            Inntektsmeldinger.insert {
+                it[ uuid ] = UUID.randomUUID().toString()
+                it[ aktorId ] = im.aktorId
+                it[ sakId ] = im.sakId
+                it[ journalpostId ] = im.journalpostId
+                it[ orgnummer ] = im.orgnummer
+                it[ arbeidsgiverPrivat ] = im.arbeidsgiverPrivat
+                it[ behandlet ] = DateTime.now()
+            }.resultedValues!!.first().toEntitet()
         }
-        result.arbeidsgiverperioder = finnAgpForIm(result.uuid).toMutableList()
-        return result
-    }
-
-    private fun finnAgpForIm(imUuid: String): List<ArbeidsgiverperiodeEntitet> {
-        return agpRepo.find(imUuid)
-    }
-
-    private fun addArbeidsgiverperioderTilInnteksmelding(results: ArrayList<InntektsmeldingEntitet>): ArrayList<InntektsmeldingEntitet> {
-        results.forEach { inntek ->
-            val aperioder = finnAgpForIm(inntek.uuid)
-            inntek.arbeidsgiverperioder = aperioder.filter { it.inntektsmelding_uuid == inntek.uuid }.toMutableList()
-        }
-        return results
-    }
-
-    private fun lagreArbeidsgiverperioder(arbeidsgiverperioder: List<ArbeidsgiverperiodeEntitet>, connection: Connection) {
-        val rep = agpRepo
-        rep.lagreDataer(arbeidsgiverperioder, connection)
     }
 
     override fun deleteAll() {
-        val deleteStatememnt = "DELETE FROM INNTEKTSMELDING;"
-        ds.connection.use {
-            it.prepareStatement(deleteStatememnt).executeUpdate()
+        Database.connect(datasource)
+        return transaction {
+            Inntektsmeldinger.deleteAll()
         }
     }
 
     override fun findAll(): List<InntektsmeldingEntitet> {
-        val findall = " SELECT * FROM INNTEKTSMELDING;"
-        val inntektsmeldinger = ArrayList<InntektsmeldingEntitet>()
-        ds.connection.use {
-            val res = it.prepareStatement(findall).executeQuery()
-            return resultLoop(res, inntektsmeldinger)
+        Database.connect(datasource)
+        return transaction {
+            Inntektsmeldinger.selectAll().mapNotNull { it.toEntitet() }
         }
-    }
-
-    private fun resultLoop(
-        res: ResultSet,
-        returnValue: ArrayList<InntektsmeldingEntitet>
-    ): ArrayList<InntektsmeldingEntitet> {
-        while (res.next()) {
-            returnValue.add(
-                InntektsmeldingEntitet(
-                    uuid = res.getString("INNTEKTSMELDING_UUID"),
-                    aktorId = res.getString("AKTOR_ID"),
-                    orgnummer = res.getString("ORGNUMMER"),
-                    sakId = res.getString("SAK_ID"),
-                    journalpostId = res.getString("JOURNALPOST_ID"),
-                    behandlet = res.getTimestamp("BEHANDLET").toLocalDateTime(),
-                    arbeidsgiverPrivat = res.getString("ARBEIDSGIVER_PRIVAT"),
-                    data = res.getString("data")
-                )
-            )
-        }
-
-        return returnValue
     }
 }

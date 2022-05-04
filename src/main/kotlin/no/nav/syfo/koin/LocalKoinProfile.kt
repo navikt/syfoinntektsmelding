@@ -135,7 +135,7 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single { JournalConsumer(get(), get(), get()) } bind JournalConsumer::class
     single { Metrikk() } bind Metrikk::class
     single { JournalpostService(get(), get(), get(), get(), get(), get()) } bind JournalpostService::class
-    single { InntektsmeldingService(InntektsmeldingRepositoryImp(get()), get()) } bind InntektsmeldingService::class
+    single { InntektsmeldingService(InntektsmeldingRepositoryImp(get(), get()), get()) } bind InntektsmeldingService::class
     single { SakClient(config.getString("opprett_sak_url"), get(), get()) } bind SakClient::class
     single { SaksbehandlingService(get(), get(), get()) } bind SaksbehandlingService::class
     single { FeiletService(get()) } bind FeiletService::class
@@ -180,4 +180,5 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single { ArbeidsgiverperiodeRepositoryImp(get()) } bind ArbeidsgiverperiodeRepository::class
 
     single { MockBrregClient() } bind BrregClient::class
+
 }

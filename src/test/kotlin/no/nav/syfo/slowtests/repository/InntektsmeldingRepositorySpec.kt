@@ -1,5 +1,6 @@
 package no.nav.syfo.slowtests.repository
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.zaxxer.hikari.HikariDataSource
 import no.nav.inntektsmelding.kontrakt.serde.JacksonJsonConfig
 import no.nav.syfo.domain.JournalStatus
@@ -34,7 +35,7 @@ open class InntektsmeldingRepositorySpec : SystemTestBase() {
     @BeforeAll
     internal fun setUp() {
         val ds = HikariDataSource(createTestHikariConfig())
-        repository = InntektsmeldingRepositoryImp(ds)
+        repository = InntektsmeldingRepositoryImp(ds, ObjectMapper())
         repository.deleteAll()
     }
 
