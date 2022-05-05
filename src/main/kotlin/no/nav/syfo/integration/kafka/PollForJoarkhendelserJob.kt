@@ -78,9 +78,9 @@ class PollForJoarkhendelserJob(
     fun isDuplicate(journalpost: InngaaendeJournalpostDTO): Boolean {
         val dupe = duplikatRepository.findByHendelsesId(journalpost.hendelsesId)
         if (dupe) {
-            log.info("Inntektsmelding er tidligere importert for journalpost AR${journalpost.kanalReferanseId} for hendelse ${journalpost.hendelsesId}")
+            log.info("Inntektsmelding er tidligere importert for journalpost ${journalpost.kanalReferanseId} for hendelse ${journalpost.hendelsesId}")
         } else {
-            log.info("Fant ikke tidligere lagret IM for journalpost AR${journalpost.kanalReferanseId} for hendelse ${journalpost.hendelsesId}")
+            log.info("Fant ikke tidligere lagret IM for journalpost ${journalpost.kanalReferanseId} for hendelse ${journalpost.hendelsesId}")
         }
         return dupe
     }
