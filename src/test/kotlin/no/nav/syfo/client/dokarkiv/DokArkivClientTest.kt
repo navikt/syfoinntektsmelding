@@ -6,7 +6,7 @@ import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
 import no.nav.syfo.client.buildHttpClientText
 import org.assertj.core.api.Assertions
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 class DokArkivClientTest {
@@ -47,7 +47,7 @@ class DokArkivClientTest {
     fun `Skal håndtere at oppdatering av journalpost feiler`() {
         dokArkivClient = DokArkivClient("", mockStsClient, buildHttpClientText(HttpStatusCode.InternalServerError, ""))
         runBlocking {
-            assertThrows<Exception> {
+            assertThrows<VerifyError> {
                 dokArkivClient.oppdaterJournalpost("111", "123", false, "abc123", "Stark industries", "1001")
             }
         }

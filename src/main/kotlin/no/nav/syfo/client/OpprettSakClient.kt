@@ -5,7 +5,6 @@ import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
-import no.nav.syfo.helpers.retry
 import java.time.ZonedDateTime
 
 class SakClient constructor(
@@ -14,8 +13,8 @@ class SakClient constructor(
     val httpClient: HttpClient
 ) {
 
-    suspend fun opprettSak(pasientAktoerId: String, msgId: String): SakResponse = retry("opprett_sak") {
-        httpClient.post(opprettsakUrl) {
+    suspend fun opprettSak(pasientAktoerId: String, msgId: String): SakResponse {
+        return httpClient.post<SakResponse>(opprettsakUrl) {
             contentType(ContentType.Application.Json)
             header("X-Correlation-ID", msgId)
             header("Authorization", "Bearer ${tokenConsumer.token}")
@@ -46,5 +45,5 @@ data class SakResponse(
     val fagsakNr: String?,
     val applikasjon: String,
     val opprettetAv: String,
-    val opprettetTidspunkt: ZonedDateTime
+    val opprettetTidspunkt: ZonedDateTime,
 )

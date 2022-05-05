@@ -9,7 +9,7 @@ import no.nav.syfo.client.saf.model.JournalResponse
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.koin.buildObjectMapper
 import org.assertj.core.api.Assertions
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 class SafJournalpostClientTest {

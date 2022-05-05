@@ -7,7 +7,7 @@ import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
 import org.assertj.core.api.Assertions
 import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
