@@ -30,7 +30,7 @@ class SakClientTest {
     fun `Skal håndtere feil`() {
         sakClient = SakClient("http://localhost", tokenConsumer, buildHttpClientText(HttpStatusCode.BadRequest, ""))
         runBlocking {
-            assertThrows<Exception> {
+            assertThrows<VerifyError> {
                 sakClient.opprettSak("1234", "msgid")
             }
         }

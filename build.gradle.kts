@@ -48,12 +48,13 @@ tasks.withType<Test> {
 }
 
 tasks.named<Test>("test") {
-    include("no/nav/syfo/**")
-    exclude("no/nav/syfo/slowtests/**")
+    include("**/*Test.class")
+    exclude("**/*Spec.class")
 }
 
 task<Test>("slowTests") {
-    include("no/nav/syfo/slowtests/**")
+    include("**/*Spec.class")
+    exclude("**/*Test.class")
     outputs.upToDateWhen { false }
     group = "verification"
 }
