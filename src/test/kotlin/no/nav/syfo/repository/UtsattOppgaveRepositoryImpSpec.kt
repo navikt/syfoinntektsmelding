@@ -11,7 +11,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.time.LocalDateTime.now
-import java.util.*
+import java.util.UUID
 
 open class UtsattOppgaveRepositoryImpSpec : SystemTestBase() {
 
