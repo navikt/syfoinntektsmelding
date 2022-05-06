@@ -20,16 +20,7 @@ class InntektsmeldingService(
         return list
     }
 
-    fun isDuplicate(inntektsmelding: Inntektsmelding): Boolean {
-        inntektsmelding.aktorId?.let {
-            val im = findPresent(inntektsmelding, it)
-            if (im != null) {
-                log.info("Inntektsmelding finnes fra før $inntektsmelding")
-                return true
-            }
-        }
-        return false
-    }
+    fun isDuplicate(inntektsmelding: Inntektsmelding): Boolean = inntektsmelding.indexOf(finnBehandledeInntektsmeldinger(inntektsmelding.aktorId!!)) > -1
 
     /**
      * Finner inntektsmelding som er lik tidligere innsendt som ikke trengs å behandles på nytt
