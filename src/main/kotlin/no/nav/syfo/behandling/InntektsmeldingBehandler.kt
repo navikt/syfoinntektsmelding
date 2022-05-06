@@ -36,12 +36,6 @@ class InntektsmeldingBehandler(
         val log = log()
         log.info("Henter inntektsmelding for $arkivreferanse")
         val inntektsmelding = journalpostService.hentInntektsmelding(arkivId, arkivreferanse)
-        log.info("Arkivreferanse: $arkivreferanse  ArkivId: $arkivId $inntektsmelding")
-        if (inntektsmeldingService.isDuplicate(inntektsmelding)) {
-            log.info("Inntektsmelding med like detaljer finnes fra før $inntektsmelding")
-        } else {
-            log.info("Inntektsmelding har ingen like detaljer fra før")
-        }
         return behandleInntektsmelding(arkivreferanse, inntektsmelding)
     }
 
@@ -55,6 +49,13 @@ class InntektsmeldingBehandler(
             log.info("Slår opp aktørID for ${inntektsmelding.arkivRefereranse}")
             val aktorid = aktorClient.getAktorId(inntektsmelding.fnr)
             log.info("Fant aktørid for ${inntektsmelding.arkivRefereranse}")
+
+            inntektsmelding.aktorId = aktorid
+            if (inntektsmeldingService.isDuplicate(inntektsmelding)) {
+                log.info("Likhetssjekk: finnes fra før $inntektsmelding")
+            } else {
+                log.info("Likhetssjekk: ingen like detaljer fra før")
+            }
 
             tellMetrikker(inntektsmelding)
 
