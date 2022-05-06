@@ -20,7 +20,12 @@ class InntektsmeldingService(
         return list
     }
 
-    fun isDuplicate(inntektsmelding: Inntektsmelding): Boolean = inntektsmelding.indexOf(finnBehandledeInntektsmeldinger(inntektsmelding.aktorId!!)) > -1
+    fun isDuplicate(inntektsmelding: Inntektsmelding): Boolean {
+        if (inntektsmelding.aktorId == null) {
+            return false
+        }
+        return inntektsmelding.indexOf(finnBehandledeInntektsmeldinger(inntektsmelding.aktorId!!)) > -1
+    }
 
     /**
      * Finner inntektsmelding som er lik tidligere innsendt som ikke trengs å behandles på nytt
