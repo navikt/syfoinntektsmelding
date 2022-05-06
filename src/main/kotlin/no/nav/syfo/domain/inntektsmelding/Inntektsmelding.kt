@@ -45,7 +45,9 @@ data class Inntektsmelding(
         return this.equals(
             inntektsmelding.copy(
                 id = this.id,
+                fnr = this.fnr,
                 mottattDato = this.mottattDato,
+                arsakTilInnsending = this.arsakTilInnsending,
                 journalpostId = this.journalpostId,
                 journalStatus = this.journalStatus,
                 arkivRefereranse = this.arkivRefereranse,
