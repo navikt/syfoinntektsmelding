@@ -1,8 +1,16 @@
 package no.nav.syfo.domain.inntektsmelding
 
+import no.nav.syfo.domain.JournalStatus
+import no.nav.syfo.domain.Periode
 import no.nav.syfo.repository.buildIM
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal
+import java.time.LocalDate
+import java.time.LocalDateTime
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertNotEquals
+import kotlin.test.assertTrue
 
 internal class InntektsmeldingTest {
 
@@ -14,23 +22,58 @@ internal class InntektsmeldingTest {
 
     @Test
     fun `Skal være like`() {
-        kotlin.test.assertEquals(im1, im3)
-        kotlin.test.assertTrue(im1.isDuplicate(im3))
+        assertEquals(im1, im3)
+        assertTrue(im1.isDuplicate(im3))
     }
 
     @Test
     fun `Skal være ulike`() {
-        kotlin.test.assertNotEquals(im1, im2)
-        kotlin.test.assertFalse(im1.isDuplicate(im2))
+        assertNotEquals(im1, im2)
+        assertFalse(im1.isDuplicate(im2))
     }
 
     @Test
     fun `Skal finne riktig index`() {
-        kotlin.test.assertEquals(2, im1.indexOf(listOf(im4, im5, im3)))
+        assertEquals(2, im1.indexOf(listOf(im4, im5, im3)))
     }
 
     @Test
     fun `Skal ikke finne riktig index`() {
-        kotlin.test.assertEquals(-1, im3.indexOf(listOf(im4, im5)))
+        assertEquals(-1, im3.indexOf(listOf(im4, im5)))
     }
+
+    @Test
+    fun `Hvilke felter som skal ignoreres`() {
+        assertTrue(im1.copy(id = "asd").isDuplicate(im1))
+        assertTrue(im1.copy(fnr = "asd").isDuplicate(im1))
+        assertFalse(im1.copy(arbeidsgiverOrgnummer = "asd").isDuplicate(im1))
+        assertFalse(im1.copy(arbeidsgiverPrivatFnr = "asd").isDuplicate(im1))
+        assertFalse(im1.copy(arbeidsgiverPrivatAktørId = "asd").isDuplicate(im1))
+        assertFalse(im1.copy(arbeidsforholdId = "asd").isDuplicate(im1))
+        assertTrue(im1.copy(journalpostId = "asd").isDuplicate(im1))
+        assertTrue(im1.copy(arsakTilInnsending = "asd").isDuplicate(im1))
+        assertTrue(im1.copy(journalStatus = JournalStatus.MOTTATT).isDuplicate(im1))
+        assertFalse(im1.copy(arbeidsgiverperioder = listOf(Periode(fom=LocalDate.now(), tom=LocalDate.now()))).isDuplicate(im1))
+        assertFalse(im1.copy(beregnetInntekt = BigDecimal(200)).isDuplicate(im1))
+        assertFalse(im1.copy(refusjon = Refusjon(BigDecimal(123), LocalDate.now())).isDuplicate(im1))
+        assertFalse(im1.copy(endringerIRefusjon = listOf(EndringIRefusjon(endringsdato = LocalDate.now(), beloep=BigDecimal(123)))).isDuplicate(im1))
+        assertFalse(im1.copy(opphørAvNaturalYtelse = listOf(OpphoerAvNaturalytelse(Naturalytelse.BIL, LocalDate.now(), beloepPrMnd = BigDecimal(123)))).isDuplicate(im1))
+        assertFalse(im1.copy(gjenopptakelserNaturalYtelse = listOf(GjenopptakelseNaturalytelse(Naturalytelse.BOLIG))).isDuplicate(im1))
+        assertTrue(im1.copy(gyldighetsStatus = Gyldighetsstatus.GYLDIG).isDuplicate(im1))
+        assertTrue(im1.copy(arkivRefereranse = "asd").isDuplicate(im1))
+        assertFalse(im1.copy(feriePerioder = listOf(Periode(LocalDate.now(), LocalDate.now()))).isDuplicate(im1))
+        assertFalse(im1.copy(førsteFraværsdag = LocalDate.now()).isDuplicate(im1))
+        assertTrue(im1.copy(mottattDato = LocalDateTime.now()).isDuplicate(im1))
+        assertTrue(im1.copy(sakId = "asd").isDuplicate(im1))
+        assertTrue(im1.copy(aktorId = "asd").isDuplicate(im1))
+        assertTrue(im1.copy(begrunnelseRedusert = "asd").isDuplicate(im1))
+        assertTrue(im1.copy(avsenderSystem = AvsenderSystem("asd")).isDuplicate(im1))
+        assertFalse(im1.copy(nærRelasjon = true).isDuplicate(im1))
+        assertFalse(im1.copy(kontaktinformasjon = Kontaktinformasjon("asd", "asd")).isDuplicate(im1))
+        assertTrue(im1.copy(innsendingstidspunkt = LocalDateTime.now()).isDuplicate(im1))
+        assertFalse(im1.copy(bruttoUtbetalt = BigDecimal(123)).isDuplicate(im1))
+        assertTrue(im1.copy(årsakEndring = "qwe").isDuplicate(im1))
+    }
+
+
 }
