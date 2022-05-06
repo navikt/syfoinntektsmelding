@@ -2,14 +2,15 @@ package no.nav.syfo.domain.inntektsmelding
 
 import no.nav.syfo.repository.buildIM
 import org.junit.jupiter.api.Test
+import java.math.BigDecimal
 
 internal class InntektsmeldingTest {
 
-    val im1 = buildIM().copy(fnr = "123456789")
-    val im2 = buildIM().copy(fnr = "000000000")
-    val im3 = buildIM().copy(fnr = "123456789")
-    val im4 = buildIM().copy(fnr = "123456789", arsakTilInnsending = "Tull")
-    val im5 = buildIM().copy(fnr = "123456789", arsakTilInnsending = "Tall")
+    val im1 = buildIM().copy(bruttoUtbetalt = BigDecimal(100))
+    val im2 = buildIM().copy(bruttoUtbetalt = BigDecimal(200))
+    val im3 = buildIM().copy(bruttoUtbetalt = BigDecimal(100))
+    val im4 = buildIM().copy(bruttoUtbetalt = BigDecimal(300), arsakTilInnsending = "Tull")
+    val im5 = buildIM().copy(bruttoUtbetalt = BigDecimal(300), arsakTilInnsending = "Tall")
 
     @Test
     fun `Skal være like`() {
