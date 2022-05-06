@@ -15,7 +15,7 @@ import no.nav.syfo.slowtests.SystemTestBase
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import java.util.*
+import java.util.UUID
 import kotlin.random.Random
 
 class DatapakkePublisherJobSpec : SystemTestBase() {
