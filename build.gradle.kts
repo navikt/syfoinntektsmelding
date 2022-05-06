@@ -75,7 +75,7 @@ tasks.test {
 sonarqube {
     properties {
         property("sonar.projectKey", "navikt_syfoinntektsmelding")
-        property("sonar.organization", "navit")
+        property("sonar.organization", "navikt")
         property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.sourceEncoding", "UTF-8")
     }
