@@ -51,6 +51,7 @@ data class Inntektsmelding(
                 journalpostId = this.journalpostId,
                 journalStatus = this.journalStatus,
                 arkivRefereranse = this.arkivRefereranse,
+                aktorId = this.aktorId,
                 sakId = this.sakId,
                 innsendingstidspunkt = this.innsendingstidspunkt,
                 avsenderSystem = this.avsenderSystem
