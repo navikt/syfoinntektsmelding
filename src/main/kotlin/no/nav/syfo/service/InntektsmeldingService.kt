@@ -16,7 +16,7 @@ class InntektsmeldingService(
 
     fun finnBehandledeInntektsmeldinger(aktoerId: String): List<Inntektsmelding> {
         val list = repository.findByAktorId(aktoerId).map { toInntektsmelding(it) }
-        log.info("Fant inntektsmeldinger for aktørID $aktoerId = ${list.toString()}")
+        log.info("Fant siste IM: ${list.last()}}")
         return list
     }
 
