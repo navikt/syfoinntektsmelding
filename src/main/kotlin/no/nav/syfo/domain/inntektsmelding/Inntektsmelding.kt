@@ -40,8 +40,8 @@ data class Inntektsmelding(
     val årsakEndring: String? = null,
 ) {
     fun isDuplicate(inntektsmelding: Inntektsmelding): Boolean {
-        //val log = LoggerFactory.getLogger(Inntektsmelding::class.java)
-        //log.info("isDuplicat: ${this.toString()} vs ${inntektsmelding.toString()}")
+        val log = LoggerFactory.getLogger(Inntektsmelding::class.java)
+        log.info("isDuplicat: ${this.toString()} vs ${inntektsmelding.toString()}")
         return this.equals(
             inntektsmelding.copy(
                 id = this.id,
