@@ -2,8 +2,6 @@ package no.nav.syfo.domain.inntektsmelding
 
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
-import no.nav.syfo.service.InntektsmeldingService
-import org.slf4j.LoggerFactory
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -40,8 +38,6 @@ data class Inntektsmelding(
     val årsakEndring: String? = null,
 ) {
     fun isDuplicate(inntektsmelding: Inntektsmelding): Boolean {
-        val log = LoggerFactory.getLogger(Inntektsmelding::class.java)
-        log.info("isDuplicat: ${this.toString()} vs ${inntektsmelding.toString()}")
         return this.equals(
             inntektsmelding.copy(
                 id = this.id,
