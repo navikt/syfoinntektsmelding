@@ -58,7 +58,7 @@ class PollForJoarkhendelserJob(
             }
             .onEach {
                 // https://confluence.adeo.no/display/BOA/Tema https://confluence.adeo.no/display/BOA/Mottakskanal
-                log.info("Fant journalpost AR${it.kanalReferanseId} fra ALTINN for syk med status midlertidig.")
+                log.info("Fant journalpost ${it.kanalReferanseId} fra ALTINN for syk med status midlertidig.")
                 bakgrunnsjobbRepo.save(
                     Bakgrunnsjobb(
                         type = JoarkInntektsmeldingHendelseProsessor.JOB_TYPE,
