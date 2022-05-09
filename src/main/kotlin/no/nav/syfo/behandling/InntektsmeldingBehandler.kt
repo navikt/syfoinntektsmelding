@@ -52,9 +52,10 @@ class InntektsmeldingBehandler(
 
             inntektsmelding.aktorId = aktorid
             if (inntektsmeldingService.isDuplicate(inntektsmelding)) {
-                log.info("Likhetssjekk: finnes fra før $inntektsmelding")
+                metrikk.tellFunksjonellLikhet()
+                log.info("Likhetssjekk: finnes fra før ${inntektsmelding.arkivRefereranse}")
             } else {
-                log.info("Likhetssjekk: ingen like detaljer fra før")
+                log.info("Likhetssjekk: ingen like detaljer fra før for ${inntektsmelding.arkivRefereranse}")
             }
 
             tellMetrikker(inntektsmelding)
