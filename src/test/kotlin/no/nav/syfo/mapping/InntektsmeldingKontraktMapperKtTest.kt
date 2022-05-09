@@ -9,6 +9,7 @@ import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.domain.inntektsmelding.Refusjon
 import no.nav.syfo.dto.InntektsmeldingEntitet
 import no.nav.syfo.grunnleggendeInntektsmelding
+import no.nav.syfo.koin.buildObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal
@@ -16,6 +17,8 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 class InntektsmeldingKontraktMapperKtTest {
+
+    val om = buildObjectMapper()
 
     @Test
     fun toInntektsmeldingDTO() {
@@ -47,21 +50,21 @@ class InntektsmeldingKontraktMapperKtTest {
     @Test
     fun toInntektsmelding() {
         val dto = InntektsmeldingEntitet(
-            journalpostId = "journalpostId",
-            behandlet = LocalDateTime.of(2019, 10, 1, 5, 18, 45, 0),
-            sakId = "sakId",
-            orgnummer = "orgnummer",
+            journalpostId = grunnleggendeInntektsmelding.journalpostId,
+            behandlet = LocalDateTime.of(2019, 10, 25, 0, 0, 0, 0),
+            sakId = grunnleggendeInntektsmelding.sakId!!,
+            orgnummer = grunnleggendeInntektsmelding.arbeidsgiverOrgnummer,
             arbeidsgiverPrivat = "arbeidsgiverPrivat",
-            aktorId = "aktorId"
+            aktorId = grunnleggendeInntektsmelding.aktorId.toString(),
+            data = om.writeValueAsString(grunnleggendeInntektsmelding)
         )
-        val i = toInntektsmelding(dto)
-        assertThat(i.journalpostId).isEqualTo("journalpostId")
-        assertThat(i.mottattDato).isEqualTo(LocalDateTime.of(2019, 10, 1, 5, 18, 45, 0))
+        val i = toInntektsmelding(dto, om)
+        assertThat(i.journalpostId).isEqualTo("123")
         assertThat(i.sakId).isEqualTo("sakId")
-        assertThat(i.arbeidsgiverOrgnummer).isEqualTo("orgnummer")
-        assertThat(i.fnr).isEqualTo("arbeidsgiverPrivat")
+        assertThat(i.arbeidsgiverOrgnummer).isEqualTo("1234")
+        assertThat(i.fnr).isEqualTo(grunnleggendeInntektsmelding.fnr)
         assertThat(i.aktorId).isEqualTo("aktorId")
-        assertThat(i.arbeidsgiverperioder.size).isEqualTo(0)
+        assertThat(i.arbeidsgiverperioder.size).isEqualTo(1)
     }
 
     @Test

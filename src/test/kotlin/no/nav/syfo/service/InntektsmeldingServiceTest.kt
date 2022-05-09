@@ -37,7 +37,7 @@ class InntektsmeldingServiceTest {
         val repository = mockk<InntektsmeldingRepository>(relaxed = true)
         val service = InntektsmeldingService(repository, objectMapper)
         val ent = buildEntitet(AKTOR_ID_FOUND, buildIM())
-        val im = toInntektsmelding(ent)
+        val im = toInntektsmelding(ent, objectMapper)
         every { repository.findByAktorId(any()) } returns listOf(ent)
         assertTrue(service.isDuplicate(im))
     }
@@ -47,7 +47,7 @@ class InntektsmeldingServiceTest {
         val repository = mockk<InntektsmeldingRepository>(relaxed = true)
         val service = InntektsmeldingService(repository, objectMapper)
         val ent = buildEntitet(AKTOR_ID_FOUND, buildIM())
-        val im = toInntektsmelding(ent).copy(arbeidsforholdId = "abc")
+        val im = toInntektsmelding(ent, objectMapper).copy(arbeidsforholdId = "abc")
         every { repository.findByAktorId(any()) } returns listOf(ent)
         assertFalse(service.isDuplicate(im))
     }
