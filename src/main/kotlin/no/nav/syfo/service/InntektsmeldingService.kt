@@ -16,7 +16,9 @@ class InntektsmeldingService(
 
     fun finnBehandledeInntektsmeldinger(aktoerId: String): List<Inntektsmelding> {
         val list = repository.findByAktorId(aktoerId).map { toInntektsmelding(it) }
-        log.info("Fant siste IM: ${list.last()}}")
+        if (!list.isEmpty()){
+            log.info("Fant siste IM: ${list.last()}}")
+        }
         return list
     }
 
@@ -26,11 +28,6 @@ class InntektsmeldingService(
         }
         return inntektsmelding.indexOf(finnBehandledeInntektsmeldinger(inntektsmelding.aktorId!!)) > -1
     }
-
-    /**
-     * Finner inntektsmelding som er lik tidligere innsendt som ikke trengs å behandles på nytt
-     */
-    fun findPresent(inntektsmelding: Inntektsmelding, aktoerId: String): Inntektsmelding? = finnBehandledeInntektsmeldinger(aktoerId).find { it.isDuplicate(inntektsmelding) }
 
     fun lagreBehandling(
         inntektsmelding: Inntektsmelding,

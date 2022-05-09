@@ -61,22 +61,6 @@ class InntektsmeldingServiceTest {
     }
 
     @Test
-    fun `findPresent - Skal kunne finne eksisterende duplikater når inntektsmeldingene er like`() {
-        val repository = mockk<InntektsmeldingRepository>(relaxed = true)
-        val service = InntektsmeldingService(repository, objectMapper)
-        every { repository.findByAktorId(any()) } returns listOf(buildEntitet(AKTOR_ID_FOUND, buildIM()))
-        assertNull(service.findPresent(buildIM().copy(aktorId = AKTOR_ID_FOUND), AKTOR_ID_FOUND))
-    }
-
-    @Test
-    fun `findPresent - Skal ikke kunne finne eksisterende duplikater når inntektsmeldingene er ulike`() {
-        val repository = mockk<InntektsmeldingRepository>(relaxed = true)
-        val service = InntektsmeldingService(repository, objectMapper)
-        every { repository.findByAktorId(any()) } returns emptyList()
-        assertNull(service.findPresent(buildIM().copy(aktorId = AKTOR_ID_FOUND, sakId = "diff"), AKTOR_ID_FOUND))
-    }
-
-    @Test
     fun `Skal gi forventet JSON format`() {
         val im = buildIM()
         val json = im.asJsonString(objectMapper)
