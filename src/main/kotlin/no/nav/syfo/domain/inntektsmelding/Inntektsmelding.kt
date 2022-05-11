@@ -56,9 +56,9 @@ data class Inntektsmelding(
             )
         )
     }
-    fun indexOf(inntektsmeldinger: List<Inntektsmelding>) : Int {
+    fun indexOf(inntektsmeldinger: List<Inntektsmelding>): Int {
         inntektsmeldinger.forEachIndexed { index, inntektsmelding ->
-            if (inntektsmelding.isDuplicate(this)){
+            if (inntektsmelding.isDuplicate(this)) {
                 return index
             }
         }

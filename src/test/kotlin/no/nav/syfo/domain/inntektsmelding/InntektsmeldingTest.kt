@@ -53,10 +53,10 @@ internal class InntektsmeldingTest {
         assertTrue(im1.copy(journalpostId = "asd").isDuplicate(im1))
         assertTrue(im1.copy(arsakTilInnsending = "asd").isDuplicate(im1))
         assertTrue(im1.copy(journalStatus = JournalStatus.MOTTATT).isDuplicate(im1))
-        assertFalse(im1.copy(arbeidsgiverperioder = listOf(Periode(fom=LocalDate.now(), tom=LocalDate.now()))).isDuplicate(im1))
+        assertFalse(im1.copy(arbeidsgiverperioder = listOf(Periode(fom = LocalDate.now(), tom = LocalDate.now()))).isDuplicate(im1))
         assertFalse(im1.copy(beregnetInntekt = BigDecimal(200)).isDuplicate(im1))
         assertFalse(im1.copy(refusjon = Refusjon(BigDecimal(123), LocalDate.now())).isDuplicate(im1))
-        assertFalse(im1.copy(endringerIRefusjon = listOf(EndringIRefusjon(endringsdato = LocalDate.now(), beloep=BigDecimal(123)))).isDuplicate(im1))
+        assertFalse(im1.copy(endringerIRefusjon = listOf(EndringIRefusjon(endringsdato = LocalDate.now(), beloep = BigDecimal(123)))).isDuplicate(im1))
         assertFalse(im1.copy(opphørAvNaturalYtelse = listOf(OpphoerAvNaturalytelse(Naturalytelse.BIL, LocalDate.now(), beloepPrMnd = BigDecimal(123)))).isDuplicate(im1))
         assertFalse(im1.copy(gjenopptakelserNaturalYtelse = listOf(GjenopptakelseNaturalytelse(Naturalytelse.BOLIG))).isDuplicate(im1))
         assertTrue(im1.copy(gyldighetsStatus = Gyldighetsstatus.GYLDIG).isDuplicate(im1))
@@ -74,6 +74,4 @@ internal class InntektsmeldingTest {
         assertFalse(im1.copy(bruttoUtbetalt = BigDecimal(123)).isDuplicate(im1))
         assertTrue(im1.copy(årsakEndring = "qwe").isDuplicate(im1))
     }
-
-
 }
