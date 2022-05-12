@@ -42,5 +42,4 @@ class DokArkivClientTest {
             assertEquals(HttpStatusCode.OK, resultat.status)
         }
     }
-
 }
