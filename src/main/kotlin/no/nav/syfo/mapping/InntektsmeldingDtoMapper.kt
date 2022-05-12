@@ -22,7 +22,7 @@ fun toInntektsmeldingEntitet(inntektsmelding: Inntektsmelding): InntektsmeldingE
 
 fun toInntektsmelding(inntektsmeldingEntitet: InntektsmeldingEntitet, objectMapper: ObjectMapper): Inntektsmelding {
     var im = objectMapper.readValue(inntektsmeldingEntitet.data, Inntektsmelding::class.java)
-    if (im.journalStatus == JournalStatus.MIDLERTIDIG){
+    if (im.journalStatus == JournalStatus.MIDLERTIDIG) {
         im.journalStatus = JournalStatus.MOTTATT
     }
     return im
