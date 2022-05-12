@@ -15,7 +15,7 @@ data class Inntektsmelding(
     val arbeidsforholdId: String? = null,
     val journalpostId: String,
     val arsakTilInnsending: String,
-    val journalStatus: JournalStatus,
+    var journalStatus: JournalStatus,
     val arbeidsgiverperioder: List<Periode> = emptyList(),
     val beregnetInntekt: BigDecimal? = null,
     val refusjon: Refusjon = Refusjon(),

@@ -1,6 +1,7 @@
 package no.nav.syfo.mapping
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.dto.ArbeidsgiverperiodeEntitet
@@ -20,7 +21,11 @@ fun toInntektsmeldingEntitet(inntektsmelding: Inntektsmelding): InntektsmeldingE
 }
 
 fun toInntektsmelding(inntektsmeldingEntitet: InntektsmeldingEntitet, objectMapper: ObjectMapper): Inntektsmelding {
-    return objectMapper.readValue(inntektsmeldingEntitet.data, Inntektsmelding::class.java)
+    var im = objectMapper.readValue(inntektsmeldingEntitet.data, Inntektsmelding::class.java)
+    if (im.journalStatus == JournalStatus.MIDLERTIDIG){
+        im.journalStatus = JournalStatus.MOTTATT
+    }
+    return im
 }
 
 fun mapPerioder(perioder: List<ArbeidsgiverperiodeEntitet>): List<Periode> {
