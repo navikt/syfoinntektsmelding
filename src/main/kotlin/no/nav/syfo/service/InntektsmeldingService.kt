@@ -15,8 +15,14 @@ class InntektsmeldingService(
     val log = LoggerFactory.getLogger(InntektsmeldingService::class.java)
 
     fun finnBehandledeInntektsmeldinger(aktoerId: String): List<Inntektsmelding> {
-        val liste = repository.findByAktorId(aktoerId)
-        return liste.map { InntektsmeldingMeta -> toInntektsmelding(InntektsmeldingMeta) }
+        return repository.findByAktorId(aktoerId).map { toInntektsmelding(it, objectMapper) }
+    }
+
+    fun isDuplicate(inntektsmelding: Inntektsmelding): Boolean {
+        if (inntektsmelding.aktorId == null) {
+            return false
+        }
+        return inntektsmelding.isDuplicate(finnBehandledeInntektsmeldinger(inntektsmelding.aktorId!!))
     }
 
     fun lagreBehandling(
