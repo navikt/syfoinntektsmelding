@@ -33,16 +33,6 @@ internal class InntektsmeldingTest {
     }
 
     @Test
-    fun `Skal finne riktig index`() {
-        assertEquals(2, im1.indexOf(listOf(im4, im5, im3)))
-    }
-
-    @Test
-    fun `Skal ikke finne riktig index`() {
-        assertEquals(-1, im3.indexOf(listOf(im4, im5)))
-    }
-
-    @Test
     fun `Hvilke felter som skal ignoreres`() {
         assertTrue(im1.copy(id = "asd").isDuplicate(im1))
         assertTrue(im1.copy(fnr = "asd").isDuplicate(im1))

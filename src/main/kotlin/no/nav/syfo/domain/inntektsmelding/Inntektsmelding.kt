@@ -56,12 +56,8 @@ data class Inntektsmelding(
             )
         )
     }
-    fun indexOf(inntektsmeldinger: List<Inntektsmelding>): Int {
-        inntektsmeldinger.forEachIndexed { index, inntektsmelding ->
-            if (inntektsmelding.isDuplicate(this)) {
-                return index
-            }
-        }
-        return -1
-    }
+
+    fun isDuplicate(inntektsmeldinger: List<Inntektsmelding>): Boolean =
+        inntektsmeldinger.any { it.isDuplicate(this) }
+
 }

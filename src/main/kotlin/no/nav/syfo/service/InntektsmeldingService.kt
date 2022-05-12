@@ -22,7 +22,7 @@ class InntektsmeldingService(
         if (inntektsmelding.aktorId == null) {
             return false
         }
-        return inntektsmelding.indexOf(finnBehandledeInntektsmeldinger(inntektsmelding.aktorId!!)) > -1
+        return inntektsmelding.isDuplicate(finnBehandledeInntektsmeldinger(inntektsmelding.aktorId!!))
     }
 
     fun lagreBehandling(
