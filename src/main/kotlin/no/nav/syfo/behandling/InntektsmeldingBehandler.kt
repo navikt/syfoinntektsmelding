@@ -88,7 +88,7 @@ class InntektsmeldingBehandler(
                         utbetalingBruker = false
                     )
                 )
-                log.info("Opprettet utsatt oppgave for ${inntektsmelding.arkivRefereranse}")
+                log.info("Lagrer UtsattOppgave i databasen for ${inntektsmelding.arkivRefereranse}")
 
                 val mappedInntektsmelding = mapInntektsmeldingKontrakt(
                     inntektsmelding,
