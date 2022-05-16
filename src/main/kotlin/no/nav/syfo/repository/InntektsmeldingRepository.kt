@@ -126,9 +126,10 @@ class InntektsmeldingRepositoryImp(
 
     override fun lagreInnteksmelding(innteksmelding: InntektsmeldingEntitet): InntektsmeldingEntitet {
         val insertStatement =
-            """INSERT INTO INNTEKTSMELDING (INNTEKTSMELDING_UUID, AKTOR_ID, ORGNUMMER, SAK_ID, JOURNALPOST_ID, BEHANDLET, ARBEIDSGIVER_PRIVAT, DATA)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?::jsonb)
-        RETURNING *;""".trimMargin()
+            """INSERT INTO INNTEKTSMELDING (INNTEKTSMELDING_UUID, AKTOR_ID, ORGNUMMER, JOURNALPOST_ID, BEHANDLET, ARBEIDSGIVER_PRIVAT, DATA)
+        VALUES (?, ?, ?, ?, ?, ?, ?::jsonb)
+        RETURNING *;
+            """.trimMargin()
         val inntektsmeldinger = ArrayList<InntektsmeldingEntitet>()
         var result: InntektsmeldingEntitet
         ds.connection.use {
@@ -136,11 +137,10 @@ class InntektsmeldingRepositoryImp(
             ps.setString(1, innteksmelding.uuid)
             ps.setString(2, innteksmelding.aktorId)
             ps.setString(3, innteksmelding.orgnummer)
-            ps.setString(4, innteksmelding.sakId)
-            ps.setString(5, innteksmelding.journalpostId)
-            ps.setTimestamp(6, Timestamp.valueOf(innteksmelding.behandlet))
-            ps.setString(7, innteksmelding.arbeidsgiverPrivat)
-            ps.setString(8, innteksmelding.data)
+            ps.setString(4, innteksmelding.journalpostId)
+            ps.setTimestamp(5, Timestamp.valueOf(innteksmelding.behandlet))
+            ps.setString(6, innteksmelding.arbeidsgiverPrivat)
+            ps.setString(7, innteksmelding.data)
 
             val res = ps.executeQuery()
             result = resultLoop(res, inntektsmeldinger).first()
@@ -193,7 +193,6 @@ class InntektsmeldingRepositoryImp(
                     uuid = res.getString("INNTEKTSMELDING_UUID"),
                     aktorId = res.getString("AKTOR_ID"),
                     orgnummer = res.getString("ORGNUMMER"),
-                    sakId = res.getString("SAK_ID"),
                     journalpostId = res.getString("JOURNALPOST_ID"),
                     behandlet = res.getTimestamp("BEHANDLET").toLocalDateTime(),
                     arbeidsgiverPrivat = res.getString("ARBEIDSGIVER_PRIVAT"),

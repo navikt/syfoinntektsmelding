@@ -28,12 +28,10 @@ class InntektsmeldingService(
     fun lagreBehandling(
         inntektsmelding: Inntektsmelding,
         aktorid: String,
-        saksId: String,
         arkivReferanse: String
     ): InntektsmeldingEntitet {
         val dto = toInntektsmeldingEntitet(inntektsmelding)
         dto.aktorId = aktorid
-        dto.sakId = saksId
         dto.data = inntektsmelding.asJsonString(objectMapper)
         return repository.lagreInnteksmelding(dto)
     }

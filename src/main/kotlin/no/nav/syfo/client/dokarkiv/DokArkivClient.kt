@@ -122,7 +122,6 @@ class DokArkivClient(
         journalpostId: String,
         fnr: String,
         isFnr: Boolean,
-        gsakId: String,
         arbeidsgiverNavn: String,
         msgId: String
     ): HttpResponse {
@@ -136,7 +135,7 @@ class DokArkivClient(
                 }
             ),
             avsenderMottaker = AvsenderMottaker(fnr, arbeidsgiverNavn),
-            sak = Sak("ARKIVSAK", "GSAK", gsakId)
+            sak = Sak("GENERELL_SAK", "GSAK")
         )
         return oppdaterJournalpost(journalpostId, req, msgId)
     }

@@ -103,7 +103,6 @@ fun opprettOppgaveIGosys(
     log.info("Fant enhet $behandlendeEnhet for ${utsattOppgave.arkivreferanse}")
     val resultat = runBlocking {
         oppgaveClient.opprettOppgave(
-            sakId = utsattOppgave.sakId,
             journalpostId = utsattOppgave.journalpostId,
             tildeltEnhetsnr = null,
             aktoerId = utsattOppgave.aktørId,

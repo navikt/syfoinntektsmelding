@@ -25,7 +25,6 @@ class BehandleInngaaendeJournalConsumer(private val dokArkivClient: DokArkivClie
                 journalpostId,
                 avsenderNr,
                 isFnr,
-                inngaendeJournalpost.gsakId,
                 inngaendeJournalpost.arbeidsgiverNavn,
                 MDCOperations.generateCallId()
             )

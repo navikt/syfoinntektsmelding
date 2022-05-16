@@ -19,7 +19,7 @@ class BehandleInngaaendeJournalConsumerTest {
         val behandlendeEngetId = "behandlendeEngetId"
         val journalpostId = "journalpostId"
         behandleInngaaendeJournalConsumer.ferdigstillJournalpost(
-            InngaendeJournalpost(behandlendeEnhetId = behandlendeEngetId, journalpostId = journalpostId, dokumentId = "dokumentId", fnr = "fnr", gsakId = "id")
+            InngaendeJournalpost(behandlendeEnhetId = behandlendeEngetId, journalpostId = journalpostId, dokumentId = "dokumentId", fnr = "fnr")
         )
         verify {
             runBlocking {
@@ -32,7 +32,6 @@ class BehandleInngaaendeJournalConsumerTest {
     fun oppdaterJournalpostMedPrivatAvsender() {
         val inngaendeJournalpost = InngaendeJournalpost(
             fnr = "fnr",
-            gsakId = "saksID",
             behandlendeEnhetId = "enhet",
             dokumentId = "dokumentId",
             journalpostId = "journalpostId",
@@ -41,7 +40,7 @@ class BehandleInngaaendeJournalConsumerTest {
         behandleInngaaendeJournalConsumer.oppdaterJournalpost(inngaendeJournalpost)
         verify {
             runBlocking {
-                dokArkivClient.oppdaterJournalpost("journalpostId", any(), any(), any(), any(), any())
+                dokArkivClient.oppdaterJournalpost("journalpostId", any(), any(), any(), any())
             }
         }
         // TODO - Asserten under må virke

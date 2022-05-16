@@ -11,7 +11,6 @@ import no.nav.syfo.behandling.InntektsmeldingBehandler
 import no.nav.syfo.client.BrregClient
 import no.nav.syfo.client.MockBrregClient
 import no.nav.syfo.client.OppgaveClient
-import no.nav.syfo.client.SakClient
 import no.nav.syfo.client.TokenConsumer
 import no.nav.syfo.client.aktor.AktorClient
 import no.nav.syfo.client.dokarkiv.DokArkivClient
@@ -33,7 +32,6 @@ import no.nav.syfo.repository.DuplikatRepository
 import no.nav.syfo.repository.DuplikatRepositoryImpl
 import no.nav.syfo.repository.FeiletRepository
 import no.nav.syfo.repository.FeiletRepositoryImp
-import no.nav.syfo.repository.FeiletService
 import no.nav.syfo.repository.IMStatsRepo
 import no.nav.syfo.repository.IMStatsRepoImpl
 import no.nav.syfo.repository.InntektsmeldingRepository
@@ -49,7 +47,6 @@ import no.nav.syfo.service.InngaaendeJournalConsumer
 import no.nav.syfo.service.InntektsmeldingService
 import no.nav.syfo.service.JournalConsumer
 import no.nav.syfo.service.JournalpostService
-import no.nav.syfo.service.SaksbehandlingService
 import no.nav.syfo.util.Metrikk
 import no.nav.syfo.utsattoppgave.FeiletUtsattOppgaveMeldingProsessor
 import no.nav.syfo.utsattoppgave.UtsattOppgaveDAO
@@ -126,7 +123,6 @@ fun localDevConfig(config: ApplicationConfig) = module {
             get(),
             get(),
             get(),
-            get(),
             get()
         )
     } bind InntektsmeldingBehandler::class
@@ -136,9 +132,6 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single { Metrikk() } bind Metrikk::class
     single { JournalpostService(get(), get(), get(), get(), get(), get()) } bind JournalpostService::class
     single { InntektsmeldingService(InntektsmeldingRepositoryImp(get()), get()) } bind InntektsmeldingService::class
-    single { SakClient(config.getString("opprett_sak_url"), get(), get()) } bind SakClient::class
-    single { SaksbehandlingService(get(), get(), get()) } bind SaksbehandlingService::class
-    single { FeiletService(get()) } bind FeiletService::class
     single {
         JoarkInntektsmeldingHendelseProsessor(
             get(),

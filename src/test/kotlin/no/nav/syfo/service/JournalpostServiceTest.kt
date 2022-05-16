@@ -40,7 +40,6 @@ class JournalpostServiceTest {
         every { behandlendeEnhetConsumer.hentBehandlendeEnhet(any(), any()) } returns "enhet"
 
         journalpostService.ferdigstillJournalpost(
-            "saksId",
             Inntektsmelding(
                 fnr = "fnr",
                 arbeidsgiverOrgnummer = "orgnummer",

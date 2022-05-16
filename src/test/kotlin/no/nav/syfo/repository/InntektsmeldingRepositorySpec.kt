@@ -46,7 +46,6 @@ open class InntektsmeldingRepositorySpec : SystemTestBase() {
         val inntektsmelding = InntektsmeldingEntitet(
             journalpostId = "journalpostId",
             behandlet = behandlet,
-            sakId = "sakId",
             orgnummer = "orgnummer",
             arbeidsgiverPrivat = "arbeidsgiverPrivat",
             aktorId = "aktorId1"
@@ -58,7 +57,6 @@ open class InntektsmeldingRepositorySpec : SystemTestBase() {
         val i = inntektsmeldinger[0]
         assertThat(i.uuid).isNotNull
         assertThat(i.journalpostId).isEqualTo("journalpostId")
-        assertThat(i.sakId).isEqualTo("sakId")
         assertThat(i.orgnummer).isEqualTo("orgnummer")
         assertThat(i.arbeidsgiverPrivat).isEqualTo("arbeidsgiverPrivat")
         assertThat(i.aktorId).isEqualTo("aktorId1")
@@ -76,7 +74,6 @@ open class InntektsmeldingRepositorySpec : SystemTestBase() {
         val inntektsmelding = InntektsmeldingEntitet(
             journalpostId = "journalpostId",
             behandlet = behandlet,
-            sakId = "sakId",
             orgnummer = "orgnummer",
             arbeidsgiverPrivat = "arbeidsgiverPrivat",
             aktorId = "aktorId2"
@@ -100,7 +97,6 @@ open class InntektsmeldingRepositorySpec : SystemTestBase() {
         val inntektsmelding = InntektsmeldingEntitet(
             journalpostId = "journalpostId",
             behandlet = behandlet,
-            sakId = "sakId",
             orgnummer = "orgnummer",
             arbeidsgiverPrivat = "arbeidsgiverPrivat",
             aktorId = "aktorId3"
@@ -159,7 +155,6 @@ open class InntektsmeldingRepositorySpec : SystemTestBase() {
         val inntektsmelding = InntektsmeldingEntitet(
             journalpostId = "journalpostId",
             behandlet = LocalDateTime.now(),
-            sakId = "sakId",
             orgnummer = "orgnummer",
             arbeidsgiverPrivat = "arbeidsgiverPrivat",
             aktorId = "aktorId-repo-test",
@@ -221,7 +216,6 @@ open class InntektsmeldingRepositorySpec : SystemTestBase() {
         return InntektsmeldingEntitet(
             journalpostId = "journalpostId",
             behandlet = behandlet,
-            sakId = "sakId",
             orgnummer = "orgnummer",
             arbeidsgiverPrivat = "arbeidsgiverPrivat",
             aktorId = "aktorId1"

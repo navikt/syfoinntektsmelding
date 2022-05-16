@@ -33,7 +33,7 @@ class OppgaveClientTest {
     fun henterEksisterendeOppgave() {
         runBlocking {
             oppgaveClient = OppgaveClient("url", tokenConsumer, buildHttpClientJson(HttpStatusCode.OK, lagOppgaveResponse()), metrikk)
-            val resultat = oppgaveClient.opprettOppgave("sakId", "123", "tildeltEnhet", "aktoerid", false, false, BehandlingsTema.REFUSJON_MED_DATO)
+            val resultat = oppgaveClient.opprettOppgave("123", "tildeltEnhet", "aktoerid", false, false, BehandlingsTema.REFUSJON_MED_DATO)
             assertThat(resultat.oppgaveId).isEqualTo(OPPGAVE_ID)
             assertThat(resultat.duplikat).isTrue
         }
@@ -44,7 +44,7 @@ class OppgaveClientTest {
     fun oppretterNyOppgave() {
         runBlocking {
             oppgaveClient = OppgaveClient("url", tokenConsumer, buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk)
-            val resultat = oppgaveClient.opprettOppgave("sakId", "123", "tildeltEnhet", "aktoerid", false, false, BehandlingsTema.REFUSJON_MED_DATO)
+            val resultat = oppgaveClient.opprettOppgave("123", "tildeltEnhet", "aktoerid", false, false, BehandlingsTema.REFUSJON_MED_DATO)
             val requestVerdier = hentRequestInnhold(oppgaveClient.httpClient)
             assertThat(resultat.oppgaveId).isNotEqualTo(OPPGAVE_ID)
             assertThat(resultat.duplikat).isFalse
@@ -84,13 +84,13 @@ class OppgaveClientTest {
     fun skal_opprette_utland() {
         runBlocking {
             oppgaveClient = OppgaveClient("url", tokenConsumer, buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk)
-            oppgaveClient.opprettOppgave("sakId", "123", "tildeltEnhet", "aktoerid", true, false, BehandlingsTema.REFUSJON_MED_DATO)
+            oppgaveClient.opprettOppgave("123", "tildeltEnhet", "aktoerid", true, false, BehandlingsTema.REFUSJON_MED_DATO)
             val requestVerdier = hentRequestInnhold(oppgaveClient.httpClient)
             assertThat(requestVerdier?.behandlingstype).isEqualTo("ae0106")
         }
         runBlocking {
             oppgaveClient = OppgaveClient("url", tokenConsumer, buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk)
-            oppgaveClient.opprettOppgave("sakId", "123", "tildeltEnhet", "aktoerid", true, false, BehandlingsTema.REFUSJON_UTEN_DATO)
+            oppgaveClient.opprettOppgave("123", "tildeltEnhet", "aktoerid", true, false, BehandlingsTema.REFUSJON_UTEN_DATO)
             val requestVerdier = hentRequestInnhold(oppgaveClient.httpClient)
             assertThat(requestVerdier?.behandlingstype).isEqualTo("ae0106")
         }
@@ -101,7 +101,7 @@ class OppgaveClientTest {
     fun skal_opprette_speil() {
         runBlocking {
             oppgaveClient = OppgaveClient("url", tokenConsumer, buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk)
-            oppgaveClient.opprettOppgave("sakId", "123", "tildeltEnhet", "aktoerid", true, true, BehandlingsTema.REFUSJON_UTEN_DATO)
+            oppgaveClient.opprettOppgave("123", "tildeltEnhet", "aktoerid", true, true, BehandlingsTema.REFUSJON_UTEN_DATO)
             val requestVerdier = hentRequestInnhold(oppgaveClient.httpClient)
             assertThat(requestVerdier?.behandlingstema).isEqualTo("ab0455")
         }
@@ -127,19 +127,19 @@ class OppgaveClientTest {
     fun skal_utbetale_til_bruker() {
         runBlocking {
             oppgaveClient = OppgaveClient("url", tokenConsumer, buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk)
-            oppgaveClient.opprettOppgave("sakId", "123", "tildeltEnhet", "aktoerid", false, false, BehandlingsTema.REFUSJON_MED_DATO)
+            oppgaveClient.opprettOppgave("123", "tildeltEnhet", "aktoerid", false, false, BehandlingsTema.REFUSJON_MED_DATO)
             val requestVerdier = hentRequestInnhold(oppgaveClient.httpClient)
             assertThat(requestVerdier?.behandlingstema).isEqualTo("ab0458")
         }
         runBlocking {
             oppgaveClient = OppgaveClient("url", tokenConsumer, buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk)
-            oppgaveClient.opprettOppgave("sakId", "123", "tildeltEnhet", "aktoerid", false, false, BehandlingsTema.IKKE_REFUSJON)
+            oppgaveClient.opprettOppgave("123", "tildeltEnhet", "aktoerid", false, false, BehandlingsTema.IKKE_REFUSJON)
             val requestVerdier = hentRequestInnhold(oppgaveClient.httpClient)
             assertThat(requestVerdier?.behandlingstema).isEqualTo("ab0458")
         }
         runBlocking {
             oppgaveClient = OppgaveClient("url", tokenConsumer, buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk)
-            oppgaveClient.opprettOppgave("sakId", "123", "tildeltEnhet", "aktoerid", false, false, BehandlingsTema.REFUSJON_LITEN_LØNN)
+            oppgaveClient.opprettOppgave("123", "tildeltEnhet", "aktoerid", false, false, BehandlingsTema.REFUSJON_LITEN_LØNN)
             val requestVerdier = hentRequestInnhold(oppgaveClient.httpClient)
             assertThat(requestVerdier?.behandlingstema).isEqualTo("ab0458")
         }

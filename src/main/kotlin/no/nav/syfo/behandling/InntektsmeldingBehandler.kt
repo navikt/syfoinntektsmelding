@@ -13,7 +13,6 @@ import no.nav.syfo.mapping.mapInntektsmeldingKontrakt
 import no.nav.syfo.producer.InntektsmeldingAivenProducer
 import no.nav.syfo.service.InntektsmeldingService
 import no.nav.syfo.service.JournalpostService
-import no.nav.syfo.service.SaksbehandlingService
 import no.nav.syfo.util.Metrikk
 import no.nav.syfo.util.validerInntektsmelding
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
@@ -21,7 +20,6 @@ import java.time.LocalDateTime
 
 class InntektsmeldingBehandler(
     private val journalpostService: JournalpostService,
-    private val saksbehandlingService: SaksbehandlingService,
     private val metrikk: Metrikk,
     private val inntektsmeldingService: InntektsmeldingService,
     private val aktorClient: AktorClient,
@@ -63,19 +61,15 @@ class InntektsmeldingBehandler(
             if (JournalStatus.MOTTATT == inntektsmelding.journalStatus) {
                 metrikk.tellInntektsmeldingerMottatt(inntektsmelding)
 
-                val saksId = saksbehandlingService.finnEllerOpprettSakForInntektsmelding(inntektsmelding, aktorid, arkivreferanse)
-                log.info("Fant sak $saksId for ${inntektsmelding.arkivRefereranse}")
-
-                journalpostService.ferdigstillJournalpost(saksId, inntektsmelding)
+                journalpostService.ferdigstillJournalpost(inntektsmelding)
                 log.info("Ferdigstilte ${inntektsmelding.arkivRefereranse}")
 
-                val dto = inntektsmeldingService.lagreBehandling(inntektsmelding, aktorid, saksId, arkivreferanse)
+                val dto = inntektsmeldingService.lagreBehandling(inntektsmelding, aktorid, arkivreferanse)
                 log.info("Lagret inntektsmelding ${inntektsmelding.arkivRefereranse}")
 
                 utsattOppgaveService.opprett(
                     UtsattOppgaveEntitet(
                         fnr = inntektsmelding.fnr,
-                        sakId = saksId,
                         aktørId = dto.aktorId,
                         journalpostId = inntektsmelding.journalpostId,
                         arkivreferanse = inntektsmelding.arkivRefereranse,

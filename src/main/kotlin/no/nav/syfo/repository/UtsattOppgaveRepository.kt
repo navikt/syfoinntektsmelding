@@ -85,9 +85,10 @@ class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepo
 
     override fun opprett(uo: UtsattOppgaveEntitet): UtsattOppgaveEntitet {
         val insertStatement =
-            """INSERT INTO UTSATT_OPPGAVE (INNTEKTSMELDING_ID, ARKIVREFERANSE, FNR, AKTOR_ID, SAK_ID, JOURNALPOST_ID, TIMEOUT, TILSTAND, GOSYS_OPPGAVE_ID, OPPDATERT, SPEIL, UTBETALING_BRUKER)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        RETURNING *;""".trimMargin()
+            """INSERT INTO UTSATT_OPPGAVE (INNTEKTSMELDING_ID, ARKIVREFERANSE, FNR, AKTOR_ID, JOURNALPOST_ID, TIMEOUT, TILSTAND, GOSYS_OPPGAVE_ID, OPPDATERT, SPEIL, UTBETALING_BRUKER)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        RETURNING *;
+            """.trimMargin()
 
         val utsattOppgaver = ArrayList<UtsattOppgaveEntitet>()
 
@@ -97,14 +98,13 @@ class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepo
             ps.setString(2, uo.arkivreferanse)
             ps.setString(3, uo.fnr)
             ps.setString(4, uo.aktørId)
-            ps.setString(5, uo.sakId)
-            ps.setString(6, uo.journalpostId)
-            ps.setTimestamp(7, Timestamp.valueOf(uo.timeout))
-            ps.setString(8, uo.tilstand.name)
-            ps.setString(9, uo.gosysOppgaveId)
-            ps.setTimestamp(10, Timestamp.valueOf(uo.oppdatert ?: LocalDateTime.now()))
-            ps.setBoolean(11, uo.speil)
-            ps.setBoolean(12, uo.utbetalingBruker)
+            ps.setString(5, uo.journalpostId)
+            ps.setTimestamp(6, Timestamp.valueOf(uo.timeout))
+            ps.setString(7, uo.tilstand.name)
+            ps.setString(8, uo.gosysOppgaveId)
+            ps.setTimestamp(9, Timestamp.valueOf(uo.oppdatert ?: LocalDateTime.now()))
+            ps.setBoolean(10, uo.speil)
+            ps.setBoolean(11, uo.utbetalingBruker)
             val res = ps.executeQuery()
             return resultLoop(res, utsattOppgaver).first()
         }
@@ -117,7 +117,6 @@ class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepo
                 ARKIVREFERANSE =  ?,
                 FNR =  ?,
                 AKTOR_ID =  ?,
-                SAK_ID =  ?,
                 JOURNALPOST_ID =  ?,
                 TIMEOUT =  ?,
                 TILSTAND =  ?,
@@ -126,7 +125,8 @@ class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepo
                 OPPDATERT = ?,
                 SPEIL = ?,
                 UTBETALING_BRUKER = ?
-            WHERE OPPGAVE_ID = ?""".trimMargin()
+            WHERE OPPGAVE_ID = ?
+            """.trimMargin()
 
         ds.connection.use {
             val ps = it.prepareStatement(updateStatement)
@@ -134,16 +134,15 @@ class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepo
             ps.setString(2, uo.arkivreferanse)
             ps.setString(3, uo.fnr)
             ps.setString(4, uo.aktørId)
-            ps.setString(5, uo.sakId)
-            ps.setString(6, uo.journalpostId)
-            ps.setTimestamp(7, Timestamp.valueOf(uo.timeout))
-            ps.setString(8, uo.tilstand.name)
-            ps.setString(9, uo.enhet)
-            ps.setString(10, uo.gosysOppgaveId)
-            ps.setTimestamp(11, Timestamp.valueOf(uo.oppdatert ?: LocalDateTime.now()))
-            ps.setBoolean(12, uo.speil)
-            ps.setBoolean(13, uo.utbetalingBruker)
-            ps.setInt(14, uo.id)
+            ps.setString(5, uo.journalpostId)
+            ps.setTimestamp(6, Timestamp.valueOf(uo.timeout))
+            ps.setString(7, uo.tilstand.name)
+            ps.setString(8, uo.enhet)
+            ps.setString(9, uo.gosysOppgaveId)
+            ps.setTimestamp(10, Timestamp.valueOf(uo.oppdatert ?: LocalDateTime.now()))
+            ps.setBoolean(11, uo.speil)
+            ps.setBoolean(12, uo.utbetalingBruker)
+            ps.setInt(13, uo.id)
             ps.executeUpdate()
             return uo
         }
@@ -177,7 +176,6 @@ class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepo
                     arkivreferanse = res.getString("ARKIVREFERANSE"),
                     fnr = res.getString("FNR"),
                     aktørId = res.getString("AKTOR_ID"),
-                    sakId = res.getString("SAK_ID"),
                     journalpostId = res.getString("JOURNALPOST_ID"),
                     timeout = res.getTimestamp("TIMEOUT").toLocalDateTime(),
                     tilstand = Tilstand.valueOf(res.getString("TILSTAND")),

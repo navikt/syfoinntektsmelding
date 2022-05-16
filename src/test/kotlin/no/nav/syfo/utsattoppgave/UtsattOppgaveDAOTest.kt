@@ -69,7 +69,6 @@ open class UtsattOppgaveDAOTest {
 
     private fun oppgave() = UtsattOppgaveEntitet(
         fnr = "fnr",
-        sakId = "saksId",
         aktørId = "aktørId",
         journalpostId = "journalpostId",
         arkivreferanse = "arkivreferanse",
