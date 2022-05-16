@@ -16,4 +16,3 @@ val FEILET_JOBB_COUNTER = Counter.build()
     .name("feilet_jobb")
     .help("Counts the number of permanently failed jobs")
     .register()
-
