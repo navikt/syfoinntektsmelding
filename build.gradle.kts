@@ -5,13 +5,13 @@ val mainClass = "no.nav.syfo.AppKt"
 val group = "no.nav.syfo"
 // Dependencies
 val micrometerVersion = "1.8.3"
-val flywayVersion = "8.4.2"
+val flywayVersion = "8.5.10"
 val cxfVersion = "3.4.4"
 val kotlinVersion = "1.4.10"
 val hikariVersion = "5.0.1"
 val ktorVersion = "1.6.7"
 val koinVersion = "3.1.5"
-val tokenSupportVersion = "2.0.8"
+val tokenSupportVersion = "2.0.13"
 val mockOAuth2ServerVersion = "0.4.4"
 val brukernotifikasjonSchemasVersion = "1.2021.01.18-11.12-b9c8c40b98d1"
 val jacksonVersion = "2.13.1"
@@ -157,7 +157,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-native-mt")
     implementation("io.confluent:kafka-streams-avro-serde:6.2.1")
     implementation("io.confluent:kafka-avro-serializer:6.2.1")
-    implementation("org.apache.kafka:kafka-streams:7.0.1-ce")
+    implementation("org.apache.kafka:kafka-streams:7.1.1-ce")
     implementation("io.ktor:ktor-client-core:$ktorVersion")
     implementation("io.ktor:ktor-client-apache:$ktorVersion")
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
