@@ -7,6 +7,7 @@ import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
 import no.nav.syfo.client.buildHttpClientText
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
@@ -21,7 +22,7 @@ class DokArkivClientTest {
         dokArkivClient = DokArkivClient("", mockStsClient, buildHttpClientText(HttpStatusCode.OK, ""))
         runBlocking {
             val resultat = dokArkivClient.ferdigstillJournalpost("111", "1001")
-            Assertions.assertThat(resultat).isEqualTo("")
+            assertEquals("", resultat)
         }
     }
 
@@ -40,7 +41,7 @@ class DokArkivClientTest {
         dokArkivClient = DokArkivClient("", mockStsClient, buildHttpClientText(HttpStatusCode.OK))
         runBlocking {
             val resultat = dokArkivClient.oppdaterJournalpost("111", "123", false, "abc123", "Stark industries", "1001")
-            Assertions.assertThat(resultat.status).isEqualTo(HttpStatusCode.OK)
+            assertEquals(HttpStatusCode.OK, resultat.status)
         }
     }
 

@@ -50,6 +50,14 @@ class InntektsmeldingBehandler(
             val aktorid = aktorClient.getAktorId(inntektsmelding.fnr)
             log.info("Fant aktørid for ${inntektsmelding.arkivRefereranse}")
 
+            inntektsmelding.aktorId = aktorid
+            if (inntektsmeldingService.isDuplicate(inntektsmelding)) {
+                metrikk.tellFunksjonellLikhet()
+                log.info("Likhetssjekk: finnes fra før ${inntektsmelding.arkivRefereranse}")
+            } else {
+                log.info("Likhetssjekk: ingen like detaljer fra før for ${inntektsmelding.arkivRefereranse}")
+            }
+
             tellMetrikker(inntektsmelding)
 
             if (JournalStatus.MOTTATT == inntektsmelding.journalStatus) {
@@ -80,7 +88,7 @@ class InntektsmeldingBehandler(
                         utbetalingBruker = false
                     )
                 )
-                log.info("Opprettet utsatt oppgave for ${inntektsmelding.arkivRefereranse}")
+                log.info("Lagrer UtsattOppgave i databasen for ${inntektsmelding.arkivRefereranse}")
 
                 val mappedInntektsmelding = mapInntektsmeldingKontrakt(
                     inntektsmelding,

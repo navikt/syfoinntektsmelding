@@ -91,6 +91,11 @@ class Metrikk {
         "Metrikker for KreverRefusjon", "type"
     )
 
+    val FUNKSJONELL_LIKHET = proseseringsMetrikker(
+        "syfoinntektsmelding_likhet",
+        "Metrikker for funksjonelt like", "type"
+    )
+
     val NATURALYTELSE = proseseringsMetrikker(
         "syfoinntektsmelding_faar_naturalytelse",
         "Metrikker for Naturalytelse", "type"
@@ -185,6 +190,7 @@ class Metrikk {
     }
 
     fun tellNaturalytelse() = NATURALYTELSE.labels("info").inc()
+    fun tellFunksjonellLikhet() = FUNKSJONELL_LIKHET.labels("info").inc()
 
     fun tellOpprettOppgave(eksisterer: Boolean) = OPPRETTOPPGAVE.labels("info", if (eksisterer) "J" else "N").inc()
 

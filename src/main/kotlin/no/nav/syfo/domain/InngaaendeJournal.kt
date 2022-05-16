@@ -15,6 +15,7 @@ enum class JournalStatus {
     MOTTATT, // Tidligere: MIDLERTIDIG
     UKJENT, // Tidligere: ANNET
     FERDIGSTILT, // Tidligere: ENDELIG
+    MIDLERTIDIG,
     UTGAAR,
     JOURNALFOERT,
     EKSPEDERT,
