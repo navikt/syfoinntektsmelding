@@ -1,4 +1,4 @@
-package no.nav.syfo.slowtests.repository
+package no.nav.syfo.repository
 
 import com.zaxxer.hikari.HikariDataSource
 import no.nav.inntektsmelding.kontrakt.serde.JacksonJsonConfig
@@ -13,9 +13,6 @@ import no.nav.syfo.domain.inntektsmelding.OpphoerAvNaturalytelse
 import no.nav.syfo.domain.inntektsmelding.Refusjon
 import no.nav.syfo.dto.InntektsmeldingEntitet
 import no.nav.syfo.grunnleggendeInntektsmelding
-import no.nav.syfo.repository.InntektsmeldingRepository
-import no.nav.syfo.repository.InntektsmeldingRepositoryImp
-import no.nav.syfo.repository.createTestHikariConfig
 import no.nav.syfo.slowtests.SystemTestBase
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
