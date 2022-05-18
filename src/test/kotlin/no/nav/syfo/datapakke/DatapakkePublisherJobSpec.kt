@@ -153,7 +153,7 @@ class DatapakkePublisherJobSpec : SystemTestBase() {
     }
 
     @Test
-    @Disabled
+    @Disabled // er disabled fordi dev.intern.nav.no kun er tilgjengelig med naisdevice.
     internal fun name() = suspendableTest {
         val om = buildObjectMapper()
 

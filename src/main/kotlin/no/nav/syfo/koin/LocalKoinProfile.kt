@@ -32,6 +32,7 @@ import no.nav.syfo.repository.DuplikatRepository
 import no.nav.syfo.repository.DuplikatRepositoryImpl
 import no.nav.syfo.repository.FeiletRepository
 import no.nav.syfo.repository.FeiletRepositoryImp
+import no.nav.syfo.repository.FeiletService
 import no.nav.syfo.repository.IMStatsRepo
 import no.nav.syfo.repository.IMStatsRepoImpl
 import no.nav.syfo.repository.InntektsmeldingRepository
@@ -132,6 +133,7 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single { Metrikk() } bind Metrikk::class
     single { JournalpostService(get(), get(), get(), get(), get(), get()) } bind JournalpostService::class
     single { InntektsmeldingService(InntektsmeldingRepositoryImp(get()), get()) } bind InntektsmeldingService::class
+    single { FeiletService(get()) } bind FeiletService::class
     single {
         JoarkInntektsmeldingHendelseProsessor(
             get(),

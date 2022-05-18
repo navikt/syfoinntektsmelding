@@ -66,6 +66,7 @@ class InntektsmeldingBehandlerTest {
             )
 
         inntektsmeldingBehandler.behandle("arkivId", "AR-123")
+        verify { journalpostService.ferdigstillJournalpost(any()) }
 
         verify { aivenInntektsmeldingProducer.leggMottattInntektsmeldingPåTopics(any()) }
     }
