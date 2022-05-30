@@ -43,15 +43,12 @@ data class Inntektsmelding(
                 id = this.id,
                 fnr = this.fnr,
                 mottattDato = this.mottattDato,
-                arsakTilInnsending = this.arsakTilInnsending,
                 journalpostId = this.journalpostId,
                 journalStatus = this.journalStatus,
                 arkivRefereranse = this.arkivRefereranse,
                 aktorId = this.aktorId,
                 sakId = this.sakId,
                 innsendingstidspunkt = this.innsendingstidspunkt,
-                begrunnelseRedusert = this.begrunnelseRedusert,
-                årsakEndring = this.årsakEndring,
                 avsenderSystem = this.avsenderSystem
             )
         )
