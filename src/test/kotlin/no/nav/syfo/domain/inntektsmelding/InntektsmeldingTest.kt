@@ -41,7 +41,7 @@ internal class InntektsmeldingTest {
         assertFalse(im1.copy(arbeidsgiverPrivatAktørId = "asd").isDuplicate(im1))
         assertFalse(im1.copy(arbeidsforholdId = "asd").isDuplicate(im1))
         assertTrue(im1.copy(journalpostId = "asd").isDuplicate(im1))
-        assertTrue(im1.copy(arsakTilInnsending = "asd").isDuplicate(im1))
+        assertFalse(im1.copy(arsakTilInnsending = "asd").isDuplicate(im1))
         assertTrue(im1.copy(journalStatus = JournalStatus.MOTTATT).isDuplicate(im1))
         assertFalse(im1.copy(arbeidsgiverperioder = listOf(Periode(fom = LocalDate.now(), tom = LocalDate.now()))).isDuplicate(im1))
         assertFalse(im1.copy(beregnetInntekt = BigDecimal(200)).isDuplicate(im1))
@@ -56,12 +56,12 @@ internal class InntektsmeldingTest {
         assertTrue(im1.copy(mottattDato = LocalDateTime.now()).isDuplicate(im1))
         assertTrue(im1.copy(sakId = "asd").isDuplicate(im1))
         assertTrue(im1.copy(aktorId = "asd").isDuplicate(im1))
-        assertTrue(im1.copy(begrunnelseRedusert = "asd").isDuplicate(im1))
+        assertFalse(im1.copy(begrunnelseRedusert = "asd").isDuplicate(im1))
         assertTrue(im1.copy(avsenderSystem = AvsenderSystem("asd")).isDuplicate(im1))
         assertFalse(im1.copy(nærRelasjon = true).isDuplicate(im1))
         assertFalse(im1.copy(kontaktinformasjon = Kontaktinformasjon("asd", "asd")).isDuplicate(im1))
         assertTrue(im1.copy(innsendingstidspunkt = LocalDateTime.now()).isDuplicate(im1))
         assertFalse(im1.copy(bruttoUtbetalt = BigDecimal(123)).isDuplicate(im1))
-        assertTrue(im1.copy(årsakEndring = "qwe").isDuplicate(im1))
+        assertFalse(im1.copy(årsakEndring = "qwe").isDuplicate(im1))
     }
 }
