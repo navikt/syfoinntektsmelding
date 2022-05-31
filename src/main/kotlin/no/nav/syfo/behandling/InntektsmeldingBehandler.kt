@@ -108,6 +108,7 @@ class InntektsmeldingBehandler(
         }
         return ret
     }
+
     private fun tellMetrikker(inntektsmelding: Inntektsmelding) {
         metrikk.tellJournalpoststatus(inntektsmelding.journalStatus)
         metrikk.tellInntektsmeldingerRedusertEllerIngenUtbetaling(inntektsmelding.begrunnelseRedusert)
