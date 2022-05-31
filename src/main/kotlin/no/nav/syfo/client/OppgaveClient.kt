@@ -114,7 +114,7 @@ class OppgaveClient constructor(
             journalpostId = journalpostId,
             behandlesAvApplikasjon = "FS22",
             beskrivelse = "Det har kommet en inntektsmelding på sykepenger.",
-            tema = TEMA,
+            tema = "SYK",
             oppgavetype = OPPGAVETYPE_INNTEKTSMELDING,
             behandlingstype = behandlingstype,
             behandlingstema = behandlingstema,
