@@ -135,7 +135,7 @@ class DokArkivClient(
                 }
             ),
             avsenderMottaker = AvsenderMottaker(fnr, arbeidsgiverNavn),
-            sak = Sak("GENERELL_SAK")
+            sak = Sak("GENERELL_SAK", "SYK")
         )
         log.info("Sender request: $req")
         return oppdaterJournalpost(journalpostId, req, msgId)
