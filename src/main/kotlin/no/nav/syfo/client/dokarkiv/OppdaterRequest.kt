@@ -28,5 +28,5 @@ data class AvsenderMottaker(
 
 data class Sak(
     val sakstype: String,
-    val arkivsaksystem: String,
+    val arkivsaksystem: String? = null
 )
