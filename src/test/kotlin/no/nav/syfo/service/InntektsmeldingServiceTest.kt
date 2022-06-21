@@ -13,6 +13,7 @@ import no.nav.syfo.repository.InntektsmeldingRepository
 import no.nav.syfo.repository.buildIM
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import java.math.BigDecimal
 import java.time.LocalDateTime
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -22,6 +23,38 @@ class InntektsmeldingServiceTest {
 
     val objectMapper = ObjectMapper().registerModules(KotlinModule(), JavaTimeModule())
     val AKTOR_ID_FOUND = "aktør-123"
+
+    @Test
+    fun `Skal ikke være duplikat dersom ingen tidligere inntektsmeldinger`() {
+        val im = lag(0, 0)
+        assertFalse(isDuplicateWithLatest(im, emptyList()))
+    }
+
+    @Test
+    fun `Skal ikke være duplikat dersom nest siste eller tidligere var lik`() {
+        val inntekt = 100
+        val im = lag(0, inntekt)
+        val list = listOf(
+            lag(1, inntekt + 300),
+            lag(2, inntekt),
+            lag(3, inntekt + 200),
+        )
+        assertFalse(isDuplicateWithLatest(im, list))
+        assertFalse(isDuplicateWithLatest(im, list.asReversed()))
+    }
+
+    @Test
+    fun `Skal være duplikat av sist innsendt`() {
+        val inntekt = 100
+        val im = lag(0, inntekt)
+        val list = listOf(
+            lag(1, inntekt),
+            lag(2, inntekt + 100),
+            lag(3, inntekt + 200),
+        )
+        assertTrue(isDuplicateWithLatest(im, list))
+        assertTrue(isDuplicateWithLatest(im, list.asReversed()))
+    }
 
     @Test
     fun `Skal finne inntektsmeldinger og mappe de om til domene objekter`() {
@@ -126,5 +159,9 @@ class InntektsmeldingServiceTest {
             journalpostId = "jp-123",
             data = objectMapper.writeValueAsString(im)
         )
+    }
+
+    fun lag(dager: Long, inntekt: Int): Inntektsmelding {
+        return buildIM().copy(innsendingstidspunkt = LocalDateTime.now().minusDays(dager), beregnetInntekt = BigDecimal(inntekt))
     }
 }

@@ -22,7 +22,7 @@ class InntektsmeldingService(
         if (inntektsmelding.aktorId == null) {
             return false
         }
-        return inntektsmelding.isDuplicate(finnBehandledeInntektsmeldinger(inntektsmelding.aktorId!!))
+        return isDuplicateWithLatest(inntektsmelding, finnBehandledeInntektsmeldinger(inntektsmelding.aktorId!!))
     }
 
     fun lagreBehandling(
@@ -42,4 +42,11 @@ class InntektsmeldingService(
 fun Inntektsmelding.asJsonString(objectMapper: ObjectMapper): String {
     val im = this.copy(fnr = "") // La stå! Ikke lagre fødselsnummer
     return objectMapper.writeValueAsString(im)
+}
+
+fun isDuplicateWithLatest(inntektsmelding: Inntektsmelding, list: List<Inntektsmelding>): Boolean {
+    if (list.isEmpty()) {
+        return false
+    }
+    return inntektsmelding.isDuplicate(list.sortedBy { it.innsendingstidspunkt }.last())
 }
