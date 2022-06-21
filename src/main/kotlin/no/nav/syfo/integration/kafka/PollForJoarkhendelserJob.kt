@@ -72,7 +72,11 @@ class PollForJoarkhendelserJob(
     }
 
     fun isInntektsmelding(journalpost: InngaaendeJournalpostDTO): Boolean {
-        return journalpost.temaNytt == "SYK" && journalpost.mottaksKanal == "ALTINN" && journalpost.journalpostStatus == "MOTTATT"
+        val isIM = journalpost.temaNytt == "SYK" && journalpost.mottaksKanal == "ALTINN" && journalpost.journalpostStatus == "MOTTATT"
+        if (isIM) {
+            log.info("Fant inntektsmelding ${journalpost}")
+        }
+        return isIM
     }
 
     fun isDuplicate(journalpost: InngaaendeJournalpostDTO): Boolean {
