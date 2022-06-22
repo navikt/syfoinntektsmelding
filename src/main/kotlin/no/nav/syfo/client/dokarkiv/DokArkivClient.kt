@@ -132,8 +132,8 @@ class DokArkivClient(
                 "FNR"
             ),
             avsenderMottaker = AvsenderMottaker(
-                if (isArbeidsgiverFnr) { "FNR" } else { "ORGNR" },
                 arbeidsgiverNr,
+                if (isArbeidsgiverFnr) { "FNR" } else { "ORGNR" },
                 arbeidsgiverNavn
             ),
             sak = Sak("GENERELL_SAK"),
