@@ -37,7 +37,7 @@ class BehandleInngaaendeJournalConsumerTest {
             journalpostId = "journalpostId",
             arbeidsgiverPrivat = "10101033333"
         )
-        behandleInngaaendeJournalConsumer.oppdaterJournalpost(inngaendeJournalpost)
+        behandleInngaaendeJournalConsumer.oppdaterJournalpost("fnr", inngaendeJournalpost)
         verify {
             runBlocking {
                 dokArkivClient.oppdaterJournalpost("journalpostId", any(), any(), any(), any())

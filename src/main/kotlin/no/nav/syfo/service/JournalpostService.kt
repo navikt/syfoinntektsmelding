@@ -20,7 +20,7 @@ class JournalpostService(
 
     fun ferdigstillJournalpost(inntektsmelding: Inntektsmelding) {
         val journalpost = hentInngaendeJournalpost(inntektsmelding)
-        behandleInngaaendeJournalConsumer.oppdaterJournalpost(journalpost)
+        behandleInngaaendeJournalConsumer.oppdaterJournalpost(inntektsmelding.fnr, journalpost)
         behandleInngaaendeJournalConsumer.ferdigstillJournalpost(journalpost)
         metrikk.tellInntektsmeldingerJournalfort()
     }
