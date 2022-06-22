@@ -24,6 +24,7 @@ data class Bruker(
 
 data class AvsenderMottaker(
     val id: String,
+    val idType: String,
     val navn: String
 )
 
