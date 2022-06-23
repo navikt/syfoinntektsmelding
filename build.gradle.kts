@@ -16,7 +16,7 @@ val mockOAuth2ServerVersion = "0.4.4"
 val brukernotifikasjonSchemasVersion = "1.2021.01.18-11.12-b9c8c40b98d1"
 val jacksonVersion = "2.13.3"
 val junitJupiterVersion = "5.8.2"
-val assertJVersion = "3.22.0"
+val assertJVersion = "3.23.1"
 val prometheusVersion = "0.15.0"
 val joarkHendelseVersion = "96ec5ebb"
 val githubPassword: String by project
@@ -157,7 +157,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-native-mt")
     implementation("io.confluent:kafka-streams-avro-serde:6.2.1")
     implementation("io.confluent:kafka-avro-serializer:6.2.1")
-    implementation("org.apache.kafka:kafka-streams:7.0.1-ce")
+    implementation("org.apache.kafka:kafka-streams:7.1.1-ce")
     implementation("io.ktor:ktor-client-core:$ktorVersion")
     implementation("io.ktor:ktor-client-apache:$ktorVersion")
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
