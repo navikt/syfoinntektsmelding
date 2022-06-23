@@ -13,7 +13,7 @@ class BehandleInngaaendeJournalConsumer(private val dokArkivClient: DokArkivClie
     /**
      * Oppdaterer journalposten
      */
-    fun oppdaterJournalpost(fnr:String, inngaendeJournalpost: InngaendeJournalpost) {
+    fun oppdaterJournalpost(fnr: String, inngaendeJournalpost: InngaendeJournalpost) {
         val journalpostId = inngaendeJournalpost.journalpostId
         val avsenderNr = inngaendeJournalpost.arbeidsgiverOrgnummer
             ?: inngaendeJournalpost.arbeidsgiverPrivat
