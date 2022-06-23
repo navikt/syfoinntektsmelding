@@ -43,7 +43,7 @@ class AktorClient(
                     header("Nav-Personidenter", "$sokeIdent")
                 }[sokeIdent]
             } catch (cause: ClientRequestException) {
-                val status = cause.response?.status?.value
+                val status = cause.response.status.value
                 log.error("Kall mot aktørregister på $endpointUrl feiler med HTTP-$status")
                 throw AktørKallResponseException(status, null)
             } catch (cause: ConnectException) {
