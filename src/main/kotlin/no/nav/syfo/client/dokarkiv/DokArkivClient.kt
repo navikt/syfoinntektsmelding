@@ -139,7 +139,6 @@ class DokArkivClient(
             sak = Sak("GENERELL_SAK"),
             tema = "SYK"
         )
-        log.info("Sender request: $req")
         return oppdaterJournalpost(journalpostId, req, msgId)
     }
 }
