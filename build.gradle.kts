@@ -22,7 +22,7 @@ val joarkHendelseVersion = "96ec5ebb"
 val githubPassword: String by project
 
 plugins {
-    kotlin("jvm") version "1.5.30"
+    kotlin("jvm") version "1.7.0"
     id("com.github.ben-manes.versions") version "0.42.0"
     id("org.flywaydb.flyway") version "8.4.2"
     jacoco
@@ -149,7 +149,7 @@ dependencies {
     implementation("no.nav.security:mock-oauth2-server:$mockOAuth2ServerVersion")
     implementation("com.zaxxer:HikariCP:$hikariVersion")
     implementation("org.slf4j:slf4j-api:1.7.32")
-    implementation("net.logstash.logback:logstash-logback-encoder:7.1.1")
+    implementation("net.logstash.logback:logstash-logback-encoder:7.2")
     implementation("org.apache.httpcomponents:httpclient:4.5.13")
     implementation("io.micrometer:micrometer-core:$micrometerVersion")
     runtimeOnly("io.micrometer:micrometer-registry-prometheus:$micrometerVersion")
