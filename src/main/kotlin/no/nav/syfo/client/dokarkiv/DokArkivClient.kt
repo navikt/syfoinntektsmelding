@@ -54,23 +54,23 @@ class DokArkivClient(
                 header("Authorization", "Bearer ${accessTokenProvider.getToken()}")
                 header("Nav-Callid", msgId)
                 body = ferdigstillRequest
-            }.also { log.info("ferdigstilling av journalpost ok for journalpostid {}, msgId {}, {}", journalpostId, msgId) }
+            }.also { log.info("ferdigstilling av journalpost ok for journalpostid {}", journalpostId) }
         } catch (e: Exception) {
-            log.error("Dokarkiv svarte med feilmelding ved ferdigstilling av journalpost for msgId $msgId", e)
             if (e is ClientRequestException) {
                 when (e.response.status) {
                     HttpStatusCode.NotFound -> {
-                        log.error("Journalposten finnes ikke for journalpostid {}, msgId {}, {}", journalpostId, msgId)
+                        log.error("Journalposten finnes ikke for journalpostid {}", journalpostId)
                         throw RuntimeException("Ferdigstilling: Journalposten finnes ikke for journalpostid $journalpostId msgid $msgId")
                     }
                     else -> {
-                        log.error("Fikk http status {} for journalpostid {}, msgId {}, {}", e.response.status, journalpostId, msgId)
+                        log.error("Fikk http status {} for journalpostid {}", e.response.status, journalpostId, msgId)
                         throw RuntimeException("Fikk feilmelding ved ferdigstilling av journalpostid $journalpostId msgid $msgId")
                     }
                 }
+            } else {
+                log.error("Dokarkiv svarte med feilmelding ved ferdigstilling av journalpost $journalpostId", e)
             }
-            log.error("Dokarkiv svarte med feilmelding ved ferdigstilling av journalpost for msgId $msgId", e)
-            throw IOException("Dokarkiv svarte med feilmelding ved ferdigstilling av journalpost for $journalpostId msgid $msgId")
+            throw IOException("Dokarkiv svarte med feilmelding ved ferdigstilling av journalpost $journalpostId ")
         }
     }
 
@@ -100,7 +100,6 @@ class DokArkivClient(
                 body = oppdaterJournalpostRequest
             }.also { log.info("Oppdatering av journalpost ok for journalpostid {}, msgId {}", journalpostId, msgId) }
         } catch (e: Exception) {
-            log.error("Dokarkiv svarte med feilmelding", e)
             if (e is ClientRequestException) {
                 when (e.response.status) {
                     HttpStatusCode.NotFound -> {
@@ -112,8 +111,9 @@ class DokArkivClient(
                         throw RuntimeException("Fikk feilmelding ved oppdatering av journalpostid $journalpostId msgid $msgId")
                     }
                 }
+            } else {
+                log.error("Dokarkiv svarte med feilmelding ved oppdatering av journalpost $journalpostId", e)
             }
-            log.error("Dokarkiv svarte med feilmelding ved oppdatering av journalpost for msgId {}, {}", msgId, e)
             throw IOException("Dokarkiv svarte med feilmelding ved oppdatering av journalpost for $journalpostId msgid $msgId")
         }
     }
