@@ -40,7 +40,6 @@ class InntektsmeldingKontraktMapperKtTest {
         val dto = toInntektsmeldingEntitet(inntektsmelding)
         assertThat(dto.journalpostId).isEqualTo("journalpostId")
         assertThat(dto.aktorId).isEqualTo("aktorId")
-        assertThat(dto.sakId).isEqualTo("sakId")
         assertThat(dto.arbeidsgiverPrivat).isEqualTo("fnr")
         assertThat(dto.uuid).isNotNull
         assertThat(dto.behandlet).isEqualTo(LocalDateTime.of(2019, 10, 1, 5, 18, 45, 0))
@@ -52,7 +51,6 @@ class InntektsmeldingKontraktMapperKtTest {
         val dto = InntektsmeldingEntitet(
             journalpostId = grunnleggendeInntektsmelding.journalpostId,
             behandlet = LocalDateTime.of(2019, 10, 25, 0, 0, 0, 0),
-            sakId = grunnleggendeInntektsmelding.sakId!!,
             orgnummer = grunnleggendeInntektsmelding.arbeidsgiverOrgnummer,
             arbeidsgiverPrivat = "arbeidsgiverPrivat",
             aktorId = grunnleggendeInntektsmelding.aktorId.toString(),

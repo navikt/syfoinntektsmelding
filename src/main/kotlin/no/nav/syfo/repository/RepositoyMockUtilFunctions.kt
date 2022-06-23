@@ -32,13 +32,13 @@ fun getRandomTime(before: LocalDateTime?): String {
 
 fun getRandonDateTime(before: LocalDateTime?) = "${getRandomDate(before)}T${getRandomTime(before)}"
 
+@Suppress("kotlin:S107")
 fun getRandonUtsattOppgaveEntitet(
     id: Int = getRandomNumber(100, 1000),
     inntektsmeldingId: String = "INNTEKTSMELDING_ID",
     arkivreferanse: String = "ARKIVREFERANSE",
     fnr: String = "FNR",
     aktørId: String = "AKTOR_ID",
-    sakId: String = "SAK_ID",
     journalpostId: String = "JOURNALPOST_ID",
     timeout: LocalDateTime = LocalDateTime.parse(getRandonDateTime(null)),
     tilstand: Tilstand = getRandomTilstand()
@@ -49,7 +49,6 @@ fun getRandonUtsattOppgaveEntitet(
         arkivreferanse = arkivreferanse,
         fnr = fnr,
         aktørId = aktørId,
-        sakId = sakId,
         journalpostId = journalpostId,
         timeout = timeout,
         tilstand = tilstand,
@@ -63,7 +62,6 @@ fun getRandonUtsattOppgaveEntitet(
 fun getRandonInntektsmeldingEntitet(
     uuid: String = UUID.randomUUID().toString(),
     aktorId: String = validIdentitetsnummer,
-    sakId: String = getRandomNumber(1000, 5000).toString(),
     journalpostId: String = getRandomNumber(10, 50).toString(),
     orgnummer: String = validOrgNr,
     arbeidsgiverPrivat: String? = null,
@@ -73,7 +71,6 @@ fun getRandonInntektsmeldingEntitet(
     return InntektsmeldingEntitet(
         uuid = uuid,
         aktorId = aktorId,
-        sakId = sakId,
         journalpostId = journalpostId,
         orgnummer = orgnummer,
         arbeidsgiverPrivat = arbeidsgiverPrivat,

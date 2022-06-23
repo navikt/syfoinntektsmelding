@@ -40,7 +40,6 @@ class JournalpostServiceTest {
         every { behandlendeEnhetConsumer.hentBehandlendeEnhet(any(), any()) } returns "enhet"
 
         journalpostService.ferdigstillJournalpost(
-            "saksId",
             Inntektsmelding(
                 fnr = "fnr",
                 arbeidsgiverOrgnummer = "orgnummer",
@@ -56,7 +55,7 @@ class JournalpostServiceTest {
 
         verify { behandlendeEnhetConsumer.hentBehandlendeEnhet("fnr", "") }
         verify { inngaaendeJournalConsumer.hentDokumentId("journalpostId") }
-        verify { behandleInngaaendeJournalConsumer.oppdaterJournalpost(any()) }
+        verify { behandleInngaaendeJournalConsumer.oppdaterJournalpost(any(), any()) }
         verify { behandleInngaaendeJournalConsumer.ferdigstillJournalpost(any()) }
     }
 

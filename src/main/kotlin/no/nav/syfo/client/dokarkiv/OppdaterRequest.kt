@@ -13,7 +13,8 @@ package no.nav.syfo.client.dokarkiv
 data class OppdaterJournalpostRequest(
     val bruker: Bruker?,
     val avsenderMottaker: AvsenderMottaker?,
-    val sak: Sak?
+    val sak: Sak?,
+    val tema: String? = null
 )
 
 data class Bruker(
@@ -23,11 +24,11 @@ data class Bruker(
 
 data class AvsenderMottaker(
     val id: String,
+    val idType: String,
     val navn: String
 )
 
 data class Sak(
     val sakstype: String,
-    val arkivsaksystem: String,
-    val arkivsaksnummer: String
+    val arkivsaksystem: String? = null
 )

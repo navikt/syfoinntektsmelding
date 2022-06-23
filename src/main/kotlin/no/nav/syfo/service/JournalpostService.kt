@@ -18,14 +18,14 @@ class JournalpostService(
         return journalConsumer.hentInntektsmelding(journalpostId, arkivReferanse)
     }
 
-    fun ferdigstillJournalpost(saksId: String, inntektsmelding: Inntektsmelding) {
-        val journalpost = hentInngaendeJournalpost(saksId, inntektsmelding)
-        behandleInngaaendeJournalConsumer.oppdaterJournalpost(journalpost)
+    fun ferdigstillJournalpost(inntektsmelding: Inntektsmelding) {
+        val journalpost = hentInngaendeJournalpost(inntektsmelding)
+        behandleInngaaendeJournalConsumer.oppdaterJournalpost(inntektsmelding.fnr, journalpost)
         behandleInngaaendeJournalConsumer.ferdigstillJournalpost(journalpost)
         metrikk.tellInntektsmeldingerJournalfort()
     }
 
-    private fun hentInngaendeJournalpost(gsakId: String, inntektsmelding: Inntektsmelding): InngaendeJournalpost {
+    private fun hentInngaendeJournalpost(inntektsmelding: Inntektsmelding): InngaendeJournalpost {
         val inngaaendeJournal = inngaaendeJournalConsumer.hentDokumentId(inntektsmelding.journalpostId)
         val behandlendeEnhet = behandlendeEnhetConsumer.hentBehandlendeEnhet(inntektsmelding.fnr, inntektsmelding.id)
         val arbeidsgiverNavn = inntektsmelding.arbeidsgiverOrgnummer?.let {
@@ -34,7 +34,6 @@ class JournalpostService(
 
         return InngaendeJournalpost(
             fnr = inntektsmelding.fnr,
-            gsakId = gsakId,
             journalpostId = inntektsmelding.journalpostId,
             dokumentId = inngaaendeJournal.dokumentId,
             behandlendeEnhetId = behandlendeEnhet,

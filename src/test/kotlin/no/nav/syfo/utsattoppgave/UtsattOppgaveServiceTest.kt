@@ -45,7 +45,6 @@ open class UtsattOppgaveServiceTest {
 
     private fun enOppgave(timeout: LocalDateTime, tilstand: Tilstand = Tilstand.Utsatt) = UtsattOppgaveEntitet(
         fnr = fnr,
-        sakId = saksId,
         aktørId = aktørId,
         journalpostId = journalpostId,
         arkivreferanse = arkivreferanse,

@@ -9,15 +9,12 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.client.BrregClient
 import no.nav.syfo.client.OppgaveClient
-import no.nav.syfo.client.SakClient
-import no.nav.syfo.client.SakResponse
 import no.nav.syfo.client.aktor.AktorClient
 import no.nav.syfo.client.saf.SafDokumentClient
 import no.nav.syfo.client.saf.SafJournalpostClient
@@ -36,7 +33,6 @@ import no.nav.syfo.service.InngaaendeJournalConsumer
 import no.nav.syfo.service.InntektsmeldingService
 import no.nav.syfo.service.JournalConsumer
 import no.nav.syfo.service.JournalpostService
-import no.nav.syfo.service.SaksbehandlingService
 import no.nav.syfo.syfoinntektsmelding.consumer.ws.inntektsmeldingArbeidsgiver
 import no.nav.syfo.syfoinntektsmelding.consumer.ws.inntektsmeldingArbeidsgiverPrivat
 import no.nav.syfo.util.Metrikk
@@ -48,7 +44,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.ZonedDateTime
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -68,7 +63,6 @@ class InntektsmeldingBehandlerTest2 {
     private var behandleInngaaendeJournalConsumer = mockk<BehandleInngaaendeJournalConsumer>(relaxed = true)
     private var behandlendeEnhetConsumer = mockk<BehandlendeEnhetConsumer>(relaxed = true)
     var oppgaveClient = mockk<OppgaveClient>(relaxed = true)
-    private var sakClient = mockk<SakClient>(relaxed = true)
     private var journalpostService = mockk<JournalpostService>(relaxed = true)
 
     private var inntektsmeldingRepository = mockk<InntektsmeldingRepository>(relaxed = true)
@@ -81,7 +75,6 @@ class InntektsmeldingBehandlerTest2 {
     private var journalConsumer = mockk<JournalConsumer>(relaxed = true)
     private var safDokumentClient = mockk<SafDokumentClient>(relaxed = true)
     private var safJournalpostClient = mockk<SafJournalpostClient>(relaxed = true)
-    private var saksbehandlingService = mockk<SaksbehandlingService>(relaxed = true)
     private var inntektsmeldingBehandler = mockk<InntektsmeldingBehandler>(relaxed = true)
     private var aivenInntektsmeldingBehandler = mockk<InntektsmeldingAivenProducer>(relaxed = true)
     var feiletUtsattOppgaveMeldingProsessor = mockk<FeiletUtsattOppgaveMeldingProsessor>(relaxed = true)
@@ -100,11 +93,9 @@ class InntektsmeldingBehandlerTest2 {
             metrikk,
             brregClient
         )
-        saksbehandlingService =
-            SaksbehandlingService(inntektsmeldingService, sakClient, metrikk)
+
         inntektsmeldingBehandler = InntektsmeldingBehandler(
             journalpostService,
-            saksbehandlingService,
             metrikk,
             inntektsmeldingService,
             aktorClient,
@@ -112,30 +103,7 @@ class InntektsmeldingBehandlerTest2 {
             utsattOppgaveService
         )
         MockKAnnotations.init(inntektsmeldingBehandler)
-        runBlocking {
-            coEvery { sakClient.opprettSak(any(), any()) } returnsMany listOf(
-                SakResponse(
-                    id = 987,
-                    tema = "SYM",
-                    aktoerId = "444",
-                    applikasjon = "",
-                    fagsakNr = "123000",
-                    opprettetAv = "meg",
-                    opprettetTidspunkt = ZonedDateTime.now(),
-                    orgnr = "999888777"
-                ),
-                SakResponse(
-                    id = 988,
-                    tema = "SYM",
-                    aktoerId = "444",
-                    applikasjon = "",
-                    fagsakNr = "123000",
-                    opprettetAv = "meg",
-                    opprettetTidspunkt = ZonedDateTime.now(),
-                    orgnr = "999888777"
-                )
-            )
-        }
+
         every { inngaaendeJournalConsumer.hentDokumentId("arkivId") } returns inngaaendeJournal("arkivId")
 
         every { aktorClient.getAktorId(any()) } answers { "aktorId_for_" + firstArg() }
@@ -169,9 +137,6 @@ class InntektsmeldingBehandlerTest2 {
         val inntektsmeldingMetas = inntektsmeldingService.finnBehandledeInntektsmeldinger("aktorId_for_1")
         Assertions.assertThat(inntektsmeldingMetas.size).isEqualTo(2)
         Assertions.assertThat(inntektsmeldingMetas[0].sakId).isEqualTo(inntektsmeldingMetas[1].sakId)
-        runBlocking {
-            coVerify(exactly = 1) { sakClient.opprettSak(eq("aktorId_for_1"), any()) }
-        }
     }
 
     @Test
@@ -197,10 +162,6 @@ class InntektsmeldingBehandlerTest2 {
 
         Assertions.assertThat(inntektsmeldingMetas[0].sakId).isEqualTo("987")
         Assertions.assertThat(inntektsmeldingMetas[1].sakId).isEqualTo("988")
-
-        runBlocking {
-            coVerify(exactly = 2) { sakClient.opprettSak(eq("778"), any()) }
-        }
     }
 
     @Test
@@ -277,9 +238,6 @@ class InntektsmeldingBehandlerTest2 {
         val numThreads = 16
         produceParallelMessages(numThreads, "arkivId")
 
-        runBlocking {
-            coVerify(exactly = 1) { sakClient.opprettSak(any(), any()) }
-        }
         verify(exactly = numThreads) { behandleInngaaendeJournalConsumer.ferdigstillJournalpost(any()) }
     }
 
@@ -292,7 +250,6 @@ class InntektsmeldingBehandlerTest2 {
 
         val numThreads = 16
         produceParallelMessages(numThreads, "arkivId")
-        coVerify(exactly = numThreads) { sakClient.opprettSak(any(), any()) }
         verify(exactly = numThreads) { behandleInngaaendeJournalConsumer.ferdigstillJournalpost(any()) }
     }
 

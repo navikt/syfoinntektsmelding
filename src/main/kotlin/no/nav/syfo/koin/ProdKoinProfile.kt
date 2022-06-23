@@ -15,7 +15,6 @@ import no.nav.syfo.behandling.InntektsmeldingBehandler
 import no.nav.syfo.client.BrregClient
 import no.nav.syfo.client.BrregClientImp
 import no.nav.syfo.client.OppgaveClient
-import no.nav.syfo.client.SakClient
 import no.nav.syfo.client.TokenConsumer
 import no.nav.syfo.client.aktor.AktorClient
 import no.nav.syfo.client.dokarkiv.DokArkivClient
@@ -49,7 +48,6 @@ import no.nav.syfo.service.InngaaendeJournalConsumer
 import no.nav.syfo.service.InntektsmeldingService
 import no.nav.syfo.service.JournalConsumer
 import no.nav.syfo.service.JournalpostService
-import no.nav.syfo.service.SaksbehandlingService
 import no.nav.syfo.util.Metrikk
 import no.nav.syfo.utsattoppgave.FeiletUtsattOppgaveMeldingProsessor
 import no.nav.syfo.utsattoppgave.UtsattOppgaveDAO
@@ -101,7 +99,7 @@ fun prodConfig(config: ApplicationConfig) = module {
             config.getString("srvsyfoinntektsmelding.password")
         )
     } bind TokenConsumer::class
-    single { InntektsmeldingBehandler(get(), get(), get(), get(), get(), get(), get()) } bind InntektsmeldingBehandler::class
+    single { InntektsmeldingBehandler(get(), get(), get(), get(), get(), get()) } bind InntektsmeldingBehandler::class
 
     single { InngaaendeJournalConsumer(get()) } bind InngaaendeJournalConsumer::class
     single { BehandleInngaaendeJournalConsumer(get()) } bind BehandleInngaaendeJournalConsumer::class
@@ -112,8 +110,6 @@ fun prodConfig(config: ApplicationConfig) = module {
     single { InntektsmeldingRepositoryImp(get()) } bind InntektsmeldingRepository::class
     single { InntektsmeldingService(get(), get()) } bind InntektsmeldingService::class
     single { ArbeidsgiverperiodeRepositoryImp(get()) } bind ArbeidsgiverperiodeRepository::class
-    single { SakClient(config.getString("opprett_sak_url"), get(), get()) } bind SakClient::class
-    single { SaksbehandlingService(get(), get(), get()) } bind SaksbehandlingService::class
     single { DatapakkePublisherJob(get(), get(), config.getString("datapakke.api_url"), config.getString("datapakke.id"), false, get()) }
 
     single {

@@ -10,7 +10,6 @@ import no.nav.syfo.dto.InntektsmeldingEntitet
 import no.nav.syfo.producer.InntektsmeldingAivenProducer
 import no.nav.syfo.service.InntektsmeldingService
 import no.nav.syfo.service.JournalpostService
-import no.nav.syfo.service.SaksbehandlingService
 import no.nav.syfo.util.Metrikk
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import org.junit.jupiter.api.BeforeEach
@@ -23,14 +22,12 @@ class InntektsmeldingBehandlerTest {
     private val metrikk = mockk<Metrikk>(relaxed = true)
     private var journalpostService = mockk<JournalpostService>(relaxed = true)
     private var utsattOppgaveService = mockk<UtsattOppgaveService>(relaxed = true)
-    private var saksbehandlingService = mockk<SaksbehandlingService>(relaxed = true)
     private var aktorClient = mockk<AktorClient>(relaxed = true)
     private var inntektsmeldingService = mockk<InntektsmeldingService>(relaxed = true)
     private val aivenInntektsmeldingProducer = mockk<InntektsmeldingAivenProducer>(relaxed = true)
 
     private var inntektsmeldingBehandler = InntektsmeldingBehandler(
         journalpostService,
-        saksbehandlingService,
         metrikk,
         inntektsmeldingService,
         aktorClient,
@@ -41,20 +38,12 @@ class InntektsmeldingBehandlerTest {
     @BeforeEach
     fun setup() {
         every { aktorClient.getAktorId("fnr") } returns "aktorId" // inntektsmelding.fnr
-        every {
-            saksbehandlingService.finnEllerOpprettSakForInntektsmelding(
-                any(),
-                match { it.contentEquals("aktorId") },
-                match { it.contentEquals("AR-123") }
-            )
-        } returns "saksId"
-        every { inntektsmeldingService.lagreBehandling(any(), any(), any(), any()) } returns
+        every { inntektsmeldingService.lagreBehandling(any(), any(), any()) } returns
             InntektsmeldingEntitet(
                 orgnummer = "orgnummer",
                 arbeidsgiverPrivat = "123",
                 aktorId = "aktorId",
                 journalpostId = "arkivId",
-                sakId = "saksId",
                 behandlet = LocalDateTime.now()
             )
     }
@@ -77,9 +66,8 @@ class InntektsmeldingBehandlerTest {
             )
 
         inntektsmeldingBehandler.behandle("arkivId", "AR-123")
+        verify { journalpostService.ferdigstillJournalpost(any()) }
 
-        verify { saksbehandlingService.finnEllerOpprettSakForInntektsmelding(any(), any(), any()) }
-        verify { journalpostService.ferdigstillJournalpost(match { it.contentEquals("saksId") }, any()) }
         verify { aivenInntektsmeldingProducer.leggMottattInntektsmeldingPåTopics(any()) }
     }
 
@@ -100,8 +88,7 @@ class InntektsmeldingBehandlerTest {
 
         inntektsmeldingBehandler.behandle("arkivId", "AR-123")
 
-        verify(exactly = 0) { saksbehandlingService.finnEllerOpprettSakForInntektsmelding(any(), any(), any()) }
-        verify(exactly = 0) { journalpostService.ferdigstillJournalpost(any(), any()) }
+        verify(exactly = 0) { journalpostService.ferdigstillJournalpost(any()) }
     }
 
     @Test
@@ -121,7 +108,6 @@ class InntektsmeldingBehandlerTest {
 
         inntektsmeldingBehandler.behandle("arkivId", "AR-123")
 
-        verify(exactly = 0) { saksbehandlingService.finnEllerOpprettSakForInntektsmelding(any(), any(), any()) }
-        verify(exactly = 0) { journalpostService.ferdigstillJournalpost(any(), any()) }
+        verify(exactly = 0) { journalpostService.ferdigstillJournalpost(any()) }
     }
 }

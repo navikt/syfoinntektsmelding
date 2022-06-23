@@ -98,17 +98,17 @@ class DokArkivClient(
                 header("Authorization", "Bearer ${accessTokenProvider.getToken()}")
                 header("Nav-Callid", msgId)
                 body = oppdaterJournalpostRequest
-            }.also { log.info("Oppdatering av journalpost ok for journalpostid {}, msgId {}, {}", journalpostId, msgId) }
+            }.also { log.info("Oppdatering av journalpost ok for journalpostid {}, msgId {}", journalpostId, msgId) }
         } catch (e: Exception) {
             log.error("Dokarkiv svarte med feilmelding", e)
             if (e is ClientRequestException) {
                 when (e.response.status) {
                     HttpStatusCode.NotFound -> {
-                        log.error("Oppdatering: Journalposten finnes ikke for journalpostid {}, msgId {}, {}", journalpostId, msgId)
+                        log.error("Oppdatering: Journalposten finnes ikke for journalpostid {}, msgId {}", journalpostId, msgId)
                         throw RuntimeException("Oppdatering: Journalposten finnes ikke for journalpostid $journalpostId msgid $msgId")
                     }
                     else -> {
-                        log.error("Fikk http status {} ved oppdatering av journalpostid {}, msgId {}, {}", e.response.status, journalpostId, msgId)
+                        log.error("Fikk http status {} ved oppdatering av journalpostid {}, msgId {}", e.response.status, journalpostId, msgId)
                         throw RuntimeException("Fikk feilmelding ved oppdatering av journalpostid $journalpostId msgid $msgId")
                     }
                 }
@@ -121,22 +121,23 @@ class DokArkivClient(
     suspend fun oppdaterJournalpost(
         journalpostId: String,
         fnr: String,
-        isFnr: Boolean,
-        gsakId: String,
+        arbeidsgiverNr: String,
         arbeidsgiverNavn: String,
+        isArbeidsgiverFnr: Boolean,
         msgId: String
     ): HttpResponse {
         val req = OppdaterJournalpostRequest(
             bruker = Bruker(
                 fnr,
-                if (isFnr) {
-                    "FNR"
-                } else {
-                    "ORGNR"
-                }
+                "FNR"
             ),
-            avsenderMottaker = AvsenderMottaker(fnr, arbeidsgiverNavn),
-            sak = Sak("ARKIVSAK", "GSAK", gsakId)
+            avsenderMottaker = AvsenderMottaker(
+                arbeidsgiverNr,
+                if (isArbeidsgiverFnr) { "FNR" } else { "ORGNR" },
+                arbeidsgiverNavn
+            ),
+            sak = Sak("GENERELL_SAK"),
+            tema = "SYK"
         )
         return oppdaterJournalpost(journalpostId, req, msgId)
     }

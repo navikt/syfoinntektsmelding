@@ -154,7 +154,6 @@ class InntektsmeldingServiceTest {
         return InntektsmeldingEntitet(
             aktorId = aktorId,
             behandlet = LocalDateTime.now(),
-            sakId = "sak-123",
             orgnummer = "arb-org-123",
             journalpostId = "jp-123",
             data = objectMapper.writeValueAsString(im)

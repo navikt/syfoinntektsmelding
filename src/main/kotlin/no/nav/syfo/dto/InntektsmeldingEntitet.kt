@@ -7,7 +7,6 @@ import java.util.UUID
 data class InntektsmeldingEntitet(
     val uuid: String = UUID.randomUUID().toString(),
     var aktorId: String,
-    var sakId: String,
     var journalpostId: String,
     var orgnummer: String? = null,
     var arbeidsgiverPrivat: String? = null,

@@ -36,7 +36,6 @@ val grunnleggendeInntektsmelding = Inntektsmelding(
 val inntektsmeldingEntitet = InntektsmeldingEntitet(
     uuid = "UUID",
     aktorId = validIdentitetsnummer,
-    sakId = "987",
     journalpostId = "",
     orgnummer = validOrgNr,
     arbeidsgiverPrivat = null,

@@ -74,7 +74,6 @@ class OppgaveClient constructor(
     }
 
     suspend fun opprettOppgave(
-        sakId: String,
         journalpostId: String,
         tildeltEnhetsnr: String?,
         aktoerId: String,
@@ -114,9 +113,8 @@ class OppgaveClient constructor(
             aktoerId = aktoerId,
             journalpostId = journalpostId,
             behandlesAvApplikasjon = "FS22",
-            saksreferanse = sakId,
             beskrivelse = "Det har kommet en inntektsmelding på sykepenger.",
-            tema = TEMA,
+            tema = "SYK",
             oppgavetype = OPPGAVETYPE_INNTEKTSMELDING,
             behandlingstype = behandlingstype,
             behandlingstema = behandlingstema,

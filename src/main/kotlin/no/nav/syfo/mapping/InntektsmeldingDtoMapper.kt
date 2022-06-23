@@ -10,7 +10,6 @@ import no.nav.syfo.dto.InntektsmeldingEntitet
 fun toInntektsmeldingEntitet(inntektsmelding: Inntektsmelding): InntektsmeldingEntitet {
     val entitet = InntektsmeldingEntitet(
         aktorId = inntektsmelding.aktorId ?: "",
-        sakId = inntektsmelding.sakId ?: "",
         journalpostId = inntektsmelding.journalpostId,
         arbeidsgiverPrivat = inntektsmelding.arbeidsgiverPrivatFnr,
         orgnummer = inntektsmelding.arbeidsgiverOrgnummer,

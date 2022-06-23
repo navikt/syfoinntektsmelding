@@ -13,20 +13,19 @@ class BehandleInngaaendeJournalConsumer(private val dokArkivClient: DokArkivClie
     /**
      * Oppdaterer journalposten
      */
-    fun oppdaterJournalpost(inngaendeJournalpost: InngaendeJournalpost) {
+    fun oppdaterJournalpost(fnr: String, inngaendeJournalpost: InngaendeJournalpost) {
         val journalpostId = inngaendeJournalpost.journalpostId
         val avsenderNr = inngaendeJournalpost.arbeidsgiverOrgnummer
             ?: inngaendeJournalpost.arbeidsgiverPrivat
             ?: throw RuntimeException("Mangler avsender")
-
-        val isFnr = avsenderNr != inngaendeJournalpost.arbeidsgiverOrgnummer
+        val isArbeidsgiverFnr = avsenderNr != inngaendeJournalpost.arbeidsgiverOrgnummer
         runBlocking {
             dokArkivClient.oppdaterJournalpost(
                 journalpostId,
+                fnr,
                 avsenderNr,
-                isFnr,
-                inngaendeJournalpost.gsakId,
                 inngaendeJournalpost.arbeidsgiverNavn,
+                isArbeidsgiverFnr,
                 MDCOperations.generateCallId()
             )
         }

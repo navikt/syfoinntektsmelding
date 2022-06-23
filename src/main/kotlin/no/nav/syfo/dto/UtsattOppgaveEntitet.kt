@@ -8,7 +8,6 @@ data class UtsattOppgaveEntitet(
     var arkivreferanse: String,
     var fnr: String,
     var aktørId: String,
-    var sakId: String,
     var journalpostId: String,
     var timeout: LocalDateTime,
     var tilstand: Tilstand,
