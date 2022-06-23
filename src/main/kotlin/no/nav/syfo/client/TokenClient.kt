@@ -25,7 +25,7 @@ class TokenConsumer(
                         header(HttpHeaders.Authorization, "Basic " + "$username:$password".toBase64())
                     }.access_token
                 } catch (cause: ClientRequestException) {
-                    throw TokenException(cause.response?.status?.value, cause)
+                    throw TokenException(cause.response.status.value, cause)
                 }
             }
             return result
