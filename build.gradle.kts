@@ -9,9 +9,9 @@ val flywayVersion = "8.5.10"
 val cxfVersion = "3.4.4"
 val kotlinVersion = "1.4.10"
 val hikariVersion = "5.0.1"
-val ktorVersion = "1.6.7"
+val ktorVersion = "1.6.8"
 val koinVersion = "3.1.5"
-val tokenSupportVersion = "2.0.13"
+val tokenSupportVersion = "2.1.0"
 val mockOAuth2ServerVersion = "0.4.4"
 val brukernotifikasjonSchemasVersion = "1.2021.01.18-11.12-b9c8c40b98d1"
 val jacksonVersion = "2.13.3"
@@ -131,7 +131,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("com.google.guava:guava:31.0.1-jre")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.6.10")
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.6.10")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:1.7.0")
     implementation("org.apache.cxf:cxf-core:$cxfVersion")
     implementation("org.apache.cxf:cxf-rt-databinding-jaxb:$cxfVersion")
     implementation("org.postgresql:postgresql:42.3.1")
