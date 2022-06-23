@@ -11,7 +11,7 @@ val kotlinVersion = "1.4.10"
 val hikariVersion = "5.0.1"
 val ktorVersion = "1.6.7"
 val koinVersion = "3.1.5"
-val tokenSupportVersion = "2.0.13"
+val tokenSupportVersion = "2.1.0"
 val mockOAuth2ServerVersion = "0.4.4"
 val brukernotifikasjonSchemasVersion = "1.2021.01.18-11.12-b9c8c40b98d1"
 val jacksonVersion = "2.13.3"
@@ -148,8 +148,8 @@ dependencies {
     implementation("no.nav.security:token-validation-ktor:$tokenSupportVersion")
     implementation("no.nav.security:mock-oauth2-server:$mockOAuth2ServerVersion")
     implementation("com.zaxxer:HikariCP:$hikariVersion")
-    implementation("org.slf4j:slf4j-api:1.7.32")
-    implementation("net.logstash.logback:logstash-logback-encoder:7.1.1")
+    implementation("org.slf4j:slf4j-api:1.7.36")
+    implementation("net.logstash.logback:logstash-logback-encoder:7.2")
     implementation("org.apache.httpcomponents:httpclient:4.5.13")
     implementation("io.micrometer:micrometer-core:$micrometerVersion")
     runtimeOnly("io.micrometer:micrometer-registry-prometheus:$micrometerVersion")
