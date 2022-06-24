@@ -42,4 +42,8 @@ class JournalpostService(
             arbeidsgiverPrivat = inntektsmelding.arbeidsgiverPrivatFnr
         )
     }
+
+    fun feilregistrerJournalpost(journalpostId: String) {
+        behandleInngaaendeJournalConsumer.feilregistrerJournalpost(journalpostId)
+    }
 }

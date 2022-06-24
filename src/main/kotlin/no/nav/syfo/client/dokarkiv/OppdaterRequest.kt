@@ -11,10 +11,11 @@ package no.nav.syfo.client.dokarkiv
  *
  **/
 data class OppdaterJournalpostRequest(
-    val bruker: Bruker?,
-    val avsenderMottaker: AvsenderMottaker?,
-    val sak: Sak?,
-    val tema: String? = null
+    val bruker: Bruker? = null,
+    val avsenderMottaker: AvsenderMottaker? = null,
+    val sak: Sak? = null,
+    val tema: String? = null,
+    val tittel: String? = null
 )
 
 data class Bruker(

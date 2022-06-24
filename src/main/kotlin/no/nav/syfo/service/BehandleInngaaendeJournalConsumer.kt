@@ -3,8 +3,10 @@ package no.nav.syfo.service
 import kotlinx.coroutines.runBlocking
 import log
 import no.nav.syfo.client.dokarkiv.DokArkivClient
+import no.nav.syfo.client.dokarkiv.OppdaterJournalpostRequest
 import no.nav.syfo.domain.InngaendeJournalpost
 import no.nav.syfo.util.MDCOperations
+import java.util.UUID
 
 class BehandleInngaaendeJournalConsumer(private val dokArkivClient: DokArkivClient) {
 
@@ -37,9 +39,19 @@ class BehandleInngaaendeJournalConsumer(private val dokArkivClient: DokArkivClie
      */
     fun ferdigstillJournalpost(inngaendeJournalpost: InngaendeJournalpost) {
         val journalpostId = inngaendeJournalpost.journalpostId
-
         runBlocking {
             dokArkivClient.ferdigstillJournalpost(journalpostId, MDCOperations.generateCallId())
+        }
+    }
+
+    fun feilregistrerJournalpost(journalpostId: String) {
+        val request = OppdaterJournalpostRequest(tittel="Duplikat inntektsmelding")
+        val callId = UUID.randomUUID().toString()
+        runBlocking {
+            dokArkivClient.oppdaterJournalpost(journalpostId, request, callId)
+        }
+        runBlocking {
+            dokArkivClient.feilregistrerJournalpost(journalpostId, callId)
         }
     }
 }

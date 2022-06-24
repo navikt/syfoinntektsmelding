@@ -42,7 +42,7 @@ class DokArkivClient(
      * 403 Forbidden. Konsument har ikke tilgang til å ferdigstille journalpost.
      * 500 Internal Server Error. Dersom en uventet feil oppstår i dokarkiv.
      */
-    private suspend fun ferdigstillJournalpost(
+    suspend fun ferdigstillJournalpost(
         journalpostId: String,
         msgId: String,
         ferdigstillRequest: FerdigstillRequest
@@ -86,7 +86,7 @@ class DokArkivClient(
      *
      * https://confluence.adeo.no/display/BOA/oppdaterJournalpost
      */
-    private suspend fun oppdaterJournalpost(
+    suspend fun oppdaterJournalpost(
         journalpostId: String,
         oppdaterJournalpostRequest: OppdaterJournalpostRequest,
         msgId: String
@@ -140,5 +140,32 @@ class DokArkivClient(
             tema = "SYK"
         )
         return oppdaterJournalpost(journalpostId, req, msgId)
+    }
+
+    suspend fun feilregistrerJournalpost(journalpostId: String, msgId: String) {
+        try {
+            httpClient.patch<HttpResponse>("$url/journalpost/$journalpostId/feilregistrer/feilregistrerSaktilknytning") {
+                contentType(ContentType.Application.Json)
+                accept(ContentType.Application.Json)
+                header("Authorization", "Bearer ${accessTokenProvider.getToken()}")
+                header("Nav-Callid", msgId)
+            }.also { log.info("Feilregistrer journalpost {}", journalpostId) }
+        } catch (e: Exception) {
+            if (e is ClientRequestException) {
+                when (e.response.status) {
+                    HttpStatusCode.NotFound -> {
+                        log.error("Klarte ikke feilregistrere journalpost {}", journalpostId)
+                        throw RuntimeException("Oppdatering: Journalposten finnes ikke for journalpostid $journalpostId msgid $msgId")
+                    }
+                    else -> {
+                        log.error("Fikk http status {} ved feilregistrering av journalpost  {}", e.response.status, journalpostId)
+                        throw RuntimeException("Fikk feilmelding ved oppdatering av journalpostid $journalpostId")
+                    }
+                }
+            } else {
+                log.error("Dokarkiv svarte med feilmelding ved feilregistrering av journalpost {}", msgId)
+            }
+            throw IOException("Dokarkiv svarte med feilmelding ved oppdatering av journalpost for $journalpostId")
+        }
     }
 }
