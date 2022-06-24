@@ -54,6 +54,7 @@ class InntektsmeldingBehandler(
                 log.info("Likhetssjekk: finnes fra før ${inntektsmelding.arkivRefereranse} og blir feilregistrert")
                 if (JournalStatus.MOTTATT == inntektsmelding.journalStatus) {
                     journalpostService.feilregistrerJournalpost(inntektsmelding)
+                    metrikk.tellInntektsmeldingerFeilregistrert()
                 }
             } else {
                 log.info("Likhetssjekk: ingen like detaljer fra før for ${inntektsmelding.arkivRefereranse}")
