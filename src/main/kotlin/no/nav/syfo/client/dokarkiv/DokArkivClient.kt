@@ -54,23 +54,23 @@ class DokArkivClient(
                 header("Authorization", "Bearer ${accessTokenProvider.getToken()}")
                 header("Nav-Callid", msgId)
                 body = ferdigstillRequest
-            }.also { log.info("ferdigstilling av journalpost ok for journalpostid {}", journalpostId) }
+            }.also { log.info("Ferdigstilte journalpost {}", journalpostId) }
         } catch (e: Exception) {
             if (e is ClientRequestException) {
                 when (e.response.status) {
                     HttpStatusCode.NotFound -> {
-                        log.error("Journalposten finnes ikke for journalpostid {}", journalpostId)
-                        throw RuntimeException("Ferdigstilling: Journalposten finnes ikke for journalpostid $journalpostId msgid $msgId")
+                        log.error("Journalposten finnes ikke for journalpostid $journalpostId", e)
+                        throw RuntimeException("Ferdigstilling: Journalposten finnes ikke for journalpostid $journalpostId", e)
                     }
                     else -> {
-                        log.error("Fikk http status {} for journalpostid {}", e.response.status, journalpostId, msgId)
-                        throw RuntimeException("Fikk feilmelding ved ferdigstilling av journalpostid $journalpostId msgid $msgId")
+                        log.error("Fikk http status ${e.response.status} for journalpostid $journalpostId", e)
+                        throw RuntimeException("Ferdigstilling: Fikk feilmelding for journalpostid $journalpostId", e)
                     }
                 }
             } else {
-                log.error("Dokarkiv svarte med feilmelding ved ferdigstilling av journalpost $journalpostId", e)
+                log.error("Ferdigstilling: Dokarkiv svarte med feilmelding for journalpost $journalpostId", e)
             }
-            throw IOException("Dokarkiv svarte med feilmelding ved ferdigstilling av journalpost $journalpostId ")
+            throw IOException("Ferdigstilling: Dokarkiv svarte med feilmelding for journalpost $journalpostId", e)
         }
     }
 
