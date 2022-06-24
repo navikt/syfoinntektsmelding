@@ -18,7 +18,7 @@ import no.nav.syfo.util.DatapakkeUtil
 import java.time.DayOfWeek
 import java.time.Duration
 import java.time.LocalDateTime
-
+// TODO: Gjør om til datafortelling
 class DatapakkePublisherJob(
     private val imRepo: IMStatsRepo,
     private val httpClient: HttpClient,
