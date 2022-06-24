@@ -154,18 +154,17 @@ class DokArkivClient(
             if (e is ClientRequestException) {
                 when (e.response.status) {
                     HttpStatusCode.NotFound -> {
-                        log.error("Klarte ikke feilregistrere journalpost {}", journalpostId)
-                        throw RuntimeException("Oppdatering: Journalposten finnes ikke for journalpostid $journalpostId msgid $msgId")
+                        log.error("Klarte ikke feilregistrere journalpost $journalpostId")
+                        throw RuntimeException("feilregistrering: Journalposten finnes ikke for journalpostid $journalpostId", e)
                     }
                     else -> {
-                        log.error("Fikk http status {} ved feilregistrering av journalpost  {}", e.response.status, journalpostId)
-                        throw RuntimeException("Fikk feilmelding ved oppdatering av journalpostid $journalpostId")
+                        log.error("Fikk http status ${e.response.status} ved feilregistrering av journalpost $journalpostId")
+                        throw RuntimeException("Fikk feilmelding ved feilregistrering av journalpostid $journalpostId", e)
                     }
                 }
-            } else {
-                log.error("Dokarkiv svarte med feilmelding ved feilregistrering av journalpost {}", msgId)
             }
-            throw IOException("Dokarkiv svarte med feilmelding ved oppdatering av journalpost for $journalpostId")
+            log.error("Dokarkiv svarte med feilmelding ved feilregistrering av journalpost $journalpostId")
+            throw IOException("Dokarkiv svarte med feilmelding ved feilregistrering av journalpost for $journalpostId", e)
         }
     }
 }
