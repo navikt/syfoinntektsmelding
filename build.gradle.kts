@@ -17,7 +17,7 @@ val brukernotifikasjonSchemasVersion = "1.2021.01.18-11.12-b9c8c40b98d1"
 val jacksonVersion = "2.13.3"
 val junitJupiterVersion = "5.8.2"
 val assertJVersion = "3.23.1"
-val prometheusVersion = "0.15.0"
+val prometheusVersion = "0.16.0"
 val joarkHendelseVersion = "96ec5ebb"
 val githubPassword: String by project
 
