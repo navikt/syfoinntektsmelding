@@ -111,9 +111,8 @@ class DokArkivClient(
                         throw RuntimeException("Fikk feilmelding ved oppdatering av journalpostid $journalpostId msgid $msgId")
                     }
                 }
-            } else {
-                log.error("Dokarkiv svarte med feilmelding ved oppdatering av journalpost $journalpostId", e)
             }
+            log.error("Dokarkiv svarte med feilmelding ved oppdatering av journalpost $journalpostId", e)
             throw IOException("Dokarkiv svarte med feilmelding ved oppdatering av journalpost for $journalpostId msgid $msgId")
         }
     }
@@ -144,12 +143,12 @@ class DokArkivClient(
 
     suspend fun feilregistrerJournalpost(journalpostId: String, msgId: String) {
         try {
-            httpClient.patch<HttpResponse>("$url/journalpost/$journalpostId/feilregistrer/feilregistrerSaktilknytning") {
+            httpClient.patch<HttpResponse>("$url/journalpost/$journalpostId/feilregistrer/feilregistrerSakstilknytning") {
                 contentType(ContentType.Application.Json)
                 accept(ContentType.Application.Json)
                 header("Authorization", "Bearer ${accessTokenProvider.getToken()}")
                 header("Nav-Callid", msgId)
-            }.also { log.info("Feilregistrer journalpost {}", journalpostId) }
+            }.also { log.info("Feilregistrerer journalpost {}", journalpostId) }
         } catch (e: Exception) {
             if (e is ClientRequestException) {
                 when (e.response.status) {
