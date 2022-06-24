@@ -38,17 +38,14 @@ class BehandleInngaaendeJournalConsumer(private val dokArkivClient: DokArkivClie
      *
      */
     fun ferdigstillJournalpost(inngaendeJournalpost: InngaendeJournalpost) {
-        val journalpostId = inngaendeJournalpost.journalpostId
         runBlocking {
-            dokArkivClient.ferdigstillJournalpost(journalpostId, MDCOperations.generateCallId())
+            dokArkivClient.ferdigstillJournalpost(inngaendeJournalpost.journalpostId, MDCOperations.generateCallId())
         }
     }
 
     fun feilregistrerJournalpost(journalpostId: String) {
-        val request = OppdaterJournalpostRequest(tittel="Duplikat inntektsmelding")
-        val callId = UUID.randomUUID().toString()
         runBlocking {
-            dokArkivClient.feilregistrerJournalpost(journalpostId, callId)
+            dokArkivClient.feilregistrerJournalpost(journalpostId, MDCOperations.generateCallId())
         }
     }
 }

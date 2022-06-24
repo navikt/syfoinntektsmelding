@@ -148,7 +148,7 @@ class DokArkivClient(
                 accept(ContentType.Application.Json)
                 header("Authorization", "Bearer ${accessTokenProvider.getToken()}")
                 header("Nav-Callid", msgId)
-            }.also { log.info("Feilregistrerer journalpost {}", journalpostId) }
+            }.also { log.info("Feilregistrerte journalpost {}", journalpostId) }
         } catch (e: Exception) {
             if (e is ClientRequestException) {
                 when (e.response.status) {

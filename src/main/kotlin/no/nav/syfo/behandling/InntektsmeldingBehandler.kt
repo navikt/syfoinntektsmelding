@@ -53,8 +53,7 @@ class InntektsmeldingBehandler(
                 metrikk.tellFunksjonellLikhet()
                 log.info("Likhetssjekk: finnes fra før ${inntektsmelding.arkivRefereranse} og blir feilregistrert")
                 if (JournalStatus.MOTTATT == inntektsmelding.journalStatus) {
-                    journalpostService.ferdigstillJournalpost(inntektsmelding)
-                    journalpostService.feilregistrerJournalpost(inntektsmelding.journalpostId)
+                    journalpostService.feilregistrerJournalpost(inntektsmelding)
                 }
             } else {
                 log.info("Likhetssjekk: ingen like detaljer fra før for ${inntektsmelding.arkivRefereranse}")

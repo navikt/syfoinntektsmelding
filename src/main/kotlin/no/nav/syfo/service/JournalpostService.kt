@@ -43,7 +43,8 @@ class JournalpostService(
         )
     }
 
-    fun feilregistrerJournalpost(journalpostId: String) {
-        behandleInngaaendeJournalConsumer.feilregistrerJournalpost(journalpostId)
+    fun feilregistrerJournalpost(inntektsmelding: Inntektsmelding) {
+        ferdigstillJournalpost(inntektsmelding)
+        behandleInngaaendeJournalConsumer.feilregistrerJournalpost(inntektsmelding.journalpostId)
     }
 }
