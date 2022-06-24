@@ -51,6 +51,9 @@ class BehandleInngaaendeJournalConsumer(private val dokArkivClient: DokArkivClie
             dokArkivClient.oppdaterJournalpost(journalpostId, request, callId)
         }
         runBlocking {
+            dokArkivClient.ferdigstillJournalpost(journalpostId, callId)
+        }
+        runBlocking {
             dokArkivClient.feilregistrerJournalpost(journalpostId, callId)
         }
     }
