@@ -14,7 +14,6 @@ import no.nav.helse.arbeidsgiver.kubernetes.ReadynessComponent
 import no.nav.helse.arbeidsgiver.system.AppEnv
 import no.nav.helse.arbeidsgiver.system.getEnvironment
 import no.nav.helse.arbeidsgiver.system.getString
-import no.nav.syfo.datapakke.DatapakkePublisherJob
 import no.nav.syfo.integration.kafka.PollForJoarkhendelserJob
 import no.nav.syfo.integration.kafka.PollForUtsattOppgaveVarslingsmeldingJob
 import no.nav.syfo.koin.selectModuleBasedOnProfile
@@ -88,7 +87,6 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
     private fun configAndStartBackgroundWorkers() {
         if (appConfig.getString("run_background_workers") == "true") {
             get<FinnAlleUtgaandeOppgaverProcessor>().startAsync(true)
-            get<DatapakkePublisherJob>().startAsync(true)
 
             get<BakgrunnsjobbService>().apply {
 
