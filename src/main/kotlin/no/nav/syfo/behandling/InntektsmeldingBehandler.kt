@@ -52,8 +52,10 @@ class InntektsmeldingBehandler(
             if (inntektsmeldingService.isDuplicate(inntektsmelding)) {
                 metrikk.tellFunksjonellLikhet()
                 log.info("Likhetssjekk: finnes fra før ${inntektsmelding.arkivRefereranse} og blir feilregistrert")
-                journalpostService.feilregistrerJournalpost(inntektsmelding.journalpostId)
-
+                if (JournalStatus.MOTTATT == inntektsmelding.journalStatus) {
+                    journalpostService.ferdigstillJournalpost(inntektsmelding)
+                    journalpostService.feilregistrerJournalpost(inntektsmelding.journalpostId)
+                }
             } else {
                 log.info("Likhetssjekk: ingen like detaljer fra før for ${inntektsmelding.arkivRefereranse}")
                 if (JournalStatus.MOTTATT == inntektsmelding.journalStatus) {

@@ -48,12 +48,6 @@ class BehandleInngaaendeJournalConsumer(private val dokArkivClient: DokArkivClie
         val request = OppdaterJournalpostRequest(tittel="Duplikat inntektsmelding")
         val callId = UUID.randomUUID().toString()
         runBlocking {
-            dokArkivClient.oppdaterJournalpost(journalpostId, request, callId)
-        }
-        runBlocking {
-            dokArkivClient.ferdigstillJournalpost(journalpostId, callId)
-        }
-        runBlocking {
             dokArkivClient.feilregistrerJournalpost(journalpostId, callId)
         }
     }
