@@ -123,7 +123,8 @@ class DokArkivClient(
         arbeidsgiverNr: String,
         arbeidsgiverNavn: String,
         isArbeidsgiverFnr: Boolean,
-        msgId: String
+        msgId: String,
+        tittel: String?
     ): HttpResponse {
         val req = OppdaterJournalpostRequest(
             bruker = Bruker(
@@ -136,7 +137,8 @@ class DokArkivClient(
                 arbeidsgiverNavn
             ),
             sak = Sak("GENERELL_SAK"),
-            tema = "SYK"
+            tema = "SYK",
+            tittel = tittel
         )
         return oppdaterJournalpost(journalpostId, req, msgId)
     }
