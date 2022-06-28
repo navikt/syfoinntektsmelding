@@ -44,9 +44,7 @@ class JournalpostService(
     }
 
     fun feilregistrerJournalpost(inntektsmelding: Inntektsmelding) {
-        val journalpost = hentInngaendeJournalpost(inntektsmelding)
-        behandleInngaaendeJournalConsumer.oppdaterJournalpost(inntektsmelding.fnr, journalpost, "Inntektsmelding - duplikat")
-        behandleInngaaendeJournalConsumer.ferdigstillJournalpost(journalpost)
+        ferdigstillJournalpost(inntektsmelding)
         behandleInngaaendeJournalConsumer.feilregistrerJournalpost(inntektsmelding.journalpostId)
     }
 }

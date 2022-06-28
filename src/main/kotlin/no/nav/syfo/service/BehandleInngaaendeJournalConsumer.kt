@@ -15,7 +15,7 @@ class BehandleInngaaendeJournalConsumer(private val dokArkivClient: DokArkivClie
     /**
      * Oppdaterer journalposten
      */
-    fun oppdaterJournalpost(fnr: String, inngaendeJournalpost: InngaendeJournalpost, tittel: String? = null) {
+    fun oppdaterJournalpost(fnr: String, inngaendeJournalpost: InngaendeJournalpost) {
         val journalpostId = inngaendeJournalpost.journalpostId
         val avsenderNr = inngaendeJournalpost.arbeidsgiverOrgnummer
             ?: inngaendeJournalpost.arbeidsgiverPrivat
@@ -28,8 +28,7 @@ class BehandleInngaaendeJournalConsumer(private val dokArkivClient: DokArkivClie
                 avsenderNr,
                 inngaendeJournalpost.arbeidsgiverNavn,
                 isArbeidsgiverFnr,
-                MDCOperations.generateCallId(),
-                tittel
+                MDCOperations.generateCallId()
             )
         }
     }
