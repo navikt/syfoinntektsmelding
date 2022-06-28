@@ -44,8 +44,8 @@ class DokArkivClient(
      */
     suspend fun ferdigstillJournalpost(
         journalpostId: String,
-        msgId: String,
-        ferdigstillRequest: FerdigstillRequest
+        ferdigstillRequest: FerdigstillRequest,
+        msgId: String
     ): String {
         try {
             return httpClient.patch<String>("$url/journalpost/$journalpostId/ferdigstill") {
@@ -78,7 +78,7 @@ class DokArkivClient(
         journalpostId: String,
         msgId: String,
     ): String {
-        return ferdigstillJournalpost(journalpostId, msgId, FerdigstillRequest(AUTOMATISK_JOURNALFOERING_ENHET))
+        return ferdigstillJournalpost(journalpostId, FerdigstillRequest(AUTOMATISK_JOURNALFOERING_ENHET), msgId)
     }
 
     /**
@@ -115,30 +115,6 @@ class DokArkivClient(
             log.error("Dokarkiv svarte med feilmelding ved oppdatering av journalpost $journalpostId", e)
             throw IOException("Dokarkiv svarte med feilmelding ved oppdatering av journalpost for $journalpostId msgid $msgId")
         }
-    }
-
-    suspend fun oppdaterJournalpost(
-        journalpostId: String,
-        fnr: String,
-        arbeidsgiverNr: String,
-        arbeidsgiverNavn: String,
-        isArbeidsgiverFnr: Boolean,
-        msgId: String
-    ): HttpResponse {
-        val req = OppdaterJournalpostRequest(
-            bruker = Bruker(
-                fnr,
-                "FNR"
-            ),
-            avsenderMottaker = AvsenderMottaker(
-                arbeidsgiverNr,
-                if (isArbeidsgiverFnr) { "FNR" } else { "ORGNR" },
-                arbeidsgiverNavn
-            ),
-            sak = Sak("GENERELL_SAK"),
-            tema = "SYK"
-        )
-        return oppdaterJournalpost(journalpostId, req, msgId)
     }
 
     suspend fun feilregistrerJournalpost(journalpostId: String, msgId: String) {

@@ -39,7 +39,18 @@ class DokArkivClientTest {
     fun `Skal oppdatere journalpost når man får status OK`() {
         dokArkivClient = DokArkivClient("", mockStsClient, buildHttpClientText(HttpStatusCode.OK))
         runBlocking {
-            val resultat = dokArkivClient.oppdaterJournalpost("111", "123", "123", "Stark industries", true, "")
+            val req = mapOppdaterRequest("123", "123", "Stark industries", true)
+            val resultat = dokArkivClient.oppdaterJournalpost("111", req, "")
+            assertEquals(HttpStatusCode.OK, resultat.status)
+        }
+    }
+
+    @Test
+    fun `Skal oppdatere journalpost med feilregistrering`() {
+        dokArkivClient = DokArkivClient("", mockStsClient, buildHttpClientText(HttpStatusCode.OK))
+        runBlocking {
+            val req = mapFeilregistrertRequest("123", "123", "Stark industries", true, "dok123")
+            val resultat = dokArkivClient.oppdaterJournalpost("111", req, "")
             assertEquals(HttpStatusCode.OK, resultat.status)
         }
     }
@@ -48,9 +59,10 @@ class DokArkivClientTest {
     @Test
     fun `Skal håndtere at oppdatering av journalpost feiler`() {
         dokArkivClient = DokArkivClient("", mockStsClient, buildHttpClientText(HttpStatusCode.InternalServerError, ""))
+        val req = mapOppdaterRequest("123", "123", "Stark industries", true)
         runBlocking {
             assertThrows<Exception> {
-                dokArkivClient.oppdaterJournalpost("111", "123", "123", "Stark industries", true, "")
+                dokArkivClient.oppdaterJournalpost("111", req, "")
             }
         }
     }
