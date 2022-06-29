@@ -40,7 +40,6 @@ data class Sak(
     val arkivsaksystem: String? = null
 )
 
-
 fun mapOppdaterRequest(
     fnr: String,
     arbeidsgiverNr: String,
