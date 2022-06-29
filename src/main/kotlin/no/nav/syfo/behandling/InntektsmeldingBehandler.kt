@@ -44,29 +44,23 @@ class InntektsmeldingBehandler(
         val consumerLock = consumerLocks.get(inntektsmelding.fnr)
         try {
             consumerLock.lock()
-            log.info("Slår opp aktørID for ${inntektsmelding.arkivRefereranse}")
-            val aktorid = aktorClient.getAktorId(inntektsmelding.fnr)
-            log.info("Fant aktørid for ${inntektsmelding.arkivRefereranse}")
-
-            inntektsmelding.aktorId = aktorid
-            if (inntektsmeldingService.isDuplicate(inntektsmelding)) {
-                metrikk.tellFunksjonellLikhet()
-                log.info("Likhetssjekk: finnes fra før ${inntektsmelding.arkivRefereranse} og blir feilregistrert")
-                if (JournalStatus.MOTTATT == inntektsmelding.journalStatus) {
+            if (JournalStatus.MOTTATT == inntektsmelding.journalStatus) {
+                log.info("Slår opp aktørID for ${inntektsmelding.arkivRefereranse}")
+                val aktorid = aktorClient.getAktorId(inntektsmelding.fnr)
+                log.info("Fant aktørid for ${inntektsmelding.arkivRefereranse}")
+                inntektsmelding.aktorId = aktorid
+                if (inntektsmeldingService.isDuplicate(inntektsmelding)) {
+                    metrikk.tellFunksjonellLikhet()
+                    log.info("Likhetssjekk: finnes fra før ${inntektsmelding.arkivRefereranse} og blir feilregistrert")
                     journalpostService.feilregistrerJournalpost(inntektsmelding)
                     metrikk.tellInntektsmeldingerFeilregistrert()
-                }
-            } else {
-                log.info("Likhetssjekk: ingen like detaljer fra før for ${inntektsmelding.arkivRefereranse}")
-                if (JournalStatus.MOTTATT == inntektsmelding.journalStatus) {
+                } else {
+                    log.info("Likhetssjekk: ingen like detaljer fra før for ${inntektsmelding.arkivRefereranse}")
                     metrikk.tellInntektsmeldingerMottatt(inntektsmelding)
-
                     journalpostService.ferdigstillJournalpost(inntektsmelding)
                     log.info("Ferdigstilte ${inntektsmelding.arkivRefereranse}")
-
                     val dto = inntektsmeldingService.lagreBehandling(inntektsmelding, aktorid, arkivreferanse)
                     log.info("Lagret inntektsmelding ${inntektsmelding.arkivRefereranse}")
-
                     utsattOppgaveService.opprett(
                         UtsattOppgaveEntitet(
                             fnr = inntektsmelding.fnr,
@@ -83,7 +77,6 @@ class InntektsmeldingBehandler(
                         )
                     )
                     log.info("Lagrer UtsattOppgave i databasen for ${inntektsmelding.arkivRefereranse}")
-
                     val mappedInntektsmelding = mapInntektsmeldingKontrakt(
                         inntektsmelding,
                         aktorid,
@@ -91,22 +84,18 @@ class InntektsmeldingBehandler(
                         arkivreferanse,
                         dto.uuid
                     )
-
                     inntektsmeldingAivenProducer.leggMottattInntektsmeldingPåTopics(mappedInntektsmelding)
                     tellMetrikker(inntektsmelding)
                     log.info("Inntektsmelding {} er journalført for {} refusjon {}", inntektsmelding.journalpostId, arkivreferanse, inntektsmelding.refusjon.beloepPrMnd)
                     ret = dto.uuid
-                } else {
-                    log.info(
-                        "Behandler ikke inntektsmelding {} da den har status: {}",
-                        inntektsmelding.journalpostId,
-                        inntektsmelding.journalStatus
-                    )
-
                 }
-
+            } else {
+                log.info(
+                    "Behandler ikke inntektsmelding {} da den har status: {}",
+                    inntektsmelding.journalpostId,
+                    inntektsmelding.journalStatus
+                )
             }
-
         } finally {
             consumerLock.unlock()
         }
