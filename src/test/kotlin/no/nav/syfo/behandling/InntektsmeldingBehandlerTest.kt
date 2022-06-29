@@ -25,7 +25,6 @@ class InntektsmeldingBehandlerTest {
     private var aktorClient = mockk<AktorClient>(relaxed = true)
     private var inntektsmeldingService = mockk<InntektsmeldingService>(relaxed = true)
     private val aivenInntektsmeldingProducer = mockk<InntektsmeldingAivenProducer>(relaxed = true)
-
     private var inntektsmeldingBehandler = InntektsmeldingBehandler(
         journalpostService,
         metrikk,
@@ -49,7 +48,8 @@ class InntektsmeldingBehandlerTest {
     }
 
     @Test
-    fun behandler_midlertidig() {
+    fun `Skal feilregistrere duplikater`() {
+        // Rigg
         every { journalpostService.hentInntektsmelding("arkivId", "AR-123") } returns
             Inntektsmelding(
                 fnr = "fnr",
@@ -64,15 +64,44 @@ class InntektsmeldingBehandlerTest {
                 førsteFraværsdag = LocalDate.now(),
                 mottattDato = LocalDate.of(2019, 2, 6).atStartOfDay()
             )
-
+        every { inntektsmeldingService.isDuplicate(any()) } returns true
+        // Kjør
         inntektsmeldingBehandler.behandle("arkivId", "AR-123")
-        verify { journalpostService.ferdigstillJournalpost(any()) }
-
-        verify { aivenInntektsmeldingProducer.leggMottattInntektsmeldingPåTopics(any()) }
+        // Verifiser
+        verify(exactly = 1) { journalpostService.feilregistrerJournalpost(any()) }
+        verify(exactly = 0) { journalpostService.ferdigstillJournalpost(any()) } // not
+        verify(exactly = 0) { aivenInntektsmeldingProducer.leggMottattInntektsmeldingPåTopics(any()) }
     }
 
     @Test
-    fun behandler_Ikke_ForskjelligFraMidlertidig() {
+    fun `Skal behandle midlertidig - ikke duplikat`() {
+        // Rigg
+        every { journalpostService.hentInntektsmelding("arkivId", "AR-123") } returns
+            Inntektsmelding(
+                fnr = "fnr",
+                arbeidsgiverOrgnummer = "orgnummer",
+                arbeidsgiverPrivatFnr = null,
+                arbeidsforholdId = "",
+                journalpostId = "arkivId",
+                arsakTilInnsending = "",
+                journalStatus = JournalStatus.MOTTATT,
+                arbeidsgiverperioder = emptyList(),
+                arkivRefereranse = "AR-123",
+                førsteFraværsdag = LocalDate.now(),
+                mottattDato = LocalDate.of(2019, 2, 6).atStartOfDay()
+            )
+        every { inntektsmeldingService.isDuplicate(any()) } returns false
+        // Kjør
+        inntektsmeldingBehandler.behandle("arkivId", "AR-123")
+        // Verifiser
+        verify(exactly = 0) { journalpostService.feilregistrerJournalpost(any()) }
+        verify(exactly = 1) { journalpostService.ferdigstillJournalpost(any()) }
+        verify(exactly = 1) { aivenInntektsmeldingProducer.leggMottattInntektsmeldingPåTopics(any()) }
+    }
+
+    @Test
+    fun `Skal ignorere alt unntatt midlertidig`() {
+        // Rigg
         every { journalpostService.hentInntektsmelding("arkivId", "AR-123") } returns
             Inntektsmelding(
                 fnr = "fnr",
@@ -85,14 +114,18 @@ class InntektsmeldingBehandlerTest {
                 førsteFraværsdag = LocalDate.now(),
                 mottattDato = LocalDate.of(2019, 2, 6).atStartOfDay()
             )
-
+        every { inntektsmeldingService.isDuplicate(any()) } returns false
+        // Kjør
         inntektsmeldingBehandler.behandle("arkivId", "AR-123")
-
+        // Verifiser
+        verify(exactly = 0) { journalpostService.feilregistrerJournalpost(any()) }
         verify(exactly = 0) { journalpostService.ferdigstillJournalpost(any()) }
+        verify(exactly = 0) { aivenInntektsmeldingProducer.leggMottattInntektsmeldingPåTopics(any()) }
     }
 
     @Test
-    fun behandler_Ikke_StatusEndelig() {
+    fun `Skal ikke behandle ferdigstilt`() {
+        // Rigg
         every { journalpostService.hentInntektsmelding("arkivId", "AR-123") } returns
             Inntektsmelding(
                 fnr = "fnr",
@@ -105,9 +138,12 @@ class InntektsmeldingBehandlerTest {
                 førsteFraværsdag = LocalDate.now(),
                 mottattDato = LocalDate.of(2019, 2, 6).atStartOfDay()
             )
-
+        every { inntektsmeldingService.isDuplicate(any()) } returns false
+        // Kjør
         inntektsmeldingBehandler.behandle("arkivId", "AR-123")
-
-        verify(exactly = 0) { journalpostService.ferdigstillJournalpost(any()) }
+        // Verifiser
+        verify(exactly = 0) { journalpostService.feilregistrerJournalpost(any()) }
+        verify(exactly = 0) { journalpostService.ferdigstillJournalpost(any()) } // not
+        verify(exactly = 0) { aivenInntektsmeldingProducer.leggMottattInntektsmeldingPåTopics(any()) }
     }
 }
