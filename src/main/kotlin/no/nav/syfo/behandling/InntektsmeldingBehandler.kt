@@ -29,77 +29,79 @@ class InntektsmeldingBehandler(
 
     private val consumerLocks = Striped.lock(8)
     private val OPPRETT_OPPGAVE_FORSINKELSE = 48L
+    private val log = log()
 
     fun behandle(arkivId: String, arkivreferanse: String): String? {
-        val log = log()
         log.info("Henter inntektsmelding for $arkivreferanse")
         val inntektsmelding = journalpostService.hentInntektsmelding(arkivId, arkivreferanse)
-        return behandleInntektsmelding(arkivreferanse, inntektsmelding)
+        if (JournalStatus.MOTTATT == inntektsmelding.journalStatus) {
+            return behandleInntektsmelding(inntektsmelding)
+        } else {
+            log.info("Behandler ikke ${inntektsmelding.journalpostId} med status ${inntektsmelding.journalStatus}")
+            return null
+        }
     }
 
-    fun behandleInntektsmelding(arkivreferanse: String, inntektsmelding: Inntektsmelding): String? {
-
-        val log = log()
-        var ret: String? = null
+    fun behandleInntektsmelding(inntektsmelding: Inntektsmelding): String? {
         val consumerLock = consumerLocks.get(inntektsmelding.fnr)
         try {
             consumerLock.lock()
-            if (JournalStatus.MOTTATT == inntektsmelding.journalStatus) {
-                log.info("Slår opp aktørID for ${inntektsmelding.arkivRefereranse}")
-                val aktorid = aktorClient.getAktorId(inntektsmelding.fnr)
-                log.info("Fant aktørid for ${inntektsmelding.arkivRefereranse}")
-                inntektsmelding.aktorId = aktorid
-                if (inntektsmeldingService.isDuplicate(inntektsmelding)) {
-                    metrikk.tellFunksjonellLikhet()
-                    log.info("Likhetssjekk: finnes fra før ${inntektsmelding.arkivRefereranse} og blir feilregistrert")
-                    journalpostService.feilregistrerJournalpost(inntektsmelding)
-                    metrikk.tellInntektsmeldingerFeilregistrert()
-                } else {
-                    log.info("Likhetssjekk: ingen like detaljer fra før for ${inntektsmelding.arkivRefereranse}")
-                    metrikk.tellInntektsmeldingerMottatt(inntektsmelding)
-                    journalpostService.ferdigstillJournalpost(inntektsmelding)
-                    log.info("Ferdigstilte ${inntektsmelding.arkivRefereranse}")
-                    val dto = inntektsmeldingService.lagreBehandling(inntektsmelding, aktorid, arkivreferanse)
-                    log.info("Lagret inntektsmelding ${inntektsmelding.arkivRefereranse}")
-                    utsattOppgaveService.opprett(
-                        UtsattOppgaveEntitet(
-                            fnr = inntektsmelding.fnr,
-                            aktørId = dto.aktorId,
-                            journalpostId = inntektsmelding.journalpostId,
-                            arkivreferanse = inntektsmelding.arkivRefereranse,
-                            inntektsmeldingId = dto.uuid,
-                            tilstand = Tilstand.Utsatt,
-                            timeout = LocalDateTime.now().plusHours(OPPRETT_OPPGAVE_FORSINKELSE),
-                            gosysOppgaveId = null,
-                            oppdatert = null,
-                            speil = false,
-                            utbetalingBruker = false
-                        )
-                    )
-                    log.info("Lagrer UtsattOppgave i databasen for ${inntektsmelding.arkivRefereranse}")
-                    val mappedInntektsmelding = mapInntektsmeldingKontrakt(
-                        inntektsmelding,
-                        aktorid,
-                        validerInntektsmelding(inntektsmelding),
-                        arkivreferanse,
-                        dto.uuid
-                    )
-                    inntektsmeldingAivenProducer.leggMottattInntektsmeldingPåTopics(mappedInntektsmelding)
-                    tellMetrikker(inntektsmelding)
-                    log.info("Inntektsmelding {} er journalført for {} refusjon {}", inntektsmelding.journalpostId, arkivreferanse, inntektsmelding.refusjon.beloepPrMnd)
-                    ret = dto.uuid
-                }
+            log.info("Slår opp aktørID for ${inntektsmelding.arkivRefereranse}")
+            val aktorid = aktorClient.getAktorId(inntektsmelding.fnr)
+            log.info("Fant aktørid for ${inntektsmelding.arkivRefereranse}")
+            inntektsmelding.aktorId = aktorid
+            if (inntektsmeldingService.isDuplicate(inntektsmelding)) {
+                behandleDuplikat(inntektsmelding)
             } else {
-                log.info(
-                    "Behandler ikke inntektsmelding {} da den har status: {}",
-                    inntektsmelding.journalpostId,
-                    inntektsmelding.journalStatus
-                )
+                return behandleVanlig(inntektsmelding)
             }
         } finally {
             consumerLock.unlock()
         }
-        return ret
+        return null
+    }
+
+    fun behandleVanlig(inntektsmelding: Inntektsmelding): String {
+        log.info("Likhetssjekk: ingen like detaljer fra før for ${inntektsmelding.arkivRefereranse}")
+        metrikk.tellInntektsmeldingerMottatt(inntektsmelding)
+        journalpostService.ferdigstillJournalpost(inntektsmelding)
+        log.info("Ferdigstilte ${inntektsmelding.arkivRefereranse}")
+        val dto = inntektsmeldingService.lagreBehandling(inntektsmelding, inntektsmelding.aktorId!!, inntektsmelding.arkivRefereranse)
+        log.info("Lagret inntektsmelding ${inntektsmelding.arkivRefereranse}")
+        utsattOppgaveService.opprett(
+            UtsattOppgaveEntitet(
+                fnr = inntektsmelding.fnr,
+                aktørId = dto.aktorId,
+                journalpostId = inntektsmelding.journalpostId,
+                arkivreferanse = inntektsmelding.arkivRefereranse,
+                inntektsmeldingId = dto.uuid,
+                tilstand = Tilstand.Utsatt,
+                timeout = LocalDateTime.now().plusHours(OPPRETT_OPPGAVE_FORSINKELSE),
+                gosysOppgaveId = null,
+                oppdatert = null,
+                speil = false,
+                utbetalingBruker = false
+            )
+        )
+        log.info("Lagrer UtsattOppgave i databasen for ${inntektsmelding.arkivRefereranse}")
+        val mappedInntektsmelding = mapInntektsmeldingKontrakt(
+            inntektsmelding,
+            inntektsmelding.aktorId!!,
+            validerInntektsmelding(inntektsmelding),
+            inntektsmelding.arkivRefereranse,
+            dto.uuid
+        )
+        inntektsmeldingAivenProducer.leggMottattInntektsmeldingPåTopics(mappedInntektsmelding)
+        tellMetrikker(inntektsmelding)
+        log.info("Inntektsmelding {} er journalført for {} refusjon {}", inntektsmelding.journalpostId, inntektsmelding.arkivRefereranse, inntektsmelding.refusjon.beloepPrMnd)
+        return dto.uuid
+    }
+
+    fun behandleDuplikat(inntektsmelding: Inntektsmelding) {
+        log.info("Likhetssjekk: finnes fra før ${inntektsmelding.arkivRefereranse} og blir feilregistrert")
+        metrikk.tellFunksjonellLikhet()
+        journalpostService.feilregistrerJournalpost(inntektsmelding)
+        metrikk.tellInntektsmeldingerFeilregistrert()
     }
 
     private fun tellMetrikker(inntektsmelding: Inntektsmelding) {
