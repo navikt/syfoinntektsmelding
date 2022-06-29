@@ -51,58 +51,62 @@ class InntektsmeldingBehandler(
             inntektsmelding.aktorId = aktorid
             if (inntektsmeldingService.isDuplicate(inntektsmelding)) {
                 metrikk.tellFunksjonellLikhet()
-                log.info("Likhetssjekk: finnes fra før ${inntektsmelding.arkivRefereranse}")
+                log.info("Likhetssjekk: finnes fra før ${inntektsmelding.arkivRefereranse} og blir feilregistrert")
+                if (JournalStatus.MOTTATT == inntektsmelding.journalStatus) {
+                    journalpostService.feilregistrerJournalpost(inntektsmelding)
+                    metrikk.tellInntektsmeldingerFeilregistrert()
+                }
             } else {
                 log.info("Likhetssjekk: ingen like detaljer fra før for ${inntektsmelding.arkivRefereranse}")
-            }
+                if (JournalStatus.MOTTATT == inntektsmelding.journalStatus) {
+                    metrikk.tellInntektsmeldingerMottatt(inntektsmelding)
 
-            tellMetrikker(inntektsmelding)
+                    journalpostService.ferdigstillJournalpost(inntektsmelding)
+                    log.info("Ferdigstilte ${inntektsmelding.arkivRefereranse}")
 
-            if (JournalStatus.MOTTATT == inntektsmelding.journalStatus) {
-                metrikk.tellInntektsmeldingerMottatt(inntektsmelding)
+                    val dto = inntektsmeldingService.lagreBehandling(inntektsmelding, aktorid, arkivreferanse)
+                    log.info("Lagret inntektsmelding ${inntektsmelding.arkivRefereranse}")
 
-                journalpostService.ferdigstillJournalpost(inntektsmelding)
-                log.info("Ferdigstilte ${inntektsmelding.arkivRefereranse}")
-
-                val dto = inntektsmeldingService.lagreBehandling(inntektsmelding, aktorid, arkivreferanse)
-                log.info("Lagret inntektsmelding ${inntektsmelding.arkivRefereranse}")
-
-                utsattOppgaveService.opprett(
-                    UtsattOppgaveEntitet(
-                        fnr = inntektsmelding.fnr,
-                        aktørId = dto.aktorId,
-                        journalpostId = inntektsmelding.journalpostId,
-                        arkivreferanse = inntektsmelding.arkivRefereranse,
-                        inntektsmeldingId = dto.uuid,
-                        tilstand = Tilstand.Utsatt,
-                        timeout = LocalDateTime.now().plusHours(OPPRETT_OPPGAVE_FORSINKELSE),
-                        gosysOppgaveId = null,
-                        oppdatert = null,
-                        speil = false,
-                        utbetalingBruker = false
+                    utsattOppgaveService.opprett(
+                        UtsattOppgaveEntitet(
+                            fnr = inntektsmelding.fnr,
+                            aktørId = dto.aktorId,
+                            journalpostId = inntektsmelding.journalpostId,
+                            arkivreferanse = inntektsmelding.arkivRefereranse,
+                            inntektsmeldingId = dto.uuid,
+                            tilstand = Tilstand.Utsatt,
+                            timeout = LocalDateTime.now().plusHours(OPPRETT_OPPGAVE_FORSINKELSE),
+                            gosysOppgaveId = null,
+                            oppdatert = null,
+                            speil = false,
+                            utbetalingBruker = false
+                        )
                     )
-                )
-                log.info("Lagrer UtsattOppgave i databasen for ${inntektsmelding.arkivRefereranse}")
+                    log.info("Lagrer UtsattOppgave i databasen for ${inntektsmelding.arkivRefereranse}")
 
-                val mappedInntektsmelding = mapInntektsmeldingKontrakt(
-                    inntektsmelding,
-                    aktorid,
-                    validerInntektsmelding(inntektsmelding),
-                    arkivreferanse,
-                    dto.uuid
-                )
+                    val mappedInntektsmelding = mapInntektsmeldingKontrakt(
+                        inntektsmelding,
+                        aktorid,
+                        validerInntektsmelding(inntektsmelding),
+                        arkivreferanse,
+                        dto.uuid
+                    )
 
-                inntektsmeldingAivenProducer.leggMottattInntektsmeldingPåTopics(mappedInntektsmelding)
+                    inntektsmeldingAivenProducer.leggMottattInntektsmeldingPåTopics(mappedInntektsmelding)
+                    tellMetrikker(inntektsmelding)
+                    log.info("Inntektsmelding {} er journalført for {} refusjon {}", inntektsmelding.journalpostId, arkivreferanse, inntektsmelding.refusjon.beloepPrMnd)
+                    ret = dto.uuid
+                } else {
+                    log.info(
+                        "Behandler ikke inntektsmelding {} da den har status: {}",
+                        inntektsmelding.journalpostId,
+                        inntektsmelding.journalStatus
+                    )
 
-                log.info("Inntektsmelding {} er journalført for {} refusjon {}", inntektsmelding.journalpostId, arkivreferanse, inntektsmelding.refusjon.beloepPrMnd)
-                ret = dto.uuid
-            } else {
-                log.info(
-                    "Behandler ikke inntektsmelding {} da den har status: {}",
-                    inntektsmelding.journalpostId,
-                    inntektsmelding.journalStatus
-                )
+                }
+
             }
+
         } finally {
             consumerLock.unlock()
         }

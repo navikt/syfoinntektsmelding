@@ -11,10 +11,17 @@ package no.nav.syfo.client.dokarkiv
  *
  **/
 data class OppdaterJournalpostRequest(
-    val bruker: Bruker?,
-    val avsenderMottaker: AvsenderMottaker?,
-    val sak: Sak?,
-    val tema: String? = null
+    val bruker: Bruker? = null,
+    val avsenderMottaker: AvsenderMottaker? = null,
+    val sak: Sak? = null,
+    val tema: String? = null,
+    val tittel: String? = null,
+    val dokumenter: List<Dokument>? = null
+)
+
+data class Dokument(
+    val dokumentInfoId: String,
+    val tittel: String? = null
 )
 
 data class Bruker(
@@ -32,3 +39,29 @@ data class Sak(
     val sakstype: String,
     val arkivsaksystem: String? = null
 )
+
+
+fun mapOppdaterRequest(
+    fnr: String,
+    arbeidsgiverNr: String,
+    arbeidsgiverNavn: String,
+    isArbeidsgiverFnr: Boolean
+): OppdaterJournalpostRequest {
+    return OppdaterJournalpostRequest(
+        bruker = Bruker(
+            fnr,
+            "FNR"
+        ),
+        avsenderMottaker = AvsenderMottaker(
+            arbeidsgiverNr,
+            if (isArbeidsgiverFnr) {
+                "FNR"
+            } else {
+                "ORGNR"
+            },
+            arbeidsgiverNavn
+        ),
+        sak = Sak("GENERELL_SAK"),
+        tema = "SYK",
+    )
+}

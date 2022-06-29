@@ -20,7 +20,7 @@ class JournalpostService(
 
     fun ferdigstillJournalpost(inntektsmelding: Inntektsmelding) {
         val journalpost = hentInngaendeJournalpost(inntektsmelding)
-        behandleInngaaendeJournalConsumer.oppdaterJournalpost(inntektsmelding.fnr, journalpost)
+        behandleInngaaendeJournalConsumer.oppdaterJournalpost(inntektsmelding.fnr, journalpost, false)
         behandleInngaaendeJournalConsumer.ferdigstillJournalpost(journalpost)
         metrikk.tellInntektsmeldingerJournalfort()
     }
@@ -41,5 +41,12 @@ class JournalpostService(
             arbeidsgiverNavn = arbeidsgiverNavn,
             arbeidsgiverPrivat = inntektsmelding.arbeidsgiverPrivatFnr
         )
+    }
+
+    fun feilregistrerJournalpost(inntektsmelding: Inntektsmelding) {
+        val journalpost = hentInngaendeJournalpost(inntektsmelding)
+        behandleInngaaendeJournalConsumer.oppdaterJournalpost(inntektsmelding.fnr, journalpost, true)
+        behandleInngaaendeJournalConsumer.ferdigstillJournalpost(journalpost)
+        behandleInngaaendeJournalConsumer.feilregistrerJournalpost(inntektsmelding.journalpostId)
     }
 }

@@ -3,6 +3,8 @@ package no.nav.syfo.service
 import kotlinx.coroutines.runBlocking
 import log
 import no.nav.syfo.client.dokarkiv.DokArkivClient
+import no.nav.syfo.client.dokarkiv.mapFeilregistrertRequest
+import no.nav.syfo.client.dokarkiv.mapOppdaterRequest
 import no.nav.syfo.domain.InngaendeJournalpost
 import no.nav.syfo.util.MDCOperations
 
@@ -13,19 +15,21 @@ class BehandleInngaaendeJournalConsumer(private val dokArkivClient: DokArkivClie
     /**
      * Oppdaterer journalposten
      */
-    fun oppdaterJournalpost(fnr: String, inngaendeJournalpost: InngaendeJournalpost) {
+    fun oppdaterJournalpost(fnr: String, inngaendeJournalpost: InngaendeJournalpost, feilregistrert: Boolean) {
         val journalpostId = inngaendeJournalpost.journalpostId
         val avsenderNr = inngaendeJournalpost.arbeidsgiverOrgnummer
             ?: inngaendeJournalpost.arbeidsgiverPrivat
             ?: throw RuntimeException("Mangler avsender")
         val isArbeidsgiverFnr = avsenderNr != inngaendeJournalpost.arbeidsgiverOrgnummer
+        val req = if (feilregistrert) {
+            mapFeilregistrertRequest(fnr, avsenderNr, inngaendeJournalpost.arbeidsgiverNavn, isArbeidsgiverFnr, inngaendeJournalpost.dokumentId)
+        } else {
+            mapOppdaterRequest(fnr, avsenderNr, inngaendeJournalpost.arbeidsgiverNavn, isArbeidsgiverFnr)
+        }
         runBlocking {
             dokArkivClient.oppdaterJournalpost(
                 journalpostId,
-                fnr,
-                avsenderNr,
-                inngaendeJournalpost.arbeidsgiverNavn,
-                isArbeidsgiverFnr,
+                req,
                 MDCOperations.generateCallId()
             )
         }
@@ -36,10 +40,14 @@ class BehandleInngaaendeJournalConsumer(private val dokArkivClient: DokArkivClie
      *
      */
     fun ferdigstillJournalpost(inngaendeJournalpost: InngaendeJournalpost) {
-        val journalpostId = inngaendeJournalpost.journalpostId
-
         runBlocking {
-            dokArkivClient.ferdigstillJournalpost(journalpostId, MDCOperations.generateCallId())
+            dokArkivClient.ferdigstillJournalpost(inngaendeJournalpost.journalpostId, MDCOperations.generateCallId())
+        }
+    }
+
+    fun feilregistrerJournalpost(journalpostId: String) {
+        runBlocking {
+            dokArkivClient.feilregistrerJournalpost(journalpostId, MDCOperations.generateCallId())
         }
     }
 }

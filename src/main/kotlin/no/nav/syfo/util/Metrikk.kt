@@ -36,6 +36,11 @@ class Metrikk {
         "Metrikker for journalfort inntektsmeldinger", "type"
     )
 
+    val INNTEKTS_MELDINGER_FEILREGISTRERT = proseseringsMetrikker(
+        "syfoinntektsmelding_inntektsmeldinger_feilregistrert",
+        "Metrikker for feilregistrerte inntektsmeldinger", "type"
+    )
+
     val OVERLAPPENDEINNTEKTSMELDING = proseseringsMetrikker(
         "syfoinntektsmelding_inntektsmeldinger_kobling",
         "Metrikker for inntektsmeldinger kobling", "type", "kobling"
@@ -161,6 +166,7 @@ class Metrikk {
     }
 
     fun tellInntektsmeldingerJournalfort() = INNTEKTS_MELDINGER_JOURNALFORT.labels("info").inc()
+    fun tellInntektsmeldingerFeilregistrert() = INNTEKTS_MELDINGER_FEILREGISTRERT.labels("info").inc()
 
     fun tellOverlappendeInntektsmelding() = OVERLAPPENDEINNTEKTSMELDING.labels("info", OVERLAPPENDE).inc()
 
