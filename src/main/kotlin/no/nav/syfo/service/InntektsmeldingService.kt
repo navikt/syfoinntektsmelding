@@ -6,14 +6,11 @@ import no.nav.syfo.dto.InntektsmeldingEntitet
 import no.nav.syfo.mapping.toInntektsmelding
 import no.nav.syfo.mapping.toInntektsmeldingEntitet
 import no.nav.syfo.repository.InntektsmeldingRepository
-import org.slf4j.LoggerFactory
 
 class InntektsmeldingService(
     private val repository: InntektsmeldingRepository,
     private val objectMapper: ObjectMapper
 ) {
-    val log = LoggerFactory.getLogger(InntektsmeldingService::class.java)
-
     fun finnBehandledeInntektsmeldinger(aktoerId: String): List<Inntektsmelding> {
         return repository.findByAktorId(aktoerId).map { toInntektsmelding(it, objectMapper) }
     }

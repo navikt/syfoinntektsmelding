@@ -11,16 +11,16 @@ import no.nav.security.token.support.client.core.http.OAuth2HttpClient
 import no.nav.security.token.support.client.core.http.OAuth2HttpRequest
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenResponse
 import no.nav.security.token.support.ktor.TokenValidationContextPrincipal
-import org.slf4j.LoggerFactory
+import no.nav.syfo.util.logger
 import java.util.Optional
 
 class DefaultOAuth2HttpClient(private val httpClient: HttpClient) : OAuth2HttpClient {
-    val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = this.logger()
 
     override fun post(oAuth2HttpRequest: OAuth2HttpRequest): OAuth2AccessTokenResponse {
         return runBlocking {
             try {
-                return@runBlocking httpClient.submitForm(
+                httpClient.submitForm(
                     url = oAuth2HttpRequest.tokenEndpointUrl.toString(),
                     formParameters = Parameters.build {
                         oAuth2HttpRequest.formParameters.forEach {

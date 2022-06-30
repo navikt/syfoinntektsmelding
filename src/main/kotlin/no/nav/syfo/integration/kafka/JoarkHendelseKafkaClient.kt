@@ -2,9 +2,9 @@ package no.nav.syfo.integration.kafka
 
 import no.nav.helse.arbeidsgiver.kubernetes.LivenessComponent
 import no.nav.syfo.kafkamottak.InngaaendeJournalpostDTO
+import no.nav.syfo.util.logger
 import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.clients.consumer.KafkaConsumer
-import org.slf4j.LoggerFactory
 import java.time.Duration
 
 interface JoarkHendelseProvider {
@@ -16,20 +16,20 @@ class JoarkHendelseKafkaClient(props: Map<String, Any>, topicName: String) : Joa
     private var currentBatch: List<InngaaendeJournalpostDTO> = emptyList()
     private var lastThrown: Exception? = null
     private val consumer: KafkaConsumer<String, GenericRecord> = KafkaConsumer(props)
-    private val log = LoggerFactory.getLogger(JoarkHendelseKafkaClient::class.java)
+    private val logger = this.logger()
     private var isOpen = false
     private var topic = topicName
 
     init {
         Runtime.getRuntime().addShutdownHook(
             Thread {
-                log.debug("Got shutdown message, closing Kafka connection...")
+                logger.debug("Got shutdown message, closing Kafka connection...")
                 try {
                     stop()
                 } catch (e: ConcurrentModificationException) {
-                    log.debug("Fikk ConcurrentModificationException når man stoppet")
+                    logger.debug("Fikk ConcurrentModificationException når man stoppet")
                 }
-                log.debug("Kafka connection closed")
+                logger.debug("Kafka connection closed")
             }
         )
     }
@@ -38,9 +38,9 @@ class JoarkHendelseKafkaClient(props: Map<String, Any>, topicName: String) : Joa
 
     override fun getMessagesToProcess(): List<InngaaendeJournalpostDTO> {
         if (!isOpen) {
-            log.info("Subscribing to topic $topic ...")
+            logger.info("Subscribing to topic $topic ...")
             consumer.subscribe(listOf(topic))
-            log.info("Successfully subscribed to topic $topic")
+            logger.info("Successfully subscribed to topic $topic")
             isOpen = true
         }
         if (currentBatch.isNotEmpty()) {
@@ -52,7 +52,7 @@ class JoarkHendelseKafkaClient(props: Map<String, Any>, topicName: String) : Joa
             currentBatch = records.map { mapInngaaendeJournalpostDTO(it.value()) }
             lastThrown = null
             if (records?.count() != null && records.count() > 0) {
-                log.info("JoarkHendelse: Fikk ${records.count()} meldinger med offsets ${records.map { it.offset() }.joinToString(", ")}")
+                logger.info("JoarkHendelse: Fikk ${records.count()} meldinger med offsets ${records.map { it.offset() }.joinToString(", ")}")
             }
             return currentBatch
         } catch (e: Exception) {
