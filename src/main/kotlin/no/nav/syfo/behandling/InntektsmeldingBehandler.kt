@@ -3,7 +3,6 @@
 package no.nav.syfo.behandling
 
 import com.google.common.util.concurrent.Striped
-import log
 import no.nav.syfo.client.aktor.AktorClient
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
@@ -14,9 +13,12 @@ import no.nav.syfo.producer.InntektsmeldingAivenProducer
 import no.nav.syfo.service.InntektsmeldingService
 import no.nav.syfo.service.JournalpostService
 import no.nav.syfo.util.Metrikk
+import no.nav.syfo.util.logger
 import no.nav.syfo.util.validerInntektsmelding
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import java.time.LocalDateTime
+
+private const val OPPRETT_OPPGAVE_FORSINKELSE = 48L
 
 class InntektsmeldingBehandler(
     private val journalpostService: JournalpostService,
@@ -26,46 +28,43 @@ class InntektsmeldingBehandler(
     private val inntektsmeldingAivenProducer: InntektsmeldingAivenProducer,
     private val utsattOppgaveService: UtsattOppgaveService
 ) {
+    private val logger = this.logger()
 
     private val consumerLocks = Striped.lock(8)
-    private val OPPRETT_OPPGAVE_FORSINKELSE = 48L
 
     fun behandle(arkivId: String, arkivreferanse: String): String? {
-        val log = log()
-        log.info("Henter inntektsmelding for $arkivreferanse")
+        logger.info("Henter inntektsmelding for $arkivreferanse")
         val inntektsmelding = journalpostService.hentInntektsmelding(arkivId, arkivreferanse)
         return behandleInntektsmelding(arkivreferanse, inntektsmelding)
     }
 
     fun behandleInntektsmelding(arkivreferanse: String, inntektsmelding: Inntektsmelding): String? {
-
-        val log = log()
         var ret: String? = null
         val consumerLock = consumerLocks.get(inntektsmelding.fnr)
         try {
             consumerLock.lock()
-            log.info("Slår opp aktørID for ${inntektsmelding.arkivRefereranse}")
+            logger.info("Slår opp aktørID for ${inntektsmelding.arkivRefereranse}")
             val aktorid = aktorClient.getAktorId(inntektsmelding.fnr)
-            log.info("Fant aktørid for ${inntektsmelding.arkivRefereranse}")
+            logger.info("Fant aktørid for ${inntektsmelding.arkivRefereranse}")
 
             inntektsmelding.aktorId = aktorid
             if (inntektsmeldingService.isDuplicate(inntektsmelding)) {
                 metrikk.tellFunksjonellLikhet()
-                log.info("Likhetssjekk: finnes fra før ${inntektsmelding.arkivRefereranse} og blir feilregistrert")
+                logger.info("Likhetssjekk: finnes fra før ${inntektsmelding.arkivRefereranse} og blir feilregistrert")
                 if (JournalStatus.MOTTATT == inntektsmelding.journalStatus) {
                     journalpostService.feilregistrerJournalpost(inntektsmelding)
                     metrikk.tellInntektsmeldingerFeilregistrert()
                 }
             } else {
-                log.info("Likhetssjekk: ingen like detaljer fra før for ${inntektsmelding.arkivRefereranse}")
+                logger.info("Likhetssjekk: ingen like detaljer fra før for ${inntektsmelding.arkivRefereranse}")
                 if (JournalStatus.MOTTATT == inntektsmelding.journalStatus) {
                     metrikk.tellInntektsmeldingerMottatt(inntektsmelding)
 
                     journalpostService.ferdigstillJournalpost(inntektsmelding)
-                    log.info("Ferdigstilte ${inntektsmelding.arkivRefereranse}")
+                    logger.info("Ferdigstilte ${inntektsmelding.arkivRefereranse}")
 
                     val dto = inntektsmeldingService.lagreBehandling(inntektsmelding, aktorid, arkivreferanse)
-                    log.info("Lagret inntektsmelding ${inntektsmelding.arkivRefereranse}")
+                    logger.info("Lagret inntektsmelding ${inntektsmelding.arkivRefereranse}")
 
                     utsattOppgaveService.opprett(
                         UtsattOppgaveEntitet(
@@ -82,7 +81,7 @@ class InntektsmeldingBehandler(
                             utbetalingBruker = false
                         )
                     )
-                    log.info("Lagrer UtsattOppgave i databasen for ${inntektsmelding.arkivRefereranse}")
+                    logger.info("Lagrer UtsattOppgave i databasen for ${inntektsmelding.arkivRefereranse}")
 
                     val mappedInntektsmelding = mapInntektsmeldingKontrakt(
                         inntektsmelding,
@@ -94,19 +93,16 @@ class InntektsmeldingBehandler(
 
                     inntektsmeldingAivenProducer.leggMottattInntektsmeldingPåTopics(mappedInntektsmelding)
                     tellMetrikker(inntektsmelding)
-                    log.info("Inntektsmelding {} er journalført for {} refusjon {}", inntektsmelding.journalpostId, arkivreferanse, inntektsmelding.refusjon.beloepPrMnd)
+                    logger.info("Inntektsmelding {} er journalført for {} refusjon {}", inntektsmelding.journalpostId, arkivreferanse, inntektsmelding.refusjon.beloepPrMnd)
                     ret = dto.uuid
                 } else {
-                    log.info(
+                    logger.info(
                         "Behandler ikke inntektsmelding {} da den har status: {}",
                         inntektsmelding.journalpostId,
                         inntektsmelding.journalStatus
                     )
-
                 }
-
             }
-
         } finally {
             consumerLock.unlock()
         }

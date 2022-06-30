@@ -1,7 +1,6 @@
 package no.nav.syfo.service
 
 import kotlinx.coroutines.runBlocking
-import log
 import no.nav.syfo.behandling.HentDokumentFeiletException
 import no.nav.syfo.client.aktor.AktorClient
 import no.nav.syfo.client.saf.SafDokumentClient
@@ -11,6 +10,7 @@ import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.mapping.InntektsmeldingArbeidsgiver20180924Mapper
 import no.nav.syfo.mapping.InntektsmeldingArbeidsgiverPrivat20181211Mapper
 import no.nav.syfo.util.JAXB
+import no.nav.syfo.util.logger
 import no.seres.xsd.nav.inntektsmelding_m._20180924.XMLInntektsmeldingM
 import java.time.LocalDateTime
 import javax.xml.bind.JAXBElement
@@ -20,7 +20,7 @@ class JournalConsumer(
     private val safJournalpostClient: SafJournalpostClient,
     private val aktorClient: AktorClient
 ) {
-    var log = log()
+    private val logger = this.logger()
 
     /**
      * 1 - Henter inntektsmelding fra journalpost i byteArray
@@ -42,7 +42,7 @@ class JournalConsumer(
             else
                 InntektsmeldingArbeidsgiverPrivat20181211Mapper.tilXMLInntektsmelding(jaxbInntektsmelding, journalpostId, mottattDato, journalStatus, arkivReferanse, aktorClient)
         } catch (e: RuntimeException) {
-            log.error("Klarte ikke å hente inntektsmelding med journalpostId: $journalpostId", e)
+            logger.error("Klarte ikke å hente inntektsmelding med journalpostId: $journalpostId", e)
             throw HentDokumentFeiletException(journalpostId, e)
         }
     }
