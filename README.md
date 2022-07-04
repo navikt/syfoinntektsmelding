@@ -90,8 +90,6 @@ Alternativt kan man sette opp automatisk formattering. Kommandoene for dette er:
 
 Les mer om pluginen [her](https://github.com/JLLeitschuh/ktlint-gradle).
 
-
-
 ## Database
 Applikasjonen bruker Postgres database med JPA grensesnitt OG et JDBC grensesnitt. Skjermbildet nedenfor viser samtlige 
 tabeller som er brukt.
