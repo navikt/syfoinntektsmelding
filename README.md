@@ -54,7 +54,9 @@ ut oppgaver fra køen og sjekker tilstanden. Dersom tilstanden er satt i å oppr
 er oppgaver som skal forkastes eller utsettes. Oppgaver som blir funnet her endrer tilstanden
 i køen for Oppgave i avsnittet over.
 
-## Kjøre applikasjonen lokalt
+## Utvikling
+
+### Kjøre applikasjonen lokalt
 Applikasjonen er avhengig av mange tjenester og det enkleste er å starte den inne fra en 
 tynnklient hvor tjenestene er 
 tilgjengelige. 
@@ -66,13 +68,27 @@ som bestemmer hvilke tjenster som blir benytter lokalt. For å kunne kjøre må 
 disse miljø innstillingene er riktig og fylle ut innstillinger for passord da de nå er satt 
 til dummy.
 
-### Påkrevde miljø variabler
+#### Påkrevde miljøvariabler
 ```
 SECURITYTOKENSERVICE_URL=dummy
 SRVSYFOINNTEKTSMELDING_USERNAME=dummy
 SRVSYFOINNTEKTSMELDING_PASSWORD=dummy
 ```
 
+### Ktlint
+
+Prosjektet bruker en [Ktlint](https://ktlint.github.io/)-plugin for Gradle som håndhever kodestilregler. Nyttige kommandoer er:
+
+- `gradle ktlintCheck` (sier ifra om brudd på kodestilreglene)
+- `gradle ktlintFormat` (retter opp i brudd på kodestilreglene)
+
+Det anbefales hver utvikler å konfigurere en pre-commit hook som automatisk sjekker endrede filer for brudd på kodestilreglene.
+Alternativt kan man sette opp automatisk formattering. Kommandoene for dette er:
+
+- `gradle addKtlintCheckGitPreCommitHook` (automatisk sjekk)
+- `gradle addKtlintFormatGitPreCommitHook` (automatisk formattering)
+
+Les mer om pluginen [her](https://github.com/JLLeitschuh/ktlint-gradle).
 
 ## Database
 Applikasjonen bruker Postgres database med JPA grensesnitt OG et JDBC grensesnitt. Skjermbildet nedenfor viser samtlige 
