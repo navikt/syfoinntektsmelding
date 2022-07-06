@@ -102,11 +102,8 @@ class InntektsmeldingBehandler(
                         inntektsmelding.journalpostId,
                         inntektsmelding.journalStatus
                     )
-
                 }
-
             }
-
         } finally {
             consumerLock.unlock()
         }
