@@ -12,7 +12,7 @@ class FjernInntektsmeldingByBehandletProcessor(
     private val lagringstidMåneder: Int
 ) : BakgrunnsjobbProsesserer {
     private val logger = this.logger()
-    
+
     companion object { const val JOB_TYPE = "fjern-inntektsmelding-via-behnadling" }
     override val type: String get() = JOB_TYPE
 
