@@ -14,6 +14,7 @@ import no.nav.helse.arbeidsgiver.kubernetes.ReadynessComponent
 import no.nav.helse.arbeidsgiver.system.AppEnv
 import no.nav.helse.arbeidsgiver.system.getEnvironment
 import no.nav.helse.arbeidsgiver.system.getString
+import no.nav.helse.arbeidsgiver.utils.logger
 import no.nav.syfo.integration.kafka.PollForJoarkhendelserJob
 import no.nav.syfo.integration.kafka.PollForUtsattOppgaveVarslingsmeldingJob
 import no.nav.syfo.koin.selectModuleBasedOnProfile

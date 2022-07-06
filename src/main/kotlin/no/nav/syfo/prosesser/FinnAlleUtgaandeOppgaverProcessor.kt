@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import no.nav.helse.arbeidsgiver.utils.RecurringJob
+import no.nav.helse.arbeidsgiver.utils.logger
 import no.nav.syfo.behandling.OpprettOppgaveException
 import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.dto.Tilstand
@@ -11,7 +12,6 @@ import no.nav.syfo.repository.InntektsmeldingRepository
 import no.nav.syfo.service.BehandlendeEnhetConsumer
 import no.nav.syfo.util.MDCOperations
 import no.nav.syfo.util.Metrikk
-import no.nav.syfo.util.logger
 import no.nav.syfo.utsattoppgave.UtsattOppgaveDAO
 import no.nav.syfo.utsattoppgave.opprettOppgaveIGosys
 import java.time.Duration
@@ -26,7 +26,7 @@ class FinnAlleUtgaandeOppgaverProcessor(
     private val inntektsmeldingRepository: InntektsmeldingRepository,
     private val om: ObjectMapper
 ) : RecurringJob(CoroutineScope(Dispatchers.IO), Duration.ofHours(6).toMillis()) {
-    private val jobLogger = this.logger()
+    private val logger = this.logger()
 
     override fun doJob() {
         MDCOperations.putToMDC(MDCOperations.MDC_CALL_ID, UUID.randomUUID().toString())
@@ -34,16 +34,16 @@ class FinnAlleUtgaandeOppgaverProcessor(
             .finnAlleUtgåtteOppgaver()
             .forEach {
                 try {
-                    jobLogger.info("Skal opprette oppgave for inntektsmelding: ${it.arkivreferanse}")
+                    logger.info("Skal opprette oppgave for inntektsmelding: ${it.arkivreferanse}")
                     val inntektsmeldingEntitet = inntektsmeldingRepository.findByArkivReferanse(it.arkivreferanse)
                     opprettOppgaveIGosys(it, oppgaveClient, utsattOppgaveDAO, behandlendeEnhetConsumer, it.speil, inntektsmeldingEntitet, om)
                     it.tilstand = Tilstand.OpprettetTimeout
                     it.oppdatert = LocalDateTime.now()
                     metrikk.tellUtsattOppgave_OpprettTimeout()
                     utsattOppgaveDAO.lagre(it)
-                    jobLogger.info("Oppgave opprettet i gosys pga timeout for inntektsmelding: ${it.arkivreferanse}")
+                    logger.info("Oppgave opprettet i gosys pga timeout for inntektsmelding: ${it.arkivreferanse}")
                 } catch (e: OpprettOppgaveException) {
-                    jobLogger.error("Feilet ved opprettelse av oppgave ved timeout i gosys for inntektsmelding: ${it.arkivreferanse}")
+                    logger.error("Feilet ved opprettelse av oppgave ved timeout i gosys for inntektsmelding: ${it.arkivreferanse}")
                 }
             }
         MDCOperations.remove(MDCOperations.MDC_CALL_ID)

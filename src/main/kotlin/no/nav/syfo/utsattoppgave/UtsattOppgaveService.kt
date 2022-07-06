@@ -3,6 +3,7 @@ package no.nav.syfo.utsattoppgave
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import kotlinx.coroutines.runBlocking
+import no.nav.helse.arbeidsgiver.utils.logger
 import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.domain.OppgaveResultat
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
@@ -13,7 +14,6 @@ import no.nav.syfo.repository.InntektsmeldingRepository
 import no.nav.syfo.service.BehandlendeEnhetConsumer
 import no.nav.syfo.service.SYKEPENGER_UTLAND
 import no.nav.syfo.util.Metrikk
-import no.nav.syfo.util.logger
 import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
 import java.util.UUID

@@ -3,6 +3,7 @@
 package no.nav.syfo.behandling
 
 import com.google.common.util.concurrent.Striped
+import no.nav.helse.arbeidsgiver.utils.logger
 import no.nav.syfo.client.aktor.AktorClient
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
@@ -13,7 +14,6 @@ import no.nav.syfo.producer.InntektsmeldingAivenProducer
 import no.nav.syfo.service.InntektsmeldingService
 import no.nav.syfo.service.JournalpostService
 import no.nav.syfo.util.Metrikk
-import no.nav.syfo.util.logger
 import no.nav.syfo.util.validerInntektsmelding
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import java.time.LocalDateTime

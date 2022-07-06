@@ -2,8 +2,8 @@ package no.nav.syfo.prosesser
 
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbProsesserer
+import no.nav.helse.arbeidsgiver.utils.logger
 import no.nav.syfo.repository.InntektsmeldingRepository
-import no.nav.syfo.util.logger
 import java.time.LocalDate
 import java.util.UUID
 

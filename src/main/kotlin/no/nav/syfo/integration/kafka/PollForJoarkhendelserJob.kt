@@ -6,10 +6,10 @@ import kotlinx.coroutines.Dispatchers
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.utils.RecurringJob
+import no.nav.helse.arbeidsgiver.utils.logger
 import no.nav.syfo.kafkamottak.InngaaendeJournalpostDTO
 import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
 import no.nav.syfo.repository.DuplikatRepository
-import no.nav.syfo.util.logger
 import org.apache.avro.generic.GenericRecord
 import java.time.Duration
 import java.time.LocalDateTime
@@ -38,7 +38,7 @@ class PollForJoarkhendelserJob(
     waitTimeWhenEmptyQueue: Duration = Duration.ofSeconds(30)
 ) : RecurringJob(coroutineScope, waitTimeWhenEmptyQueue.toMillis()) {
 
-    private val jobLogger = this.logger()
+    private val logger = this.logger()
 
     override fun doJob() {
         do {
@@ -55,7 +55,7 @@ class PollForJoarkhendelserJob(
             .filterNot(::isDuplicate)
             .onEach {
                 // https://confluence.adeo.no/display/BOA/Tema https://confluence.adeo.no/display/BOA/Mottakskanal
-                jobLogger.info("Fant journalpost ${it.kanalReferanseId} fra ALTINN for syk med status midlertidig.")
+                logger.info("Fant journalpost ${it.kanalReferanseId} fra ALTINN for syk med status midlertidig.")
                 bakgrunnsjobbRepo.save(
                     Bakgrunnsjobb(
                         type = JoarkInntektsmeldingHendelseProsessor.JOB_TYPE,
@@ -75,9 +75,9 @@ class PollForJoarkhendelserJob(
     fun isDuplicate(journalpost: InngaaendeJournalpostDTO): Boolean {
         val dupe = duplikatRepository.findByHendelsesId(journalpost.hendelsesId)
         if (dupe) {
-            jobLogger.info("Inntektsmelding er tidligere importert for journalpost ${journalpost.kanalReferanseId} for hendelse ${journalpost.hendelsesId}")
+            logger.info("Inntektsmelding er tidligere importert for journalpost ${journalpost.kanalReferanseId} for hendelse ${journalpost.hendelsesId}")
         } else {
-            jobLogger.info("Fant ikke tidligere lagret IM for journalpost ${journalpost.kanalReferanseId} for hendelse ${journalpost.hendelsesId}")
+            logger.info("Fant ikke tidligere lagret IM for journalpost ${journalpost.kanalReferanseId} for hendelse ${journalpost.hendelsesId}")
         }
         return dupe
     }

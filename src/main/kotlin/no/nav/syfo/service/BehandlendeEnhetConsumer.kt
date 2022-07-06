@@ -2,6 +2,7 @@ package no.nav.syfo.service
 
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClient
+import no.nav.helse.arbeidsgiver.utils.logger
 import no.nav.syfo.behandling.BehandlendeEnhetFeiletException
 import no.nav.syfo.behandling.IngenAktivEnhetException
 import no.nav.syfo.client.norg.ArbeidsfordelingRequest
@@ -10,7 +11,6 @@ import no.nav.syfo.client.norg.Norg2Client
 import no.nav.syfo.domain.GeografiskTilknytningData
 import no.nav.syfo.util.MDCOperations
 import no.nav.syfo.util.Metrikk
-import no.nav.syfo.util.logger
 
 const val SYKEPENGER_UTLAND = "4474"
 const val SYKEPENGER = "SYK"

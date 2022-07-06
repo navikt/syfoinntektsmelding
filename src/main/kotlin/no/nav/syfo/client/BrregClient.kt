@@ -4,7 +4,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.features.ClientRequestException
 import io.ktor.client.request.get
 import kotlinx.coroutines.runBlocking
-import no.nav.syfo.util.logger
+import no.nav.helse.arbeidsgiver.utils.logger
 
 interface BrregClient {
     fun getVirksomhetsNavn(orgnr: String): String

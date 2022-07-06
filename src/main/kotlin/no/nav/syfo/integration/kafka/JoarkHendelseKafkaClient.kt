@@ -1,8 +1,8 @@
 package no.nav.syfo.integration.kafka
 
 import no.nav.helse.arbeidsgiver.kubernetes.LivenessComponent
+import no.nav.helse.arbeidsgiver.utils.logger
 import no.nav.syfo.kafkamottak.InngaaendeJournalpostDTO
-import no.nav.syfo.util.logger
 import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import java.time.Duration

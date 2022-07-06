@@ -7,6 +7,7 @@ import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
+import no.nav.helse.arbeidsgiver.utils.logger
 import no.nav.syfo.behandling.HentOppgaveException
 import no.nav.syfo.behandling.OpprettFordelingsOppgaveException
 import no.nav.syfo.behandling.OpprettOppgaveException
@@ -14,7 +15,6 @@ import no.nav.syfo.domain.OppgaveResultat
 import no.nav.syfo.helpers.retry
 import no.nav.syfo.util.MDCOperations
 import no.nav.syfo.util.Metrikk
-import no.nav.syfo.util.logger
 import no.nav.syfo.utsattoppgave.BehandlingsTema
 import java.time.DayOfWeek
 import java.time.LocalDate

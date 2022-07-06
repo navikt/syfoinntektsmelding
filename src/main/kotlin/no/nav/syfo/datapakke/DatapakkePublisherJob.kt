@@ -12,10 +12,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.utils.RecurringJob
 import no.nav.helse.arbeidsgiver.utils.loadFromResources
+import no.nav.helse.arbeidsgiver.utils.logger
 import no.nav.syfo.repository.ForsinkelseWeeklyStats
 import no.nav.syfo.repository.IMStatsRepo
 import no.nav.syfo.util.DatapakkeUtil
-import no.nav.syfo.util.logger
 import java.time.DayOfWeek
 import java.time.Duration
 import java.time.LocalDateTime
@@ -32,7 +32,7 @@ class DatapakkePublisherJob(
         CoroutineScope(Dispatchers.IO),
         Duration.ofHours(1).toMillis()
     ) {
-    private val jobLogger = this.logger()
+    private val logger = this.logger()
 
     override fun doJob() {
         val now = LocalDateTime.now()
@@ -188,7 +188,7 @@ class DatapakkePublisherJob(
                 body = om.readTree(populatedDatapakke)
             }
 
-            jobLogger.info("Oppdaterte datapakke $datapakkeId med respons ${response.readText()}")
+            logger.info("Oppdaterte datapakke $datapakkeId med respons ${response.readText()}")
         }
     }
 }

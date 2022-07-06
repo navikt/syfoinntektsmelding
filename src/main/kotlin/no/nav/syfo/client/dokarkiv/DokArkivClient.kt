@@ -11,8 +11,8 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
+import no.nav.helse.arbeidsgiver.utils.logger
 import no.nav.syfo.helpers.retry
-import no.nav.syfo.util.logger
 import java.io.IOException
 
 // NAV-enheten som personen som utfører journalføring jobber for. Ved automatisk journalføring uten

@@ -1,5 +1,6 @@
 package no.nav.syfo.mapping
 
+import no.nav.helse.arbeidsgiver.utils.logger
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
 import no.nav.syfo.domain.inntektsmelding.AvsenderSystem
@@ -10,7 +11,6 @@ import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.domain.inntektsmelding.Kontaktinformasjon
 import no.nav.syfo.domain.inntektsmelding.OpphoerAvNaturalytelse
 import no.nav.syfo.domain.inntektsmelding.Refusjon
-import no.nav.syfo.util.logger
 import no.seres.xsd.nav.inntektsmelding_m._20180924.XMLArbeidsforhold
 import no.seres.xsd.nav.inntektsmelding_m._20180924.XMLGjenopptakelseNaturalytelseListe
 import no.seres.xsd.nav.inntektsmelding_m._20180924.XMLInntektsmeldingM

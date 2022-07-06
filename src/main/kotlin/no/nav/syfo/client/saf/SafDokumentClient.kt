@@ -10,8 +10,8 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.util.toByteArray
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
+import no.nav.helse.arbeidsgiver.utils.logger
 import no.nav.syfo.util.MDCOperations
-import no.nav.syfo.util.logger
 import java.util.UUID
 
 /**
