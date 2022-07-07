@@ -4,42 +4,43 @@ val version = "1.0"
 val mainClass = "no.nav.syfo.AppKt"
 val group = "no.nav.syfo"
 val githubPassword: String by project
+
 // Dependencies
-val micrometerVersion = "1.8.3"
-val flywayVersion = "8.5.10"
-val cxfVersion = "3.5.2"
-val kotlinVersion = "1.4.10"
-val hikariVersion = "5.0.1"
-val ktorVersion = "1.6.7"
-val koinVersion = "3.1.5"
-val tokenSupportVersion = "2.1.0"
-val mockOAuth2ServerVersion = "0.4.4"
-val brukernotifikasjonSchemasVersion = "1.2021.01.18-11.12-b9c8c40b98d1"
-val jacksonVersion = "2.13.3"
-val junitJupiterVersion = "5.8.2"
-val assertJVersion = "3.23.1"
-val prometheusVersion = "0.15.0"
-val joarkHendelseVersion = "96ec5ebb"
-val mockkVersion = "1.12.2"
-val jetbrainsStdLib = "kotlin-stdlib-jdk8"
-val guavaVersion = "31.0.1-jre"
-val kotlinLibsVersion = "1.7.0"
-val postgresVersion = "42.3.1"
-val neethiVersion = "3.2.0"
-val imkontraktVersion = "2022.02.25-10-37-3934b"
-val altinnInntektsmeldingVersion = "1.2021.02.22-10.45-4201aaea72fb"
-val navSyfoCommonVersion = "2019.09.25-05-44-08e26429f4e37cd57d99ba4d39fc74099a078b97"
-val vaultJdbcVersion = "1.3.7"
-val navLogVersion = "2.2022.02.18_14.38-8d8bb494bd41"
-val fellesBackendVersion = "2022.07.06-11-34-2e18c"
-val slf4Version = "1.7.36"
-val logbackVersion = "7.2"
-val apacheHttpClientVersion = "4.5.13"
-val kotlinCoroutinesVersion = "1.6.0-native-mt"
-val kafkaVersion = "7.1.1"
-val apacheKafkaStreamsVersion = "7.1.1-ce"
-val annotationApiVersion = "1.3.2"
-val altinnCorrespondanceVersion = "1.2019.09.25-00.21-49b69f0625e0"
+val micrometerVersion: String by project
+val flywayVersion: String by project
+val cxfVersion: String by project
+val kotlinVersion: String by project
+val hikariVersion: String by project
+val ktorVersion: String by project
+val koinVersion: String by project
+val tokenSupportVersion: String by project
+val mockOAuth2ServerVersion: String by project
+val brukernotifikasjonSchemasVersion: String by project
+val jacksonVersion: String by project
+val junitJupiterVersion: String by project
+val assertJVersion: String by project
+val prometheusVersion: String by project
+val joarkHendelseVersion: String by project
+val mockkVersion: String by project
+val jetbrainsStdLib: String by project
+val guavaVersion: String by project
+val kotlinLibsVersion: String by project
+val postgresVersion: String by project
+val neethiVersion: String by project
+val imkontraktVersion: String by project
+val altinnInntektsmeldingVersion: String by project
+val navSyfoCommonVersion: String by project
+val vaultJdbcVersion: String by project
+val navLogVersion: String by project
+val fellesBackendVersion: String by project
+val slf4Version: String by project
+val logbackVersion: String by project
+val apacheHttpClientVersion: String by project
+val kotlinCoroutinesVersion: String by project
+val kafkaVersion: String by project
+val apacheKafkaStreamsVersion: String by project
+val annotationApiVersion: String by project
+val altinnCorrespondanceVersion: String by project
 
 plugins {
     kotlin("jvm") version "1.7.0"
