@@ -5,7 +5,7 @@ import no.nav.syfo.client.dokarkiv.DokArkivClient
 import no.nav.syfo.client.dokarkiv.mapFeilregistrertRequest
 import no.nav.syfo.client.dokarkiv.mapOppdaterRequest
 import no.nav.syfo.domain.InngaendeJournalpost
-import no.nav.syfo.util.MDCOperations
+import no.nav.syfo.util.newCallId
 
 class BehandleInngaaendeJournalConsumer(private val dokArkivClient: DokArkivClient) {
 
@@ -27,7 +27,7 @@ class BehandleInngaaendeJournalConsumer(private val dokArkivClient: DokArkivClie
             dokArkivClient.oppdaterJournalpost(
                 journalpostId,
                 req,
-                MDCOperations.generateCallId()
+                newCallId()
             )
         }
     }
@@ -38,13 +38,13 @@ class BehandleInngaaendeJournalConsumer(private val dokArkivClient: DokArkivClie
      */
     fun ferdigstillJournalpost(inngaendeJournalpost: InngaendeJournalpost) {
         runBlocking {
-            dokArkivClient.ferdigstillJournalpost(inngaendeJournalpost.journalpostId, MDCOperations.generateCallId())
+            dokArkivClient.ferdigstillJournalpost(inngaendeJournalpost.journalpostId, newCallId())
         }
     }
 
     fun feilregistrerJournalpost(journalpostId: String) {
         runBlocking {
-            dokArkivClient.feilregistrerJournalpost(journalpostId, MDCOperations.generateCallId())
+            dokArkivClient.ferdigstillJournalpost(journalpostId, newCallId())
         }
     }
 }

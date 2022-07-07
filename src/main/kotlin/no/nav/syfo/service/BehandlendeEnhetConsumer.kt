@@ -9,7 +9,7 @@ import no.nav.syfo.client.norg.ArbeidsfordelingRequest
 import no.nav.syfo.client.norg.ArbeidsfordelingResponse
 import no.nav.syfo.client.norg.Norg2Client
 import no.nav.syfo.domain.GeografiskTilknytningData
-import no.nav.syfo.util.MDCOperations
+import no.nav.syfo.util.MdcUtils
 import no.nav.syfo.util.Metrikk
 
 const val SYKEPENGER_UTLAND = "4474"
@@ -31,11 +31,9 @@ class BehandlendeEnhetConsumer(
             geografiskOmraade = geografiskTilknytning.geografiskTilknytning
         )
 
-        val callId = MDCOperations.getFromMDC(MDCOperations.MDC_CALL_ID)
-
         try {
             val arbeidsfordelinger = runBlocking {
-                norg2Client.hentAlleArbeidsfordelinger(criteria, callId)
+                norg2Client.hentAlleArbeidsfordelinger(criteria, MdcUtils.getCallId())
             }
             logger.info("Fant enheter: " + arbeidsfordelinger.toString())
             val behandlendeEnhet = finnAktivBehandlendeEnhet(

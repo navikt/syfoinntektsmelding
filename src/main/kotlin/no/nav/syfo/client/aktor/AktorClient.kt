@@ -11,8 +11,7 @@ import no.nav.syfo.behandling.AktørException
 import no.nav.syfo.behandling.AktørKallResponseException
 import no.nav.syfo.behandling.FantIkkeAktørException
 import no.nav.syfo.client.TokenConsumer
-import no.nav.syfo.util.MDCOperations.Companion.MDC_CALL_ID
-import no.nav.syfo.util.MDCOperations.Companion.getFromMDC
+import no.nav.syfo.util.MdcUtils
 import java.net.ConnectException
 
 class AktorClient(
@@ -23,6 +22,7 @@ class AktorClient(
 ) {
     private val logger = this.logger()
 
+    // TODO alle throws kan fjernes
     @Throws(AktørException::class)
     fun getAktorId(fnr: String): String {
         return getIdent(fnr, "AktoerId")
@@ -38,9 +38,9 @@ class AktorClient(
                 aktor = httpClient.get<AktorResponse> {
                     url(urlString)
                     header("Authorization", "Bearer ${tokenConsumer.token}")
-                    header("Nav-Call-Id", "${getFromMDC(MDC_CALL_ID)}")
-                    header("Nav-Consumer-Id", "$username")
-                    header("Nav-Personidenter", "$sokeIdent")
+                    header("Nav-Call-Id", MdcUtils.getCallId())
+                    header("Nav-Consumer-Id", username)
+                    header("Nav-Personidenter", sokeIdent)
                 }[sokeIdent]
             } catch (cause: ClientRequestException) {
                 val status = cause.response.status.value

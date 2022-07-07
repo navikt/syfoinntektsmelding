@@ -13,7 +13,7 @@ import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.kafkamottak.InngaaendeJournalpostDTO
 import no.nav.syfo.kafkamottak.InntektsmeldingConsumerException
 import no.nav.syfo.repository.FeiletService
-import no.nav.syfo.util.MDCOperations
+import no.nav.syfo.util.MdcUtils
 import no.nav.syfo.util.Metrikk
 
 /**
@@ -35,12 +35,10 @@ class JoarkInntektsmeldingHendelseProsessor(
 
     override val type: String get() = JOB_TYPE
 
-    override fun prosesser(jobb: Bakgrunnsjobb) {
+    override fun prosesser(jobb: Bakgrunnsjobb): Unit = MdcUtils.withCallId {
         var arkivReferanse = "UKJENT"
         try {
-
             val journalpostDTO = om.readValue<InngaaendeJournalpostDTO>(jobb.data)
-            MDCOperations.putToMDC(MDCOperations.MDC_CALL_ID, MDCOperations.generateCallId())
 
             arkivReferanse = if (journalpostDTO.kanalReferanseId.isEmpty()) "UKJENT" else journalpostDTO.kanalReferanseId
 
@@ -60,7 +58,7 @@ class JoarkInntektsmeldingHendelseProsessor(
                     opprettFordelingsoppgave(journalpostDTO.journalpostId.toString())
                 }
                 metrikk.tellOpprettFordelingsoppgave()
-                return
+                return@withCallId
             }
 
             inntektsmeldingBehandler.behandle(journalpostDTO.journalpostId.toString(), arkivReferanse)
@@ -78,14 +76,11 @@ class JoarkInntektsmeldingHendelseProsessor(
             lagreFeilet(arkivReferanse, Feiltype.USPESIFISERT)
 
             throw InntektsmeldingConsumerException(arkivReferanse, e, Feiltype.USPESIFISERT)
-        } finally {
-            MDCOperations.remove(MDCOperations.MDC_CALL_ID)
         }
     }
 
-    private suspend fun opprettFordelingsoppgave(journalpostId: String): Boolean {
+    private suspend fun opprettFordelingsoppgave(journalpostId: String) {
         oppgaveClient.opprettFordelingsOppgave(journalpostId)
-        return true
     }
 
     fun lagreFeilet(arkivReferanse: String, feiltype: Feiltype) {
