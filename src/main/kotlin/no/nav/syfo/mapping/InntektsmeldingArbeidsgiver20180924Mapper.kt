@@ -1,6 +1,6 @@
 package no.nav.syfo.mapping
 
-import log
+import no.nav.helse.arbeidsgiver.utils.logger
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
 import no.nav.syfo.domain.inntektsmelding.AvsenderSystem
@@ -22,7 +22,7 @@ import javax.xml.bind.JAXBElement
 
 internal object InntektsmeldingArbeidsgiver20180924Mapper {
 
-    val log = log()
+    private val logger = this.logger()
 
     fun tilXMLInntektsmelding(
         jabxInntektsmelding: JAXBElement<Any>,
@@ -31,7 +31,7 @@ internal object InntektsmeldingArbeidsgiver20180924Mapper {
         journalStatus: JournalStatus,
         arkivReferanse: String
     ): Inntektsmelding {
-        log.info("Behandling inntektsmelding på 20180924 format")
+        logger.info("Behandling inntektsmelding på 20180924 format")
         val skjemainnhold = (jabxInntektsmelding.value as XMLInntektsmeldingM).skjemainnhold
 
         val arbeidsforholdId = skjemainnhold.arbeidsforhold.value.arbeidsforholdId?.value

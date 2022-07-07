@@ -1,10 +1,10 @@
 package no.nav.syfo.integration.kafka
 
 import no.nav.helse.arbeidsgiver.kubernetes.LivenessComponent
+import no.nav.helse.arbeidsgiver.utils.logger
 import org.apache.kafka.clients.consumer.ConsumerRecords
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.serialization.StringDeserializer
-import org.slf4j.LoggerFactory
 import java.time.Duration
 
 interface MeldingProvider {
@@ -23,21 +23,21 @@ class UtsattOppgaveKafkaClient(
     private var lastThrown: Exception? = null
     private val consumer: KafkaConsumer<String, String> = KafkaConsumer(props, StringDeserializer(), StringDeserializer())
 
-    private val log = LoggerFactory.getLogger(UtsattOppgaveKafkaClient::class.java)
+    private val logger = this.logger()
 
     init {
-        log.info("Subscribing to topic $topicName ...")
+        logger.info("Subscribing to topic $topicName ...")
         consumer.subscribe(listOf(topicName))
-        log.info("Successfully subscribed to topic $topicName")
+        logger.info("Successfully subscribed to topic $topicName")
         Runtime.getRuntime().addShutdownHook(
             Thread {
-                log.debug("Got shutdown message, closing Kafka connection...")
+                logger.debug("Got shutdown message, closing Kafka connection...")
                 try {
                     stop()
                 } catch (e: ConcurrentModificationException) {
-                    log.debug("Fikk ConcurrentModificationException når man stoppet")
+                    logger.debug("Fikk ConcurrentModificationException når man stoppet")
                 }
-                log.debug("Kafka connection closed")
+                logger.debug("Kafka connection closed")
             }
         )
     }
@@ -57,7 +57,7 @@ class UtsattOppgaveKafkaClient(
             lastThrown = null
 
             if (records?.count() != null && records.count() > 0) {
-                log.debug("UtsattOppgave: Fikk ${records.count()} meldinger med offsets ${records.map { it.offset() }.joinToString(", ")}")
+                logger.debug("UtsattOppgave: Fikk ${records.count()} meldinger med offsets ${records.map { it.offset() }.joinToString(", ")}")
             }
             return payloads!!
         } catch (e: Exception) {

@@ -4,9 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbProsesserer
+import no.nav.helse.arbeidsgiver.utils.logger
 import no.nav.syfo.util.MDCOperations
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 
 /**
  * En bakgrunnsjobb som tar feilede meldinger ang utsatt oppgave og prøver å prosessere dem på nytt
@@ -17,7 +16,8 @@ class FeiletUtsattOppgaveMeldingProsessor(
     val oppgaveService: UtsattOppgaveService
 ) :
     BakgrunnsjobbProsesserer {
-    val log: Logger = LoggerFactory.getLogger(FeiletUtsattOppgaveMeldingProsessor::class.java)
+    private val logger = this.logger()
+
     override val type: String get() = JOB_TYPE
     companion object {
         const val JOB_TYPE = "feilet-utsatt-oppgave"
@@ -33,7 +33,7 @@ class FeiletUtsattOppgaveMeldingProsessor(
             )
 
             MDCOperations.putToMDC(MDCOperations.MDC_CALL_ID, MDCOperations.generateCallId())
-            log.info("Prosesserer inntekstmelding " + oppdatering.id)
+            logger.info("Prosesserer inntekstmelding " + oppdatering.id)
             oppgaveService.prosesser(oppdatering)
         } finally {
             MDCOperations.remove(MDCOperations.MDC_CALL_ID)

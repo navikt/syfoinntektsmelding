@@ -11,8 +11,8 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
+import no.nav.helse.arbeidsgiver.utils.logger
 import no.nav.syfo.helpers.retry
-import org.slf4j.LoggerFactory
 import java.io.IOException
 
 // NAV-enheten som personen som utfører journalføring jobber for. Ved automatisk journalføring uten
@@ -24,7 +24,7 @@ class DokArkivClient(
     private val accessTokenProvider: AccessTokenProvider,
     private val httpClient: HttpClient
 ) {
-    private val log: org.slf4j.Logger = LoggerFactory.getLogger("DokArkivClient")
+    private val logger = this.logger()
 
     /**
      * Tjeneste som lar konsument "switche" status på en journalpost fra midlerdidig til endelig. Dersom journalposten
@@ -54,21 +54,21 @@ class DokArkivClient(
                 header("Authorization", "Bearer ${accessTokenProvider.getToken()}")
                 header("Nav-Callid", msgId)
                 body = ferdigstillRequest
-            }.also { log.info("Ferdigstilte journalpost {}", journalpostId) }
+            }.also { logger.info("Ferdigstilte journalpost {}", journalpostId) }
         } catch (e: Exception) {
             if (e is ClientRequestException) {
                 when (e.response.status) {
                     HttpStatusCode.NotFound -> {
-                        log.error("Journalposten finnes ikke for journalpostid $journalpostId", e)
+                        logger.error("Journalposten finnes ikke for journalpostid $journalpostId", e)
                         throw RuntimeException("Ferdigstilling: Journalposten finnes ikke for journalpostid $journalpostId", e)
                     }
                     else -> {
-                        log.error("Fikk http status ${e.response.status} for journalpostid $journalpostId", e)
+                        logger.error("Fikk http status ${e.response.status} for journalpostid $journalpostId", e)
                         throw RuntimeException("Ferdigstilling: Fikk feilmelding for journalpostid $journalpostId", e)
                     }
                 }
             } else {
-                log.error("Ferdigstilling: Dokarkiv svarte med feilmelding for journalpost $journalpostId", e)
+                logger.error("Ferdigstilling: Dokarkiv svarte med feilmelding for journalpost $journalpostId", e)
             }
             throw IOException("Ferdigstilling: Dokarkiv svarte med feilmelding for journalpost $journalpostId", e)
         }
@@ -98,21 +98,21 @@ class DokArkivClient(
                 header("Authorization", "Bearer ${accessTokenProvider.getToken()}")
                 header("Nav-Callid", msgId)
                 body = oppdaterJournalpostRequest
-            }.also { log.info("Oppdatering av journalpost ok for journalpostid {}, msgId {}", journalpostId, msgId) }
+            }.also { logger.info("Oppdatering av journalpost ok for journalpostid {}, msgId {}", journalpostId, msgId) }
         } catch (e: Exception) {
             if (e is ClientRequestException) {
                 when (e.response.status) {
                     HttpStatusCode.NotFound -> {
-                        log.error("Oppdatering: Journalposten finnes ikke for journalpostid {}, msgId {}", journalpostId, msgId)
+                        logger.error("Oppdatering: Journalposten finnes ikke for journalpostid {}, msgId {}", journalpostId, msgId)
                         throw RuntimeException("Oppdatering: Journalposten finnes ikke for journalpostid $journalpostId msgid $msgId")
                     }
                     else -> {
-                        log.error("Fikk http status {} ved oppdatering av journalpostid {}, msgId {}", e.response.status, journalpostId, msgId)
+                        logger.error("Fikk http status {} ved oppdatering av journalpostid {}, msgId {}", e.response.status, journalpostId, msgId)
                         throw RuntimeException("Fikk feilmelding ved oppdatering av journalpostid $journalpostId msgid $msgId")
                     }
                 }
             }
-            log.error("Dokarkiv svarte med feilmelding ved oppdatering av journalpost $journalpostId", e)
+            logger.error("Dokarkiv svarte med feilmelding ved oppdatering av journalpost $journalpostId", e)
             throw IOException("Dokarkiv svarte med feilmelding ved oppdatering av journalpost for $journalpostId msgid $msgId")
         }
     }
@@ -124,21 +124,21 @@ class DokArkivClient(
                 accept(ContentType.Application.Json)
                 header("Authorization", "Bearer ${accessTokenProvider.getToken()}")
                 header("Nav-Callid", msgId)
-            }.also { log.info("Feilregistrerte journalpost {}", journalpostId) }
+            }.also { logger.info("Feilregistrerte journalpost {}", journalpostId) }
         } catch (e: Exception) {
             if (e is ClientRequestException) {
                 when (e.response.status) {
                     HttpStatusCode.NotFound -> {
-                        log.error("Klarte ikke feilregistrere journalpost $journalpostId", e)
+                        logger.error("Klarte ikke feilregistrere journalpost $journalpostId", e)
                         throw RuntimeException("feilregistrering: Journalposten finnes ikke for journalpostid $journalpostId", e)
                     }
                     else -> {
-                        log.error("Fikk http status ${e.response.status} ved feilregistrering av journalpost $journalpostId", e)
+                        logger.error("Fikk http status ${e.response.status} ved feilregistrering av journalpost $journalpostId", e)
                         throw RuntimeException("Fikk feilmelding ved feilregistrering av journalpostid $journalpostId", e)
                     }
                 }
             }
-            log.error("Dokarkiv svarte med feilmelding ved feilregistrering av journalpost $journalpostId", e)
+            logger.error("Dokarkiv svarte med feilmelding ved feilregistrering av journalpost $journalpostId", e)
             throw IOException("Dokarkiv svarte med feilmelding ved feilregistrering av journalpost for $journalpostId", e)
         }
     }

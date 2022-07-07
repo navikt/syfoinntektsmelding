@@ -6,11 +6,11 @@ import kotlinx.coroutines.Dispatchers
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.utils.RecurringJob
+import no.nav.helse.arbeidsgiver.utils.logger
 import no.nav.syfo.kafkamottak.InngaaendeJournalpostDTO
 import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
 import no.nav.syfo.repository.DuplikatRepository
 import org.apache.avro.generic.GenericRecord
-import org.slf4j.LoggerFactory
 import java.time.Duration
 import java.time.LocalDateTime
 
@@ -38,7 +38,8 @@ class PollForJoarkhendelserJob(
     waitTimeWhenEmptyQueue: Duration = Duration.ofSeconds(30)
 ) : RecurringJob(coroutineScope, waitTimeWhenEmptyQueue.toMillis()) {
 
-    private val log = LoggerFactory.getLogger(PollForJoarkhendelserJob::class.java)
+    private val logger = this.logger()
+
     override fun doJob() {
         do {
             val wasEmpty = processAll(kafkaProvider.getMessagesToProcess())
@@ -50,15 +51,11 @@ class PollForJoarkhendelserJob(
 
     fun processAll(journalposter: List<InngaaendeJournalpostDTO>): Boolean {
         return journalposter
-            .filter {
-                isInntektsmelding(it)
-            }
-            .filter {
-                !isDuplicate(it)
-            }
+            .filter(::isInntektsmelding)
+            .filterNot(::isDuplicate)
             .onEach {
                 // https://confluence.adeo.no/display/BOA/Tema https://confluence.adeo.no/display/BOA/Mottakskanal
-                log.info("Fant journalpost ${it.kanalReferanseId} fra ALTINN for syk med status midlertidig.")
+                logger.info("Fant journalpost ${it.kanalReferanseId} fra ALTINN for syk med status midlertidig.")
                 bakgrunnsjobbRepo.save(
                     Bakgrunnsjobb(
                         type = JoarkInntektsmeldingHendelseProsessor.JOB_TYPE,
@@ -78,9 +75,9 @@ class PollForJoarkhendelserJob(
     fun isDuplicate(journalpost: InngaaendeJournalpostDTO): Boolean {
         val dupe = duplikatRepository.findByHendelsesId(journalpost.hendelsesId)
         if (dupe) {
-            log.info("Inntektsmelding er tidligere importert for journalpost ${journalpost.kanalReferanseId} for hendelse ${journalpost.hendelsesId}")
+            logger.info("Inntektsmelding er tidligere importert for journalpost ${journalpost.kanalReferanseId} for hendelse ${journalpost.hendelsesId}")
         } else {
-            log.info("Fant ikke tidligere lagret IM for journalpost ${journalpost.kanalReferanseId} for hendelse ${journalpost.hendelsesId}")
+            logger.info("Fant ikke tidligere lagret IM for journalpost ${journalpost.kanalReferanseId} for hendelse ${journalpost.hendelsesId}")
         }
         return dupe
     }

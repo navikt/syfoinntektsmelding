@@ -1,7 +1,6 @@
 package no.nav.syfo.service
 
 import kotlinx.coroutines.runBlocking
-import log
 import no.nav.syfo.client.dokarkiv.DokArkivClient
 import no.nav.syfo.client.dokarkiv.mapFeilregistrertRequest
 import no.nav.syfo.client.dokarkiv.mapOppdaterRequest
@@ -9,8 +8,6 @@ import no.nav.syfo.domain.InngaendeJournalpost
 import no.nav.syfo.util.MDCOperations
 
 class BehandleInngaaendeJournalConsumer(private val dokArkivClient: DokArkivClient) {
-
-    var log = log()
 
     /**
      * Oppdaterer journalposten

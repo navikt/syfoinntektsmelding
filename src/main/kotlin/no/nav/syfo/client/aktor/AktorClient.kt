@@ -6,13 +6,13 @@ import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.url
 import kotlinx.coroutines.runBlocking
+import no.nav.helse.arbeidsgiver.utils.logger
 import no.nav.syfo.behandling.AktørException
 import no.nav.syfo.behandling.AktørKallResponseException
 import no.nav.syfo.behandling.FantIkkeAktørException
 import no.nav.syfo.client.TokenConsumer
 import no.nav.syfo.util.MDCOperations.Companion.MDC_CALL_ID
 import no.nav.syfo.util.MDCOperations.Companion.getFromMDC
-import org.slf4j.LoggerFactory
 import java.net.ConnectException
 
 class AktorClient(
@@ -21,7 +21,7 @@ class AktorClient(
     private val endpointUrl: String,
     private val httpClient: HttpClient
 ) {
-    private val log = LoggerFactory.getLogger(AktorClient::class.java)
+    private val logger = this.logger()
 
     @Throws(AktørException::class)
     fun getAktorId(fnr: String): String {
@@ -44,14 +44,14 @@ class AktorClient(
                 }[sokeIdent]
             } catch (cause: ClientRequestException) {
                 val status = cause.response.status.value
-                log.error("Kall mot aktørregister på $endpointUrl feiler med HTTP-$status")
+                logger.error("Kall mot aktørregister på $endpointUrl feiler med HTTP-$status")
                 throw AktørKallResponseException(status, null)
             } catch (cause: ConnectException) {
-                log.error("Kall til $urlString gir ${cause.message}")
+                logger.error("Kall til $urlString gir ${cause.message}")
                 throw AktørKallResponseException(999, cause)
             }
             if (aktor?.identer == null) {
-                log.error("Fant ikke aktøren: ${aktor?.feilmelding}")
+                logger.error("Fant ikke aktøren: ${aktor?.feilmelding}")
                 throw FantIkkeAktørException(null)
             }
         }

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbProsesserer
+import no.nav.helse.arbeidsgiver.utils.logger
 import no.nav.syfo.behandling.BehandlingException
 import no.nav.syfo.behandling.Feiltype
 import no.nav.syfo.behandling.InntektsmeldingBehandler
@@ -14,7 +15,6 @@ import no.nav.syfo.kafkamottak.InntektsmeldingConsumerException
 import no.nav.syfo.repository.FeiletService
 import no.nav.syfo.util.MDCOperations
 import no.nav.syfo.util.Metrikk
-import org.slf4j.LoggerFactory
 
 /**
  * En bakgrunnsjobb som kan prosessere bakgrunnsjobber med inntektsmeldinger fra Joark
@@ -27,8 +27,8 @@ class JoarkInntektsmeldingHendelseProsessor(
     private val feiletService: FeiletService,
     private val oppgaveClient: OppgaveClient
 ) : BakgrunnsjobbProsesserer {
+    private val logger = this.logger()
 
-    val log = LoggerFactory.getLogger(JoarkInntektsmeldingHendelseProsessor::class.java)!!
     companion object {
         const val JOB_TYPE = "joark-ny-inntektsmelding"
     }
@@ -48,7 +48,7 @@ class JoarkInntektsmeldingHendelseProsessor(
                 throw IllegalArgumentException("Mottok inntektsmelding uten arkivreferanse")
             }
 
-            log.info("Bakgrunnsbehandler $arkivReferanse")
+            logger.info("Bakgrunnsbehandler $arkivReferanse")
             val historikk = feiletService.finnHistorikk(arkivReferanse)
 
             if (historikk.feiletList.isNotEmpty()) {
@@ -68,12 +68,12 @@ class JoarkInntektsmeldingHendelseProsessor(
             metrikk.tellInntektsmeldingUtenArkivReferanse()
             throw InntektsmeldingConsumerException(arkivReferanse, e, Feiltype.INNGÅENDE_MANGLER_KANALREFERANSE)
         } catch (e: BehandlingException) {
-            log.error("Feil ved behandling av inntektsmelding med arkivreferanse $arkivReferanse", e)
+            logger.error("Feil ved behandling av inntektsmelding med arkivreferanse $arkivReferanse", e)
             metrikk.tellBehandlingsfeil(e.feiltype)
             lagreFeilet(arkivReferanse, e.feiltype)
             throw InntektsmeldingConsumerException(arkivReferanse, e, e.feiltype)
         } catch (e: Exception) {
-            log.error("Det skjedde en feil ved journalføring med arkivreferanse $arkivReferanse", e)
+            logger.error("Det skjedde en feil ved journalføring med arkivreferanse $arkivReferanse", e)
             metrikk.tellBehandlingsfeil(Feiltype.USPESIFISERT)
             lagreFeilet(arkivReferanse, Feiltype.USPESIFISERT)
 

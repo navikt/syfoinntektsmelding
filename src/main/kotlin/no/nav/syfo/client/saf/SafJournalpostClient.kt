@@ -6,8 +6,8 @@ import io.ktor.client.request.post
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import kotlinx.coroutines.runBlocking
-import log
 import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
+import no.nav.helse.arbeidsgiver.utils.logger
 import no.nav.syfo.client.saf.model.GetJournalpostRequest
 import no.nav.syfo.client.saf.model.JournalResponse
 import no.nav.syfo.client.saf.model.Journalpost
@@ -17,12 +17,12 @@ class SafJournalpostClient(
     private val basePath: String,
     private val stsClient: AccessTokenProvider
 ) {
-    val log = log()
+    private val logger = this.logger()
 
     @Throws(NotAuthorizedException::class, ErrorException::class, EmptyException::class)
     fun getJournalpostMetadata(journalpostId: String): Journalpost? {
         val token = stsClient.getToken()
-        log.info("Henter journalpostmetadata for $journalpostId with token size " + token.length)
+        logger.info("Henter journalpostmetadata for $journalpostId with token size " + token.length)
         val response = runBlocking {
             httpClient.post<JournalResponse>(basePath) {
                 contentType(ContentType.Application.Json)

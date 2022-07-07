@@ -1,8 +1,8 @@
 package no.nav.syfo.service
 
 import kotlinx.coroutines.runBlocking
-import log
 import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClient
+import no.nav.helse.arbeidsgiver.utils.logger
 import no.nav.syfo.behandling.BehandlendeEnhetFeiletException
 import no.nav.syfo.behandling.IngenAktivEnhetException
 import no.nav.syfo.client.norg.ArbeidsfordelingRequest
@@ -20,8 +20,7 @@ class BehandlendeEnhetConsumer(
     private val norg2Client: Norg2Client,
     private val metrikk: Metrikk
 ) {
-
-    var log = log()
+    private val logger = this.logger()
 
     fun hentBehandlendeEnhet(fnr: String, uuid: String): String {
         val geografiskTilknytning = hentGeografiskTilknytning(fnr)
@@ -38,7 +37,7 @@ class BehandlendeEnhetConsumer(
             val arbeidsfordelinger = runBlocking {
                 norg2Client.hentAlleArbeidsfordelinger(criteria, callId)
             }
-            log.info("Fant enheter: " + arbeidsfordelinger.toString())
+            logger.info("Fant enheter: " + arbeidsfordelinger.toString())
             val behandlendeEnhet = finnAktivBehandlendeEnhet(
                 arbeidsfordelinger,
                 geografiskTilknytning.geografiskTilknytning
@@ -46,10 +45,10 @@ class BehandlendeEnhetConsumer(
             if (SYKEPENGER_UTLAND == behandlendeEnhet) {
                 metrikk.tellInntektsmeldingSykepengerUtland()
             }
-            log.info("Fant geografiskTilknytning ${geografiskTilknytning.geografiskTilknytning} med behandlendeEnhet $behandlendeEnhet for inntektsmelding $uuid")
+            logger.info("Fant geografiskTilknytning ${geografiskTilknytning.geografiskTilknytning} med behandlendeEnhet $behandlendeEnhet for inntektsmelding $uuid")
             return behandlendeEnhet
         } catch (e: RuntimeException) {
-            log.error("Klarte ikke å hente behandlende enhet!", e)
+            logger.error("Klarte ikke å hente behandlende enhet!", e)
             throw BehandlendeEnhetFeiletException(e)
         }
     }

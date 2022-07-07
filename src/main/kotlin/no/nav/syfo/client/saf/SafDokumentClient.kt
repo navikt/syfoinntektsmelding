@@ -9,8 +9,8 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.util.toByteArray
 import kotlinx.coroutines.runBlocking
-import log
 import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
+import no.nav.helse.arbeidsgiver.utils.logger
 import no.nav.syfo.util.MDCOperations
 import java.util.UUID
 
@@ -24,13 +24,13 @@ class SafDokumentClient constructor(
     private val httpClient: HttpClient,
     private val stsClient: AccessTokenProvider
 ) {
-    val log = log()
+    private val logger = this.logger()
 
     fun hentDokument(
         journalpostId: String,
         dokumentInfoId: String
     ): ByteArray? {
-        log.info("Henter dokument fra journalpostId $journalpostId, og dokumentInfoId $dokumentInfoId")
+        logger.info("Henter dokument fra journalpostId $journalpostId, og dokumentInfoId $dokumentInfoId")
         val response = runBlocking {
             httpClient.get<HttpStatement>("$url/hentdokument/$journalpostId/$dokumentInfoId/ORIGINAL") {
                 accept(ContentType.Application.Xml)
@@ -40,7 +40,7 @@ class SafDokumentClient constructor(
             }.execute()
         }
         if (response.status != HttpStatusCode.OK) {
-            log.info("Saf returnerte: httpstatus {}", response.status)
+            logger.info("Saf returnerte: httpstatus {}", response.status)
             return null
         }
         return runBlocking {

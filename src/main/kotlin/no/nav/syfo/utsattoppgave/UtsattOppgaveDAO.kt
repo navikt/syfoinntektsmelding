@@ -1,14 +1,13 @@
 package no.nav.syfo.utsattoppgave
 
-import log
+import no.nav.helse.arbeidsgiver.utils.logger
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.dto.UtsattOppgaveEntitet
 import no.nav.syfo.repository.UtsattOppgaveRepository
 import java.time.LocalDateTime
 
 class UtsattOppgaveDAO(private val utsattOppgaveRepository: UtsattOppgaveRepository) {
-
-    val log = log()
+    private val logger = this.logger()
 
     fun opprett(oppgave: UtsattOppgaveEntitet): Int {
         return utsattOppgaveRepository.opprett(oppgave).id
@@ -23,5 +22,5 @@ class UtsattOppgaveDAO(private val utsattOppgaveRepository: UtsattOppgaveReposit
 
     fun finnAlleUtgåtteOppgaver(): List<UtsattOppgaveEntitet> =
         utsattOppgaveRepository.findUtsattOppgaveEntitetByTimeoutBeforeAndTilstandEquals(LocalDateTime.now(), Tilstand.Utsatt)
-            .also { log.info("Fant ${it.size} utsatte oppgaver som har timet ut hvor vi skal opprette en oppgave i gosys") }
+            .also { logger.info("Fant ${it.size} utsatte oppgaver som har timet ut hvor vi skal opprette en oppgave i gosys") }
 }

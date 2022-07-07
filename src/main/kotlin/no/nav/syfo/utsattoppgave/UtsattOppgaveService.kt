@@ -3,6 +3,7 @@ package no.nav.syfo.utsattoppgave
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import kotlinx.coroutines.runBlocking
+import no.nav.helse.arbeidsgiver.utils.logger
 import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.domain.OppgaveResultat
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
@@ -26,16 +27,16 @@ class UtsattOppgaveService(
     private val metrikk: Metrikk
 ) {
 
-    val log = LoggerFactory.getLogger(UtsattOppgaveService::class.java)!!
+    private val logger = this.logger()
 
     fun prosesser(oppdatering: OppgaveOppdatering) {
         val oppgave = utsattOppgaveDAO.finn(oppdatering.id.toString())
         if (oppgave == null) {
             metrikk.tellUtsattOppgave_Ukjent()
-            log.warn("Mottok oppdatering på en ukjent oppgave")
+            logger.warn("Mottok oppdatering på en ukjent oppgave")
             return
         }
-        log.info("Fant oppgave for inntektsmelding: ${oppgave.arkivreferanse} med tilstand: ${Tilstand.Forkastet.name}")
+        logger.info("Fant oppgave for inntektsmelding: ${oppgave.arkivreferanse} med tilstand: ${Tilstand.Forkastet.name}")
         val gjelderSpeil = oppdatering.oppdateringstype == OppdateringstypeDTO.OpprettSpeilRelatert
 
         if (oppgave.tilstand == Tilstand.Utsatt && oppdatering.handling == no.nav.syfo.utsattoppgave.Handling.Utsett) {
@@ -48,7 +49,7 @@ class UtsattOppgaveService(
             oppgave.speil = gjelderSpeil
             lagre(oppgave)
             metrikk.tellUtsattOppgave_Utsett()
-            log.info("Oppdaterte timeout på inntektsmelding: ${oppgave.arkivreferanse} til ${oppdatering.timeout}")
+            logger.info("Oppdaterte timeout på inntektsmelding: ${oppgave.arkivreferanse} til ${oppdatering.timeout}")
             return
         }
 
@@ -56,7 +57,7 @@ class UtsattOppgaveService(
             oppgave.oppdatert = LocalDateTime.now()
             lagre(oppgave.copy(tilstand = Tilstand.Forkastet, speil = gjelderSpeil))
             metrikk.tellUtsattOppgave_Forkast()
-            log.info("Endret oppgave: ${oppgave.arkivreferanse} til tilstand: ${Tilstand.Forkastet.name}")
+            logger.info("Endret oppgave: ${oppgave.arkivreferanse} til tilstand: ${Tilstand.Forkastet.name}")
             return
         }
 
@@ -66,12 +67,12 @@ class UtsattOppgaveService(
             oppgave.oppdatert = LocalDateTime.now()
             lagre(oppgave.copy(tilstand = Tilstand.Opprettet, speil = gjelderSpeil))
             metrikk.tellUtsattOppgave_Opprett()
-            log.info("Endret oppgave: ${oppgave.inntektsmeldingId} til tilstand: ${Tilstand.Opprettet.name} gosys oppgaveID: ${resultat.oppgaveId} duplikat? ${resultat.duplikat}")
+            logger.info("Endret oppgave: ${oppgave.inntektsmeldingId} til tilstand: ${Tilstand.Opprettet.name} gosys oppgaveID: ${resultat.oppgaveId} duplikat? ${resultat.duplikat}")
             return
         }
 
         metrikk.tellUtsattOppgave_Irrelevant()
-        log.info("Oppdatering på dokumentId: ${oppdatering.id} ikke relevant")
+        logger.info("Oppdatering på dokumentId: ${oppdatering.id} ikke relevant")
     }
 
     fun lagre(oppgave: UtsattOppgaveEntitet) {
@@ -92,7 +93,7 @@ fun opprettOppgaveIGosys(
     imEntitet: InntektsmeldingEntitet,
     om: ObjectMapper
 ): OppgaveResultat {
-    val log = LoggerFactory.getLogger(UtsattOppgaveService::class.java)!!
+    val logger = LoggerFactory.getLogger(UtsattOppgaveService::class.java)!!
     val behandlendeEnhet = behandlendeEnhetConsumer.hentBehandlendeEnhet(
         utsattOppgave.fnr,
         utsattOppgave.inntektsmeldingId
@@ -100,7 +101,7 @@ fun opprettOppgaveIGosys(
     val gjelderUtland = (SYKEPENGER_UTLAND == behandlendeEnhet)
     val inntektsmelding = om.readValue<Inntektsmelding>(imEntitet.data!!)
     val behandlingsTema = finnBehandlingsTema(inntektsmelding)
-    log.info("Fant enhet $behandlendeEnhet for ${utsattOppgave.arkivreferanse}")
+    logger.info("Fant enhet $behandlendeEnhet for ${utsattOppgave.arkivreferanse}")
     val resultat = runBlocking {
         oppgaveClient.opprettOppgave(
             journalpostId = utsattOppgave.journalpostId,

@@ -14,12 +14,14 @@ import no.nav.helse.arbeidsgiver.kubernetes.ReadynessComponent
 import no.nav.helse.arbeidsgiver.system.AppEnv
 import no.nav.helse.arbeidsgiver.system.getEnvironment
 import no.nav.helse.arbeidsgiver.system.getString
+import no.nav.helse.arbeidsgiver.utils.logger
 import no.nav.syfo.integration.kafka.PollForJoarkhendelserJob
 import no.nav.syfo.integration.kafka.PollForUtsattOppgaveVarslingsmeldingJob
 import no.nav.syfo.koin.selectModuleBasedOnProfile
 import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
 import no.nav.syfo.prosesser.FjernInntektsmeldingByBehandletProcessor
 import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
+import no.nav.syfo.util.logger
 import no.nav.syfo.utsattoppgave.FeiletUtsattOppgaveMeldingProsessor
 import no.nav.syfo.web.inntektsmeldingModule
 import no.nav.syfo.web.nais.nais
@@ -29,10 +31,9 @@ import org.koin.core.component.get
 import org.koin.core.context.GlobalContext
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
-import org.slf4j.LoggerFactory
 
 class SpinnApplication(val port: Int = 8080) : KoinComponent {
-    private val logger = LoggerFactory.getLogger(SpinnApplication::class.simpleName)
+    private val logger = this.logger()
     private var webserver: NettyApplicationEngine? = null
     private var appConfig: HoconApplicationConfig = HoconApplicationConfig(ConfigFactory.load())
 
@@ -124,7 +125,7 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
 }
 
 fun main() {
-    val logger = LoggerFactory.getLogger("main")
+    val logger = logger("main")
 
     Thread.currentThread().setUncaughtExceptionHandler { thread, err ->
         logger.error("uncaught exception in thread ${thread.name}: ${err.message}", err)

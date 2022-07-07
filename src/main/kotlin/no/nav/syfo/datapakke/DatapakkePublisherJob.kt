@@ -12,6 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.utils.RecurringJob
 import no.nav.helse.arbeidsgiver.utils.loadFromResources
+import no.nav.helse.arbeidsgiver.utils.logger
 import no.nav.syfo.repository.ForsinkelseWeeklyStats
 import no.nav.syfo.repository.IMStatsRepo
 import no.nav.syfo.util.DatapakkeUtil
@@ -31,6 +32,7 @@ class DatapakkePublisherJob(
         CoroutineScope(Dispatchers.IO),
         Duration.ofHours(1).toMillis()
     ) {
+    private val logger = this.logger()
 
     override fun doJob() {
         val now = LocalDateTime.now()
