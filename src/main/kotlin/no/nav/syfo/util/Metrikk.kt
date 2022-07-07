@@ -134,10 +134,6 @@ class Metrikk {
         "syfoinntektsmelding_utsatt_oppgave_utsett",
         "Oppdaterte timeout for inntektsmelding", "type"
     )
-    val UTSATT_OPPGAVE_UTSETT_UTEN_DATO = proseseringsMetrikker(
-        "syfoinntektsmelding_utsatt_oppgave_ingen_dato",
-        "Timeout på utsettelse mangler", "type"
-    )
     val UTSATT_OPPGAVE_FORKAST = proseseringsMetrikker(
         "syfoinntektsmelding_utsatt_oppgave_forkast",
         "Forkaster oppgave", "type"
@@ -208,7 +204,6 @@ class Metrikk {
 
     fun tellUtsattOppgave_Ukjent() = UTSATT_OPPGAVE_UKJENT.labels("info").inc()
     fun tellUtsattOppgave_Utsett() = UTSATT_OPPGAVE_UTSETT.labels("info").inc()
-    fun tellUtsattOppgave_UtenDato() = UTSATT_OPPGAVE_UTSETT_UTEN_DATO.labels("info").inc()
     fun tellUtsattOppgave_Forkast() = UTSATT_OPPGAVE_FORKAST.labels("info").inc()
     fun tellUtsattOppgave_Opprett() = UTSATT_OPPGAVE_OPPRETT.labels("info").inc()
     fun tellUtsattOppgave_OpprettTimeout() = UTSATT_OPPGAVE_OPPRETT_TIMEOUT.labels("info").inc()
