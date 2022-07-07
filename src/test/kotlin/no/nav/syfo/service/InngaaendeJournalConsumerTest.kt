@@ -19,7 +19,6 @@ class InngaaendeJournalConsumerTest {
     private val inngaaendeJournalConsumer = InngaaendeJournalConsumer(safJournalpostClient)
 
     @Test
-    @Throws(Exception::class)
     fun hentDokumentId() {
         val dokumentId1 = "dokumentId"
         val journalpostId = "journalpostId"

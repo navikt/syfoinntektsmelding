@@ -19,7 +19,6 @@ class SafJournalpostClient(
 ) {
     private val logger = this.logger()
 
-    @Throws(NotAuthorizedException::class, ErrorException::class, EmptyException::class)
     fun getJournalpostMetadata(journalpostId: String): Journalpost? {
         val token = stsClient.getToken()
         logger.info("Henter journalpostmetadata for $journalpostId with token size " + token.length)

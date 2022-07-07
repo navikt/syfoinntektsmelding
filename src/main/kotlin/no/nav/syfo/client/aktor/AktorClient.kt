@@ -7,7 +7,6 @@ import io.ktor.client.request.header
 import io.ktor.client.request.url
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.utils.logger
-import no.nav.syfo.behandling.AktørException
 import no.nav.syfo.behandling.AktørKallResponseException
 import no.nav.syfo.behandling.FantIkkeAktørException
 import no.nav.syfo.client.TokenConsumer
@@ -22,13 +21,10 @@ class AktorClient(
 ) {
     private val logger = this.logger()
 
-    // TODO alle throws kan fjernes
-    @Throws(AktørException::class)
     fun getAktorId(fnr: String): String {
         return getIdent(fnr, "AktoerId")
     }
 
-    @Throws(AktørException::class)
     private fun getIdent(sokeIdent: String, identgruppe: String): String {
         var aktor: Aktor? = null
 

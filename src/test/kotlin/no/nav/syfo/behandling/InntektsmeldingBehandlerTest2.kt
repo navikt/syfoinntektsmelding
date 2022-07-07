@@ -265,7 +265,6 @@ class InntektsmeldingBehandlerTest2 {
         )
     }
 
-    @Throws(Exception::class)
     fun produceParallelMessages(numThreads: Int, arkivId: String) {
         val countdown = CountDownLatch(numThreads)
 
