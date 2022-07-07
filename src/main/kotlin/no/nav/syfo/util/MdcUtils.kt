@@ -23,8 +23,9 @@ object MdcUtils {
             fn,
         )
 
-    fun getCallId(): String? =
+    fun getCallId(): String =
         MDC.get(Keys.CALL_ID)
+            ?: newCallId()
 
     private fun withLogField(logField: Pair<String, String>, fn: () -> Unit) {
         val (key, value) = logField
@@ -37,7 +38,7 @@ object MdcUtils {
     }
 }
 
-fun newCallId(): String {
+private fun newCallId(): String {
     val randomNumber = RANDOM.nextInt(Int.MAX_VALUE)
     val systemTime = System.currentTimeMillis()
     return "CallId_${randomNumber}_$systemTime"
