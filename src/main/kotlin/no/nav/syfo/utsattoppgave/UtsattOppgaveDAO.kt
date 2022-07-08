@@ -1,6 +1,6 @@
 package no.nav.syfo.utsattoppgave
 
-import no.nav.helse.arbeidsgiver.utils.logger
+import no.nav.helsearbeidsgiver.utils.logger
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.dto.UtsattOppgaveEntitet
 import no.nav.syfo.repository.UtsattOppgaveRepository

@@ -6,13 +6,11 @@ import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.url
 import kotlinx.coroutines.runBlocking
-import no.nav.helse.arbeidsgiver.utils.logger
-import no.nav.syfo.behandling.AktørException
+import no.nav.helsearbeidsgiver.utils.MdcUtils
+import no.nav.helsearbeidsgiver.utils.logger
 import no.nav.syfo.behandling.AktørKallResponseException
 import no.nav.syfo.behandling.FantIkkeAktørException
 import no.nav.syfo.client.TokenConsumer
-import no.nav.syfo.util.MDCOperations.Companion.MDC_CALL_ID
-import no.nav.syfo.util.MDCOperations.Companion.getFromMDC
 import java.net.ConnectException
 
 class AktorClient(
@@ -23,12 +21,10 @@ class AktorClient(
 ) {
     private val logger = this.logger()
 
-    @Throws(AktørException::class)
     fun getAktorId(fnr: String): String {
         return getIdent(fnr, "AktoerId")
     }
 
-    @Throws(AktørException::class)
     private fun getIdent(sokeIdent: String, identgruppe: String): String {
         var aktor: Aktor? = null
 
@@ -38,9 +34,9 @@ class AktorClient(
                 aktor = httpClient.get<AktorResponse> {
                     url(urlString)
                     header("Authorization", "Bearer ${tokenConsumer.token}")
-                    header("Nav-Call-Id", "${getFromMDC(MDC_CALL_ID)}")
-                    header("Nav-Consumer-Id", "$username")
-                    header("Nav-Personidenter", "$sokeIdent")
+                    header("Nav-Call-Id", MdcUtils.getCallId())
+                    header("Nav-Consumer-Id", username)
+                    header("Nav-Personidenter", sokeIdent)
                 }[sokeIdent]
             } catch (cause: ClientRequestException) {
                 val status = cause.response.status.value

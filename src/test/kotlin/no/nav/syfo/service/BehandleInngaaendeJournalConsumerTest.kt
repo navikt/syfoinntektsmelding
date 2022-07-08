@@ -14,7 +14,6 @@ class BehandleInngaaendeJournalConsumerTest {
     private val behandleInngaaendeJournalConsumer = BehandleInngaaendeJournalConsumer(dokArkivClient)
 
     @Test
-    @Throws(Exception::class)
     fun ferdigstillJournalpost() {
         val behandlendeEngetId = "behandlendeEngetId"
         val journalpostId = "journalpostId"
