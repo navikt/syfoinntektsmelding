@@ -7,7 +7,7 @@ import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
-import no.nav.helse.arbeidsgiver.utils.logger
+import no.nav.helsearbeidsgiver.utils.logger
 import no.nav.syfo.client.saf.model.GetJournalpostRequest
 import no.nav.syfo.client.saf.model.JournalResponse
 import no.nav.syfo.client.saf.model.Journalpost

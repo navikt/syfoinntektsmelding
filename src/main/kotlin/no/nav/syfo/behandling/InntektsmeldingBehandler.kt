@@ -3,7 +3,7 @@
 package no.nav.syfo.behandling
 
 import com.google.common.util.concurrent.Striped
-import no.nav.helse.arbeidsgiver.utils.logger
+import no.nav.helsearbeidsgiver.utils.logger
 import no.nav.syfo.client.aktor.AktorClient
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding

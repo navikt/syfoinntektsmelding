@@ -4,13 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import no.nav.helse.arbeidsgiver.utils.RecurringJob
-import no.nav.helse.arbeidsgiver.utils.logger
+import no.nav.helsearbeidsgiver.utils.MdcUtils
+import no.nav.helsearbeidsgiver.utils.logger
 import no.nav.syfo.behandling.OpprettOppgaveException
 import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.repository.InntektsmeldingRepository
 import no.nav.syfo.service.BehandlendeEnhetConsumer
-import no.nav.syfo.util.MdcUtils
 import no.nav.syfo.util.Metrikk
 import no.nav.syfo.utsattoppgave.UtsattOppgaveDAO
 import no.nav.syfo.utsattoppgave.opprettOppgaveIGosys

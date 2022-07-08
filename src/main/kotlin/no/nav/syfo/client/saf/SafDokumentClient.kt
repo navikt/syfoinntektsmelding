@@ -10,8 +10,8 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.util.toByteArray
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
-import no.nav.helse.arbeidsgiver.utils.logger
-import no.nav.syfo.util.MdcUtils
+import no.nav.helsearbeidsgiver.utils.MdcUtils
+import no.nav.helsearbeidsgiver.utils.logger
 
 /**
  * REST tjeneste for å hente fysisk dokument fra arkivet.

@@ -1,7 +1,7 @@
 package no.nav.syfo.service
 
 import kotlinx.coroutines.runBlocking
-import no.nav.helse.arbeidsgiver.utils.logger
+import no.nav.helsearbeidsgiver.utils.logger
 import no.nav.syfo.behandling.HentDokumentFeiletException
 import no.nav.syfo.client.aktor.AktorClient
 import no.nav.syfo.client.saf.SafDokumentClient

@@ -6,11 +6,11 @@ import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.url
 import kotlinx.coroutines.runBlocking
-import no.nav.helse.arbeidsgiver.utils.logger
+import no.nav.helsearbeidsgiver.utils.MdcUtils
+import no.nav.helsearbeidsgiver.utils.logger
 import no.nav.syfo.behandling.AktørKallResponseException
 import no.nav.syfo.behandling.FantIkkeAktørException
 import no.nav.syfo.client.TokenConsumer
-import no.nav.syfo.util.MdcUtils
 import java.net.ConnectException
 
 class AktorClient(

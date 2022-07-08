@@ -7,7 +7,7 @@ import kotlinx.coroutines.Dispatchers
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.utils.RecurringJob
-import no.nav.syfo.util.MdcUtils
+import no.nav.helsearbeidsgiver.utils.MdcUtils
 import no.nav.syfo.utsattoppgave.DokumentTypeDTO
 import no.nav.syfo.utsattoppgave.FeiletUtsattOppgaveMeldingProsessor
 import no.nav.syfo.utsattoppgave.OppgaveOppdatering

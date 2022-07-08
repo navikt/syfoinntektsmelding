@@ -145,6 +145,7 @@ dependencies {
     implementation("no.nav:vault-jdbc:1.3.7")
     implementation("no.nav.common:log:2.2022.02.18_14.38-8d8bb494bd41")
     implementation("no.nav.helsearbeidsgiver:helse-arbeidsgiver-felles-backend:2022.07.06-11-34-2e18c")
+    implementation("no.nav.helsearbeidsgiver:utils:0.1.1")
     implementation("no.nav.security:token-client-core:$tokenSupportVersion")
     implementation("no.nav.security:token-validation-ktor:$tokenSupportVersion")
     implementation("no.nav.security:mock-oauth2-server:$mockOAuth2ServerVersion")

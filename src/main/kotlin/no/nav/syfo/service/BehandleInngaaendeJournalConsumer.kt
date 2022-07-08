@@ -1,11 +1,11 @@
 package no.nav.syfo.service
 
 import kotlinx.coroutines.runBlocking
+import no.nav.helsearbeidsgiver.utils.MdcUtils
 import no.nav.syfo.client.dokarkiv.DokArkivClient
 import no.nav.syfo.client.dokarkiv.mapFeilregistrertRequest
 import no.nav.syfo.client.dokarkiv.mapOppdaterRequest
 import no.nav.syfo.domain.InngaendeJournalpost
-import no.nav.syfo.util.MdcUtils
 
 class BehandleInngaaendeJournalConsumer(private val dokArkivClient: DokArkivClient) {
 

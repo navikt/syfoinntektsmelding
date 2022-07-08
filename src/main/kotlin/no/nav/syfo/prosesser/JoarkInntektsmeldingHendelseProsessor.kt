@@ -5,7 +5,8 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbProsesserer
-import no.nav.helse.arbeidsgiver.utils.logger
+import no.nav.helsearbeidsgiver.utils.MdcUtils
+import no.nav.helsearbeidsgiver.utils.logger
 import no.nav.syfo.behandling.BehandlingException
 import no.nav.syfo.behandling.Feiltype
 import no.nav.syfo.behandling.InntektsmeldingBehandler
@@ -13,7 +14,6 @@ import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.kafkamottak.InngaaendeJournalpostDTO
 import no.nav.syfo.kafkamottak.InntektsmeldingConsumerException
 import no.nav.syfo.repository.FeiletService
-import no.nav.syfo.util.MdcUtils
 import no.nav.syfo.util.Metrikk
 
 /**
