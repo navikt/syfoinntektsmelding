@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbProsesserer
-import no.nav.helse.arbeidsgiver.utils.logger
-import no.nav.syfo.util.MDCOperations
+import no.nav.helsearbeidsgiver.utils.MdcUtils
+import no.nav.helsearbeidsgiver.utils.logger
 
 /**
  * En bakgrunnsjobb som tar feilede meldinger ang utsatt oppgave og prøver å prosessere dem på nytt
@@ -22,21 +22,19 @@ class FeiletUtsattOppgaveMeldingProsessor(
     companion object {
         const val JOB_TYPE = "feilet-utsatt-oppgave"
     }
-    override fun prosesser(jobb: Bakgrunnsjobb) {
-        try {
-            val utsattOppgaveOppdatering = om.readValue<UtsattOppgaveDTO>(jobb.data)
-            val oppdatering = OppgaveOppdatering(
-                utsattOppgaveOppdatering.dokumentId,
-                utsattOppgaveOppdatering.oppdateringstype.tilHandling(),
-                utsattOppgaveOppdatering.timeout,
-                utsattOppgaveOppdatering.oppdateringstype
-            )
 
-            MDCOperations.putToMDC(MDCOperations.MDC_CALL_ID, MDCOperations.generateCallId())
+    override fun prosesser(jobb: Bakgrunnsjobb) {
+        val utsattOppgaveOppdatering = om.readValue<UtsattOppgaveDTO>(jobb.data)
+        val oppdatering = OppgaveOppdatering(
+            utsattOppgaveOppdatering.dokumentId,
+            utsattOppgaveOppdatering.oppdateringstype.tilHandling(),
+            utsattOppgaveOppdatering.timeout,
+            utsattOppgaveOppdatering.oppdateringstype
+        )
+
+        MdcUtils.withCallId {
             logger.info("Prosesserer inntekstmelding " + oppdatering.id)
             oppgaveService.prosesser(oppdatering)
-        } finally {
-            MDCOperations.remove(MDCOperations.MDC_CALL_ID)
         }
     }
 }

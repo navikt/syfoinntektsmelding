@@ -33,6 +33,7 @@ val navSyfoCommonVersion: String by project
 val vaultJdbcVersion: String by project
 val navLogVersion: String by project
 val fellesBackendVersion: String by project
+val helseArbeidsgiverUtilsVersion: String by project
 val slf4Version: String by project
 val logbackVersion: String by project
 val apacheHttpClientVersion: String by project
@@ -166,6 +167,7 @@ dependencies {
     implementation("no.nav:vault-jdbc:$vaultJdbcVersion")
     implementation("no.nav.common:log:$navLogVersion")
     implementation("no.nav.helsearbeidsgiver:helse-arbeidsgiver-felles-backend:$fellesBackendVersion")
+    implementation("no.nav.helsearbeidsgiver:utils:$helseArbeidsgiverUtilsVersion")
     implementation("no.nav.security:token-client-core:$tokenSupportVersion")
     implementation("no.nav.security:token-validation-ktor:$tokenSupportVersion")
     implementation("no.nav.security:mock-oauth2-server:$mockOAuth2ServerVersion")

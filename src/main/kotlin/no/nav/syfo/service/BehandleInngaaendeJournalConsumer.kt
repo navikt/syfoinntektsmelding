@@ -1,11 +1,11 @@
 package no.nav.syfo.service
 
 import kotlinx.coroutines.runBlocking
+import no.nav.helsearbeidsgiver.utils.MdcUtils
 import no.nav.syfo.client.dokarkiv.DokArkivClient
 import no.nav.syfo.client.dokarkiv.mapFeilregistrertRequest
 import no.nav.syfo.client.dokarkiv.mapOppdaterRequest
 import no.nav.syfo.domain.InngaendeJournalpost
-import no.nav.syfo.util.MDCOperations
 
 class BehandleInngaaendeJournalConsumer(private val dokArkivClient: DokArkivClient) {
 
@@ -27,7 +27,7 @@ class BehandleInngaaendeJournalConsumer(private val dokArkivClient: DokArkivClie
             dokArkivClient.oppdaterJournalpost(
                 journalpostId,
                 req,
-                MDCOperations.generateCallId()
+                MdcUtils.getCallId(),
             )
         }
     }
@@ -38,13 +38,13 @@ class BehandleInngaaendeJournalConsumer(private val dokArkivClient: DokArkivClie
      */
     fun ferdigstillJournalpost(inngaendeJournalpost: InngaendeJournalpost) {
         runBlocking {
-            dokArkivClient.ferdigstillJournalpost(inngaendeJournalpost.journalpostId, MDCOperations.generateCallId())
+            dokArkivClient.ferdigstillJournalpost(inngaendeJournalpost.journalpostId, MdcUtils.getCallId())
         }
     }
 
     fun feilregistrerJournalpost(journalpostId: String) {
         runBlocking {
-            dokArkivClient.feilregistrerJournalpost(journalpostId, MDCOperations.generateCallId())
+            dokArkivClient.ferdigstillJournalpost(journalpostId, MdcUtils.getCallId())
         }
     }
 }

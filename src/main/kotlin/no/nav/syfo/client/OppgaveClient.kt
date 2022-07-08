@@ -7,13 +7,13 @@ import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
-import no.nav.helse.arbeidsgiver.utils.logger
+import no.nav.helsearbeidsgiver.utils.MdcUtils
+import no.nav.helsearbeidsgiver.utils.logger
 import no.nav.syfo.behandling.HentOppgaveException
 import no.nav.syfo.behandling.OpprettFordelingsOppgaveException
 import no.nav.syfo.behandling.OpprettOppgaveException
 import no.nav.syfo.domain.OppgaveResultat
 import no.nav.syfo.helpers.retry
-import no.nav.syfo.util.MDCOperations
 import no.nav.syfo.util.Metrikk
 import no.nav.syfo.utsattoppgave.BehandlingsTema
 import java.time.DayOfWeek
@@ -39,14 +39,14 @@ class OppgaveClient constructor(
         httpClient.post<OpprettOppgaveResponse>(oppgavebehndlingUrl) {
             contentType(ContentType.Application.Json)
             this.header("Authorization", "Bearer ${tokenConsumer.token}")
-            this.header("X-Correlation-ID", MDCOperations.getFromMDC(MDCOperations.MDC_CALL_ID))
+            this.header("X-Correlation-ID", MdcUtils.getCallId())
             body = opprettOppgaveRequest
         }
     }
 
     private suspend fun hentOppgave(oppgavetype: String, journalpostId: String): OppgaveResponse {
         return retry("hent_oppgave") {
-            val callId = MDCOperations.getFromMDC(MDCOperations.MDC_CALL_ID)
+            val callId = MdcUtils.getCallId()
             logger.info("Henter oppgave med CallId $callId")
             httpClient.get<OppgaveResponse>(oppgavebehndlingUrl) {
                 this.header("Authorization", "Bearer ${tokenConsumer.token}")

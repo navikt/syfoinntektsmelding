@@ -10,9 +10,8 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.util.toByteArray
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
-import no.nav.helse.arbeidsgiver.utils.logger
-import no.nav.syfo.util.MDCOperations
-import java.util.UUID
+import no.nav.helsearbeidsgiver.utils.MdcUtils
+import no.nav.helsearbeidsgiver.utils.logger
 
 /**
  * REST tjeneste for å hente fysisk dokument fra arkivet.
@@ -35,7 +34,7 @@ class SafDokumentClient constructor(
             httpClient.get<HttpStatement>("$url/hentdokument/$journalpostId/$dokumentInfoId/ORIGINAL") {
                 accept(ContentType.Application.Xml)
                 header("Authorization", "Bearer ${stsClient.getToken()}")
-                header("Nav-Callid", MDCOperations.putToMDC(MDCOperations.MDC_CALL_ID, UUID.randomUUID().toString()))
+                header("Nav-Callid", MdcUtils.getCallId())
                 header("Nav-Consumer-Id", "syfoinntektsmelding")
             }.execute()
         }
