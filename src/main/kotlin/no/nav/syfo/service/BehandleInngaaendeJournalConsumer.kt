@@ -44,7 +44,7 @@ class BehandleInngaaendeJournalConsumer(private val dokArkivClient: DokArkivClie
 
     fun feilregistrerJournalpost(journalpostId: String) {
         runBlocking {
-            dokArkivClient.ferdigstillJournalpost(journalpostId, MdcUtils.getCallId())
+            dokArkivClient.feilregistrerJournalpost(journalpostId, MdcUtils.getCallId())
         }
     }
 }
