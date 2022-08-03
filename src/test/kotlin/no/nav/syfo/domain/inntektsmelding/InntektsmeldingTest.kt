@@ -59,7 +59,7 @@ internal class InntektsmeldingTest {
         assertFalse(im1.copy(begrunnelseRedusert = "asd").isDuplicate(im1))
         assertTrue(im1.copy(avsenderSystem = AvsenderSystem("asd")).isDuplicate(im1))
         assertFalse(im1.copy(nærRelasjon = true).isDuplicate(im1))
-        assertFalse(im1.copy(kontaktinformasjon = Kontaktinformasjon("asd", "asd")).isDuplicate(im1))
+        assertTrue(im1.copy(kontaktinformasjon = Kontaktinformasjon("asd", "asd")).isDuplicate(im1))
         assertTrue(im1.copy(innsendingstidspunkt = LocalDateTime.now()).isDuplicate(im1))
         assertFalse(im1.copy(bruttoUtbetalt = BigDecimal(123)).isDuplicate(im1))
         assertFalse(im1.copy(årsakEndring = "qwe").isDuplicate(im1))

@@ -49,7 +49,8 @@ data class Inntektsmelding(
                 aktorId = this.aktorId,
                 sakId = this.sakId,
                 innsendingstidspunkt = this.innsendingstidspunkt,
-                avsenderSystem = this.avsenderSystem
+                avsenderSystem = this.avsenderSystem,
+                kontaktinformasjon = this.kontaktinformasjon
             )
         )
     }
