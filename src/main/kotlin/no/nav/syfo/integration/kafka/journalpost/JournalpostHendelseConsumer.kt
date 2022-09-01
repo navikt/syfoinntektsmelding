@@ -41,15 +41,13 @@ class JournalpostHendelseConsumer(
     }
 
     fun start() {
-        var totalCount = 0L
         log.info("Starter...")
         consumer.use {
             setIsReady(true)
             while (!error) {
                 consumer
                     .poll(ofMillis(1000))
-                    .fold(totalCount) { accumulator, record ->
-                        val newCount = accumulator + 1
+                    .forEach { record ->
                         try {
                             try {
                                 processHendelse(mapJournalpostHendelse(record.value()))
@@ -61,7 +59,6 @@ class JournalpostHendelseConsumer(
                             log.error("Klarte ikke behandle hendelse. Stopper lytting!", e)
                             setIsError(true)
                         }
-                        newCount
                     }
             }
         }
@@ -83,7 +80,7 @@ class JournalpostHendelseConsumer(
         }
     }
 
-    fun lagreBakgrunnsjobb(hendelse: InngaaendeJournalpostDTO) {
+    private fun lagreBakgrunnsjobb(hendelse: InngaaendeJournalpostDTO) {
         bakgrunnsjobbRepo.save(
             Bakgrunnsjobb(
                 type = JoarkInntektsmeldingHendelseProsessor.JOB_TYPE,
@@ -94,7 +91,7 @@ class JournalpostHendelseConsumer(
         )
     }
 
-    fun isDuplicate(hendelse: InngaaendeJournalpostDTO): Boolean {
+    private fun isDuplicate(hendelse: InngaaendeJournalpostDTO): Boolean {
         return duplikatRepository.findByHendelsesId(hendelse.hendelsesId)
     }
 
