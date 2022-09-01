@@ -1,3 +1,4 @@
+
 package no.nav.syfo.integration.kafka
 
 import com.fasterxml.jackson.databind.ObjectMapper

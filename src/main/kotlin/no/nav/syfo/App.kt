@@ -15,8 +15,8 @@ import no.nav.helse.arbeidsgiver.system.AppEnv
 import no.nav.helse.arbeidsgiver.system.getEnvironment
 import no.nav.helse.arbeidsgiver.system.getString
 import no.nav.helsearbeidsgiver.utils.logger
-import no.nav.syfo.integration.kafka.PollForJoarkhendelserJob
 import no.nav.syfo.integration.kafka.PollForUtsattOppgaveVarslingsmeldingJob
+import no.nav.syfo.integration.kafka.journalpost.JournalpostHendelseConsumer
 import no.nav.syfo.koin.selectModuleBasedOnProfile
 import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
 import no.nav.syfo.prosesser.FjernInntektsmeldingByBehandletProcessor
@@ -56,8 +56,8 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
     private fun startKafkaConsumer() {
         val utsattOppgavePoll = PollForUtsattOppgaveVarslingsmeldingJob(get(), get(), get(), get())
         utsattOppgavePoll.startAsync(retryOnFail = true)
-        val joarkPoll = PollForJoarkhendelserJob(get(), get(), get(), get())
-        joarkPoll.startAsync(retryOnFail = true)
+        val journalpostHendelseConsumer = get<JournalpostHendelseConsumer>()
+        journalpostHendelseConsumer.start()
     }
 
     fun shutdown() {
