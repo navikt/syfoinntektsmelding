@@ -14,6 +14,10 @@ import org.slf4j.LoggerFactory
 import java.time.Duration.ofMillis
 import java.time.LocalDateTime
 
+enum class JournalpostStatus {
+    Duplikat, Ny, IkkeInntektsmelding
+}
+
 class JournalpostHendelseConsumer(
     props: Map<String, Any>,
     topicName: String,
@@ -32,11 +36,11 @@ class JournalpostHendelseConsumer(
         consumer.subscribe(listOf(topicName))
     }
 
-    fun setIsReady(ready: Boolean) {
+    fun setIsReady(ready: Boolean){
         this.ready = ready
     }
 
-    fun setIsError(isError: Boolean) {
+    fun setIsError(isError: Boolean){
         this.error = isError
     }
 
@@ -49,11 +53,7 @@ class JournalpostHendelseConsumer(
                     .poll(ofMillis(1000))
                     .forEach { record ->
                         try {
-                            try {
-                                processHendelse(mapJournalpostHendelse(record.value()))
-                            } catch (ex: Throwable) {
-                                throw IllegalArgumentException("Klarte ikke lese hendelse med offset ${record.offset()}!", ex)
-                            }
+                            processHendelse(mapJournalpostHendelse(record.value()))
                             consumer.commitSync()
                         } catch (e: Throwable) {
                             log.error("Klarte ikke behandle hendelse. Stopper lytting!", e)
@@ -64,23 +64,26 @@ class JournalpostHendelseConsumer(
         }
     }
 
-    fun processHendelse(journalpostDTO: InngaaendeJournalpostDTO): Int {
-        if (isInntektsmelding(journalpostDTO)) {
-            if (isDuplicate(journalpostDTO)) {
-                log.info("Ignorerer duplikat inntektsmelding ${journalpostDTO.kanalReferanseId} for hendelse ${journalpostDTO.hendelsesId}")
-                return 0
-            } else {
-                log.info("Fant inntektsmelding ${journalpostDTO.kanalReferanseId} for hendelse ${journalpostDTO.hendelsesId}")
-                lagreBakgrunnsjobb(journalpostDTO)
-                return 1
-            }
-        } else {
-            log.info("Ignorerte journalposthendelse ${journalpostDTO.hendelsesId}. Kanal: ${journalpostDTO.mottaksKanal} Tema: ${journalpostDTO.temaNytt} Status: ${journalpostDTO.journalpostStatus}")
-            return -1
+    fun processHendelse(journalpostDTO: InngaaendeJournalpostDTO) {
+        when (findStatus(journalpostDTO)) {
+            JournalpostStatus.Duplikat -> log.info("Ignorerer duplikat inntektsmelding ${journalpostDTO.kanalReferanseId} for hendelse ${journalpostDTO.hendelsesId}")
+            JournalpostStatus.Ny -> lagreBakgrunnsjobb(journalpostDTO)
+            JournalpostStatus.IkkeInntektsmelding -> log.info("Ignorerte journalposthendelse ${journalpostDTO.hendelsesId}. Kanal: ${journalpostDTO.mottaksKanal} Tema: ${journalpostDTO.temaNytt} Status: ${journalpostDTO.journalpostStatus}")
         }
     }
 
+    fun findStatus(journalpostDTO: InngaaendeJournalpostDTO): JournalpostStatus {
+        if (isInntektsmelding(journalpostDTO)) {
+            if (isDuplicate(journalpostDTO)) {
+                return JournalpostStatus.Duplikat
+            }
+            return JournalpostStatus.Ny
+        }
+        return JournalpostStatus.IkkeInntektsmelding
+    }
+
     private fun lagreBakgrunnsjobb(hendelse: InngaaendeJournalpostDTO) {
+        log.info("Lagrer inntektsmelding ${hendelse.kanalReferanseId} for hendelse ${hendelse.hendelsesId}")
         bakgrunnsjobbRepo.save(
             Bakgrunnsjobb(
                 type = JoarkInntektsmeldingHendelseProsessor.JOB_TYPE,
