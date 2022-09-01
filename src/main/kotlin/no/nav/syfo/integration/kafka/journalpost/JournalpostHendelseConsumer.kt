@@ -32,12 +32,20 @@ class JournalpostHendelseConsumer(
         consumer.subscribe(listOf(topicName))
     }
 
+    fun setIsReady(ready: Boolean){
+        this.ready = ready
+    }
+
+    fun setIsError(isError: Boolean){
+        this.error = isError
+    }
+
     fun start() {
         var totalCount = 0L
         log.info("Starter...")
         consumer.use {
-            ready = true
-            while (true && !error) {
+            setIsReady(true)
+            while (!error) {
                 consumer
                     .poll(ofMillis(1000))
                     .fold(totalCount) { accumulator, record ->
@@ -51,7 +59,7 @@ class JournalpostHendelseConsumer(
                             consumer.commitSync()
                         } catch (e: Throwable) {
                             log.error("Klarte ikke behandle Journalpost. Stopper lytting!", e)
-                            error = true
+                            setIsError(true)
                         }
                         newCount
                     }
@@ -59,16 +67,19 @@ class JournalpostHendelseConsumer(
         }
     }
 
-    fun processHendelse(hendelse: InngaaendeJournalpostDTO) {
-        if (isInntektsmelding(hendelse)) {
-            if (isDuplicate(hendelse)) {
-                log.info("Ignorerer duplikat inntektsmelding ${hendelse.kanalReferanseId} for hendelse ${hendelse.hendelsesId}")
+    fun processHendelse(journalpostDTO: InngaaendeJournalpostDTO): Int {
+        if (isInntektsmelding(journalpostDTO)) {
+            if (isDuplicate(journalpostDTO)) {
+                log.info("Ignorerer duplikat inntektsmelding ${journalpostDTO.kanalReferanseId} for hendelse ${journalpostDTO.hendelsesId}")
+                return 0
             } else {
-                log.info("Fant inntektsmelding ${hendelse.kanalReferanseId} for hendelse ${hendelse.hendelsesId}")
-                lagreBakgrunnsjobb(hendelse)
+                log.info("Fant inntektsmelding ${journalpostDTO.kanalReferanseId} for hendelse ${journalpostDTO.hendelsesId}")
+                lagreBakgrunnsjobb(journalpostDTO)
+                return 1
             }
         } else {
-            log.info("Ignorerte hendelse ${hendelse.hendelsesId}. Kanal: ${hendelse.mottaksKanal} Tema: ${hendelse.temaNytt} Status: ${hendelse.journalpostStatus}")
+            log.info("Ignorerte hendelse ${journalpostDTO.hendelsesId}. Kanal: ${journalpostDTO.mottaksKanal} Tema: ${journalpostDTO.temaNytt} Status: ${journalpostDTO.journalpostStatus}")
+            return -1
         }
     }
 
@@ -83,10 +94,6 @@ class JournalpostHendelseConsumer(
         )
     }
 
-    fun isInntektsmelding(hendelse: InngaaendeJournalpostDTO): Boolean {
-        return hendelse.temaNytt == "SYK" && hendelse.mottaksKanal == "ALTINN" && hendelse.journalpostStatus == "MOTTATT"
-    }
-
     fun isDuplicate(hendelse: InngaaendeJournalpostDTO): Boolean {
         return duplikatRepository.findByHendelsesId(hendelse.hendelsesId)
     }
@@ -98,8 +105,12 @@ class JournalpostHendelseConsumer(
     }
 
     override suspend fun runLivenessCheck() {
-        if (error) {
+        if (!ready || error) {
             throw IllegalStateException("Failed to read from")
         }
     }
+}
+
+fun isInntektsmelding(hendelse: InngaaendeJournalpostDTO): Boolean {
+    return hendelse.temaNytt == "SYK" && hendelse.mottaksKanal == "ALTINN" && hendelse.journalpostStatus == "MOTTATT"
 }
