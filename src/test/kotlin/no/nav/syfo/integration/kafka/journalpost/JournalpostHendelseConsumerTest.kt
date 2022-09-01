@@ -44,8 +44,9 @@ internal class JournalpostHendelseConsumerTest {
     }
 
     @Test
-    fun liveness_skal_gi_feilmelding_før_oppstart() {
+    fun liveness_skal_gi_feilmelding_når_feil_oppstår() {
         val consumer = JournalpostHendelseConsumer(props, topicName, duplikatRepository, bakgrunnsjobbRepo, om)
+        consumer.setIsError(true)
         assertThrows<IllegalStateException> {
             runBlocking {
                 consumer.runLivenessCheck()
@@ -54,9 +55,9 @@ internal class JournalpostHendelseConsumerTest {
     }
 
     @Test
-    fun liveness_skal_ikke_gi_feilmelding_etter_oppstart() {
+    fun liveness_skal_ikke_gi_feilmelding_når_alt_virker() {
         val consumer = JournalpostHendelseConsumer(props, topicName, duplikatRepository, bakgrunnsjobbRepo, om)
-        consumer.setIsReady(true)
+        consumer.setIsError(false)
         runBlocking {
             consumer.runLivenessCheck()
         }

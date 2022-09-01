@@ -54,11 +54,11 @@ class JournalpostHendelseConsumer(
                             try {
                                 processHendelse(mapJournalpostHendelse(record.value()))
                             } catch (ex: Throwable) {
-                                throw IllegalArgumentException("Klarte ikke lese journalposthendelse med offset ${record.offset()}!", ex)
+                                throw IllegalArgumentException("Klarte ikke lese hendelse med offset ${record.offset()}!", ex)
                             }
                             consumer.commitSync()
                         } catch (e: Throwable) {
-                            log.error("Klarte ikke behandle Journalpost. Stopper lytting!", e)
+                            log.error("Klarte ikke behandle hendelse. Stopper lytting!", e)
                             setIsError(true)
                         }
                         newCount
@@ -78,7 +78,7 @@ class JournalpostHendelseConsumer(
                 return 1
             }
         } else {
-            log.info("Ignorerte hendelse ${journalpostDTO.hendelsesId}. Kanal: ${journalpostDTO.mottaksKanal} Tema: ${journalpostDTO.temaNytt} Status: ${journalpostDTO.journalpostStatus}")
+            log.info("Ignorerte journalposthendelse ${journalpostDTO.hendelsesId}. Kanal: ${journalpostDTO.mottaksKanal} Tema: ${journalpostDTO.temaNytt} Status: ${journalpostDTO.journalpostStatus}")
             return -1
         }
     }
@@ -100,13 +100,13 @@ class JournalpostHendelseConsumer(
 
     override suspend fun runReadynessCheck() {
         if (!ready) {
-            throw IllegalStateException("Not started yet.")
+            throw IllegalStateException("Lytting på hendelser er ikke klar ennå")
         }
     }
 
     override suspend fun runLivenessCheck() {
-        if (!ready || error) {
-            throw IllegalStateException("Failed to read from")
+        if (error) {
+            throw IllegalStateException("Det har oppstått en feil og slutter å lytte på hendelser")
         }
     }
 }
