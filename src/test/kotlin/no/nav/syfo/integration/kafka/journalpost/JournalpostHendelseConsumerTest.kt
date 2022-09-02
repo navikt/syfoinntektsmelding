@@ -12,6 +12,7 @@ import no.nav.syfo.repository.DuplikatRepository
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
@@ -20,16 +21,20 @@ class JournalpostHendelseConsumerTest {
     var duplikatRepository: DuplikatRepository = mockk(relaxed = true)
     var bakgrunnsjobbRepo: BakgrunnsjobbRepository = mockk(relaxed = true)
     var om: ObjectMapper = mockk(relaxed = true)
-
     var props = joarkLocalProperties().toMap()
     val topicName = "topic"
+    lateinit var consumer: JournalpostHendelseConsumer
     val GYLDIG_INNTEKTSMELDING = InngaaendeJournalpostDTO("abc", 1, "", 111, "MOTTATT", "", "SYK", "ALTINN", "", "")
     val DUPLIKAT_INNTEKTSMELDING = GYLDIG_INNTEKTSMELDING.copy(journalpostId = 222)
     val IKKE_INNTEKTSMELDING = InngaaendeJournalpostDTO("abc", 1, "", 333, "IKKE_MOTTATT", "", "IKKE_SYK", "IKKE_ALTINN", "", "")
 
+    @BeforeEach
+    fun before(){
+        consumer = JournalpostHendelseConsumer(props, topicName, duplikatRepository, bakgrunnsjobbRepo, om)
+    }
+
     @Test
     fun isready_skal_gi_feilmelding_før_oppstart() {
-        val consumer = JournalpostHendelseConsumer(props, topicName, duplikatRepository, bakgrunnsjobbRepo, om)
         assertThrows<IllegalStateException> {
             runBlocking {
                 consumer.runReadynessCheck()
@@ -39,7 +44,6 @@ class JournalpostHendelseConsumerTest {
 
     @Test
     fun isready_skal_ikke_gi_feilmelding_etter_oppstart() {
-        val consumer = JournalpostHendelseConsumer(props, topicName, duplikatRepository, bakgrunnsjobbRepo, om)
         consumer.setIsReady(true)
         runBlocking {
             consumer.runReadynessCheck()
@@ -48,7 +52,6 @@ class JournalpostHendelseConsumerTest {
 
     @Test
     fun liveness_skal_gi_feilmelding_når_feil_oppstår() {
-        val consumer = JournalpostHendelseConsumer(props, topicName, duplikatRepository, bakgrunnsjobbRepo, om)
         consumer.setIsError(true)
         assertThrows<IllegalStateException> {
             runBlocking {
@@ -59,7 +62,6 @@ class JournalpostHendelseConsumerTest {
 
     @Test
     fun liveness_skal_ikke_gi_feilmelding_når_alt_virker() {
-        val consumer = JournalpostHendelseConsumer(props, topicName, duplikatRepository, bakgrunnsjobbRepo, om)
         consumer.setIsError(false)
         runBlocking {
             consumer.runLivenessCheck()
@@ -71,9 +73,17 @@ class JournalpostHendelseConsumerTest {
         every {
             duplikatRepository.findByHendelsesId(any())
         } returns false
-        val consumer = JournalpostHendelseConsumer(props, topicName, duplikatRepository, bakgrunnsjobbRepo, om)
         consumer.processHendelse(GYLDIG_INNTEKTSMELDING)
         verify(exactly = 1) { bakgrunnsjobbRepo.save(any()) }
+    }
+
+    @Test
+    fun skal_ikke_lagre_duplikater() {
+        every {
+            duplikatRepository.findByHendelsesId(any())
+        } returns true
+        consumer.processHendelse(DUPLIKAT_INNTEKTSMELDING)
+        verify(exactly = 0) { bakgrunnsjobbRepo.save(any()) }
     }
 
     @Test
@@ -81,13 +91,11 @@ class JournalpostHendelseConsumerTest {
         every {
             duplikatRepository.findByHendelsesId(any())
         } returns true
-        val consumer = JournalpostHendelseConsumer(props, topicName, duplikatRepository, bakgrunnsjobbRepo, om)
         assertEquals(JournalpostStatus.Duplikat, consumer.findStatus(DUPLIKAT_INNTEKTSMELDING))
     }
 
     @Test
     fun skal_gjenkjenne_nye() {
-        val consumer = JournalpostHendelseConsumer(props, topicName, duplikatRepository, bakgrunnsjobbRepo, om)
         assertEquals(JournalpostStatus.Ny, consumer.findStatus(GYLDIG_INNTEKTSMELDING))
     }
 
@@ -96,8 +104,8 @@ class JournalpostHendelseConsumerTest {
         every {
             duplikatRepository.findByHendelsesId(any())
         } returns false
-        val consumer = JournalpostHendelseConsumer(props, topicName, duplikatRepository, bakgrunnsjobbRepo, om)
         assertEquals(JournalpostStatus.IkkeInntektsmelding, consumer.findStatus(IKKE_INNTEKTSMELDING))
+        verify(exactly = 0) { bakgrunnsjobbRepo.save(any()) }
     }
 
     @Test
