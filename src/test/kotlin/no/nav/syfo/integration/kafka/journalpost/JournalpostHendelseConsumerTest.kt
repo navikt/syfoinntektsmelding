@@ -29,7 +29,7 @@ class JournalpostHendelseConsumerTest {
     val IKKE_INNTEKTSMELDING = InngaaendeJournalpostDTO("abc", 1, "", 333, "IKKE_MOTTATT", "", "IKKE_SYK", "IKKE_ALTINN", "", "")
 
     @BeforeEach
-    fun before(){
+    fun before() {
         consumer = JournalpostHendelseConsumer(props, topicName, duplikatRepository, bakgrunnsjobbRepo, om)
     }
 
