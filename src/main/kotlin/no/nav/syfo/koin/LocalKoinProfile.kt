@@ -20,6 +20,7 @@ import no.nav.syfo.datapakke.DatapakkePublisherJob
 import no.nav.syfo.integration.kafka.JoarkHendelseKafkaClient
 import no.nav.syfo.integration.kafka.UtsattOppgaveKafkaClient
 import no.nav.syfo.integration.kafka.joarkLocalProperties
+import no.nav.syfo.integration.kafka.journalpost.JournalpostHendelseConsumer
 import no.nav.syfo.integration.kafka.producerLocalProperties
 import no.nav.syfo.integration.kafka.utsattOppgaveLocalProperties
 import no.nav.syfo.producer.InntektsmeldingAivenProducer
@@ -93,9 +94,12 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single { FinnAlleUtgaandeOppgaverProcessor(get(), get(), get(), get(), get(), get()) } bind FinnAlleUtgaandeOppgaverProcessor::class
 
     single {
-        JoarkHendelseKafkaClient(
+        JournalpostHendelseConsumer(
             joarkLocalProperties().toMutableMap(),
-            config.getString("kafka_joark_hendelse_topic")
+            config.getString("kafka_joark_hendelse_topic"),
+            get(),
+            get(),
+            get()
         )
     }
     single {

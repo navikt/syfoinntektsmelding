@@ -26,6 +26,7 @@ import no.nav.syfo.integration.kafka.JoarkHendelseKafkaClient
 import no.nav.syfo.integration.kafka.UtsattOppgaveKafkaClient
 import no.nav.syfo.integration.kafka.commonAivenProperties
 import no.nav.syfo.integration.kafka.joarkAivenProperties
+import no.nav.syfo.integration.kafka.journalpost.JournalpostHendelseConsumer
 import no.nav.syfo.integration.kafka.utsattOppgaveAivenProperties
 import no.nav.syfo.producer.InntektsmeldingAivenProducer
 import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
@@ -122,6 +123,15 @@ fun preprodConfig(config: ApplicationConfig) = module {
     single { InntektsmeldingRepositoryImp(get()) } bind InntektsmeldingRepository::class
     single { InntektsmeldingService(get(), get()) } bind InntektsmeldingService::class
 
+    single {
+        JournalpostHendelseConsumer(
+            joarkAivenProperties(config),
+            config.getString("kafka_joark_hendelse_topic"),
+            get(),
+            get(),
+            get()
+        )
+    }
     single {
         JoarkHendelseKafkaClient(
             joarkAivenProperties(config),
