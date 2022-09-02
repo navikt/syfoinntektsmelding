@@ -11,6 +11,7 @@ Applikasjonen tar imot innkommende inntektsmeldinger for sykepenger, journalfør
 Gosys for behandlende enhet. Dersom behandlede enhet ikke er funnet blir det opprettet en fordelingsoppgave istedet.
 Andre applikasjoner kan be om utsettelse eller ignorering av opprettelser av disse oppgavene.
 
+
 ### Oversikt
 
 ![image](docs/hovedflyt.svg)
