@@ -36,11 +36,11 @@ class JournalpostHendelseConsumer(
         consumer.subscribe(listOf(topicName))
     }
 
-    fun setIsReady(ready: Boolean){
+    fun setIsReady(ready: Boolean) {
         this.ready = ready
     }
 
-    fun setIsError(isError: Boolean){
+    fun setIsError(isError: Boolean) {
         this.error = isError
     }
 
