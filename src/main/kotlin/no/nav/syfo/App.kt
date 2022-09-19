@@ -118,10 +118,16 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
         val kubernetesProbeManager = get<KubernetesProbeManager>()
 
         getKoin().getAll<LivenessComponent>()
-            .forEach { kubernetesProbeManager.registerLivenessComponent(it) }
+            .forEach {
+                logger.info("LivenessComponent: $it")
+                kubernetesProbeManager.registerLivenessComponent(it)
+            }
 
         getKoin().getAll<ReadynessComponent>()
-            .forEach { kubernetesProbeManager.registerReadynessComponent(it) }
+            .forEach {
+                logger.info("ReadynessComponent: $it")
+                kubernetesProbeManager.registerReadynessComponent(it)
+            }
 
         logger.debug("La til probeable komponenter")
     }
