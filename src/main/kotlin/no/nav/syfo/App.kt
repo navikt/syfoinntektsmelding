@@ -49,14 +49,16 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
         startKoin { modules(selectModuleBasedOnProfile(appConfig)) }
         migrateDatabase()
         configAndStartBackgroundWorkers()
+        startKafkaConsumer()
         autoDetectProbeableComponents()
         configAndStartWebserver()
-        startKafkaConsumer()
     }
 
     private fun startKafkaConsumer() {
+        logger.info("Starter lytting for utsatt oppgave...")
         val utsattOppgavePoll = PollForUtsattOppgaveVarslingsmeldingJob(get(), get(), get(), get())
         utsattOppgavePoll.startAsync(retryOnFail = true)
+        logger.info("Starter lytting for journalpost hendelser...")
         val journalpostHendelseConsumer = get<JournalpostHendelseConsumer>()
         thread(start = true) {
             journalpostHendelseConsumer.start()
@@ -115,21 +117,21 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
     }
 
     private fun autoDetectProbeableComponents() {
+        logger.info("Starter registrering av helsesjekker...")
         val kubernetesProbeManager = get<KubernetesProbeManager>()
 
         getKoin().getAll<LivenessComponent>()
             .forEach {
-                logger.info("LivenessComponent: $it")
+                logger.info("Alive helsesjekk for: $it")
                 kubernetesProbeManager.registerLivenessComponent(it)
             }
 
         getKoin().getAll<ReadynessComponent>()
             .forEach {
-                logger.info("ReadynessComponent: $it")
+                logger.info("Ready helsesjekk for: $it")
                 kubernetesProbeManager.registerReadynessComponent(it)
             }
-
-        logger.debug("La til probeable komponenter")
+        logger.info("Ferdig registrering av helsesjekker!")
     }
 }
 
