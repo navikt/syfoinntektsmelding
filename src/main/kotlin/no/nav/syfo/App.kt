@@ -120,7 +120,6 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
 
         logger.info("Databasemigrering slutt")
     }
-
 }
 
 fun main() {

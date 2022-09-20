@@ -4,13 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
-import no.nav.syfo.integration.kafka.journalpost.JournalpostHendelseConsumer
-import no.nav.syfo.repository.DuplikatRepository
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
-import org.junit.jupiter.api.Test
-
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 internal class UtsattOppgaveConsumerTest {
 
@@ -33,8 +29,6 @@ internal class UtsattOppgaveConsumerTest {
     @Test
     fun skal_opprette_bakgrunnsjobb() {
     }
-
-
 
     @Test
     fun isready_skal_gi_feilmelding_før_oppstart() {
@@ -70,5 +64,4 @@ internal class UtsattOppgaveConsumerTest {
             consumer.runLivenessCheck()
         }
     }
-
 }

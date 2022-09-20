@@ -17,8 +17,6 @@ import io.ktor.client.features.json.JacksonSerializer
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.config.ApplicationConfig
 import no.nav.helse.arbeidsgiver.kubernetes.KubernetesProbeManager
-import org.koin.core.Koin
-import org.koin.core.definition.Kind
 import org.koin.core.module.Module
 import org.koin.core.qualifier.StringQualifier
 import org.koin.dsl.module

@@ -1,10 +1,12 @@
 package no.nav.syfo.integration.kafka
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.kubernetes.LivenessComponent
 import no.nav.helse.arbeidsgiver.kubernetes.ReadynessComponent
+import no.nav.helsearbeidsgiver.utils.MdcUtils
 import no.nav.helsearbeidsgiver.utils.logger
 import no.nav.syfo.utsattoppgave.FeiletUtsattOppgaveMeldingProsessor
 import no.nav.syfo.utsattoppgave.OppgaveOppdatering
@@ -15,8 +17,6 @@ import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.serialization.StringDeserializer
 import java.time.Duration
 import java.time.LocalDateTime
-import com.fasterxml.jackson.module.kotlin.readValue
-import no.nav.helsearbeidsgiver.utils.MdcUtils
 
 class UtsattOppgaveConsumer(
     props: Map<String, Any>,
@@ -50,19 +50,19 @@ class UtsattOppgaveConsumer(
             setIsReady(true)
             while (!error) {
                 it
-                .poll(Duration.ofMillis(1000))
-                .forEach { record ->
-                    try {
-                        val raw: String = record.value()
-                        MdcUtils.withCallId {
-                            behandle(raw, om.readValue<UtsattOppgaveDTO>(raw))
+                    .poll(Duration.ofMillis(1000))
+                    .forEach { record ->
+                        try {
+                            val raw: String = record.value()
+                            MdcUtils.withCallId {
+                                behandle(raw, om.readValue<UtsattOppgaveDTO>(raw))
+                            }
+                            it.commitSync()
+                        } catch (e: Throwable) {
+                            logger.error("Klarte ikke behandle UtsattOppgave. Stopper lytting!", e)
+                            setIsError(true)
                         }
-                        it.commitSync()
-                    } catch (e: Throwable) {
-                        logger.error("Klarte ikke behandle UtsattOppgave. Stopper lytting!", e)
-                        setIsError(true)
                     }
-                }
             }
         }
     }
