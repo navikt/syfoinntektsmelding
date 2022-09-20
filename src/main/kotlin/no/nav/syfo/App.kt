@@ -65,6 +65,7 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
         val kubernetesProbeManager = get<KubernetesProbeManager>()
         val list = listOf(utsattOppgaveConsumer, journalpostHendelseConsumer)
         list.forEach {
+            logger.info("Registrerer helsesjekker for ${it.javaClass}")
             kubernetesProbeManager.registerLivenessComponent(it)
             kubernetesProbeManager.registerReadynessComponent(it)
         }

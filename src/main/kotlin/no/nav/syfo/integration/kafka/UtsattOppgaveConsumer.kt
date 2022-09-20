@@ -22,7 +22,7 @@ class UtsattOppgaveConsumer(
     props: Map<String, Any>,
     topicName: String,
     val om: ObjectMapper,
-    val oppgaveService: UtsattOppgaveService,
+    val utsattOppgaveService: UtsattOppgaveService,
     val bakgrunnsjobbRepo: BakgrunnsjobbRepository,
 ) : ReadynessComponent, LivenessComponent {
 
@@ -70,7 +70,7 @@ class UtsattOppgaveConsumer(
     fun behandle(hendelse: UtsattOppgaveDTO, raw: String) {
         try {
             logger.info("Behandler UtsattOppgave...")
-            oppgaveService.prosesser(
+            utsattOppgaveService.prosesser(
                 OppgaveOppdatering(
                     hendelse.dokumentId,
                     hendelse.oppdateringstype.tilHandling(),

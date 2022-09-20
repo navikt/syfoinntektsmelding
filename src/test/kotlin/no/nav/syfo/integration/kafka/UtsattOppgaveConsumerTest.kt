@@ -3,6 +3,7 @@ package no.nav.syfo.integration.kafka
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.syfo.utsattoppgave.DokumentTypeDTO
@@ -32,15 +33,18 @@ internal class UtsattOppgaveConsumerTest {
     }
 
     @Test
-    fun skal_prosessere() {
-        every {
-            utsattOppgaveService.prosesser(any())
-        } returns Unit
+    fun skal_behandle_utsatt_oppgave() {
         consumer.behandle(utsattOppgaveDTO, RAW)
+        verify(exactly = 1) { utsattOppgaveService.prosesser(any()) }
     }
 
     @Test
     fun skal_opprette_bakgrunnsjobb() {
+        every {
+            utsattOppgaveService.prosesser(any())
+        } throws RuntimeException("Feil!")
+        consumer.behandle(utsattOppgaveDTO, RAW)
+        verify(exactly = 1) { bakgrunnsjobbRepo.save(any()) }
     }
 
     @Test
