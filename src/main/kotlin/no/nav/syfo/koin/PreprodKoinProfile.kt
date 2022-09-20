@@ -22,8 +22,7 @@ import no.nav.syfo.client.norg.Norg2Client
 import no.nav.syfo.client.saf.SafDokumentClient
 import no.nav.syfo.client.saf.SafJournalpostClient
 import no.nav.syfo.datapakke.DatapakkePublisherJob
-import no.nav.syfo.integration.kafka.JoarkHendelseKafkaClient
-import no.nav.syfo.integration.kafka.UtsattOppgaveKafkaClient
+import no.nav.syfo.integration.kafka.UtsattOppgaveConsumer
 import no.nav.syfo.integration.kafka.commonAivenProperties
 import no.nav.syfo.integration.kafka.joarkAivenProperties
 import no.nav.syfo.integration.kafka.journalpost.JournalpostHendelseConsumer
@@ -133,15 +132,9 @@ fun preprodConfig(config: ApplicationConfig) = module {
         )
     }
     single {
-        JoarkHendelseKafkaClient(
-            joarkAivenProperties(config),
-            config.getString("kafka_joark_hendelse_topic")
-        )
-    }
-    single {
-        UtsattOppgaveKafkaClient(
+        UtsattOppgaveConsumer(
             utsattOppgaveAivenProperties(config),
-            config.getString("kafka_utsatt_oppgave_topic")
+            config.getString("kafka_utsatt_oppgave_topic"), get(), get(), get()
         )
     }
 
