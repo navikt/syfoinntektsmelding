@@ -1,29 +1,42 @@
 package no.nav.syfo.integration.kafka
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
+import no.nav.syfo.utsattoppgave.DokumentTypeDTO
+import no.nav.syfo.utsattoppgave.OppdateringstypeDTO
+import no.nav.syfo.utsattoppgave.UtsattOppgaveDTO
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.time.LocalDateTime
+import java.util.UUID
 
 internal class UtsattOppgaveConsumerTest {
 
     lateinit var consumer: UtsattOppgaveConsumer
     var om: ObjectMapper = mockk(relaxed = true)
     var props = joarkLocalProperties().toMap()
-    val topicName = "topic"
     var utsattOppgaveService: UtsattOppgaveService = mockk(relaxed = true)
     var bakgrunnsjobbRepo: BakgrunnsjobbRepository = mockk(relaxed = true)
+    val TOPIC_NAME = "topic"
+    val TIMEOUT = LocalDateTime.now()
+    val utsattOppgaveDTO = UtsattOppgaveDTO(DokumentTypeDTO.Inntektsmelding, OppdateringstypeDTO.Opprett, UUID.randomUUID(), TIMEOUT)
+    val RAW = "raw"
 
     @BeforeEach
     fun before() {
-        consumer = UtsattOppgaveConsumer(props, topicName, om, utsattOppgaveService, bakgrunnsjobbRepo)
+        consumer = UtsattOppgaveConsumer(props, TOPIC_NAME, om, utsattOppgaveService, bakgrunnsjobbRepo)
     }
 
     @Test
     fun skal_prosessere() {
+        every {
+            utsattOppgaveService.prosesser(any())
+        } returns Unit
+        consumer.behandle(utsattOppgaveDTO, RAW)
     }
 
     @Test

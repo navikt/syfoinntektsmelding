@@ -55,7 +55,7 @@ class UtsattOppgaveConsumer(
                         try {
                             val raw: String = record.value()
                             MdcUtils.withCallId {
-                                behandle(raw, om.readValue<UtsattOppgaveDTO>(raw))
+                                behandle(om.readValue<UtsattOppgaveDTO>(raw), raw)
                             }
                             it.commitSync()
                         } catch (e: Throwable) {
@@ -67,7 +67,7 @@ class UtsattOppgaveConsumer(
         }
     }
 
-    fun behandle(raw: String, hendelse: UtsattOppgaveDTO) {
+    fun behandle(hendelse: UtsattOppgaveDTO, raw: String) {
         try {
             logger.info("Behandler UtsattOppgave...")
             oppgaveService.prosesser(

@@ -52,7 +52,7 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
 
     private fun startKafkaConsumer() {
         logger.info("Starter lytting for UtsattOppgave hendelser...")
-        val utsattOppgaveConsumer = UtsattOppgaveConsumer(get(), get(), get(), get(), get())
+        val utsattOppgaveConsumer = get<UtsattOppgaveConsumer>()
         thread(start = true) {
             utsattOppgaveConsumer.start()
         }
