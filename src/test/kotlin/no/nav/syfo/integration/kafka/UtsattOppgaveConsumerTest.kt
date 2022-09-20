@@ -12,6 +12,7 @@ import no.nav.syfo.utsattoppgave.UtsattOppgaveDTO
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -33,13 +34,13 @@ internal class UtsattOppgaveConsumerTest {
     }
 
     @Test
-    fun skal_behandle_utsatt_oppgave() {
+    fun `Skal behandle UtsattOppgave`() {
         consumer.behandle(utsattOppgaveDTO, RAW)
         verify(exactly = 1) { utsattOppgaveService.prosesser(any()) }
     }
 
     @Test
-    fun skal_opprette_bakgrunnsjobb() {
+    fun `Skal opprette bakgrunnsjobb dersom behandling feiler`() {
         every {
             utsattOppgaveService.prosesser(any())
         } throws RuntimeException("Feil!")
@@ -48,8 +49,8 @@ internal class UtsattOppgaveConsumerTest {
     }
 
     @Test
-    fun isready_skal_gi_feilmelding_før_oppstart() {
-        org.junit.jupiter.api.assertThrows<IllegalStateException> {
+    fun `Helsesjekk - isready - skal gi feilmelding før oppstart`() {
+        assertThrows<IllegalStateException> {
             runBlocking {
                 consumer.runReadynessCheck()
             }
@@ -57,7 +58,7 @@ internal class UtsattOppgaveConsumerTest {
     }
 
     @Test
-    fun isready_skal_ikke_gi_feilmelding_etter_oppstart() {
+    fun `Helsesjekk - isready - skal ikke gi feilmelding etter oppstart`() {
         consumer.setIsReady(true)
         runBlocking {
             consumer.runReadynessCheck()
@@ -65,7 +66,7 @@ internal class UtsattOppgaveConsumerTest {
     }
 
     @Test
-    fun liveness_skal_gi_feilmelding_når_feil_oppstår() {
+    fun `Helsesjekk - liveness - skal gi feilmelding når feil oppstår`() {
         consumer.setIsError(true)
         org.junit.jupiter.api.assertThrows<IllegalStateException> {
             runBlocking {
@@ -75,7 +76,7 @@ internal class UtsattOppgaveConsumerTest {
     }
 
     @Test
-    fun liveness_skal_ikke_gi_feilmelding_når_alt_virker() {
+    fun `Helsesjekk - liveness - skal ikke gi feilmelding når alt virker`() {
         consumer.setIsError(false)
         runBlocking {
             consumer.runLivenessCheck()

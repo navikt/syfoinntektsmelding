@@ -45,7 +45,7 @@ class UtsattOppgaveConsumer(
     }
 
     fun start() {
-        logger.info("Starter...")
+        logger.info("Starter å lytte på UtsattOppgave...")
         consumer.use {
             setIsReady(true)
             while (!error) {
