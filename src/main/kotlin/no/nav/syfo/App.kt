@@ -9,13 +9,11 @@ import io.ktor.server.netty.Netty
 import io.ktor.server.netty.NettyApplicationEngine
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.helse.arbeidsgiver.kubernetes.KubernetesProbeManager
-import no.nav.helse.arbeidsgiver.kubernetes.LivenessComponent
-import no.nav.helse.arbeidsgiver.kubernetes.ReadynessComponent
 import no.nav.helse.arbeidsgiver.system.AppEnv
 import no.nav.helse.arbeidsgiver.system.getEnvironment
 import no.nav.helse.arbeidsgiver.system.getString
 import no.nav.helsearbeidsgiver.utils.logger
-import no.nav.syfo.integration.kafka.PollForUtsattOppgaveVarslingsmeldingJob
+import no.nav.syfo.integration.kafka.UtsattOppgaveConsumer
 import no.nav.syfo.integration.kafka.journalpost.JournalpostHendelseConsumer
 import no.nav.syfo.koin.selectModuleBasedOnProfile
 import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
@@ -45,21 +43,31 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
             logger.info("Sover i 30s i påvente av SQL proxy sidecar")
             Thread.sleep(30000)
         }
-
         startKoin { modules(selectModuleBasedOnProfile(appConfig)) }
         migrateDatabase()
         configAndStartBackgroundWorkers()
-        autoDetectProbeableComponents()
-        configAndStartWebserver()
         startKafkaConsumer()
+        configAndStartWebserver()
     }
 
     private fun startKafkaConsumer() {
-        val utsattOppgavePoll = PollForUtsattOppgaveVarslingsmeldingJob(get(), get(), get(), get())
-        utsattOppgavePoll.startAsync(retryOnFail = true)
+        logger.info("Starter lytting for UtsattOppgave hendelser...")
+        val utsattOppgaveConsumer = get<UtsattOppgaveConsumer>()
+        thread(start = true) {
+            utsattOppgaveConsumer.start()
+        }
+        logger.info("Starter lytting for journalpost hendelser...")
         val journalpostHendelseConsumer = get<JournalpostHendelseConsumer>()
         thread(start = true) {
             journalpostHendelseConsumer.start()
+        }
+        logger.info("Registrerer helsesjekker for kafka konsumentene...")
+        val kubernetesProbeManager = get<KubernetesProbeManager>()
+        val list = listOf(utsattOppgaveConsumer, journalpostHendelseConsumer)
+        list.forEach {
+            logger.info("Registrerer helsesjekker for ${it.javaClass}")
+            kubernetesProbeManager.registerLivenessComponent(it)
+            kubernetesProbeManager.registerReadynessComponent(it)
         }
     }
 
@@ -112,18 +120,6 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
             .migrate()
 
         logger.info("Databasemigrering slutt")
-    }
-
-    private fun autoDetectProbeableComponents() {
-        val kubernetesProbeManager = get<KubernetesProbeManager>()
-
-        getKoin().getAll<LivenessComponent>()
-            .forEach { kubernetesProbeManager.registerLivenessComponent(it) }
-
-        getKoin().getAll<ReadynessComponent>()
-            .forEach { kubernetesProbeManager.registerReadynessComponent(it) }
-
-        logger.debug("La til probeable komponenter")
     }
 }
 

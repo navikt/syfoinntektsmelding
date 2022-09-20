@@ -44,13 +44,11 @@ fun joarkAivenProperties(config: ApplicationConfig) = commonAivenProperties(conf
 fun utsattOppgaveLocalProperties() = consumerLocalProperties() + mapOf(
     ConsumerConfig.GROUP_ID_CONFIG to "syfoinntektsmelding-v1",
     ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
-    ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to UtsattOppgaveDTODeserializer::class.java
 )
 
 fun utsattOppgaveAivenProperties(config: ApplicationConfig) = commonAivenProperties(config) + mapOf(
     ConsumerConfig.GROUP_ID_CONFIG to "syfoinntektsmelding-v1",
     ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
-    ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to UtsattOppgaveDTODeserializer::class.java
 )
 
 fun producerLocalProperties(bootstrapServers: String) = mutableMapOf<String, Any>().apply {

@@ -49,12 +49,12 @@ class JournalpostHendelseConsumer(
         consumer.use {
             setIsReady(true)
             while (!error) {
-                consumer
+                it
                     .poll(ofMillis(1000))
                     .forEach { record ->
                         try {
                             processHendelse(mapJournalpostHendelse(record.value()))
-                            consumer.commitSync()
+                            it.commitSync()
                         } catch (e: Throwable) {
                             log.error("Klarte ikke behandle hendelse. Stopper lytting!", e)
                             setIsError(true)
