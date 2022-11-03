@@ -30,10 +30,8 @@ jobs:
           key: ${{ runner.os }}-gradle-cache-${{ hashFiles('build.gradle') }}
           restore-keys: |
             ${{ runner.os }}-gradle-cache-
-      - name: Sonarcube
-        uses: gradle/gradle-build-action@v2
-        with:
-          arguments: sonarqube
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@master
         env:
           ORG_GRADLE_PROJECT_githubUser: x-access-token
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
