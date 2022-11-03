@@ -49,7 +49,7 @@ plugins {
     id("org.jlleitschuh.gradle.ktlint") version "10.3.0"
     id("org.flywaydb.flyway") version "8.4.2"
     jacoco
-    id("org.sonarqube") version "3.3"
+    id("org.sonarqube") version "3.5.0.2730"
     application
 }
 
@@ -93,15 +93,6 @@ tasks.jacocoTestReport {
 
 tasks.test {
     finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
-}
-
-sonarqube {
-    properties {
-        property("sonar.projectKey", "navikt_syfoinntektsmelding")
-        property("sonar.organization", "navikt")
-        property("sonar.host.url", "https://sonarcloud.io")
-        property("sonar.sourceEncoding", "UTF-8")
-    }
 }
 
 tasks.jar {
