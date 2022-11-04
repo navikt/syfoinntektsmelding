@@ -18,7 +18,7 @@ import no.nav.syfo.util.validerInntektsmelding
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import java.time.LocalDateTime
 
-private const val OPPRETT_OPPGAVE_FORSINKELSE = 48L
+private const val OPPRETT_OPPGAVE_FORSINKELSE = 72L
 
 class InntektsmeldingBehandler(
     private val journalpostService: JournalpostService,
