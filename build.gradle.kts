@@ -55,9 +55,9 @@ plugins {
 
 sonarqube {
     properties {
-        property ("sonar.projectKey", "navikt_syfoinntektsmelding")
-        property ("sonar.organization", "navikt")
-        property ("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.projectKey", "navikt_syfoinntektsmelding")
+        property("sonar.organization", "navikt")
+        property("sonar.host.url", "https://sonarcloud.io")
     }
 }
 
