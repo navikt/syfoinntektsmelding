@@ -53,6 +53,14 @@ plugins {
     application
 }
 
+sonarqube {
+    properties {
+        property ("sonar.projectKey", "navikt_syfoinntektsmelding")
+        property ("sonar.organization", "navikt")
+        property ("sonar.host.url", "https://sonarcloud.io")
+    }
+}
+
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "11"
 }
