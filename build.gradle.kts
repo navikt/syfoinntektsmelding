@@ -44,7 +44,7 @@ val annotationApiVersion: String by project
 val altinnCorrespondanceVersion: String by project
 
 plugins {
-    kotlin("jvm") version "1.7.20"
+    kotlin("jvm") version "1.7.21"
     id("com.github.ben-manes.versions") version "0.42.0"
     id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
     id("org.flywaydb.flyway") version "9.7.0"
