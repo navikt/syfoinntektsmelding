@@ -112,5 +112,8 @@ class JournalpostHendelseConsumer(
 }
 
 fun isInntektsmelding(hendelse: InngaaendeJournalpostDTO): Boolean {
-    return hendelse.temaNytt == "SYK" && hendelse.mottaksKanal == "ALTINN" && hendelse.journalpostStatus == "MOTTATT"
+    if (hendelse.temaNytt == "SYK" && hendelse.journalpostStatus == "MOTTATT") {
+        return hendelse.mottaksKanal == "ALTINN" || hendelse.mottaksKanal == "NAV_NO"
+    }
+    return false
 }
