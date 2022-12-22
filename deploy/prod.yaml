@@ -41,6 +41,8 @@ spec:
         kvPath: /azuread/prod/creds/syfoinntektsmelding
   sidecar: true
   webproxy: true
+  secureLogs:
+    enabled: true
   kafka:
     pool: nav-prod
   env:

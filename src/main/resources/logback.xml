@@ -1,16 +1,34 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <configuration>
-    <appender name="stdout_json" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
-            <provider class="net.logstash.logback.composite.loggingevent.ArgumentsJsonProvider" />
-        </encoder>
-    </appender>
 
     <logger name="no.nav" level="INFO"/>
     <logger name="org.apache.cxf" level="${log.level.org.apache:-ERROR}" />
     <logger name="no.nav.security.token" level="${log.level.no.nav.security.token:-WARN}"/>
 
+    <!-- Åpen logger -->
+    <appender name="stdout_json" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <provider class="net.logstash.logback.composite.loggingevent.ArgumentsJsonProvider" />
+        </encoder>
+    </appender>
     <root level="INFO">
         <appender-ref ref="stdout_json"/>
     </root>
+
+    <!-- Sikker logger -->
+    <appender name="secureLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>/secure-logs/secure.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>/secure-logs/secure.log.%i</fileNamePattern>
+            <minIndex>1</minIndex>
+            <maxIndex>1</maxIndex>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>50MB</maxFileSize>
+        </triggeringPolicy>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+    </appender>
+    <logger name="tjenestekall" level="INFO" additivity="false">
+        <appender-ref ref="secureLog" />
+    </logger>
 </configuration>
