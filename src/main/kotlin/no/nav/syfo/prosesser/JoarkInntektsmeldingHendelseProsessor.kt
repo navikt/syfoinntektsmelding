@@ -15,6 +15,7 @@ import no.nav.syfo.kafkamottak.InngaaendeJournalpostDTO
 import no.nav.syfo.kafkamottak.InntektsmeldingConsumerException
 import no.nav.syfo.repository.FeiletService
 import no.nav.syfo.util.Metrikk
+import org.slf4j.LoggerFactory
 
 /**
  * En bakgrunnsjobb som kan prosessere bakgrunnsjobber med inntektsmeldinger fra Joark
@@ -28,6 +29,7 @@ class JoarkInntektsmeldingHendelseProsessor(
     private val oppgaveClient: OppgaveClient
 ) : BakgrunnsjobbProsesserer {
     private val logger = this.logger()
+    private val sikkerlogger = LoggerFactory.getLogger("tjenestekall")
 
     companion object {
         const val JOB_TYPE = "joark-ny-inntektsmelding"
@@ -39,7 +41,7 @@ class JoarkInntektsmeldingHendelseProsessor(
         var arkivReferanse = "UKJENT"
         try {
             val journalpostDTO = om.readValue<InngaaendeJournalpostDTO>(jobb.data)
-
+            sikkerlogger.info("Bruker InngaaendeJournalpostDTO: $journalpostDTO ")
             arkivReferanse = if (journalpostDTO.kanalReferanseId.isEmpty()) "UKJENT" else journalpostDTO.kanalReferanseId
 
             if (arkivReferanse == "UKJENT") {
