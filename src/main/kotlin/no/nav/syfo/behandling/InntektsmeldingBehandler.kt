@@ -16,6 +16,7 @@ import no.nav.syfo.service.JournalpostService
 import no.nav.syfo.util.Metrikk
 import no.nav.syfo.util.validerInntektsmelding
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
+import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
 
 private const val OPPRETT_OPPGAVE_FORSINKELSE = 48L
@@ -29,7 +30,7 @@ class InntektsmeldingBehandler(
     private val utsattOppgaveService: UtsattOppgaveService
 ) {
     private val logger = this.logger()
-
+    private val sikkerlogger = LoggerFactory.getLogger("tjenestekall")
     private val consumerLocks = Striped.lock(8)
 
     fun behandle(arkivId: String, arkivreferanse: String): String? {
@@ -43,6 +44,7 @@ class InntektsmeldingBehandler(
         val consumerLock = consumerLocks.get(inntektsmelding.fnr)
         try {
             consumerLock.lock()
+            sikkerlogger.info("Behandler: $inntektsmelding")
             logger.info("Slår opp aktørID for ${inntektsmelding.arkivRefereranse}")
             val aktorid = aktorClient.getAktorId(inntektsmelding.fnr)
             logger.info("Fant aktørid for ${inntektsmelding.arkivRefereranse}")
