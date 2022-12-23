@@ -66,9 +66,13 @@ class JournalpostHendelseConsumer(
 
     fun processHendelse(journalpostDTO: InngaaendeJournalpostDTO) {
         when (findStatus(journalpostDTO)) {
-            JournalpostStatus.Duplikat -> log.info("Ignorerer duplikat inntektsmelding ${journalpostDTO.kanalReferanseId} for hendelse ${journalpostDTO.hendelsesId}")
+            JournalpostStatus.Duplikat -> log.info(
+                "Ignorerer duplikat inntektsmelding ${journalpostDTO.kanalReferanseId} for hendelse ${journalpostDTO.hendelsesId}"
+            )
             JournalpostStatus.Ny -> lagreBakgrunnsjobb(journalpostDTO)
-            JournalpostStatus.IkkeInntektsmelding -> log.info("Ignorerte journalposthendelse ${journalpostDTO.hendelsesId}. Kanal: ${journalpostDTO.mottaksKanal} Tema: ${journalpostDTO.temaNytt} Status: ${journalpostDTO.journalpostStatus}")
+            JournalpostStatus.IkkeInntektsmelding -> log.info(
+                "Ignorerte journalposthendelse ${journalpostDTO.hendelsesId}. Kanal: ${journalpostDTO.mottaksKanal} Tema: ${journalpostDTO.temaNytt} Status: ${journalpostDTO.journalpostStatus}"
+            )
         }
     }
 
@@ -112,5 +116,5 @@ class JournalpostHendelseConsumer(
 }
 
 fun isInntektsmelding(hendelse: InngaaendeJournalpostDTO): Boolean {
-    return hendelse.temaNytt == "SYK" && hendelse.mottaksKanal == "ALTINN" && hendelse.journalpostStatus == "MOTTATT"
+    return hendelse.temaNytt == "SYK" && hendelse.mottaksKanal == "ALTINN" && hendelse.journalpostStatus == "MOTTATT" && hendelse.hendelsesType == "JournalpostMottatt"
 }

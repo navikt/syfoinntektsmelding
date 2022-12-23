@@ -24,9 +24,9 @@ class JournalpostHendelseConsumerTest {
     var props = joarkLocalProperties().toMap()
     val topicName = "topic"
     lateinit var consumer: JournalpostHendelseConsumer
-    val GYLDIG_INNTEKTSMELDING = InngaaendeJournalpostDTO("abc", 1, "", 111, "MOTTATT", "", "SYK", "ALTINN", "", "")
+    val GYLDIG_INNTEKTSMELDING = InngaaendeJournalpostDTO("abc", 1, "JournalpostMottatt", 111, "MOTTATT", "", "SYK", "ALTINN", "", "")
     val DUPLIKAT_INNTEKTSMELDING = GYLDIG_INNTEKTSMELDING.copy(journalpostId = 222)
-    val IKKE_INNTEKTSMELDING = InngaaendeJournalpostDTO("abc", 1, "", 333, "IKKE_MOTTATT", "", "IKKE_SYK", "IKKE_ALTINN", "", "")
+    val IKKE_INNTEKTSMELDING = InngaaendeJournalpostDTO("abc", 1, "TemaEndret", 333, "IKKE_MOTTATT", "", "IKKE_SYK", "IKKE_ALTINN", "", "")
 
     @BeforeEach
     fun before() {
@@ -114,5 +114,8 @@ class JournalpostHendelseConsumerTest {
         assertFalse(isInntektsmelding(GYLDIG_INNTEKTSMELDING.copy(journalpostStatus = "IKKE_MOTTATT")))
         assertFalse(isInntektsmelding(GYLDIG_INNTEKTSMELDING.copy(temaNytt = "IKKE_SYK")))
         assertFalse(isInntektsmelding(GYLDIG_INNTEKTSMELDING.copy(mottaksKanal = "IKKE_ALTINN")))
+        assertFalse(isInntektsmelding(GYLDIG_INNTEKTSMELDING.copy(hendelsesType = "EndeligJournalført")))
+        assertFalse(isInntektsmelding(GYLDIG_INNTEKTSMELDING.copy(hendelsesType = "JournalpostUtgått")))
+        assertFalse(isInntektsmelding(GYLDIG_INNTEKTSMELDING.copy(hendelsesType = "TemaEndret")))
     }
 }
