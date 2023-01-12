@@ -3,6 +3,8 @@
 package no.nav.syfo.behandling
 
 import com.google.common.util.concurrent.Striped
+import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClient
+import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlIdent
 import no.nav.helsearbeidsgiver.utils.logger
 import no.nav.syfo.client.aktor.AktorClient
 import no.nav.syfo.domain.JournalStatus
@@ -27,7 +29,8 @@ class InntektsmeldingBehandler(
     private val inntektsmeldingService: InntektsmeldingService,
     private val aktorClient: AktorClient,
     private val inntektsmeldingAivenProducer: InntektsmeldingAivenProducer,
-    private val utsattOppgaveService: UtsattOppgaveService
+    private val utsattOppgaveService: UtsattOppgaveService,
+    private val pdlClient: PdlClient
 ) {
     private val logger = this.logger()
     private val sikkerlogger = LoggerFactory.getLogger("tjenestekall")
@@ -46,9 +49,10 @@ class InntektsmeldingBehandler(
             consumerLock.lock()
             sikkerlogger.info("Behandler: $inntektsmelding")
             logger.info("Slår opp aktørID for ${inntektsmelding.arkivRefereranse}")
-            val aktorid = aktorClient.getAktorId(inntektsmelding.fnr)
+            val aktorid = pdlClient.fullPerson(inntektsmelding.fnr)?.hentIdenter?.trekkUtIdent(PdlIdent.PdlIdentGruppe.AKTORID) ?: aktorClient.getAktorId(
+                inntektsmelding.fnr
+            )
             logger.info("Fant aktørid for ${inntektsmelding.arkivRefereranse}")
-
             inntektsmelding.aktorId = aktorid
             if (inntektsmeldingService.isDuplicate(inntektsmelding)) {
                 metrikk.tellFunksjonellLikhet()
@@ -95,7 +99,12 @@ class InntektsmeldingBehandler(
 
                     inntektsmeldingAivenProducer.leggMottattInntektsmeldingPåTopics(mappedInntektsmelding)
                     tellMetrikker(inntektsmelding)
-                    logger.info("Inntektsmelding {} er journalført for {} refusjon {}", inntektsmelding.journalpostId, arkivreferanse, inntektsmelding.refusjon.beloepPrMnd)
+                    logger.info(
+                        "Inntektsmelding {} er journalført for {} refusjon {}",
+                        inntektsmelding.journalpostId,
+                        arkivreferanse,
+                        inntektsmelding.refusjon.beloepPrMnd
+                    )
                     ret = dto.uuid
                 } else {
                     logger.info(
@@ -117,7 +126,8 @@ class InntektsmeldingBehandler(
         metrikk.tellKreverRefusjon(inntektsmelding.refusjon.beloepPrMnd?.toInt() ?: 0)
         metrikk.tellArbeidsgiverperioder(inntektsmelding.arbeidsgiverperioder.size.toString())
 
-        if (inntektsmelding.opphørAvNaturalYtelse.isEmpty())
+        if (inntektsmelding.opphørAvNaturalYtelse.isEmpty()) {
             metrikk.tellNaturalytelse()
+        }
     }
 }

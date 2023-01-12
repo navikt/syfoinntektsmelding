@@ -110,6 +110,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
             get(),
             get(),
             get(),
+            get(),
             get()
         )
     } bind InntektsmeldingBehandler::class
