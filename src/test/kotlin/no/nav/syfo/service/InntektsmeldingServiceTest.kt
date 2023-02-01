@@ -5,6 +5,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.mockk.every
 import io.mockk.mockk
+import no.nav.helsearbeidsgiver.utils.logger
 import no.nav.inntektsmelding.kontrakt.serde.JacksonJsonConfig
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.dto.InntektsmeldingEntitet
@@ -23,11 +24,12 @@ class InntektsmeldingServiceTest {
 
     val objectMapper = ObjectMapper().registerModules(KotlinModule(), JavaTimeModule())
     val AKTOR_ID_FOUND = "aktør-123"
+    val logger = this.logger()
 
     @Test
     fun `Skal ikke være duplikat dersom ingen tidligere inntektsmeldinger`() {
         val im = lag(0, 0)
-        assertFalse(isDuplicateWithLatest(im, emptyList()))
+        assertFalse(isDuplicateWithLatest(logger, im, emptyList()))
     }
 
     @Test
@@ -37,10 +39,10 @@ class InntektsmeldingServiceTest {
         val list = listOf(
             lag(1, inntekt + 300),
             lag(2, inntekt),
-            lag(3, inntekt + 200),
+            lag(3, inntekt + 200)
         )
-        assertFalse(isDuplicateWithLatest(im, list))
-        assertFalse(isDuplicateWithLatest(im, list.asReversed()))
+        assertFalse(isDuplicateWithLatest(logger, im, list))
+        assertFalse(isDuplicateWithLatest(logger, im, list.asReversed()))
     }
 
     @Test
@@ -52,8 +54,8 @@ class InntektsmeldingServiceTest {
             lag(2, inntekt + 100),
             lag(3, inntekt + 200),
         )
-        assertTrue(isDuplicateWithLatest(im, list))
-        assertTrue(isDuplicateWithLatest(im, list.asReversed()))
+        assertTrue(isDuplicateWithLatest(logger, im, list))
+        assertTrue(isDuplicateWithLatest(logger, im, list.asReversed()))
     }
 
     @Test
