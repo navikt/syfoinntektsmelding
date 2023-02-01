@@ -47,7 +47,8 @@ fun isDuplicateWithLatest(logger: Logger, inntektsmelding: Inntektsmelding, list
     if (list.isEmpty()) {
         return false
     }
-    val duplikatExclusive = inntektsmelding.isDuplicateExclusiveArsakInnsending(list.sortedBy { it.innsendingstidspunkt }.last())
+    val sortedList = list.sortedBy { it.innsendingstidspunkt }.last()
+    val duplikatExclusive = inntektsmelding.isDuplicateExclusiveArsakInnsending(sortedList)
     logger.info("Likhetssjekk: Er duplikat ekslusive ÅrsakInnsending? $duplikatExclusive")
-    return inntektsmelding.isDuplicate(list.sortedBy { it.innsendingstidspunkt }.last())
+    return inntektsmelding.isDuplicate(sortedList)
 }
