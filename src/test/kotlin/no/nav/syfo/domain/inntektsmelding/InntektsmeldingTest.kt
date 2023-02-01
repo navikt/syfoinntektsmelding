@@ -31,7 +31,7 @@ internal class InntektsmeldingTest {
     }
 
     @Test
-    fun `Skal være ulike selv om arsakInnsending er ulik`() {
+    fun `Skal være duplikat selv om arsakInnsending er ulik`() {
         val imNy = im1.copy(arsakTilInnsending = "Ny")
         val imEndring = im1.copy(arsakTilInnsending = "Endring")
         assertTrue(imNy.isDuplicateExclusiveArsakInnsending(imEndring))
