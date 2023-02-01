@@ -45,7 +45,7 @@ val altinnCorrespondanceVersion: String by project
 
 plugins {
     kotlin("jvm") version "1.7.20"
-    id("com.github.ben-manes.versions") version "0.44.0"
+    id("com.github.ben-manes.versions") version "0.45.0"
     id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
     id("org.flywaydb.flyway") version "9.8.3"
     jacoco
