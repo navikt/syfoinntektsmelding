@@ -17,8 +17,6 @@ internal class InntektsmeldingTest {
     val im1 = buildIM().copy(bruttoUtbetalt = BigDecimal(100))
     val im2 = buildIM().copy(bruttoUtbetalt = BigDecimal(200))
     val im3 = buildIM().copy(bruttoUtbetalt = BigDecimal(100))
-    val im4 = buildIM().copy(bruttoUtbetalt = BigDecimal(300), arsakTilInnsending = "Tull")
-    val im5 = buildIM().copy(bruttoUtbetalt = BigDecimal(300), arsakTilInnsending = "Tall")
 
     @Test
     fun `Skal være like`() {
@@ -30,6 +28,14 @@ internal class InntektsmeldingTest {
     fun `Skal være ulike`() {
         assertNotEquals(im1, im2)
         assertFalse(im1.isDuplicate(im2))
+    }
+
+    @Test
+    fun `Skal være duplikat selv om arsakInnsending er ulik`() {
+        val imNy = im1.copy(arsakTilInnsending = "Ny")
+        val imEndring = im1.copy(arsakTilInnsending = "Endring")
+        assertTrue(imNy.isDuplicateExclusiveArsakInnsending(imEndring))
+        assertFalse(imNy.isDuplicate(imEndring)) // Disse skal bli ulike siden vi tar hensyn til årsakInnsending
     }
 
     @Test
