@@ -5,7 +5,6 @@ import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.kubernetes.LivenessComponent
 import no.nav.helse.arbeidsgiver.kubernetes.ReadynessComponent
-import no.nav.helse.arbeidsgiver.utils.logger
 import no.nav.syfo.kafkamottak.InngaaendeJournalpostDTO
 import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
 import no.nav.syfo.repository.DuplikatRepository
@@ -27,14 +26,13 @@ class JournalpostHendelseConsumer(
     private val om: ObjectMapper
 ) : ReadynessComponent, LivenessComponent {
 
-    private val logger = logger()
-    private val loggerSikker = LoggerFactory.getLogger("tjenestekall")
+    private val log = LoggerFactory.getLogger(JournalpostHendelseConsumer::class.java)
     private val consumer: KafkaConsumer<String, GenericRecord> = KafkaConsumer(props)
     private var ready = false
     private var error = false
 
     init {
-        logger.info("Lytter på topic $topicName")
+        log.info("Lytter på topic $topicName")
         consumer.subscribe(listOf(topicName))
     }
 
@@ -47,7 +45,7 @@ class JournalpostHendelseConsumer(
     }
 
     fun start() {
-        logger.info("Starter...")
+        log.info("Starter...")
         consumer.use {
             setIsReady(true)
             while (!error) {
@@ -58,7 +56,7 @@ class JournalpostHendelseConsumer(
                             processHendelse(mapJournalpostHendelse(record.value()))
                             it.commitSync()
                         } catch (e: Throwable) {
-                            logger.error("Klarte ikke behandle hendelse. Stopper lytting!", e)
+                            log.error("Klarte ikke behandle hendelse. Stopper lytting!", e)
                             setIsError(true)
                         }
                     }
@@ -68,9 +66,9 @@ class JournalpostHendelseConsumer(
 
     fun processHendelse(journalpostDTO: InngaaendeJournalpostDTO) {
         when (findStatus(journalpostDTO)) {
-            JournalpostStatus.Duplikat -> logger.info("Ignorerer duplikat inntektsmelding ${journalpostDTO.kanalReferanseId} for hendelse ${journalpostDTO.hendelsesId}")
+            JournalpostStatus.Duplikat -> log.info("Ignorerer duplikat inntektsmelding ${journalpostDTO.kanalReferanseId} for hendelse ${journalpostDTO.hendelsesId}")
             JournalpostStatus.Ny -> lagreBakgrunnsjobb(journalpostDTO)
-            JournalpostStatus.IkkeInntektsmelding -> logger.info("Ignorerte journalposthendelse ${journalpostDTO.hendelsesId}. Kanal: ${journalpostDTO.mottaksKanal} Tema: ${journalpostDTO.temaNytt} Status: ${journalpostDTO.journalpostStatus}")
+            JournalpostStatus.IkkeInntektsmelding -> log.info("Ignorerte journalposthendelse ${journalpostDTO.hendelsesId}. Kanal: ${journalpostDTO.mottaksKanal} Tema: ${journalpostDTO.temaNytt} Status: ${journalpostDTO.journalpostStatus}")
         }
     }
 
@@ -80,17 +78,12 @@ class JournalpostHendelseConsumer(
                 return JournalpostStatus.Duplikat
             }
             return JournalpostStatus.Ny
-        } else if (journalpostDTO.temaNytt == "SYK" && journalpostDTO.mottaksKanal == "NAV_NO" && journalpostDTO.journalpostStatus == "MOTTATT") {
-            "Fant journalpost som var [temaNytt=SYK, mottaksKanal=NAV_NO, journalpostStatus=MOTTATT].".let {
-                logger.info(it)
-                loggerSikker.info("$it journalpost: $journalpostDTO")
-            }
         }
         return JournalpostStatus.IkkeInntektsmelding
     }
 
     private fun lagreBakgrunnsjobb(hendelse: InngaaendeJournalpostDTO) {
-        logger.info("Lagrer inntektsmelding ${hendelse.kanalReferanseId} for hendelse ${hendelse.hendelsesId}")
+        log.info("Lagrer inntektsmelding ${hendelse.kanalReferanseId} for hendelse ${hendelse.hendelsesId}")
         bakgrunnsjobbRepo.save(
             Bakgrunnsjobb(
                 type = JoarkInntektsmeldingHendelseProsessor.JOB_TYPE,
@@ -118,5 +111,6 @@ class JournalpostHendelseConsumer(
     }
 }
 
-fun isInntektsmelding(hendelse: InngaaendeJournalpostDTO): Boolean =
-    hendelse.temaNytt == "SYK" && hendelse.mottaksKanal == "ALTINN" && hendelse.journalpostStatus == "MOTTATT"
+fun isInntektsmelding(hendelse: InngaaendeJournalpostDTO): Boolean {
+    return hendelse.temaNytt == "SYK" && hendelse.mottaksKanal == "ALTINN" && hendelse.journalpostStatus == "MOTTATT"
+}
