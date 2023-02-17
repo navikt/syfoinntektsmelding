@@ -54,14 +54,6 @@ spec:
       value: "https://sts.adeo.no/SecurityTokenServiceProvider/"
     - name: SRVSYFOINNTEKTSMELDING_USERNAME
       value: "srvsyfoinntektsmel"
-    - name: OPENIDCONNECT_ISSOHOST
-      value: "https://isso.adeo.no:443/isso/oauth2"
-    - name: OPENIDCONNECT_ISSOISSUER
-      value: "https://isso.adeo.no:443/isso/oauth2"
-    - name: OPENIDCONNECT_ISSOJWKS
-      value: "https://isso.adeo.no:443/isso/oauth2/connect/jwk_uri"
-    - name: OPENIDCONNECT_USERNAME
-      value: "syfoinntektsmelding-p"
     - name: OIDC_STS_ISSUERURL
       value: "http://security-token-service.default.svc.nais.local/rest/v1/sts/token"
     - name: OIDC_STS_JWKSURL
