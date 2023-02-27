@@ -48,6 +48,7 @@ import no.nav.syfo.service.InngaaendeJournalConsumer
 import no.nav.syfo.service.InntektsmeldingService
 import no.nav.syfo.service.JournalConsumer
 import no.nav.syfo.service.JournalpostService
+import no.nav.syfo.simba.InntektsmeldingConsumer
 import no.nav.syfo.util.Metrikk
 import no.nav.syfo.utsattoppgave.FeiletUtsattOppgaveMeldingProsessor
 import no.nav.syfo.utsattoppgave.UtsattOppgaveDAO
@@ -181,4 +182,11 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single { ArbeidsgiverperiodeRepositoryImp(get()) } bind ArbeidsgiverperiodeRepository::class
 
     single { MockBrregClient() } bind BrregClient::class
+
+    single {
+        InntektsmeldingConsumer(
+            joarkLocalProperties().toMutableMap(),
+            "inntektsmelding"
+        )
+    }
 }

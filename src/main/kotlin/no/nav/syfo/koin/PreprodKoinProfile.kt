@@ -239,5 +239,4 @@ fun preprodConfig(config: ApplicationConfig) = module {
             "inntektsmelding"
         )
     }
-
 }

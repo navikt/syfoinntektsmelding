@@ -1,10 +1,12 @@
 package no.nav.syfo.simba
 
+import no.nav.helse.arbeidsgiver.kubernetes.LivenessComponent
+import no.nav.helse.arbeidsgiver.kubernetes.ReadynessComponent
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.slf4j.LoggerFactory
 import java.time.Duration
 
-class InntektsmeldingConsumer(props: Map<String,Any>, topicName: String) {
+class InntektsmeldingConsumer(props: Map<String, Any>, topicName: String) : ReadynessComponent, LivenessComponent {
 
     private val consumer = KafkaConsumer<String, String>(props)
     private var ready = false
@@ -45,8 +47,18 @@ class InntektsmeldingConsumer(props: Map<String,Any>, topicName: String) {
     }
 
     fun behandle(value: String) {
-        //
         log.info("Fikk inntektsmelding fra simba: $value")
     }
 
+    override suspend fun runReadynessCheck() {
+        if (!ready) {
+            throw IllegalStateException("Lytting på hendelser er ikke klar ennå")
+        }
+    }
+
+    override suspend fun runLivenessCheck() {
+        if (error) {
+            throw IllegalStateException("Det har oppstått en feil og slutter å lytte på hendelser")
+        }
+    }
 }

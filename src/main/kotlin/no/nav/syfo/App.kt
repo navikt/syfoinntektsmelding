@@ -19,6 +19,7 @@ import no.nav.syfo.koin.selectModuleBasedOnProfile
 import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
 import no.nav.syfo.prosesser.FjernInntektsmeldingByBehandletProcessor
 import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
+import no.nav.syfo.simba.InntektsmeldingConsumer
 import no.nav.syfo.util.logger
 import no.nav.syfo.utsattoppgave.FeiletUtsattOppgaveMeldingProsessor
 import no.nav.syfo.web.inntektsmeldingModule
@@ -68,6 +69,11 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
             logger.info("Registrerer helsesjekker for ${it.javaClass}")
             kubernetesProbeManager.registerLivenessComponent(it)
             kubernetesProbeManager.registerReadynessComponent(it)
+        }
+        logger.info("Starter lytting for mottak fra simba...")
+        val inntektsmeldingConsumer = get<InntektsmeldingConsumer>()
+        thread(start = true) {
+            inntektsmeldingConsumer.start()
         }
     }
 
