@@ -48,6 +48,7 @@ import no.nav.syfo.service.InngaaendeJournalConsumer
 import no.nav.syfo.service.InntektsmeldingService
 import no.nav.syfo.service.JournalConsumer
 import no.nav.syfo.service.JournalpostService
+import no.nav.syfo.simba.InntektsmeldingConsumer
 import no.nav.syfo.util.Metrikk
 import no.nav.syfo.utsattoppgave.FeiletUtsattOppgaveMeldingProsessor
 import no.nav.syfo.utsattoppgave.UtsattOppgaveDAO
@@ -231,4 +232,12 @@ fun preprodConfig(config: ApplicationConfig) = module {
     } bind DokArkivClient::class
 
     single { BrregClientImp(get(qualifier = named("proxyHttpClient")), config.getString("berreg_enhet_url")) } bind BrregClient::class
+
+    single {
+        InntektsmeldingConsumer(
+            commonAivenProperties(config),
+            "inntektsmelding"
+        )
+    }
+
 }
