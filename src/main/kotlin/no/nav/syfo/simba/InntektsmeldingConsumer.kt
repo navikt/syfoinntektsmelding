@@ -27,7 +27,7 @@ class InntektsmeldingConsumer(props: Map<String, Any>, topicName: String) : Read
     }
 
     fun start() {
-        log.info("Starter...")
+        log.info("Starter InntektsmeldingConsumer...")
         consumer.use {
             setIsReady(true)
             while (!error) {

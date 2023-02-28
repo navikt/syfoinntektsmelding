@@ -72,7 +72,9 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
         }
         logger.info("Starter lytting for mottak fra simba...")
         val inntektsmeldingConsumer = get<InntektsmeldingConsumer>()
+        logger.info("InntektsmeldingConsumer = $inntektsmeldingConsumer")
         thread(start = true) {
+            logger.info("Starter inntektsmeldingConsumer-tråd")
             inntektsmeldingConsumer.start()
         }
     }
