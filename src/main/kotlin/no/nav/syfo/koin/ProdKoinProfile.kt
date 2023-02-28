@@ -128,7 +128,7 @@ fun prodConfig(config: ApplicationConfig) = module {
         )
     }
 
-    single { InntektsmeldingAivenProducer(commonAivenProperties(config)) }
+    single { InntektsmeldingAivenProducer(commonAivenProperties()) }
 
     single { DuplikatRepositoryImpl(get()) } bind DuplikatRepository::class
     single { UtsattOppgaveDAO(UtsattOppgaveRepositoryImp(get())) }
