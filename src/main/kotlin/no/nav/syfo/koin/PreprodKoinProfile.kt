@@ -54,6 +54,7 @@ import no.nav.syfo.utsattoppgave.FeiletUtsattOppgaveMeldingProsessor
 import no.nav.syfo.utsattoppgave.UtsattOppgaveDAO
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil
+import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -235,7 +236,11 @@ fun preprodConfig(config: ApplicationConfig) = module {
 
     single {
         InntektsmeldingConsumer(
-            commonAivenProperties(config),
+            commonAivenProperties(config).apply {
+                ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest"
+                ConsumerConfig.CLIENT_ID_CONFIG to "syfoinntektsmelding"
+                ConsumerConfig.GROUP_ID_CONFIG to "syfoinntektsmelding-v1"
+            },
             "inntektsmelding"
         )
     }

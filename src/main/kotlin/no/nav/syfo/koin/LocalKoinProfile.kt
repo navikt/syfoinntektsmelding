@@ -18,6 +18,7 @@ import no.nav.syfo.client.saf.SafDokumentClient
 import no.nav.syfo.client.saf.SafJournalpostClient
 import no.nav.syfo.datapakke.DatapakkePublisherJob
 import no.nav.syfo.integration.kafka.UtsattOppgaveConsumer
+import no.nav.syfo.integration.kafka.inntektsmeldingFraSimbaLocalProperties
 import no.nav.syfo.integration.kafka.joarkLocalProperties
 import no.nav.syfo.integration.kafka.journalpost.JournalpostHendelseConsumer
 import no.nav.syfo.integration.kafka.producerLocalProperties
@@ -185,7 +186,7 @@ fun localDevConfig(config: ApplicationConfig) = module {
 
     single {
         InntektsmeldingConsumer(
-            joarkLocalProperties().toMutableMap(),
+            inntektsmeldingFraSimbaLocalProperties(),
             "inntektsmelding"
         )
     }
