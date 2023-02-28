@@ -241,7 +241,8 @@ fun preprodConfig(config: ApplicationConfig) = module {
                 ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
                 ConsumerConfig.CLIENT_ID_CONFIG to "syfoinntektsmelding",
                 ConsumerConfig.GROUP_ID_CONFIG to "syfoinntektsmelding-v1",
-                ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java
+                ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java ,
+                ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java
             ),
             "inntektsmelding"
         )
