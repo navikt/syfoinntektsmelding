@@ -33,7 +33,7 @@ class UtsattOppgaveService(
         val oppgave = utsattOppgaveDAO.finn(oppdatering.id.toString())
         if (oppgave == null) {
             metrikk.tellUtsattOppgave_Ukjent()
-            logger.warn("Mottok oppdatering på en ukjent oppgave")
+            logger.info("Mottok oppdatering på en ukjent oppgave for id: ${oppdatering.id}")
             return
         }
         logger.info("Fant oppgave for inntektsmelding: ${oppgave.arkivreferanse} med tilstand: ${Tilstand.Forkastet.name}")
