@@ -8,6 +8,7 @@ import no.nav.helse.arbeidsgiver.kubernetes.LivenessComponent
 import no.nav.helse.arbeidsgiver.kubernetes.ReadynessComponent
 import no.nav.helsearbeidsgiver.utils.MdcUtils
 import no.nav.helsearbeidsgiver.utils.logger
+import no.nav.syfo.utsattoppgave.DokumentTypeDTO
 import no.nav.syfo.utsattoppgave.FeiletUtsattOppgaveMeldingProsessor
 import no.nav.syfo.utsattoppgave.OppgaveOppdatering
 import no.nav.syfo.utsattoppgave.UtsattOppgaveDTO
@@ -55,7 +56,10 @@ class UtsattOppgaveConsumer(
                         try {
                             val raw: String = record.value()
                             MdcUtils.withCallId {
-                                behandle(om.readValue<UtsattOppgaveDTO>(raw), raw)
+                                val utsattOppgaveDTO = om.readValue<UtsattOppgaveDTO>(raw)
+                                if (utsattOppgaveDTO.dokumentType == DokumentTypeDTO.Inntektsmelding) {
+                                    behandle(utsattOppgaveDTO, raw)
+                                }
                             }
                             it.commitSync()
                         } catch (e: Throwable) {
