@@ -36,7 +36,7 @@ class UtsattOppgaveService(
             logger.info("Mottok oppdatering på en ukjent oppgave for id: ${oppdatering.id}")
             return
         }
-        logger.info("Fant oppgave for inntektsmelding: ${oppgave.arkivreferanse} med tilstand: ${Tilstand.Forkastet.name}")
+        logger.info("Fant oppgave for inntektsmelding: ${oppgave.arkivreferanse} med tilstand: ${oppgave.tilstand.name}")
         val gjelderSpeil = oppdatering.oppdateringstype == OppdateringstypeDTO.OpprettSpeilRelatert
 
         if (oppgave.tilstand == Tilstand.Utsatt && oppdatering.handling == no.nav.syfo.utsattoppgave.Handling.Utsett) {
