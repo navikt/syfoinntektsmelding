@@ -1,5 +1,6 @@
 package no.nav.syfo.repository
 
+import no.nav.helsearbeidsgiver.utils.logger
 import no.nav.syfo.dto.ArbeidsgiverperiodeEntitet
 import no.nav.syfo.dto.InntektsmeldingEntitet
 import java.sql.Connection
@@ -59,6 +60,7 @@ class InntektsmeldingRepositoryImp(
     private val ds: DataSource
 ) : InntektsmeldingRepository {
     private val agpRepo = ArbeidsgiverperiodeRepositoryImp(ds)
+    private val logger = this.logger()
 
     override fun findByUuid(uuid: String): InntektsmeldingEntitet {
         val findByAktorId = "SELECT * FROM INNTEKTSMELDING WHERE INNTEKTSMELDING_UUID = ?;"
@@ -68,7 +70,11 @@ class InntektsmeldingRepositoryImp(
             val res = it.prepareStatement(findByAktorId).apply {
                 setString(1, uuid)
             }.executeQuery()
-            result = resultLoop(res, inntektsmeldinger).first()
+            val list = resultLoop(res, inntektsmeldinger)
+            if (list.isEmpty()) {
+                logger.warn("Fant ikke inntektsmelding med uuid: $uuid")
+            }
+            result = list.first()
         }
         result.arbeidsgiverperioder = finnAgpForIm(uuid).toMutableList()
         return result
@@ -82,7 +88,11 @@ class InntektsmeldingRepositoryImp(
             val res = it.prepareStatement(sqlQuery).apply {
                 setString(1, arkivRefereanse)
             }.executeQuery()
-            result = resultLoop(res, inntektsmeldinger).first()
+            val list = resultLoop(res, inntektsmeldinger)
+            if (list.isEmpty()) {
+                logger.warn("Fant ikke inntektsmelding med arkivReferanse: $arkivRefereanse")
+            }
+            result = list.first()
         }
         result.arbeidsgiverperioder = finnAgpForIm(result.uuid).toMutableList()
         return result
