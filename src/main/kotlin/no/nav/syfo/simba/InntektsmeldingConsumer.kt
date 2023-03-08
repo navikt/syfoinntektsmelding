@@ -1,10 +1,10 @@
 package no.nav.syfo.simba
 
-import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import no.nav.helse.arbeidsgiver.kubernetes.LivenessComponent
 import no.nav.helse.arbeidsgiver.kubernetes.ReadynessComponent
-import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
+import no.nav.helsearbeidsgiver.felles.inntektsmelding.db.InntektsmeldingDokument
+import no.nav.security.mock.oauth2.http.objectMapper
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.dto.UtsattOppgaveEntitet
 import no.nav.syfo.mapping.mapInntektsmeldingKontrakt
@@ -54,7 +54,8 @@ class InntektsmeldingConsumer(
                     .poll(Duration.ofMillis(1000))
                     .forEach { record ->
                         try {
-                            behandle(record.value())
+                            val inntektsmedingDokument = om.readValue<InntektsmeldingDokument>(record.value(), InntektsmeldingDokument::class.java)
+                            behandle(inntektsmedingDokument)
                             it.commitSync()
                         } catch (e: Throwable) {
                             log.error("Klarte ikke behandle hendelse. Stopper lytting!", e)
@@ -65,7 +66,7 @@ class InntektsmeldingConsumer(
         }
     }
 
-    fun behandle(inntektsmeldingDokument: String) {
+    fun behandle(inntektsmeldingDokument: InntektsmeldingDokument) {
         val inntektsmelding = mapInntektsmelding(inntektsmeldingDokument)
         val arkivreferanse = ""
         val aktorid = ""
