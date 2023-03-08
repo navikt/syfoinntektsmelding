@@ -187,7 +187,12 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single {
         InntektsmeldingConsumer(
             inntektsmeldingFraSimbaLocalProperties(),
-            "inntektsmelding"
+            "inntektsmelding",
+            get(),
+            get(),
+            get(),
+            get(),
+            get()
         )
     }
 }

@@ -244,7 +244,12 @@ fun preprodConfig(config: ApplicationConfig) = module {
                 ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
                 ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java
             ),
-            "helsearbeidsgiver.inntektsmelding"
+            "helsearbeidsgiver.inntektsmelding",
+            get(),
+            get(),
+            get(),
+            get(),
+            get()
         )
     }
 }

@@ -1,12 +1,15 @@
 package no.nav.syfo.simba
 
 import no.nav.helsearbeidsgiver.felles.inntektsmelding.db.InntektsmeldingDokument
+import no.nav.helsearbeidsgiver.felles.inntektsmelding.felles.Naturalytelse
+import no.nav.helsearbeidsgiver.felles.inntektsmelding.felles.NaturalytelseKode
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
 import no.nav.syfo.domain.inntektsmelding.AvsenderSystem
 import no.nav.syfo.domain.inntektsmelding.Gyldighetsstatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.domain.inntektsmelding.Kontaktinformasjon
+import no.nav.syfo.domain.inntektsmelding.OpphoerAvNaturalytelse
 import no.nav.syfo.domain.inntektsmelding.Refusjon
 import org.apache.avro.LogicalTypes.Decimal
 import java.math.BigDecimal
@@ -26,9 +29,11 @@ fun mapInntektsmelding(imd: InntektsmeldingDokument): Inntektsmelding {
         JournalStatus.FERDIGSTILT,
         imd.arbeidsgiverperioder.map { t-> Periode(t.fom,t.tom) },
         BigDecimal(imd.beregnetInntekt),
-        Refusjon(BigDecimal(imd.refusjon.refusjonPrMnd?: 0 )),
+        Refusjon(BigDecimal(imd.refusjon.refusjonPrMnd?: 0.0 )),
         emptyList(),
-        emptyList(),
+        imd.naturalytelser?.map{
+            OpphoerAvNaturalytelse()
+        } ?: emptyList(),
         emptyList(),
         Gyldighetsstatus.GYLDIG,
         "",

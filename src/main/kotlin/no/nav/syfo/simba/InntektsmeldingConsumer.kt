@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import no.nav.helse.arbeidsgiver.kubernetes.LivenessComponent
 import no.nav.helse.arbeidsgiver.kubernetes.ReadynessComponent
 import no.nav.helsearbeidsgiver.felles.inntektsmelding.db.InntektsmeldingDokument
-import no.nav.security.mock.oauth2.http.objectMapper
+import no.nav.syfo.client.aktor.AktorClient
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.dto.UtsattOppgaveEntitet
 import no.nav.syfo.mapping.mapInntektsmeldingKontrakt
@@ -23,7 +23,8 @@ class InntektsmeldingConsumer(
     val om: ObjectMapper,
     val inntektsmeldingService: InntektsmeldingService,
     val inntektsmeldingAivenProducer: InntektsmeldingAivenProducer,
-    val utsattOppgaveService: UtsattOppgaveService
+    val utsattOppgaveService: UtsattOppgaveService,
+    val aktorClient: AktorClient
 ) : ReadynessComponent, LivenessComponent {
 
     private val consumer = KafkaConsumer<String, String>(props)
@@ -69,7 +70,7 @@ class InntektsmeldingConsumer(
     fun behandle(inntektsmeldingDokument: InntektsmeldingDokument) {
         val inntektsmelding = mapInntektsmelding(inntektsmeldingDokument)
         val arkivreferanse = ""
-        val aktorid = ""
+        val aktorid = aktorClient.getAktorId(inntektsmelding.fnr)
         val dto = inntektsmeldingService.lagreBehandling(inntektsmelding, aktorid, arkivreferanse)
 
         utsattOppgaveService.opprett(
