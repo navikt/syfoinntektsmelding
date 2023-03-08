@@ -1,8 +1,6 @@
 package no.nav.syfo.simba
 
 import no.nav.helsearbeidsgiver.felles.inntektsmelding.db.InntektsmeldingDokument
-import no.nav.helsearbeidsgiver.felles.inntektsmelding.felles.Naturalytelse
-import no.nav.helsearbeidsgiver.felles.inntektsmelding.felles.NaturalytelseKode
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
 import no.nav.syfo.domain.inntektsmelding.AvsenderSystem
@@ -11,12 +9,10 @@ import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.domain.inntektsmelding.Kontaktinformasjon
 import no.nav.syfo.domain.inntektsmelding.OpphoerAvNaturalytelse
 import no.nav.syfo.domain.inntektsmelding.Refusjon
-import org.apache.avro.LogicalTypes.Decimal
 import java.math.BigDecimal
-import java.time.LocalDate
 import java.time.LocalDateTime
 
-fun mapInntektsmelding(imd: InntektsmeldingDokument): Inntektsmelding {
+fun mapInntektsmelding(arkivreferanse: String, aktorId: String, journalpostId: String, imd: InntektsmeldingDokument): Inntektsmelding {
     return Inntektsmelding(
         "",
         imd.identitetsnummer,
@@ -24,7 +20,7 @@ fun mapInntektsmelding(imd: InntektsmeldingDokument): Inntektsmelding {
         null,
         null,
         null,
-    "", //@TODO Vi trenger  å legge journalpostid til inntektsmelding dokument
+        journalpostId,
         imd.årsakInnsending.name,
         JournalStatus.FERDIGSTILT,
         imd.arbeidsgiverperioder.map { t-> Periode(t.fom,t.tom) },
@@ -32,22 +28,26 @@ fun mapInntektsmelding(imd: InntektsmeldingDokument): Inntektsmelding {
         Refusjon(BigDecimal(imd.refusjon.refusjonPrMnd?: 0.0 )),
         emptyList(),
         imd.naturalytelser?.map{
-            OpphoerAvNaturalytelse()
+            OpphoerAvNaturalytelse(
+                no.nav.syfo.domain.inntektsmelding.Naturalytelse.valueOf(it.naturalytelse.name),
+                it.dato,
+                BigDecimal(it.beløp)
+            )
         } ?: emptyList(),
         emptyList(),
         Gyldighetsstatus.GYLDIG,
-        "",
+        arkivreferanse,
         emptyList(),
-        LocalDate.now(),
+        imd.bestemmendeFraværsdag,
         LocalDateTime.now(),
         "",
+        aktorId,
         "",
-        "",
-        AvsenderSystem("", ""),
-        false,
-        Kontaktinformasjon("", ""),
+        AvsenderSystem("NAV_NO", "1.0"),
+        null,
+        Kontaktinformasjon("Ukjent", "n/a"),
         LocalDateTime.now(),
-        BigDecimal(100),
-        ""
+        BigDecimal(0),
+        null
     )
 }

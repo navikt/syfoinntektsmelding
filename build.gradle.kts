@@ -42,6 +42,7 @@ val kafkaVersion: String by project
 val apacheKafkaStreamsVersion: String by project
 val annotationApiVersion: String by project
 val altinnCorrespondanceVersion: String by project
+val inntektsmeldingVersion: String by project
 
 plugins {
     kotlin("jvm") version "1.7.20"
@@ -197,5 +198,5 @@ dependencies {
     implementation("io.prometheus:simpleclient_hotspot:$prometheusVersion")
     implementation("no.nav.tjenestespesifikasjoner:altinn-correspondence-agency-external-basic:$altinnCorrespondanceVersion")
     implementation("javax.annotation:javax.annotation-api:$annotationApiVersion")
-    implementation("no.nav.helsearbeidsgiver.inntektsmelding:dokument:20230307bc969952c6b52a5e54b7d17f0e35a5af5c7ac447")
+    implementation("no.nav.helsearbeidsgiver.inntektsmelding:dokument:$inntektsmeldingVersion")
 }

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import no.nav.helse.arbeidsgiver.kubernetes.LivenessComponent
 import no.nav.helse.arbeidsgiver.kubernetes.ReadynessComponent
 import no.nav.helsearbeidsgiver.felles.inntektsmelding.db.InntektsmeldingDokument
+import no.nav.helsearbeidsgiver.felles.inntektsmelding.db.JournalførtInntektsmelding
+import no.nav.syfo.behandling.OPPRETT_OPPGAVE_FORSINKELSE
 import no.nav.syfo.client.aktor.AktorClient
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.dto.UtsattOppgaveEntitet
@@ -31,7 +33,7 @@ class InntektsmeldingConsumer(
     private var ready = false
     private var error = false
     private val log = LoggerFactory.getLogger(InntektsmeldingConsumer::class.java)
-    val OPPRETT_OPPGAVE_FORSINKELSE = 48L
+    private val sikkerlogger = LoggerFactory.getLogger("tjenestekall")
 
     init {
         log.info("Lytter på topic $topicName")
@@ -55,10 +57,12 @@ class InntektsmeldingConsumer(
                     .poll(Duration.ofMillis(1000))
                     .forEach { record ->
                         try {
-                            val inntektsmedingDokument = om.readValue<InntektsmeldingDokument>(record.value(), InntektsmeldingDokument::class.java)
-                            behandle(inntektsmedingDokument)
+                            val jd = om.readValue<JournalførtInntektsmelding>(record.value(), JournalførtInntektsmelding::class.java)
+                            behandle(jd.journalpostId, jd.inntektsmeldingDokument)
+                            log.info("Behandlet inntektsmelding med journalpostid: ${jd.journalpostId}")
                             it.commitSync()
                         } catch (e: Throwable) {
+                            sikkerlogger.error("Klarte ikke behandle: ${record.value()}")
                             log.error("Klarte ikke behandle hendelse. Stopper lytting!", e)
                             setIsError(true)
                         }
@@ -67,10 +71,10 @@ class InntektsmeldingConsumer(
         }
     }
 
-    fun behandle(inntektsmeldingDokument: InntektsmeldingDokument) {
-        val inntektsmelding = mapInntektsmelding(inntektsmeldingDokument)
+    fun behandle(journalpostId: String, inntektsmeldingDokument: InntektsmeldingDokument) {
+        val aktorid = aktorClient.getAktorId(inntektsmeldingDokument.identitetsnummer)
         val arkivreferanse = ""
-        val aktorid = aktorClient.getAktorId(inntektsmelding.fnr)
+        val inntektsmelding = mapInntektsmelding(arkivreferanse, aktorid, journalpostId, inntektsmeldingDokument)
         val dto = inntektsmeldingService.lagreBehandling(inntektsmelding, aktorid, arkivreferanse)
 
         utsattOppgaveService.opprett(
@@ -99,7 +103,7 @@ class InntektsmeldingConsumer(
 
         inntektsmeldingAivenProducer.leggMottattInntektsmeldingPåTopics(mappedInntektsmelding)
 
-        log.info("Fikk inntektsmelding fra simba: $inntektsmeldingDokument")
+        log.info("Publiserte inntektsmelding på topic: $inntektsmeldingDokument")
     }
 
     override suspend fun runReadynessCheck() {
