@@ -129,6 +129,13 @@ repositories {
         }
         setUrl("https://maven.pkg.github.com/navikt/helse-arbeidsgiver-felles-backend")
     }
+    maven {
+        credentials {
+            username = "x-access-token"
+            password = githubPassword
+        }
+        setUrl("https://maven.pkg.github.com/navikt/helsearbeidsgiver-inntektsmelding")
+    }
 }
 
 dependencies {
@@ -190,4 +197,5 @@ dependencies {
     implementation("io.prometheus:simpleclient_hotspot:$prometheusVersion")
     implementation("no.nav.tjenestespesifikasjoner:altinn-correspondence-agency-external-basic:$altinnCorrespondanceVersion")
     implementation("javax.annotation:javax.annotation-api:$annotationApiVersion")
+    implementation("no.nav.helsearbeidsgiver.inntektsmelding:dokument:20230307bc969952c6b52a5e54b7d17f0e35a5af5c7ac447")
 }
