@@ -23,11 +23,11 @@ fun mapInntektsmelding(arkivreferanse: String, aktorId: String, journalpostId: S
         journalpostId,
         imd.årsakInnsending.name,
         JournalStatus.FERDIGSTILT,
-        imd.arbeidsgiverperioder.map { t-> Periode(t.fom,t.tom) },
+        imd.arbeidsgiverperioder.map { t -> Periode(t.fom, t.tom) },
         BigDecimal(imd.beregnetInntekt),
-        Refusjon(BigDecimal(imd.refusjon.refusjonPrMnd?: 0.0 )),
+        Refusjon(BigDecimal(imd.refusjon.refusjonPrMnd ?: 0.0)),
         emptyList(),
-        imd.naturalytelser?.map{
+        imd.naturalytelser?.map {
             OpphoerAvNaturalytelse(
                 no.nav.syfo.domain.inntektsmelding.Naturalytelse.valueOf(it.naturalytelse.name),
                 it.dato,
