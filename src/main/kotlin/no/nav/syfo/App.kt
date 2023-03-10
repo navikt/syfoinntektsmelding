@@ -62,20 +62,20 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
         thread(start = true) {
             journalpostHendelseConsumer.start()
         }
-        logger.info("Registrerer helsesjekker for kafka konsumentene...")
-        val kubernetesProbeManager = get<KubernetesProbeManager>()
-        val list = listOf(utsattOppgaveConsumer, journalpostHendelseConsumer)
-        list.forEach {
-            logger.info("Registrerer helsesjekker for ${it.javaClass}")
-            kubernetesProbeManager.registerLivenessComponent(it)
-            kubernetesProbeManager.registerReadynessComponent(it)
-        }
         logger.info("Starter lytting for mottak fra simba...")
         val inntektsmeldingConsumer = get<InntektsmeldingConsumer>()
         logger.info("InntektsmeldingConsumer = $inntektsmeldingConsumer")
         thread(start = true) {
             logger.info("Starter inntektsmeldingConsumer-tråd")
             inntektsmeldingConsumer.start()
+        }
+        logger.info("Registrerer helsesjekker for kafka konsumentene...")
+        val kubernetesProbeManager = get<KubernetesProbeManager>()
+        val list = listOf(utsattOppgaveConsumer, journalpostHendelseConsumer, inntektsmeldingConsumer)
+        list.forEach {
+            logger.info("Registrerer helsesjekker for ${it.javaClass}")
+            kubernetesProbeManager.registerLivenessComponent(it)
+            kubernetesProbeManager.registerReadynessComponent(it)
         }
     }
 
