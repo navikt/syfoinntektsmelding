@@ -49,7 +49,7 @@ class InntektsmeldingConsumer(
     }
 
     fun start() {
-        log.info("Starter InntektsmeldingConsumer...")
+        sikkerlogger.info("Starter InntektsmeldingConsumer...")
         consumer.use {
             setIsReady(true)
             while (!error) {
@@ -57,13 +57,15 @@ class InntektsmeldingConsumer(
                     .poll(Duration.ofMillis(1000))
                     .forEach { record ->
                         try {
-                            val jd = om.readValue<JournalførtInntektsmelding>(record.value(), JournalførtInntektsmelding::class.java)
+                            val value = record.value()
+                            sikkerlogger.info("InntektsmeldingConsumer: Mottar record: $value")
+                            val jd = om.readValue<JournalførtInntektsmelding>(value, JournalførtInntektsmelding::class.java)
                             behandle(jd.journalpostId, jd.inntektsmeldingDokument)
-                            log.info("Behandlet inntektsmelding med journalpostid: ${jd.journalpostId}")
+                            log.info("InntektsmeldingConsumer: Behandlet inntektsmelding med journalpostid: ${jd.journalpostId}")
                             it.commitSync()
                         } catch (e: Throwable) {
-                            sikkerlogger.error("Klarte ikke behandle: ${record.value()}")
-                            log.error("Klarte ikke behandle hendelse. Stopper lytting!", e)
+                            sikkerlogger.error("InntektsmeldingConsumer: Klarte ikke behandle: ${record.value()}", e)
+                            log.error("InntektsmeldingConsumer: Klarte ikke behandle hendelse. Stopper lytting!", e)
                             setIsError(true)
                         }
                     }
