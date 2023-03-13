@@ -1,6 +1,6 @@
 package no.nav.syfo.simba
 
-import no.nav.helsearbeidsgiver.felles.inntektsmelding.db.InntektsmeldingDokument
+import no.nav.helsearbeidsgiver.felles.inntektsmelding.felles.models.InntektsmeldingDokument
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
 import no.nav.syfo.domain.inntektsmelding.AvsenderSystem
@@ -24,14 +24,14 @@ fun mapInntektsmelding(arkivreferanse: String, aktorId: String, journalpostId: S
         imd.årsakInnsending.name,
         JournalStatus.FERDIGSTILT,
         imd.arbeidsgiverperioder.map { t -> Periode(t.fom, t.tom) },
-        BigDecimal(imd.beregnetInntekt),
-        Refusjon(BigDecimal(imd.refusjon.refusjonPrMnd ?: 0.0)),
+        imd.beregnetInntekt,
+        Refusjon(imd.refusjon.refusjonPrMnd ?: 0.0.toBigDecimal()),
         emptyList(),
         imd.naturalytelser?.map {
             OpphoerAvNaturalytelse(
                 no.nav.syfo.domain.inntektsmelding.Naturalytelse.valueOf(it.naturalytelse.name),
                 it.dato,
-                BigDecimal(it.beløp)
+                it.beløp
             )
         } ?: emptyList(),
         emptyList(),
