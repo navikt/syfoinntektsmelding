@@ -3,8 +3,8 @@ package no.nav.syfo.simba
 import com.fasterxml.jackson.databind.ObjectMapper
 import no.nav.helse.arbeidsgiver.kubernetes.LivenessComponent
 import no.nav.helse.arbeidsgiver.kubernetes.ReadynessComponent
-import no.nav.helsearbeidsgiver.felles.inntektsmelding.db.InntektsmeldingDokument
-import no.nav.helsearbeidsgiver.felles.inntektsmelding.db.JournalførtInntektsmelding
+import no.nav.helsearbeidsgiver.felles.inntektsmelding.felles.models.InntektsmeldingDokument
+import no.nav.helsearbeidsgiver.felles.inntektsmelding.felles.models.JournalførtInntektsmelding
 import no.nav.syfo.behandling.OPPRETT_OPPGAVE_FORSINKELSE
 import no.nav.syfo.client.aktor.AktorClient
 import no.nav.syfo.dto.Tilstand
