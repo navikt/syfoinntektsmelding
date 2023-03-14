@@ -75,7 +75,7 @@ class InntektsmeldingConsumer(
 
     fun behandle(journalpostId: String, inntektsmeldingDokument: InntektsmeldingDokument) {
         val aktorid = aktorClient.getAktorId(inntektsmeldingDokument.identitetsnummer)
-        val arkivreferanse = ""
+        val arkivreferanse = "im_${journalpostId}"
         val inntektsmelding = mapInntektsmelding(arkivreferanse, aktorid, journalpostId, inntektsmeldingDokument)
         val dto = inntektsmeldingService.lagreBehandling(inntektsmelding, aktorid, arkivreferanse)
 
