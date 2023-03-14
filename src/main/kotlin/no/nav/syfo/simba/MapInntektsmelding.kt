@@ -1,6 +1,7 @@
 package no.nav.syfo.simba
 
 import no.nav.helsearbeidsgiver.felles.inntektsmelding.felles.models.InntektsmeldingDokument
+import no.nav.helsearbeidsgiver.felles.inntektsmelding.felles.models.ÅrsakInnsending
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
 import no.nav.syfo.domain.inntektsmelding.AvsenderSystem
@@ -48,6 +49,6 @@ fun mapInntektsmelding(arkivreferanse: String, aktorId: String, journalpostId: S
         Kontaktinformasjon("Ukjent", "n/a"),
         LocalDateTime.now(),
         BigDecimal(0),
-        null
+        imd.årsakInnsending.name
     )
 }
