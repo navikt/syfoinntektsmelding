@@ -19,6 +19,10 @@ class InntektsmeldingService(
         return repository.findByAktorId(aktoerId).map { toInntektsmelding(it, objectMapper) }
     }
 
+    fun findByJournalpost(journalpostId: String): InntektsmeldingEntitet? {
+        return repository.findByJournalpost(journalpostId)
+    }
+
     fun isDuplicate(inntektsmelding: Inntektsmelding): Boolean {
         if (inntektsmelding.aktorId == null) {
             return false

@@ -60,8 +60,13 @@ class InntektsmeldingConsumer(
                             val value = record.value()
                             sikkerlogger.info("InntektsmeldingConsumer: Mottar record: $value")
                             val jd = om.readValue<JournalførtInntektsmelding>(value, JournalførtInntektsmelding::class.java)
-                            behandle(jd.journalpostId, jd.inntektsmeldingDokument)
-                            log.info("InntektsmeldingConsumer: Behandlet inntektsmelding med journalpostid: ${jd.journalpostId}")
+                            val im = inntektsmeldingService.findByJournalpost(jd.journalpostId)
+                            if (im != null) {
+                                sikkerlogger.info("InntektsmeldingConsumer: Behandler ikke ${jd.journalpostId}. Finnes allerede.")
+                            } else {
+                                behandle(jd.journalpostId, jd.inntektsmeldingDokument)
+                                log.info("InntektsmeldingConsumer: Behandlet inntektsmelding med journalpostid: ${jd.journalpostId}")
+                            }
                             it.commitSync()
                         } catch (e: Throwable) {
                             sikkerlogger.error("InntektsmeldingConsumer: Klarte ikke behandle: ${record.value()}", e)
@@ -75,7 +80,7 @@ class InntektsmeldingConsumer(
 
     fun behandle(journalpostId: String, inntektsmeldingDokument: InntektsmeldingDokument) {
         val aktorid = aktorClient.getAktorId(inntektsmeldingDokument.identitetsnummer)
-        val arkivreferanse = "im_${journalpostId}"
+        val arkivreferanse = "im_$journalpostId"
         val inntektsmelding = mapInntektsmelding(arkivreferanse, aktorid, journalpostId, inntektsmeldingDokument)
         val dto = inntektsmeldingService.lagreBehandling(inntektsmelding, aktorid, arkivreferanse)
 
