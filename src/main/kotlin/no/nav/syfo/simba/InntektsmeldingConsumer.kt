@@ -110,7 +110,7 @@ class InntektsmeldingConsumer(
 
         inntektsmeldingAivenProducer.leggMottattInntektsmeldingPåTopics(mappedInntektsmelding)
 
-        log.info("Publiserte inntektsmelding på topic: $inntektsmeldingDokument")
+        sikkerlogger.info("Publiserte inntektsmelding på topic: $inntektsmeldingDokument")
     }
 
     override suspend fun runReadynessCheck() {
