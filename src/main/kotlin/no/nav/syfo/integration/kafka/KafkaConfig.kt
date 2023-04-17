@@ -15,7 +15,7 @@ private const val LOCALHOSTBOOTSTRAPSERVER = "localhost:9092"
 private fun envOrThrow(envVar: String) =
     System.getenv()[envVar] ?: throw IllegalStateException("$envVar er påkrevd miljøvariabel")
 
-private fun consumerLocalProperties() = mutableMapOf<String, Any>(
+fun consumerLocalProperties() = mutableMapOf<String, Any>(
     ConsumerConfig.MAX_POLL_RECORDS_CONFIG to "1",
     ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG to false,
     ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG to "30000",
@@ -30,7 +30,15 @@ fun joarkLocalProperties() = consumerLocalProperties() + mapOf(
     ConsumerConfig.GROUP_ID_CONFIG to "syfoinntektsmelding-v2"
 )
 
-fun joarkAivenProperties(config: ApplicationConfig) = commonAivenProperties(config) + mapOf(
+fun inntektsmeldingFraSimbaLocalProperties() = consumerLocalProperties() + mapOf(
+    "schema.registry.url" to "http://kafka-schema-registry.tpa.svc.nais.local:8081",
+    ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to GenericAvroDeserializer::class.java,
+    ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
+    ConsumerConfig.CLIENT_ID_CONFIG to "syfoinntektsmelding",
+    ConsumerConfig.GROUP_ID_CONFIG to "syfoinntektsmelding-v1"
+)
+
+fun joarkAivenProperties(config: ApplicationConfig) = commonAivenProperties() + mapOf(
     ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to GenericAvroDeserializer::class.java,
     KafkaAvroSerializerConfig.SCHEMA_REGISTRY_URL_CONFIG to System.getenv("KAFKA_SCHEMA_REGISTRY"),
     SchemaRegistryClientConfig.BASIC_AUTH_CREDENTIALS_SOURCE to "USER_INFO",
@@ -46,7 +54,7 @@ fun utsattOppgaveLocalProperties() = consumerLocalProperties() + mapOf(
     ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
 )
 
-fun utsattOppgaveAivenProperties(config: ApplicationConfig) = commonAivenProperties(config) + mapOf(
+fun utsattOppgaveAivenProperties(config: ApplicationConfig) = commonAivenProperties() + mapOf(
     ConsumerConfig.GROUP_ID_CONFIG to "syfoinntektsmelding-v1",
     ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
 )
@@ -62,7 +70,7 @@ fun producerLocalProperties(bootstrapServers: String) = mutableMapOf<String, Any
     put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers)
 }
 
-fun commonAivenProperties(config: ApplicationConfig) = mutableMapOf<String, Any>().apply {
+fun commonAivenProperties() = mutableMapOf<String, Any>().apply {
     val PKCS12 = "PKCS12"
     val JAVA_KEYSTORE = "jks"
 

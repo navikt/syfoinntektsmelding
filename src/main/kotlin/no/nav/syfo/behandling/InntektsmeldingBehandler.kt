@@ -19,7 +19,7 @@ import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
 
-private const val OPPRETT_OPPGAVE_FORSINKELSE = 48L
+const val OPPRETT_OPPGAVE_FORSINKELSE = 48L
 
 class InntektsmeldingBehandler(
     private val journalpostService: JournalpostService,

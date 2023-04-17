@@ -42,6 +42,7 @@ val kafkaVersion: String by project
 val apacheKafkaStreamsVersion: String by project
 val annotationApiVersion: String by project
 val altinnCorrespondanceVersion: String by project
+val inntektsmeldingVersion: String by project
 
 plugins {
     kotlin("jvm") version "1.7.20"
@@ -129,6 +130,13 @@ repositories {
         }
         setUrl("https://maven.pkg.github.com/navikt/helse-arbeidsgiver-felles-backend")
     }
+    maven {
+        credentials {
+            username = "x-access-token"
+            password = githubPassword
+        }
+        setUrl("https://maven.pkg.github.com/navikt/helsearbeidsgiver-inntektsmelding")
+    }
 }
 
 dependencies {
@@ -190,4 +198,5 @@ dependencies {
     implementation("io.prometheus:simpleclient_hotspot:$prometheusVersion")
     implementation("no.nav.tjenestespesifikasjoner:altinn-correspondence-agency-external-basic:$altinnCorrespondanceVersion")
     implementation("javax.annotation:javax.annotation-api:$annotationApiVersion")
+    implementation("no.nav.helsearbeidsgiver.inntektsmelding:dokument:$inntektsmeldingVersion")
 }

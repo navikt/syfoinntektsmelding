@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
+import kotlin.test.assertNotNull
 
 open class InntektsmeldingRepositorySpec : SystemTestBase() {
 
@@ -38,6 +39,19 @@ open class InntektsmeldingRepositorySpec : SystemTestBase() {
     @AfterEach
     internal fun tearDown() {
         repository.deleteAll()
+    }
+
+    @Test
+    fun findByJournalpostId() {
+        val inntektsmelding = InntektsmeldingEntitet(
+            journalpostId = "jp-123-987",
+            behandlet = LocalDateTime.of(2019, 10, 1, 5, 18, 45, 0),
+            orgnummer = "orgnummer",
+            arbeidsgiverPrivat = "arbeidsgiverPrivat",
+            aktorId = "aktorId1"
+        )
+        repository.lagreInnteksmelding(inntektsmelding)
+        assertNotNull(repository.findByJournalpost("jp-123-987"))
     }
 
     @Test

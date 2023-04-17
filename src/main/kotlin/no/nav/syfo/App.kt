@@ -19,6 +19,7 @@ import no.nav.syfo.koin.selectModuleBasedOnProfile
 import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
 import no.nav.syfo.prosesser.FjernInntektsmeldingByBehandletProcessor
 import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
+import no.nav.syfo.simba.InntektsmeldingConsumer
 import no.nav.syfo.util.logger
 import no.nav.syfo.utsattoppgave.FeiletUtsattOppgaveMeldingProsessor
 import no.nav.syfo.web.inntektsmeldingModule
@@ -61,9 +62,16 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
         thread(start = true) {
             journalpostHendelseConsumer.start()
         }
+        logger.info("Starter lytting for mottak fra simba...")
+        val inntektsmeldingConsumer = get<InntektsmeldingConsumer>()
+        logger.info("InntektsmeldingConsumer = $inntektsmeldingConsumer")
+        thread(start = true) {
+            logger.info("Starter inntektsmeldingConsumer-tråd")
+            inntektsmeldingConsumer.start()
+        }
         logger.info("Registrerer helsesjekker for kafka konsumentene...")
         val kubernetesProbeManager = get<KubernetesProbeManager>()
-        val list = listOf(utsattOppgaveConsumer, journalpostHendelseConsumer)
+        val list = listOf(utsattOppgaveConsumer, journalpostHendelseConsumer, inntektsmeldingConsumer)
         list.forEach {
             logger.info("Registrerer helsesjekker for ${it.javaClass}")
             kubernetesProbeManager.registerLivenessComponent(it)

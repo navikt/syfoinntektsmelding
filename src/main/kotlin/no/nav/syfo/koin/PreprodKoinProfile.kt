@@ -48,11 +48,14 @@ import no.nav.syfo.service.InngaaendeJournalConsumer
 import no.nav.syfo.service.InntektsmeldingService
 import no.nav.syfo.service.JournalConsumer
 import no.nav.syfo.service.JournalpostService
+import no.nav.syfo.simba.InntektsmeldingConsumer
 import no.nav.syfo.util.Metrikk
 import no.nav.syfo.utsattoppgave.FeiletUtsattOppgaveMeldingProsessor
 import no.nav.syfo.utsattoppgave.UtsattOppgaveDAO
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil
+import org.apache.kafka.clients.consumer.ConsumerConfig
+import org.apache.kafka.common.serialization.StringDeserializer
 import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -140,7 +143,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
 
     single {
         InntektsmeldingAivenProducer(
-            commonAivenProperties(config)
+            commonAivenProperties()
         )
     }
 
@@ -231,4 +234,22 @@ fun preprodConfig(config: ApplicationConfig) = module {
     } bind DokArkivClient::class
 
     single { BrregClientImp(get(qualifier = named("proxyHttpClient")), config.getString("berreg_enhet_url")) } bind BrregClient::class
+
+    single {
+        InntektsmeldingConsumer(
+            commonAivenProperties() + mapOf(
+                ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
+                ConsumerConfig.CLIENT_ID_CONFIG to "simba-im-consumer",
+                ConsumerConfig.GROUP_ID_CONFIG to "simba-im-v1",
+                ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
+                ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java
+            ),
+            "helsearbeidsgiver.inntektsmelding",
+            get(),
+            get(),
+            get(),
+            get(),
+            get()
+        )
+    }
 }

@@ -9,6 +9,7 @@ import java.time.LocalDateTime
 import javax.sql.DataSource
 
 interface InntektsmeldingRepository {
+    fun findByJournalpost(journalpostId: String): InntektsmeldingEntitet?
     fun findByUuid(uuid: String): InntektsmeldingEntitet
     fun findByArkivReferanse(arkivRefereanse: String): InntektsmeldingEntitet
     fun findByAktorId(aktoerId: String): List<InntektsmeldingEntitet>
@@ -46,6 +47,10 @@ class InntektsmeldingRepositoryMock : InntektsmeldingRepository {
         return mockrepo.toList()
     }
 
+    override fun findByJournalpost(journalpostId: String): InntektsmeldingEntitet? {
+        TODO("Not yet implemented")
+    }
+
     override fun findByUuid(uuid: String): InntektsmeldingEntitet {
         TODO("Not yet implemented")
     }
@@ -59,6 +64,18 @@ class InntektsmeldingRepositoryImp(
     private val ds: DataSource
 ) : InntektsmeldingRepository {
     private val agpRepo = ArbeidsgiverperiodeRepositoryImp(ds)
+    override fun findByJournalpost(journalpostId: String): InntektsmeldingEntitet? {
+        val findByAktorId = "SELECT * FROM INNTEKTSMELDING WHERE JOURNALPOST_ID = ?;"
+        val inntektsmeldinger = ArrayList<InntektsmeldingEntitet>()
+        val result: InntektsmeldingEntitet?
+        ds.connection.use {
+            val res = it.prepareStatement(findByAktorId).apply {
+                setString(1, journalpostId)
+            }.executeQuery()
+            result = resultLoop(res, inntektsmeldinger).firstOrNull()
+        }
+        return result
+    }
 
     override fun findByUuid(uuid: String): InntektsmeldingEntitet {
         val findByAktorId = "SELECT * FROM INNTEKTSMELDING WHERE INNTEKTSMELDING_UUID = ?;"
