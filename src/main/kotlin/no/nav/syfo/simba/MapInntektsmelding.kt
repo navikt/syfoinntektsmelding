@@ -48,6 +48,6 @@ fun mapInntektsmelding(arkivreferanse: String, aktorId: String, journalpostId: S
         Kontaktinformasjon("Ukjent", "n/a"),
         LocalDateTime.now(),
         BigDecimal(0),
-        imd.årsakInnsending.name
+        null
     )
 }
