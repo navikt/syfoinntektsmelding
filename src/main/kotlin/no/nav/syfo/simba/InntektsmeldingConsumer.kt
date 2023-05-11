@@ -58,7 +58,7 @@ class InntektsmeldingConsumer(
                     .forEach { record ->
                         try {
                             val value = record.value()
-                            sikkerlogger.info("InntektsmeldingConsumer: Mottar record: $value")
+                            sikkerlogger.info("InntektsmeldingConsumer: Mottar record fra Simba: $value")
                             val jd = om.readValue<JournalførtInntektsmelding>(value, JournalførtInntektsmelding::class.java)
                             val im = inntektsmeldingService.findByJournalpost(jd.journalpostId)
                             if (im != null) {
