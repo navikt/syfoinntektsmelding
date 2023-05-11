@@ -21,7 +21,7 @@ fun mapInntektsmelding(arkivreferanse: String, aktorId: String, journalpostId: S
         null,
         null,
         journalpostId,
-        imd.årsakInnsending.name,
+        imd.årsakInnsending.name.lowercase().replaceFirstChar { it.uppercase() },
         JournalStatus.FERDIGSTILT,
         imd.arbeidsgiverperioder.map { t -> Periode(t.fom, t.tom) },
         imd.beregnetInntekt,
@@ -48,6 +48,6 @@ fun mapInntektsmelding(arkivreferanse: String, aktorId: String, journalpostId: S
         Kontaktinformasjon("Ukjent", "n/a"),
         LocalDateTime.now(),
         BigDecimal(0),
-        imd.årsakInnsending.name
+        null
     )
 }
