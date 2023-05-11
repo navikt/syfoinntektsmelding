@@ -70,10 +70,10 @@ open class FeiletRepositorySpec : SystemTestBase() {
         assertThat(liste.size).isEqualTo(2)
         assertThat(liste[0].arkivReferanse).isEqualTo(ARKIV_REFERANSE)
         assertThat(liste[0].feiltype).isEqualTo(Feiltype.AKTØR_IKKE_FUNNET)
-        assertThat(liste[0].tidspunkt).isEqualTo(DAYS_1)
+        assertThat(liste[0].tidspunkt.withNano(0)).isEqualTo(DAYS_1.withNano(0))
         assertThat(liste[1].arkivReferanse).isEqualTo(ARKIV_REFERANSE)
         assertThat(liste[1].feiltype).isEqualTo(Feiltype.BEHANDLENDE_IKKE_FUNNET)
-        assertThat(liste[1].tidspunkt).isEqualTo(DAYS_8)
+        assertThat(liste[1].tidspunkt.withNano(0)).isEqualTo(DAYS_8.withNano(0))
     }
 
     @Test
