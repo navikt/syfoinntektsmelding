@@ -77,7 +77,7 @@ spec:
     - name: OPPGAVEBEHANDLING_URL
       value: "http://oppgave.default.svc.nais.local/api/v1/oppgaver"
     - name: OPPRETT_SAK_URL
-      value: "http://sak.default.svc.nais.local/api/v1/saker"
+      value: "http://sak.teamdokumenthandtering.svc.nais.local/api/v1/saker"
     - name: SRVAPPSERVER_USERNAME
       value: "srvappserver"
     - name: SRVAPPSERVER_PASSWORD
@@ -91,7 +91,7 @@ spec:
     - name: KAFKA_UTSATT_OPPGAVE_TOPIC
       value: "tbd.spre-oppgaver"
     - name: DOKARKIV_URL
-      value: "https://dokarkiv.nais.adeo.no/rest/journalpostapi/v1"
+      value: "https://dokarkiv.intern.nav.no/rest/journalpostapi/v1"
     - name: DATAPAKKE_ID
       value: "fb74c8d14d9c579e05b0b4b587843e6b"
     - name: DATAPAKKE_API_URL
@@ -103,8 +103,8 @@ spec:
     - name: NORG2_URL
       value: "https://norg2.nais.adeo.no/norg2/api/v1"
     - name: SAF_DOKUMENT_URL
-      value: "https://saf.nais.adeo.no/rest"
+      value: "https://saf.intern.nav.no/rest"
     - name: SAF_JOURNAL_URL
-      value: "https://saf.nais.adeo.no/graphql"
+      value: "https://saf.intern.nav.no/graphql"
     - name: ENHETSREGISTERET_URL
       value: "https://data.brreg.no/enhetsregisteret/api/underenheter/"
