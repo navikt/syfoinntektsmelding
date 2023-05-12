@@ -3,6 +3,7 @@ package no.nav.syfo.behandling
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClient
 import no.nav.syfo.client.aktor.AktorClient
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
@@ -25,13 +26,15 @@ class InntektsmeldingBehandlerTest {
     private var aktorClient = mockk<AktorClient>(relaxed = true)
     private var inntektsmeldingService = mockk<InntektsmeldingService>(relaxed = true)
     private val aivenInntektsmeldingProducer = mockk<InntektsmeldingAivenProducer>(relaxed = true)
+    private val pdlClient = mockk<PdlClient>(relaxed = true)
     private var inntektsmeldingBehandler = InntektsmeldingBehandler(
         journalpostService,
         metrikk,
         inntektsmeldingService,
         aktorClient,
         aivenInntektsmeldingProducer,
-        utsattOppgaveService
+        utsattOppgaveService,
+        pdlClient
     )
 
     @BeforeEach
