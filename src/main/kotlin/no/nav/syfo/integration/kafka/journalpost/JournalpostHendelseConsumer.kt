@@ -23,7 +23,7 @@ class JournalpostHendelseConsumer(
     topicName: String,
     private val duplikatRepository: DuplikatRepository,
     private val bakgrunnsjobbRepo: BakgrunnsjobbRepository,
-    private val om: ObjectMapper
+    private val om: ObjectMapper,
 ) : ReadynessComponent, LivenessComponent {
 
     private val log = LoggerFactory.getLogger(JournalpostHendelseConsumer::class.java)
@@ -65,10 +65,20 @@ class JournalpostHendelseConsumer(
     }
 
     fun processHendelse(journalpostDTO: InngaaendeJournalpostDTO) {
-        when (findStatus(journalpostDTO)) {
-            JournalpostStatus.Duplikat -> log.info("Ignorerer duplikat inntektsmelding ${journalpostDTO.kanalReferanseId} for hendelse ${journalpostDTO.hendelsesId}")
-            JournalpostStatus.Ny -> lagreBakgrunnsjobb(journalpostDTO)
-            JournalpostStatus.IkkeInntektsmelding -> log.info("Ignorerte journalposthendelse ${journalpostDTO.hendelsesId}. Kanal: ${journalpostDTO.mottaksKanal} Tema: ${journalpostDTO.temaNytt} Status: ${journalpostDTO.journalpostStatus}")
+        if (journalpostDTO.hendelsesType == "JournalpostMottatt") {
+            when (findStatus(journalpostDTO)) {
+                JournalpostStatus.Duplikat -> log.info(
+                    "Ignorerer duplikat inntektsmelding ${journalpostDTO.kanalReferanseId} for hendelse ${journalpostDTO.hendelsesId}",
+                )
+                JournalpostStatus.Ny -> lagreBakgrunnsjobb(journalpostDTO)
+                JournalpostStatus.IkkeInntektsmelding -> log.info(
+                    "Ignorerte journalposthendelse ${journalpostDTO.hendelsesId}. Kanal: ${journalpostDTO.mottaksKanal} Tema: ${journalpostDTO.temaNytt} Status: ${journalpostDTO.journalpostStatus}",
+                )
+            }
+        } else {
+            log.info(
+                "Ingorerte JournalpostHendelse ${journalpostDTO.hendelsesId} av type ${journalpostDTO.hendelsesType} med referanse: ${journalpostDTO.kanalReferanseId}",
+            )
         }
     }
 
@@ -89,8 +99,8 @@ class JournalpostHendelseConsumer(
                 type = JoarkInntektsmeldingHendelseProsessor.JOB_TYPE,
                 kjoeretid = LocalDateTime.now(),
                 maksAntallForsoek = 10,
-                data = om.writeValueAsString(hendelse)
-            )
+                data = om.writeValueAsString(hendelse),
+            ),
         )
     }
 
