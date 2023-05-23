@@ -24,7 +24,7 @@ class JournalpostHendelseConsumerTest {
     var props = joarkLocalProperties().toMap()
     val topicName = "topic"
     lateinit var consumer: JournalpostHendelseConsumer
-    val GYLDIG_INNTEKTSMELDING = InngaaendeJournalpostDTO("abc", 1, "", 111, "MOTTATT", "", "SYK", "ALTINN", "", "")
+    val GYLDIG_INNTEKTSMELDING = InngaaendeJournalpostDTO("abc", 1, "JournalpostMottatt", 111, "MOTTATT", "", "SYK", "ALTINN", "", "")
     val DUPLIKAT_INNTEKTSMELDING = GYLDIG_INNTEKTSMELDING.copy(journalpostId = 222)
     val IKKE_INNTEKTSMELDING = InngaaendeJournalpostDTO("abc", 1, "", 333, "IKKE_MOTTATT", "", "IKKE_SYK", "IKKE_ALTINN", "", "")
 
