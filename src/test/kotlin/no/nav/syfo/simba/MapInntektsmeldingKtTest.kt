@@ -1,6 +1,5 @@
 package no.nav.syfo.simba
 
-import junit.framework.TestCase.assertEquals
 import no.nav.helsearbeidsgiver.felles.inntektsmelding.felles.models.BegrunnelseIngenEllerRedusertUtbetalingKode
 import no.nav.helsearbeidsgiver.felles.inntektsmelding.felles.models.FullLonnIArbeidsgiverPerioden
 import no.nav.helsearbeidsgiver.felles.inntektsmelding.felles.models.InntektsmeldingDokument
@@ -9,6 +8,7 @@ import no.nav.helsearbeidsgiver.felles.inntektsmelding.felles.models.Naturalytel
 import no.nav.helsearbeidsgiver.felles.inntektsmelding.felles.models.Periode
 import no.nav.helsearbeidsgiver.felles.inntektsmelding.felles.models.Refusjon
 import no.nav.helsearbeidsgiver.felles.inntektsmelding.felles.models.ÅrsakInnsending
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -24,6 +24,8 @@ internal class MapInntektsmeldingKtTest {
         val periode1 = listOf(Periode(dato1, dato1))
         val periode2 = listOf(Periode(dato1, dato1), Periode(dato2, dato2))
         val periode3 = listOf(Periode(dato1, dato3))
+        val naturalytelseListe = NaturalytelseKode.values().map { Naturalytelse(it, dato1, BigDecimal.ONE) }
+        val antallNaturalytelser = naturalytelseListe.count()
         val imDokumentFraSimba = InntektsmeldingDokument(
             orgnrUnderenhet = "123456789",
             identitetsnummer = "12345678901",
@@ -37,22 +39,14 @@ internal class MapInntektsmeldingKtTest {
             beregnetInntekt = BigDecimal.valueOf(100_000L),
             fullLønnIArbeidsgiverPerioden = FullLonnIArbeidsgiverPerioden(utbetalerFullLønn = false, begrunnelse = BegrunnelseIngenEllerRedusertUtbetalingKode.BESKJED_GITT_FOR_SENT),
             refusjon = Refusjon(true, BigDecimal.TEN, null, null),
-            naturalytelser = listOf(
-                Naturalytelse(
-                    NaturalytelseKode
-                        .INNBETALINGTILUTENLANDSKPENSJONSORDNING,
-                    dato1, BigDecimal.valueOf(10_000L)
-                ),
-                Naturalytelse(
-                    NaturalytelseKode.BIL, dato2, BigDecimal.valueOf(5_000L)
-                )
-            ),
+            naturalytelser = naturalytelseListe,
             tidspunkt = OffsetDateTime.now(),
             årsakInnsending = ÅrsakInnsending.NY,
             identitetsnummerInnsender = "123456789"
         )
         val mapped = mapInntektsmelding("1323", "sdfds", "134", imDokumentFraSimba)
         val naturalytelse = mapped.opphørAvNaturalYtelse.get(0)
-        assertEquals(no.nav.syfo.domain.inntektsmelding.Naturalytelse.INNBETALINGTILUTENLANDSKPENSJONSORDNING, naturalytelse.naturalytelse)
+        assertEquals(antallNaturalytelser, mapped.opphørAvNaturalYtelse.size)
+        assertEquals(no.nav.syfo.domain.inntektsmelding.Naturalytelse.AKSJERGRUNNFONDSBEVISTILUNDERKURS, naturalytelse.naturalytelse)
     }
 }
