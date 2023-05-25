@@ -29,7 +29,7 @@ fun mapInntektsmelding(arkivreferanse: String, aktorId: String, journalpostId: S
         emptyList(),
         imd.naturalytelser?.map {
             OpphoerAvNaturalytelse(
-                no.nav.syfo.domain.inntektsmelding.Naturalytelse.valueOf(it.naturalytelse.name),
+                no.nav.syfo.domain.inntektsmelding.Naturalytelse.valueOf(it.naturalytelse.value),
                 it.dato,
                 it.beløp
             )
