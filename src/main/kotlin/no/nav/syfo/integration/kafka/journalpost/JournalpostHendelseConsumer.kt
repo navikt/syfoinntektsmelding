@@ -15,7 +15,7 @@ import java.time.Duration.ofMillis
 import java.time.LocalDateTime
 
 enum class JournalpostStatus {
-    Duplikat, Ny, IkkeInntektsmelding
+    Duplikat, Ny, IkkeInntektsmelding, FeilHendelseType
 }
 
 class JournalpostHendelseConsumer(
@@ -65,24 +65,24 @@ class JournalpostHendelseConsumer(
     }
 
     fun processHendelse(journalpostDTO: InngaaendeJournalpostDTO) {
-        if (journalpostDTO.hendelsesType == "JournalpostMottatt") {
-            when (findStatus(journalpostDTO)) {
-                JournalpostStatus.Duplikat -> log.info(
-                    "Ignorerer duplikat inntektsmelding ${journalpostDTO.kanalReferanseId} for hendelse ${journalpostDTO.hendelsesId}",
-                )
-                JournalpostStatus.Ny -> lagreBakgrunnsjobb(journalpostDTO)
-                JournalpostStatus.IkkeInntektsmelding -> log.info(
-                    "Ignorerte journalposthendelse ${journalpostDTO.hendelsesId}. Kanal: ${journalpostDTO.mottaksKanal} Tema: ${journalpostDTO.temaNytt} Status: ${journalpostDTO.journalpostStatus}",
-                )
-            }
-        } else {
-            log.info(
+        when (findStatus(journalpostDTO)) {
+            JournalpostStatus.Duplikat -> log.info(
+                "Ignorerer duplikat inntektsmelding ${journalpostDTO.kanalReferanseId} for hendelse ${journalpostDTO.hendelsesId}",
+            )
+            JournalpostStatus.Ny -> lagreBakgrunnsjobb(journalpostDTO)
+            JournalpostStatus.IkkeInntektsmelding -> log.info(
+                "Ignorerte journalposthendelse ${journalpostDTO.hendelsesId}. Kanal: ${journalpostDTO.mottaksKanal} Tema: ${journalpostDTO.temaNytt} Status: ${journalpostDTO.journalpostStatus}",
+            )
+            JournalpostStatus.FeilHendelseType -> log.info(
                 "Ingorerte JournalpostHendelse ${journalpostDTO.hendelsesId} av type ${journalpostDTO.hendelsesType} med referanse: ${journalpostDTO.kanalReferanseId}",
             )
         }
     }
 
     fun findStatus(journalpostDTO: InngaaendeJournalpostDTO): JournalpostStatus {
+        if (journalpostDTO.hendelsesType != "JournalpostMottatt") {
+            return JournalpostStatus.FeilHendelseType
+        }
         if (isInntektsmelding(journalpostDTO)) {
             if (isDuplicate(journalpostDTO)) {
                 return JournalpostStatus.Duplikat
@@ -99,8 +99,8 @@ class JournalpostHendelseConsumer(
                 type = JoarkInntektsmeldingHendelseProsessor.JOB_TYPE,
                 kjoeretid = LocalDateTime.now(),
                 maksAntallForsoek = 10,
-                data = om.writeValueAsString(hendelse),
-            ),
+                data = om.writeValueAsString(hendelse)
+            )
         )
     }
 
