@@ -26,7 +26,8 @@ class JournalpostHendelseConsumerTest {
     lateinit var consumer: JournalpostHendelseConsumer
     val GYLDIG_INNTEKTSMELDING = InngaaendeJournalpostDTO("abc", 1, "JournalpostMottatt", 111, "MOTTATT", "", "SYK", "ALTINN", "", "")
     val DUPLIKAT_INNTEKTSMELDING = GYLDIG_INNTEKTSMELDING.copy(journalpostId = 222)
-    val IKKE_INNTEKTSMELDING = InngaaendeJournalpostDTO("abc", 1, "", 333, "IKKE_MOTTATT", "", "IKKE_SYK", "IKKE_ALTINN", "", "")
+    val IKKE_INNTEKTSMELDING = InngaaendeJournalpostDTO("abc", 1, "JournalpostMottatt", 333, "IKKE_MOTTATT", "", "IKKE_SYK", "IKKE_ALTINN", "", "")
+    val FEIL_HENDELSE_TYPE = InngaaendeJournalpostDTO("abc", 1, "TemaEndret", 333, "IKKE_MOTTATT", "", "IKKE_SYK", "IKKE_ALTINN", "", "")
 
     @BeforeEach
     fun before() {
@@ -105,6 +106,15 @@ class JournalpostHendelseConsumerTest {
             duplikatRepository.findByHendelsesId(any())
         } returns false
         assertEquals(JournalpostStatus.IkkeInntektsmelding, consumer.findStatus(IKKE_INNTEKTSMELDING))
+        verify(exactly = 0) { bakgrunnsjobbRepo.save(any()) }
+    }
+
+    @Test
+    fun skal_gjenkjenne_feil_hendelser() {
+        every {
+            duplikatRepository.findByHendelsesId(any())
+        } returns false
+        assertEquals(JournalpostStatus.FeilHendelseType, consumer.findStatus(FEIL_HENDELSE_TYPE))
         verify(exactly = 0) { bakgrunnsjobbRepo.save(any()) }
     }
 
