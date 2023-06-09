@@ -49,17 +49,15 @@ class JournalpostHendelseConsumer(
         consumer.use {
             setIsReady(true)
             while (!error) {
-                it
-                    .poll(ofMillis(1000))
-                    .forEach { record ->
-                        try {
-                            processHendelse(mapJournalpostHendelse(record.value()))
-                            it.commitSync()
-                        } catch (e: Throwable) {
-                            log.error("Klarte ikke behandle hendelse. Stopper lytting!", e)
-                            setIsError(true)
-                        }
+                it.poll(ofMillis(1000)).forEach { record ->
+                    try {
+                        processHendelse(mapJournalpostHendelse(record.value()))
+                        it.commitSync()
+                    } catch (e: Throwable) {
+                        log.error("Klarte ikke behandle hendelse. Stopper lytting!", e)
+                        setIsError(true)
                     }
+                }
             }
         }
     }
@@ -67,23 +65,25 @@ class JournalpostHendelseConsumer(
     fun processHendelse(journalpostDTO: InngaaendeJournalpostDTO) {
         when (findStatus(journalpostDTO)) {
             JournalpostStatus.Duplikat -> log.info(
-                "Ignorerer duplikat inntektsmelding ${journalpostDTO.kanalReferanseId} for hendelse ${journalpostDTO.hendelsesId}",
+                "Ignorerer duplikat inntektsmelding ${journalpostDTO.kanalReferanseId} for hendelse ${journalpostDTO.hendelsesId}"
             )
+
             JournalpostStatus.Ny -> lagreBakgrunnsjobb(journalpostDTO)
             JournalpostStatus.IkkeInntektsmelding -> log.info(
-                "Ignorerte journalposthendelse ${journalpostDTO.hendelsesId}. Kanal: ${journalpostDTO.mottaksKanal} Tema: ${journalpostDTO.temaNytt} Status: ${journalpostDTO.journalpostStatus}",
+                "Ignorerte journalposthendelse ${journalpostDTO.hendelsesId}. Kanal: ${journalpostDTO.mottaksKanal} Tema: ${journalpostDTO.temaNytt} Status: ${journalpostDTO.journalpostStatus}"
             )
+
             JournalpostStatus.FeilHendelseType -> log.info(
-                "Ingorerte JournalpostHendelse ${journalpostDTO.hendelsesId} av type ${journalpostDTO.hendelsesType} med referanse: ${journalpostDTO.kanalReferanseId}",
+                "Ingorerte JournalpostHendelse ${journalpostDTO.hendelsesId} av type ${journalpostDTO.hendelsesType} med referanse: ${journalpostDTO.kanalReferanseId}"
             )
         }
     }
 
     fun findStatus(journalpostDTO: InngaaendeJournalpostDTO): JournalpostStatus {
-        if (journalpostDTO.hendelsesType != "JournalpostMottatt") {
-            return JournalpostStatus.FeilHendelseType
-        }
         if (isInntektsmelding(journalpostDTO)) {
+            if (journalpostDTO.hendelsesType != "JournalpostMottatt") {
+                return JournalpostStatus.FeilHendelseType
+            }
             if (isDuplicate(journalpostDTO)) {
                 return JournalpostStatus.Duplikat
             }
