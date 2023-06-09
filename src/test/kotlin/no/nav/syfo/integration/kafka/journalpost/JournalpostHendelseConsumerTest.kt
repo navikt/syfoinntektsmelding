@@ -27,7 +27,7 @@ class JournalpostHendelseConsumerTest {
     val GYLDIG_INNTEKTSMELDING = InngaaendeJournalpostDTO("abc", 1, "JournalpostMottatt", 111, "MOTTATT", "", "SYK", "ALTINN", "", "")
     val DUPLIKAT_INNTEKTSMELDING = GYLDIG_INNTEKTSMELDING.copy(journalpostId = 222)
     val IKKE_INNTEKTSMELDING = InngaaendeJournalpostDTO("abc", 1, "JournalpostMottatt", 333, "IKKE_MOTTATT", "", "IKKE_SYK", "IKKE_ALTINN", "", "")
-    val FEIL_HENDELSE_TYPE = InngaaendeJournalpostDTO("abc", 1, "TemaEndret", 333, "IKKE_MOTTATT", "", "IKKE_SYK", "IKKE_ALTINN", "", "")
+    val FEIL_HENDELSE_TYPE = InngaaendeJournalpostDTO("abc", 1, "TemaEndret", 333, "MOTTATT", "", "SYK", "ALTINN", "", "")
 
     @BeforeEach
     fun before() {
