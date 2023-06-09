@@ -23,7 +23,7 @@ class JournalpostHendelseConsumer(
     topicName: String,
     private val duplikatRepository: DuplikatRepository,
     private val bakgrunnsjobbRepo: BakgrunnsjobbRepository,
-    private val om: ObjectMapper,
+    private val om: ObjectMapper
 ) : ReadynessComponent, LivenessComponent {
 
     private val log = LoggerFactory.getLogger(JournalpostHendelseConsumer::class.java)
