@@ -25,7 +25,7 @@ fun mapInntektsmelding(arkivreferanse: String, aktorId: String, journalpostId: S
         JournalStatus.FERDIGSTILT,
         imd.arbeidsgiverperioder.map { t -> Periode(t.fom, t.tom) },
         imd.beregnetInntekt,
-        Refusjon(imd.refusjon.refusjonPrMnd ?: 0.0.toBigDecimal()),
+        Refusjon(imd.refusjon.refusjonPrMnd ?: 0.0.toBigDecimal(),imd.refusjon.refusjonOpphører),
         emptyList(),
         imd.naturalytelser?.map {
             OpphoerAvNaturalytelse(
