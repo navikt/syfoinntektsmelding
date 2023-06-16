@@ -26,7 +26,7 @@ internal class MapInntektsmeldingKtTest {
         val periode3 = listOf(Periode(dato1, dato3))
         val naturalytelseListe = NaturalytelseKode.values().map { Naturalytelse(it, dato1, BigDecimal.ONE) }
         val antallNaturalytelser = naturalytelseListe.count()
-        val refusjon = Refusjon(true, BigDecimal.TEN, LocalDate.of(2025,12,12), null)
+        val refusjon = Refusjon(true, BigDecimal.TEN, LocalDate.of(2025, 12, 12), null)
         val imDokumentFraSimba = InntektsmeldingDokument(
             orgnrUnderenhet = "123456789",
             identitetsnummer = "12345678901",
@@ -39,7 +39,7 @@ internal class MapInntektsmeldingKtTest {
             arbeidsgiverperioder = periode3,
             beregnetInntekt = BigDecimal.valueOf(100_000L),
             fullLønnIArbeidsgiverPerioden = FullLonnIArbeidsgiverPerioden(utbetalerFullLønn = false, begrunnelse = BegrunnelseIngenEllerRedusertUtbetalingKode.BESKJED_GITT_FOR_SENT),
-            refusjon =  refusjon,
+            refusjon = refusjon,
             naturalytelser = naturalytelseListe,
             tidspunkt = OffsetDateTime.now(),
             årsakInnsending = ÅrsakInnsending.NY,
@@ -47,7 +47,7 @@ internal class MapInntektsmeldingKtTest {
         )
         val mapped = mapInntektsmelding("1323", "sdfds", "134", imDokumentFraSimba)
         val naturalytelse = mapped.opphørAvNaturalYtelse.get(0)
-        assertEquals(mapped.refusjon.opphoersdato,refusjon.refusjonOpphører)
+        assertEquals(mapped.refusjon.opphoersdato, refusjon.refusjonOpphører)
         assertEquals(antallNaturalytelser, mapped.opphørAvNaturalYtelse.size)
         assertEquals(no.nav.syfo.domain.inntektsmelding.Naturalytelse.AKSJERGRUNNFONDSBEVISTILUNDERKURS, naturalytelse.naturalytelse)
     }
