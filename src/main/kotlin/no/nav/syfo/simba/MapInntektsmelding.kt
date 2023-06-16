@@ -4,6 +4,7 @@ import no.nav.helsearbeidsgiver.felles.inntektsmelding.felles.models.Inntektsmel
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
 import no.nav.syfo.domain.inntektsmelding.AvsenderSystem
+import no.nav.syfo.domain.inntektsmelding.EndringIRefusjon
 import no.nav.syfo.domain.inntektsmelding.Gyldighetsstatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.domain.inntektsmelding.Kontaktinformasjon
@@ -26,7 +27,7 @@ fun mapInntektsmelding(arkivreferanse: String, aktorId: String, journalpostId: S
         imd.arbeidsgiverperioder.map { t -> Periode(t.fom, t.tom) },
         imd.beregnetInntekt,
         Refusjon(imd.refusjon.refusjonPrMnd ?: 0.0.toBigDecimal(), imd.refusjon.refusjonOpphører),
-        emptyList(),
+        imd.refusjon.refusjonEndringer?.map { EndringIRefusjon(it.dato, it.beløp) } ?: emptyList(),
         imd.naturalytelser?.map {
             OpphoerAvNaturalytelse(
                 no.nav.syfo.domain.inntektsmelding.Naturalytelse.valueOf(it.naturalytelse.value),
