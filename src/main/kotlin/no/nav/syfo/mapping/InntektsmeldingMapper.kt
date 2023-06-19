@@ -88,7 +88,7 @@ fun mapNaturalytelseType(naturalytelseType: no.nav.syfo.domain.inntektsmelding.N
     }
         ?: Naturalytelse.ANNET
 }
-fun mapAvsenderSystem(avsenderSystem: no.nav.syfo.domain.inntektsmelding.AvsenderSystem): AvsenderSystem{
+fun mapAvsenderSystem(avsenderSystem: no.nav.syfo.domain.inntektsmelding.AvsenderSystem): AvsenderSystem {
     return AvsenderSystem(
         avsenderSystem.navn,
         avsenderSystem.versjon
