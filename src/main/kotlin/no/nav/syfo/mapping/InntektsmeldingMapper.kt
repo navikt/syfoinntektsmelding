@@ -1,6 +1,7 @@
 package no.nav.syfo.mapping
 
 import no.nav.inntektsmeldingkontrakt.Arbeidsgivertype
+import no.nav.inntektsmeldingkontrakt.AvsenderSystem
 import no.nav.inntektsmeldingkontrakt.EndringIRefusjon
 import no.nav.inntektsmeldingkontrakt.GjenopptakelseNaturalytelse
 import no.nav.inntektsmeldingkontrakt.Naturalytelse
@@ -39,7 +40,8 @@ fun mapInntektsmeldingKontrakt(
         foersteFravaersdag = inntektsmelding.førsteFraværsdag,
         mottattDato = inntektsmelding.mottattDato,
         begrunnelseForReduksjonEllerIkkeUtbetalt = inntektsmelding.begrunnelseRedusert,
-        naerRelasjon = inntektsmelding.nærRelasjon
+        naerRelasjon = inntektsmelding.nærRelasjon,
+        avsenderSystem = mapAvsenderSystem(inntektsmelding.avsenderSystem)
     )
 }
 
@@ -85,4 +87,10 @@ fun mapNaturalytelseType(naturalytelseType: no.nav.syfo.domain.inntektsmelding.N
         if (Naturalytelse.values().map { it.name }.contains(naturalytelse.name)) Naturalytelse.valueOf(naturalytelse.name) else Naturalytelse.ANNET
     }
         ?: Naturalytelse.ANNET
+}
+fun mapAvsenderSystem(avsenderSystem: no.nav.syfo.domain.inntektsmelding.AvsenderSystem): AvsenderSystem {
+    return AvsenderSystem(
+        navn = avsenderSystem.navn,
+        versjon = avsenderSystem.versjon
+    )
 }
