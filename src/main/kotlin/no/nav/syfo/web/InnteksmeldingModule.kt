@@ -20,7 +20,7 @@ fun Application.inntektsmeldingModule(config: ApplicationConfig = environment.co
 
     routing {
         route("/api/v1") {
-            syfoinntektsmelding(get(), get(), get(), get())
+            syfoinntektsmelding(get(), get(), get())
         }
     }
 }

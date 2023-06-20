@@ -11,16 +11,18 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.request.receive
 import io.ktor.response.respond
 import io.ktor.routing.Route
+import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.route
-import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.syfo.behandling.InntektsmeldingBehandler
-import javax.sql.DataSource
+import no.nav.syfo.mapping.mapInntektsmeldingKontrakt
+import no.nav.syfo.mapping.toInntektsmelding
+import no.nav.syfo.repository.InntektsmeldingRepository
+import no.nav.syfo.util.validerInntektsmelding
 
 fun Route.syfoinntektsmelding(
     inntektsmeldingBehandler: InntektsmeldingBehandler,
-    bakgunnsjobbService: BakgrunnsjobbService,
-    datasource: DataSource,
+    imRepo: InntektsmeldingRepository,
     om: ObjectMapper
 ) {
     route("/api/v1/inntektsmelding") {
@@ -42,6 +44,23 @@ fun Route.syfoinntektsmelding(
                 call.respond(HttpStatusCode.Created, Resultat(uuid))
             }
             call.respond(HttpStatusCode.NoContent)
+        }
+        get("/{inntektsmeldingId}") {
+            val inntektsmeldingId = call.parameters["inntektsmeldingId"] ?: throw IllegalArgumentException("Forventet inntektsmeldingId som path parameter")
+            val dto = imRepo.findByUuid(inntektsmeldingId)
+            if (dto != null) {
+                val inntektsmelding = toInntektsmelding(dto, om)
+
+                val mappedInntektsmelding = mapInntektsmeldingKontrakt(
+                    inntektsmelding,
+                    dto.aktorId,
+                    validerInntektsmelding(inntektsmelding),
+                    inntektsmelding.arkivRefereranse,
+                    dto.uuid
+                )
+
+                call.respond(HttpStatusCode.OK, mappedInntektsmelding)
+            } else call.respond(HttpStatusCode.NotFound)
         }
     }
 }
