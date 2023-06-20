@@ -90,7 +90,7 @@ fun mapNaturalytelseType(naturalytelseType: no.nav.syfo.domain.inntektsmelding.N
 }
 fun mapAvsenderSystem(avsenderSystem: no.nav.syfo.domain.inntektsmelding.AvsenderSystem): AvsenderSystem {
     return AvsenderSystem(
-        avsenderSystem.navn,
-        avsenderSystem.versjon
+        navn = avsenderSystem.navn,
+        versjon = avsenderSystem.versjon
     )
 }
