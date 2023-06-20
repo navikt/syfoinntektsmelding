@@ -10,7 +10,7 @@ import javax.sql.DataSource
 
 interface InntektsmeldingRepository {
     fun findByJournalpost(journalpostId: String): InntektsmeldingEntitet?
-    fun findByUuid(uuid: String): InntektsmeldingEntitet?
+    fun findByUuid(uuid: String): InntektsmeldingEntitet
     fun findByArkivReferanse(arkivRefereanse: String): InntektsmeldingEntitet
     fun findByAktorId(aktoerId: String): List<InntektsmeldingEntitet>
     fun findFirst100ByBehandletBefore(førDato: LocalDateTime): List<InntektsmeldingEntitet>
@@ -77,19 +77,17 @@ class InntektsmeldingRepositoryImp(
         return result
     }
 
-    override fun findByUuid(uuid: String): InntektsmeldingEntitet? {
+    override fun findByUuid(uuid: String): InntektsmeldingEntitet {
         val findByAktorId = "SELECT * FROM INNTEKTSMELDING WHERE INNTEKTSMELDING_UUID = ?;"
         val inntektsmeldinger = ArrayList<InntektsmeldingEntitet>()
-        val result: InntektsmeldingEntitet?
+        val result: InntektsmeldingEntitet
         ds.connection.use {
             val res = it.prepareStatement(findByAktorId).apply {
                 setString(1, uuid)
             }.executeQuery()
-            result = resultLoop(res, inntektsmeldinger).firstOrNull()
+            result = resultLoop(res, inntektsmeldinger).first()
         }
-        if (result != null) {
-            result.arbeidsgiverperioder = finnAgpForIm(uuid).toMutableList()
-        }
+        result.arbeidsgiverperioder = finnAgpForIm(uuid).toMutableList()
         return result
     }
 
