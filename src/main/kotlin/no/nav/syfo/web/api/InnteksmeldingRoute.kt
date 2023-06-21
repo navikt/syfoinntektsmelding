@@ -14,6 +14,7 @@ import io.ktor.routing.Route
 import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.route
+import no.nav.helsearbeidsgiver.utils.logger
 import no.nav.syfo.behandling.InntektsmeldingBehandler
 import no.nav.syfo.mapping.mapInntektsmeldingKontrakt
 import no.nav.syfo.mapping.toInntektsmelding
@@ -25,6 +26,7 @@ fun Route.syfoinntektsmelding(
     imRepo: InntektsmeldingRepository,
     om: ObjectMapper
 ) {
+    val logger = this.logger()
     route("/api/v1/inntektsmelding") {
         post("behandleJournal") {
             val request = call.receive<JournalInntektsmeldingRequest>()
@@ -47,6 +49,7 @@ fun Route.syfoinntektsmelding(
         }
         get("/{inntektsmeldingId}") {
             val inntektsmeldingId = call.parameters["inntektsmeldingId"] ?: throw IllegalArgumentException("Forventet inntektsmeldingId som path parameter")
+            logger.info("Fikk request om å hente inntektsmelding med id: $inntektsmeldingId")
             val dto = imRepo.findByUuid(inntektsmeldingId)
             if (dto != null) {
                 val inntektsmelding = toInntektsmelding(dto, om)
@@ -58,6 +61,8 @@ fun Route.syfoinntektsmelding(
                     inntektsmelding.arkivRefereranse,
                     dto.uuid
                 )
+
+                logger.info("inntetsmelding arkivreferanse: ${inntektsmelding.arkivRefereranse}")
 
                 call.respond(HttpStatusCode.OK, mappedInntektsmelding)
             } else call.respond(HttpStatusCode.NotFound)
