@@ -27,7 +27,7 @@ fun Route.syfoinntektsmelding(
     om: ObjectMapper
 ) {
     val logger = this.logger()
-    route("/api/v1/inntektsmelding") {
+    route("/inntektsmelding") {
         post("behandleJournal") {
             val request = call.receive<JournalInntektsmeldingRequest>()
             val uuid = inntektsmeldingBehandler.behandle(request.arkivId, request.arkivReferanse)
