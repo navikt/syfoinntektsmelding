@@ -16,8 +16,6 @@ import no.nav.syfo.web.api.syfoinntektsmelding
 import org.koin.ktor.ext.get
 
 fun Application.inntektsmeldingModule(config: ApplicationConfig = environment.config) {
-
-
     install(Authentication) {
         tokenValidationSupport(config = config)
     }
@@ -25,7 +23,6 @@ fun Application.inntektsmeldingModule(config: ApplicationConfig = environment.co
         val commonObjectMapper = get<ObjectMapper>()
         register(ContentType.Application.Json, JacksonConverter(commonObjectMapper))
     }
-
     routing {
         route("/api/v1") {
             authenticate {
