@@ -49,6 +49,11 @@ spec:
     enabled: true
   kafka:
     pool: nav-dev
+
+  accessPolicy:
+    innbound:
+      rules:
+        - application: helsearbeidsgiver-proxy
   env:
     - name: KOIN_PROFILE
       value: "PREPROD"
