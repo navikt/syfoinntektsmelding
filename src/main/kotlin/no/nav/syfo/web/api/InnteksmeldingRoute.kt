@@ -28,7 +28,7 @@ fun Route.syfoinntektsmelding(
 ) {
     val logger = this.logger()
     route("/inntektsmelding") {
-        post("behandleJournal") {
+        /*post("behandleJournal") {
             val request = call.receive<JournalInntektsmeldingRequest>()
             val uuid = inntektsmeldingBehandler.behandle(request.arkivId, request.arkivReferanse)
             uuid?.let {
@@ -46,7 +46,7 @@ fun Route.syfoinntektsmelding(
                 call.respond(HttpStatusCode.Created, Resultat(uuid))
             }
             call.respond(HttpStatusCode.NoContent)
-        }
+        }*/
         get("/{inntektsmeldingId}") {
             val inntektsmeldingId = call.parameters["inntektsmeldingId"] ?: throw IllegalArgumentException("Forventet inntektsmeldingId som path parameter")
             logger.info("Fikk request om å hente inntektsmelding med id: $inntektsmeldingId")
