@@ -160,7 +160,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
             config.getString("lagringstidMåneder").toInt()
         )
     } bind FjernInntektsmeldingByBehandletProcessor::class
-    single { FinnAlleUtgaandeOppgaverProcessor(get(), get(), get(), get(), get(), get()) } bind FinnAlleUtgaandeOppgaverProcessor::class
+    single { FinnAlleUtgaandeOppgaverProcessor(get(), get(), get(), get()) } bind FinnAlleUtgaandeOppgaverProcessor::class
 
     single { FeiletService(FeiletRepositoryImp(get())) } bind FeiletService::class
 

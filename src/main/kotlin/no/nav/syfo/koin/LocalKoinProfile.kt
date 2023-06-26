@@ -92,7 +92,7 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single { FeiletRepositoryImp(get()) } bind FeiletRepository::class
     single { UtsattOppgaveRepositoryImp(get()) } bind UtsattOppgaveRepository::class
 
-    single { FinnAlleUtgaandeOppgaverProcessor(get(), get(), get(), get(), get(), get()) } bind FinnAlleUtgaandeOppgaverProcessor::class
+    single { FinnAlleUtgaandeOppgaverProcessor(get(), get(), get(), get()) } bind FinnAlleUtgaandeOppgaverProcessor::class
 
     single {
         JournalpostHendelseConsumer(
