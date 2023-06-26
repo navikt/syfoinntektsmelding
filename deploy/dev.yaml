@@ -49,6 +49,9 @@ spec:
     enabled: true
   kafka:
     pool: nav-dev
+  azure:
+    application:
+      enabled: true
 
   accessPolicy:
     innbound:
