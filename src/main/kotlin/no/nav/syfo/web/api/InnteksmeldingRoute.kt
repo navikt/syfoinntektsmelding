@@ -60,7 +60,7 @@ fun Route.syfoinntektsmelding(
                     dto.uuid
                 )
 
-                logger.info("inntetsmelding arkivreferanse: ${inntektsmelding.arkivRefereranse}")
+                logger.info("inntektsmelding arkivreferanse: ${inntektsmelding.arkivRefereranse}")
 
                 call.respond(HttpStatusCode.OK, mappedInntektsmelding)
             } else call.respond(HttpStatusCode.NotFound)
