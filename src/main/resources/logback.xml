@@ -3,7 +3,7 @@
 
     <logger name="no.nav" level="INFO"/>
     <logger name="org.apache.cxf" level="${log.level.org.apache:-ERROR}" />
-    <logger name="no.nav.security.token" level="${log.level.no.nav.security.token:-WARN}"/>
+    <logger name="no.nav.security.token" level="DEBUG"/>
 
     <!-- Åpen logger -->
     <appender name="stdout_json" class="ch.qos.logback.core.ConsoleAppender">
