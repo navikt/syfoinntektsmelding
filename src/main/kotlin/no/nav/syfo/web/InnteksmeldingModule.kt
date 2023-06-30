@@ -26,7 +26,7 @@ fun Application.inntektsmeldingModule(config: ApplicationConfig = environment.co
     routing {
         route("/api/v1") {
             authenticate {
-                syfoinntektsmelding(get(), get(), get())
+                syfoinntektsmelding(get(), get())
             }
         }
     }
