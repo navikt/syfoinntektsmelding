@@ -6,6 +6,8 @@ metadata:
   labels:
     team: helsearbeidsgiver
 spec:
+  ingresses:
+    - https://syfoinntektsmelding.intern.nav.no
   cpuThresholdPercentage: 90
   image: {{image}}
   port: 8080
@@ -37,15 +39,20 @@ spec:
   vault:
     enabled: true
 
-  azure:
-    application:
-      enabled: true
   sidecar: true
   webproxy: true
   secureLogs:
     enabled: true
   kafka:
     pool: nav-prod
+  azure:
+    application:
+      enabled: true
+
+  accessPolicy:
+    inbound:
+      rules:
+        - application: helsearbeidsgiver-proxy
   env:
     - name: KOIN_PROFILE
       value: "PROD"
