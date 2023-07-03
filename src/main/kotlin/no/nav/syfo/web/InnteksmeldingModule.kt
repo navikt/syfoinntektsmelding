@@ -11,7 +11,6 @@ import io.ktor.http.ContentType
 import io.ktor.jackson.JacksonConverter
 import io.ktor.routing.route
 import io.ktor.routing.routing
-import no.nav.helse.arbeidsgiver.system.getString
 import no.nav.security.token.support.ktor.tokenValidationSupport
 import no.nav.syfo.web.api.syfoinntektsmelding
 import org.koin.ktor.ext.get
@@ -21,7 +20,7 @@ fun Application.inntektsmeldingModule(config: ApplicationConfig = environment.co
         tokenValidationSupport(
             config = config,
             additionalValidation = {
-                val claims = it.getClaims(config.getString("no.nav.security.jwt.issuers[0].issuer_name"))
+                val claims = it.getClaims("hagproxy")
                 val roles = claims.getAsList("roles")
                 roles.size == 1 && roles.contains("access_as_application")
             }
