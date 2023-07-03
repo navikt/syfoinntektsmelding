@@ -8,7 +8,7 @@ metadata:
 spec:
   ingresses:
     - https://syfoinntektsmelding.nais.preprod.local
-    - https://syfoinntektsmelding.dev.intern.nav.no
+    - https://syfoinntektsmelding.intern.dev.nav.no
   cpuThresholdPercentage: 90
   image: {{image}}
   port: 8080
