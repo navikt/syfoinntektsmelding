@@ -36,9 +36,10 @@ spec:
       memory: "386Mi"
   vault:
     enabled: true
-    paths:
-      - mountPath: /var/run/secrets/nais.io/azuread
-        kvPath: /azuread/prod/creds/syfoinntektsmelding
+
+  azure:
+    application:
+      enabled: true
   sidecar: true
   webproxy: true
   secureLogs:
