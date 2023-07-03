@@ -52,7 +52,8 @@ spec:
   accessPolicy:
     inbound:
       rules:
-        - application: helsearbeidsgiver-proxy
+        - application: helsearbeidsgiver-bro-sykepenger
+          cluster: prod-gcp
   env:
     - name: KOIN_PROFILE
       value: "PROD"
