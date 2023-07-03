@@ -3,7 +3,7 @@
 
     <logger name="no.nav" level="INFO"/>
     <logger name="org.apache.cxf" level="${log.level.org.apache:-ERROR}" />
-    <logger name="no.nav.security.token" level="DEBUG"/>
+    <logger name="no.nav.security.token" level="${log.level.no.nav.security.token:-WARN}"/>
 
     <!-- Åpen logger -->
     <appender name="stdout_json" class="ch.qos.logback.core.ConsoleAppender">
@@ -11,7 +11,7 @@
             <provider class="net.logstash.logback.composite.loggingevent.ArgumentsJsonProvider" />
         </encoder>
     </appender>
-    <root level="DEBUG">
+    <root level="INFO">
         <appender-ref ref="stdout_json"/>
     </root>
 
@@ -28,7 +28,7 @@
         </triggeringPolicy>
         <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
     </appender>
-    <logger name="tjenestekall" level="DEBUG" additivity="false">
+    <logger name="tjenestekall" level="INFO" additivity="false">
         <appender-ref ref="secureLog" />
     </logger>
 </configuration>
