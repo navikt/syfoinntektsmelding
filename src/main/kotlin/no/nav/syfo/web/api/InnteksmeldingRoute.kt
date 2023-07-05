@@ -39,10 +39,12 @@ fun Route.syfoinntektsmelding(
                     dto.uuid
                 )
 
-                logger.info("inntektsmelding arkivreferanse: ${inntektsmelding.arkivRefereranse}")
+                logger.info("Henter inntektsmelding med arkivreferanse: ${inntektsmelding.arkivRefereranse}")
 
                 call.respond(HttpStatusCode.OK, mappedInntektsmelding)
-            } else call.respond(HttpStatusCode.NotFound)
+            } else {
+                call.respond(HttpStatusCode.NotFound)
+            }
         }
     }
 }
