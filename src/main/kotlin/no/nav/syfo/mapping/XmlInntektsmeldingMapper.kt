@@ -1,6 +1,6 @@
 package no.nav.syfo.mapping
 
-import no.nav.syfo.client.aktor.AktorClient
+import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClient
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.util.JAXB
@@ -12,7 +12,7 @@ class XmlInntektsmeldingMapper {
 
     fun mapInntektsmelding(
         inntektsmeldingRAW: ByteArray,
-        aktorClient: AktorClient,
+        pdlClient: PdlClient,
         mottattDato: LocalDateTime,
         journalpostId: String,
         journalStatus: JournalStatus,
@@ -21,9 +21,22 @@ class XmlInntektsmeldingMapper {
         val inntektsmelding = String(inntektsmeldingRAW)
         val jaxbInntektsmelding = JAXB.unmarshalInntektsmelding<JAXBElement<Any>>(inntektsmelding)
         return if (jaxbInntektsmelding.value is XMLInntektsmeldingM)
-            InntektsmeldingArbeidsgiver20180924Mapper.tilXMLInntektsmelding(jaxbInntektsmelding, journalpostId, mottattDato, journalStatus, arkivReferanse)
+            InntektsmeldingArbeidsgiver20180924Mapper.tilXMLInntektsmelding(
+                jaxbInntektsmelding,
+                journalpostId,
+                mottattDato,
+                journalStatus,
+                arkivReferanse
+            )
         else {
-            InntektsmeldingArbeidsgiverPrivat20181211Mapper.tilXMLInntektsmelding(jaxbInntektsmelding, journalpostId, mottattDato, journalStatus, arkivReferanse, aktorClient)
+            InntektsmeldingArbeidsgiverPrivat20181211Mapper.tilXMLInntektsmelding(
+                jaxbInntektsmelding,
+                journalpostId,
+                mottattDato,
+                journalStatus,
+                arkivReferanse,
+                pdlClient
+            )
         }
     }
 }

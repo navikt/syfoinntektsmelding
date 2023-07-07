@@ -4,9 +4,7 @@ package no.nav.syfo.behandling
 
 import com.google.common.util.concurrent.Striped
 import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClient
-import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlIdent
 import no.nav.helsearbeidsgiver.utils.logger
-import no.nav.syfo.client.aktor.AktorClient
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.dto.Tilstand
@@ -16,6 +14,7 @@ import no.nav.syfo.producer.InntektsmeldingAivenProducer
 import no.nav.syfo.service.InntektsmeldingService
 import no.nav.syfo.service.JournalpostService
 import no.nav.syfo.util.Metrikk
+import no.nav.syfo.util.getAktørid
 import no.nav.syfo.util.validerInntektsmelding
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import org.slf4j.LoggerFactory
@@ -27,7 +26,6 @@ class InntektsmeldingBehandler(
     private val journalpostService: JournalpostService,
     private val metrikk: Metrikk,
     private val inntektsmeldingService: InntektsmeldingService,
-    private val aktorClient: AktorClient,
     private val inntektsmeldingAivenProducer: InntektsmeldingAivenProducer,
     private val utsattOppgaveService: UtsattOppgaveService,
     private val pdlClient: PdlClient
@@ -49,9 +47,11 @@ class InntektsmeldingBehandler(
             consumerLock.lock()
             sikkerlogger.info("Behandler: $inntektsmelding")
             logger.info("Slår opp aktørID for ${inntektsmelding.arkivRefereranse}")
-            val aktorid = pdlClient.fullPerson(inntektsmelding.fnr)?.hentIdenter?.trekkUtIdent(PdlIdent.PdlIdentGruppe.AKTORID) ?: aktorClient.getAktorId(
-                inntektsmelding.fnr
-            )
+            val aktorid = pdlClient.getAktørid(inntektsmelding.fnr)
+            if (aktorid == null) {
+                logger.error("Fant ikke aktøren for arkivreferansen: $arkivreferanse")
+                throw FantIkkeAktørException(null)
+            }
             logger.info("Fant aktørid for ${inntektsmelding.arkivRefereranse}")
             inntektsmelding.aktorId = aktorid
             if (inntektsmeldingService.isDuplicate(inntektsmelding)) {

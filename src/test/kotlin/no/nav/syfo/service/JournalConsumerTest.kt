@@ -2,8 +2,8 @@ package no.nav.syfo.service
 
 import io.mockk.every
 import io.mockk.mockk
+import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClient
 import no.nav.syfo.behandling.HentDokumentFeiletException
-import no.nav.syfo.client.aktor.AktorClient
 import no.nav.syfo.client.saf.SafDokumentClient
 import no.nav.syfo.client.saf.SafJournalpostClient
 import no.nav.syfo.client.saf.model.Dokument
@@ -20,10 +20,10 @@ import java.time.LocalDateTime
 
 class JournalConsumerTest {
 
-    private val aktør = mockk<AktorClient>(relaxed = true)
+    private val pdlClient = mockk<PdlClient>(relaxed = true)
     private val dokumentClient = mockk<SafDokumentClient>(relaxed = true)
     private val safJournalpostClient = mockk<SafJournalpostClient>(relaxed = true)
-    private val journalConsumer = JournalConsumer(dokumentClient, safJournalpostClient, aktør)
+    private val journalConsumer = JournalConsumer(dokumentClient, safJournalpostClient, pdlClient)
 
     // Todo Lage test for når safJournalpostClient returnerer errrors
 

@@ -16,7 +16,6 @@ import no.nav.syfo.client.BrregClient
 import no.nav.syfo.client.BrregClientImp
 import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.client.TokenConsumer
-import no.nav.syfo.client.aktor.AktorClient
 import no.nav.syfo.client.dokarkiv.DokArkivClient
 import no.nav.syfo.client.norg.Norg2Client
 import no.nav.syfo.client.saf.SafDokumentClient
@@ -88,14 +87,6 @@ fun preprodConfig(config: ApplicationConfig) = module {
     single { ArbeidsgiverperiodeRepositoryImp(get()) } bind ArbeidsgiverperiodeRepository::class
 
     single {
-        AktorClient(
-            get(),
-            config.getString("srvsyfoinntektsmelding.username"),
-            config.getString("aktoerregister_api_v1_url"),
-            get()
-        )
-    } bind AktorClient::class
-    single {
         TokenConsumer(
             get(),
             config.getString("security-token-service-token.url"),
@@ -105,7 +96,6 @@ fun preprodConfig(config: ApplicationConfig) = module {
     } bind TokenConsumer::class
     single {
         InntektsmeldingBehandler(
-            get(),
             get(),
             get(),
             get(),

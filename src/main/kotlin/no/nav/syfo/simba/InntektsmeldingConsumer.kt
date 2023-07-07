@@ -1,17 +1,19 @@
 package no.nav.syfo.simba
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClient
 import no.nav.helse.arbeidsgiver.kubernetes.LivenessComponent
 import no.nav.helse.arbeidsgiver.kubernetes.ReadynessComponent
 import no.nav.helsearbeidsgiver.felles.inntektsmelding.felles.models.InntektsmeldingDokument
 import no.nav.helsearbeidsgiver.felles.inntektsmelding.felles.models.JournalførtInntektsmelding
+import no.nav.syfo.behandling.FantIkkeAktørException
 import no.nav.syfo.behandling.OPPRETT_OPPGAVE_FORSINKELSE
-import no.nav.syfo.client.aktor.AktorClient
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.dto.UtsattOppgaveEntitet
 import no.nav.syfo.mapping.mapInntektsmeldingKontrakt
 import no.nav.syfo.producer.InntektsmeldingAivenProducer
 import no.nav.syfo.service.InntektsmeldingService
+import no.nav.syfo.util.getAktørid
 import no.nav.syfo.util.validerInntektsmelding
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import org.apache.kafka.clients.consumer.KafkaConsumer
@@ -26,7 +28,7 @@ class InntektsmeldingConsumer(
     val inntektsmeldingService: InntektsmeldingService,
     val inntektsmeldingAivenProducer: InntektsmeldingAivenProducer,
     val utsattOppgaveService: UtsattOppgaveService,
-    val aktorClient: AktorClient
+    val pdlClient: PdlClient
 ) : ReadynessComponent, LivenessComponent {
 
     private val consumer = KafkaConsumer<String, String>(props)
@@ -79,8 +81,12 @@ class InntektsmeldingConsumer(
     }
 
     fun behandle(journalpostId: String, inntektsmeldingDokument: InntektsmeldingDokument) {
-        val aktorid = aktorClient.getAktorId(inntektsmeldingDokument.identitetsnummer)
+        val aktorid = pdlClient.getAktørid(inntektsmeldingDokument.identitetsnummer)
         val arkivreferanse = "im_$journalpostId"
+        if (aktorid == null) {
+            log.error("Fant ikke aktøren for arkivreferansen: $arkivreferanse")
+            throw FantIkkeAktørException(null)
+        }
         val inntektsmelding = mapInntektsmelding(arkivreferanse, aktorid, journalpostId, inntektsmeldingDokument)
         val dto = inntektsmeldingService.lagreBehandling(inntektsmelding, aktorid, arkivreferanse)
 
