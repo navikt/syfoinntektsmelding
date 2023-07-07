@@ -8,6 +8,7 @@ metadata:
 spec:
   ingresses:
     - https://syfoinntektsmelding.nais.preprod.local
+    - https://syfoinntektsmelding.dev.intern.nav.no
   cpuThresholdPercentage: 90
   image: {{image}}
   port: 8080
@@ -40,15 +41,23 @@ spec:
       memory: "386Mi"
   vault:
     enabled: true
-    paths:
-      - mountPath: /var/run/secrets/nais.io/azuread
-        kvPath: /azuread/dev/creds/syfoinntektsmelding
+
   sidecar: true
   webproxy: true
   secureLogs:
     enabled: true
   kafka:
     pool: nav-dev
+  azure:
+    application:
+      enabled: true
+
+  accessPolicy:
+    inbound:
+      rules:
+        - application: helsearbeidsgiver-proxy
+        - application: helsearbeidsgiver-bro-sykepenger
+          cluster: dev-gcp
   env:
     - name: KOIN_PROFILE
       value: "PREPROD"
