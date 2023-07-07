@@ -4,7 +4,6 @@ package no.nav.syfo.behandling
 
 import com.google.common.util.concurrent.Striped
 import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClient
-import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlIdent
 import no.nav.helsearbeidsgiver.utils.logger
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
@@ -19,7 +18,6 @@ import no.nav.syfo.util.getAktørid
 import no.nav.syfo.util.validerInntektsmelding
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import org.slf4j.LoggerFactory
-import java.lang.RuntimeException
 import java.time.LocalDateTime
 
 const val OPPRETT_OPPGAVE_FORSINKELSE = 48L
@@ -50,7 +48,7 @@ class InntektsmeldingBehandler(
             sikkerlogger.info("Behandler: $inntektsmelding")
             logger.info("Slår opp aktørID for ${inntektsmelding.arkivRefereranse}")
             val aktorid = pdlClient.getAktørid(inntektsmelding.fnr)
-            if(aktorid == null) {
+            if (aktorid == null) {
                 logger.error("Fant ikke aktøren for arkivreferansen: $arkivreferanse")
                 throw FantIkkeAktørException(null)
             }

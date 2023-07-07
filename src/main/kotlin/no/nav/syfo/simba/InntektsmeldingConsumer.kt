@@ -83,7 +83,7 @@ class InntektsmeldingConsumer(
     fun behandle(journalpostId: String, inntektsmeldingDokument: InntektsmeldingDokument) {
         val aktorid = pdlClient.getAktørid(inntektsmeldingDokument.identitetsnummer)
         val arkivreferanse = "im_$journalpostId"
-        if(aktorid == null) {
+        if (aktorid == null) {
             log.error("Fant ikke aktøren for arkivreferansen: $arkivreferanse")
             throw FantIkkeAktørException(null)
         }
