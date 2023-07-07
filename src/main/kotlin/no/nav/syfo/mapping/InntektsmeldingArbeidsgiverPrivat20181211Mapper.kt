@@ -1,7 +1,7 @@
 package no.nav.syfo.mapping
 
+import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClient
 import no.nav.helsearbeidsgiver.utils.logger
-import no.nav.syfo.client.aktor.AktorClient
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
 import no.nav.syfo.domain.inntektsmelding.AvsenderSystem
@@ -12,6 +12,7 @@ import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.domain.inntektsmelding.Kontaktinformasjon
 import no.nav.syfo.domain.inntektsmelding.OpphoerAvNaturalytelse
 import no.nav.syfo.domain.inntektsmelding.Refusjon
+import no.nav.syfo.util.getAktørid
 import no.seres.xsd.nav.inntektsmelding_m._20181211.XMLArbeidsforhold
 import no.seres.xsd.nav.inntektsmelding_m._20181211.XMLGjenopptakelseNaturalytelseListe
 import no.seres.xsd.nav.inntektsmelding_m._20181211.XMLInntektsmeldingM
@@ -31,14 +32,14 @@ internal object InntektsmeldingArbeidsgiverPrivat20181211Mapper {
         mottattDato: LocalDateTime,
         journalStatus: JournalStatus,
         arkivReferanse: String,
-        aktorClient: AktorClient
+        pdlClient: PdlClient
     ): Inntektsmelding {
         logger.info("Behandling inntektsmelding på 20181211 format")
         val skjemainnhold = (jaxbInntektsmelding.value as XMLInntektsmeldingM).skjemainnhold
 
         val arbeidsforholdId = skjemainnhold.arbeidsforhold.value.arbeidsforholdId?.value
         val beregnetInntekt = skjemainnhold.arbeidsforhold.value.beregnetInntekt?.value?.beloep?.value
-        val arbeidsGiverAktørId = skjemainnhold.arbeidsgiverPrivat?.value?.arbeidsgiverFnr?.let { ap -> aktorClient.getAktorId(ap) }
+        val arbeidsGiverAktørId = skjemainnhold.arbeidsgiverPrivat?.value?.arbeidsgiverFnr?.let { fnr -> pdlClient.getAktørid(fnr) }
 
         val innsendingstidspunkt = skjemainnhold.avsendersystem?.innsendingstidspunkt?.value
         val bruttoUtbetalt = skjemainnhold.sykepengerIArbeidsgiverperioden?.value?.bruttoUtbetalt?.value

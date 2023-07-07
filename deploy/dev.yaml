@@ -70,8 +70,6 @@ spec:
       value: "5432"
     - name: DATABASE_NAME
       value: "syfoinntektsmelding"
-    - name: AKTOERREGISTER_API_V1_URL
-      value: "https://app-q1.adeo.no/aktoerregister/api/v1"
     - name: SECURITY_TOKEN_SERVICE_TOKEN_URL
       value: "http://security-token-service.default.svc.nais.local/rest/v1/sts/token"
     - name: AADACCESSTOKEN_URL

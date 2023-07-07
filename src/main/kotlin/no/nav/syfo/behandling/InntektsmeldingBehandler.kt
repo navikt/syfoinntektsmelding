@@ -6,7 +6,6 @@ import com.google.common.util.concurrent.Striped
 import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClient
 import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlIdent
 import no.nav.helsearbeidsgiver.utils.logger
-import no.nav.syfo.client.aktor.AktorClient
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.dto.Tilstand
@@ -27,7 +26,6 @@ class InntektsmeldingBehandler(
     private val journalpostService: JournalpostService,
     private val metrikk: Metrikk,
     private val inntektsmeldingService: InntektsmeldingService,
-    private val aktorClient: AktorClient,
     private val inntektsmeldingAivenProducer: InntektsmeldingAivenProducer,
     private val utsattOppgaveService: UtsattOppgaveService,
     private val pdlClient: PdlClient
@@ -49,9 +47,7 @@ class InntektsmeldingBehandler(
             consumerLock.lock()
             sikkerlogger.info("Behandler: $inntektsmelding")
             logger.info("Slår opp aktørID for ${inntektsmelding.arkivRefereranse}")
-            val aktorid = pdlClient.fullPerson(inntektsmelding.fnr)?.hentIdenter?.trekkUtIdent(PdlIdent.PdlIdentGruppe.AKTORID) ?: aktorClient.getAktorId(
-                inntektsmelding.fnr
-            )
+            val aktorid = requireNotNull(pdlClient.fullPerson(inntektsmelding.fnr)?.hentIdenter?.trekkUtIdent(PdlIdent.PdlIdentGruppe.AKTORID))
             logger.info("Fant aktørid for ${inntektsmelding.arkivRefereranse}")
             inntektsmelding.aktorId = aktorid
             if (inntektsmeldingService.isDuplicate(inntektsmelding)) {
