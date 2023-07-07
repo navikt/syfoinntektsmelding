@@ -15,9 +15,11 @@ import no.nav.syfo.producer.InntektsmeldingAivenProducer
 import no.nav.syfo.service.InntektsmeldingService
 import no.nav.syfo.service.JournalpostService
 import no.nav.syfo.util.Metrikk
+import no.nav.syfo.util.getAktørid
 import no.nav.syfo.util.validerInntektsmelding
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import org.slf4j.LoggerFactory
+import java.lang.RuntimeException
 import java.time.LocalDateTime
 
 const val OPPRETT_OPPGAVE_FORSINKELSE = 48L
@@ -47,7 +49,11 @@ class InntektsmeldingBehandler(
             consumerLock.lock()
             sikkerlogger.info("Behandler: $inntektsmelding")
             logger.info("Slår opp aktørID for ${inntektsmelding.arkivRefereranse}")
-            val aktorid = requireNotNull(pdlClient.fullPerson(inntektsmelding.fnr)?.hentIdenter?.trekkUtIdent(PdlIdent.PdlIdentGruppe.AKTORID))
+            val aktorid = pdlClient.getAktørid(inntektsmelding.fnr)
+            if(aktorid == null) {
+                logger.error("Fant ikke aktøren for arkivreferansen: $arkivreferanse")
+                throw FantIkkeAktørException(null)
+            }
             logger.info("Fant aktørid for ${inntektsmelding.arkivRefereranse}")
             inntektsmelding.aktorId = aktorid
             if (inntektsmeldingService.isDuplicate(inntektsmelding)) {

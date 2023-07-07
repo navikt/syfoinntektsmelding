@@ -6,6 +6,7 @@ import no.nav.helse.arbeidsgiver.kubernetes.LivenessComponent
 import no.nav.helse.arbeidsgiver.kubernetes.ReadynessComponent
 import no.nav.helsearbeidsgiver.felles.inntektsmelding.felles.models.InntektsmeldingDokument
 import no.nav.helsearbeidsgiver.felles.inntektsmelding.felles.models.JournalførtInntektsmelding
+import no.nav.syfo.behandling.FantIkkeAktørException
 import no.nav.syfo.behandling.OPPRETT_OPPGAVE_FORSINKELSE
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.dto.UtsattOppgaveEntitet
@@ -80,8 +81,12 @@ class InntektsmeldingConsumer(
     }
 
     fun behandle(journalpostId: String, inntektsmeldingDokument: InntektsmeldingDokument) {
-        val aktorid = requireNotNull(pdlClient.getAktørid(inntektsmeldingDokument.identitetsnummer))
+        val aktorid = pdlClient.getAktørid(inntektsmeldingDokument.identitetsnummer)
         val arkivreferanse = "im_$journalpostId"
+        if(aktorid == null) {
+            log.error("Fant ikke aktøren for arkivreferansen: $arkivreferanse")
+            throw FantIkkeAktørException(null)
+        }
         val inntektsmelding = mapInntektsmelding(arkivreferanse, aktorid, journalpostId, inntektsmeldingDokument)
         val dto = inntektsmeldingService.lagreBehandling(inntektsmelding, aktorid, arkivreferanse)
 
