@@ -6,7 +6,7 @@ import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.mockk.every
 import io.mockk.mockk
-import no.nav.helsearbeidsgiver.utils.logger
+import no.nav.helsearbeidsgiver.utils.log.logger
 import no.nav.inntektsmelding.kontrakt.serde.JacksonJsonConfig
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.dto.InntektsmeldingEntitet
@@ -31,7 +31,9 @@ class InntektsmeldingServiceTest {
             .configure(KotlinFeature.NullIsSameAsDefault, false)
             .configure(KotlinFeature.SingletonSupport, false)
             .configure(KotlinFeature.StrictNullChecks, false)
-            .build(), JavaTimeModule())
+            .build(),
+        JavaTimeModule()
+    )
     val AKTOR_ID_FOUND = "aktør-123"
     val logger = this.logger()
 

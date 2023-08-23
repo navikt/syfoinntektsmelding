@@ -12,7 +12,7 @@ import no.nav.helse.arbeidsgiver.kubernetes.KubernetesProbeManager
 import no.nav.helse.arbeidsgiver.system.AppEnv
 import no.nav.helse.arbeidsgiver.system.getEnvironment
 import no.nav.helse.arbeidsgiver.system.getString
-import no.nav.helsearbeidsgiver.utils.logger
+import no.nav.helsearbeidsgiver.utils.log.logger
 import no.nav.syfo.integration.kafka.UtsattOppgaveConsumer
 import no.nav.syfo.integration.kafka.journalpost.JournalpostHendelseConsumer
 import no.nav.syfo.koin.selectModuleBasedOnProfile

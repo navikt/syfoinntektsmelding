@@ -2,8 +2,8 @@ package no.nav.syfo.service
 
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClient
-import no.nav.helsearbeidsgiver.utils.MdcUtils
-import no.nav.helsearbeidsgiver.utils.logger
+import no.nav.helsearbeidsgiver.utils.log.MdcUtils
+import no.nav.helsearbeidsgiver.utils.log.logger
 import no.nav.syfo.behandling.BehandlendeEnhetFeiletException
 import no.nav.syfo.behandling.IngenAktivEnhetException
 import no.nav.syfo.client.norg.ArbeidsfordelingRequest

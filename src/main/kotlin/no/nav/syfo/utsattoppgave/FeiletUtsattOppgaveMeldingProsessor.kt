@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbProsesserer
-import no.nav.helsearbeidsgiver.utils.MdcUtils
-import no.nav.helsearbeidsgiver.utils.logger
+import no.nav.helsearbeidsgiver.utils.log.MdcUtils
+import no.nav.helsearbeidsgiver.utils.log.logger
 
 /**
  * En bakgrunnsjobb som tar feilede meldinger ang utsatt oppgave og prøver å prosessere dem på nytt

@@ -1,7 +1,7 @@
 package no.nav.syfo.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import no.nav.helsearbeidsgiver.utils.logger
+import no.nav.helsearbeidsgiver.utils.log.logger
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.dto.InntektsmeldingEntitet
 import no.nav.syfo.mapping.toInntektsmelding

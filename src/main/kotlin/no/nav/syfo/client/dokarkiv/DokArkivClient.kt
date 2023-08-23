@@ -11,7 +11,7 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
-import no.nav.helsearbeidsgiver.utils.logger
+import no.nav.helsearbeidsgiver.utils.log.logger
 import no.nav.syfo.helpers.retry
 import java.io.IOException
 

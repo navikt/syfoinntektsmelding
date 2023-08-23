@@ -5,8 +5,8 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbProsesserer
-import no.nav.helsearbeidsgiver.utils.MdcUtils
-import no.nav.helsearbeidsgiver.utils.logger
+import no.nav.helsearbeidsgiver.utils.log.MdcUtils
+import no.nav.helsearbeidsgiver.utils.log.logger
 import no.nav.syfo.behandling.BehandlingException
 import no.nav.syfo.behandling.Feiltype
 import no.nav.syfo.behandling.InntektsmeldingBehandler
