@@ -20,7 +20,6 @@ import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
 import no.nav.syfo.prosesser.FjernInntektsmeldingByBehandletProcessor
 import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
 import no.nav.syfo.simba.InntektsmeldingConsumer
-import no.nav.syfo.util.logger
 import no.nav.syfo.utsattoppgave.FeiletUtsattOppgaveMeldingProsessor
 import no.nav.syfo.web.inntektsmeldingModule
 import no.nav.syfo.web.nais.nais
@@ -133,7 +132,7 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
 }
 
 fun main() {
-    val logger = logger("main")
+    val logger = "main".logger()
 
     Thread.currentThread().setUncaughtExceptionHandler { thread, err ->
         logger.error("uncaught exception in thread ${thread.name}: ${err.message}", err)
