@@ -32,8 +32,7 @@ class InntektsmeldingService(
 
     fun lagreBehandling(
         inntektsmelding: Inntektsmelding,
-        aktorid: String,
-        arkivReferanse: String
+        aktorid: String
     ): InntektsmeldingEntitet {
         val dto = toInntektsmeldingEntitet(inntektsmelding)
         dto.aktorId = aktorid

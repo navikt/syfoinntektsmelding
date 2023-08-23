@@ -30,10 +30,11 @@ import org.koin.core.component.get
 import org.koin.core.context.GlobalContext
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
+import org.slf4j.Logger
 import kotlin.concurrent.thread
 
 class SpinnApplication(val port: Int = 8080) : KoinComponent {
-    private val logger = this.logger()
+    private val logger: Logger = this.logger()
     private var webserver: NettyApplicationEngine? = null
     private var appConfig: HoconApplicationConfig = HoconApplicationConfig(ConfigFactory.load())
 

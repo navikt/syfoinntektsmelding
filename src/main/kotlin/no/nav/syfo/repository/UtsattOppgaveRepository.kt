@@ -83,7 +83,7 @@ class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepo
         }
     }
 
-    override fun opprett(uo: UtsattOppgaveEntitet): UtsattOppgaveEntitet {
+    override fun opprett(innteksmelding: UtsattOppgaveEntitet): UtsattOppgaveEntitet {
         val insertStatement =
             """INSERT INTO UTSATT_OPPGAVE (INNTEKTSMELDING_ID, ARKIVREFERANSE, FNR, AKTOR_ID, JOURNALPOST_ID, TIMEOUT, TILSTAND, GOSYS_OPPGAVE_ID, OPPDATERT, SPEIL, UTBETALING_BRUKER)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -94,23 +94,23 @@ class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepo
 
         ds.connection.use {
             val ps = it.prepareStatement(insertStatement)
-            ps.setString(1, uo.inntektsmeldingId)
-            ps.setString(2, uo.arkivreferanse)
-            ps.setString(3, uo.fnr)
-            ps.setString(4, uo.aktørId)
-            ps.setString(5, uo.journalpostId)
-            ps.setTimestamp(6, Timestamp.valueOf(uo.timeout))
-            ps.setString(7, uo.tilstand.name)
-            ps.setString(8, uo.gosysOppgaveId)
-            ps.setTimestamp(9, Timestamp.valueOf(uo.oppdatert ?: LocalDateTime.now()))
-            ps.setBoolean(10, uo.speil)
-            ps.setBoolean(11, uo.utbetalingBruker)
+            ps.setString(1, innteksmelding.inntektsmeldingId)
+            ps.setString(2, innteksmelding.arkivreferanse)
+            ps.setString(3, innteksmelding.fnr)
+            ps.setString(4, innteksmelding.aktørId)
+            ps.setString(5, innteksmelding.journalpostId)
+            ps.setTimestamp(6, Timestamp.valueOf(innteksmelding.timeout))
+            ps.setString(7, innteksmelding.tilstand.name)
+            ps.setString(8, innteksmelding.gosysOppgaveId)
+            ps.setTimestamp(9, Timestamp.valueOf(innteksmelding.oppdatert ?: LocalDateTime.now()))
+            ps.setBoolean(10, innteksmelding.speil)
+            ps.setBoolean(11, innteksmelding.utbetalingBruker)
             val res = ps.executeQuery()
             return resultLoop(res, utsattOppgaver).first()
         }
     }
 
-    override fun oppdater(uo: UtsattOppgaveEntitet): UtsattOppgaveEntitet {
+    override fun oppdater(innteksmelding: UtsattOppgaveEntitet): UtsattOppgaveEntitet {
         val updateStatement =
             """UPDATE UTSATT_OPPGAVE SET
                 INNTEKTSMELDING_ID= ?,
@@ -130,21 +130,21 @@ class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepo
 
         ds.connection.use {
             val ps = it.prepareStatement(updateStatement)
-            ps.setString(1, uo.inntektsmeldingId)
-            ps.setString(2, uo.arkivreferanse)
-            ps.setString(3, uo.fnr)
-            ps.setString(4, uo.aktørId)
-            ps.setString(5, uo.journalpostId)
-            ps.setTimestamp(6, Timestamp.valueOf(uo.timeout))
-            ps.setString(7, uo.tilstand.name)
-            ps.setString(8, uo.enhet)
-            ps.setString(9, uo.gosysOppgaveId)
-            ps.setTimestamp(10, Timestamp.valueOf(uo.oppdatert ?: LocalDateTime.now()))
-            ps.setBoolean(11, uo.speil)
-            ps.setBoolean(12, uo.utbetalingBruker)
-            ps.setInt(13, uo.id)
+            ps.setString(1, innteksmelding.inntektsmeldingId)
+            ps.setString(2, innteksmelding.arkivreferanse)
+            ps.setString(3, innteksmelding.fnr)
+            ps.setString(4, innteksmelding.aktørId)
+            ps.setString(5, innteksmelding.journalpostId)
+            ps.setTimestamp(6, Timestamp.valueOf(innteksmelding.timeout))
+            ps.setString(7, innteksmelding.tilstand.name)
+            ps.setString(8, innteksmelding.enhet)
+            ps.setString(9, innteksmelding.gosysOppgaveId)
+            ps.setTimestamp(10, Timestamp.valueOf(innteksmelding.oppdatert ?: LocalDateTime.now()))
+            ps.setBoolean(11, innteksmelding.speil)
+            ps.setBoolean(12, innteksmelding.utbetalingBruker)
+            ps.setInt(13, innteksmelding.id)
             ps.executeUpdate()
-            return uo
+            return innteksmelding
         }
     }
 
