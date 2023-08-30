@@ -2,7 +2,6 @@ package no.nav.syfo.koin
 
 import com.zaxxer.hikari.HikariConfig
 import io.ktor.config.ApplicationConfig
-import io.ktor.util.KtorExperimentalAPI
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
@@ -60,7 +59,6 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 import javax.sql.DataSource
 
-@OptIn(KtorExperimentalAPI::class)
 fun preprodConfig(config: ApplicationConfig) = module {
     externalSystemClients(config)
     single {
@@ -118,7 +116,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
 
     single {
         JournalpostHendelseConsumer(
-            joarkAivenProperties(config),
+            joarkAivenProperties(),
             config.getString("kafka_joark_hendelse_topic"),
             get(),
             get(),
@@ -127,7 +125,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
     }
     single {
         UtsattOppgaveConsumer(
-            utsattOppgaveAivenProperties(config),
+            utsattOppgaveAivenProperties(),
             config.getString("kafka_utsatt_oppgave_topic"), get(), get(), get()
         )
     }

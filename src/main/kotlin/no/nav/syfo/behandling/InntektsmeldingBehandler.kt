@@ -4,7 +4,7 @@ package no.nav.syfo.behandling
 
 import com.google.common.util.concurrent.Striped
 import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClient
-import no.nav.helsearbeidsgiver.utils.logger
+import no.nav.helsearbeidsgiver.utils.log.logger
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.dto.Tilstand
@@ -17,6 +17,7 @@ import no.nav.syfo.util.Metrikk
 import no.nav.syfo.util.getAktørid
 import no.nav.syfo.util.validerInntektsmelding
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
 
@@ -30,7 +31,7 @@ class InntektsmeldingBehandler(
     private val utsattOppgaveService: UtsattOppgaveService,
     private val pdlClient: PdlClient
 ) {
-    private val logger = this.logger()
+    private val logger: Logger = this.logger()
     private val sikkerlogger = LoggerFactory.getLogger("tjenestekall")
     private val consumerLocks = Striped.lock(8)
 
@@ -69,7 +70,7 @@ class InntektsmeldingBehandler(
                     journalpostService.ferdigstillJournalpost(inntektsmelding)
                     logger.info("Ferdigstilte ${inntektsmelding.arkivRefereranse}")
 
-                    val dto = inntektsmeldingService.lagreBehandling(inntektsmelding, aktorid, arkivreferanse)
+                    val dto = inntektsmeldingService.lagreBehandling(inntektsmelding, aktorid)
                     logger.info("Lagret inntektsmelding ${inntektsmelding.arkivRefereranse}")
 
                     utsattOppgaveService.opprett(

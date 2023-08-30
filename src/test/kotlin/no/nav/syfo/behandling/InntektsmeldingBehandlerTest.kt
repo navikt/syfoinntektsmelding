@@ -38,7 +38,7 @@ class InntektsmeldingBehandlerTest {
     @BeforeEach
     fun setup() {
         every { pdlClient.getAktørid("fnr") } returns "aktorId" // inntektsmelding.fnr
-        every { inntektsmeldingService.lagreBehandling(any(), any(), any()) } returns
+        every { inntektsmeldingService.lagreBehandling(any(), any()) } returns
             InntektsmeldingEntitet(
                 orgnummer = "orgnummer",
                 arbeidsgiverPrivat = "123",

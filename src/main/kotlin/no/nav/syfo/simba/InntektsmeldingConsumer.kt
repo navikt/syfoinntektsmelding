@@ -88,7 +88,7 @@ class InntektsmeldingConsumer(
             throw FantIkkeAktørException(null)
         }
         val inntektsmelding = mapInntektsmelding(arkivreferanse, aktorid, journalpostId, inntektsmeldingDokument)
-        val dto = inntektsmeldingService.lagreBehandling(inntektsmelding, aktorid, arkivreferanse)
+        val dto = inntektsmeldingService.lagreBehandling(inntektsmelding, aktorid)
 
         utsattOppgaveService.opprett(
             UtsattOppgaveEntitet(

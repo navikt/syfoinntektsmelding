@@ -3,7 +3,6 @@ package no.nav.syfo.integration.kafka
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClientConfig
 import io.confluent.kafka.serializers.KafkaAvroSerializerConfig
 import io.confluent.kafka.streams.serdes.avro.GenericAvroDeserializer
-import io.ktor.config.ApplicationConfig
 import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.producer.ProducerConfig
@@ -38,7 +37,7 @@ fun inntektsmeldingFraSimbaLocalProperties() = consumerLocalProperties() + mapOf
     ConsumerConfig.GROUP_ID_CONFIG to "syfoinntektsmelding-v1"
 )
 
-fun joarkAivenProperties(config: ApplicationConfig) = commonAivenProperties() + mapOf(
+fun joarkAivenProperties() = commonAivenProperties() + mapOf(
     ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to GenericAvroDeserializer::class.java,
     KafkaAvroSerializerConfig.SCHEMA_REGISTRY_URL_CONFIG to System.getenv("KAFKA_SCHEMA_REGISTRY"),
     SchemaRegistryClientConfig.BASIC_AUTH_CREDENTIALS_SOURCE to "USER_INFO",
@@ -54,7 +53,7 @@ fun utsattOppgaveLocalProperties() = consumerLocalProperties() + mapOf(
     ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
 )
 
-fun utsattOppgaveAivenProperties(config: ApplicationConfig) = commonAivenProperties() + mapOf(
+fun utsattOppgaveAivenProperties() = commonAivenProperties() + mapOf(
     ConsumerConfig.GROUP_ID_CONFIG to "syfoinntektsmelding-v1",
     ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
 )

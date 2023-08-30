@@ -14,8 +14,8 @@ interface UtsattOppgaveRepository {
         tilstand: Tilstand
     ): List<UtsattOppgaveEntitet>
 
-    fun opprett(innteksmelding: UtsattOppgaveEntitet): UtsattOppgaveEntitet
-    fun oppdater(innteksmelding: UtsattOppgaveEntitet): UtsattOppgaveEntitet
+    fun opprett(uo: UtsattOppgaveEntitet): UtsattOppgaveEntitet
+    fun oppdater(uo: UtsattOppgaveEntitet): UtsattOppgaveEntitet
     fun deleteAll()
     fun findAll(): List<UtsattOppgaveEntitet>
 }
@@ -34,13 +34,13 @@ class UtsattOppgaveRepositoryMockk : UtsattOppgaveRepository {
         return mockrepo.filter { it.timeout < timeout && it.tilstand == tilstand }
     }
 
-    override fun opprett(innteksmelding: UtsattOppgaveEntitet): UtsattOppgaveEntitet {
-        mockrepo.add(innteksmelding)
-        return innteksmelding
+    override fun opprett(uo: UtsattOppgaveEntitet): UtsattOppgaveEntitet {
+        mockrepo.add(uo)
+        return uo
     }
 
-    override fun oppdater(innteksmelding: UtsattOppgaveEntitet): UtsattOppgaveEntitet {
-        return innteksmelding
+    override fun oppdater(uo: UtsattOppgaveEntitet): UtsattOppgaveEntitet {
+        return uo
     }
 
     override fun deleteAll() {

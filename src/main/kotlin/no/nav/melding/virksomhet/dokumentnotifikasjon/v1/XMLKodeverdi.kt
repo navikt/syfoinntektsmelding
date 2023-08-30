@@ -11,10 +11,10 @@ import javax.xml.bind.annotation.XmlValue
 @XmlType(name = "Kodeverdi", namespace = "", propOrder = ["value"])
 open class XMLKodeverdi {
     @XmlValue
-    protected lateinit var value: String
+    protected var value: String
     @XmlAttribute(name = "kodeRef")
     @XmlSchemaType(name = "anyURI")
-    protected lateinit var kodeRef: String
+    protected var kodeRef: String
 
     constructor(value: String, kodeRef: String) {
         this.value = value

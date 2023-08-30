@@ -39,14 +39,6 @@ object JAXB {
         }
     }
 
-    fun <T> unmarshalForsendelsesinformasjon(melding: String?): T {
-        return try {
-            FORSENDELSESINFORMASJON!!.createUnmarshaller().unmarshal(StringReader(melding)) as T
-        } catch (e: JAXBException) {
-            throw RuntimeException(e)
-        }
-    }
-
     @JvmStatic
     fun <T> unmarshalInntektsmelding(melding: String?): T {
         return try {
