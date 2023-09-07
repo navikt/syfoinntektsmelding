@@ -46,7 +46,8 @@ fun mapInntektsmelding(arkivreferanse: String, aktorId: String, journalpostId: S
         begrunnelseRedusert = "",
         avsenderSystem = AvsenderSystem("NAV_NO", "1.0"),
         nærRelasjon = null,
-        kontaktinformasjon = Kontaktinformasjon("Ukjent", "n/a"),
+        // TODO: Telefonnummer og navn!
+        kontaktinformasjon = Kontaktinformasjon(imd.innsenderNavn, imd.telefonnummer),
         innsendingstidspunkt = LocalDateTime.now(),
         bruttoUtbetalt = BigDecimal(0),
         årsakEndring = null

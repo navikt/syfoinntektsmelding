@@ -46,7 +46,8 @@ internal class MapInntektsmeldingKtTest {
             naturalytelser = naturalytelseListe,
             tidspunkt = OffsetDateTime.now(),
             årsakInnsending = ÅrsakInnsending.NY,
-            identitetsnummerInnsender = "123456789"
+            innsenderNavn = "Peppes Pizza",
+            telefonnummer = "22555555"
         )
         val mapped = mapInntektsmelding("1323", "sdfds", "134", imDokumentFraSimba)
         val naturalytelse = mapped.opphørAvNaturalYtelse.get(0)
