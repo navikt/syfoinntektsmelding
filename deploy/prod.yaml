@@ -6,6 +6,8 @@ metadata:
   labels:
     team: helsearbeidsgiver
 spec:
+  ingresses:
+    - https://syfoinntektsmelding.intern.nav.no
   cpuThresholdPercentage: 90
   image: {{image}}
   port: 8080
@@ -36,15 +38,22 @@ spec:
       memory: "386Mi"
   vault:
     enabled: true
-    paths:
-      - mountPath: /var/run/secrets/nais.io/azuread
-        kvPath: /azuread/prod/creds/syfoinntektsmelding
+
   sidecar: true
   webproxy: true
   secureLogs:
     enabled: true
   kafka:
     pool: nav-prod
+  azure:
+    application:
+      enabled: true
+
+  accessPolicy:
+    inbound:
+      rules:
+        - application: helsearbeidsgiver-bro-sykepenger
+          cluster: prod-gcp
   env:
     - name: KOIN_PROFILE
       value: "PROD"
@@ -66,8 +75,6 @@ spec:
       value: "5432"
     - name: DATABASE_NAME
       value: "syfoinntektsmelding"
-    - name: AKTOERREGISTER_API_V1_URL
-      value: "https://app.adeo.no/aktoerregister/api/v1"
     - name: SECURITY_TOKEN_SERVICE_TOKEN_URL
       value: "http://security-token-service.default.svc.nais.local/rest/v1/sts/token"
     - name: AADACCESSTOKEN_URL

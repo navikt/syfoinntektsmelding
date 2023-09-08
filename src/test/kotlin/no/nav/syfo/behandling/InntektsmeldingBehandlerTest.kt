@@ -4,7 +4,6 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClient
-import no.nav.syfo.client.aktor.AktorClient
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.dto.InntektsmeldingEntitet
@@ -12,6 +11,7 @@ import no.nav.syfo.producer.InntektsmeldingAivenProducer
 import no.nav.syfo.service.InntektsmeldingService
 import no.nav.syfo.service.JournalpostService
 import no.nav.syfo.util.Metrikk
+import no.nav.syfo.util.getAktørid
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -23,7 +23,6 @@ class InntektsmeldingBehandlerTest {
     private val metrikk = mockk<Metrikk>(relaxed = true)
     private var journalpostService = mockk<JournalpostService>(relaxed = true)
     private var utsattOppgaveService = mockk<UtsattOppgaveService>(relaxed = true)
-    private var aktorClient = mockk<AktorClient>(relaxed = true)
     private var inntektsmeldingService = mockk<InntektsmeldingService>(relaxed = true)
     private val aivenInntektsmeldingProducer = mockk<InntektsmeldingAivenProducer>(relaxed = true)
     private val pdlClient = mockk<PdlClient>(relaxed = true)
@@ -31,7 +30,6 @@ class InntektsmeldingBehandlerTest {
         journalpostService,
         metrikk,
         inntektsmeldingService,
-        aktorClient,
         aivenInntektsmeldingProducer,
         utsattOppgaveService,
         pdlClient
@@ -39,8 +37,8 @@ class InntektsmeldingBehandlerTest {
 
     @BeforeEach
     fun setup() {
-        every { aktorClient.getAktorId("fnr") } returns "aktorId" // inntektsmelding.fnr
-        every { inntektsmeldingService.lagreBehandling(any(), any(), any()) } returns
+        every { pdlClient.getAktørid("fnr") } returns "aktorId" // inntektsmelding.fnr
+        every { inntektsmeldingService.lagreBehandling(any(), any()) } returns
             InntektsmeldingEntitet(
                 orgnummer = "orgnummer",
                 arbeidsgiverPrivat = "123",

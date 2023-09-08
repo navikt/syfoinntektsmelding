@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -16,7 +17,6 @@ import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClient
 import no.nav.syfo.client.BrregClient
 import no.nav.syfo.client.OppgaveClient
-import no.nav.syfo.client.aktor.AktorClient
 import no.nav.syfo.client.saf.SafDokumentClient
 import no.nav.syfo.client.saf.SafJournalpostClient
 import no.nav.syfo.client.saf.model.Dokument
@@ -37,6 +37,7 @@ import no.nav.syfo.service.JournalpostService
 import no.nav.syfo.syfoinntektsmelding.consumer.ws.inntektsmeldingArbeidsgiver
 import no.nav.syfo.syfoinntektsmelding.consumer.ws.inntektsmeldingArbeidsgiverPrivat
 import no.nav.syfo.util.Metrikk
+import no.nav.syfo.util.getAktørid
 import no.nav.syfo.utsattoppgave.FeiletUtsattOppgaveMeldingProsessor
 import no.nav.syfo.utsattoppgave.UtsattOppgaveDAO
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
@@ -51,14 +52,22 @@ import java.util.concurrent.atomic.AtomicInteger
 class InntektsmeldingBehandlerTest2 {
 
     private var objectMapper = ObjectMapper()
-        .registerModule(KotlinModule())
+        .registerModule(
+            KotlinModule.Builder()
+                .withReflectionCacheSize(512)
+                .configure(KotlinFeature.NullToEmptyCollection, false)
+                .configure(KotlinFeature.NullToEmptyMap, false)
+                .configure(KotlinFeature.NullIsSameAsDefault, false)
+                .configure(KotlinFeature.SingletonSupport, false)
+                .configure(KotlinFeature.StrictNullChecks, false)
+                .build()
+        )
         .registerModule(Jdk8Module())
         .registerModule(JavaTimeModule())
         .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
         .configure(SerializationFeature.INDENT_OUTPUT, true)
         .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-    private var aktorClient = mockk<AktorClient>(relaxed = true)
     private var inngaaendeJournalConsumer = mockk<InngaaendeJournalConsumer>(relaxed = true)
     private var metrikk = mockk<Metrikk>(relaxed = true)
     private var behandleInngaaendeJournalConsumer = mockk<BehandleInngaaendeJournalConsumer>(relaxed = true)
@@ -87,7 +96,7 @@ class InntektsmeldingBehandlerTest2 {
     @BeforeEach
     fun setup() {
         inntektsmeldingRepository.deleteAll()
-        journalConsumer = JournalConsumer(safDokumentClient, safJournalpostClient, aktorClient)
+        journalConsumer = JournalConsumer(safDokumentClient, safJournalpostClient, pdlClient)
         journalpostService = JournalpostService(
             inngaaendeJournalConsumer,
             behandleInngaaendeJournalConsumer,
@@ -101,7 +110,6 @@ class InntektsmeldingBehandlerTest2 {
             journalpostService,
             metrikk,
             inntektsmeldingService,
-            aktorClient,
             aivenInntektsmeldingBehandler,
             utsattOppgaveService,
             pdlClient
@@ -110,7 +118,7 @@ class InntektsmeldingBehandlerTest2 {
 
         every { inngaaendeJournalConsumer.hentDokumentId("arkivId") } returns inngaaendeJournal("arkivId")
 
-        every { aktorClient.getAktorId(any()) } answers { "aktorId_for_" + firstArg() }
+        every { pdlClient.getAktørid(any()) } answers { "aktorId_for_" + firstArg() }
 
         every { behandlendeEnhetConsumer.hentBehandlendeEnhet(any(), any()) } returns "enhet"
         every { behandlendeEnhetConsumer.hentGeografiskTilknytning(any()) } returns
@@ -127,7 +135,7 @@ class InntektsmeldingBehandlerTest2 {
 
     @Test
     fun `Gjenbruker saksId hvis vi får to overlappende inntektsmeldinger`() {
-        every { aktorClient.getAktorId(any()) } returnsMany listOf("aktorId_for_1", "aktorId_for_1")
+        every { pdlClient.getAktørid(any()) } returnsMany listOf("aktorId_for_1", "aktorId_for_1")
         every { inngaaendeJournalConsumer.hentDokumentId("arkivId1") } returns inngaaendeJournal("arkivId1")
         every { inngaaendeJournalConsumer.hentDokumentId("arkivId2") } returns inngaaendeJournal("arkivId2")
         val dokumentResponse1 = lagDokumentRespons(LocalDate.of(2019, 1, 1), LocalDate.of(2019, 1, 16))
@@ -155,7 +163,7 @@ class InntektsmeldingBehandlerTest2 {
             safDokumentClient.hentDokument(any(), any())
         } returnsMany listOf(dokumentResponse1.toByteArray(), dokumentResponse2.toByteArray())
 
-        every { aktorClient.getAktorId(any()) } returnsMany listOf("778", "778")
+        every { pdlClient.getAktørid(any()) } returnsMany listOf("778", "778")
 
         inntektsmeldingBehandler.behandle("arkivId3", "AR-3")
         inntektsmeldingBehandler.behandle("arkivId4", "AR-4")
@@ -170,7 +178,7 @@ class InntektsmeldingBehandlerTest2 {
 
     @Test
     fun `Mottar inntektsmelding uten arbeidsgiverperioder`() {
-        every { aktorClient.getAktorId(any()) } returnsMany listOf("aktorId_for_7", "aktorId_for_7")
+        every { pdlClient.getAktørid(any()) } returnsMany listOf("aktorId_for_7", "aktorId_for_7")
         every { inngaaendeJournalConsumer.hentDokumentId("arkivId7") } returns inngaaendeJournal("arkivId7")
 
         every {
@@ -185,7 +193,7 @@ class InntektsmeldingBehandlerTest2 {
 
     @Test
     fun `Mottar inntektsmelding med flere perioder`() {
-        every { aktorClient.getAktorId(any()) } returnsMany listOf("aktorId_for_8", "aktorId_for_8")
+        every { pdlClient.getAktørid(any()) } returnsMany listOf("aktorId_for_8", "aktorId_for_8")
         val dokumentResponse = lagDokumentRespons(
             LocalDate.of(2019, 1, 1),
             LocalDate.of(2019, 1, 12),
@@ -211,7 +219,7 @@ class InntektsmeldingBehandlerTest2 {
 
     @Test
     fun `Mottar inntektsmelding med privat arbeidsgiver`() {
-        every { aktorClient.getAktorId(any()) } returnsMany listOf("aktorId_for_9", "aktorId_for_9")
+        every { pdlClient.getAktørid(any()) } returnsMany listOf("aktorId_for_9", "aktorId_for_9")
         every {
             safDokumentClient.hentDokument(any(), any())
         } returns inntektsmeldingArbeidsgiverPrivat().toByteArray()

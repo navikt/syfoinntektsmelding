@@ -2,10 +2,11 @@ package no.nav.syfo.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.mockk.every
 import io.mockk.mockk
-import no.nav.helsearbeidsgiver.utils.logger
+import no.nav.helsearbeidsgiver.utils.log.logger
 import no.nav.inntektsmelding.kontrakt.serde.JacksonJsonConfig
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.dto.InntektsmeldingEntitet
@@ -22,7 +23,17 @@ import kotlin.test.assertTrue
 
 class InntektsmeldingServiceTest {
 
-    val objectMapper = ObjectMapper().registerModules(KotlinModule(), JavaTimeModule())
+    val objectMapper = ObjectMapper().registerModules(
+        KotlinModule.Builder()
+            .withReflectionCacheSize(512)
+            .configure(KotlinFeature.NullToEmptyCollection, false)
+            .configure(KotlinFeature.NullToEmptyMap, false)
+            .configure(KotlinFeature.NullIsSameAsDefault, false)
+            .configure(KotlinFeature.SingletonSupport, false)
+            .configure(KotlinFeature.StrictNullChecks, false)
+            .build(),
+        JavaTimeModule()
+    )
     val AKTOR_ID_FOUND = "aktør-123"
     val logger = this.logger()
 

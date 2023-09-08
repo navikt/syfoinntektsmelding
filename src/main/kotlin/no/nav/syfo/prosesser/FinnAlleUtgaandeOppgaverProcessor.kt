@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import no.nav.helse.arbeidsgiver.utils.RecurringJob
-import no.nav.helsearbeidsgiver.utils.MdcUtils
-import no.nav.helsearbeidsgiver.utils.logger
+import no.nav.helsearbeidsgiver.utils.log.MdcUtils
+import no.nav.helsearbeidsgiver.utils.log.logger
 import no.nav.syfo.behandling.OpprettOppgaveException
 import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.dto.Tilstand
@@ -14,6 +14,7 @@ import no.nav.syfo.service.BehandlendeEnhetConsumer
 import no.nav.syfo.util.Metrikk
 import no.nav.syfo.utsattoppgave.UtsattOppgaveDAO
 import no.nav.syfo.utsattoppgave.opprettOppgaveIGosys
+import org.slf4j.LoggerFactory
 import java.time.Duration
 import java.time.LocalDateTime
 
@@ -26,6 +27,7 @@ class FinnAlleUtgaandeOppgaverProcessor(
     private val om: ObjectMapper
 ) : RecurringJob(CoroutineScope(Dispatchers.IO), Duration.ofHours(6).toMillis()) {
     private val logger = this.logger()
+    private val sikkerlogger = LoggerFactory.getLogger("tjenestekall")
 
     override fun doJob(): Unit = MdcUtils.withCallIdAsUuid {
         utsattOppgaveDAO
@@ -41,6 +43,7 @@ class FinnAlleUtgaandeOppgaverProcessor(
                     utsattOppgaveDAO.lagre(it)
                     logger.info("Oppgave opprettet i gosys pga timeout for inntektsmelding: ${it.arkivreferanse}")
                 } catch (e: OpprettOppgaveException) {
+                    sikkerlogger.error("Feilet ved opprettelse av oppgave ved timeout i gosys for inntektsmelding: ${it.arkivreferanse}", e)
                     logger.error("Feilet ved opprettelse av oppgave ved timeout i gosys for inntektsmelding: ${it.arkivreferanse}")
                 }
             }

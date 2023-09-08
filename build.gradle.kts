@@ -43,9 +43,10 @@ val apacheKafkaStreamsVersion: String by project
 val annotationApiVersion: String by project
 val altinnCorrespondanceVersion: String by project
 val inntektsmeldingVersion: String by project
+val logbackClassicVersion: String by project
 
 plugins {
-    kotlin("jvm") version "1.7.20"
+    kotlin("jvm") version "1.9.0"
     id("com.github.ben-manes.versions") version "0.47.0"
     id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
     id("org.flywaydb.flyway") version "9.8.3"
@@ -199,4 +200,5 @@ dependencies {
     implementation("no.nav.tjenestespesifikasjoner:altinn-correspondence-agency-external-basic:$altinnCorrespondanceVersion")
     implementation("javax.annotation:javax.annotation-api:$annotationApiVersion")
     implementation("no.nav.helsearbeidsgiver.inntektsmelding:dokument:$inntektsmeldingVersion")
+    runtimeOnly("ch.qos.logback:logback-classic:$logbackClassicVersion")
 }

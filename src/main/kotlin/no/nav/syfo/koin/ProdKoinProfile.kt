@@ -2,7 +2,6 @@ package no.nav.syfo.koin
 
 import com.zaxxer.hikari.HikariConfig
 import io.ktor.config.ApplicationConfig
-import io.ktor.util.KtorExperimentalAPI
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
@@ -16,7 +15,6 @@ import no.nav.syfo.client.BrregClient
 import no.nav.syfo.client.BrregClientImp
 import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.client.TokenConsumer
-import no.nav.syfo.client.aktor.AktorClient
 import no.nav.syfo.client.dokarkiv.DokArkivClient
 import no.nav.syfo.client.norg.Norg2Client
 import no.nav.syfo.client.saf.SafDokumentClient
@@ -61,7 +59,6 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 import javax.sql.DataSource
 
-@OptIn(KtorExperimentalAPI::class)
 fun prodConfig(config: ApplicationConfig) = module {
     externalSystemClients(config)
     single {
@@ -87,14 +84,6 @@ fun prodConfig(config: ApplicationConfig) = module {
     } bind JoarkInntektsmeldingHendelseProsessor::class
 
     single {
-        AktorClient(
-            get(),
-            config.getString("srvsyfoinntektsmelding.username"),
-            config.getString("aktoerregister_api_v1_url"),
-            get()
-        )
-    } bind AktorClient::class
-    single {
         TokenConsumer(
             get(),
             config.getString("security-token-service-token.url"),
@@ -102,7 +91,7 @@ fun prodConfig(config: ApplicationConfig) = module {
             config.getString("srvsyfoinntektsmelding.password")
         )
     } bind TokenConsumer::class
-    single { InntektsmeldingBehandler(get(), get(), get(), get(), get(), get(), get()) } bind InntektsmeldingBehandler::class
+    single { InntektsmeldingBehandler(get(), get(), get(), get(), get(), get()) } bind InntektsmeldingBehandler::class
 
     single { InngaaendeJournalConsumer(get()) } bind InngaaendeJournalConsumer::class
     single { BehandleInngaaendeJournalConsumer(get()) } bind BehandleInngaaendeJournalConsumer::class
@@ -117,7 +106,7 @@ fun prodConfig(config: ApplicationConfig) = module {
 
     single {
         JournalpostHendelseConsumer(
-            joarkAivenProperties(config).toMutableMap(),
+            joarkAivenProperties().toMutableMap(),
             config.getString("kafka_joark_hendelse_topic"),
             get(),
             get(),
@@ -126,7 +115,7 @@ fun prodConfig(config: ApplicationConfig) = module {
     }
     single {
         UtsattOppgaveConsumer(
-            utsattOppgaveAivenProperties(config),
+            utsattOppgaveAivenProperties(),
             config.getString("kafka_utsatt_oppgave_topic"), get(), get(), get()
         )
     }

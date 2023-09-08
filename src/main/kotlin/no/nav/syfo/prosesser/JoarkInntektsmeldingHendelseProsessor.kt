@@ -5,8 +5,8 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbProsesserer
-import no.nav.helsearbeidsgiver.utils.MdcUtils
-import no.nav.helsearbeidsgiver.utils.logger
+import no.nav.helsearbeidsgiver.utils.log.MdcUtils
+import no.nav.helsearbeidsgiver.utils.log.logger
 import no.nav.syfo.behandling.BehandlingException
 import no.nav.syfo.behandling.Feiltype
 import no.nav.syfo.behandling.InntektsmeldingBehandler
@@ -66,18 +66,18 @@ class JoarkInntektsmeldingHendelseProsessor(
             inntektsmeldingBehandler.behandle(journalpostDTO.journalpostId.toString(), arkivReferanse)
         } catch (e: IllegalArgumentException) {
             metrikk.tellInntektsmeldingUtenArkivReferanse()
-            throw InntektsmeldingConsumerException(arkivReferanse, e, Feiltype.INNGÅENDE_MANGLER_KANALREFERANSE)
+            throw InntektsmeldingConsumerException(e)
         } catch (e: BehandlingException) {
             logger.error("Feil ved behandling av inntektsmelding med arkivreferanse $arkivReferanse", e)
             metrikk.tellBehandlingsfeil(e.feiltype)
             lagreFeilet(arkivReferanse, e.feiltype)
-            throw InntektsmeldingConsumerException(arkivReferanse, e, e.feiltype)
+            throw InntektsmeldingConsumerException(e)
         } catch (e: Exception) {
             logger.error("Det skjedde en feil ved journalføring med arkivreferanse $arkivReferanse", e)
             metrikk.tellBehandlingsfeil(Feiltype.USPESIFISERT)
             lagreFeilet(arkivReferanse, Feiltype.USPESIFISERT)
 
-            throw InntektsmeldingConsumerException(arkivReferanse, e, Feiltype.USPESIFISERT)
+            throw InntektsmeldingConsumerException(e)
         }
     }
 

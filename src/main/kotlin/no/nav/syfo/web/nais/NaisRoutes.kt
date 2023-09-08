@@ -15,13 +15,13 @@ import io.prometheus.client.exporter.common.TextFormat
 import no.nav.helse.arbeidsgiver.kubernetes.KubernetesProbeManager
 import no.nav.helse.arbeidsgiver.kubernetes.ProbeResult
 import no.nav.helse.arbeidsgiver.kubernetes.ProbeState
-import no.nav.syfo.util.logger
+import no.nav.helsearbeidsgiver.utils.log.logger
 import org.koin.ktor.ext.get
 import java.util.Collections
 
 fun Application.nais() {
 
-    val logger = logger("Helsesjekker")
+    val logger = "Helsesjekker".logger()
 
     suspend fun PipelineContext<Unit, ApplicationCall>.returnResultOfChecks(checkResults: ProbeResult) {
         val httpResult =

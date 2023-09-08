@@ -2,7 +2,6 @@ package no.nav.syfo.koin
 
 import com.zaxxer.hikari.HikariConfig
 import io.ktor.config.ApplicationConfig
-import io.ktor.util.KtorExperimentalAPI
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
@@ -16,7 +15,6 @@ import no.nav.syfo.client.BrregClient
 import no.nav.syfo.client.BrregClientImp
 import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.client.TokenConsumer
-import no.nav.syfo.client.aktor.AktorClient
 import no.nav.syfo.client.dokarkiv.DokArkivClient
 import no.nav.syfo.client.norg.Norg2Client
 import no.nav.syfo.client.saf.SafDokumentClient
@@ -61,7 +59,6 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 import javax.sql.DataSource
 
-@OptIn(KtorExperimentalAPI::class)
 fun preprodConfig(config: ApplicationConfig) = module {
     externalSystemClients(config)
     single {
@@ -88,14 +85,6 @@ fun preprodConfig(config: ApplicationConfig) = module {
     single { ArbeidsgiverperiodeRepositoryImp(get()) } bind ArbeidsgiverperiodeRepository::class
 
     single {
-        AktorClient(
-            get(),
-            config.getString("srvsyfoinntektsmelding.username"),
-            config.getString("aktoerregister_api_v1_url"),
-            get()
-        )
-    } bind AktorClient::class
-    single {
         TokenConsumer(
             get(),
             config.getString("security-token-service-token.url"),
@@ -105,7 +94,6 @@ fun preprodConfig(config: ApplicationConfig) = module {
     } bind TokenConsumer::class
     single {
         InntektsmeldingBehandler(
-            get(),
             get(),
             get(),
             get(),
@@ -128,7 +116,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
 
     single {
         JournalpostHendelseConsumer(
-            joarkAivenProperties(config),
+            joarkAivenProperties(),
             config.getString("kafka_joark_hendelse_topic"),
             get(),
             get(),
@@ -137,7 +125,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
     }
     single {
         UtsattOppgaveConsumer(
-            utsattOppgaveAivenProperties(config),
+            utsattOppgaveAivenProperties(),
             config.getString("kafka_utsatt_oppgave_topic"), get(), get(), get()
         )
     }

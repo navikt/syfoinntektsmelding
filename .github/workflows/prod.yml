@@ -12,6 +12,8 @@ jobs:
   build:
     # You must use a Linux environment when using service containers or container jobs
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
 
     # Service containers to run with `container-job`
     services:

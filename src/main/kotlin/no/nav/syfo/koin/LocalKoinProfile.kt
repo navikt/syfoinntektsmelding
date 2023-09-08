@@ -2,7 +2,6 @@ package no.nav.syfo.koin
 
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.config.ApplicationConfig
-import io.ktor.util.KtorExperimentalAPI
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
@@ -12,7 +11,6 @@ import no.nav.syfo.client.BrregClient
 import no.nav.syfo.client.MockBrregClient
 import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.client.TokenConsumer
-import no.nav.syfo.client.aktor.AktorClient
 import no.nav.syfo.client.dokarkiv.DokArkivClient
 import no.nav.syfo.client.saf.SafDokumentClient
 import no.nav.syfo.client.saf.SafJournalpostClient
@@ -58,18 +56,9 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 import javax.sql.DataSource
 
-@OptIn(KtorExperimentalAPI::class)
 fun localDevConfig(config: ApplicationConfig) = module {
     mockExternalDependecies()
 
-    single {
-        AktorClient(
-            get(),
-            config.getString("srvsyfoinntektsmelding.username"),
-            config.getString("aktoerregister_api_v1_url"),
-            get()
-        )
-    }
     single {
         TokenConsumer(
             get(),
@@ -127,7 +116,6 @@ fun localDevConfig(config: ApplicationConfig) = module {
 
     single {
         InntektsmeldingBehandler(
-            get(),
             get(),
             get(),
             get(),
