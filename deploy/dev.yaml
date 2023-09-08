@@ -9,11 +9,8 @@ spec:
   ingresses:
     - https://syfoinntektsmelding.nais.preprod.local
     - https://syfoinntektsmelding.dev.intern.nav.no
-  cpuThresholdPercentage: 90
   image: {{image}}
   port: 8080
-  istio:
-    enabled: false
   prometheus:
     enabled: false
     path: /metrics
@@ -42,7 +39,6 @@ spec:
   vault:
     enabled: true
 
-  sidecar: true
   webproxy: true
   secureLogs:
     enabled: true
