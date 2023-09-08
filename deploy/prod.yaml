@@ -8,11 +8,8 @@ metadata:
 spec:
   ingresses:
     - https://syfoinntektsmelding.intern.nav.no
-  cpuThresholdPercentage: 90
   image: {{image}}
   port: 8080
-  istio:
-    enabled: false
   prometheus:
     enabled: true
     path: /metrics
@@ -31,7 +28,6 @@ spec:
     min: 1
   resources:
     limits:
-      cpu: "1000m"
       memory: "1024Mi"
     requests:
       cpu: "500m"
@@ -39,7 +35,6 @@ spec:
   vault:
     enabled: true
 
-  sidecar: true
   webproxy: true
   secureLogs:
     enabled: true
