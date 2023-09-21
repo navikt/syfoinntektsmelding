@@ -10,6 +10,7 @@ import no.nav.helsearbeidsgiver.felles.inntektsmelding.felles.models.Refusjon
 import no.nav.helsearbeidsgiver.felles.inntektsmelding.felles.models.RefusjonEndring
 import no.nav.helsearbeidsgiver.felles.inntektsmelding.felles.models.ÅrsakInnsending
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -62,7 +63,7 @@ class MapInntektsmeldingFraSimbaTest {
     fun mapIngenBegrunnelseRedusert() {
         val im = mapInntektsmelding("1", "2", "3", lagInntektsMeldingDokument())
         assertEquals("", im.begrunnelseRedusert)
-        assertEquals(BigDecimal(0), im.bruttoUtbetalt)
+        assertNull(im.bruttoUtbetalt)
     }
 
     private fun lagInntektsMeldingDokument(): InntektsmeldingDokument {

@@ -1,7 +1,6 @@
 package no.nav.syfo.simba
 
 import no.nav.helsearbeidsgiver.felles.inntektsmelding.felles.models.InntektsmeldingDokument
-import no.nav.helsearbeidsgiver.utils.pipe.orDefault
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
 import no.nav.syfo.domain.inntektsmelding.AvsenderSystem
@@ -11,7 +10,6 @@ import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.domain.inntektsmelding.Kontaktinformasjon
 import no.nav.syfo.domain.inntektsmelding.OpphoerAvNaturalytelse
 import no.nav.syfo.domain.inntektsmelding.Refusjon
-import java.math.BigDecimal
 import java.time.LocalDateTime
 
 fun mapInntektsmelding(arkivreferanse: String, aktorId: String, journalpostId: String, imd: InntektsmeldingDokument): Inntektsmelding {
@@ -49,7 +47,7 @@ fun mapInntektsmelding(arkivreferanse: String, aktorId: String, journalpostId: S
         nærRelasjon = null,
         kontaktinformasjon = Kontaktinformasjon(imd.innsenderNavn, imd.telefonnummer),
         innsendingstidspunkt = LocalDateTime.now(),
-        bruttoUtbetalt = imd.fullLønnIArbeidsgiverPerioden?.utbetalt.orDefault(BigDecimal(0)),
+        bruttoUtbetalt = imd.fullLønnIArbeidsgiverPerioden?.utbetalt,
         årsakEndring = null
     )
 }
