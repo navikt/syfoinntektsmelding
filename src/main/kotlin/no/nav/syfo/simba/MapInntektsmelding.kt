@@ -1,6 +1,7 @@
 package no.nav.syfo.simba
 
 import no.nav.helsearbeidsgiver.felles.inntektsmelding.felles.models.InntektsmeldingDokument
+import no.nav.helsearbeidsgiver.utils.pipe.orDefault
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
 import no.nav.syfo.domain.inntektsmelding.AvsenderSystem
@@ -43,12 +44,12 @@ fun mapInntektsmelding(arkivreferanse: String, aktorId: String, journalpostId: S
         mottattDato = LocalDateTime.now(),
         sakId = "",
         aktorId = aktorId,
-        begrunnelseRedusert = "",
+        begrunnelseRedusert = imd.fullLønnIArbeidsgiverPerioden?.begrunnelse?.value.orEmpty(),
         avsenderSystem = AvsenderSystem("NAV_NO", "1.0"),
         nærRelasjon = null,
         kontaktinformasjon = Kontaktinformasjon(imd.innsenderNavn, imd.telefonnummer),
         innsendingstidspunkt = LocalDateTime.now(),
-        bruttoUtbetalt = BigDecimal(0),
+        bruttoUtbetalt = imd.fullLønnIArbeidsgiverPerioden?.utbetalt.orDefault(BigDecimal(0)),
         årsakEndring = null
     )
 }
