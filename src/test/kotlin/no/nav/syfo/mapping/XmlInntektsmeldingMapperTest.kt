@@ -9,10 +9,10 @@ import no.nav.syfo.util.getAktørid
 import org.assertj.core.api.Assertions
 import org.junit.Before
 import org.junit.jupiter.api.Test
+import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.function.BinaryOperator
 
 class XmlInntektsmeldingMapperTest {
 
@@ -35,6 +35,8 @@ class XmlInntektsmeldingMapperTest {
         Assertions.assertThat(im.fnr).isEqualTo("18018522868")
         Assertions.assertThat(im.journalpostId).isEqualTo("journalpostId")
         Assertions.assertThat(im.arbeidsgiverperioder.size).isEqualTo(1)
+        Assertions.assertThat(im.begrunnelseRedusert).isEqualTo("")
+        Assertions.assertThat(im.bruttoUtbetalt).isEqualTo(BigDecimal(18000))
     }
 
     @Test
@@ -55,6 +57,8 @@ class XmlInntektsmeldingMapperTest {
         Assertions.assertThat(im.fnr).isEqualTo("fnr")
         Assertions.assertThat(im.journalpostId).isEqualTo("journalpostId")
         Assertions.assertThat(im.arbeidsgiverperioder.size).isEqualTo(1)
+        Assertions.assertThat(im.begrunnelseRedusert).isEqualTo("")
+        Assertions.assertThat(im.bruttoUtbetalt).isEqualTo(BigDecimal(9889))
     }
 
     companion object {
@@ -137,7 +141,7 @@ class XmlInntektsmeldingMapperTest {
                         "   <ns6:fom>" + DateTimeFormatter.ISO_DATE.format(fom) + "</ns6:fom>" +
                         "   <ns6:tom>" + DateTimeFormatter.ISO_DATE.format(tom) + "</ns6:tom>" +
                         "</ns6:arbeidsgiverperiode>"
-                }.reduce("", BinaryOperator<String> { obj, str -> obj + str }) +
+                }.reduce("") { obj, str -> obj + str } +
                 "            </ns6:arbeidsgiverperiodeListe>" +
                 "            <ns6:bruttoUtbetalt>2000</ns6:bruttoUtbetalt>" +
                 "        </ns6:sykepengerIArbeidsgiverperioden>" +
