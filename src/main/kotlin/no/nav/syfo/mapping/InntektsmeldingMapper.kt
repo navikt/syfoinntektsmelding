@@ -40,6 +40,9 @@ fun mapInntektsmeldingKontrakt(
         foersteFravaersdag = inntektsmelding.førsteFraværsdag,
         mottattDato = inntektsmelding.mottattDato,
         begrunnelseForReduksjonEllerIkkeUtbetalt = inntektsmelding.begrunnelseRedusert,
+        bruttoUtbetalt = inntektsmelding.bruttoUtbetalt,
+        innsenderFulltNavn = inntektsmelding.kontaktinformasjon.navn.orEmpty(),
+        innsenderTelefon = inntektsmelding.kontaktinformasjon.telefon.orEmpty(),
         naerRelasjon = inntektsmelding.nærRelasjon,
         avsenderSystem = mapAvsenderSystem(inntektsmelding.avsenderSystem)
     )
