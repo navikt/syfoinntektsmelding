@@ -71,7 +71,4 @@ data class Inntektsmelding(
             )
         )
     }
-
-    fun isDuplicate(inntektsmeldinger: List<Inntektsmelding>): Boolean =
-        inntektsmeldinger.any { it.isDuplicate(this) }
 }
