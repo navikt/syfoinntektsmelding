@@ -43,7 +43,7 @@ fun mapInntektsmelding(arkivreferanse: String, aktorId: String, journalpostId: S
         mottattDato = LocalDateTime.now(),
         sakId = "",
         aktorId = aktorId,
-        begrunnelseRedusert = "",
+        begrunnelseRedusert = imd.fullLønnIArbeidsgiverPerioden?.begrunnelse?.value.orEmpty(),
         avsenderSystem = AvsenderSystem("NAV_NO", "1.0"),
         nærRelasjon = null,
         kontaktinformasjon = Kontaktinformasjon(imd.innsenderNavn, imd.telefonnummer),
