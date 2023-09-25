@@ -15,11 +15,18 @@ class InntektsmeldingService(
 ) {
     private val logger = this.logger()
 
+    private val blacklist = listOf(
+        "620051176"
+    )
     fun finnBehandledeInntektsmeldinger(aktoerId: String): List<Inntektsmelding> {
         return repository.findByAktorId(aktoerId).map { toInntektsmelding(it, objectMapper) }
     }
 
     fun findByJournalpost(journalpostId: String): InntektsmeldingEntitet? {
+        if (journalpostId in blacklist) {
+            logger.info("Ignorer $journalpostId!")
+            return null
+        }
         return repository.findByJournalpost(journalpostId)
     }
 
