@@ -110,17 +110,90 @@ class InntektsmeldingService(
         "626170290",
         "626130488",
         "618774620",
+        "626170290",
+        "627250898",
+        "627392402",
+        "626839198",
+        "627354395",
+        "627352366",
+        "627348767",
+        "627348777",
+        "627347707",
+        "627340240",
+        "627335886",
+        "627201560",
+        "627332773",
+        "627032161",
+        "627239923",
+        "627288635",
+        "627279552",
+        "627279498",
+        "627271448",
+        "627264278",
+        "627263236",
+        "626131310",
+        "627248414",
+        "626113259",
+        "627243945",
+        "627217940",
+        "627209776",
+        "627172297",
+        "626892396",
+        "627147827",
+        "627127486",
+        "627119677",
+        "627102257",
+        "627100693",
+        "627078505",
+        "626810174",
+        "627024521",
+        "627007763",
+        "626990253",
+        "626985538",
+        "626980535",
+        "626933278",
+        "626896968",
+        "626891406",
+        "626878449",
+        "626857011",
+        "626856957",
+        "626844959",
+        "626833807",
+        "626831547",
+        "626625338",
+        "626555961",
+        "626604353",
+        "626560055",
+        "626176116",
+        "626114952",
+        "626111878",
+        "626106839",
+        "625695327",
+        "624754629",
+        "624746682",
+        "623537431",
+        "623537323",
+        "622980211",
+        "620889964",
+        "621556139",
+        "618157714",
+        "618105082",
+        "613292703",
     )
     fun finnBehandledeInntektsmeldinger(aktoerId: String): List<Inntektsmelding> {
         return repository.findByAktorId(aktoerId).map { toInntektsmelding(it, objectMapper) }
     }
 
     fun findByJournalpost(journalpostId: String): InntektsmeldingEntitet? {
-        if (journalpostId in blacklist) {
+        if (isInBlacklist(journalpostId)) {
             logger.info("Ignorer $journalpostId!")
             return null
         }
         return repository.findByJournalpost(journalpostId)
+    }
+
+    fun isInBlacklist(journalpostId: String): Boolean {
+        return journalpostId in blacklist
     }
 
     fun isDuplicate(inntektsmelding: Inntektsmelding): Boolean {
