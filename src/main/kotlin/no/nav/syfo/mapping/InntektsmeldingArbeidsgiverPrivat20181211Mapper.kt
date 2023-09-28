@@ -26,7 +26,7 @@ internal object InntektsmeldingArbeidsgiverPrivat20181211Mapper {
 
     private val logger = this.logger()
 
-    fun tilXMLInntektsmelding(
+    fun fraXMLInntektsmelding(
         jaxbInntektsmelding: JAXBElement<Any>,
         journalpostId: String,
         mottattDato: LocalDateTime,

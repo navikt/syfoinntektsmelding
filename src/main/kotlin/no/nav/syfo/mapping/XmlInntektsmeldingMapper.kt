@@ -21,7 +21,7 @@ class XmlInntektsmeldingMapper {
         val inntektsmelding = String(inntektsmeldingRAW)
         val jaxbInntektsmelding = JAXB.unmarshalInntektsmelding<JAXBElement<Any>>(inntektsmelding)
         return if (jaxbInntektsmelding.value is XMLInntektsmeldingM)
-            InntektsmeldingArbeidsgiver20180924Mapper.tilXMLInntektsmelding(
+            InntektsmeldingArbeidsgiver20180924Mapper.fraXMLInntektsmelding(
                 jaxbInntektsmelding,
                 journalpostId,
                 mottattDato,
@@ -29,7 +29,7 @@ class XmlInntektsmeldingMapper {
                 arkivReferanse
             )
         else {
-            InntektsmeldingArbeidsgiverPrivat20181211Mapper.tilXMLInntektsmelding(
+            InntektsmeldingArbeidsgiverPrivat20181211Mapper.fraXMLInntektsmelding(
                 jaxbInntektsmelding,
                 journalpostId,
                 mottattDato,

@@ -38,9 +38,9 @@ class JournalConsumer(
             val mottattDato: LocalDateTime = journalpost!!.datoOpprettet
             val journalStatus: JournalStatus = journalpost.journalstatus
             return if (jaxbInntektsmelding.value is XMLInntektsmeldingM)
-                InntektsmeldingArbeidsgiver20180924Mapper.tilXMLInntektsmelding(jaxbInntektsmelding, journalpostId, mottattDato, journalStatus, arkivReferanse)
+                InntektsmeldingArbeidsgiver20180924Mapper.fraXMLInntektsmelding(jaxbInntektsmelding, journalpostId, mottattDato, journalStatus, arkivReferanse)
             else
-                InntektsmeldingArbeidsgiverPrivat20181211Mapper.tilXMLInntektsmelding(jaxbInntektsmelding, journalpostId, mottattDato, journalStatus, arkivReferanse, pdlClient)
+                InntektsmeldingArbeidsgiverPrivat20181211Mapper.fraXMLInntektsmelding(jaxbInntektsmelding, journalpostId, mottattDato, journalStatus, arkivReferanse, pdlClient)
         } catch (e: RuntimeException) {
             logger.error("Klarte ikke å hente inntektsmelding med journalpostId: $journalpostId", e)
             throw HentDokumentFeiletException(journalpostId, e)

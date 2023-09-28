@@ -10,7 +10,6 @@ import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.domain.inntektsmelding.Kontaktinformasjon
 import no.nav.syfo.domain.inntektsmelding.OpphoerAvNaturalytelse
 import no.nav.syfo.domain.inntektsmelding.Refusjon
-import java.math.BigDecimal
 import java.time.LocalDateTime
 
 fun mapInntektsmelding(arkivreferanse: String, aktorId: String, journalpostId: String, imd: InntektsmeldingDokument): Inntektsmelding {
@@ -48,7 +47,7 @@ fun mapInntektsmelding(arkivreferanse: String, aktorId: String, journalpostId: S
         nærRelasjon = null,
         kontaktinformasjon = Kontaktinformasjon(imd.innsenderNavn, imd.telefonnummer),
         innsendingstidspunkt = LocalDateTime.now(),
-        bruttoUtbetalt = BigDecimal(0),
+        bruttoUtbetalt = imd.fullLønnIArbeidsgiverPerioden?.utbetalt,
         årsakEndring = null
     )
 }
