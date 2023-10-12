@@ -33,7 +33,7 @@ val navSyfoCommonVersion: String by project
 val vaultJdbcVersion: String by project
 val navLogVersion: String by project
 val fellesBackendVersion: String by project
-val helseArbeidsgiverUtilsVersion: String by project
+val hagUtilsVersion: String by project
 val slf4Version: String by project
 val logbackVersion: String by project
 val apacheHttpClientVersion: String by project
@@ -42,11 +42,13 @@ val kafkaVersion: String by project
 val apacheKafkaStreamsVersion: String by project
 val annotationApiVersion: String by project
 val altinnCorrespondanceVersion: String by project
-val inntektsmeldingVersion: String by project
 val logbackClassicVersion: String by project
+val hagDomeneInntektsmeldingVersion: String by project
+val kotlinxSerializationVersion: String by project
 
 plugins {
     kotlin("jvm") version "1.9.0"
+    kotlin("plugin.serialization") version "1.9.0"
     id("com.github.ben-manes.versions") version "0.47.0"
     id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
     id("org.flywaydb.flyway") version "9.8.3"
@@ -166,7 +168,7 @@ dependencies {
     implementation("no.nav:vault-jdbc:$vaultJdbcVersion")
     implementation("no.nav.common:log:$navLogVersion")
     implementation("no.nav.helsearbeidsgiver:helse-arbeidsgiver-felles-backend:$fellesBackendVersion")
-    implementation("no.nav.helsearbeidsgiver:utils:$helseArbeidsgiverUtilsVersion")
+    implementation("no.nav.helsearbeidsgiver:utils:$hagUtilsVersion")
     implementation("no.nav.security:token-client-core:$tokenSupportVersion")
     implementation("no.nav.security:token-validation-ktor:$tokenSupportVersion")
     implementation("no.nav.security:mock-oauth2-server:$mockOAuth2ServerVersion")
@@ -199,6 +201,7 @@ dependencies {
     implementation("io.prometheus:simpleclient_hotspot:$prometheusVersion")
     implementation("no.nav.tjenestespesifikasjoner:altinn-correspondence-agency-external-basic:$altinnCorrespondanceVersion")
     implementation("javax.annotation:javax.annotation-api:$annotationApiVersion")
-    implementation("no.nav.helsearbeidsgiver.inntektsmelding:dokument:$inntektsmeldingVersion")
+    implementation("no.nav.helsearbeidsgiver:domene-inntektsmelding:$hagDomeneInntektsmeldingVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion")
     runtimeOnly("ch.qos.logback:logback-classic:$logbackClassicVersion")
 }
