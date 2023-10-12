@@ -1,6 +1,6 @@
 package no.nav.syfo.mapping
 
-import no.nav.helsearbeidsgiver.felles.inntektsmelding.felles.models.BegrunnelseIngenEllerRedusertUtbetalingKode
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.BegrunnelseIngenEllerRedusertUtbetalingKode
 import no.nav.syfo.domain.inntektsmelding.Gyldighetsstatus
 import no.nav.syfo.domain.inntektsmelding.Kontaktinformasjon
 import no.nav.syfo.grunnleggendeInntektsmelding
@@ -28,7 +28,7 @@ class InntektsmeldingMapperFraInternSyfoTilHAGKontraktTest {
     @Test
     fun mapInntektsmeldingKontrakt() {
         val bruttoUtbetalt = BigDecimal(39013)
-        val begrunnelse = BegrunnelseIngenEllerRedusertUtbetalingKode.FERIE_ELLER_AVSPASERING.value
+        val begrunnelse = BegrunnelseIngenEllerRedusertUtbetalingKode.FerieEllerAvspasering.name
         val innsenderNavn = "André Bjørke"
         val innsenderTelefon = "22555555"
         val syfoInternInntektsmelding = grunnleggendeInntektsmelding.copy(

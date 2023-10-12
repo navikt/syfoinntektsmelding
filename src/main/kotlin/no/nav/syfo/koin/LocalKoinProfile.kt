@@ -180,7 +180,6 @@ fun localDevConfig(config: ApplicationConfig) = module {
             get(),
             get(),
             get(),
-            get(),
             get()
         )
     }

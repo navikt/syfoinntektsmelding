@@ -223,7 +223,6 @@ fun prodConfig(config: ApplicationConfig) = module {
             get(),
             get(),
             get(),
-            get(),
             get()
         )
     }
