@@ -1,11 +1,13 @@
 package no.nav.syfo.simba
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClient
 import no.nav.helse.arbeidsgiver.kubernetes.LivenessComponent
 import no.nav.helse.arbeidsgiver.kubernetes.ReadynessComponent
-import no.nav.helsearbeidsgiver.felles.inntektsmelding.felles.models.InntektsmeldingDokument
-import no.nav.helsearbeidsgiver.felles.inntektsmelding.felles.models.JournalførtInntektsmelding
+import no.nav.helse.arbeidsgiver.utils.logger
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.Inntektsmelding
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.JournalfoertInntektsmelding
+import no.nav.helsearbeidsgiver.utils.json.fromJson
+import no.nav.helsearbeidsgiver.utils.log.sikkerLogger
 import no.nav.syfo.behandling.FantIkkeAktørException
 import no.nav.syfo.behandling.OPPRETT_OPPGAVE_FORSINKELSE
 import no.nav.syfo.dto.Tilstand
@@ -17,36 +19,34 @@ import no.nav.syfo.util.getAktørid
 import no.nav.syfo.util.validerInntektsmelding
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import org.apache.kafka.clients.consumer.KafkaConsumer
-import org.slf4j.LoggerFactory
 import java.time.Duration
 import java.time.LocalDateTime
 
 class InntektsmeldingConsumer(
     props: Map<String, Any>,
     topicName: String,
-    val om: ObjectMapper,
-    val inntektsmeldingService: InntektsmeldingService,
-    val inntektsmeldingAivenProducer: InntektsmeldingAivenProducer,
-    val utsattOppgaveService: UtsattOppgaveService,
-    val pdlClient: PdlClient
+    private val inntektsmeldingService: InntektsmeldingService,
+    private val inntektsmeldingAivenProducer: InntektsmeldingAivenProducer,
+    private val utsattOppgaveService: UtsattOppgaveService,
+    private val pdlClient: PdlClient
 ) : ReadynessComponent, LivenessComponent {
 
     private val consumer = KafkaConsumer<String, String>(props)
     private var ready = false
     private var error = false
-    private val log = LoggerFactory.getLogger(InntektsmeldingConsumer::class.java)
-    private val sikkerlogger = LoggerFactory.getLogger("tjenestekall")
+    private val log = logger()
+    private val sikkerlogger = sikkerLogger()
 
     init {
         log.info("Lytter på topic $topicName")
         consumer.subscribe(listOf(topicName))
     }
 
-    fun setIsReady(ready: Boolean) {
+    private fun setIsReady(ready: Boolean) {
         this.ready = ready
     }
 
-    fun setIsError(isError: Boolean) {
+    private fun setIsError(isError: Boolean) {
         this.error = isError
     }
 
@@ -61,13 +61,14 @@ class InntektsmeldingConsumer(
                         try {
                             val value = record.value()
                             sikkerlogger.info("InntektsmeldingConsumer: Mottar record fra Simba: $value")
-                            val jd = om.readValue<JournalførtInntektsmelding>(value, JournalførtInntektsmelding::class.java)
-                            val im = inntektsmeldingService.findByJournalpost(jd.journalpostId)
+                            val meldingFraSimba = value.fromJson(JournalfoertInntektsmelding.serializer())
+
+                            val im = inntektsmeldingService.findByJournalpost(meldingFraSimba.journalpostId)
                             if (im != null) {
-                                sikkerlogger.info("InntektsmeldingConsumer: Behandler ikke ${jd.journalpostId}. Finnes allerede.")
+                                sikkerlogger.info("InntektsmeldingConsumer: Behandler ikke ${meldingFraSimba.journalpostId}. Finnes allerede.")
                             } else {
-                                behandle(jd.journalpostId, jd.inntektsmeldingDokument)
-                                log.info("InntektsmeldingConsumer: Behandlet inntektsmelding med journalpostid: ${jd.journalpostId}")
+                                behandle(meldingFraSimba.journalpostId, meldingFraSimba.inntektsmelding)
+                                log.info("InntektsmeldingConsumer: Behandlet inntektsmelding med journalpostid: ${meldingFraSimba.journalpostId}")
                             }
                             it.commitSync()
                         } catch (e: Throwable) {
@@ -80,14 +81,14 @@ class InntektsmeldingConsumer(
         }
     }
 
-    fun behandle(journalpostId: String, inntektsmeldingDokument: InntektsmeldingDokument) {
-        val aktorid = pdlClient.getAktørid(inntektsmeldingDokument.identitetsnummer)
+    private fun behandle(journalpostId: String, inntektsmeldingFraSimba: Inntektsmelding) {
+        val aktorid = pdlClient.getAktørid(inntektsmeldingFraSimba.identitetsnummer)
         val arkivreferanse = "im_$journalpostId"
         if (aktorid == null) {
             log.error("Fant ikke aktøren for arkivreferansen: $arkivreferanse")
             throw FantIkkeAktørException(null)
         }
-        val inntektsmelding = mapInntektsmelding(arkivreferanse, aktorid, journalpostId, inntektsmeldingDokument)
+        val inntektsmelding = mapInntektsmelding(arkivreferanse, aktorid, journalpostId, inntektsmeldingFraSimba)
         val dto = inntektsmeldingService.lagreBehandling(inntektsmelding, aktorid)
 
         utsattOppgaveService.opprett(
@@ -116,7 +117,7 @@ class InntektsmeldingConsumer(
 
         inntektsmeldingAivenProducer.leggMottattInntektsmeldingPåTopics(mappedInntektsmelding)
 
-        sikkerlogger.info("Publiserte inntektsmelding på topic: $inntektsmeldingDokument")
+        sikkerlogger.info("Publiserte inntektsmelding på topic: $inntektsmelding")
     }
 
     override suspend fun runReadynessCheck() {

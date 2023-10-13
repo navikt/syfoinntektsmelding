@@ -1,6 +1,6 @@
 package no.nav.syfo.simba
 
-import no.nav.helsearbeidsgiver.felles.inntektsmelding.felles.models.InntektsmeldingDokument
+import no.nav.helsearbeidsgiver.utils.pipe.orDefault
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
 import no.nav.syfo.domain.inntektsmelding.AvsenderSystem
@@ -8,46 +8,48 @@ import no.nav.syfo.domain.inntektsmelding.EndringIRefusjon
 import no.nav.syfo.domain.inntektsmelding.Gyldighetsstatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.domain.inntektsmelding.Kontaktinformasjon
+import no.nav.syfo.domain.inntektsmelding.Naturalytelse
 import no.nav.syfo.domain.inntektsmelding.OpphoerAvNaturalytelse
 import no.nav.syfo.domain.inntektsmelding.Refusjon
 import java.time.LocalDateTime
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.Inntektsmelding as InntektmeldingSimba
 
-fun mapInntektsmelding(arkivreferanse: String, aktorId: String, journalpostId: String, imd: InntektsmeldingDokument): Inntektsmelding {
+fun mapInntektsmelding(arkivreferanse: String, aktorId: String, journalpostId: String, im: InntektmeldingSimba): Inntektsmelding {
     return Inntektsmelding(
         id = "",
-        fnr = imd.identitetsnummer,
-        arbeidsgiverOrgnummer = imd.orgnrUnderenhet,
+        fnr = im.identitetsnummer,
+        arbeidsgiverOrgnummer = im.orgnrUnderenhet,
         arbeidsgiverPrivatFnr = null,
         arbeidsgiverPrivatAktørId = null,
         arbeidsforholdId = null,
         journalpostId = journalpostId,
-        arsakTilInnsending = imd.årsakInnsending.name.lowercase().replaceFirstChar { it.uppercase() },
+        arsakTilInnsending = im.årsakInnsending.name.lowercase().replaceFirstChar { it.uppercase() },
         journalStatus = JournalStatus.FERDIGSTILT,
-        arbeidsgiverperioder = imd.arbeidsgiverperioder.map { t -> Periode(t.fom, t.tom) },
-        beregnetInntekt = imd.beregnetInntekt,
-        refusjon = Refusjon(imd.refusjon.refusjonPrMnd ?: 0.0.toBigDecimal(), imd.refusjon.refusjonOpphører),
-        endringerIRefusjon = imd.refusjon.refusjonEndringer?.map { EndringIRefusjon(it.dato, it.beløp) } ?: emptyList(),
-        opphørAvNaturalYtelse = imd.naturalytelser?.map {
+        arbeidsgiverperioder = im.arbeidsgiverperioder.map { Periode(it.fom, it.tom) },
+        beregnetInntekt = im.beregnetInntekt.toBigDecimal(),
+        refusjon = Refusjon(im.refusjon.refusjonPrMnd.orDefault(0.0).toBigDecimal(), im.refusjon.refusjonOpphører),
+        endringerIRefusjon = im.refusjon.refusjonEndringer?.map { EndringIRefusjon(it.dato, it.beløp?.toBigDecimal()) }.orEmpty(),
+        opphørAvNaturalYtelse = im.naturalytelser?.map {
             OpphoerAvNaturalytelse(
-                no.nav.syfo.domain.inntektsmelding.Naturalytelse.valueOf(it.naturalytelse.value),
+                Naturalytelse.valueOf(it.naturalytelse.name),
                 it.dato,
-                it.beløp
+                it.beløp.toBigDecimal()
             )
         } ?: emptyList(),
         gjenopptakelserNaturalYtelse = emptyList(),
         gyldighetsStatus = Gyldighetsstatus.GYLDIG,
         arkivRefereranse = arkivreferanse,
         feriePerioder = emptyList(),
-        førsteFraværsdag = imd.bestemmendeFraværsdag,
+        førsteFraværsdag = im.bestemmendeFraværsdag,
         mottattDato = LocalDateTime.now(),
         sakId = "",
         aktorId = aktorId,
-        begrunnelseRedusert = imd.fullLønnIArbeidsgiverPerioden?.begrunnelse?.value.orEmpty(),
+        begrunnelseRedusert = im.fullLønnIArbeidsgiverPerioden?.begrunnelse?.name.orEmpty(),
         avsenderSystem = AvsenderSystem("NAV_NO", "1.0"),
         nærRelasjon = null,
-        kontaktinformasjon = Kontaktinformasjon(imd.innsenderNavn, imd.telefonnummer),
+        kontaktinformasjon = Kontaktinformasjon(im.innsenderNavn, im.telefonnummer),
         innsendingstidspunkt = LocalDateTime.now(),
-        bruttoUtbetalt = imd.fullLønnIArbeidsgiverPerioden?.utbetalt,
+        bruttoUtbetalt = im.fullLønnIArbeidsgiverPerioden?.utbetalt?.toBigDecimal(),
         årsakEndring = null
     )
 }
