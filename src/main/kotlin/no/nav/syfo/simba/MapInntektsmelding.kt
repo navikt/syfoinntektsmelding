@@ -11,7 +11,10 @@ import no.nav.syfo.domain.inntektsmelding.Kontaktinformasjon
 import no.nav.syfo.domain.inntektsmelding.Naturalytelse
 import no.nav.syfo.domain.inntektsmelding.OpphoerAvNaturalytelse
 import no.nav.syfo.domain.inntektsmelding.Refusjon
+import java.time.DayOfWeek
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.Inntektsmelding as InntektmeldingSimba
 
 fun mapInntektsmelding(arkivreferanse: String, aktorId: String, journalpostId: String, im: InntektmeldingSimba): Inntektsmelding {
@@ -27,6 +30,8 @@ fun mapInntektsmelding(arkivreferanse: String, aktorId: String, journalpostId: S
         journalStatus = JournalStatus.FERDIGSTILT,
         arbeidsgiverperioder = im.arbeidsgiverperioder.map { Periode(it.fom, it.tom) },
         beregnetInntekt = im.beregnetInntekt.toBigDecimal(),
+        // TODO rename 'bestemmendeFraværsdag' -> 'inntektsdato'
+        inntektsdato = im.bestemmendeFraværsdag,
         refusjon = Refusjon(im.refusjon.refusjonPrMnd.orDefault(0.0).toBigDecimal(), im.refusjon.refusjonOpphører),
         endringerIRefusjon = im.refusjon.refusjonEndringer?.map { EndringIRefusjon(it.dato, it.beløp?.toBigDecimal()) }.orEmpty(),
         opphørAvNaturalYtelse = im.naturalytelser?.map {
@@ -40,7 +45,7 @@ fun mapInntektsmelding(arkivreferanse: String, aktorId: String, journalpostId: S
         gyldighetsStatus = Gyldighetsstatus.GYLDIG,
         arkivRefereranse = arkivreferanse,
         feriePerioder = emptyList(),
-        førsteFraværsdag = im.bestemmendeFraværsdag,
+        førsteFraværsdag = im.foersteFravaersdag(),
         mottattDato = LocalDateTime.now(),
         sakId = "",
         aktorId = aktorId,
@@ -53,3 +58,30 @@ fun mapInntektsmelding(arkivreferanse: String, aktorId: String, journalpostId: S
         årsakEndring = null
     )
 }
+
+private fun InntektmeldingSimba.foersteFravaersdag(): LocalDate =
+    if (arbeidsgiverperioder.isNotEmpty()) arbeidsgiverperioder.maxBy { it.fom }.fom
+    else {
+        val sisteFravaersperiode = fraværsperioder.maxBy { it.fom }
+
+        egenmeldingsperioder.sortedByDescending { it.fom }
+            .fold(listOf(sisteFravaersperiode)) { sammenhengendePerioder, egenmeldingsperiode ->
+                val foerstePeriodeISammenhengende = sammenhengendePerioder.last()
+
+                if (egenmeldingsperiode.tom.erRettFoer(foerstePeriodeISammenhengende.fom)) {
+                    sammenhengendePerioder.plus(egenmeldingsperiode)
+                } else {
+                    sammenhengendePerioder
+                }
+            }
+            .last()
+            .fom
+    }
+
+fun LocalDate.erRettFoer(other: LocalDate): Boolean =
+    when (until(other, ChronoUnit.DAYS)) {
+        1L -> true
+        2L -> dayOfWeek in listOf(DayOfWeek.FRIDAY, DayOfWeek.SATURDAY)
+        3L -> dayOfWeek == DayOfWeek.FRIDAY
+        else -> false
+    }
