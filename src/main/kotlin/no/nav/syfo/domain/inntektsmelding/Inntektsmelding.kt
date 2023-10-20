@@ -1,5 +1,6 @@
 package no.nav.syfo.domain.inntektsmelding
 
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.InntektEndringAarsak
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
 import java.math.BigDecimal
@@ -36,7 +37,8 @@ data class Inntektsmelding(
     val kontaktinformasjon: Kontaktinformasjon = Kontaktinformasjon(),
     val innsendingstidspunkt: LocalDateTime? = null,
     val bruttoUtbetalt: BigDecimal? = null,
-    val årsakEndring: String? = null
+    val årsakEndring: String? = null,
+    val rapportertInntekt: RapportertInntekt? = null,
 ) {
     fun isDuplicate(inntektsmelding: Inntektsmelding): Boolean {
         return this.equals(
