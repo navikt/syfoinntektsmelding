@@ -110,7 +110,7 @@ fun Inntekt.tilRapportertInntekt() =
         manueltKorrigert = this.manueltKorrigert
     )
 
-fun InntektEndringAarsak.aarsak() : String =
+fun InntektEndringAarsak.aarsak(): String =
     when (this) {
         is Permisjon -> "Permisjon"
         is Ferie -> "Ferie"

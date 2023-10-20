@@ -1,6 +1,5 @@
 package no.nav.syfo.domain.inntektsmelding
 
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.InntektEndringAarsak
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
 import java.math.BigDecimal
