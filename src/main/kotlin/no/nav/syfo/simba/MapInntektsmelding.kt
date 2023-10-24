@@ -120,7 +120,7 @@ fun InntektEndringAarsak.aarsak(): String =
         is VarigLonnsendring -> "VarigLonnsendring"
         is NyStilling -> "NyStilling"
         is NyStillingsprosent -> "NyStillingsprosent"
-        is Bonus -> "NyStillingsprosent"
+        is Bonus -> "Bonus"
         is Sykefravaer -> "Sykefravaer"
         is Nyansatt -> "Nyansatt"
         is Feilregistrert -> "Feilregistrert"

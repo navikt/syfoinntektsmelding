@@ -2,7 +2,10 @@ package no.nav.syfo.simba
 
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.AarsakInnsending
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.BegrunnelseIngenEllerRedusertUtbetalingKode
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.Bonus
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.FullLoennIArbeidsgiverPerioden
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.Inntekt
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.InntektEndringAarsak
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.Inntektsmelding
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.Naturalytelse
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.NaturalytelseKode
@@ -64,6 +67,21 @@ class MapInntektsmeldingFraSimbaTest {
         assertEquals("", im.begrunnelseRedusert)
         assertNull(im.bruttoUtbetalt)
     }
+
+    @Test
+    fun mapInntektEndringAArsak() {
+        val im = mapInntektsmelding("1", "2", "3", lagInntektsmelding().copy(inntekt = lagInntekt()))
+        assertEquals("", im.begrunnelseRedusert)
+        assertNull(im.bruttoUtbetalt)
+        assertEquals("Bonus", im.rapportertInntekt?.endringAarsak)
+    }
+
+    private fun lagInntekt() = Inntekt(
+            bekreftet = true,
+            beregnetInntekt = 100_000.0,
+            endringÅrsak = Bonus(),
+            manueltKorrigert = false
+        )
 
     private fun lagInntektsmelding(): Inntektsmelding {
         val dato1 = LocalDate.now().minusDays(7)
