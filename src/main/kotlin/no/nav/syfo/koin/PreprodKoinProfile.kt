@@ -19,7 +19,6 @@ import no.nav.syfo.client.dokarkiv.DokArkivClient
 import no.nav.syfo.client.norg.Norg2Client
 import no.nav.syfo.client.saf.SafDokumentClient
 import no.nav.syfo.client.saf.SafJournalpostClient
-import no.nav.syfo.datapakke.DatapakkePublisherJob
 import no.nav.syfo.integration.kafka.UtsattOppgaveConsumer
 import no.nav.syfo.integration.kafka.commonAivenProperties
 import no.nav.syfo.integration.kafka.joarkAivenProperties
@@ -35,8 +34,6 @@ import no.nav.syfo.repository.DuplikatRepository
 import no.nav.syfo.repository.DuplikatRepositoryImpl
 import no.nav.syfo.repository.FeiletRepositoryImp
 import no.nav.syfo.repository.FeiletService
-import no.nav.syfo.repository.IMStatsRepo
-import no.nav.syfo.repository.IMStatsRepoImpl
 import no.nav.syfo.repository.InntektsmeldingRepository
 import no.nav.syfo.repository.InntektsmeldingRepositoryImp
 import no.nav.syfo.repository.UtsattOppgaveRepositoryImp
@@ -109,7 +106,6 @@ fun preprodConfig(config: ApplicationConfig) = module {
     single { Metrikk() } bind Metrikk::class
     single { BehandlendeEnhetConsumer(get(), get(), get()) } bind BehandlendeEnhetConsumer::class
     single { JournalpostService(get(), get(), get(), get(), get(), get()) } bind JournalpostService::class
-    single { DatapakkePublisherJob(get(), get(), config.getString("datapakke.api_url"), config.getString("datapakke.id"), om = get()) }
 
     single { InntektsmeldingRepositoryImp(get()) } bind InntektsmeldingRepository::class
     single { InntektsmeldingService(get(), get()) } bind InntektsmeldingService::class
@@ -154,7 +150,6 @@ fun preprodConfig(config: ApplicationConfig) = module {
 
     single { PostgresBakgrunnsjobbRepository(get()) } bind BakgrunnsjobbRepository::class
     single { BakgrunnsjobbService(get(), bakgrunnsvarsler = MetrikkVarsler()) }
-    single { IMStatsRepoImpl(get()) } bind IMStatsRepo::class
 
     single {
         PdlClientImpl(
