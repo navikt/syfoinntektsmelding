@@ -102,7 +102,6 @@ class MapInntektsmeldingFraSimbaTest {
         assertEquals("Feilregistrert", Feilregistrert.aarsak())
     }
 
-
     private fun lagInntekt() = Inntekt(
         bekreftet = true,
         beregnetInntekt = 100_000.0,
