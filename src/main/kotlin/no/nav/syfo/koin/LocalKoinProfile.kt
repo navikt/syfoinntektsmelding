@@ -14,7 +14,6 @@ import no.nav.syfo.client.TokenConsumer
 import no.nav.syfo.client.dokarkiv.DokArkivClient
 import no.nav.syfo.client.saf.SafDokumentClient
 import no.nav.syfo.client.saf.SafJournalpostClient
-import no.nav.syfo.datapakke.DatapakkePublisherJob
 import no.nav.syfo.integration.kafka.UtsattOppgaveConsumer
 import no.nav.syfo.integration.kafka.inntektsmeldingFraSimbaLocalProperties
 import no.nav.syfo.integration.kafka.joarkLocalProperties
@@ -32,8 +31,6 @@ import no.nav.syfo.repository.DuplikatRepositoryImpl
 import no.nav.syfo.repository.FeiletRepository
 import no.nav.syfo.repository.FeiletRepositoryImp
 import no.nav.syfo.repository.FeiletService
-import no.nav.syfo.repository.IMStatsRepo
-import no.nav.syfo.repository.IMStatsRepoImpl
 import no.nav.syfo.repository.InntektsmeldingRepository
 import no.nav.syfo.repository.InntektsmeldingRepositoryImp
 import no.nav.syfo.repository.InntektsmeldingRepositoryMock
@@ -103,8 +100,6 @@ fun localDevConfig(config: ApplicationConfig) = module {
     }
     single { PostgresBakgrunnsjobbRepository(get()) } bind BakgrunnsjobbRepository::class
     single { BakgrunnsjobbService(get()) }
-    single { IMStatsRepoImpl(get()) } bind IMStatsRepo::class
-    single { DatapakkePublisherJob(get(), get(), config.getString("datapakke.api_url"), config.getString("datapakke.id"), om = get()) }
     single { BehandlendeEnhetConsumer(get(), get(), get()) } bind BehandlendeEnhetConsumer::class
     single { DuplikatRepositoryImpl(get()) } bind DuplikatRepository::class
     single { UtsattOppgaveDAO(UtsattOppgaveRepositoryMockk()) }

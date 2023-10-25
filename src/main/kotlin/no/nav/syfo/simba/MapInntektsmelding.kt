@@ -1,5 +1,19 @@
 package no.nav.syfo.simba
 
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.Bonus
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.Feilregistrert
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.Ferie
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.Ferietrekk
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.Inntekt
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.InntektEndringAarsak
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.NyStilling
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.NyStillingsprosent
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.Nyansatt
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.Permisjon
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.Permittering
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.Sykefravaer
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.Tariffendring
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.VarigLonnsendring
 import no.nav.helsearbeidsgiver.utils.pipe.orDefault
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
@@ -10,6 +24,7 @@ import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.domain.inntektsmelding.Kontaktinformasjon
 import no.nav.syfo.domain.inntektsmelding.Naturalytelse
 import no.nav.syfo.domain.inntektsmelding.OpphoerAvNaturalytelse
+import no.nav.syfo.domain.inntektsmelding.RapportertInntekt
 import no.nav.syfo.domain.inntektsmelding.Refusjon
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -56,7 +71,8 @@ fun mapInntektsmelding(arkivreferanse: String, aktorId: String, journalpostId: S
         kontaktinformasjon = Kontaktinformasjon(im.innsenderNavn, im.telefonnummer),
         innsendingstidspunkt = LocalDateTime.now(),
         bruttoUtbetalt = im.fullLønnIArbeidsgiverPerioden?.utbetalt?.toBigDecimal(),
-        årsakEndring = null
+        årsakEndring = null,
+        rapportertInntekt = im.inntekt?.tilRapportertInntekt()
     )
 }
 
@@ -90,3 +106,28 @@ fun PeriodeSimba.kanSlaasSammenMed(other: PeriodeSimba): Boolean {
 
 private fun LocalDate.daysUntil(other: LocalDate): Int =
     until(other, ChronoUnit.DAYS).toInt()
+
+fun Inntekt.tilRapportertInntekt() =
+    RapportertInntekt(
+        bekreftet = this.bekreftet,
+        beregnetInntekt = this.beregnetInntekt,
+        endringAarsak = this.endringÅrsak?.aarsak(),
+        manueltKorrigert = this.manueltKorrigert
+    )
+
+fun InntektEndringAarsak.aarsak(): String =
+    when (this) {
+        is Permisjon -> "Permisjon"
+        is Ferie -> "Ferie"
+        is Ferietrekk -> "Ferietrekk"
+        is Permittering -> "Permittering"
+        is Tariffendring -> "Tariffendring"
+        is VarigLonnsendring -> "VarigLonnsendring"
+        is NyStilling -> "NyStilling"
+        is NyStillingsprosent -> "NyStillingsprosent"
+        is Bonus -> "Bonus"
+        is Sykefravaer -> "Sykefravaer"
+        is Nyansatt -> "Nyansatt"
+        is Feilregistrert -> "Feilregistrert"
+        else -> this::class.simpleName ?: "Ukjent"
+    }
