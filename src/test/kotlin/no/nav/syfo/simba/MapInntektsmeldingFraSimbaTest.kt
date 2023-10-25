@@ -87,7 +87,7 @@ class MapInntektsmeldingFraSimbaTest {
     }
 
     @Test
-    fun oversettInntektEndringAArsakTilRapportertInntektEndringAarsak() {
+    fun oversettInntektEndringAarsakTilRapportertInntektEndringAarsak() {
         assertEquals("Permisjon", Permisjon(emptyList()).aarsak())
         assertEquals("Ferie", Ferie(emptyList()).aarsak())
         assertEquals("Ferietrekk", Ferietrekk.aarsak())
