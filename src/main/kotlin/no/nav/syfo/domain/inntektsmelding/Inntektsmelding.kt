@@ -36,7 +36,8 @@ data class Inntektsmelding(
     val kontaktinformasjon: Kontaktinformasjon = Kontaktinformasjon(),
     val innsendingstidspunkt: LocalDateTime? = null,
     val bruttoUtbetalt: BigDecimal? = null,
-    val årsakEndring: String? = null
+    val årsakEndring: String? = null,
+    val rapportertInntekt: RapportertInntekt? = null,
 ) {
     fun isDuplicate(inntektsmelding: Inntektsmelding): Boolean {
         return this.equals(
