@@ -22,6 +22,8 @@ import no.nav.helsearbeidsgiver.domene.inntektsmelding.RefusjonEndring
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.Sykefravaer
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.Tariffendring
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.VarigLonnsendring
+import no.nav.helsearbeidsgiver.utils.test.date.oktober
+import no.nav.helsearbeidsgiver.utils.test.date.september
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
@@ -76,6 +78,45 @@ class MapInntektsmeldingFraSimbaTest {
         val im = mapInntektsmelding("1", "2", "3", lagInntektsmelding())
         assertEquals("", im.begrunnelseRedusert)
         assertNull(im.bruttoUtbetalt)
+    }
+
+    @Test
+    fun `Bestemmende fravaersdag beregnes korrekt fra AGP`() {
+        val expected = 15.september
+
+        val mockImSimba = lagInntektsmelding()
+            .copy(
+                arbeidsgiverperioder = listOf(
+                    Periode(1.september, 10.september),
+                    Periode(expected, 20.september),
+                )
+            )
+
+        val im = mapInntektsmelding("mockArkivRef", "mockAktorId", "mockJournalpostId", mockImSimba)
+
+        assertEquals(expected, im.førsteFraværsdag)
+    }
+
+    @Test
+    fun `Bestemmende fravaersdag beregnes korrekt fra egenemeldinger og fravaersperioder`() {
+        val expected = 5.oktober(2023)
+
+        val mockImSimba = lagInntektsmelding()
+            .copy(
+                arbeidsgiverperioder = emptyList(),
+                egenmeldingsperioder = listOf(
+                    Periode(2.oktober(2023), 3.oktober(2023)),
+                    Periode(expected, 6.oktober(2023)),
+                ),
+                fraværsperioder = listOf(
+                    Periode(9.oktober(2023), 11.oktober(2023)),
+                    Periode(12.oktober(2023), 30.oktober(2023)),
+                )
+            )
+
+        val im = mapInntektsmelding("mockArkivRef", "mockAktorId", "mockJournalpostId", mockImSimba)
+
+        assertEquals(expected, im.førsteFraværsdag)
     }
 
     @Test
