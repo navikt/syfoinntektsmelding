@@ -8,7 +8,13 @@ data class Journalpost(
     val journalstatus: JournalStatus,
     val datoOpprettet: LocalDateTime,
     val dokumenter: List<Dokument>,
-    val avsenderMottaker: AvsenderMottaker? = null,
+    val avsenderMottaker: SafAvsenderMottaker? = null,
+)
+
+data class SafAvsenderMottaker(
+    val id: String,
+    val type: String,
+    val navn: String
 )
 
 data class Dokument(
