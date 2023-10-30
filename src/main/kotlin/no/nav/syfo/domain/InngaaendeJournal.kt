@@ -1,11 +1,13 @@
 package no.nav.syfo.domain
 
+import no.nav.syfo.client.saf.model.SafAvsenderMottaker
 import java.time.LocalDateTime
 
 data class InngaaendeJournal(
     val dokumentId: String,
     val status: JournalStatus,
-    val mottattDato: LocalDateTime
+    val mottattDato: LocalDateTime,
+    val avsenderMottaker: SafAvsenderMottaker? = null,
 )
 
 /**
