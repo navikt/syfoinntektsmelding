@@ -1,6 +1,5 @@
 package no.nav.syfo.client.saf.model
 
-import no.nav.syfo.client.dokarkiv.AvsenderMottaker
 import no.nav.syfo.domain.JournalStatus
 import java.time.LocalDateTime
 
