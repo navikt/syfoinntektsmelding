@@ -30,7 +30,7 @@ class BehandleInngaaendeJournalConsumer(private val dokArkivClient: DokArkivClie
         }
         inngaendeJournalpost.safAvsenderMottaker?.erLikAvsenderMottaker(req.avsenderMottaker!!)?.also {
             if (!it) {
-                sikkerlogger.info("Avsender/mottaker er endret for journalpost $journalpostId, fra saf: ${inngaendeJournalpost.safAvsenderMottaker}, til dokarkiv: ${req.avsenderMottaker}")
+                sikkerlogger.warn("Avsender/mottaker er endret for journalpost $journalpostId, fra saf: ${inngaendeJournalpost.safAvsenderMottaker}, til dokarkiv: ${req.avsenderMottaker}")
             } else sikkerlogger.info("Avsender/mottaker er ikke endret for journalpost $journalpostId")
         }
         runBlocking {
