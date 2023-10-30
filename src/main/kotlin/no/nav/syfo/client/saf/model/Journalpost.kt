@@ -1,12 +1,14 @@
 package no.nav.syfo.client.saf.model
 
+import no.nav.syfo.client.dokarkiv.AvsenderMottaker
 import no.nav.syfo.domain.JournalStatus
 import java.time.LocalDateTime
 
 data class Journalpost(
     val journalstatus: JournalStatus,
     val datoOpprettet: LocalDateTime,
-    val dokumenter: List<Dokument>
+    val dokumenter: List<Dokument>,
+    val avsenderMottaker: AvsenderMottaker? = null,
 )
 
 data class Dokument(
