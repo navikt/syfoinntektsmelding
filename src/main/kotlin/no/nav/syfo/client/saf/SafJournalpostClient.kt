@@ -8,7 +8,6 @@ import io.ktor.http.contentType
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
 import no.nav.helsearbeidsgiver.utils.log.logger
-import no.nav.helsearbeidsgiver.utils.log.sikkerLogger
 import no.nav.syfo.client.saf.model.GetJournalpostRequest
 import no.nav.syfo.client.saf.model.JournalResponse
 import no.nav.syfo.client.saf.model.Journalpost
@@ -19,7 +18,6 @@ class SafJournalpostClient(
     private val stsClient: AccessTokenProvider
 ) {
     private val logger = this.logger()
-    private val sikkerlogger = sikkerLogger()
 
     fun getJournalpostMetadata(journalpostId: String): Journalpost? {
         val token = stsClient.getToken()
@@ -36,10 +34,8 @@ class SafJournalpostClient(
             throw NotAuthorizedException(journalpostId)
         }
         if (response.errors != null && response.errors.isNotEmpty()) {
-            sikkerlogger.info("Feil ved henting av journalpost $journalpostId: ${response.errors}")
             throw ErrorException(journalpostId, response.errors.toString())
         }
-        sikkerlogger.info("Hentet journalpost ${response.data!!.journalpost?.avsenderMottaker}")
         return response.data!!.journalpost
     }
 }
