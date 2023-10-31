@@ -22,6 +22,7 @@ import no.nav.helsearbeidsgiver.domene.inntektsmelding.RefusjonEndring
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.Sykefravaer
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.Tariffendring
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.VarigLonnsendring
+import no.nav.helsearbeidsgiver.utils.test.date.august
 import no.nav.helsearbeidsgiver.utils.test.date.oktober
 import no.nav.helsearbeidsgiver.utils.test.date.september
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -98,7 +99,26 @@ class MapInntektsmeldingFraSimbaTest {
     }
 
     @Test
-    fun `Bestemmende fravaersdag beregnes korrekt fra egenemeldinger og fravaersperioder`() {
+    fun `Bestemmende fravaersdag beregnes korrekt fra fravaersperioder uten gap`() {
+        val expected = 13.august(2023)
+
+        val mockImSimba = lagInntektsmelding()
+            .copy(
+                arbeidsgiverperioder = emptyList(),
+                egenmeldingsperioder = listOf(),
+                fraværsperioder = listOf(
+                    Periode(expected, 28.august(2023)),
+                    Periode(29.august(2023), 11.september(2023))
+                )
+            )
+
+        val im = mapInntektsmelding("mockArkivRef", "mockAktorId", "mockJournalpostId", mockImSimba)
+
+        assertEquals(expected, im.førsteFraværsdag)
+    }
+
+    @Test
+    fun `Bestemmende fravaersdag beregnes korrekt fra egenmeldinger og fravaersperioder med helgegap`() {
         val expected = 5.oktober(2023)
 
         val mockImSimba = lagInntektsmelding()
