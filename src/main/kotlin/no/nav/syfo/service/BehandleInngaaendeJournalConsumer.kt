@@ -3,11 +3,9 @@ package no.nav.syfo.service
 import kotlinx.coroutines.runBlocking
 import no.nav.helsearbeidsgiver.utils.log.MdcUtils
 import no.nav.helsearbeidsgiver.utils.log.sikkerLogger
-import no.nav.syfo.client.dokarkiv.AvsenderMottaker
 import no.nav.syfo.client.dokarkiv.DokArkivClient
 import no.nav.syfo.client.dokarkiv.mapFeilregistrertRequest
 import no.nav.syfo.client.dokarkiv.mapOppdaterRequest
-import no.nav.syfo.client.saf.model.SafAvsenderMottaker
 import no.nav.syfo.domain.InngaendeJournalpost
 
 class BehandleInngaaendeJournalConsumer(private val dokArkivClient: DokArkivClient) {
@@ -20,7 +18,7 @@ class BehandleInngaaendeJournalConsumer(private val dokArkivClient: DokArkivClie
     fun oppdaterJournalpost(fnr: String, inngaendeJournalpost: InngaendeJournalpost, feilregistrert: Boolean) {
         val journalpostId = inngaendeJournalpost.journalpostId
         val req = if (feilregistrert) {
-            mapFeilregistrertRequest(fnr,inngaendeJournalpost.dokumentId)
+            mapFeilregistrertRequest(fnr, inngaendeJournalpost.dokumentId)
         } else {
             mapOppdaterRequest(fnr)
         }

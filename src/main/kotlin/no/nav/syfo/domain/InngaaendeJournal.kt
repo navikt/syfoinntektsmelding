@@ -1,6 +1,5 @@
 package no.nav.syfo.domain
 
-import no.nav.syfo.client.saf.model.SafAvsenderMottaker
 import java.time.LocalDateTime
 
 data class InngaaendeJournal(
