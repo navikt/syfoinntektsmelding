@@ -1,7 +1,5 @@
 package no.nav.syfo.domain
 
-import no.nav.syfo.client.saf.model.SafAvsenderMottaker
-
 data class InngaendeJournalpost(
     val fnr: String,
     val journalpostId: String,
@@ -10,5 +8,4 @@ data class InngaendeJournalpost(
     val arbeidsgiverOrgnummer: String? = null,
     val arbeidsgiverNavn: String = "Arbeidsgiver",
     val arbeidsgiverPrivat: String? = null,
-    val safAvsenderMottaker: SafAvsenderMottaker? = null,
 )
