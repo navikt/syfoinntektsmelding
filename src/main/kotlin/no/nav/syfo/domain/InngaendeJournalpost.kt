@@ -10,5 +10,4 @@ data class InngaendeJournalpost(
     val arbeidsgiverOrgnummer: String? = null,
     val arbeidsgiverNavn: String = "Arbeidsgiver",
     val arbeidsgiverPrivat: String? = null,
-    val safAvsenderMottaker: SafAvsenderMottaker? = null,
 )

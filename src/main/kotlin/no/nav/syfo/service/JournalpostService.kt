@@ -40,7 +40,6 @@ class JournalpostService(
             arbeidsgiverOrgnummer = inntektsmelding.arbeidsgiverOrgnummer,
             arbeidsgiverNavn = arbeidsgiverNavn,
             arbeidsgiverPrivat = inntektsmelding.arbeidsgiverPrivatFnr,
-            safAvsenderMottaker = inngaaendeJournal.avsenderMottaker
         )
     }
 

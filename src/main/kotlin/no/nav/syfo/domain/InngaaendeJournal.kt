@@ -7,7 +7,6 @@ data class InngaaendeJournal(
     val dokumentId: String,
     val status: JournalStatus,
     val mottattDato: LocalDateTime,
-    val avsenderMottaker: SafAvsenderMottaker? = null,
 )
 
 /**
