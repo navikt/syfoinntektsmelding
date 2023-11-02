@@ -103,5 +103,3 @@ spec:
       value: "https://saf.intern.nav.no/rest"
     - name: SAF_JOURNAL_URL
       value: "https://saf.intern.nav.no/graphql"
-    - name: ENHETSREGISTERET_URL
-      value: "https://data.brreg.no/enhetsregisteret/api/underenheter/"

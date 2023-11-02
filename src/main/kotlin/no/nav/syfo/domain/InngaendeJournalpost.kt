@@ -5,7 +5,4 @@ data class InngaendeJournalpost(
     val journalpostId: String,
     val dokumentId: String,
     val behandlendeEnhetId: String,
-    val arbeidsgiverOrgnummer: String? = null,
-    val arbeidsgiverNavn: String = "Arbeidsgiver",
-    val arbeidsgiverPrivat: String? = null,
 )

@@ -11,8 +11,6 @@ import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClientImpl
 import no.nav.helse.arbeidsgiver.system.getString
 import no.nav.syfo.MetrikkVarsler
 import no.nav.syfo.behandling.InntektsmeldingBehandler
-import no.nav.syfo.client.BrregClient
-import no.nav.syfo.client.BrregClientImp
 import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.client.TokenConsumer
 import no.nav.syfo.client.dokarkiv.DokArkivClient
@@ -51,7 +49,6 @@ import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.common.serialization.StringDeserializer
-import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import javax.sql.DataSource
@@ -105,7 +102,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
     single { JournalConsumer(get(), get(), get()) } bind JournalConsumer::class
     single { Metrikk() } bind Metrikk::class
     single { BehandlendeEnhetConsumer(get(), get(), get()) } bind BehandlendeEnhetConsumer::class
-    single { JournalpostService(get(), get(), get(), get(), get(), get()) } bind JournalpostService::class
+    single { JournalpostService(get(), get(), get(), get(), get()) } bind JournalpostService::class
 
     single { InntektsmeldingRepositoryImp(get()) } bind InntektsmeldingRepository::class
     single { InntektsmeldingService(get(), get()) } bind InntektsmeldingService::class
@@ -216,8 +213,6 @@ fun preprodConfig(config: ApplicationConfig) = module {
             get()
         )
     } bind DokArkivClient::class
-
-    single { BrregClientImp(get(qualifier = named("proxyHttpClient")), config.getString("berreg_enhet_url")) } bind BrregClient::class
 
     single {
         InntektsmeldingConsumer(
