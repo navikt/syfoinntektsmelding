@@ -51,6 +51,9 @@ spec:
     inbound:
       rules:
         - application: helsearbeidsgiver-proxy
+        - application: im-bro-spinn
+          namespace: helsearbeidsgiver
+          cluster: dev-gcp
   env:
     - name: KOIN_PROFILE
       value: "PREPROD"
