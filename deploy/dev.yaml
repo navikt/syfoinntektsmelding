@@ -7,8 +7,8 @@ metadata:
     team: helsearbeidsgiver
 spec:
   ingresses:
-    - https://syfoinntektsmelding.nais.preprod.local
     - https://syfoinntektsmelding.dev.intern.nav.no
+    - https://syfoinntektsmelding.dev-fss-pub.nais.io
   image: {{image}}
   port: 8080
   prometheus:
