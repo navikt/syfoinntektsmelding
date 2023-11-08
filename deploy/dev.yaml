@@ -54,6 +54,9 @@ spec:
         - application: im-bro-spinn
           namespace: helsearbeidsgiver
           cluster: dev-gcp
+        - application: sparkel-dokumenter
+          namespace: tbd
+          cluster: dev-gcp
   env:
     - name: KOIN_PROFILE
       value: "PREPROD"
