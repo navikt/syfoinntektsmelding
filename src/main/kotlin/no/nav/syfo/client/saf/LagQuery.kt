@@ -9,11 +9,6 @@ fun lagQuery(journalpostId: String): String {
             opprettetAvNavn,
             dokumenter {
                 dokumentInfoId
-            },
-            avsenderMottaker {
-                id
-                type
-                navn
             }
         }
 }""".trim()

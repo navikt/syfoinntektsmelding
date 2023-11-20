@@ -8,6 +8,7 @@ metadata:
 spec:
   ingresses:
     - https://syfoinntektsmelding.intern.nav.no
+    - https://syfoinntektsmelding.prod-fss-pub.nais.io
   image: {{image}}
   port: 8080
   prometheus:
@@ -48,6 +49,9 @@ spec:
     inbound:
       rules:
         - application: helsearbeidsgiver-proxy
+        - application: im-bro-spinn
+          namespace: helsearbeidsgiver
+          cluster: prod-gcp
   env:
     - name: KOIN_PROFILE
       value: "PROD"
