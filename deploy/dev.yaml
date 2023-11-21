@@ -50,7 +50,6 @@ spec:
   accessPolicy:
     inbound:
       rules:
-        - application: helsearbeidsgiver-proxy
         - application: im-bro-spinn
           namespace: helsearbeidsgiver
           cluster: dev-gcp
