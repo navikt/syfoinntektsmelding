@@ -39,7 +39,7 @@ class JournalpostService(
             behandlendeEnhetId = behandlendeEnhet,
             arbeidsgiverOrgnummer = inntektsmelding.arbeidsgiverOrgnummer,
             arbeidsgiverNavn = arbeidsgiverNavn,
-            arbeidsgiverPrivat = inntektsmelding.arbeidsgiverPrivatFnr
+            arbeidsgiverPrivat = inntektsmelding.arbeidsgiverPrivatFnr,
         )
     }
 

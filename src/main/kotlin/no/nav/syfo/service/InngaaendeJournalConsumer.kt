@@ -13,7 +13,7 @@ class InngaaendeJournalConsumer(
             InngaaendeJournal(
                 dokumentId = journalpost?.dokumenter!![0].dokumentInfoId,
                 status = journalpost.journalstatus,
-                mottattDato = journalpost.datoOpprettet
+                mottattDato = journalpost.datoOpprettet,
             )
         }
     }

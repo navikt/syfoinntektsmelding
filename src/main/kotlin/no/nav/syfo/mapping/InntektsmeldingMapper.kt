@@ -30,6 +30,7 @@ fun mapInntektsmeldingKontrakt(
         arbeidsforholdId = inntektsmelding.arbeidsforholdId,
         arbeidsgiverperioder = mapArbeidsgiverperioder(inntektsmelding),
         beregnetInntekt = inntektsmelding.beregnetInntekt,
+        inntektsdato = inntektsmelding.inntektsdato,
         refusjon = mapRefusjon(inntektsmelding),
         endringIRefusjoner = mapEndringIRefusjon(inntektsmelding),
         opphoerAvNaturalytelser = mapOpphørAvNaturalytelser(inntektsmelding),

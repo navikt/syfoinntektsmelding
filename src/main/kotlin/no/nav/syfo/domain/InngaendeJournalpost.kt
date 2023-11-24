@@ -7,5 +7,5 @@ data class InngaendeJournalpost(
     val behandlendeEnhetId: String,
     val arbeidsgiverOrgnummer: String? = null,
     val arbeidsgiverNavn: String = "Arbeidsgiver",
-    val arbeidsgiverPrivat: String? = null
+    val arbeidsgiverPrivat: String? = null,
 )

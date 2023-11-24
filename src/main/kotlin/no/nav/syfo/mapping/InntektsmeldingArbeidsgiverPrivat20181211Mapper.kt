@@ -64,6 +64,7 @@ internal object InntektsmeldingArbeidsgiverPrivat20181211Mapper {
             journalStatus = journalStatus,
             arbeidsgiverperioder = perioder,
             beregnetInntekt = beregnetInntekt,
+            inntektsdato = null,
             refusjon = mapXmlRefusjon(skjemainnhold.refusjon),
             endringerIRefusjon = mapXmlEndringRefusjon(skjemainnhold.refusjon),
             opphørAvNaturalYtelse = mapXmlOpphørNaturalytelser(skjemainnhold.opphoerAvNaturalytelseListe),

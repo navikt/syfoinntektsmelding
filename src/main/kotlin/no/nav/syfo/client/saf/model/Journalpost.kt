@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 data class Journalpost(
     val journalstatus: JournalStatus,
     val datoOpprettet: LocalDateTime,
-    val dokumenter: List<Dokument>
+    val dokumenter: List<Dokument>,
 )
 
 data class Dokument(

@@ -18,6 +18,7 @@ data class Inntektsmelding(
     var journalStatus: JournalStatus,
     val arbeidsgiverperioder: List<Periode> = emptyList(),
     val beregnetInntekt: BigDecimal? = null,
+    val inntektsdato: LocalDate? = null,
     val refusjon: Refusjon = Refusjon(),
     val endringerIRefusjon: List<EndringIRefusjon> = emptyList(),
     val opphørAvNaturalYtelse: List<OpphoerAvNaturalytelse> = emptyList(),
@@ -35,7 +36,8 @@ data class Inntektsmelding(
     val kontaktinformasjon: Kontaktinformasjon = Kontaktinformasjon(),
     val innsendingstidspunkt: LocalDateTime? = null,
     val bruttoUtbetalt: BigDecimal? = null,
-    val årsakEndring: String? = null
+    val årsakEndring: String? = null,
+    val rapportertInntekt: RapportertInntekt? = null,
 ) {
     fun isDuplicate(inntektsmelding: Inntektsmelding): Boolean {
         return this.equals(
