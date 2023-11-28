@@ -46,8 +46,7 @@ fun mapInntektsmelding(arkivreferanse: String, aktorId: String, journalpostId: S
         journalStatus = JournalStatus.FERDIGSTILT,
         arbeidsgiverperioder = im.arbeidsgiverperioder.map { Periode(it.fom, it.tom) },
         beregnetInntekt = im.beregnetInntekt.toBigDecimal(),
-        // TODO rename 'bestemmendeFraværsdag' -> 'inntektsdato'
-        inntektsdato = im.bestemmendeFraværsdag,
+        inntektsdato = im.inntektsdato,
         refusjon = Refusjon(im.refusjon.refusjonPrMnd.orDefault(0.0).toBigDecimal(), im.refusjon.refusjonOpphører),
         endringerIRefusjon = im.refusjon.refusjonEndringer?.map { EndringIRefusjon(it.dato, it.beløp?.toBigDecimal()) }.orEmpty(),
         opphørAvNaturalYtelse = im.naturalytelser?.map {
