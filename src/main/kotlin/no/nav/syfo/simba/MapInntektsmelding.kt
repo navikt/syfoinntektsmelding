@@ -26,12 +26,8 @@ import no.nav.syfo.domain.inntektsmelding.Naturalytelse
 import no.nav.syfo.domain.inntektsmelding.OpphoerAvNaturalytelse
 import no.nav.syfo.domain.inntektsmelding.RapportertInntekt
 import no.nav.syfo.domain.inntektsmelding.Refusjon
-import java.time.DayOfWeek
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.temporal.ChronoUnit
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.Inntektsmelding as InntektmeldingSimba
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.Periode as PeriodeSimba
 
 fun mapInntektsmelding(arkivreferanse: String, aktorId: String, journalpostId: String, im: InntektmeldingSimba): Inntektsmelding {
     return Inntektsmelding(
@@ -60,7 +56,7 @@ fun mapInntektsmelding(arkivreferanse: String, aktorId: String, journalpostId: S
         gyldighetsStatus = Gyldighetsstatus.GYLDIG,
         arkivRefereranse = arkivreferanse,
         feriePerioder = emptyList(),
-        førsteFraværsdag = im.bestemmendeFravaersdag(),
+        førsteFraværsdag = im.bestemmendeFraværsdag,
         mottattDato = LocalDateTime.now(),
         sakId = "",
         aktorId = aktorId,
@@ -74,37 +70,6 @@ fun mapInntektsmelding(arkivreferanse: String, aktorId: String, journalpostId: S
         rapportertInntekt = im.inntekt?.tilRapportertInntekt()
     )
 }
-
-// TODO flytt til Simba ved forbedringer av domenepakken.
-private fun InntektmeldingSimba.bestemmendeFravaersdag(): LocalDate =
-    if (arbeidsgiverperioder.isNotEmpty()) arbeidsgiverperioder.maxOf(PeriodeSimba::fom)
-    else {
-        (egenmeldingsperioder + fraværsperioder)
-            .sortedBy { it.fom }
-            .reduce { sammenhengende, neste ->
-                if (sammenhengende.kanSlaasSammenMed(neste)) {
-                    PeriodeSimba(
-                        fom = sammenhengende.fom,
-                        tom = maxOf(sammenhengende.tom, neste.tom)
-                    )
-                } else {
-                    neste
-                }
-            }
-            .fom
-    }
-
-fun PeriodeSimba.kanSlaasSammenMed(other: PeriodeSimba): Boolean {
-    val dagerAvstand = tom.daysUntil(other.fom)
-    return when (tom.dayOfWeek) {
-        DayOfWeek.FRIDAY -> dagerAvstand <= 3
-        DayOfWeek.SATURDAY -> dagerAvstand <= 2
-        else -> dagerAvstand <= 1
-    }
-}
-
-private fun LocalDate.daysUntil(other: LocalDate): Int =
-    until(other, ChronoUnit.DAYS).toInt()
 
 fun Inntekt.tilRapportertInntekt() =
     RapportertInntekt(
