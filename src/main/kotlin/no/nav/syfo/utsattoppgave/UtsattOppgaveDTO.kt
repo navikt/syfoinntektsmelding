@@ -25,3 +25,9 @@ fun OppdateringstypeDTO.tilHandling() = when (this) {
     OppdateringstypeDTO.OpprettSpeilRelatert -> Handling.Opprett
     OppdateringstypeDTO.Ferdigbehandlet -> Handling.Forkast
 }
+
+fun OppdateringstypeDTO.erSpeilRelatert() = when (this) {
+    OppdateringstypeDTO.UtsettSpeilRelatert,
+    OppdateringstypeDTO.OpprettSpeilRelatert -> true
+    else -> false
+}
