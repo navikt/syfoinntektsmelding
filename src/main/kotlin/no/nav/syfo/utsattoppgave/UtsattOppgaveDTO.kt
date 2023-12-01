@@ -11,7 +11,7 @@ data class UtsattOppgaveDTO(
 )
 
 enum class OppdateringstypeDTO {
-    Utsett, Opprett, OpprettSpeilRelatert, Ferdigbehandlet
+    Utsett, UtsettSpeilRelatert, Opprett, OpprettSpeilRelatert, Ferdigbehandlet
 }
 
 enum class DokumentTypeDTO {
@@ -19,8 +19,9 @@ enum class DokumentTypeDTO {
 }
 
 fun OppdateringstypeDTO.tilHandling() = when (this) {
-    OppdateringstypeDTO.Utsett -> Handling.Utsett
-    OppdateringstypeDTO.Opprett -> Handling.Opprett
-    OppdateringstypeDTO.Ferdigbehandlet -> Handling.Forkast
+    OppdateringstypeDTO.Utsett,
+    OppdateringstypeDTO.UtsettSpeilRelatert -> Handling.Utsett
+    OppdateringstypeDTO.Opprett,
     OppdateringstypeDTO.OpprettSpeilRelatert -> Handling.Opprett
+    OppdateringstypeDTO.Ferdigbehandlet -> Handling.Forkast
 }

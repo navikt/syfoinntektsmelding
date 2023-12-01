@@ -37,7 +37,7 @@ class UtsattOppgaveService(
             return
         }
         logger.info("Fant oppgave for inntektsmelding: ${oppgave.arkivreferanse} med tilstand: ${oppgave.tilstand.name}")
-        val gjelderSpeil = oppdatering.oppdateringstype == OppdateringstypeDTO.OpprettSpeilRelatert
+        val gjelderSpeil = oppdatering.oppdateringstype in setOf(OppdateringstypeDTO.OpprettSpeilRelatert, OppdateringstypeDTO.UtsettSpeilRelatert)
 
         if (oppgave.tilstand == Tilstand.Utsatt && oppdatering.handling == no.nav.syfo.utsattoppgave.Handling.Utsett) {
             if (oppgave.timeout == null) {
