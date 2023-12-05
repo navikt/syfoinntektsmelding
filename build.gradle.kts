@@ -51,7 +51,7 @@ plugins {
     kotlin("plugin.serialization") version "1.9.0"
     id("com.github.ben-manes.versions") version "0.50.0"
     id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
-    id("org.flywaydb.flyway") version "9.8.3"
+    id("org.flywaydb.flyway") version "10.1.0"
     jacoco
     application
 }
@@ -158,6 +158,7 @@ dependencies {
     implementation("org.postgresql:postgresql:$postgresVersion")
     implementation("org.apache.neethi:neethi:$neethiVersion")
     implementation("org.flywaydb:flyway-core:$flywayVersion")
+    implementation("org.flywaydb:flyway-database-postgresql:$flywayVersion")
     implementation("no.nav.sykepenger.kontrakter:inntektsmelding-kontrakt:$imkontraktVersion")
     implementation("no.nav.tjenestespesifikasjoner:nav-altinn-inntektsmelding:$altinnInntektsmeldingVersion")
     implementation("no.nav.syfo.sm:syfosm-common-rest-sts:$navSyfoCommonVersion")
