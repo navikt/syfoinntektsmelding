@@ -47,7 +47,7 @@ val hagDomeneInntektsmeldingVersion: String by project
 val kotlinxSerializationVersion: String by project
 
 plugins {
-    kotlin("jvm") version "1.9.0"
+    kotlin("jvm") version "1.9.21"
     kotlin("plugin.serialization") version "1.9.0"
     id("com.github.ben-manes.versions") version "0.50.0"
     id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
