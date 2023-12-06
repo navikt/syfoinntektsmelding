@@ -1,6 +1,7 @@
 package no.nav.syfo.utsattoppgave
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import no.nav.syfo.client.OppgaveClient
@@ -20,8 +21,8 @@ open class UtsattOppgaveServiceTest {
     private var oppgaveClient: OppgaveClient = mockk()
     private var behandlendeEnhetConsumer: BehandlendeEnhetConsumer = mockk()
     private lateinit var oppgaveService: UtsattOppgaveService
-    private var metrikk: Metrikk = mockk()
-    private var inntektsmeldingRepository: InntektsmeldingRepository = mockk()
+    private var metrikk: Metrikk = mockk(relaxed = true)
+    private var inntektsmeldingRepository: InntektsmeldingRepository = mockk(relaxed = true)
     private var om: ObjectMapper = mockk()
 
     @BeforeEach
@@ -41,6 +42,22 @@ open class UtsattOppgaveServiceTest {
         val oppgave = enOppgave(timeout)
         oppgaveService.opprett(oppgave)
         verify { utsattOppgaveDAO.opprett(oppgave) }
+    }
+
+    @Test
+    fun `lagrerer utsatt oppgave med gjelder speil flagg for UtsettSpeilRelatert`() {
+        val timeout = LocalDateTime.of(2023, 4, 6, 9, 0)
+        val nyTimout = timeout.plusDays(7)
+        val oppgave = enOppgave(timeout)
+        every { utsattOppgaveDAO.finn(any()) } returns oppgave
+        val oppgaveOppdatering = OppgaveOppdatering(
+            UUID.randomUUID(),
+            OppdateringstypeDTO.UtsettSpeilRelatert.tilHandling(),
+            nyTimout,
+            OppdateringstypeDTO.UtsettSpeilRelatert
+        )
+        oppgaveService.prosesser(oppgaveOppdatering)
+        verify { utsattOppgaveDAO.lagre(eq(oppgave.copy(timeout = nyTimout, speil = true))) }
     }
 
     private fun enOppgave(timeout: LocalDateTime, tilstand: Tilstand = Tilstand.Utsatt) = UtsattOppgaveEntitet(
