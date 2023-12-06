@@ -36,45 +36,43 @@ class UtsattOppgaveService(
             logger.info("Mottok oppdatering på en ukjent oppgave for id: ${oppdatering.id}")
             return
         }
+
         logger.info("Fant oppgave for inntektsmelding: ${oppgave.arkivreferanse} med tilstand: ${oppgave.tilstand.name}")
         val gjelderSpeil = oppdatering.oppdateringstype.erSpeilRelatert()
 
-        if (oppgave.tilstand == Tilstand.Utsatt && oppdatering.handling == no.nav.syfo.utsattoppgave.Handling.Utsett) {
-            if (oppgave.timeout == null) {
-                metrikk.tellUtsattOppgave_UtenDato()
+        when {
+            oppgave.tilstand == Tilstand.Utsatt && oppdatering.handling == Handling.Utsett -> {
+                if (oppgave.timeout == null) {
+                    metrikk.tellUtsattOppgave_UtenDato()
+                }
+                oppdatering.timeout ?: error("Timeout på utsettelse mangler for inntektsmelding: ${oppgave.arkivreferanse}")
+                oppgave.timeout = oppdatering.timeout
+                oppgave.oppdatert = LocalDateTime.now()
+                oppgave.speil = gjelderSpeil
+                lagre(oppgave)
+                metrikk.tellUtsattOppgave_Utsett()
+                logger.info("Oppdaterte timeout på inntektsmelding: ${oppgave.arkivreferanse} til ${oppdatering.timeout}")
             }
-            oppdatering.timeout ?: error("Timeout på utsettelse mangler for inntektsmelding: ${oppgave.arkivreferanse}")
-            oppgave.timeout = oppdatering.timeout
-            oppgave.oppdatert = LocalDateTime.now()
-            oppgave.speil = gjelderSpeil
-            lagre(oppgave)
-            metrikk.tellUtsattOppgave_Utsett()
-            logger.info("Oppdaterte timeout på inntektsmelding: ${oppgave.arkivreferanse} til ${oppdatering.timeout}")
-            return
+            oppgave.tilstand == Tilstand.Utsatt && oppdatering.handling == Handling.Forkast -> {
+                oppgave.oppdatert = LocalDateTime.now()
+                lagre(oppgave.copy(tilstand = Tilstand.Forkastet, speil = gjelderSpeil))
+                metrikk.tellUtsattOppgave_Forkast()
+                logger.info("Endret oppgave: ${oppgave.arkivreferanse} til tilstand: ${Tilstand.Forkastet.name}")
+            }
+            (oppgave.tilstand == Tilstand.Utsatt || oppgave.tilstand == Tilstand.Forkastet) && oppdatering.handling == Handling.Opprett -> {
+                val inntektsmeldingEntitet = inntektsmeldingRepository.findByArkivReferanse(oppgave.arkivreferanse)
+                val resultat = opprettOppgaveIGosys(oppgave, oppgaveClient, utsattOppgaveDAO, behandlendeEnhetConsumer, gjelderSpeil, inntektsmeldingEntitet, om)
+                oppgave.oppdatert = LocalDateTime.now()
+                lagre(oppgave.copy(tilstand = Tilstand.Opprettet, speil = gjelderSpeil))
+                metrikk.tellUtsattOppgave_Opprett()
+                logger.info("Endret oppgave: ${oppgave.inntektsmeldingId} til tilstand: ${Tilstand.Opprettet.name} gosys oppgaveID: ${resultat.oppgaveId} duplikat? ${resultat.duplikat}")
+            }
+            else -> {
+                metrikk.tellUtsattOppgave_Irrelevant()
+                logger.info("Oppdatering på dokumentId: ${oppdatering.id} ikke relevant")
+            }
         }
-
-        if (oppgave.tilstand == Tilstand.Utsatt && oppdatering.handling == no.nav.syfo.utsattoppgave.Handling.Forkast) {
-            oppgave.oppdatert = LocalDateTime.now()
-            lagre(oppgave.copy(tilstand = Tilstand.Forkastet, speil = gjelderSpeil))
-            metrikk.tellUtsattOppgave_Forkast()
-            logger.info("Endret oppgave: ${oppgave.arkivreferanse} til tilstand: ${Tilstand.Forkastet.name}")
-            return
-        }
-
-        if ((oppgave.tilstand == Tilstand.Utsatt || oppgave.tilstand == Tilstand.Forkastet) && oppdatering.handling == Handling.Opprett) {
-            val inntektsmeldingEntitet = inntektsmeldingRepository.findByArkivReferanse(oppgave.arkivreferanse)
-            val resultat = opprettOppgaveIGosys(oppgave, oppgaveClient, utsattOppgaveDAO, behandlendeEnhetConsumer, gjelderSpeil, inntektsmeldingEntitet, om)
-            oppgave.oppdatert = LocalDateTime.now()
-            lagre(oppgave.copy(tilstand = Tilstand.Opprettet, speil = gjelderSpeil))
-            metrikk.tellUtsattOppgave_Opprett()
-            logger.info("Endret oppgave: ${oppgave.inntektsmeldingId} til tilstand: ${Tilstand.Opprettet.name} gosys oppgaveID: ${resultat.oppgaveId} duplikat? ${resultat.duplikat}")
-            return
-        }
-
-        metrikk.tellUtsattOppgave_Irrelevant()
-        logger.info("Oppdatering på dokumentId: ${oppdatering.id} ikke relevant")
     }
-
     fun lagre(oppgave: UtsattOppgaveEntitet) {
         utsattOppgaveDAO.lagre(oppgave)
     }
