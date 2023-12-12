@@ -48,7 +48,7 @@ open class UtsattOppgaveServiceTest {
     }
 
     @Test
-    fun `lagrerer utsatt oppgave med gjelder speil flagg for OpprettSpeilRelatert`() {
+    fun `lagrerer utsatt oppgave med gjelder speil flagg og tilstand Opprettet for OpprettSpeilRelatert`() {
         val timeout = LocalDateTime.of(2023, 4, 6, 9, 0)
         val oppgave = enOppgave(timeout)
         every { utsattOppgaveDAO.finn(any()) } returns oppgave
@@ -60,7 +60,55 @@ open class UtsattOppgaveServiceTest {
             OppdateringstypeDTO.OpprettSpeilRelatert
         )
         oppgaveService.prosesser(oppgaveOppdatering)
-        verify { utsattOppgaveDAO.lagre(eq(oppgave.copy(tilstand = Tilstand.Opprettet, speil = true))) }
+        verify { utsattOppgaveDAO.lagre(eq(oppgave.copy(tilstand = Tilstand.Opprettet, speil = true, timeout = timeout))) }
+    }
+
+    @Test
+    fun `lagrerer utsatt oppgave med tilstand Opprettet for Opprett`() {
+        val timeout = LocalDateTime.of(2023, 4, 6, 9, 0)
+        val oppgave = enOppgave(timeout)
+        every { utsattOppgaveDAO.finn(any()) } returns oppgave
+        every { oppgaveService.opprettOppgave(any(), any(), any()) } returns OppgaveResultat(Random.nextInt(), false, false)
+        val oppgaveOppdatering = OppgaveOppdatering(
+            UUID.randomUUID(),
+            OppdateringstypeDTO.Opprett.tilHandling(),
+            timeout.plusDays(7),
+            OppdateringstypeDTO.Opprett
+        )
+        oppgaveService.prosesser(oppgaveOppdatering)
+        verify { utsattOppgaveDAO.lagre(eq(oppgave.copy(tilstand = Tilstand.Opprettet, speil = false, timeout = timeout))) }
+    }
+
+    @Test
+    fun `lagrerer utsatt oppgave med ny timeout for utsettelse`() {
+        val timeout = LocalDateTime.of(2023, 4, 6, 9, 0)
+        val nyTimeout = timeout.plusDays(7)
+        val oppgave = enOppgave(timeout)
+        every { utsattOppgaveDAO.finn(any()) } returns oppgave
+        every { oppgaveService.opprettOppgave(any(), any(), any()) } returns OppgaveResultat(Random.nextInt(), false, false)
+        val oppgaveOppdatering = OppgaveOppdatering(
+            UUID.randomUUID(),
+            OppdateringstypeDTO.Utsett.tilHandling(),
+            nyTimeout,
+            OppdateringstypeDTO.Utsett
+        )
+        oppgaveService.prosesser(oppgaveOppdatering)
+        verify { utsattOppgaveDAO.lagre(eq(oppgave.copy(tilstand = Tilstand.Utsatt, timeout = nyTimeout))) }
+    }
+    @Test
+    fun `lagrerer utsatt oppgave med tilstand Forkastet ved Ferdigbehandlet`() {
+        val timeout = LocalDateTime.of(2023, 4, 6, 9, 0)
+        val oppgave = enOppgave(timeout)
+        every { utsattOppgaveDAO.finn(any()) } returns oppgave
+        every { oppgaveService.opprettOppgave(any(), any(), any()) } returns OppgaveResultat(Random.nextInt(), false, false)
+        val oppgaveOppdatering = OppgaveOppdatering(
+            UUID.randomUUID(),
+            OppdateringstypeDTO.Ferdigbehandlet.tilHandling(),
+            timeout.plusDays(7),
+            OppdateringstypeDTO.Ferdigbehandlet
+        )
+        oppgaveService.prosesser(oppgaveOppdatering)
+        verify { utsattOppgaveDAO.lagre(eq(oppgave.copy(tilstand = Tilstand.Forkastet, timeout = timeout))) }
     }
 
     private fun enOppgave(timeout: LocalDateTime, tilstand: Tilstand = Tilstand.Utsatt) = UtsattOppgaveEntitet(
