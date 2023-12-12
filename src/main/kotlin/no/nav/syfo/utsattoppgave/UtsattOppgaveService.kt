@@ -39,7 +39,7 @@ class UtsattOppgaveService(
         logger.info("Fant oppgave for inntektsmelding: ${oppgave.arkivreferanse} med tilstand: ${oppgave.tilstand.name}")
         val gjelderSpeil = oppdatering.oppdateringstype.erSpeilRelatert()
         when (oppgave.tilstand to oppdatering.handling) {
-            (Tilstand.Forkastet to Handling.Opprett) -> {
+            (Tilstand.Utsatt to Handling.Opprett) -> {
                 if (oppgave.timeout == null) {
                     metrikk.tellUtsattOppgave_UtenDato()
                 }
