@@ -8,6 +8,7 @@ import no.nav.helsearbeidsgiver.domene.inntektsmelding.Ferie
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.Ferietrekk
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.FullLoennIArbeidsgiverPerioden
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.Inntekt
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.InntektEndringAarsak
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.Inntektsmelding
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.Naturalytelse
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.NaturalytelseKode
@@ -22,13 +23,34 @@ import no.nav.helsearbeidsgiver.domene.inntektsmelding.RefusjonEndring
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.Sykefravaer
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.Tariffendring
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.VarigLonnsendring
+import no.nav.syfo.domain.inntektsmelding.SpinnInntektEndringAarsak
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.MethodSource
 import java.time.LocalDate
 import java.time.OffsetDateTime
 
 class MapInntektsmeldingFraSimbaTest {
+
+    companion object {
+        @JvmStatic
+        fun inntektEndringerProvider() = listOf(
+            Pair(Mock.spinntInntektEndringBonus, Mock.bonus),
+            Pair(Mock.spinntInntektEndringBonus.copy(aarsak = "Feilregistrert"), Feilregistrert),
+            Pair(Mock.spinntInntektEndringBonus.copy(aarsak = "Ferie", perioder = listOf(Mock.spinnPeriode)), Ferie(liste = listOf(Mock.periode))),
+            Pair(Mock.spinntInntektEndringBonus.copy(aarsak = "Ferietrekk"), Ferietrekk),
+            Pair(Mock.spinntInntektEndringBonus.copy(aarsak = "Nyansatt"), Nyansatt),
+            Pair(Mock.spinntInntektEndringBonus.copy(aarsak = "NyStilling", gjelderFra = Mock.gjelderFra), NyStilling(gjelderFra = Mock.gjelderFra)),
+            Pair(Mock.spinntInntektEndringBonus.copy(aarsak = "NyStillingsprosent", gjelderFra = Mock.gjelderFra), NyStillingsprosent(gjelderFra = Mock.gjelderFra)),
+            Pair(Mock.spinntInntektEndringBonus.copy(aarsak = "Permisjon", perioder = listOf(Mock.spinnPeriode)), Permisjon(liste = listOf(Mock.periode))),
+            Pair(Mock.spinntInntektEndringBonus.copy(aarsak = "Permittering", perioder = listOf(Mock.spinnPeriode)), Permittering(liste = listOf(Mock.periode))),
+            Pair(Mock.spinntInntektEndringBonus.copy(aarsak = "Sykefravaer", perioder = listOf(Mock.spinnPeriode)), Sykefravaer(liste = listOf(Mock.periode))),
+            Pair(Mock.spinntInntektEndringBonus.copy(aarsak = "Tariffendring", gjelderFra = Mock.gjelderFra, bleKjent = Mock.bleKjent), Tariffendring(gjelderFra = Mock.gjelderFra, bleKjent = Mock.bleKjent)),
+            Pair(Mock.spinntInntektEndringBonus.copy(aarsak = "VarigLonnsendring", gjelderFra = Mock.gjelderFra), VarigLonnsendring(gjelderFra = Mock.gjelderFra)),
+            )
+    }
 
     @Test
     fun mapInntektsmeldingMedNaturalytelser() {
@@ -80,10 +102,11 @@ class MapInntektsmeldingFraSimbaTest {
 
     @Test
     fun mapInntektEndringAArsak() {
-        val im = mapInntektsmelding("1", "2", "3", lagInntektsmelding().copy(inntekt = lagInntekt()))
+        val im = mapInntektsmelding("1", "2", "3", lagInntektsmelding().copy(inntekt = Mock.inntektEndringBonus))
         assertEquals("", im.begrunnelseRedusert)
         assertNull(im.bruttoUtbetalt)
         assertEquals("Bonus", im.rapportertInntekt?.endringAarsak)
+
     }
 
     @Test
@@ -102,12 +125,29 @@ class MapInntektsmeldingFraSimbaTest {
         assertEquals("Feilregistrert", Feilregistrert.aarsak())
     }
 
-    private fun lagInntekt() = Inntekt(
-        bekreftet = true,
-        beregnetInntekt = 100_000.0,
-        endringÅrsak = Bonus(),
-        manueltKorrigert = false
-    )
+    @ParameterizedTest
+    @MethodSource("inntektEndringerProvider")
+    fun testWithMultipleInntektEndringAarsak(pair: Pair<SpinnInntektEndringAarsak, InntektEndringAarsak>) {
+        val (spinnInntektEndringAarsak, inntektEndringAarsak) = pair
+        assertEquals(spinnInntektEndringAarsak, inntektEndringAarsak.tilSpinnInntektEndringAarsak())
+    }
+    object Mock {
+        val periode = Periode(LocalDate.of(2021, 1,1), LocalDate.of(2021, 1,30))
+        val gjelderFra = LocalDate.of(2021, 1,1)
+        val bleKjent = LocalDate.of(2021, 5,1)
+        val bonus = Bonus()
+        val forslagInntekt = 50_000.0
+        val endretInntekt = 60_000.0
+        val inntektUtenEndring = Inntekt(
+            bekreftet = true,
+            beregnetInntekt = forslagInntekt,
+            manueltKorrigert = false
+        )
+        val spinnPeriode = no.nav.syfo.domain.Periode(fom = periode.fom, tom = periode.tom)
+        val inntektEndringBonus = inntektUtenEndring.copy(beregnetInntekt = endretInntekt, endringÅrsak = bonus, manueltKorrigert = true)
+        val spinntInntektEndringBonus = SpinnInntektEndringAarsak(aarsak = "Bonus")
+    }
+
 
     private fun lagInntektsmelding(): Inntektsmelding {
         val dato1 = LocalDate.now().minusDays(7)
