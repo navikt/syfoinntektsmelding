@@ -52,7 +52,7 @@ class MapInntektEndringAarsakFraSimbaTest {
     }
     @ParameterizedTest
     @MethodSource("inntektEndringerProvider")
-    fun testWithMultipleInntektEndringAarsak(pair: Pair<SpinnInntektEndringAarsak, InntektEndringAarsak>) {
+    fun `InntektEndringAarsak mappes til riktig SpinnInntektEndringAarsak`(pair: Pair<SpinnInntektEndringAarsak, InntektEndringAarsak>) {
         val (spinnInntektEndringAarsak, inntektEndringAarsak) = pair
         assertEquals(spinnInntektEndringAarsak, inntektEndringAarsak.tilSpinnInntektEndringAarsak())
     }

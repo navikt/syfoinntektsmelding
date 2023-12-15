@@ -21,4 +21,3 @@ data class SpinnInntektEndringAarsak(
     val gjelderFra: LocalDate? = null,
     val bleKjent: LocalDate? = null
 )
-

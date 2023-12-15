@@ -52,8 +52,13 @@ fun mapInntektsmeldingKontrakt(
     )
 }
 
-fun SpinnInntektEndringAarsak.tilInntektEndringAarsak(): InntektEndringAarsak
-= InntektEndringAarsak(aarsak, perioder?.map { Periode(it.fom, it.tom) }, gjelderFra, bleKjent)
+fun SpinnInntektEndringAarsak.tilInntektEndringAarsak(): InntektEndringAarsak =
+    InntektEndringAarsak(
+        aarsak = aarsak,
+        perioder = perioder?.map { Periode(it.fom, it.tom) },
+        gjelderFra = gjelderFra,
+        bleKjent = bleKjent
+    )
 
 fun mapFerieperioder(inntektsmelding: Inntektsmelding): List<Periode> {
     return inntektsmelding.feriePerioder.map { p -> Periode(p.fom, p.tom) }

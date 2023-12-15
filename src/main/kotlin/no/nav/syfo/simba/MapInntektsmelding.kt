@@ -30,7 +30,6 @@ import no.nav.syfo.domain.inntektsmelding.SpinnInntektEndringAarsak
 import java.time.LocalDateTime
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.Inntektsmelding as InntektmeldingSimba
 
-
 fun mapInntektsmelding(arkivreferanse: String, aktorId: String, journalpostId: String, im: InntektmeldingSimba): Inntektsmelding {
     return Inntektsmelding(
         id = "",
