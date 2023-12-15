@@ -78,7 +78,6 @@ class MapInntektsmeldingFraSimbaTest {
         assertNull(im.rapportertInntekt?.endringAarsakData?.bleKjent)
     }
 
-
     private fun lagInntektsmelding(): Inntektsmelding {
         val dato1 = LocalDate.now().minusDays(7)
         val dato2 = LocalDate.now().minusDays(5)

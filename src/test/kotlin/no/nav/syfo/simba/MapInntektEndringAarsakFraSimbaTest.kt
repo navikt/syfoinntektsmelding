@@ -27,27 +27,34 @@ class MapInntektEndringAarsakFraSimbaTest {
 
         // SpinnInntektEndringAarsak som tilsvarer InntektEndringAarsak
         @JvmStatic
-        fun inntektEndringerProvider() = listOf(
-            Pair(Mock.spinntInntektEndringBonus, Bonus()),
-            Pair(Mock.spinntInntektEndringBonus.copy(aarsak = "Feilregistrert"), Feilregistrert),
-            Pair(Mock.spinntInntektEndringBonus.copy(aarsak = "Ferie", perioder = listOf(Mock.spinnPeriode)), Ferie(liste = listOf(Mock.periode))),
-            Pair(Mock.spinntInntektEndringBonus.copy(aarsak = "Ferietrekk"), Ferietrekk),
-            Pair(Mock.spinntInntektEndringBonus.copy(aarsak = "Nyansatt"), Nyansatt),
-            Pair(Mock.spinntInntektEndringBonus.copy(aarsak = "NyStilling", gjelderFra = Mock.gjelderFra), NyStilling(gjelderFra = Mock.gjelderFra)),
-            Pair(Mock.spinntInntektEndringBonus.copy(aarsak = "NyStillingsprosent", gjelderFra = Mock.gjelderFra), NyStillingsprosent(gjelderFra = Mock.gjelderFra)),
-            Pair(Mock.spinntInntektEndringBonus.copy(aarsak = "Permisjon", perioder = listOf(Mock.spinnPeriode)), Permisjon(liste = listOf(Mock.periode))),
-            Pair(Mock.spinntInntektEndringBonus.copy(aarsak = "Permittering", perioder = listOf(Mock.spinnPeriode)), Permittering(liste = listOf(Mock.periode))),
-            Pair(Mock.spinntInntektEndringBonus.copy(aarsak = "Sykefravaer", perioder = listOf(Mock.spinnPeriode)), Sykefravaer(liste = listOf(Mock.periode))),
-            Pair(Mock.spinntInntektEndringBonus.copy(aarsak = "Tariffendring", gjelderFra = Mock.gjelderFra, bleKjent = Mock.bleKjent), Tariffendring(gjelderFra = Mock.gjelderFra, bleKjent = Mock.bleKjent)),
-            Pair(Mock.spinntInntektEndringBonus.copy(aarsak = "VarigLonnsendring", gjelderFra = Mock.gjelderFra), VarigLonnsendring(gjelderFra = Mock.gjelderFra)),
+        fun inntektEndringerProvider() =
+            listOf(
+                Pair(Mock.spinntInntektEndringBonus, Bonus()),
+                Pair(Mock.spinntInntektEndringBonus.copy(aarsak = "Feilregistrert"), Feilregistrert),
+                Pair(Mock.spinntInntektEndringBonus.copy(aarsak = "Ferie", perioder = listOf(Mock.spinnPeriode)), Ferie(liste = listOf(Mock.periode))),
+                Pair(Mock.spinntInntektEndringBonus.copy(aarsak = "Ferietrekk"), Ferietrekk),
+                Pair(Mock.spinntInntektEndringBonus.copy(aarsak = "Nyansatt"), Nyansatt),
+                Pair(Mock.spinntInntektEndringBonus.copy(aarsak = "NyStilling", gjelderFra = Mock.gjelderFra), NyStilling(gjelderFra = Mock.gjelderFra)),
+                Pair(Mock.spinntInntektEndringBonus.copy(aarsak = "NyStillingsprosent", gjelderFra = Mock.gjelderFra), NyStillingsprosent(gjelderFra = Mock.gjelderFra)),
+                Pair(Mock.spinntInntektEndringBonus.copy(aarsak = "Permisjon", perioder = listOf(Mock.spinnPeriode)), Permisjon(liste = listOf(Mock.periode))),
+                Pair(Mock.spinntInntektEndringBonus.copy(aarsak = "Permittering", perioder = listOf(Mock.spinnPeriode)), Permittering(liste = listOf(Mock.periode))),
+                Pair(Mock.spinntInntektEndringBonus.copy(aarsak = "Sykefravaer", perioder = listOf(Mock.spinnPeriode)), Sykefravaer(liste = listOf(Mock.periode))),
+                Pair(Mock.spinntInntektEndringBonus.copy(aarsak = "Tariffendring", gjelderFra = Mock.gjelderFra, bleKjent = Mock.bleKjent), Tariffendring(gjelderFra = Mock.gjelderFra, bleKjent = Mock.bleKjent)),
+                Pair(Mock.spinntInntektEndringBonus.copy(aarsak = "VarigLonnsendring", gjelderFra = Mock.gjelderFra), VarigLonnsendring(gjelderFra = Mock.gjelderFra)),
             )
     }
 
     object Mock {
-        val periode = Periode(LocalDate.of(2021, 1,1), LocalDate.of(2021, 1,30))
-        val gjelderFra = LocalDate.of(2021, 1,1)
-        val bleKjent = LocalDate.of(2021, 5,1)
-        val spinnPeriode = no.nav.syfo.domain.Periode(fom = periode.fom, tom = periode.tom)
+        val periode = Periode(
+            LocalDate.of(2021, 1, 1),
+            LocalDate.of(2021, 1, 30)
+        )
+        val spinnPeriode = no.nav.syfo.domain.Periode(
+            fom = periode.fom,
+            tom = periode.tom
+        )
+        val gjelderFra = LocalDate.of(2021, 1, 1)
+        val bleKjent = LocalDate.of(2021, 5, 1)
         val spinntInntektEndringBonus = SpinnInntektEndringAarsak(aarsak = "Bonus")
     }
     @ParameterizedTest
