@@ -1,36 +1,25 @@
 package no.nav.syfo.simba
 
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.AarsakInnsending
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.BegrunnelseIngenEllerRedusertUtbetalingKode
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.Bonus
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.Feilregistrert
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.Ferie
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.Ferietrekk
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.FullLoennIArbeidsgiverPerioden
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.Inntekt
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.InntektEndringAarsak
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.Inntektsmelding
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.Naturalytelse
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.NaturalytelseKode
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.NyStilling
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.NyStillingsprosent
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.Nyansatt
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.Periode
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.Permisjon
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.Permittering
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.Refusjon
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.RefusjonEndring
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.Sykefravaer
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.Tariffendring
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.VarigLonnsendring
 import no.nav.syfo.domain.inntektsmelding.SpinnInntektEndringAarsak
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import java.time.LocalDate
-import java.time.OffsetDateTime
 
 class MapInntektEndringAarsakFraSimbaTest {
 

@@ -77,39 +77,15 @@ fun Inntekt.tilRapportertInntekt() =
     RapportertInntekt(
         bekreftet = this.bekreftet,
         beregnetInntekt = this.beregnetInntekt,
-        endringAarsak = this.endringÅrsak?.tilSpinnInntektEndringAarsak()?.aarsak,
+        endringAarsak = this.endringÅrsak?.aarsak(),
         endringAarsakData = this.endringÅrsak?.tilSpinnInntektEndringAarsak(),
         manueltKorrigert = this.manueltKorrigert
     )
 
 fun InntektEndringAarsak.aarsak(): String =
-    when (this) {
-        is Permisjon -> "Permisjon"
-        is Ferie -> "Ferie"
-        is Ferietrekk -> "Ferietrekk"
-        is Permittering -> "Permittering"
-        is Tariffendring -> "Tariffendring"
-        is VarigLonnsendring -> "VarigLonnsendring"
-        is NyStilling -> "NyStilling"
-        is NyStillingsprosent -> "NyStillingsprosent"
-        is Bonus -> "Bonus"
-        is Sykefravaer -> "Sykefravaer"
-        is Nyansatt -> "Nyansatt"
-        is Feilregistrert -> "Feilregistrert"
-        else -> this::class.simpleName ?: "Ukjent"
-    }
+    this.tilSpinnInntektEndringAarsak()?.aarsak ?: this::class.simpleName ?: "Ukjent"
 
-
-fun InntektEndringAarsak.tilNyKontrakt() : SpinnInntektEndringAarsak? {
-
-    this::class.simpleName?.let {
-        return SpinnInntektEndringAarsak(aarsak = it)
-    }
-    return null
-}
-
-
-fun InntektEndringAarsak.tilSpinnInntektEndringAarsak(): SpinnInntektEndringAarsak =
+fun InntektEndringAarsak.tilSpinnInntektEndringAarsak(): SpinnInntektEndringAarsak? =
     when (this) {
         is Permisjon -> SpinnInntektEndringAarsak(aarsak = "Permisjon", perioder = liste.map { Periode(it.fom, it.tom) })
         is Ferie -> SpinnInntektEndringAarsak(aarsak = "Ferie", perioder = liste.map { Periode(it.fom, it.tom) })
@@ -123,4 +99,5 @@ fun InntektEndringAarsak.tilSpinnInntektEndringAarsak(): SpinnInntektEndringAars
         is Sykefravaer -> SpinnInntektEndringAarsak(aarsak = "Sykefravaer", perioder = liste.map { Periode(it.fom, it.tom) })
         is Nyansatt -> SpinnInntektEndringAarsak(aarsak = "Nyansatt")
         is Feilregistrert -> SpinnInntektEndringAarsak(aarsak = "Feilregistrert")
+        else -> null
     }
