@@ -146,8 +146,6 @@ dependencies {
     runtimeOnly("ch.qos.logback:logback-classic:$logbackClassicVersion")
     runtimeOnly("io.micrometer:micrometer-registry-prometheus:$micrometerVersion")
 
-    implementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
-    implementation("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
     implementation("no.nav.teamdokumenthandtering:teamdokumenthandtering-avro-schemas:$joarkHendelseVersion")
     implementation("org.jetbrains.kotlin:$jetbrainsStdLib")
     implementation("com.google.guava:guava:$guavaVersion")
@@ -201,6 +199,9 @@ dependencies {
     implementation("no.nav.helsearbeidsgiver:domene-inntektsmelding:$hagDomeneInntektsmeldingVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion")
 
+    testImplementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion")
     testImplementation(testFixtures("no.nav.helsearbeidsgiver:utils:$hagUtilsVersion"))
     testImplementation("io.insert-koin:koin-test:$koinVersion")
     testImplementation("io.ktor:ktor-client-mock-jvm:$ktorVersion")

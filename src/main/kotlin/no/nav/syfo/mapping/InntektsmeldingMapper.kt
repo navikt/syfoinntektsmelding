@@ -4,6 +4,7 @@ import no.nav.inntektsmeldingkontrakt.Arbeidsgivertype
 import no.nav.inntektsmeldingkontrakt.AvsenderSystem
 import no.nav.inntektsmeldingkontrakt.EndringIRefusjon
 import no.nav.inntektsmeldingkontrakt.GjenopptakelseNaturalytelse
+import no.nav.inntektsmeldingkontrakt.InntektEndringAarsak
 import no.nav.inntektsmeldingkontrakt.Naturalytelse
 import no.nav.inntektsmeldingkontrakt.OpphoerAvNaturalytelse
 import no.nav.inntektsmeldingkontrakt.Periode
@@ -11,6 +12,7 @@ import no.nav.inntektsmeldingkontrakt.Refusjon
 import no.nav.inntektsmeldingkontrakt.Status
 import no.nav.syfo.domain.inntektsmelding.Gyldighetsstatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
+import no.nav.syfo.domain.inntektsmelding.SpinnInntektEndringAarsak
 
 fun mapInntektsmeldingKontrakt(
     inntektsmelding: Inntektsmelding,
@@ -45,9 +47,18 @@ fun mapInntektsmeldingKontrakt(
         innsenderFulltNavn = inntektsmelding.kontaktinformasjon.navn.orEmpty(),
         innsenderTelefon = inntektsmelding.kontaktinformasjon.telefon.orEmpty(),
         naerRelasjon = inntektsmelding.nærRelasjon,
-        avsenderSystem = mapAvsenderSystem(inntektsmelding.avsenderSystem)
+        avsenderSystem = mapAvsenderSystem(inntektsmelding.avsenderSystem),
+        inntektEndringAarsak = inntektsmelding.rapportertInntekt?.endringAarsakData?.tilInntektEndringAarsak()
     )
 }
+
+fun SpinnInntektEndringAarsak.tilInntektEndringAarsak(): InntektEndringAarsak =
+    InntektEndringAarsak(
+        aarsak = aarsak,
+        perioder = perioder?.map { Periode(it.fom, it.tom) },
+        gjelderFra = gjelderFra,
+        bleKjent = bleKjent
+    )
 
 fun mapFerieperioder(inntektsmelding: Inntektsmelding): List<Periode> {
     return inntektsmelding.feriePerioder.map { p -> Periode(p.fom, p.tom) }

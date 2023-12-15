@@ -1,13 +1,17 @@
 package no.nav.syfo.mapping
 
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.BegrunnelseIngenEllerRedusertUtbetalingKode
+import no.nav.syfo.domain.Periode
 import no.nav.syfo.domain.inntektsmelding.Gyldighetsstatus
 import no.nav.syfo.domain.inntektsmelding.Kontaktinformasjon
+import no.nav.syfo.domain.inntektsmelding.RapportertInntekt
+import no.nav.syfo.domain.inntektsmelding.SpinnInntektEndringAarsak
 import no.nav.syfo.grunnleggendeInntektsmelding
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal
+import java.time.LocalDate
 import java.util.UUID
 
 class InntektsmeldingMapperFraInternSyfoTilHAGKontraktTest {
@@ -34,7 +38,18 @@ class InntektsmeldingMapperFraInternSyfoTilHAGKontraktTest {
         val syfoInternInntektsmelding = grunnleggendeInntektsmelding.copy(
             bruttoUtbetalt = bruttoUtbetalt,
             begrunnelseRedusert = begrunnelse,
-            kontaktinformasjon = Kontaktinformasjon(navn = innsenderNavn, telefon = innsenderTelefon)
+            kontaktinformasjon = Kontaktinformasjon(navn = innsenderNavn, telefon = innsenderTelefon),
+            avsenderSystem = no.nav.syfo.domain.inntektsmelding.AvsenderSystem("NAV_NO", "1.0"),
+            rapportertInntekt = RapportertInntekt(
+                bekreftet = true,
+                beregnetInntekt = 39013.0,
+                endringAarsak = "Ferie",
+                endringAarsakData = SpinnInntektEndringAarsak(
+                    aarsak = "Ferie",
+                    perioder = listOf(Periode(LocalDate.of(2021, 1, 1), LocalDate.of(2021, 1, 31))),
+                ),
+                manueltKorrigert = true
+            )
         )
         val inntektsmelding = mapInntektsmeldingKontrakt(
             syfoInternInntektsmelding,
@@ -47,5 +62,9 @@ class InntektsmeldingMapperFraInternSyfoTilHAGKontraktTest {
         assertEquals(begrunnelse, inntektsmelding.begrunnelseForReduksjonEllerIkkeUtbetalt)
         assertEquals(innsenderNavn, inntektsmelding.innsenderFulltNavn)
         assertEquals(innsenderTelefon, inntektsmelding.innsenderTelefon)
+        assertEquals("Ferie", inntektsmelding.inntektEndringAarsak?.aarsak)
+        assertEquals(1, inntektsmelding.inntektEndringAarsak?.perioder?.size)
+        assertNull(inntektsmelding.inntektEndringAarsak?.gjelderFra)
+        assertNull(inntektsmelding.inntektEndringAarsak?.bleKjent)
     }
 }
