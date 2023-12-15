@@ -29,18 +29,18 @@ class MapInntektEndringAarsakFraSimbaTest {
         @JvmStatic
         fun inntektEndringerProvider() =
             listOf(
-                Pair(Mock.spinnInntektEndringBonus, Bonus()),
-                Pair(Mock.spinnInntektEndringBonus.copy(aarsak = "Feilregistrert"), Feilregistrert),
-                Pair(Mock.spinnInntektEndringBonus.copy(aarsak = "Ferie", perioder = listOf(Mock.spinnPeriode)), Ferie(liste = listOf(Mock.periode))),
-                Pair(Mock.spinnInntektEndringBonus.copy(aarsak = "Ferietrekk"), Ferietrekk),
-                Pair(Mock.spinnInntektEndringBonus.copy(aarsak = "Nyansatt"), Nyansatt),
-                Pair(Mock.spinnInntektEndringBonus.copy(aarsak = "NyStilling", gjelderFra = Mock.gjelderFra), NyStilling(gjelderFra = Mock.gjelderFra)),
-                Pair(Mock.spinnInntektEndringBonus.copy(aarsak = "NyStillingsprosent", gjelderFra = Mock.gjelderFra), NyStillingsprosent(gjelderFra = Mock.gjelderFra)),
-                Pair(Mock.spinnInntektEndringBonus.copy(aarsak = "Permisjon", perioder = listOf(Mock.spinnPeriode)), Permisjon(liste = listOf(Mock.periode))),
-                Pair(Mock.spinnInntektEndringBonus.copy(aarsak = "Permittering", perioder = listOf(Mock.spinnPeriode)), Permittering(liste = listOf(Mock.periode))),
-                Pair(Mock.spinnInntektEndringBonus.copy(aarsak = "Sykefravaer", perioder = listOf(Mock.spinnPeriode)), Sykefravaer(liste = listOf(Mock.periode))),
-                Pair(Mock.spinnInntektEndringBonus.copy(aarsak = "Tariffendring", gjelderFra = Mock.gjelderFra, bleKjent = Mock.bleKjent), Tariffendring(gjelderFra = Mock.gjelderFra, bleKjent = Mock.bleKjent)),
-                Pair(Mock.spinnInntektEndringBonus.copy(aarsak = "VarigLonnsendring", gjelderFra = Mock.gjelderFra), VarigLonnsendring(gjelderFra = Mock.gjelderFra)),
+                Pair(Mock.spinnInntektEndringAarsak, Bonus()),
+                Pair(Mock.spinnInntektEndringAarsak.copy(aarsak = "Feilregistrert"), Feilregistrert),
+                Pair(Mock.spinnInntektEndringAarsak.copy(aarsak = "Ferie", perioder = listOf(Mock.spinnPeriode)), Ferie(liste = listOf(Mock.periode))),
+                Pair(Mock.spinnInntektEndringAarsak.copy(aarsak = "Ferietrekk"), Ferietrekk),
+                Pair(Mock.spinnInntektEndringAarsak.copy(aarsak = "Nyansatt"), Nyansatt),
+                Pair(Mock.spinnInntektEndringAarsak.copy(aarsak = "NyStilling", gjelderFra = Mock.gjelderFra), NyStilling(gjelderFra = Mock.gjelderFra)),
+                Pair(Mock.spinnInntektEndringAarsak.copy(aarsak = "NyStillingsprosent", gjelderFra = Mock.gjelderFra), NyStillingsprosent(gjelderFra = Mock.gjelderFra)),
+                Pair(Mock.spinnInntektEndringAarsak.copy(aarsak = "Permisjon", perioder = listOf(Mock.spinnPeriode)), Permisjon(liste = listOf(Mock.periode))),
+                Pair(Mock.spinnInntektEndringAarsak.copy(aarsak = "Permittering", perioder = listOf(Mock.spinnPeriode)), Permittering(liste = listOf(Mock.periode))),
+                Pair(Mock.spinnInntektEndringAarsak.copy(aarsak = "Sykefravaer", perioder = listOf(Mock.spinnPeriode)), Sykefravaer(liste = listOf(Mock.periode))),
+                Pair(Mock.spinnInntektEndringAarsak.copy(aarsak = "Tariffendring", gjelderFra = Mock.gjelderFra, bleKjent = Mock.bleKjent), Tariffendring(gjelderFra = Mock.gjelderFra, bleKjent = Mock.bleKjent)),
+                Pair(Mock.spinnInntektEndringAarsak.copy(aarsak = "VarigLonnsendring", gjelderFra = Mock.gjelderFra), VarigLonnsendring(gjelderFra = Mock.gjelderFra)),
             )
     }
 
@@ -55,7 +55,7 @@ class MapInntektEndringAarsakFraSimbaTest {
         )
         val gjelderFra = LocalDate.of(2021, 1, 1)
         val bleKjent = LocalDate.of(2021, 5, 1)
-        val spinnInntektEndringBonus = SpinnInntektEndringAarsak(aarsak = "Bonus")
+        val spinnInntektEndringAarsak = SpinnInntektEndringAarsak(aarsak = "Bonus")
     }
     @ParameterizedTest
     @MethodSource("inntektEndringerProvider")
