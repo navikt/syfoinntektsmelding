@@ -48,7 +48,7 @@ val kotlinxSerializationVersion: String by project
 
 plugins {
     kotlin("jvm") version "1.9.21"
-    kotlin("plugin.serialization") version "1.9.21"
+    kotlin("plugin.serialization") version "1.9.22"
     id("com.github.ben-manes.versions") version "0.50.0"
     id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
     id("org.flywaydb.flyway") version "10.1.0"
