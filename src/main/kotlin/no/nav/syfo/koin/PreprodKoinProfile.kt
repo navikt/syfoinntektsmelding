@@ -59,16 +59,31 @@ import javax.sql.DataSource
 fun preprodConfig(config: ApplicationConfig) = module {
     externalSystemClients(config)
     single {
-        val vaultconfig = HikariConfig()
-        vaultconfig.jdbcUrl = config.getjdbcUrlFromProperties()
-        vaultconfig.minimumIdle = 1
-        vaultconfig.maximumPoolSize = 2
-        HikariCPVaultUtil.createHikariDataSourceWithVaultIntegration(
-            vaultconfig,
-            config.getString("database.vault.mountpath"),
-            config.getString("database.vault.admin"),
-        )
+        if (System.getenv("NAIS_CLUSTER_NAME") != "dev-gcp") {
+            val hikariConfig = HikariConfig()
+            hikariConfig.jdbcUrl = config.getjdbcUrlFromProperties()
+            hikariConfig.minimumIdle = 1
+            hikariConfig.maximumPoolSize = 2
+            HikariCPVaultUtil.createHikariDataSourceWithVaultIntegration(
+                hikariConfig,
+                config.getString("database.vault.mountpath"),
+                config.getString("database.vault.admin"),
+            )
+        } else {
+            HikariConfig().apply {
+                jdbcUrl = config.getjdbcUrlFromProperties()
+                username = config.getString("database.username")
+                password = config.getString("database.password")
+                maximumPoolSize = 2
+                minimumIdle = 1
+                idleTimeout = 10001
+                connectionTimeout = 2000
+                maxLifetime = 30001
+                driverClassName = "org.postgresql.Driver"
+            }
+        }
     } bind DataSource::class
+
 
     single {
         JoarkInntektsmeldingHendelseProsessor(
