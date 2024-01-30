@@ -87,11 +87,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
 
     single {
         JoarkInntektsmeldingHendelseProsessor(
-            get(),
-            get(),
-            get(),
-            get(),
-            get()
+            get(), get(), get(), get(), get()
         )
     } bind JoarkInntektsmeldingHendelseProsessor::class
     single { ArbeidsgiverperiodeRepositoryImp(get()) } bind ArbeidsgiverperiodeRepository::class
@@ -106,12 +102,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
     } bind TokenConsumer::class
     single {
         InntektsmeldingBehandler(
-            get(),
-            get(),
-            get(),
-            get(),
-            get(),
-            get()
+            get(), get(), get(), get(), get(), get()
         )
     } bind InntektsmeldingBehandler::class
 
@@ -127,17 +118,12 @@ fun preprodConfig(config: ApplicationConfig) = module {
 
     single {
         JournalpostHendelseConsumer(
-            joarkAivenProperties(),
-            config.getString("kafka_joark_hendelse_topic"),
-            get(),
-            get(),
-            get()
+            joarkAivenProperties(), config.getString("kafka_joark_hendelse_topic"), get(), get(), get()
         )
     }
     single {
         UtsattOppgaveConsumer(
-            utsattOppgaveAivenProperties(),
-            config.getString("kafka_utsatt_oppgave_topic"), get(), get(), get()
+            utsattOppgaveAivenProperties(), config.getString("kafka_utsatt_oppgave_topic"), get(), get(), get()
         )
     }
 
@@ -155,8 +141,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
 
     single {
         FjernInntektsmeldingByBehandletProcessor(
-            InntektsmeldingRepositoryImp(get()),
-            config.getString("lagringstidMåneder").toInt()
+            InntektsmeldingRepositoryImp(get()), config.getString("lagringstidMåneder").toInt()
         )
     } bind FjernInntektsmeldingByBehandletProcessor::class
     single { FinnAlleUtgaandeOppgaverProcessor(get(), get(), get(), get(), get(), get()) } bind FinnAlleUtgaandeOppgaverProcessor::class
@@ -168,8 +153,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
 
     single {
         PdlClientImpl(
-            config.getString("pdl_url"),
-            RestSTSAccessTokenProvider(
+            config.getString("pdl_url"), RestSTSAccessTokenProvider(
                 config.getString("security_token.username"),
                 config.getString("security_token.password"),
                 config.getString("security_token_service_token_url"),
@@ -196,8 +180,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
     single {
         SafJournalpostClient(
             get(),
-            config.getString("saf_journal_url"),
-            RestSTSAccessTokenProvider(
+            config.getString("saf_journal_url"), RestSTSAccessTokenProvider(
                 config.getString("security_token.username"),
                 config.getString("security_token.password"),
                 config.getString("security_token_service_token_url"),
@@ -242,12 +225,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
                 ConsumerConfig.GROUP_ID_CONFIG to "syfoinntektsmelding-im-v1",
                 ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
                 ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java
-            ),
-            "helsearbeidsgiver.inntektsmelding",
-            get(),
-            get(),
-            get(),
-            get()
+            ), "helsearbeidsgiver.inntektsmelding", get(), get(), get(), get()
         )
     }
 }
