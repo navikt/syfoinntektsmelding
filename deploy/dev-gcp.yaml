@@ -1,0 +1,85 @@
+apiVersion: "nais.io/v1alpha1"
+kind: "Application"
+metadata:
+  name: spinosaurus
+  namespace: helsearbeidsgiver
+  labels:
+    team: helsearbeidsgiver
+spec:
+  image: {{image}}
+  port: 8080
+  prometheus:
+    enabled: false
+    path: /metrics
+  liveness:
+    failureThreshold: 3
+    initialDelay: 60
+    path: /health/is-alive
+    periodSeconds: 10
+    timeout: 1
+  readiness:
+    failureThreshold: 3
+    initialDelay: 60
+    path: /health/is-ready
+    periodSeconds: 10
+    timeout: 1
+  replicas:
+    max: 1
+    min: 1
+  resources:
+    limits:
+      memory: "1024Mi"
+    requests:
+      cpu: "500m"
+      memory: "386Mi"
+
+  secureLogs:
+    enabled: true
+  kafka:
+    pool: nav-dev
+  azure:
+    application:
+      enabled: true
+
+  accessPolicy:
+    inbound:
+      rules:
+        - application: im-bro-spinn
+          namespace: helsearbeidsgiver
+          cluster: dev-gcp
+        - application: sparkel-dokumenter
+          namespace: tbd
+          cluster: dev-gcp
+  env:
+    - name: KOIN_PROFILE
+      value: "PREPROD"
+    - name: SRVSYFOINNTEKTSMELDING_USERNAME
+      value: "srvsyfoinntektsmel"
+    - name: SECURITY_TOKEN_SERVICE_TOKEN_URL
+      value: "http://security-token-service.default.svc.nais.local/rest/v1/sts/token"
+    - name: OPPGAVEBEHANDLING_URL
+      value: "https://oppgave.nais.preprod.local/api/v1/oppgaver"
+    - name: OPPRETT_SAK_URL
+      value: "https://sak-q1.dev.intern.nav.no/api/v1/saker"
+    - name: SRVAPPSERVER_USERNAME
+      value: "srvappserver"
+    - name: SRVAPPSERVER_PASSWORD
+      value: ""
+    - name: KAFKA_JOARK_HENDELSE_TOPIC
+      value: "teamdokumenthandtering.aapen-dok-journalfoering-q1"
+    - name: KAFKA_UTSATT_OPPGAVE_TOPIC
+      value: "tbd.spre-oppgaver"
+    - name: DOKARKIV_URL
+      value: "https://dokarkiv-q1.dev.intern.nav.no/rest/journalpostapi/v1"
+    - name: RUN_BACKGROUND_WORKERS
+      value: "true"
+    - name: PDL_URL
+      value: "https://pdl-api.nais.preprod.local/graphql"
+    - name: NORG2_URL
+      value: "https://helsearbeidsgiver-proxy.dev-fss-pub.nais.io/norg"
+    - name: SAF_DOKUMENT_URL
+      value: "https://saf-q1.dev.intern.nav.no/rest"
+    - name: SAF_JOURNAL_URL
+      value: "https://saf-q1.dev.intern.nav.no/graphql"
+    - name: ENHETSREGISTERET_URL
+      value: "https://data.brreg.no/enhetsregisteret/api/underenheter/"
