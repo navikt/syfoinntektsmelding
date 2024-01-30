@@ -84,7 +84,6 @@ fun preprodConfig(config: ApplicationConfig) = module {
         }
     } bind DataSource::class
 
-
     single {
         JoarkInntektsmeldingHendelseProsessor(
             get(), get(), get(), get(), get()
@@ -153,7 +152,8 @@ fun preprodConfig(config: ApplicationConfig) = module {
 
     single {
         PdlClientImpl(
-            config.getString("pdl_url"), RestSTSAccessTokenProvider(
+            config.getString("pdl_url"),
+            RestSTSAccessTokenProvider(
                 config.getString("security_token.username"),
                 config.getString("security_token.password"),
                 config.getString("security_token_service_token_url"),
@@ -180,7 +180,8 @@ fun preprodConfig(config: ApplicationConfig) = module {
     single {
         SafJournalpostClient(
             get(),
-            config.getString("saf_journal_url"), RestSTSAccessTokenProvider(
+            config.getString("saf_journal_url"),
+            RestSTSAccessTokenProvider(
                 config.getString("security_token.username"),
                 config.getString("security_token.password"),
                 config.getString("security_token_service_token_url"),
@@ -225,7 +226,12 @@ fun preprodConfig(config: ApplicationConfig) = module {
                 ConsumerConfig.GROUP_ID_CONFIG to "syfoinntektsmelding-im-v1",
                 ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
                 ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java
-            ), "helsearbeidsgiver.inntektsmelding", get(), get(), get(), get()
+            ),
+            "helsearbeidsgiver.inntektsmelding",
+            get(),
+            get(),
+            get(),
+            get()
         )
     }
 }
