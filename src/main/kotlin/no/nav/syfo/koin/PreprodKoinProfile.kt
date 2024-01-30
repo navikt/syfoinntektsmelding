@@ -1,6 +1,7 @@
 package no.nav.syfo.koin
 
 import com.zaxxer.hikari.HikariConfig
+import com.zaxxer.hikari.HikariDataSource
 import io.ktor.config.ApplicationConfig
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
@@ -70,17 +71,19 @@ fun preprodConfig(config: ApplicationConfig) = module {
                 config.getString("database.vault.admin"),
             )
         } else {
-            HikariConfig().apply {
-                jdbcUrl = config.getjdbcUrlFromProperties()
-                username = config.getString("database.username")
-                password = config.getString("database.password")
-                maximumPoolSize = 2
-                minimumIdle = 1
-                idleTimeout = 10001
-                connectionTimeout = 2000
-                maxLifetime = 30001
-                driverClassName = "org.postgresql.Driver"
-            }
+            HikariDataSource(
+                HikariConfig().apply {
+                    jdbcUrl = config.getjdbcUrlFromProperties()
+                    username = config.getString("database.username")
+                    password = config.getString("database.password")
+                    maximumPoolSize = 2
+                    minimumIdle = 1
+                    idleTimeout = 10001
+                    connectionTimeout = 2000
+                    maxLifetime = 30001
+                    driverClassName = "org.postgresql.Driver"
+                }
+            )
         }
     } bind DataSource::class
 
