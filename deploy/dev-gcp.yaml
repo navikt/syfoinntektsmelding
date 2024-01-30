@@ -1,5 +1,5 @@
-apiVersion: "nais.io/v1alpha1"
-kind: "Application"
+apiVersion: nais.io/v1alpha1
+kind: Application
 metadata:
   name: spinosaurus
   namespace: helsearbeidsgiver
@@ -28,10 +28,10 @@ spec:
     min: 1
   resources:
     limits:
-      memory: "1024Mi"
+      memory: 1024Mi
     requests:
-      cpu: "500m"
-      memory: "386Mi"
+      cpu: 500m
+      memory: 386Mi
 
   secureLogs:
     enabled: true
@@ -41,7 +41,19 @@ spec:
     application:
       enabled: true
 
+  gcp:
+    sqlInstances:
+      - type: POSTGRES_11
+        databases:
+          - name: spinosaurus
+        diskAutoresize: true
+
   accessPolicy:
+    outbound:
+      rules:
+        - application: helsearbeidsgiver-proxy
+          namespace: helsearbeidsgiver
+          cluster: dev-fss
     inbound:
       rules:
         - application: im-bro-spinn
