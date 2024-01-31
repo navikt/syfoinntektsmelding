@@ -88,9 +88,9 @@ spec:
     - name: RUN_BACKGROUND_WORKERS
       value: "true"
     - name: PDL_URL
-      value: "https://pdl-api.nais.preprod.local/graphql"
+      value: "https://pdl-api.dev-fss-pub.nais.io"
     - name: NORG2_URL
-      value: "https://helsearbeidsgiver-proxy.dev-fss-pub.nais.io/norg"
+      value: "https://norg2.dev-fss-pub.nais.io/norg2/api"
     - name: SAF_DOKUMENT_URL
       value: "https://saf-q1.dev.intern.nav.no/rest"
     - name: SAF_JOURNAL_URL
