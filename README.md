@@ -79,16 +79,15 @@ SRVSYFOINNTEKTSMELDING_PASSWORD=dummy
 
 Prosjektet bruker en [Ktlint](https://ktlint.github.io/)-plugin for Gradle som håndhever kodestilregler. Nyttige kommandoer er:
 
-- `gradle ktlintCheck` (sier ifra om brudd på kodestilreglene)
-- `gradle ktlintFormat` (retter opp i brudd på kodestilreglene)
+- `gradle lintKotlin` (sier ifra om brudd på kodestilreglene)
+- `gradle formatKotlin` (retter opp i brudd på kodestilreglene)
 
 Det anbefales hver utvikler å konfigurere en pre-commit hook som automatisk sjekker endrede filer for brudd på kodestilreglene.
 Alternativt kan man sette opp automatisk formattering. Kommandoene for dette er:
 
-- `gradle addKtlintCheckGitPreCommitHook` (automatisk sjekk)
-- `gradle addKtlintFormatGitPreCommitHook` (automatisk formattering)
+- `gradle installKotlinterPrePushHook` (automatisk formattering)
 
-Les mer om pluginen [her](https://github.com/JLLeitschuh/ktlint-gradle).
+Les mer om pluginen [her](https://github.com/jeremymailen/kotlinter-gradle).
 
 ## Database
 Applikasjonen bruker Postgres database med JPA grensesnitt OG et JDBC grensesnitt. Skjermbildet nedenfor viser samtlige 
