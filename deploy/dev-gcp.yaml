@@ -7,7 +7,7 @@ metadata:
     team: helsearbeidsgiver
 spec:
   ingresses:
-    - https://spinosaurus.dev.intern.nav.no
+    - https://spinosaurus.intern.dev.nav.no
   image: {{image}}
   port: 8080
   prometheus:
