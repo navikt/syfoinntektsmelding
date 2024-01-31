@@ -73,9 +73,14 @@ fun preprodConfig(config: ApplicationConfig) = module {
         } else {
             HikariDataSource(
                 HikariConfig().apply {
-                    jdbcUrl = config.getjdbcUrlFromProperties()
-                    username = config.getString("database.username")
-                    password = config.getString("database.password")
+                    jdbcUrl = String.format(
+                        "jdbc:postgresql://%s:%s/%s",
+                        config.getString("gcp_database.host"),
+                        config.getString("gcp_database.port"),
+                        config.getString("gcp_database.name")
+                    )
+                    username = config.getString("gcp_database.username")
+                    password = config.getString("gcp_database.password")
                     maximumPoolSize = 2
                     minimumIdle = 1
                     idleTimeout = 10001
