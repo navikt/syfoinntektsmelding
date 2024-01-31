@@ -73,8 +73,6 @@ spec:
       value: "http://security-token-service.default.svc.nais.local/rest/v1/sts/token"
     - name: OPPGAVEBEHANDLING_URL
       value: "https://oppgave.nais.preprod.local/api/v1/oppgaver"
-    - name: OPPRETT_SAK_URL
-      value: "https://sak-q1.dev.intern.nav.no/api/v1/saker"
     - name: SRVAPPSERVER_USERNAME
       value: "srvappserver"
     - name: SRVAPPSERVER_PASSWORD
