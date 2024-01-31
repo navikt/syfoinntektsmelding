@@ -38,43 +38,41 @@ fun Module.externalSystemClients(config: ApplicationConfig) {
         OAuth2TokenProvider(accessTokenService, azureAdConfig)
     } bind AccessTokenProvider::class
 
-    single (named("PROXY")){
+    single(named("PROXY")) {
         oauth2TokenProvider(
             config,
             config.getString("client.registration.clients[0].proxyscope")
         )
     } bind AccessTokenProvider::class
 
-    single (named("OPPGAVE")){
+    single(named("OPPGAVE")) {
         oauth2TokenProvider(
             config,
             config.getString("client.registration.clients[0].oppgavescope")
         )
     } bind AccessTokenProvider::class
 
-    single (named("DOKARKIV")){
+    single(named("DOKARKIV")) {
         oauth2TokenProvider(
             config,
             config.getString("client.registration.clients[0].dokarkivscope")
         )
     } bind AccessTokenProvider::class
 
-    single (named("SAF")){
+    single(named("SAF")) {
         oauth2TokenProvider(
             config,
             config.getString("client.registration.clients[0].safscope")
         )
     } bind AccessTokenProvider::class
 
-    single (named("PDL")){
+    single(named("PDL")) {
         oauth2TokenProvider(
             config,
             config.getString("client.registration.clients[0].pdlscope")
         )
     } bind AccessTokenProvider::class
-
 }
-
 
 private fun Scope.oauth2TokenProvider(config: ApplicationConfig, scope: String): OAuth2TokenProvider =
     OAuth2TokenProvider(
