@@ -1,11 +1,12 @@
 package no.nav.syfo.koin
 
 import com.zaxxer.hikari.HikariConfig
+import com.zaxxer.hikari.HikariDataSource
 import io.ktor.config.ApplicationConfig
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
-import no.nav.helse.arbeidsgiver.integrasjoner.RestSTSAccessTokenProvider
+import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
 import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClient
 import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClientImpl
 import no.nav.helse.arbeidsgiver.system.getString
@@ -14,7 +15,6 @@ import no.nav.syfo.behandling.InntektsmeldingBehandler
 import no.nav.syfo.client.BrregClient
 import no.nav.syfo.client.BrregClientImp
 import no.nav.syfo.client.OppgaveClient
-import no.nav.syfo.client.TokenConsumer
 import no.nav.syfo.client.dokarkiv.DokArkivClient
 import no.nav.syfo.client.norg.Norg2Client
 import no.nav.syfo.client.saf.SafDokumentClient
@@ -48,7 +48,6 @@ import no.nav.syfo.util.Metrikk
 import no.nav.syfo.utsattoppgave.FeiletUtsattOppgaveMeldingProsessor
 import no.nav.syfo.utsattoppgave.UtsattOppgaveDAO
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
-import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.koin.core.qualifier.named
@@ -56,17 +55,21 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 import javax.sql.DataSource
 
-fun preprodConfig(config: ApplicationConfig) = module {
+fun devConfig(config: ApplicationConfig) = module {
     externalSystemClients(config)
     single {
-        val hikariConfig = HikariConfig()
-        hikariConfig.jdbcUrl = config.getjdbcUrlFromProperties()
-        hikariConfig.minimumIdle = 1
-        hikariConfig.maximumPoolSize = 2
-        HikariCPVaultUtil.createHikariDataSourceWithVaultIntegration(
-            hikariConfig,
-            config.getString("database.vault.mountpath"),
-            config.getString("database.vault.admin"),
+        HikariDataSource(
+            HikariConfig().apply {
+                jdbcUrl = config.getjdbcUrlFromProperties()
+                username = config.getString("database.username")
+                password = config.getString("database.password")
+                maximumPoolSize = 2
+                minimumIdle = 1
+                idleTimeout = 10001
+                connectionTimeout = 2000
+                maxLifetime = 30001
+                driverClassName = "org.postgresql.Driver"
+            }
         )
     } bind DataSource::class
 
@@ -77,14 +80,6 @@ fun preprodConfig(config: ApplicationConfig) = module {
     } bind JoarkInntektsmeldingHendelseProsessor::class
     single { ArbeidsgiverperiodeRepositoryImp(get()) } bind ArbeidsgiverperiodeRepository::class
 
-    single {
-        TokenConsumer(
-            get(),
-            config.getString("security-token-service-token.url"),
-            config.getString("srvsyfoinntektsmelding.username"),
-            config.getString("srvsyfoinntektsmelding.password")
-        )
-    } bind TokenConsumer::class
     single {
         InntektsmeldingBehandler(
             get(), get(), get(), get(), get(), get()
@@ -120,7 +115,10 @@ fun preprodConfig(config: ApplicationConfig) = module {
 
     single { DuplikatRepositoryImpl(get()) } bind DuplikatRepository::class
     single { UtsattOppgaveDAO(UtsattOppgaveRepositoryImp(get())) }
-    single { OppgaveClient(config.getString("oppgavebehandling_url"), get(), get()) { get<TokenConsumer>().token } } bind OppgaveClient::class
+    single {
+        val tokenProvider = get<AccessTokenProvider>(qualifier = named("OPPGAVE"))
+        OppgaveClient(config.getString("oppgavebehandling_url"), get(), get(), tokenProvider::getToken)
+    } bind OppgaveClient::class
     single { UtsattOppgaveService(get(), get(), get(), get(), get(), get()) } bind UtsattOppgaveService::class
     single { FeiletUtsattOppgaveMeldingProsessor(get(), get()) }
 
@@ -139,12 +137,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
     single {
         PdlClientImpl(
             config.getString("pdl_url"),
-            RestSTSAccessTokenProvider(
-                config.getString("security_token.username"),
-                config.getString("security_token.password"),
-                config.getString("security_token_service_token_url"),
-                get()
-            ),
+            get(qualifier = named("PDL")),
             get(),
             get()
         )
@@ -161,12 +154,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
         SafJournalpostClient(
             get(),
             config.getString("saf_journal_url"),
-            RestSTSAccessTokenProvider(
-                config.getString("security_token.username"),
-                config.getString("security_token.password"),
-                config.getString("security_token_service_token_url"),
-                get()
-            )
+            get(qualifier = named("SAF")),
         )
     } bind SafJournalpostClient::class
 
@@ -174,24 +162,14 @@ fun preprodConfig(config: ApplicationConfig) = module {
         SafDokumentClient(
             config.getString("saf_dokument_url"),
             get(),
-            RestSTSAccessTokenProvider(
-                config.getString("security_token.username"),
-                config.getString("security_token.password"),
-                config.getString("security_token_service_token_url"),
-                get()
-            )
+            get(qualifier = named("SAF")),
         )
     } bind SafDokumentClient::class
 
     single {
         DokArkivClient(
             config.getString("dokarkiv_url"),
-            RestSTSAccessTokenProvider(
-                config.getString("security_token.username"),
-                config.getString("security_token.password"),
-                config.getString("security_token_service_token_url"),
-                get()
-            ),
+            get(qualifier = named("DOKARKIV")),
             get()
         )
     } bind DokArkivClient::class

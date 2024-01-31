@@ -71,7 +71,7 @@ spec:
           cluster: dev-gcp
   env:
     - name: KOIN_PROFILE
-      value: "PREPROD"
+      value: "DEV"
     - name: SRVSYFOINNTEKTSMELDING_USERNAME
       value: "srvsyfoinntektsmel"
     - name: SECURITY_TOKEN_SERVICE_TOKEN_URL
@@ -100,3 +100,14 @@ spec:
       value: "https://saf-q1.dev.intern.nav.no/graphql"
     - name: ENHETSREGISTERET_URL
       value: "https://data.brreg.no/enhetsregisteret/api/underenheter/"
+    - name: DOKARKIV_SCOPE
+      value: api://dev-fss.teamdokumenthandtering.dokarkiv-q1/.default
+    - name: SAF_SCOPE
+      value: api://dev-fss.teamdokumenthandtering.saf-q1/.default
+    - name: OPPGAVE_SCOPE
+      value: api://dev-fss.oppgavehandtering.oppgave-q1/.default
+    - name: PDL_SCOPE
+      value: api://dev-fss.pdl.pdl-api/.default
+    - name: PROXY_SCOPE
+      value: api://dev-fss.helsearbeidsgiver.helsearbeidsgiver-proxy/.default
+
