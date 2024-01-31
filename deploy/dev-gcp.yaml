@@ -56,6 +56,11 @@ spec:
         - application: helsearbeidsgiver-proxy
           namespace: helsearbeidsgiver
           cluster: dev-fss
+      external:
+        - host: data.brreg.no
+        - host: norg2.dev-fss-pub.nais.io
+        - host: oppgave-q1.dev-fss-pub.nais.io
+        - host: pdl-api.dev-fss-pub.nais.io
     inbound:
       rules:
         - application: im-bro-spinn
@@ -72,7 +77,7 @@ spec:
     - name: SECURITY_TOKEN_SERVICE_TOKEN_URL
       value: "http://security-token-service.default.svc.nais.local/rest/v1/sts/token"
     - name: OPPGAVEBEHANDLING_URL
-      value: "https://oppgave.nais.preprod.local/api/v1/oppgaver"
+      value: "https://oppgave-q1.dev-fss-pub.nais.io/api/v1/oppgaver"
     - name: SRVAPPSERVER_USERNAME
       value: "srvappserver"
     - name: SRVAPPSERVER_PASSWORD
