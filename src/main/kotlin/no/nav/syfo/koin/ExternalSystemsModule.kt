@@ -23,6 +23,7 @@ import java.net.URI
 
 fun Module.externalSystemClients(config: ApplicationConfig) {
 
+    val clientConfig = config.configList("no.nav.security.jwt.client.registration.clients").first()
     single {
         val clientConfig = OAuth2ClientPropertiesConfig(config)
         val tokenResolver = TokenResolver()
@@ -39,37 +40,38 @@ fun Module.externalSystemClients(config: ApplicationConfig) {
     } bind AccessTokenProvider::class
 
     single(named("PROXY")) {
+
         oauth2TokenProvider(
-            config,
-            config.getString("client.registration.clients[0].proxyscope")
+            clientConfig,
+            clientConfig.getString("proxyscope")
         )
     } bind AccessTokenProvider::class
 
     single(named("OPPGAVE")) {
         oauth2TokenProvider(
-            config,
-            config.getString("client.registration.clients[0].oppgavescope")
+            clientConfig,
+            clientConfig.getString("oppgavescope")
         )
     } bind AccessTokenProvider::class
 
     single(named("DOKARKIV")) {
         oauth2TokenProvider(
-            config,
-            config.getString("client.registration.clients[0].dokarkivscope")
+            clientConfig,
+            clientConfig.getString("dokarkivscope")
         )
     } bind AccessTokenProvider::class
 
     single(named("SAF")) {
         oauth2TokenProvider(
-            config,
-            config.getString("client.registration.clients[0].safscope")
+            clientConfig,
+            clientConfig.getString("safscope")
         )
     } bind AccessTokenProvider::class
 
     single(named("PDL")) {
         oauth2TokenProvider(
-            config,
-            config.getString("client.registration.clients[0].pdlscope")
+            clientConfig,
+            clientConfig.getString("pdlscope")
         )
     } bind AccessTokenProvider::class
 }
@@ -91,11 +93,10 @@ private fun accessTokenService(scope: Scope): OAuth2AccessTokenService =
     }
 
 private fun ApplicationConfig.azureAdConfig(scope: String): ClientProperties {
-    val prefix = "client.registration.clients[0]"
     return ClientProperties(
-        getString("$prefix.token_endpoint_url").let(::URI),
-        getString("$prefix.well_known_url").let(::URI),
-        getString("$prefix.grant_type").let(::OAuth2GrantType),
+        getString("token_endpoint_url").let(::URI),
+        getString("well_known_url").let(::URI),
+        getString("grant_type").let(::OAuth2GrantType),
         scope.split(","),
         authProps(),
         null,
@@ -104,7 +105,7 @@ private fun ApplicationConfig.azureAdConfig(scope: String): ClientProperties {
 }
 
 private fun ApplicationConfig.authProps(): ClientAuthenticationProperties {
-    val prefix = "client.registration.clients[0].authentication"
+    val prefix = "authentication"
     return ClientAuthenticationProperties(
         getString("$prefix.client_id"),
         getString("$prefix.client_auth_method").let(::ClientAuthenticationMethod),
