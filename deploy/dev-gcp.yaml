@@ -83,7 +83,7 @@ spec:
     - name: RUN_BACKGROUND_WORKERS
       value: "true"
     - name: PDL_URL
-      value: "https://pdl-api.dev-fss-pub.nais.io"
+      value: "https://pdl-api.dev-fss-pub.nais.io/graphql"
     - name: NORG2_URL
       value: "https://norg2.dev-fss-pub.nais.io/norg2/api"
     - name: SAF_DOKUMENT_URL
