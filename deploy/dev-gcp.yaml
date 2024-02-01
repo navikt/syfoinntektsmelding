@@ -72,16 +72,8 @@ spec:
   env:
     - name: KOIN_PROFILE
       value: "DEV"
-    - name: SRVSYFOINNTEKTSMELDING_USERNAME
-      value: "srvsyfoinntektsmel"
-    - name: SECURITY_TOKEN_SERVICE_TOKEN_URL
-      value: "http://security-token-service.default.svc.nais.local/rest/v1/sts/token"
     - name: OPPGAVEBEHANDLING_URL
       value: "https://oppgave-q1.dev-fss-pub.nais.io/api/v1/oppgaver"
-    - name: SRVAPPSERVER_USERNAME
-      value: "srvappserver"
-    - name: SRVAPPSERVER_PASSWORD
-      value: ""
     - name: KAFKA_JOARK_HENDELSE_TOPIC
       value: "teamdokumenthandtering.aapen-dok-journalfoering-q1"
     - name: KAFKA_UTSATT_OPPGAVE_TOPIC
