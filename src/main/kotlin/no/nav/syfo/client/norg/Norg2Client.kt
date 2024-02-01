@@ -21,7 +21,8 @@ import java.time.LocalDate
  */
 open class Norg2Client(
     private val url: String,
-    private val httpClient: HttpClient
+    private val httpClient: HttpClient,
+    private val getAccessToken: () -> String
 ) {
 
     /**
@@ -29,9 +30,10 @@ open class Norg2Client(
      */
     open suspend fun hentAlleArbeidsfordelinger(request: ArbeidsfordelingRequest, callId: String?): List<ArbeidsfordelingResponse> {
         return runBlocking {
-            httpClient.post<List<ArbeidsfordelingResponse>>(url + "/arbeidsfordeling/enheter/bestmatch") {
+            httpClient.post<List<ArbeidsfordelingResponse>>(url) {
                 contentType(ContentType.Application.Json.withCharset(Charsets.UTF_8))
                 header("X-Correlation-ID", callId)
+                header("Authorization", "Bearer ${getAccessToken()}")
                 body = request
             }
         }

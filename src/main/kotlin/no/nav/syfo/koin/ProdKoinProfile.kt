@@ -154,7 +154,13 @@ fun prodConfig(config: ApplicationConfig) = module {
     single {
         Norg2Client(
             config.getString("norg2_url"),
-            get()
+            get(),
+            RestSTSAccessTokenProvider(
+                config.getString("security_token.username"),
+                config.getString("security_token.password"),
+                config.getString("security_token_service_token_url"),
+                get()
+            )::getToken
         )
     } bind Norg2Client::class
 

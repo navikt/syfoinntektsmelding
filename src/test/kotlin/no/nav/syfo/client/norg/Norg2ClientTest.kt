@@ -15,7 +15,7 @@ class Norg2ClientTest {
 
     fun hentAlleArbeidsfordelinger() {
         runBlocking {
-            norgClient = Norg2Client("url", buildHttpClientJson(HttpStatusCode.OK, lagResponse()))
+            norgClient = Norg2Client("url", buildHttpClientJson(HttpStatusCode.OK, lagResponse())) { "norg-token" }
             val arbeidsfordelinger = norgClient.hentAlleArbeidsfordelinger(lagRequest(), "123")
             assertThat(arbeidsfordelinger.size).isEqualTo(1)
             assertThat(arbeidsfordelinger[0].enhetNr).isEqualTo("1234")

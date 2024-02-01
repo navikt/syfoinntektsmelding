@@ -114,7 +114,8 @@ fun Module.mockExternalDependecies() {
     single {
         object : Norg2Client(
             "",
-            get()
+            get(),
+            get<AccessTokenProvider>()::getToken
         ) {
             override suspend fun hentAlleArbeidsfordelinger(
                 request: ArbeidsfordelingRequest,
