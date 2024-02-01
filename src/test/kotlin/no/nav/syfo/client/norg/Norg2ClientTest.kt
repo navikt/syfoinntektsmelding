@@ -1,9 +1,7 @@
 package no.nav.syfo.client.norg
 
 import io.ktor.http.HttpStatusCode
-import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
-import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
 import no.nav.syfo.client.buildHttpClientJson
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -13,13 +11,11 @@ class Norg2ClientTest {
 
     private lateinit var norgClient: Norg2Client
 
-    private val mockStsClient = mockk<AccessTokenProvider>(relaxed = true)
-
     @Test
 
     fun hentAlleArbeidsfordelinger() {
         runBlocking {
-            norgClient = Norg2Client("url", mockStsClient, buildHttpClientJson(HttpStatusCode.OK, lagResponse()))
+            norgClient = Norg2Client("url", buildHttpClientJson(HttpStatusCode.OK, lagResponse()))
             val arbeidsfordelinger = norgClient.hentAlleArbeidsfordelinger(lagRequest(), "123")
             assertThat(arbeidsfordelinger.size).isEqualTo(1)
             assertThat(arbeidsfordelinger[0].enhetNr).isEqualTo("1234")
