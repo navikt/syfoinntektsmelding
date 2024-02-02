@@ -61,6 +61,8 @@ spec:
         - host: norg2.dev-fss-pub.nais.io
         - host: oppgave-q1.dev-fss-pub.nais.io
         - host: pdl-api.dev-fss-pub.nais.io
+        - host: dokarkiv.dev-fss-pub.nais.io
+        - host: saf.dev-fss-pub.nais.io
     inbound:
       rules:
         - application: im-bro-spinn
@@ -79,7 +81,7 @@ spec:
     - name: KAFKA_UTSATT_OPPGAVE_TOPIC
       value: "tbd.spre-oppgaver"
     - name: DOKARKIV_URL
-      value: "https://dokarkiv-q1.dev.intern.nav.no/rest/journalpostapi/v1"
+      value: "https://dokarkiv.dev-fss-pub.nais.io/rest/journalpostapi/v1"
     - name: RUN_BACKGROUND_WORKERS
       value: "true"
     - name: PDL_URL
@@ -87,9 +89,9 @@ spec:
     - name: NORG2_URL
       value: https://helsearbeidsgiver-proxy.dev-fss-pub.nais.io/norg
     - name: SAF_DOKUMENT_URL
-      value: "https://saf-q1.dev.intern.nav.no/rest"
+      value: "https://saf.dev-fss-pub.nais.io/rest"
     - name: SAF_JOURNAL_URL
-      value: "https://saf-q1.dev.intern.nav.no/graphql"
+      value: "https://saf.dev-fss-pub.nais.io/graphql"
     - name: ENHETSREGISTERET_URL
       value: "https://data.brreg.no/enhetsregisteret/api/underenheter/"
     - name: DOKARKIV_SCOPE
