@@ -1,5 +1,6 @@
 package no.nav.syfo.koin
 
+import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.config.ApplicationConfig
@@ -7,9 +8,17 @@ import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
+import no.nav.helse.arbeidsgiver.integrasjoner.OAuth2TokenProvider
 import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClient
 import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClientImpl
 import no.nav.helse.arbeidsgiver.system.getString
+import no.nav.security.token.support.client.core.ClientAuthenticationProperties
+import no.nav.security.token.support.client.core.ClientProperties
+import no.nav.security.token.support.client.core.OAuth2GrantType
+import no.nav.security.token.support.client.core.oauth2.ClientCredentialsTokenClient
+import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
+import no.nav.security.token.support.client.core.oauth2.OnBehalfOfTokenClient
+import no.nav.security.token.support.client.core.oauth2.TokenExchangeClient
 import no.nav.syfo.MetrikkVarsler
 import no.nav.syfo.behandling.InntektsmeldingBehandler
 import no.nav.syfo.client.BrregClient
@@ -24,6 +33,8 @@ import no.nav.syfo.integration.kafka.commonAivenProperties
 import no.nav.syfo.integration.kafka.joarkAivenProperties
 import no.nav.syfo.integration.kafka.journalpost.JournalpostHendelseConsumer
 import no.nav.syfo.integration.kafka.utsattOppgaveAivenProperties
+import no.nav.syfo.integration.oauth2.DefaultOAuth2HttpClient
+import no.nav.syfo.integration.oauth2.TokenResolver
 import no.nav.syfo.producer.InntektsmeldingAivenProducer
 import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
 import no.nav.syfo.prosesser.FjernInntektsmeldingByBehandletProcessor
@@ -51,11 +62,51 @@ import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.koin.core.qualifier.named
+import org.koin.core.scope.Scope
 import org.koin.dsl.bind
 import org.koin.dsl.module
+import java.net.URI
 import javax.sql.DataSource
 
 fun devConfig(config: ApplicationConfig) = module {
+
+    val clientConfig = config.configList("no.nav.security.jwt.client.registration.clients").first()
+    single(named("PROXY")) {
+
+        oauth2TokenProvider(
+            clientConfig,
+            clientConfig.getString("proxyscope")
+        )
+    } bind AccessTokenProvider::class
+
+    single(named("OPPGAVE")) {
+        oauth2TokenProvider(
+            clientConfig,
+            clientConfig.getString("oppgavescope")
+        )
+    } bind AccessTokenProvider::class
+
+    single(named("DOKARKIV")) {
+        oauth2TokenProvider(
+            clientConfig,
+            clientConfig.getString("dokarkivscope")
+        )
+    } bind AccessTokenProvider::class
+
+    single(named("SAF")) {
+        oauth2TokenProvider(
+            clientConfig,
+            clientConfig.getString("safscope")
+        )
+    } bind AccessTokenProvider::class
+
+    single(named("PDL")) {
+        oauth2TokenProvider(
+            clientConfig,
+            clientConfig.getString("pdlscope")
+        )
+    } bind AccessTokenProvider::class
+
     externalSystemClients(config)
     single {
         HikariDataSource(
@@ -193,4 +244,42 @@ fun devConfig(config: ApplicationConfig) = module {
             get()
         )
     }
+}
+
+private fun Scope.oauth2TokenProvider(config: ApplicationConfig, scope: String): OAuth2TokenProvider =
+    OAuth2TokenProvider(
+        oauth2Service = accessTokenService(this),
+        clientProperties = config.azureAdConfig(scope)
+    )
+
+private fun accessTokenService(scope: Scope): OAuth2AccessTokenService =
+    DefaultOAuth2HttpClient(scope.get()).let {
+        OAuth2AccessTokenService(
+            TokenResolver(),
+            OnBehalfOfTokenClient(it),
+            ClientCredentialsTokenClient(it),
+            TokenExchangeClient(it)
+        )
+    }
+
+private fun ApplicationConfig.azureAdConfig(scope: String): ClientProperties {
+    return ClientProperties(
+        getString("token_endpoint_url").let(::URI),
+        getString("well_known_url").let(::URI),
+        getString("grant_type").let(::OAuth2GrantType),
+        scope.split(","),
+        authProps(),
+        null,
+        null
+    )
+}
+
+private fun ApplicationConfig.authProps(): ClientAuthenticationProperties {
+    val prefix = "authentication"
+    return ClientAuthenticationProperties(
+        getString("$prefix.client_id"),
+        getString("$prefix.client_auth_method").let(::ClientAuthenticationMethod),
+        getString("$prefix.client_secret"),
+        null
+    )
 }
