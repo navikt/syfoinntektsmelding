@@ -56,7 +56,7 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 import javax.sql.DataSource
 
-//TODO: kan fjernes
+// TODO: kan fjernes
 fun preprodConfig(config: ApplicationConfig) = module {
     externalSystemClients(config)
     single {
