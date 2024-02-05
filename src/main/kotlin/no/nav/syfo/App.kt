@@ -45,7 +45,7 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
         }
         startKoin { modules(selectModuleBasedOnProfile(appConfig)) }
         migrateDatabase()
-        if (System.getenv("NAIS_CLUSTER_NAME") == "dev-gcp") {
+        if (System.getenv("NAIS_CLUSTER_NAME") != "prod-gcp") {
             configAndStartBackgroundWorkers()
             startKafkaConsumer()
         }
