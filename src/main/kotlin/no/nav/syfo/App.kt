@@ -9,8 +9,6 @@ import io.ktor.server.netty.Netty
 import io.ktor.server.netty.NettyApplicationEngine
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.helse.arbeidsgiver.kubernetes.KubernetesProbeManager
-import no.nav.helse.arbeidsgiver.system.AppEnv
-import no.nav.helse.arbeidsgiver.system.getEnvironment
 import no.nav.helse.arbeidsgiver.system.getString
 import no.nav.helsearbeidsgiver.utils.log.logger
 import no.nav.syfo.integration.kafka.UtsattOppgaveConsumer
@@ -37,17 +35,20 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
     private var webserver: NettyApplicationEngine? = null
     private var appConfig: HoconApplicationConfig = HoconApplicationConfig(ConfigFactory.load())
 
-    private val runtimeEnvironment = appConfig.getEnvironment()
+    private val runtimeEnvironment = appConfig.getString("koin.profile")
 
     fun start() {
-        if (runtimeEnvironment == AppEnv.PREPROD || runtimeEnvironment == AppEnv.PROD) {
+        logger.info("Environment: $runtimeEnvironment")
+        if (runtimeEnvironment != "LOCAL" && runtimeEnvironment != "TEST") {
             logger.info("Sover i 30s i påvente av SQL proxy sidecar")
             Thread.sleep(30000)
         }
         startKoin { modules(selectModuleBasedOnProfile(appConfig)) }
         migrateDatabase()
-        configAndStartBackgroundWorkers()
-        startKafkaConsumer()
+        if (System.getenv("NAIS_CLUSTER_NAME") != "prod-gcp") {
+            configAndStartBackgroundWorkers()
+            startKafkaConsumer()
+        }
         configAndStartWebserver()
     }
 
