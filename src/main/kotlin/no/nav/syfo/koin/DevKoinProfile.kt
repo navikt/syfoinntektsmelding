@@ -176,7 +176,7 @@ fun devConfig(config: ApplicationConfig) = module {
     } bind DokArkivClient::class
 
     single { BrregClientImp(get(qualifier = named("proxyHttpClient")), config.getString("berreg_enhet_url")) } bind BrregClient::class
-
+//TODO: trekk ut topic og consumerConfig-properties
     single {
         InntektsmeldingConsumer(
             commonAivenProperties() + mapOf(
