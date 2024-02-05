@@ -6,7 +6,7 @@ import no.nav.security.token.support.client.core.ClientAuthenticationProperties
 import no.nav.security.token.support.client.core.ClientProperties
 import no.nav.security.token.support.client.core.OAuth2GrantType
 import java.net.URI
-
+// TODO: Kan fjernes etter hvert, ligger som private funksjoner i DevKoinProfile (må verifiseres)
 class OAuth2ClientPropertiesConfig(
     applicationConfig: ApplicationConfig
 ) {
@@ -19,7 +19,7 @@ class OAuth2ClientPropertiesConfig(
                     URI(clientConfig.propertyToString("token_endpoint_url")),
                     wellKnownUrl?.let { URI(it) },
                     OAuth2GrantType(clientConfig.propertyToString("grant_type")),
-                    clientConfig.propertyToStringOrNull("scope")?.split(","),
+                    clientConfig.propertyToStringOrNull("proxyscope")?.split(","),
                     ClientAuthenticationProperties(
                         clientConfig.propertyToString("authentication.client_id"),
                         ClientAuthenticationMethod(
