@@ -66,24 +66,22 @@ spec:
     inbound:
       rules:
         - application: im-bro-spinn
-          namespace: helsearbeidsgiver
-          cluster: dev-gcp
         - application: sparkel-dokumenter
           namespace: tbd
-          cluster: dev-gcp
+
   env:
     - name: KOIN_PROFILE
       value: "DEV"
-    - name: OPPGAVEBEHANDLING_URL
-      value: "https://oppgave-q1.dev-fss-pub.nais.io/api/v1/oppgaver"
+    - name: RUN_BACKGROUND_WORKERS
+      value: "true"
     - name: KAFKA_JOARK_HENDELSE_TOPIC
       value: "teamdokumenthandtering.aapen-dok-journalfoering-q1"
     - name: KAFKA_UTSATT_OPPGAVE_TOPIC
       value: "tbd.spre-oppgaver"
     - name: DOKARKIV_URL
       value: "https://dokarkiv.dev-fss-pub.nais.io/rest/journalpostapi/v1"
-    - name: RUN_BACKGROUND_WORKERS
-      value: "true"
+    - name: OPPGAVEBEHANDLING_URL
+      value: "https://oppgave-q1.dev-fss-pub.nais.io/api/v1/oppgaver"
     - name: PDL_URL
       value: "https://pdl-api.dev-fss-pub.nais.io/graphql"
     - name: NORG2_URL
