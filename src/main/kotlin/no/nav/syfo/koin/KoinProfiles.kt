@@ -25,7 +25,6 @@ import org.koin.dsl.module
 fun selectModuleBasedOnProfile(config: ApplicationConfig): List<Module> {
     val envModule = when (config.property("koin.profile").getString()) {
         "LOCAL" -> localDevConfig(config)
-        "PREPROD" -> preprodConfig(config)
         "DEV" -> devConfig(config)
         "PROD" -> prodConfig(config)
         else -> localDevConfig(config)
