@@ -62,12 +62,17 @@ class UtsattOppgaveService(
         }
 
         if ((oppgave.tilstand == Tilstand.Utsatt || oppgave.tilstand == Tilstand.Forkastet) && oppdatering.handling == Handling.Opprett) {
-            val inntektsmeldingEntitet = inntektsmeldingRepository.findByArkivReferanse(oppgave.arkivreferanse)
-            val resultat = opprettOppgaveIGosys(oppgave, oppgaveClient, utsattOppgaveDAO, behandlendeEnhetConsumer, gjelderSpeil, inntektsmeldingEntitet, om)
-            oppgave.oppdatert = LocalDateTime.now()
-            lagre(oppgave.copy(tilstand = Tilstand.Opprettet, speil = gjelderSpeil))
-            metrikk.tellUtsattOppgave_Opprett()
-            logger.info("Endret oppgave: ${oppgave.inntektsmeldingId} til tilstand: ${Tilstand.Opprettet.name} gosys oppgaveID: ${resultat.oppgaveId} duplikat? ${resultat.duplikat}")
+            val inntektsmeldingEntitet = inntektsmeldingRepository.findByUuid(oppgave.inntektsmeldingId)
+            if (inntektsmeldingEntitet != null) {
+                val resultat =
+                    opprettOppgaveIGosys(oppgave, oppgaveClient, utsattOppgaveDAO, behandlendeEnhetConsumer, gjelderSpeil, inntektsmeldingEntitet, om)
+                oppgave.oppdatert = LocalDateTime.now()
+                lagre(oppgave.copy(tilstand = Tilstand.Opprettet, speil = gjelderSpeil))
+                metrikk.tellUtsattOppgave_Opprett()
+                logger.info("Endret oppgave: ${oppgave.inntektsmeldingId} til tilstand: ${Tilstand.Opprettet.name} gosys oppgaveID: ${resultat.oppgaveId} duplikat? ${resultat.duplikat}")
+            } else {
+                logger.error("Fant ikke inntektsmelding for ID '${oppgave.inntektsmeldingId}'.")
+            }
             return
         }
 
