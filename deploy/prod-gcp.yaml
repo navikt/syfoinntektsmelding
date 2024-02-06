@@ -45,6 +45,7 @@ spec:
       - type: POSTGRES_11
         databases:
           - name: spinosaurus
+        tier: db-g1-small
         diskAutoresize: true
 
   accessPolicy:
