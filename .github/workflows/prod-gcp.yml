@@ -1,9 +1,8 @@
 name: Produksjon GCP
 
 on:
-  push:
-    branches:
-      - prod/spinosaurus-i-prod
+  release:
+    types: [released]
 
 env:
   IMAGE: ghcr.io/${{ github.repository }}/syfoinntektsmelding:${{ github.sha }}
