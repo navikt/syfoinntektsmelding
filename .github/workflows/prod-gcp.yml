@@ -1,10 +1,8 @@
-name: Preprod
+name: Produksjon GCP
 
 on:
-  push:
-    branches:
-      - master
-      - 'preprod/**'
+  release:
+    types: [released]
 
 env:
   IMAGE: ghcr.io/${{ github.repository }}/syfoinntektsmelding:${{ github.sha }}
@@ -67,7 +65,7 @@ jobs:
           docker push ${IMAGE}
 
   deploy:
-    name: Deploy to PREPROD
+    name: Deploy to PROD-GCP
     needs: build
     runs-on: ubuntu-latest
     permissions:
@@ -76,5 +74,5 @@ jobs:
       - uses: actions/checkout@v4
       - uses: nais/deploy/actions/deploy@v2
         env:
-          CLUSTER: dev-gcp
-          RESOURCE: deploy/dev-gcp.yaml
+          CLUSTER: prod-gcp
+          RESOURCE: deploy/prod-gcp.yaml
