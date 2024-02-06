@@ -26,6 +26,7 @@ import no.nav.syfo.domain.inntektsmelding.Naturalytelse
 import no.nav.syfo.domain.inntektsmelding.OpphoerAvNaturalytelse
 import no.nav.syfo.domain.inntektsmelding.RapportertInntekt
 import no.nav.syfo.domain.inntektsmelding.Refusjon
+import no.nav.syfo.domain.inntektsmelding.SpinnInntektEndringAarsak
 import java.time.LocalDateTime
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.Inntektsmelding as InntektmeldingSimba
 
@@ -76,22 +77,26 @@ fun Inntekt.tilRapportertInntekt() =
         bekreftet = this.bekreftet,
         beregnetInntekt = this.beregnetInntekt,
         endringAarsak = this.endringÅrsak?.aarsak(),
+        endringAarsakData = this.endringÅrsak?.tilSpinnInntektEndringAarsak(),
         manueltKorrigert = this.manueltKorrigert
     )
 
 fun InntektEndringAarsak.aarsak(): String =
+    this.tilSpinnInntektEndringAarsak()?.aarsak ?: this::class.simpleName ?: "Ukjent"
+
+fun InntektEndringAarsak.tilSpinnInntektEndringAarsak(): SpinnInntektEndringAarsak? =
     when (this) {
-        is Permisjon -> "Permisjon"
-        is Ferie -> "Ferie"
-        is Ferietrekk -> "Ferietrekk"
-        is Permittering -> "Permittering"
-        is Tariffendring -> "Tariffendring"
-        is VarigLonnsendring -> "VarigLonnsendring"
-        is NyStilling -> "NyStilling"
-        is NyStillingsprosent -> "NyStillingsprosent"
-        is Bonus -> "Bonus"
-        is Sykefravaer -> "Sykefravaer"
-        is Nyansatt -> "Nyansatt"
-        is Feilregistrert -> "Feilregistrert"
-        else -> this::class.simpleName ?: "Ukjent"
+        is Permisjon -> SpinnInntektEndringAarsak(aarsak = "Permisjon", perioder = liste.map { Periode(it.fom, it.tom) })
+        is Ferie -> SpinnInntektEndringAarsak(aarsak = "Ferie", perioder = liste.map { Periode(it.fom, it.tom) })
+        is Ferietrekk -> SpinnInntektEndringAarsak(aarsak = "Ferietrekk")
+        is Permittering -> SpinnInntektEndringAarsak(aarsak = "Permittering", perioder = liste.map { Periode(it.fom, it.tom) })
+        is Tariffendring -> SpinnInntektEndringAarsak("Tariffendring", gjelderFra = gjelderFra, bleKjent = bleKjent)
+        is VarigLonnsendring -> SpinnInntektEndringAarsak("VarigLonnsendring", gjelderFra = gjelderFra)
+        is NyStilling -> SpinnInntektEndringAarsak(aarsak = "NyStilling", gjelderFra = gjelderFra)
+        is NyStillingsprosent -> SpinnInntektEndringAarsak(aarsak = "NyStillingsprosent", gjelderFra = gjelderFra)
+        is Bonus -> SpinnInntektEndringAarsak(aarsak = "Bonus")
+        is Sykefravaer -> SpinnInntektEndringAarsak(aarsak = "Sykefravaer", perioder = liste.map { Periode(it.fom, it.tom) })
+        is Nyansatt -> SpinnInntektEndringAarsak(aarsak = "Nyansatt")
+        is Feilregistrert -> SpinnInntektEndringAarsak(aarsak = "Feilregistrert")
+        else -> null
     }

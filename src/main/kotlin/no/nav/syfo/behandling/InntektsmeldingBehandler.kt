@@ -21,7 +21,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
 
-const val OPPRETT_OPPGAVE_FORSINKELSE = 48L
+const val OPPRETT_OPPGAVE_FORSINKELSE = 72L
 
 class InntektsmeldingBehandler(
     private val journalpostService: JournalpostService,

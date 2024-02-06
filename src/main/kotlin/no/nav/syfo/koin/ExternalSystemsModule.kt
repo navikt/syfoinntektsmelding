@@ -25,7 +25,6 @@ fun Module.externalSystemClients(config: ApplicationConfig) {
             ClientCredentialsTokenClient(oauthHttpClient),
             TokenExchangeClient(oauthHttpClient)
         )
-
         val azureAdConfig = clientConfig.clientConfig["azure_ad"] ?: error("Fant ikke config i application.conf")
         OAuth2TokenProvider(accessTokenService, azureAdConfig)
     } bind AccessTokenProvider::class

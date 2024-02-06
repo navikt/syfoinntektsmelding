@@ -1,0 +1,105 @@
+apiVersion: nais.io/v1alpha1
+kind: Application
+metadata:
+  name: spinosaurus
+  namespace: helsearbeidsgiver
+  labels:
+    team: helsearbeidsgiver
+spec:
+  ingresses:
+    - https://spinosaurus.intern.dev.nav.no
+  image: {{image}}
+  port: 8080
+  prometheus:
+    enabled: false
+    path: /metrics
+  liveness:
+    failureThreshold: 3
+    initialDelay: 60
+    path: /health/is-alive
+    periodSeconds: 10
+    timeout: 1
+  readiness:
+    failureThreshold: 3
+    initialDelay: 60
+    path: /health/is-ready
+    periodSeconds: 10
+    timeout: 1
+  replicas:
+    max: 1
+    min: 1
+  resources:
+    limits:
+      memory: 1024Mi
+    requests:
+      cpu: 500m
+      memory: 386Mi
+
+  secureLogs:
+    enabled: true
+  kafka:
+    pool: nav-dev
+  azure:
+    application:
+      enabled: true
+
+  gcp:
+    sqlInstances:
+      - type: POSTGRES_14
+        databases:
+          - name: spinosaurus
+        diskAutoresize: true
+
+  accessPolicy:
+    outbound:
+      rules:
+        - application: helsearbeidsgiver-proxy
+          namespace: helsearbeidsgiver
+          cluster: dev-fss
+      external:
+        - host: data.brreg.no
+        - host: norg2.dev-fss-pub.nais.io
+        - host: oppgave-q1.dev-fss-pub.nais.io
+        - host: pdl-api.dev-fss-pub.nais.io
+        - host: dokarkiv.dev-fss-pub.nais.io
+        - host: saf.dev-fss-pub.nais.io
+    inbound:
+      rules:
+        - application: im-bro-spinn
+        - application: sparkel-dokumenter
+          namespace: tbd
+
+  env:
+    - name: KOIN_PROFILE
+      value: "DEV"
+    - name: RUN_BACKGROUND_WORKERS
+      value: "true"
+    - name: KAFKA_JOARK_HENDELSE_TOPIC
+      value: "teamdokumenthandtering.aapen-dok-journalfoering-q1"
+    - name: KAFKA_UTSATT_OPPGAVE_TOPIC
+      value: "tbd.spre-oppgaver"
+    - name: DOKARKIV_URL
+      value: "https://dokarkiv.dev-fss-pub.nais.io/rest/journalpostapi/v1"
+    - name: OPPGAVEBEHANDLING_URL
+      value: "https://oppgave-q1.dev-fss-pub.nais.io/api/v1/oppgaver"
+    - name: PDL_URL
+      value: "https://pdl-api.dev-fss-pub.nais.io/graphql"
+    - name: NORG2_URL
+      value: https://helsearbeidsgiver-proxy.dev-fss-pub.nais.io/norg
+    - name: SAF_DOKUMENT_URL
+      value: "https://saf.dev-fss-pub.nais.io/rest"
+    - name: SAF_JOURNAL_URL
+      value: "https://saf.dev-fss-pub.nais.io/graphql"
+    - name: ENHETSREGISTERET_URL
+      value: "https://data.brreg.no/enhetsregisteret/api/underenheter/"
+    - name: DOKARKIV_SCOPE
+      value: api://dev-fss.teamdokumenthandtering.dokarkiv-q1/.default
+    - name: SAF_SCOPE
+      value: api://dev-fss.teamdokumenthandtering.saf-q1/.default
+    - name: OPPGAVE_SCOPE
+      value: api://dev-fss.oppgavehandtering.oppgave-q1/.default
+    - name: PDL_SCOPE
+      value: api://dev-fss.pdl.pdl-api/.default
+    - name: PROXY_SCOPE
+      value: api://dev-fss.helsearbeidsgiver.helsearbeidsgiver-proxy/.default
+

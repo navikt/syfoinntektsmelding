@@ -29,16 +29,16 @@ const val BEHANDLINGSTYPE_NORMAL = "ab0061"
 
 class OppgaveClient(
     val oppgavebehndlingUrl: String,
-    val tokenConsumer: TokenConsumer,
     val httpClient: HttpClient,
-    val metrikk: Metrikk
+    val metrikk: Metrikk,
+    val getAccessToken: () -> String
 ) {
     private val logger = this.logger()
 
     private suspend fun opprettOppgave(opprettOppgaveRequest: OpprettOppgaveRequest): OpprettOppgaveResponse = retry("opprett_oppgave") {
         httpClient.post<OpprettOppgaveResponse>(oppgavebehndlingUrl) {
             contentType(ContentType.Application.Json)
-            this.header("Authorization", "Bearer ${tokenConsumer.token}")
+            this.header("Authorization", "Bearer ${getAccessToken()}")
             this.header("X-Correlation-ID", MdcUtils.getCallId())
             body = opprettOppgaveRequest
         }
@@ -49,7 +49,7 @@ class OppgaveClient(
             val callId = MdcUtils.getCallId()
             logger.info("Henter oppgave med CallId $callId")
             httpClient.get<OppgaveResponse>(oppgavebehndlingUrl) {
-                this.header("Authorization", "Bearer ${tokenConsumer.token}")
+                this.header("Authorization", "Bearer ${getAccessToken()}")
                 this.header("X-Correlation-ID", callId)
                 parameter("tema", TEMA)
                 parameter("oppgavetype", oppgavetype)

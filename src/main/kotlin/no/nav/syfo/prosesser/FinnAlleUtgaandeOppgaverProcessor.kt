@@ -32,19 +32,36 @@ class FinnAlleUtgaandeOppgaverProcessor(
     override fun doJob(): Unit = MdcUtils.withCallIdAsUuid {
         utsattOppgaveDAO
             .finnAlleUtgåtteOppgaver()
-            .forEach {
+            .mapNotNull {
+                val inntektsmeldingEntitet = inntektsmeldingRepository.findByUuid(it.inntektsmeldingId)
+                if (inntektsmeldingEntitet == null) {
+                    sikkerlogger.error("Fant ikke inntektsmelding for utsatt oppgave: ${it.arkivreferanse}")
+                    logger.error("Fant ikke inntektsmelding for utsatt oppgave: ${it.arkivreferanse}")
+                    null
+                } else {
+                    it to inntektsmeldingEntitet
+                }
+            }
+            .forEach { (oppgaveEntitet, inntektsmeldingEntitet) ->
                 try {
-                    logger.info("Skal opprette oppgave for inntektsmelding: ${it.arkivreferanse}")
-                    val inntektsmeldingEntitet = inntektsmeldingRepository.findByArkivReferanse(it.arkivreferanse)
-                    opprettOppgaveIGosys(it, oppgaveClient, utsattOppgaveDAO, behandlendeEnhetConsumer, it.speil, inntektsmeldingEntitet, om)
-                    it.tilstand = Tilstand.OpprettetTimeout
-                    it.oppdatert = LocalDateTime.now()
+                    logger.info("Skal opprette oppgave for inntektsmelding: ${oppgaveEntitet.arkivreferanse}")
+                    opprettOppgaveIGosys(
+                        oppgaveEntitet,
+                        oppgaveClient,
+                        utsattOppgaveDAO,
+                        behandlendeEnhetConsumer,
+                        oppgaveEntitet.speil,
+                        inntektsmeldingEntitet,
+                        om
+                    )
+                    oppgaveEntitet.tilstand = Tilstand.OpprettetTimeout
+                    oppgaveEntitet.oppdatert = LocalDateTime.now()
                     metrikk.tellUtsattOppgave_OpprettTimeout()
-                    utsattOppgaveDAO.lagre(it)
-                    logger.info("Oppgave opprettet i gosys pga timeout for inntektsmelding: ${it.arkivreferanse}")
+                    utsattOppgaveDAO.lagre(oppgaveEntitet)
+                    logger.info("Oppgave opprettet i gosys pga timeout for inntektsmelding: ${oppgaveEntitet.arkivreferanse}")
                 } catch (e: OpprettOppgaveException) {
-                    sikkerlogger.error("Feilet ved opprettelse av oppgave ved timeout i gosys for inntektsmelding: ${it.arkivreferanse}", e)
-                    logger.error("Feilet ved opprettelse av oppgave ved timeout i gosys for inntektsmelding: ${it.arkivreferanse}")
+                    sikkerlogger.error("Feilet ved opprettelse av oppgave ved timeout i gosys for inntektsmelding: ${oppgaveEntitet.arkivreferanse}", e)
+                    logger.error("Feilet ved opprettelse av oppgave ved timeout i gosys for inntektsmelding: ${oppgaveEntitet.arkivreferanse}")
                 }
             }
     }

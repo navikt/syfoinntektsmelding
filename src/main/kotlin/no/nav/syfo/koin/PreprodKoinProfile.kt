@@ -56,15 +56,16 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 import javax.sql.DataSource
 
+// TODO: kan fjernes
 fun preprodConfig(config: ApplicationConfig) = module {
     externalSystemClients(config)
     single {
-        val vaultconfig = HikariConfig()
-        vaultconfig.jdbcUrl = config.getjdbcUrlFromProperties()
-        vaultconfig.minimumIdle = 1
-        vaultconfig.maximumPoolSize = 2
+        val hikariConfig = HikariConfig()
+        hikariConfig.jdbcUrl = config.getjdbcUrlFromProperties()
+        hikariConfig.minimumIdle = 1
+        hikariConfig.maximumPoolSize = 2
         HikariCPVaultUtil.createHikariDataSourceWithVaultIntegration(
-            vaultconfig,
+            hikariConfig,
             config.getString("database.vault.mountpath"),
             config.getString("database.vault.admin"),
         )
@@ -72,11 +73,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
 
     single {
         JoarkInntektsmeldingHendelseProsessor(
-            get(),
-            get(),
-            get(),
-            get(),
-            get()
+            get(), get(), get(), get(), get()
         )
     } bind JoarkInntektsmeldingHendelseProsessor::class
     single { ArbeidsgiverperiodeRepositoryImp(get()) } bind ArbeidsgiverperiodeRepository::class
@@ -91,12 +88,7 @@ fun preprodConfig(config: ApplicationConfig) = module {
     } bind TokenConsumer::class
     single {
         InntektsmeldingBehandler(
-            get(),
-            get(),
-            get(),
-            get(),
-            get(),
-            get()
+            get(), get(), get(), get(), get(), get()
         )
     } bind InntektsmeldingBehandler::class
 
@@ -112,17 +104,12 @@ fun preprodConfig(config: ApplicationConfig) = module {
 
     single {
         JournalpostHendelseConsumer(
-            joarkAivenProperties(),
-            config.getString("kafka_joark_hendelse_topic"),
-            get(),
-            get(),
-            get()
+            joarkAivenProperties(), config.getString("kafka_joark_hendelse_topic"), get(), get(), get()
         )
     }
     single {
         UtsattOppgaveConsumer(
-            utsattOppgaveAivenProperties(),
-            config.getString("kafka_utsatt_oppgave_topic"), get(), get(), get()
+            utsattOppgaveAivenProperties(), config.getString("kafka_utsatt_oppgave_topic"), get(), get(), get()
         )
     }
 
@@ -134,14 +121,13 @@ fun preprodConfig(config: ApplicationConfig) = module {
 
     single { DuplikatRepositoryImpl(get()) } bind DuplikatRepository::class
     single { UtsattOppgaveDAO(UtsattOppgaveRepositoryImp(get())) }
-    single { OppgaveClient(config.getString("oppgavebehandling_url"), get(), get(), get()) } bind OppgaveClient::class
+    single { OppgaveClient(config.getString("oppgavebehandling_url"), get(), get()) { get<TokenConsumer>().token } } bind OppgaveClient::class
     single { UtsattOppgaveService(get(), get(), get(), get(), get(), get()) } bind UtsattOppgaveService::class
     single { FeiletUtsattOppgaveMeldingProsessor(get(), get()) }
 
     single {
         FjernInntektsmeldingByBehandletProcessor(
-            InntektsmeldingRepositoryImp(get()),
-            config.getString("lagringstidMåneder").toInt()
+            InntektsmeldingRepositoryImp(get()), config.getString("lagringstidMåneder").toInt()
         )
     } bind FjernInntektsmeldingByBehandletProcessor::class
     single { FinnAlleUtgaandeOppgaverProcessor(get(), get(), get(), get(), get(), get()) } bind FinnAlleUtgaandeOppgaverProcessor::class
@@ -168,13 +154,13 @@ fun preprodConfig(config: ApplicationConfig) = module {
     single {
         Norg2Client(
             config.getString("norg2_url"),
+            get(),
             RestSTSAccessTokenProvider(
                 config.getString("security_token.username"),
                 config.getString("security_token.password"),
                 config.getString("security_token_service_token_url"),
                 get()
-            ),
-            get()
+            )::getToken,
         )
     } bind Norg2Client::class
 
