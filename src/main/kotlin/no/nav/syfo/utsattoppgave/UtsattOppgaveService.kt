@@ -62,11 +62,16 @@ class UtsattOppgaveService(
             (Tilstand.Utsatt to Handling.Opprett),
             (Tilstand.Forkastet to Handling.Opprett) -> {
                 val inntektsmeldingEntitet = inntektsmeldingRepository.findByArkivReferanse(oppgave.arkivreferanse)
-                val resultat = opprettOppgave(oppgave, gjelderSpeil, inntektsmeldingEntitet)
-                oppgave.oppdatert = LocalDateTime.now()
-                lagre(oppgave.copy(tilstand = Tilstand.Opprettet, speil = gjelderSpeil))
-                metrikk.tellUtsattOppgave_Opprett()
-                logger.info("Endret oppgave: ${oppgave.inntektsmeldingId} til tilstand: ${Tilstand.Opprettet.name} gosys oppgaveID: ${resultat.oppgaveId} duplikat? ${resultat.duplikat}")
+
+                if (inntektsmeldingEntitet != null) {
+                    val resultat = opprettOppgave(oppgave, gjelderSpeil, inntektsmeldingEntitet)
+                    oppgave.oppdatert = LocalDateTime.now()
+                    lagre(oppgave.copy(tilstand = Tilstand.Opprettet, speil = gjelderSpeil))
+                    metrikk.tellUtsattOppgave_Opprett()
+                    logger.info("Endret oppgave: ${oppgave.inntektsmeldingId} til tilstand: ${Tilstand.Opprettet.name} gosys oppgaveID: ${resultat.oppgaveId} duplikat? ${resultat.duplikat}")
+                } else {
+                    logger.error("Fant ikke inntektsmelding for ID '${oppgave.inntektsmeldingId}'.")
+                }
             }
             else -> {
                 metrikk.tellUtsattOppgave_Irrelevant()
