@@ -41,8 +41,6 @@ import no.nav.syfo.prosesser.FjernInntektsmeldingByBehandletProcessor
 import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
 import no.nav.syfo.repository.ArbeidsgiverperiodeRepository
 import no.nav.syfo.repository.ArbeidsgiverperiodeRepositoryImp
-import no.nav.syfo.repository.DuplikatRepository
-import no.nav.syfo.repository.DuplikatRepositoryImpl
 import no.nav.syfo.repository.FeiletRepositoryImp
 import no.nav.syfo.repository.FeiletService
 import no.nav.syfo.repository.InntektsmeldingRepository
@@ -148,7 +146,7 @@ fun devConfig(config: ApplicationConfig) = module {
 
     single {
         JournalpostHendelseConsumer(
-            joarkAivenProperties(), config.getString("kafka_joark_hendelse_topic"), get(), get(), get()
+            joarkAivenProperties(), config.getString("kafka_joark_hendelse_topic"), get(), get()
         )
     }
     single {
@@ -163,7 +161,6 @@ fun devConfig(config: ApplicationConfig) = module {
         )
     }
 
-    single { DuplikatRepositoryImpl(get()) } bind DuplikatRepository::class
     single { UtsattOppgaveDAO(UtsattOppgaveRepositoryImp(get())) }
     single {
         val tokenProvider = get<AccessTokenProvider>(qualifier = named("OPPGAVE"))

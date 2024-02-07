@@ -26,8 +26,6 @@ import no.nav.syfo.prosesser.FjernInntektsmeldingByBehandletProcessor
 import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
 import no.nav.syfo.repository.ArbeidsgiverperiodeRepository
 import no.nav.syfo.repository.ArbeidsgiverperiodeRepositoryImp
-import no.nav.syfo.repository.DuplikatRepository
-import no.nav.syfo.repository.DuplikatRepositoryImpl
 import no.nav.syfo.repository.FeiletRepository
 import no.nav.syfo.repository.FeiletRepositoryImp
 import no.nav.syfo.repository.FeiletService
@@ -85,7 +83,6 @@ fun localDevConfig(config: ApplicationConfig) = module {
             joarkLocalProperties().toMutableMap(),
             config.getString("kafka_joark_hendelse_topic"),
             get(),
-            get(),
             get()
         )
     }
@@ -101,7 +98,6 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single { PostgresBakgrunnsjobbRepository(get()) } bind BakgrunnsjobbRepository::class
     single { BakgrunnsjobbService(get()) }
     single { BehandlendeEnhetConsumer(get(), get(), get()) } bind BehandlendeEnhetConsumer::class
-    single { DuplikatRepositoryImpl(get()) } bind DuplikatRepository::class
     single { UtsattOppgaveDAO(UtsattOppgaveRepositoryMockk()) }
     single { OppgaveClient(config.getString("oppgavebehandling_url"), get(), get(), get<TokenConsumer>()::token) } bind OppgaveClient::class
     single { UtsattOppgaveService(get(), get(), get(), get(), get(), get()) } bind UtsattOppgaveService::class
