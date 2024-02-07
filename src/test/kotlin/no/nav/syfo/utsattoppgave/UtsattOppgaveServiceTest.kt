@@ -40,7 +40,7 @@ open class UtsattOppgaveServiceTest {
     private val arkivreferanse = "123"
 
     @Test
-    fun `oppretter forsinket oppgave med timeout`() {
+    fun `Oppretter forsinket oppgave med timeout`() {
         val timeout = LocalDateTime.of(2020, 4, 6, 9, 0)
         val oppgave = enOppgave(timeout)
         oppgaveService.opprett(oppgave)
@@ -48,7 +48,7 @@ open class UtsattOppgaveServiceTest {
     }
 
     @Test
-    fun `lagrerer utsatt oppgave med gjelder speil flagg og tilstand Opprettet for OpprettSpeilRelatert`() {
+    fun `Lagrer utsatt oppgave med gjelder speil flagg og tilstand Opprettet for OpprettSpeilRelatert`() {
         val timeout = LocalDateTime.of(2023, 4, 6, 9, 0)
         val oppgave = enOppgave(timeout)
         every { utsattOppgaveDAO.finn(any()) } returns oppgave
@@ -64,7 +64,7 @@ open class UtsattOppgaveServiceTest {
     }
 
     @Test
-    fun `lagrerer utsatt oppgave med tilstand Opprettet for Opprett`() {
+    fun `Lagrer utsatt oppgave med tilstand Opprettet for Opprett`() {
         val timeout = LocalDateTime.of(2023, 4, 6, 9, 0)
         val oppgave = enOppgave(timeout)
         every { utsattOppgaveDAO.finn(any()) } returns oppgave
@@ -80,7 +80,7 @@ open class UtsattOppgaveServiceTest {
     }
 
     @Test
-    fun `lagrerer utsatt oppgave med ny timeout for utsettelse`() {
+    fun `Lagrer utsatt oppgave med ny timeout for utsettelse`() {
         val timeout = LocalDateTime.of(2023, 4, 6, 9, 0)
         val nyTimeout = timeout.plusDays(7)
         val oppgave = enOppgave(timeout)
@@ -96,7 +96,7 @@ open class UtsattOppgaveServiceTest {
         verify { utsattOppgaveDAO.lagre(eq(oppgave.copy(tilstand = Tilstand.Utsatt, timeout = nyTimeout))) }
     }
     @Test
-    fun `lagrerer utsatt oppgave med tilstand Forkastet ved Ferdigbehandlet`() {
+    fun `Lagrer utsatt oppgave med tilstand Forkastet ved Ferdigbehandlet`() {
         val timeout = LocalDateTime.of(2023, 4, 6, 9, 0)
         val oppgave = enOppgave(timeout)
         every { utsattOppgaveDAO.finn(any()) } returns oppgave
