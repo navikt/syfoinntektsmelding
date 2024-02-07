@@ -40,9 +40,6 @@ class UtsattOppgaveService(
         val gjelderSpeil = oppdatering.oppdateringstype.erSpeilRelatert()
         when (oppgave.tilstand to oppdatering.handling) {
             (Tilstand.Utsatt to Handling.Utsett) -> {
-                if (oppgave.timeout == null) {
-                    metrikk.tellUtsattOppgave_UtenDato()
-                }
                 oppdatering.timeout ?: error("Timeout på utsettelse mangler for inntektsmelding: ${oppgave.arkivreferanse}")
                 oppgave.apply {
                     timeout = oppdatering.timeout
