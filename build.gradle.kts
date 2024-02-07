@@ -47,11 +47,10 @@ val hagDomeneInntektsmeldingVersion: String by project
 val kotlinxSerializationVersion: String by project
 
 plugins {
-    kotlin("jvm") version "1.9.21"
-    kotlin("plugin.serialization") version "1.9.21"
-    id("com.github.ben-manes.versions") version "0.50.0"
-    id("org.jmailen.kotlinter") version "3.8.0"
-    id("org.flywaydb.flyway") version "10.1.0"
+    kotlin("jvm")
+    kotlin("plugin.serialization")
+    id("org.jmailen.kotlinter")
+    id("com.github.ben-manes.versions")
     jacoco
     application
 }

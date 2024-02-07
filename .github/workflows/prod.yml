@@ -75,4 +75,4 @@ jobs:
       - uses: nais/deploy/actions/deploy@v2
         env:
           CLUSTER: prod-gcp
-          RESOURCE: deploy/prod-gcp.yaml
+          RESOURCE: deploy/prod.yml

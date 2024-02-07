@@ -7,7 +7,6 @@ import no.nav.helse.arbeidsgiver.kubernetes.LivenessComponent
 import no.nav.helse.arbeidsgiver.kubernetes.ReadynessComponent
 import no.nav.syfo.kafkamottak.InngaaendeJournalpostDTO
 import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
-import no.nav.syfo.repository.DuplikatRepository
 import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.slf4j.LoggerFactory
@@ -15,13 +14,12 @@ import java.time.Duration.ofMillis
 import java.time.LocalDateTime
 
 enum class JournalpostStatus {
-    Duplikat, Ny, IkkeInntektsmelding, FeilHendelseType
+    Ny, IkkeInntektsmelding, FeilHendelseType
 }
 
 class JournalpostHendelseConsumer(
     props: Map<String, Any>,
     topicName: String,
-    private val duplikatRepository: DuplikatRepository,
     private val bakgrunnsjobbRepo: BakgrunnsjobbRepository,
     private val om: ObjectMapper
 ) : ReadynessComponent, LivenessComponent {
@@ -64,10 +62,6 @@ class JournalpostHendelseConsumer(
 
     fun processHendelse(journalpostDTO: InngaaendeJournalpostDTO) {
         when (findStatus(journalpostDTO)) {
-            JournalpostStatus.Duplikat -> log.info(
-                "Ignorerer duplikat inntektsmelding ${journalpostDTO.kanalReferanseId} for hendelse ${journalpostDTO.hendelsesId}"
-            )
-
             JournalpostStatus.Ny -> lagreBakgrunnsjobb(journalpostDTO)
             JournalpostStatus.IkkeInntektsmelding -> log.info(
                 "Ignorerte journalposthendelse ${journalpostDTO.hendelsesId}. Kanal: ${journalpostDTO.mottaksKanal} Tema: ${journalpostDTO.temaNytt} Status: ${journalpostDTO.journalpostStatus}"
@@ -84,9 +78,6 @@ class JournalpostHendelseConsumer(
             if (journalpostDTO.hendelsesType != "JournalpostMottatt") {
                 return JournalpostStatus.FeilHendelseType
             }
-            if (isDuplicate(journalpostDTO)) {
-                return JournalpostStatus.Duplikat
-            }
             return JournalpostStatus.Ny
         }
         return JournalpostStatus.IkkeInntektsmelding
@@ -102,10 +93,6 @@ class JournalpostHendelseConsumer(
                 data = om.writeValueAsString(hendelse)
             )
         )
-    }
-
-    private fun isDuplicate(hendelse: InngaaendeJournalpostDTO): Boolean {
-        return duplikatRepository.findByHendelsesId(hendelse.hendelsesId)
     }
 
     override suspend fun runReadynessCheck() {
