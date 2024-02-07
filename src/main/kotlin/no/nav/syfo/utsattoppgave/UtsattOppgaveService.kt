@@ -61,7 +61,7 @@ class UtsattOppgaveService(
             }
             (Tilstand.Utsatt to Handling.Opprett),
             (Tilstand.Forkastet to Handling.Opprett) -> {
-                val inntektsmeldingEntitet = inntektsmeldingRepository.findByArkivReferanse(oppgave.arkivreferanse)
+                val inntektsmeldingEntitet = inntektsmeldingRepository.findByUuid(oppgave.inntektsmeldingId)
 
                 if (inntektsmeldingEntitet != null) {
                     val resultat = opprettOppgave(oppgave, gjelderSpeil, inntektsmeldingEntitet)
