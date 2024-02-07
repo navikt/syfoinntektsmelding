@@ -1,14 +1,12 @@
 package no.nav.syfo.integration.kafka.journalpost
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.syfo.integration.kafka.joarkLocalProperties
 import no.nav.syfo.kafkamottak.InngaaendeJournalpostDTO
-import no.nav.syfo.repository.DuplikatRepository
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -18,20 +16,18 @@ import org.junit.jupiter.api.assertThrows
 
 class JournalpostHendelseConsumerTest {
 
-    var duplikatRepository: DuplikatRepository = mockk(relaxed = true)
     var bakgrunnsjobbRepo: BakgrunnsjobbRepository = mockk(relaxed = true)
     var om: ObjectMapper = mockk(relaxed = true)
     var props = joarkLocalProperties().toMap()
     val topicName = "topic"
     lateinit var consumer: JournalpostHendelseConsumer
     val GYLDIG_INNTEKTSMELDING = InngaaendeJournalpostDTO("abc", 1, "JournalpostMottatt", 111, "MOTTATT", "", "SYK", "ALTINN", "", "")
-    val DUPLIKAT_INNTEKTSMELDING = GYLDIG_INNTEKTSMELDING.copy(journalpostId = 222)
     val IKKE_INNTEKTSMELDING = InngaaendeJournalpostDTO("abc", 1, "JournalpostMottatt", 333, "IKKE_MOTTATT", "", "IKKE_SYK", "IKKE_ALTINN", "", "")
     val FEIL_HENDELSE_TYPE = InngaaendeJournalpostDTO("abc", 1, "TemaEndret", 333, "MOTTATT", "", "SYK", "ALTINN", "", "")
 
     @BeforeEach
     fun before() {
-        consumer = JournalpostHendelseConsumer(props, topicName, duplikatRepository, bakgrunnsjobbRepo, om)
+        consumer = JournalpostHendelseConsumer(props, topicName, bakgrunnsjobbRepo, om)
     }
 
     @Test
@@ -71,28 +67,8 @@ class JournalpostHendelseConsumerTest {
 
     @Test
     fun skal_lagre_inntektsmelding() {
-        every {
-            duplikatRepository.findByHendelsesId(any())
-        } returns false
         consumer.processHendelse(GYLDIG_INNTEKTSMELDING)
         verify(exactly = 1) { bakgrunnsjobbRepo.save(any()) }
-    }
-
-    @Test
-    fun skal_ikke_lagre_duplikater() {
-        every {
-            duplikatRepository.findByHendelsesId(any())
-        } returns true
-        consumer.processHendelse(DUPLIKAT_INNTEKTSMELDING)
-        verify(exactly = 0) { bakgrunnsjobbRepo.save(any()) }
-    }
-
-    @Test
-    fun skal_gjenkjenne_duplikat() {
-        every {
-            duplikatRepository.findByHendelsesId(any())
-        } returns true
-        assertEquals(JournalpostStatus.Duplikat, consumer.findStatus(DUPLIKAT_INNTEKTSMELDING))
     }
 
     @Test
@@ -102,18 +78,12 @@ class JournalpostHendelseConsumerTest {
 
     @Test
     fun skal_gjenkjenne_ikke_inntektsmeldinger() {
-        every {
-            duplikatRepository.findByHendelsesId(any())
-        } returns false
         assertEquals(JournalpostStatus.IkkeInntektsmelding, consumer.findStatus(IKKE_INNTEKTSMELDING))
         verify(exactly = 0) { bakgrunnsjobbRepo.save(any()) }
     }
 
     @Test
     fun skal_gjenkjenne_feil_hendelser() {
-        every {
-            duplikatRepository.findByHendelsesId(any())
-        } returns false
         assertEquals(JournalpostStatus.FeilHendelseType, consumer.findStatus(FEIL_HENDELSE_TYPE))
         verify(exactly = 0) { bakgrunnsjobbRepo.save(any()) }
     }
