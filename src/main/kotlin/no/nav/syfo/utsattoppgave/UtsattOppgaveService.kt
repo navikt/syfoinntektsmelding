@@ -39,10 +39,7 @@ class UtsattOppgaveService(
         logger.info("Fant oppgave for inntektsmelding: ${oppgave.arkivreferanse} med tilstand: ${oppgave.tilstand.name}")
         val gjelderSpeil = oppdatering.oppdateringstype == OppdateringstypeDTO.OpprettSpeilRelatert
 
-        if (oppgave.tilstand == Tilstand.Utsatt && oppdatering.handling == no.nav.syfo.utsattoppgave.Handling.Utsett) {
-            if (oppgave.timeout == null) {
-                metrikk.tellUtsattOppgave_UtenDato()
-            }
+        if (oppgave.tilstand == Tilstand.Utsatt && oppdatering.handling == Handling.Utsett) {
             oppdatering.timeout ?: error("Timeout på utsettelse mangler for inntektsmelding: ${oppgave.arkivreferanse}")
             oppgave.timeout = oppdatering.timeout
             oppgave.oppdatert = LocalDateTime.now()
@@ -53,7 +50,7 @@ class UtsattOppgaveService(
             return
         }
 
-        if (oppgave.tilstand == Tilstand.Utsatt && oppdatering.handling == no.nav.syfo.utsattoppgave.Handling.Forkast) {
+        if (oppgave.tilstand == Tilstand.Utsatt && oppdatering.handling == Handling.Forkast) {
             oppgave.oppdatert = LocalDateTime.now()
             lagre(oppgave.copy(tilstand = Tilstand.Forkastet, speil = gjelderSpeil))
             metrikk.tellUtsattOppgave_Forkast()
