@@ -52,7 +52,7 @@ class UtsattOppgaveService(
 
         if (oppgave.tilstand == Tilstand.Utsatt && oppdatering.handling == Handling.Forkast) {
             oppgave.oppdatert = LocalDateTime.now()
-            lagre(oppgave.copy(tilstand = Tilstand.Forkastet, speil = gjelderSpeil))
+            lagre(oppgave.copy(tilstand = Tilstand.Forkastet, speil = gjelderSpeil, utbetalingBruker = true))
             metrikk.tellUtsattOppgave_Forkast()
             logger.info("Endret oppgave: ${oppgave.arkivreferanse} til tilstand: ${Tilstand.Forkastet.name}")
             return
