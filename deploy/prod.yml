@@ -55,7 +55,6 @@ spec:
           namespace: helsearbeidsgiver
           cluster: prod-fss
       external:
-        - host: data.brreg.no
         - host: norg2.prod-fss-pub.nais.io
         - host: oppgave.prod-fss-pub.nais.io
         - host: pdl-api.prod-fss-pub.nais.io
@@ -88,8 +87,6 @@ spec:
       value: "https://saf.prod-fss-pub.nais.io/rest"
     - name: SAF_JOURNAL_URL
       value: "https://saf.prod-fss-pub.nais.io/graphql"
-    - name: ENHETSREGISTERET_URL
-      value: "https://data.brreg.no/enhetsregisteret/api/underenheter/"
     - name: DOKARKIV_SCOPE
       value: "api://prod-fss.teamdokumenthandtering.dokarkiv/.default"
     - name: SAF_SCOPE
