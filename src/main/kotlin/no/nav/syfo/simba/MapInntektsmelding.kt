@@ -26,12 +26,9 @@ import no.nav.syfo.domain.inntektsmelding.Naturalytelse
 import no.nav.syfo.domain.inntektsmelding.OpphoerAvNaturalytelse
 import no.nav.syfo.domain.inntektsmelding.RapportertInntekt
 import no.nav.syfo.domain.inntektsmelding.Refusjon
-import java.time.DayOfWeek
-import java.time.LocalDate
+import no.nav.syfo.domain.inntektsmelding.SpinnInntektEndringAarsak
 import java.time.LocalDateTime
-import java.time.temporal.ChronoUnit
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.Inntektsmelding as InntektmeldingSimba
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.Periode as PeriodeSimba
 
 fun mapInntektsmelding(arkivreferanse: String, aktorId: String, journalpostId: String, im: InntektmeldingSimba): Inntektsmelding {
     return Inntektsmelding(
@@ -46,8 +43,7 @@ fun mapInntektsmelding(arkivreferanse: String, aktorId: String, journalpostId: S
         journalStatus = JournalStatus.FERDIGSTILT,
         arbeidsgiverperioder = im.arbeidsgiverperioder.map { Periode(it.fom, it.tom) },
         beregnetInntekt = im.beregnetInntekt.toBigDecimal(),
-        // TODO rename 'bestemmendeFraværsdag' -> 'inntektsdato'
-        inntektsdato = im.bestemmendeFraværsdag,
+        inntektsdato = im.inntektsdato,
         refusjon = Refusjon(im.refusjon.refusjonPrMnd.orDefault(0.0).toBigDecimal(), im.refusjon.refusjonOpphører),
         endringerIRefusjon = im.refusjon.refusjonEndringer?.map { EndringIRefusjon(it.dato, it.beløp?.toBigDecimal()) }.orEmpty(),
         opphørAvNaturalYtelse = im.naturalytelser?.map {
@@ -61,7 +57,7 @@ fun mapInntektsmelding(arkivreferanse: String, aktorId: String, journalpostId: S
         gyldighetsStatus = Gyldighetsstatus.GYLDIG,
         arkivRefereranse = arkivreferanse,
         feriePerioder = emptyList(),
-        førsteFraværsdag = im.bestemmendeFravaersdag(),
+        førsteFraværsdag = im.bestemmendeFraværsdag,
         mottattDato = LocalDateTime.now(),
         sakId = "",
         aktorId = aktorId,
@@ -76,58 +72,31 @@ fun mapInntektsmelding(arkivreferanse: String, aktorId: String, journalpostId: S
     )
 }
 
-// TODO flytt til Simba ved forbedringer av domenepakken.
-private fun InntektmeldingSimba.bestemmendeFravaersdag(): LocalDate =
-    if (arbeidsgiverperioder.isNotEmpty()) arbeidsgiverperioder.maxOf(PeriodeSimba::fom)
-    else {
-        (egenmeldingsperioder + fraværsperioder)
-            .sortedBy { it.fom }
-            .reduce { sammenhengende, neste ->
-                if (sammenhengende.kanSlaasSammenMed(neste)) {
-                    PeriodeSimba(
-                        fom = sammenhengende.fom,
-                        tom = maxOf(sammenhengende.tom, neste.tom)
-                    )
-                } else {
-                    neste
-                }
-            }
-            .fom
-    }
-
-fun PeriodeSimba.kanSlaasSammenMed(other: PeriodeSimba): Boolean {
-    val dagerAvstand = tom.daysUntil(other.fom)
-    return when (tom.dayOfWeek) {
-        DayOfWeek.FRIDAY -> dagerAvstand <= 3
-        DayOfWeek.SATURDAY -> dagerAvstand <= 2
-        else -> dagerAvstand <= 1
-    }
-}
-
-private fun LocalDate.daysUntil(other: LocalDate): Int =
-    until(other, ChronoUnit.DAYS).toInt()
-
 fun Inntekt.tilRapportertInntekt() =
     RapportertInntekt(
         bekreftet = this.bekreftet,
         beregnetInntekt = this.beregnetInntekt,
         endringAarsak = this.endringÅrsak?.aarsak(),
+        endringAarsakData = this.endringÅrsak?.tilSpinnInntektEndringAarsak(),
         manueltKorrigert = this.manueltKorrigert
     )
 
 fun InntektEndringAarsak.aarsak(): String =
+    this.tilSpinnInntektEndringAarsak()?.aarsak ?: this::class.simpleName ?: "Ukjent"
+
+fun InntektEndringAarsak.tilSpinnInntektEndringAarsak(): SpinnInntektEndringAarsak? =
     when (this) {
-        is Permisjon -> "Permisjon"
-        is Ferie -> "Ferie"
-        is Ferietrekk -> "Ferietrekk"
-        is Permittering -> "Permittering"
-        is Tariffendring -> "Tariffendring"
-        is VarigLonnsendring -> "VarigLonnsendring"
-        is NyStilling -> "NyStilling"
-        is NyStillingsprosent -> "NyStillingsprosent"
-        is Bonus -> "Bonus"
-        is Sykefravaer -> "Sykefravaer"
-        is Nyansatt -> "Nyansatt"
-        is Feilregistrert -> "Feilregistrert"
-        else -> this::class.simpleName ?: "Ukjent"
+        is Permisjon -> SpinnInntektEndringAarsak(aarsak = "Permisjon", perioder = liste.map { Periode(it.fom, it.tom) })
+        is Ferie -> SpinnInntektEndringAarsak(aarsak = "Ferie", perioder = liste.map { Periode(it.fom, it.tom) })
+        is Ferietrekk -> SpinnInntektEndringAarsak(aarsak = "Ferietrekk")
+        is Permittering -> SpinnInntektEndringAarsak(aarsak = "Permittering", perioder = liste.map { Periode(it.fom, it.tom) })
+        is Tariffendring -> SpinnInntektEndringAarsak("Tariffendring", gjelderFra = gjelderFra, bleKjent = bleKjent)
+        is VarigLonnsendring -> SpinnInntektEndringAarsak("VarigLonnsendring", gjelderFra = gjelderFra)
+        is NyStilling -> SpinnInntektEndringAarsak(aarsak = "NyStilling", gjelderFra = gjelderFra)
+        is NyStillingsprosent -> SpinnInntektEndringAarsak(aarsak = "NyStillingsprosent", gjelderFra = gjelderFra)
+        is Bonus -> SpinnInntektEndringAarsak(aarsak = "Bonus")
+        is Sykefravaer -> SpinnInntektEndringAarsak(aarsak = "Sykefravaer", perioder = liste.map { Periode(it.fom, it.tom) })
+        is Nyansatt -> SpinnInntektEndringAarsak(aarsak = "Nyansatt")
+        is Feilregistrert -> SpinnInntektEndringAarsak(aarsak = "Feilregistrert")
+        else -> null
     }

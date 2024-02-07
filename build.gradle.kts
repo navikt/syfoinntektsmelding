@@ -47,11 +47,10 @@ val hagDomeneInntektsmeldingVersion: String by project
 val kotlinxSerializationVersion: String by project
 
 plugins {
-    kotlin("jvm") version "1.9.0"
-    kotlin("plugin.serialization") version "1.9.0"
-    id("com.github.ben-manes.versions") version "0.47.0"
-    id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
-    id("org.flywaydb.flyway") version "9.8.3"
+    kotlin("jvm")
+    kotlin("plugin.serialization")
+    id("org.jmailen.kotlinter")
+    id("com.github.ben-manes.versions")
     jacoco
     application
 }
@@ -108,7 +107,7 @@ tasks.jar {
     }
     doLast {
         configurations.runtimeClasspath.get().forEach {
-            val file = File("$buildDir/libs/${it.name}")
+            val file = layout.buildDirectory.file("libs/${it.name}").get().asFile
             if (!file.exists())
                 it.copyTo(file)
         }
@@ -146,8 +145,6 @@ dependencies {
     runtimeOnly("ch.qos.logback:logback-classic:$logbackClassicVersion")
     runtimeOnly("io.micrometer:micrometer-registry-prometheus:$micrometerVersion")
 
-    implementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
-    implementation("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
     implementation("no.nav.teamdokumenthandtering:teamdokumenthandtering-avro-schemas:$joarkHendelseVersion")
     implementation("org.jetbrains.kotlin:$jetbrainsStdLib")
     implementation("com.google.guava:guava:$guavaVersion")
@@ -158,6 +155,7 @@ dependencies {
     implementation("org.postgresql:postgresql:$postgresVersion")
     implementation("org.apache.neethi:neethi:$neethiVersion")
     implementation("org.flywaydb:flyway-core:$flywayVersion")
+    implementation("org.flywaydb:flyway-database-postgresql:$flywayVersion")
     implementation("no.nav.sykepenger.kontrakter:inntektsmelding-kontrakt:$imkontraktVersion")
     implementation("no.nav.tjenestespesifikasjoner:nav-altinn-inntektsmelding:$altinnInntektsmeldingVersion")
     implementation("no.nav.syfo.sm:syfosm-common-rest-sts:$navSyfoCommonVersion")
@@ -200,6 +198,9 @@ dependencies {
     implementation("no.nav.helsearbeidsgiver:domene-inntektsmelding:$hagDomeneInntektsmeldingVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion")
 
+    testImplementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion")
     testImplementation(testFixtures("no.nav.helsearbeidsgiver:utils:$hagUtilsVersion"))
     testImplementation("io.insert-koin:koin-test:$koinVersion")
     testImplementation("io.ktor:ktor-client-mock-jvm:$ktorVersion")
