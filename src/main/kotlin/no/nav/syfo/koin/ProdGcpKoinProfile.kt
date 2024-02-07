@@ -66,7 +66,7 @@ import org.koin.dsl.module
 import java.net.URI
 import javax.sql.DataSource
 
-fun prodGcpConfig(config: ApplicationConfig) = module {
+fun prodConfig(config: ApplicationConfig) = module {
 
     val clientConfig = config.configList("no.nav.security.jwt.client.registration.clients").first()
     single(named("PROXY")) {

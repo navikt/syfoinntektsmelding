@@ -37,52 +37,55 @@ class UtsattOppgaveService(
             return
         }
         logger.info("Fant oppgave for inntektsmelding: ${oppgave.arkivreferanse} med tilstand: ${oppgave.tilstand.name}")
-        val gjelderSpeil = oppdatering.oppdateringstype == OppdateringstypeDTO.OpprettSpeilRelatert
-
-        if (oppgave.tilstand == Tilstand.Utsatt && oppdatering.handling == Handling.Utsett) {
-            oppdatering.timeout ?: error("Timeout på utsettelse mangler for inntektsmelding: ${oppgave.arkivreferanse}")
-            oppgave.timeout = oppdatering.timeout
-            oppgave.oppdatert = LocalDateTime.now()
-            oppgave.speil = gjelderSpeil
-            lagre(oppgave)
-            metrikk.tellUtsattOppgave_Utsett()
-            logger.info("Oppdaterte timeout på inntektsmelding: ${oppgave.arkivreferanse} til ${oppdatering.timeout}")
-            return
-        }
-
-        if (oppgave.tilstand == Tilstand.Utsatt && oppdatering.handling == Handling.Forkast) {
-            oppgave.oppdatert = LocalDateTime.now()
-            lagre(oppgave.copy(tilstand = Tilstand.Forkastet, speil = gjelderSpeil))
-            metrikk.tellUtsattOppgave_Forkast()
-            logger.info("Endret oppgave: ${oppgave.arkivreferanse} til tilstand: ${Tilstand.Forkastet.name}")
-            return
-        }
-
-        if ((oppgave.tilstand == Tilstand.Utsatt || oppgave.tilstand == Tilstand.Forkastet) && oppdatering.handling == Handling.Opprett) {
-            val inntektsmeldingEntitet = inntektsmeldingRepository.findByUuid(oppgave.inntektsmeldingId)
-            if (inntektsmeldingEntitet != null) {
-                val resultat =
-                    opprettOppgaveIGosys(oppgave, oppgaveClient, utsattOppgaveDAO, behandlendeEnhetConsumer, gjelderSpeil, inntektsmeldingEntitet, om)
-                oppgave.oppdatert = LocalDateTime.now()
-                lagre(oppgave.copy(tilstand = Tilstand.Opprettet, speil = gjelderSpeil))
-                metrikk.tellUtsattOppgave_Opprett()
-                logger.info("Endret oppgave: ${oppgave.inntektsmeldingId} til tilstand: ${Tilstand.Opprettet.name} gosys oppgaveID: ${resultat.oppgaveId} duplikat? ${resultat.duplikat}")
-            } else {
-                logger.error("Fant ikke inntektsmelding for ID '${oppgave.inntektsmeldingId}'.")
+        val gjelderSpeil = oppdatering.oppdateringstype.erSpeilRelatert()
+        when (oppgave.tilstand to oppdatering.handling) {
+            (Tilstand.Utsatt to Handling.Utsett) -> {
+                oppdatering.timeout ?: error("Timeout på utsettelse mangler for inntektsmelding: ${oppgave.arkivreferanse}")
+                oppgave.apply {
+                    timeout = oppdatering.timeout
+                    oppdatert = LocalDateTime.now()
+                    speil = gjelderSpeil
+                }
+                lagre(oppgave)
+                metrikk.tellUtsattOppgave_Utsett()
+                logger.info("Oppdaterte timeout på inntektsmelding: ${oppgave.arkivreferanse} til ${oppdatering.timeout}")
             }
-            return
+            (Tilstand.Utsatt to Handling.Forkast) -> {
+                oppgave.oppdatert = LocalDateTime.now()
+                lagre(oppgave.copy(tilstand = Tilstand.Forkastet, speil = gjelderSpeil))
+                metrikk.tellUtsattOppgave_Forkast()
+                logger.info("Endret oppgave: ${oppgave.arkivreferanse} til tilstand: ${Tilstand.Forkastet.name}")
+            }
+            (Tilstand.Utsatt to Handling.Opprett),
+            (Tilstand.Forkastet to Handling.Opprett) -> {
+                val inntektsmeldingEntitet = inntektsmeldingRepository.findByUuid(oppgave.inntektsmeldingId)
+
+                if (inntektsmeldingEntitet != null) {
+                    val resultat = opprettOppgave(oppgave, gjelderSpeil, inntektsmeldingEntitet)
+                    oppgave.oppdatert = LocalDateTime.now()
+                    lagre(oppgave.copy(tilstand = Tilstand.Opprettet, speil = gjelderSpeil))
+                    metrikk.tellUtsattOppgave_Opprett()
+                    logger.info("Endret oppgave: ${oppgave.inntektsmeldingId} til tilstand: ${Tilstand.Opprettet.name} gosys oppgaveID: ${resultat.oppgaveId} duplikat? ${resultat.duplikat}")
+                } else {
+                    logger.error("Fant ikke inntektsmelding for ID '${oppgave.inntektsmeldingId}'.")
+                }
+            }
+            else -> {
+                metrikk.tellUtsattOppgave_Irrelevant()
+                logger.info("Oppdatering på dokumentId: ${oppdatering.id} ikke relevant")
+            }
         }
-
-        metrikk.tellUtsattOppgave_Irrelevant()
-        logger.info("Oppdatering på dokumentId: ${oppdatering.id} ikke relevant")
     }
-
     fun lagre(oppgave: UtsattOppgaveEntitet) {
         utsattOppgaveDAO.lagre(oppgave)
     }
 
     fun opprett(utsattOppgave: UtsattOppgaveEntitet) {
         utsattOppgaveDAO.opprett(utsattOppgave)
+    }
+
+    fun opprettOppgave(oppgave: UtsattOppgaveEntitet, gjelderSpeil: Boolean, inntektsmeldingEntitet: InntektsmeldingEntitet): OppgaveResultat {
+        return opprettOppgaveIGosys(oppgave, oppgaveClient, utsattOppgaveDAO, behandlendeEnhetConsumer, gjelderSpeil, inntektsmeldingEntitet, om)
     }
 }
 

@@ -8,7 +8,6 @@ import no.nav.helse.arbeidsgiver.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.system.getString
 import no.nav.syfo.behandling.InntektsmeldingBehandler
 import no.nav.syfo.client.OppgaveClient
-import no.nav.syfo.client.TokenConsumer
 import no.nav.syfo.client.dokarkiv.DokArkivClient
 import no.nav.syfo.client.saf.SafDokumentClient
 import no.nav.syfo.client.saf.SafJournalpostClient
@@ -52,14 +51,6 @@ import javax.sql.DataSource
 fun localDevConfig(config: ApplicationConfig) = module {
     mockExternalDependecies()
 
-    single {
-        TokenConsumer(
-            get(),
-            config.getString("security-token-service-token.url"),
-            config.getString("srvsyfoinntektsmelding.username"),
-            config.getString("srvsyfoinntektsmelding.password")
-        )
-    }
     single { InntektsmeldingRepositoryMock() } bind InntektsmeldingRepository::class
 
     single {
@@ -97,7 +88,7 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single { BakgrunnsjobbService(get()) }
     single { BehandlendeEnhetConsumer(get(), get(), get()) } bind BehandlendeEnhetConsumer::class
     single { UtsattOppgaveDAO(UtsattOppgaveRepositoryMockk()) }
-    single { OppgaveClient(config.getString("oppgavebehandling_url"), get(), get(), get<TokenConsumer>()::token) } bind OppgaveClient::class
+    single { OppgaveClient(config.getString("oppgavebehandling_url"), get(), get()) { "local token" } } bind OppgaveClient::class
     single { UtsattOppgaveService(get(), get(), get(), get(), get(), get()) } bind UtsattOppgaveService::class
     single { FeiletUtsattOppgaveMeldingProsessor(get(), get()) }
 

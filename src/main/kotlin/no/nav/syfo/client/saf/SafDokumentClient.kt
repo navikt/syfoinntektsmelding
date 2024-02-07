@@ -18,7 +18,7 @@ import no.nav.helsearbeidsgiver.utils.log.logger
  *
  * https://confluence.adeo.no/display/BOA/saf+-+REST+hentdokument
  */
-class SafDokumentClient constructor(
+class SafDokumentClient(
     private val url: String,
     private val httpClient: HttpClient,
     private val stsClient: AccessTokenProvider

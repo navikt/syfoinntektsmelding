@@ -69,7 +69,7 @@ spec:
 
   env:
     - name: KOIN_PROFILE
-      value: "PROD_GCP"
+      value: "PROD"
     - name: RUN_BACKGROUND_WORKERS
       value: "true"
     - name: KAFKA_JOARK_HENDELSE_TOPIC

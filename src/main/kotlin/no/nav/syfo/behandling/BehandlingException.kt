@@ -2,13 +2,9 @@ package no.nav.syfo.behandling
 
 open class BehandlingException(val feiltype: Feiltype, message: String, cause: Exception?) : RuntimeException(message, cause)
 
-// TokenConsumer
-open class TokenException(statusCode: Int, causedBy: Exception?) : BehandlingException(Feiltype.TOKEN, "Henting av token feiler med HTTP status $statusCode", causedBy)
-
 // AktorClient
 open class AktørException(feiltype: Feiltype, message: String, causedBy: Exception?) : BehandlingException(feiltype, message, causedBy)
 open class FantIkkeAktørException(causedBy: java.lang.Exception?) : AktørException(Feiltype.AKTØR_IKKE_FUNNET, "Fant ikke aktørId", causedBy)
-open class AktørKallResponseException(statusCode: Int, causedBy: java.lang.Exception?) : AktørException(Feiltype.AKTØR_FEIL, "Kall mot aktørregister for aktørId feiler med http status $statusCode", causedBy)
 
 // OppgaveClient
 open class OppgaveException(feiltype: Feiltype, message: String, causedBy: Exception?) : BehandlingException(feiltype, message, causedBy)
