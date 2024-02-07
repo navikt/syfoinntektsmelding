@@ -31,28 +31,26 @@ open class UtsattOppgaveServiceTest {
     @BeforeEach
     fun setup() {
         oppgaveService = spyk(UtsattOppgaveService(utsattOppgaveDAO, oppgaveClient, behandlendeEnhetConsumer, inntektsmeldingRepository, om, metrikk))
+        every { utsattOppgaveDAO.finn(any()) } returns oppgave
+        every { oppgaveService.opprettOppgave(any(), any(), any()) } returns OppgaveResultat(Random.nextInt(), false, false)
     }
 
     private val fnr = "fnr"
-    private val saksId = "saksId"
     private val aktørId = "aktørId"
     private val journalpostId = "journalpostId"
     private val arkivreferanse = "123"
 
+    private val timeout = LocalDateTime.of(2023, 4, 6, 9, 0)
+    private val oppgave = enOppgave(timeout)
+
     @Test
     fun `Oppretter forsinket oppgave med timeout`() {
-        val timeout = LocalDateTime.of(2020, 4, 6, 9, 0)
-        val oppgave = enOppgave(timeout)
         oppgaveService.opprett(oppgave)
         verify { utsattOppgaveDAO.opprett(oppgave) }
     }
 
     @Test
     fun `Lagrer utsatt oppgave med gjelder speil flagg og tilstand Opprettet for OpprettSpeilRelatert`() {
-        val timeout = LocalDateTime.of(2023, 4, 6, 9, 0)
-        val oppgave = enOppgave(timeout)
-        every { utsattOppgaveDAO.finn(any()) } returns oppgave
-        every { oppgaveService.opprettOppgave(any(), any(), any()) } returns OppgaveResultat(Random.nextInt(), false, false)
         val oppgaveOppdatering = OppgaveOppdatering(
             UUID.randomUUID(),
             OppdateringstypeDTO.OpprettSpeilRelatert.tilHandling(),
@@ -65,10 +63,6 @@ open class UtsattOppgaveServiceTest {
 
     @Test
     fun `Lagrer utsatt oppgave med tilstand Opprettet for Opprett`() {
-        val timeout = LocalDateTime.of(2023, 4, 6, 9, 0)
-        val oppgave = enOppgave(timeout)
-        every { utsattOppgaveDAO.finn(any()) } returns oppgave
-        every { oppgaveService.opprettOppgave(any(), any(), any()) } returns OppgaveResultat(Random.nextInt(), false, false)
         val oppgaveOppdatering = OppgaveOppdatering(
             UUID.randomUUID(),
             OppdateringstypeDTO.Opprett.tilHandling(),
@@ -81,11 +75,7 @@ open class UtsattOppgaveServiceTest {
 
     @Test
     fun `Lagrer utsatt oppgave med ny timeout for utsettelse`() {
-        val timeout = LocalDateTime.of(2023, 4, 6, 9, 0)
         val nyTimeout = timeout.plusDays(7)
-        val oppgave = enOppgave(timeout)
-        every { utsattOppgaveDAO.finn(any()) } returns oppgave
-        every { oppgaveService.opprettOppgave(any(), any(), any()) } returns OppgaveResultat(Random.nextInt(), false, false)
         val oppgaveOppdatering = OppgaveOppdatering(
             UUID.randomUUID(),
             OppdateringstypeDTO.Utsett.tilHandling(),
@@ -97,10 +87,6 @@ open class UtsattOppgaveServiceTest {
     }
     @Test
     fun `Lagrer utsatt oppgave med tilstand Forkastet ved Ferdigbehandlet`() {
-        val timeout = LocalDateTime.of(2023, 4, 6, 9, 0)
-        val oppgave = enOppgave(timeout)
-        every { utsattOppgaveDAO.finn(any()) } returns oppgave
-        every { oppgaveService.opprettOppgave(any(), any(), any()) } returns OppgaveResultat(Random.nextInt(), false, false)
         val oppgaveOppdatering = OppgaveOppdatering(
             UUID.randomUUID(),
             OppdateringstypeDTO.Ferdigbehandlet.tilHandling(),
