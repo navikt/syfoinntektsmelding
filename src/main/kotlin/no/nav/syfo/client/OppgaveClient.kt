@@ -80,33 +80,37 @@ class OppgaveClient(
         gjelderSpeil: Boolean,
         tema: BehandlingsTema
     ): OppgaveResultat {
+
         val eksisterendeOppgave = hentHvisOppgaveFinnes(OPPGAVETYPE_INNTEKTSMELDING, journalpostId)
         metrikk.tellOpprettOppgave(eksisterendeOppgave != null)
         if (eksisterendeOppgave != null) {
             logger.info("Det finnes allerede journalføringsoppgave for journalpost $journalpostId")
             return eksisterendeOppgave
         }
-        var behandlingstype: String? = null
-        var behandlingstema: String? = null
-        var utbetalingBruker = false
-        if (gjelderSpeil) {
-            logger.info("Oppretter oppgave: Speil for journalpost $journalpostId")
-            behandlingstema = BEHANDLINGSTEMA_SPEIL
-        } else {
-            if (gjelderUtland) {
-                logger.info("Oppretter oppgave: Utland for journalpost $journalpostId")
-                behandlingstype = BEHANDLINGSTYPE_UTLAND
-            } else {
-                if (tema != BehandlingsTema.REFUSJON_UTEN_DATO) {
-                    logger.info("Oppretter oppgave: Utbetaling til bruker for journalpost $journalpostId")
-                    behandlingstema = BEHANDLINGSTEMA_UTBETALING_TIL_BRUKER
-                    utbetalingBruker = true
-                } else {
-                    logger.info("Oppretter oppgave: Normal for journalpost $journalpostId")
-                    behandlingstema = BEHANDLINGSTYPE_NORMAL
-                }
+
+        fun loggOppgave(type: String) {
+            logger.info("Oppretter oppgave: $type for journalpost $journalpostId")
+        }
+
+        val (behandlingstype, behandlingstema, utbetalingBruker) = when {
+            gjelderSpeil -> {
+                loggOppgave("Speil")
+                Triple(null, BEHANDLINGSTEMA_SPEIL, false)
+            }
+            gjelderUtland -> {
+                loggOppgave("Utland")
+                Triple(BEHANDLINGSTYPE_UTLAND, null, false)
+            }
+            tema != BehandlingsTema.REFUSJON_UTEN_DATO -> {
+                loggOppgave("Utbetaling til bruker")
+                Triple(null, BEHANDLINGSTEMA_UTBETALING_TIL_BRUKER, true)
+            }
+            else -> {
+                loggOppgave("Normal")
+                Triple(null, BEHANDLINGSTYPE_NORMAL, false)
             }
         }
+
         val opprettOppgaveRequest = OpprettOppgaveRequest(
             tildeltEnhetsnr = tildeltEnhetsnr,
             aktoerId = aktoerId,
