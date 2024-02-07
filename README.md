@@ -68,13 +68,6 @@ som bestemmer hvilke tjenster som blir benytter lokalt. For å kunne kjøre må 
 disse miljø innstillingene er riktig og fylle ut innstillinger for passord da de nå er satt 
 til dummy.
 
-#### Påkrevde miljøvariabler
-```
-SECURITYTOKENSERVICE_URL=dummy
-SRVSYFOINNTEKTSMELDING_USERNAME=dummy
-SRVSYFOINNTEKTSMELDING_PASSWORD=dummy
-```
-
 ### Ktlint
 
 Prosjektet bruker en [Ktlint](https://ktlint.github.io/)-plugin for Gradle som håndhever kodestilregler. Nyttige kommandoer er:
@@ -92,7 +85,7 @@ Les mer om pluginen [her](https://github.com/jeremymailen/kotlinter-gradle).
 ## Database
 Applikasjonen bruker Postgres database med JPA grensesnitt OG et JDBC grensesnitt. Skjermbildet nedenfor viser samtlige 
 tabeller som er brukt.
-Flyway blir brukt til versjonering i databasen. Passord mot databasen ligger i vault. 
+Flyway blir brukt til versjonering i databasen.
 
 ![image](docs/datamodell.png)
 
