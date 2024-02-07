@@ -11,7 +11,6 @@ import javax.sql.DataSource
 interface InntektsmeldingRepository {
     fun findByJournalpost(journalpostId: String): InntektsmeldingEntitet?
     fun findByUuid(uuid: String): InntektsmeldingEntitet?
-    fun findByArkivReferanse(arkivRefereanse: String): InntektsmeldingEntitet
     fun findByAktorId(aktoerId: String): List<InntektsmeldingEntitet>
     fun findFirst100ByBehandletBefore(førDato: LocalDateTime): List<InntektsmeldingEntitet>
     fun deleteByBehandletBefore(førDato: LocalDateTime): Int
@@ -54,10 +53,6 @@ class InntektsmeldingRepositoryMock : InntektsmeldingRepository {
     override fun findByUuid(uuid: String): InntektsmeldingEntitet {
         TODO("Not yet implemented")
     }
-
-    override fun findByArkivReferanse(arkivRefereanse: String): InntektsmeldingEntitet {
-        TODO("Not yet implemented")
-    }
 }
 
 class InntektsmeldingRepositoryImp(
@@ -90,20 +85,6 @@ class InntektsmeldingRepositoryImp(
         if (result != null) {
             result.arbeidsgiverperioder = finnAgpForIm(uuid).toMutableList()
         }
-        return result
-    }
-
-    override fun findByArkivReferanse(arkivRefereanse: String): InntektsmeldingEntitet {
-        val sqlQuery = "SELECT * FROM INNTEKTSMELDING WHERE data ->> 'arkivRefereranse' = ?;"
-        val inntektsmeldinger = ArrayList<InntektsmeldingEntitet>()
-        val result: InntektsmeldingEntitet
-        ds.connection.use {
-            val res = it.prepareStatement(sqlQuery).apply {
-                setString(1, arkivRefereanse)
-            }.executeQuery()
-            result = resultLoop(res, inntektsmeldinger).first()
-        }
-        result.arbeidsgiverperioder = finnAgpForIm(result.uuid).toMutableList()
         return result
     }
 
