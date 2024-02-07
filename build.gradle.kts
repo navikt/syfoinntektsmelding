@@ -30,7 +30,6 @@ val neethiVersion: String by project
 val imkontraktVersion: String by project
 val altinnInntektsmeldingVersion: String by project
 val navSyfoCommonVersion: String by project
-val vaultJdbcVersion: String by project
 val navLogVersion: String by project
 val fellesBackendVersion: String by project
 val hagUtilsVersion: String by project
@@ -160,7 +159,6 @@ dependencies {
     implementation("no.nav.tjenestespesifikasjoner:nav-altinn-inntektsmelding:$altinnInntektsmeldingVersion")
     implementation("no.nav.syfo.sm:syfosm-common-rest-sts:$navSyfoCommonVersion")
     implementation("no.nav.syfo.sm:syfosm-common-networking:$navSyfoCommonVersion")
-    implementation("no.nav:vault-jdbc:$vaultJdbcVersion")
     implementation("no.nav.common:log:$navLogVersion")
     implementation("no.nav.helsearbeidsgiver:helse-arbeidsgiver-felles-backend:$fellesBackendVersion")
     implementation("no.nav.helsearbeidsgiver:utils:$hagUtilsVersion")

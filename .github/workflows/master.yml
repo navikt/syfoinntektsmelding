@@ -1,10 +1,11 @@
-name: Preprod
+name: Dev
 
 on:
   push:
     branches:
       - master
-      - 'preprod/**'
+      - preprod/**
+      - dev/**
 
 env:
   IMAGE: ghcr.io/${{ github.repository }}/syfoinntektsmelding:${{ github.sha }}
@@ -67,7 +68,7 @@ jobs:
           docker push ${IMAGE}
 
   deploy:
-    name: Deploy to PREPROD
+    name: Deploy to DEV
     needs: build
     runs-on: ubuntu-latest
     permissions:

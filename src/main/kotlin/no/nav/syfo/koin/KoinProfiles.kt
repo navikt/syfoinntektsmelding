@@ -27,7 +27,6 @@ fun selectModuleBasedOnProfile(config: ApplicationConfig): List<Module> {
         "LOCAL" -> localDevConfig(config)
         "DEV" -> devConfig(config)
         "PROD" -> prodConfig(config)
-        "PROD_GCP" -> prodGcpConfig(config)
         else -> localDevConfig(config)
     }
     return listOf(common, envModule)
