@@ -11,25 +11,35 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.ktor.client.HttpClient
-import io.ktor.client.engine.ProxyBuilder
 import io.ktor.client.engine.apache.Apache
-import io.ktor.client.engine.http
 import io.ktor.client.features.json.JacksonSerializer
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.config.ApplicationConfig
 import no.nav.helse.arbeidsgiver.kubernetes.KubernetesProbeManager
 import org.koin.core.module.Module
-import org.koin.core.qualifier.StringQualifier
 import org.koin.dsl.module
 
 fun selectModuleBasedOnProfile(config: ApplicationConfig): List<Module> {
     val envModule = when (config.property("koin.profile").getString()) {
-        "LOCAL" -> localDevConfig(config)
-        "DEV" -> devConfig(config)
         "PROD" -> prodConfig(config)
+        "DEV" -> devConfig(config)
         else -> localDevConfig(config)
     }
     return listOf(common, envModule)
+}
+
+val common = module {
+    single { buildObjectMapper() }
+
+    single { KubernetesProbeManager() }
+
+    single {
+        HttpClient(Apache) {
+            install(JsonFeature) {
+                serializer = buildJacksonSerializer()
+            }
+        }
+    }
 }
 
 fun buildObjectMapper(): ObjectMapper {
@@ -69,35 +79,6 @@ fun buildJacksonSerializer(): JacksonSerializer {
         configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
     }
-}
-
-val common = module {
-    single { buildObjectMapper() }
-
-    single { KubernetesProbeManager() }
-
-    val jacksonSerializer = buildJacksonSerializer()
-
-    val httpClient = HttpClient(Apache) {
-        install(JsonFeature) {
-            serializer = jacksonSerializer
-        }
-    }
-
-    val proxiedHttpClient = HttpClient(Apache) {
-        if (System.getenv().containsKey("HTTPS_PROXY")) {
-            engine {
-                proxy = ProxyBuilder.http(System.getenv("HTTPS_PROXY"))
-            }
-        }
-
-        install(JsonFeature) {
-            serializer = jacksonSerializer
-        }
-    }
-
-    single { httpClient }
-    single(qualifier = StringQualifier("proxyHttpClient")) { proxiedHttpClient }
 }
 
 // utils

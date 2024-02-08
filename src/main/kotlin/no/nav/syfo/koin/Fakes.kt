@@ -34,9 +34,7 @@ fun Module.mockExternalDependecies() {
 
     single {
         object : AccessTokenProvider {
-            override fun getToken(): String {
-                return "token"
-            }
+            override fun getToken(): String = "fake token"
         }
     } bind AccessTokenProvider::class
 
