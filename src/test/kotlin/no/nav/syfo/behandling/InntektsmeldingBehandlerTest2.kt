@@ -9,13 +9,11 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.mockk.MockKAnnotations
-import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClient
-import no.nav.syfo.client.BrregClient
 import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.client.saf.SafDokumentClient
 import no.nav.syfo.client.saf.SafJournalpostClient
@@ -90,9 +88,6 @@ class InntektsmeldingBehandlerTest2 {
     var feiletUtsattOppgaveMeldingProsessor = mockk<FeiletUtsattOppgaveMeldingProsessor>(relaxed = true)
     private val pdlClient = mockk<PdlClient>(relaxed = true)
 
-    val brregClient = mockk<BrregClient>(relaxed = true) {
-        coEvery { getVirksomhetsNavn(any()) } returns "Stark Industries"
-    }
     @BeforeEach
     fun setup() {
         inntektsmeldingRepository.deleteAll()
@@ -103,7 +98,6 @@ class InntektsmeldingBehandlerTest2 {
             journalConsumer,
             behandlendeEnhetConsumer,
             metrikk,
-            brregClient
         )
 
         inntektsmeldingBehandler = InntektsmeldingBehandler(

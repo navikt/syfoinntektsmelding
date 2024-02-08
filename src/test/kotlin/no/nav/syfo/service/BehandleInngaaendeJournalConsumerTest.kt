@@ -34,7 +34,6 @@ class BehandleInngaaendeJournalConsumerTest {
             behandlendeEnhetId = "enhet",
             dokumentId = "dokumentId",
             journalpostId = "journalpostId",
-            arbeidsgiverPrivat = "10101033333"
         )
         behandleInngaaendeJournalConsumer.oppdaterJournalpost("fnr", inngaendeJournalpost, false)
         verify {

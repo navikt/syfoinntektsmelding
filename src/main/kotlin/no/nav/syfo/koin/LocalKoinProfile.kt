@@ -7,8 +7,6 @@ import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.system.getString
 import no.nav.syfo.behandling.InntektsmeldingBehandler
-import no.nav.syfo.client.BrregClient
-import no.nav.syfo.client.MockBrregClient
 import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.client.dokarkiv.DokArkivClient
 import no.nav.syfo.client.saf.SafDokumentClient
@@ -110,7 +108,7 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single { BehandleInngaaendeJournalConsumer(get()) } bind BehandleInngaaendeJournalConsumer::class
     single { JournalConsumer(get(), get(), get()) } bind JournalConsumer::class
     single { Metrikk() } bind Metrikk::class
-    single { JournalpostService(get(), get(), get(), get(), get(), get()) } bind JournalpostService::class
+    single { JournalpostService(get(), get(), get(), get(), get()) } bind JournalpostService::class
     single { InntektsmeldingService(InntektsmeldingRepositoryImp(get()), get()) } bind InntektsmeldingService::class
     single { FeiletService(get()) } bind FeiletService::class
     single {
@@ -152,8 +150,6 @@ fun localDevConfig(config: ApplicationConfig) = module {
     } bind DokArkivClient::class
 
     single { ArbeidsgiverperiodeRepositoryImp(get()) } bind ArbeidsgiverperiodeRepository::class
-
-    single { MockBrregClient() } bind BrregClient::class
 
     single {
         InntektsmeldingConsumer(
