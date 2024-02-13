@@ -45,8 +45,13 @@ spec:
       - type: POSTGRES_14
         databases:
           - name: spinosaurus
+            users:
+              - name: spinosaurus_datastream_bruker
         tier: db-custom-1-3840
         diskAutoresize: true
+        flags:
+          - name: cloudsql.logical_decoding
+            value: "on"
 
   accessPolicy:
     outbound:
