@@ -10,6 +10,10 @@ services:
       context: ./
     ports:
       - "5432:5432"
+    command:
+      - "postgres"
+      - "-c"
+      - "wal_level=logical"
   spinn_zookeeper:
     image: 'bitnami/zookeeper:3.6'
     networks:
