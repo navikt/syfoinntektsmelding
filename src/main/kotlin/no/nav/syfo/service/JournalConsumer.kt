@@ -2,7 +2,7 @@ package no.nav.syfo.service
 
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClient
-import no.nav.helsearbeidsgiver.utils.log.logger
+import no.nav.helsearbeidsgiver.utils.log.sikkerLogger
 import no.nav.syfo.behandling.HentDokumentFeiletException
 import no.nav.syfo.client.saf.SafDokumentClient
 import no.nav.syfo.client.saf.SafJournalpostClient
@@ -20,7 +20,7 @@ class JournalConsumer(
     private val safJournalpostClient: SafJournalpostClient,
     private val pdlClient: PdlClient
 ) {
-    private val logger = this.logger()
+    private val sikkerlogger = sikkerLogger()
 
     /**
      * 1 - Henter inntektsmelding fra journalpost i byteArray
@@ -42,7 +42,7 @@ class JournalConsumer(
             else
                 InntektsmeldingArbeidsgiverPrivat20181211Mapper.fraXMLInntektsmelding(jaxbInntektsmelding, journalpostId, mottattDato, journalStatus, arkivReferanse, pdlClient)
         } catch (e: RuntimeException) {
-            logger.error("Klarte ikke å hente inntektsmelding med journalpostId: $journalpostId", e)
+            sikkerlogger.error("Klarte ikke å hente inntektsmelding med journalpostId: $journalpostId", e)
             throw HentDokumentFeiletException(journalpostId, e)
         }
     }

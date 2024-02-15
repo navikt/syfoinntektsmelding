@@ -4,6 +4,7 @@ import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClient
 import no.nav.helsearbeidsgiver.utils.log.MdcUtils
 import no.nav.helsearbeidsgiver.utils.log.logger
+import no.nav.helsearbeidsgiver.utils.log.sikkerLogger
 import no.nav.syfo.behandling.BehandlendeEnhetFeiletException
 import no.nav.syfo.behandling.IngenAktivEnhetException
 import no.nav.syfo.client.norg.ArbeidsfordelingRequest
@@ -21,6 +22,7 @@ class BehandlendeEnhetConsumer(
     private val metrikk: Metrikk
 ) {
     private val logger = this.logger()
+    private val sikkerlogger = sikkerLogger()
 
     fun hentBehandlendeEnhet(fnr: String, uuid: String): String {
         val geografiskTilknytning = hentGeografiskTilknytning(fnr)
@@ -46,7 +48,7 @@ class BehandlendeEnhetConsumer(
             logger.info("Fant geografiskTilknytning ${geografiskTilknytning.geografiskTilknytning} med behandlendeEnhet $behandlendeEnhet for inntektsmelding $uuid")
             return behandlendeEnhet
         } catch (e: RuntimeException) {
-            logger.error("Klarte ikke å hente behandlende enhet!", e)
+            sikkerlogger.error("Klarte ikke å hente behandlende enhet!", e)
             throw BehandlendeEnhetFeiletException(e)
         }
     }

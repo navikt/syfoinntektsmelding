@@ -15,19 +15,19 @@ import io.prometheus.client.exporter.common.TextFormat
 import no.nav.helse.arbeidsgiver.kubernetes.KubernetesProbeManager
 import no.nav.helse.arbeidsgiver.kubernetes.ProbeResult
 import no.nav.helse.arbeidsgiver.kubernetes.ProbeState
-import no.nav.helsearbeidsgiver.utils.log.logger
+import no.nav.helsearbeidsgiver.utils.log.sikkerLogger
 import org.koin.ktor.ext.get
 import java.util.Collections
 
 fun Application.nais() {
 
-    val logger = "Helsesjekker".logger()
+    val sikkerlogger = sikkerLogger()
 
     suspend fun PipelineContext<Unit, ApplicationCall>.returnResultOfChecks(checkResults: ProbeResult) {
         val httpResult =
             if (checkResults.state == ProbeState.UN_HEALTHY) HttpStatusCode.InternalServerError else HttpStatusCode.OK
         checkResults.unhealthyComponents.forEach { r ->
-            r.error?.let { logger.error("Helsesjekk feiler for ${r.componentName}", it) }
+            r.error?.let { sikkerlogger.error("Helsesjekk feiler for ${r.componentName}", it) }
         }
         call.respond(httpResult, checkResults)
     }

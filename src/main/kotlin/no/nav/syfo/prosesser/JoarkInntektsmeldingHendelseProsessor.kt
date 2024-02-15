@@ -68,12 +68,12 @@ class JoarkInntektsmeldingHendelseProsessor(
             metrikk.tellInntektsmeldingUtenArkivReferanse()
             throw InntektsmeldingConsumerException(e)
         } catch (e: BehandlingException) {
-            logger.error("Feil ved behandling av inntektsmelding med arkivreferanse $arkivReferanse", e)
+            sikkerlogger.error("Feil ved behandling av inntektsmelding med arkivreferanse $arkivReferanse", e)
             metrikk.tellBehandlingsfeil(e.feiltype)
             lagreFeilet(arkivReferanse, e.feiltype)
             throw InntektsmeldingConsumerException(e)
         } catch (e: Exception) {
-            logger.error("Det skjedde en feil ved journalføring med arkivreferanse $arkivReferanse", e)
+            sikkerlogger.error("Det skjedde en feil ved journalføring med arkivreferanse $arkivReferanse", e)
             metrikk.tellBehandlingsfeil(Feiltype.USPESIFISERT)
             lagreFeilet(arkivReferanse, Feiltype.USPESIFISERT)
 
