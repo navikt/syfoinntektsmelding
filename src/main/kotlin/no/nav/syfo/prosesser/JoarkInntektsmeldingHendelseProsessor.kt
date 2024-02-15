@@ -89,6 +89,7 @@ class JoarkInntektsmeldingHendelseProsessor(
         try {
             feiletService.lagreFeilet(arkivReferanse, feiltype)
         } catch (e: Exception) {
+            sikkerlogger.warn("Feil ved lagring til feilet-tabell", e)
             metrikk.tellLagreFeiletMislykkes()
         }
     }
