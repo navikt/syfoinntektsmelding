@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import kotlinx.coroutines.runBlocking
 import no.nav.helsearbeidsgiver.utils.log.logger
+import no.nav.helsearbeidsgiver.utils.log.sikkerLogger
 import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.domain.OppgaveResultat
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
@@ -28,6 +29,7 @@ class UtsattOppgaveService(
 ) {
 
     private val logger = this.logger()
+    private val sikkerlogger = sikkerLogger()
 
     fun prosesser(oppdatering: OppgaveOppdatering) {
         val oppgave = utsattOppgaveDAO.finn(oppdatering.id.toString())
@@ -67,7 +69,7 @@ class UtsattOppgaveService(
                     metrikk.tellUtsattOppgave_Opprett()
                     logger.info("Endret oppgave: ${oppgave.inntektsmeldingId} til tilstand: ${Tilstand.Opprettet.name} gosys oppgaveID: ${resultat.oppgaveId} duplikat? ${resultat.duplikat}")
                 } else {
-                    logger.error("Fant ikke inntektsmelding for ID '${oppgave.inntektsmeldingId}'.")
+                    sikkerlogger.error("Fant ikke inntektsmelding for ID '${oppgave.inntektsmeldingId}'.")
                 }
             }
             else -> {

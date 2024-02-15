@@ -12,6 +12,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
 import no.nav.helsearbeidsgiver.utils.log.logger
+import no.nav.helsearbeidsgiver.utils.log.sikkerLogger
 import no.nav.syfo.helpers.retry
 import java.io.IOException
 
@@ -25,6 +26,7 @@ class DokArkivClient(
     private val httpClient: HttpClient
 ) {
     private val logger = this.logger()
+    private val sikkerlogger = sikkerLogger()
 
     /**
      * Tjeneste som lar konsument "switche" status på en journalpost fra midlerdidig til endelig. Dersom journalposten
@@ -59,16 +61,16 @@ class DokArkivClient(
             if (e is ClientRequestException) {
                 when (e.response.status) {
                     HttpStatusCode.NotFound -> {
-                        logger.error("Journalposten finnes ikke for journalpostid $journalpostId", e)
+                        sikkerlogger.error("Journalposten finnes ikke for journalpostid $journalpostId", e)
                         throw RuntimeException("Ferdigstilling: Journalposten finnes ikke for journalpostid $journalpostId", e)
                     }
                     else -> {
-                        logger.error("Fikk http status ${e.response.status} for journalpostid $journalpostId", e)
+                        sikkerlogger.error("Fikk http status ${e.response.status} for journalpostid $journalpostId", e)
                         throw RuntimeException("Ferdigstilling: Fikk feilmelding for journalpostid $journalpostId", e)
                     }
                 }
             } else {
-                logger.error("Ferdigstilling: Dokarkiv svarte med feilmelding for journalpost $journalpostId", e)
+                sikkerlogger.error("Ferdigstilling: Dokarkiv svarte med feilmelding for journalpost $journalpostId", e)
             }
             throw IOException("Ferdigstilling: Dokarkiv svarte med feilmelding for journalpost $journalpostId", e)
         }
@@ -103,16 +105,16 @@ class DokArkivClient(
             if (e is ClientRequestException) {
                 when (e.response.status) {
                     HttpStatusCode.NotFound -> {
-                        logger.error("Oppdatering: Journalposten finnes ikke for journalpostid {}, msgId {}", journalpostId, msgId)
+                        sikkerlogger.error("Oppdatering: Journalposten finnes ikke for journalpostid {}, msgId {}", journalpostId, msgId)
                         throw RuntimeException("Oppdatering: Journalposten finnes ikke for journalpostid $journalpostId msgid $msgId")
                     }
                     else -> {
-                        logger.error("Fikk http status {} ved oppdatering av journalpostid {}, msgId {}", e.response.status, journalpostId, msgId)
+                        sikkerlogger.error("Fikk http status {} ved oppdatering av journalpostid {}, msgId {}", e.response.status, journalpostId, msgId)
                         throw RuntimeException("Fikk feilmelding ved oppdatering av journalpostid $journalpostId msgid $msgId")
                     }
                 }
             }
-            logger.error("Dokarkiv svarte med feilmelding ved oppdatering av journalpost $journalpostId", e)
+            sikkerlogger.error("Dokarkiv svarte med feilmelding ved oppdatering av journalpost $journalpostId", e)
             throw IOException("Dokarkiv svarte med feilmelding ved oppdatering av journalpost for $journalpostId msgid $msgId")
         }
     }
@@ -129,16 +131,16 @@ class DokArkivClient(
             if (e is ClientRequestException) {
                 when (e.response.status) {
                     HttpStatusCode.NotFound -> {
-                        logger.error("Klarte ikke feilregistrere journalpost $journalpostId", e)
+                        sikkerlogger.error("Klarte ikke feilregistrere journalpost $journalpostId", e)
                         throw RuntimeException("feilregistrering: Journalposten finnes ikke for journalpostid $journalpostId", e)
                     }
                     else -> {
-                        logger.error("Fikk http status ${e.response.status} ved feilregistrering av journalpost $journalpostId", e)
+                        sikkerlogger.error("Fikk http status ${e.response.status} ved feilregistrering av journalpost $journalpostId", e)
                         throw RuntimeException("Fikk feilmelding ved feilregistrering av journalpostid $journalpostId", e)
                     }
                 }
             }
-            logger.error("Dokarkiv svarte med feilmelding ved feilregistrering av journalpost $journalpostId", e)
+            sikkerlogger.error("Dokarkiv svarte med feilmelding ved feilregistrering av journalpost $journalpostId", e)
             throw IOException("Dokarkiv svarte med feilmelding ved feilregistrering av journalpost for $journalpostId", e)
         }
     }

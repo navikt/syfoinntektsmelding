@@ -9,6 +9,7 @@ import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import no.nav.helsearbeidsgiver.utils.log.MdcUtils
 import no.nav.helsearbeidsgiver.utils.log.logger
+import no.nav.helsearbeidsgiver.utils.log.sikkerLogger
 import no.nav.syfo.behandling.HentOppgaveException
 import no.nav.syfo.behandling.OpprettFordelingsOppgaveException
 import no.nav.syfo.behandling.OpprettOppgaveException
@@ -34,6 +35,7 @@ class OppgaveClient(
     val getAccessToken: () -> String
 ) {
     private val logger = this.logger()
+    private val sikkerlogger = sikkerLogger()
 
     private suspend fun opprettOppgave(opprettOppgaveRequest: OpprettOppgaveRequest): OpprettOppgaveResponse = retry("opprett_oppgave") {
         httpClient.post<OpprettOppgaveResponse>(oppgavebehndlingUrl) {
@@ -67,7 +69,7 @@ class OppgaveClient(
             val oppgaveResponse = hentOppgave(oppgavetype = oppgavetype, journalpostId = journalpostId)
             return if (oppgaveResponse.antallTreffTotalt > 0) OppgaveResultat(oppgaveResponse.oppgaver.first().id, true, false) else null
         } catch (ex: Exception) {
-            logger.error("Feil ved sjekking av eksisterende oppgave", ex)
+            sikkerlogger.error("Feil ved sjekking av eksisterende oppgave", ex)
             throw HentOppgaveException(journalpostId, oppgavetype, ex)
         }
     }

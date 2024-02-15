@@ -8,6 +8,7 @@ import no.nav.helse.arbeidsgiver.kubernetes.LivenessComponent
 import no.nav.helse.arbeidsgiver.kubernetes.ReadynessComponent
 import no.nav.helsearbeidsgiver.utils.log.MdcUtils
 import no.nav.helsearbeidsgiver.utils.log.logger
+import no.nav.helsearbeidsgiver.utils.log.sikkerLogger
 import no.nav.syfo.utsattoppgave.DokumentTypeDTO
 import no.nav.syfo.utsattoppgave.FeiletUtsattOppgaveMeldingProsessor
 import no.nav.syfo.utsattoppgave.OppgaveOppdatering
@@ -29,6 +30,7 @@ class UtsattOppgaveConsumer(
 
     private val consumer: KafkaConsumer<String, String> = KafkaConsumer(props, StringDeserializer(), StringDeserializer())
     private val logger = this.logger()
+    private val sikkerlogger = sikkerLogger()
     private var ready = false
     private var error = false
 
@@ -63,7 +65,7 @@ class UtsattOppgaveConsumer(
                             }
                             it.commitSync()
                         } catch (e: Throwable) {
-                            logger.error("Klarte ikke behandle UtsattOppgave. Stopper lytting!", e)
+                            sikkerlogger.error("Klarte ikke behandle UtsattOppgave. Stopper lytting!", e)
                             setIsError(true)
                         }
                     }

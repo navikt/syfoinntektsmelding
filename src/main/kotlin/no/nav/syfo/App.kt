@@ -11,6 +11,7 @@ import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.helse.arbeidsgiver.kubernetes.KubernetesProbeManager
 import no.nav.helse.arbeidsgiver.system.getString
 import no.nav.helsearbeidsgiver.utils.log.logger
+import no.nav.helsearbeidsgiver.utils.log.sikkerLogger
 import no.nav.syfo.integration.kafka.UtsattOppgaveConsumer
 import no.nav.syfo.integration.kafka.journalpost.JournalpostHendelseConsumer
 import no.nav.syfo.koin.selectModuleBasedOnProfile
@@ -134,9 +135,11 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
 
 fun main() {
     val logger = "main".logger()
+    val sikkerlogger = sikkerLogger()
 
     Thread.currentThread().setUncaughtExceptionHandler { thread, err ->
-        logger.error("uncaught exception in thread ${thread.name}: ${err.message}", err)
+        logger.error("uncaught exception in thread ${thread.name}: ${err.message}")
+        sikkerlogger.error("uncaught exception in thread ${thread.name}: ${err.message}", err)
     }
 
     val application = SpinnApplication()

@@ -6,7 +6,7 @@ import io.ktor.client.features.ClientRequestException
 import io.ktor.client.request.forms.submitForm
 import io.ktor.http.Parameters
 import kotlinx.coroutines.runBlocking
-import no.nav.helsearbeidsgiver.utils.log.logger
+import no.nav.helsearbeidsgiver.utils.log.sikkerLogger
 import no.nav.security.token.support.client.core.context.JwtBearerTokenResolver
 import no.nav.security.token.support.client.core.http.OAuth2HttpClient
 import no.nav.security.token.support.client.core.http.OAuth2HttpRequest
@@ -15,7 +15,7 @@ import no.nav.security.token.support.ktor.TokenValidationContextPrincipal
 import java.util.Optional
 
 class DefaultOAuth2HttpClient(private val httpClient: HttpClient) : OAuth2HttpClient {
-    private val logger = this.logger()
+    private val sikkerlogger = sikkerLogger()
 
     override fun post(oAuth2HttpRequest: OAuth2HttpRequest): OAuth2AccessTokenResponse {
         return runBlocking {
@@ -30,7 +30,7 @@ class DefaultOAuth2HttpClient(private val httpClient: HttpClient) : OAuth2HttpCl
                 )
             } catch (ex: Exception) {
                 if (ex is ClientRequestException) {
-                    logger.error(ex.response.receive<String>())
+                    sikkerlogger.error(ex.response.receive<String>())
                 }
 
                 throw ex

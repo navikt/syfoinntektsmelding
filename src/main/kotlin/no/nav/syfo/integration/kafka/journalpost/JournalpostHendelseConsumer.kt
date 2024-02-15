@@ -5,6 +5,7 @@ import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.kubernetes.LivenessComponent
 import no.nav.helse.arbeidsgiver.kubernetes.ReadynessComponent
+import no.nav.helsearbeidsgiver.utils.log.sikkerLogger
 import no.nav.syfo.kafkamottak.InngaaendeJournalpostDTO
 import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
 import org.apache.avro.generic.GenericRecord
@@ -25,6 +26,7 @@ class JournalpostHendelseConsumer(
 ) : ReadynessComponent, LivenessComponent {
 
     private val log = LoggerFactory.getLogger(JournalpostHendelseConsumer::class.java)
+    private val sikkerlogger = sikkerLogger()
     private val consumer: KafkaConsumer<String, GenericRecord> = KafkaConsumer(props)
     private var ready = false
     private var error = false
@@ -52,7 +54,7 @@ class JournalpostHendelseConsumer(
                         processHendelse(mapJournalpostHendelse(record.value()))
                         it.commitSync()
                     } catch (e: Throwable) {
-                        log.error("Klarte ikke behandle hendelse. Stopper lytting!", e)
+                        sikkerlogger.error("Klarte ikke behandle hendelse. Stopper lytting!", e)
                         setIsError(true)
                     }
                 }
