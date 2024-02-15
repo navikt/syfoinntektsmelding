@@ -1,1 +1,1 @@
-ALTER TABLE bakgrunnsjobb add primary key JOBB_ID;
+ALTER TABLE bakgrunnsjobb add primary key (JOBB_ID);
