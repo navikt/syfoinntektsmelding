@@ -39,8 +39,6 @@ import no.nav.syfo.prosesser.FjernInntektsmeldingByBehandletProcessor
 import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
 import no.nav.syfo.repository.ArbeidsgiverperiodeRepository
 import no.nav.syfo.repository.ArbeidsgiverperiodeRepositoryImp
-import no.nav.syfo.repository.FeiletRepositoryImp
-import no.nav.syfo.repository.FeiletService
 import no.nav.syfo.repository.InntektsmeldingRepository
 import no.nav.syfo.repository.InntektsmeldingRepositoryImp
 import no.nav.syfo.repository.UtsattOppgaveRepositoryImp
@@ -122,7 +120,7 @@ fun devConfig(config: ApplicationConfig) = module {
 
     single {
         JoarkInntektsmeldingHendelseProsessor(
-            get(), get(), get(), get(), get()
+            get(), get(), get(), get()
         )
     } bind JoarkInntektsmeldingHendelseProsessor::class
 
@@ -173,8 +171,6 @@ fun devConfig(config: ApplicationConfig) = module {
         )
     } bind FjernInntektsmeldingByBehandletProcessor::class
     single { FinnAlleUtgaandeOppgaverProcessor(get(), get(), get(), get(), get(), get()) } bind FinnAlleUtgaandeOppgaverProcessor::class
-
-    single { FeiletService(FeiletRepositoryImp(get())) } bind FeiletService::class
 
     single { PostgresBakgrunnsjobbRepository(get()) } bind BakgrunnsjobbRepository::class
     single { BakgrunnsjobbService(get(), bakgrunnsvarsler = MetrikkVarsler()) }

@@ -116,11 +116,6 @@ class Metrikk {
         "Metrikker for Opprett Fordelingsoppgave", "type"
     )
 
-    val LAGREFEILETMISLYKKES = proseseringsMetrikker(
-        "syfoinntektsmelding_feilet_lagring_mislykkes",
-        "Metrikker for Lagre feilet mislykkes", "type"
-    )
-
     val REKJØRERFEILET = proseseringsMetrikker(
         "syfoinntektsmelding_rekjorer",
         "Metrikker for rekjører Feilet", "type"
@@ -197,8 +192,6 @@ class Metrikk {
     fun tellOpprettOppgave(eksisterer: Boolean) = OPPRETTOPPGAVE.labels("info", if (eksisterer) "J" else "N").inc()
 
     fun tellOpprettFordelingsoppgave() = OPPRETTFORDELINGSOPPGAVE.labels("info").inc()
-
-    fun tellLagreFeiletMislykkes() = LAGREFEILETMISLYKKES.labels("warning").inc()
 
     fun tellRekjørerFeilet() = REKJØRERFEILET.labels("warning").inc()
 
