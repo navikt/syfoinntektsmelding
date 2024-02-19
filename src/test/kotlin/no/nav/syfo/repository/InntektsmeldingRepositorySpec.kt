@@ -12,7 +12,6 @@ import no.nav.syfo.domain.inntektsmelding.Naturalytelse
 import no.nav.syfo.domain.inntektsmelding.OpphoerAvNaturalytelse
 import no.nav.syfo.domain.inntektsmelding.Refusjon
 import no.nav.syfo.dto.InntektsmeldingEntitet
-import no.nav.syfo.grunnleggendeInntektsmelding
 import no.nav.syfo.slowtests.SystemTestBase
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
@@ -26,8 +25,6 @@ import kotlin.test.assertNotNull
 open class InntektsmeldingRepositorySpec : SystemTestBase() {
 
     lateinit var repository: InntektsmeldingRepository
-
-    val testKrav = grunnleggendeInntektsmelding
 
     @BeforeAll
     internal fun setUp() {
