@@ -9,7 +9,6 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.util.toByteArray
 import kotlinx.coroutines.runBlocking
-import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
 import no.nav.helsearbeidsgiver.utils.log.MdcUtils
 import no.nav.helsearbeidsgiver.utils.log.logger
 
@@ -21,7 +20,7 @@ import no.nav.helsearbeidsgiver.utils.log.logger
 class SafDokumentClient(
     private val url: String,
     private val httpClient: HttpClient,
-    private val stsClient: AccessTokenProvider
+    private val getAccessToken: () -> String
 ) {
     private val logger = this.logger()
 
@@ -33,7 +32,7 @@ class SafDokumentClient(
         val response = runBlocking {
             httpClient.get<HttpStatement>("$url/hentdokument/$journalpostId/$dokumentInfoId/ORIGINAL") {
                 accept(ContentType.Application.Xml)
-                header("Authorization", "Bearer ${stsClient.getToken()}")
+                header("Authorization", "Bearer ${getAccessToken()}")
                 header("Nav-Callid", MdcUtils.getCallId())
                 header("Nav-Consumer-Id", "syfoinntektsmelding")
             }.execute()
