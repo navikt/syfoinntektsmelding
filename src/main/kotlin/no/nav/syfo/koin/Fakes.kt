@@ -1,9 +1,5 @@
 package no.nav.syfo.koin
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
-import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
-import no.nav.helse.arbeidsgiver.integrasjoner.altinn.AltinnOrganisasjon
 import no.nav.helse.arbeidsgiver.integrasjoner.dokarkiv.DokarkivKlient
 import no.nav.helse.arbeidsgiver.integrasjoner.dokarkiv.JournalpostRequest
 import no.nav.helse.arbeidsgiver.integrasjoner.dokarkiv.JournalpostResponse
@@ -18,8 +14,6 @@ import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlHentFullPerson
 import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlHentPersonNavn
 import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlIdent
 import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlPersonNavnMetadata
-import no.nav.helse.arbeidsgiver.utils.loadFromResources
-import no.nav.helse.arbeidsgiver.web.auth.AltinnOrganisationsRepository
 import no.nav.syfo.client.norg.ArbeidsfordelingRequest
 import no.nav.syfo.client.norg.ArbeidsfordelingResponse
 import no.nav.syfo.client.norg.Norg2Client
@@ -30,14 +24,6 @@ import java.time.LocalDate.now
 import java.time.LocalDateTime
 
 fun Module.mockExternalDependecies() {
-    // single { MockAltinnRepo(get()) } bind AltinnOrganisationsRepository::class
-
-    single {
-        object : AccessTokenProvider {
-            override fun getToken(): String = "fake token"
-        }
-    } bind AccessTokenProvider::class
-
     single {
         object : DokarkivKlient {
             override fun journalførDokument(
@@ -113,7 +99,7 @@ fun Module.mockExternalDependecies() {
         object : Norg2Client(
             "",
             get(),
-            get<AccessTokenProvider>()::getToken
+            { "fake token" }
         ) {
             override suspend fun hentAlleArbeidsfordelinger(
                 request: ArbeidsfordelingRequest,
@@ -141,10 +127,4 @@ fun Module.mockExternalDependecies() {
             )
         }
     } bind Norg2Client::class
-}
-
-class MockAltinnRepo(om: ObjectMapper) : AltinnOrganisationsRepository {
-    private val mockList = "altinn-mock/organisasjoner-med-rettighet.json".loadFromResources()
-    private val mockAcl = om.readValue<Set<AltinnOrganisasjon>>(mockList)
-    override fun hentOrgMedRettigheterForPerson(identitetsnummer: String): Set<AltinnOrganisasjon> = mockAcl
 }

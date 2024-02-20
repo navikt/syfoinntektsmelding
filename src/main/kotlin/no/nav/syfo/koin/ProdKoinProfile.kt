@@ -108,10 +108,6 @@ fun prodConfig(config: ApplicationConfig) = module {
     }
 
     single { UtsattOppgaveDAO(UtsattOppgaveRepositoryImp(get())) }
-    single {
-        val tokenProvider = get<AccessTokenProvider>(qualifier = named(AccessScope.OPPGAVE))
-        OppgaveClient(config.getString("oppgavebehandling_url"), get(), get(), tokenProvider::getToken)
-    }
     single { UtsattOppgaveService(get(), get(), get(), get(), get(), get()) }
     single { FeiletUtsattOppgaveMeldingProsessor(get(), get()) }
 
@@ -126,9 +122,18 @@ fun prodConfig(config: ApplicationConfig) = module {
     single { BakgrunnsjobbService(get(), bakgrunnsvarsler = MetrikkVarsler()) }
 
     single {
+        OppgaveClient(
+            config.getString("oppgavebehandling_url"),
+            get(),
+            get(),
+            get<AccessTokenProvider>(qualifier = named(AccessScope.OPPGAVE))::getToken
+        )
+    }
+
+    single {
         PdlClientImpl(
             config.getString("pdl_url"),
-            get(qualifier = named(AccessScope.PDL)),
+            get<AccessTokenProvider>(qualifier = named(AccessScope.PDL)),
             get(),
             get()
         )
@@ -146,7 +151,7 @@ fun prodConfig(config: ApplicationConfig) = module {
         SafJournalpostClient(
             get(),
             config.getString("saf_journal_url"),
-            get(qualifier = named(AccessScope.SAF)),
+            get<AccessTokenProvider>(qualifier = named(AccessScope.SAF))::getToken,
         )
     }
 
@@ -154,15 +159,15 @@ fun prodConfig(config: ApplicationConfig) = module {
         SafDokumentClient(
             config.getString("saf_dokument_url"),
             get(),
-            get(qualifier = named(AccessScope.SAF)),
+            get<AccessTokenProvider>(qualifier = named(AccessScope.SAF))::getToken,
         )
     }
 
     single {
         DokArkivClient(
             config.getString("dokarkiv_url"),
-            get(qualifier = named(AccessScope.DOKARKIV)),
-            get()
+            get(),
+            get<AccessTokenProvider>(qualifier = named(AccessScope.DOKARKIV))::getToken
         )
     }
 

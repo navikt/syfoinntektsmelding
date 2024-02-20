@@ -1,9 +1,7 @@
 package no.nav.syfo.client.saf
 
 import io.ktor.http.HttpStatusCode
-import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
-import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
 import no.nav.syfo.client.buildHttpClientJson
 import no.nav.syfo.client.saf.model.JournalResponse
 import no.nav.syfo.domain.JournalStatus
@@ -14,15 +12,13 @@ import org.junit.jupiter.api.assertThrows
 
 class SafJournalpostClientTest {
 
-    private val stsClient = mockk<AccessTokenProvider>(relaxed = true)
-
     val objectMapper = buildObjectMapper()
 
     private lateinit var client: SafJournalpostClient
 
     @Test
     fun `Skal hente ut gyldig respons`() {
-        client = SafJournalpostClient(buildHttpClientJson(HttpStatusCode.OK, validJson()), "http://localhost", stsClient)
+        client = SafJournalpostClient(buildHttpClientJson(HttpStatusCode.OK, validJson()), "http://localhost", ::mockAccessToken)
         runBlocking {
             val journalpost = client.getJournalpostMetadata("123")
             Assertions.assertThat(journalpost?.journalstatus).isEqualTo(JournalStatus.MOTTATT)
@@ -32,7 +28,7 @@ class SafJournalpostClientTest {
 
     @Test
     fun `Skal håndtere feil`() {
-        client = SafJournalpostClient(buildHttpClientJson(HttpStatusCode.OK, errorJson()), "http://localhost", stsClient)
+        client = SafJournalpostClient(buildHttpClientJson(HttpStatusCode.OK, errorJson()), "http://localhost", ::mockAccessToken)
         runBlocking {
             assertThrows<ErrorException> {
                 client.getJournalpostMetadata("123")
@@ -42,7 +38,7 @@ class SafJournalpostClientTest {
 
     @Test
     fun `Skal håndtere ikke autorisert`() {
-        client = SafJournalpostClient(buildHttpClientJson(HttpStatusCode.OK, unauthorizedJson()), "http://localhost", stsClient)
+        client = SafJournalpostClient(buildHttpClientJson(HttpStatusCode.OK, unauthorizedJson()), "http://localhost", ::mockAccessToken)
         runBlocking {
             assertThrows<NotAuthorizedException> {
                 client.getJournalpostMetadata("123")
@@ -94,3 +90,6 @@ class SafJournalpostClientTest {
         return getJsonFile("/saf_unauthorized.json")
     }
 }
+
+private fun mockAccessToken(): String =
+    "mock saf token"

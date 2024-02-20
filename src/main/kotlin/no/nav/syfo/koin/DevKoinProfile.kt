@@ -108,10 +108,6 @@ fun devConfig(config: ApplicationConfig) = module {
     }
 
     single { UtsattOppgaveDAO(UtsattOppgaveRepositoryImp(get())) }
-    single {
-        val tokenProvider = get<AccessTokenProvider>(qualifier = named(AccessScope.OPPGAVE))
-        OppgaveClient(config.getString("oppgavebehandling_url"), get(), get(), tokenProvider::getToken)
-    }
     single { UtsattOppgaveService(get(), get(), get(), get(), get(), get()) }
     single { FeiletUtsattOppgaveMeldingProsessor(get(), get()) }
 
@@ -124,6 +120,15 @@ fun devConfig(config: ApplicationConfig) = module {
 
     single { PostgresBakgrunnsjobbRepository(get()) } bind BakgrunnsjobbRepository::class
     single { BakgrunnsjobbService(get(), bakgrunnsvarsler = MetrikkVarsler()) }
+
+    single {
+        OppgaveClient(
+            config.getString("oppgavebehandling_url"),
+            get(),
+            get(),
+            get<AccessTokenProvider>(qualifier = named(AccessScope.OPPGAVE))::getToken
+        )
+    }
 
     single {
         PdlClientImpl(
@@ -146,7 +151,7 @@ fun devConfig(config: ApplicationConfig) = module {
         SafJournalpostClient(
             get(),
             config.getString("saf_journal_url"),
-            get(qualifier = named(AccessScope.SAF)),
+            get<AccessTokenProvider>(qualifier = named(AccessScope.SAF))::getToken,
         )
     }
 
@@ -154,15 +159,15 @@ fun devConfig(config: ApplicationConfig) = module {
         SafDokumentClient(
             config.getString("saf_dokument_url"),
             get(),
-            get(qualifier = named(AccessScope.SAF)),
+            get<AccessTokenProvider>(qualifier = named(AccessScope.SAF))::getToken,
         )
     }
 
     single {
         DokArkivClient(
             config.getString("dokarkiv_url"),
-            get(qualifier = named(AccessScope.DOKARKIV)),
-            get()
+            get(),
+            get<AccessTokenProvider>(qualifier = named(AccessScope.DOKARKIV))::getToken
         )
     }
 
