@@ -23,9 +23,6 @@ import no.nav.syfo.prosesser.FjernInntektsmeldingByBehandletProcessor
 import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
 import no.nav.syfo.repository.ArbeidsgiverperiodeRepository
 import no.nav.syfo.repository.ArbeidsgiverperiodeRepositoryImp
-import no.nav.syfo.repository.FeiletRepository
-import no.nav.syfo.repository.FeiletRepositoryImp
-import no.nav.syfo.repository.FeiletService
 import no.nav.syfo.repository.InntektsmeldingRepository
 import no.nav.syfo.repository.InntektsmeldingRepositoryImp
 import no.nav.syfo.repository.InntektsmeldingRepositoryMock
@@ -62,7 +59,6 @@ fun localDevConfig(config: ApplicationConfig) = module {
             )
         )
     } bind DataSource::class
-    single { FeiletRepositoryImp(get()) } bind FeiletRepository::class
     single { UtsattOppgaveRepositoryImp(get()) } bind UtsattOppgaveRepository::class
 
     single { FinnAlleUtgaandeOppgaverProcessor(get(), get(), get(), get(), get(), get()) } bind FinnAlleUtgaandeOppgaverProcessor::class
@@ -110,10 +106,8 @@ fun localDevConfig(config: ApplicationConfig) = module {
     single { Metrikk() } bind Metrikk::class
     single { JournalpostService(get(), get(), get(), get(), get()) } bind JournalpostService::class
     single { InntektsmeldingService(InntektsmeldingRepositoryImp(get()), get()) } bind InntektsmeldingService::class
-    single { FeiletService(get()) } bind FeiletService::class
     single {
         JoarkInntektsmeldingHendelseProsessor(
-            get(),
             get(),
             get(),
             get(),

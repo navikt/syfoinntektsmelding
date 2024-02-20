@@ -50,7 +50,7 @@ class InntektsmeldingBehandler(
             logger.info("Slår opp aktørID for ${inntektsmelding.arkivRefereranse}")
             val aktorid = pdlClient.getAktørid(inntektsmelding.fnr)
             if (aktorid == null) {
-                logger.error("Fant ikke aktøren for arkivreferansen: $arkivreferanse")
+                sikkerlogger.error("Fant ikke aktøren for arkivreferansen: $arkivreferanse")
                 throw FantIkkeAktørException(null)
             }
             logger.info("Fant aktørid for ${inntektsmelding.arkivRefereranse}")

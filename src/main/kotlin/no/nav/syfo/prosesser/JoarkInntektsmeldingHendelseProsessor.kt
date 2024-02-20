@@ -13,7 +13,6 @@ import no.nav.syfo.behandling.InntektsmeldingBehandler
 import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.kafkamottak.InngaaendeJournalpostDTO
 import no.nav.syfo.kafkamottak.InntektsmeldingConsumerException
-import no.nav.syfo.repository.FeiletService
 import no.nav.syfo.util.Metrikk
 import org.slf4j.LoggerFactory
 
@@ -25,7 +24,6 @@ class JoarkInntektsmeldingHendelseProsessor(
     private val om: ObjectMapper,
     private val metrikk: Metrikk,
     private val inntektsmeldingBehandler: InntektsmeldingBehandler,
-    private val feiletService: FeiletService,
     private val oppgaveClient: OppgaveClient
 ) : BakgrunnsjobbProsesserer {
     private val logger = this.logger()
@@ -49,47 +47,31 @@ class JoarkInntektsmeldingHendelseProsessor(
             }
 
             logger.info("Bakgrunnsbehandler $arkivReferanse")
-            val historikk = feiletService.finnHistorikk(arkivReferanse)
-
-            if (historikk.feiletList.isNotEmpty()) {
+            if (jobb.forsoek >= jobb.maksAntallForsoek) {
+                sikkerlogger.error("Jobb med arkivreferanse $arkivReferanse feilet permanent! Oppretter fordelingsoppgave")
                 metrikk.tellRekjørerFeilet()
-            }
-
-            if (historikk.skalArkiveresForDato()) {
                 runBlocking {
                     opprettFordelingsoppgave(journalpostDTO.journalpostId.toString())
                 }
                 metrikk.tellOpprettFordelingsoppgave()
                 return@withCallId
             }
-
             inntektsmeldingBehandler.behandle(journalpostDTO.journalpostId.toString(), arkivReferanse)
         } catch (e: IllegalArgumentException) {
             metrikk.tellInntektsmeldingUtenArkivReferanse()
             throw InntektsmeldingConsumerException(e)
         } catch (e: BehandlingException) {
-            logger.error("Feil ved behandling av inntektsmelding med arkivreferanse $arkivReferanse", e)
+            sikkerlogger.error("Feil ved behandling av inntektsmelding med arkivreferanse $arkivReferanse", e)
             metrikk.tellBehandlingsfeil(e.feiltype)
-            lagreFeilet(arkivReferanse, e.feiltype)
             throw InntektsmeldingConsumerException(e)
         } catch (e: Exception) {
-            logger.error("Det skjedde en feil ved journalføring med arkivreferanse $arkivReferanse", e)
+            sikkerlogger.error("Det skjedde en feil ved journalføring med arkivreferanse $arkivReferanse", e)
             metrikk.tellBehandlingsfeil(Feiltype.USPESIFISERT)
-            lagreFeilet(arkivReferanse, Feiltype.USPESIFISERT)
-
             throw InntektsmeldingConsumerException(e)
         }
     }
 
     private suspend fun opprettFordelingsoppgave(journalpostId: String) {
         oppgaveClient.opprettFordelingsOppgave(journalpostId)
-    }
-
-    fun lagreFeilet(arkivReferanse: String, feiltype: Feiltype) {
-        try {
-            feiletService.lagreFeilet(arkivReferanse, feiltype)
-        } catch (e: Exception) {
-            metrikk.tellLagreFeiletMislykkes()
-        }
     }
 }
