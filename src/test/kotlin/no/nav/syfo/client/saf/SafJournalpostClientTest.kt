@@ -92,4 +92,4 @@ class SafJournalpostClientTest {
 }
 
 private fun mockAccessToken(): String =
-    "mock dokarkiv token"
+    "mock saf token"
