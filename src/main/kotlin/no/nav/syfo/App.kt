@@ -35,7 +35,6 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
     private val logger: Logger = this.logger()
     private var webserver: NettyApplicationEngine? = null
     private var appConfig: HoconApplicationConfig = HoconApplicationConfig(ConfigFactory.load())
-
     private val runtimeEnvironment = appConfig.getString("koin.profile")
 
     fun start() {
@@ -46,10 +45,8 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
         }
         startKoin { modules(selectModuleBasedOnProfile(appConfig)) }
         migrateDatabase()
-        if (System.getenv("NAIS_CLUSTER_NAME") != "prod-fss") {
-            configAndStartBackgroundWorkers()
-            startKafkaConsumer()
-        }
+        configAndStartBackgroundWorkers()
+        startKafkaConsumer()
         configAndStartWebserver()
     }
 
@@ -83,7 +80,12 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
 
     fun shutdown() {
         webserver?.stop(1000, 1000)
-        get<BakgrunnsjobbService>().stop()
+        get<FinnAlleUtgaandeOppgaverProcessor>().stop()
+        val service = get<BakgrunnsjobbService>()
+        service.stop()
+        // Et forsøk på at bakgrunnsjobber skal kunne ferdigstilles OK, før stopp. Ingen garantier..
+        logger.info("Venter ${service.delayMillis} ms på at bakgrunnsjobbService stoppes!")
+        Thread.sleep(service.delayMillis)
         stopKoin()
     }
 
