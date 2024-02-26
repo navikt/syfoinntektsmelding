@@ -6,6 +6,8 @@ metadata:
   labels:
     team: helsearbeidsgiver
 spec:
+  strategy:
+    type: RollingUpdate
   image: {{image}}
   port: 8080
   prometheus:
