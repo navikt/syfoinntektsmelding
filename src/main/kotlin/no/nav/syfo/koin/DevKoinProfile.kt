@@ -185,7 +185,8 @@ fun devConfig(config: ApplicationConfig) = module {
             get(),
             get(),
             get(),
-            get()
+            get(),
+            skalKastePdlFeil = false
         )
     }
 }
