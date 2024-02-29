@@ -14,10 +14,10 @@ spec:
     enabled: true
     path: /metrics
   liveness:
-    failureThreshold: 600
+    failureThreshold: 6
     initialDelay: 60
     path: /health/is-alive
-    periodSeconds: 6
+    periodSeconds: 10
     timeout: 3
   readiness:
     initialDelay: 60
