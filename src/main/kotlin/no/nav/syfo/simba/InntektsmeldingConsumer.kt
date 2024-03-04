@@ -30,7 +30,7 @@ class InntektsmeldingConsumer(
     private val inntektsmeldingAivenProducer: InntektsmeldingAivenProducer,
     private val utsattOppgaveService: UtsattOppgaveService,
     private val pdlClient: PdlClient,
-    private val skalKrasjeVedPDLFeil: Boolean = true
+    private val skalKastePdlFeil: Boolean = true
 ) : ReadynessComponent, LivenessComponent {
 
     private val consumer = KafkaConsumer<String, String>(props)
@@ -128,7 +128,7 @@ class InntektsmeldingConsumer(
         val aktorid = pdlClient.getAktørid(identitetsnummer)
         if (aktorid == null) {
             sikkerlogger.error("Fant ikke aktøren for: $identitetsnummer")
-            if (skalKrasjeVedPDLFeil) { // Oppslag feiler i dev-miljøer om ikke brukere er opprettet i PDL - og dev wipes rett som det er
+            if (skalKastePdlFeil) { // Oppslag feiler i dev-miljøer om ikke brukere er opprettet i PDL - og dev wipes rett som det er
                 throw FantIkkeAktørException(null)
             }
         }
