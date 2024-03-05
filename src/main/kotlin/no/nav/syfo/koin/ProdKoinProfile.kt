@@ -175,6 +175,8 @@ fun prodConfig(config: ApplicationConfig) = module {
     single {
         InntektsmeldingConsumer(
             commonAivenProperties() + mapOf(
+                ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG to "false", // viktig!
+                ConsumerConfig.MAX_POLL_RECORDS_CONFIG to "1", // også viktig - unngår at vi commiter for stort offset hvis vi henter flere og feiler midt i batchen
                 ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
                 ConsumerConfig.CLIENT_ID_CONFIG to "syfoinntektsmelding-im-consumer",
                 ConsumerConfig.GROUP_ID_CONFIG to "syfoinntektsmelding-im-v1",

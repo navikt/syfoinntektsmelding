@@ -58,7 +58,7 @@ class InntektsmeldingConsumer(
             setIsReady(true)
             while (!error) {
                 it
-                    .poll(Duration.ofMillis(1000))
+                    .poll(Duration.ofMillis(100))
                     .forEach { record ->
                         try {
                             behandleRecord(record)
