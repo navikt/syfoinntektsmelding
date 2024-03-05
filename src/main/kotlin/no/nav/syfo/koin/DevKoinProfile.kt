@@ -185,8 +185,7 @@ fun devConfig(config: ApplicationConfig) = module {
             get(),
             get(),
             get(),
-            get(),
-            skalKrasjeVedPDLFeil = false
+            get()
         )
     }
 }
