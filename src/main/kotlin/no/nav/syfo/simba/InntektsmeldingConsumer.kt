@@ -90,7 +90,7 @@ class InntektsmeldingConsumer(
     }
 
     private fun behandle(journalpostId: String, inntektsmeldingFraSimba: Inntektsmelding) {
-        val aktorid = hentAktøridFraPDL(inntektsmeldingFraSimba.identitetsnummer)
+        val aktorid = hentAktoeridFraPDL(inntektsmeldingFraSimba.identitetsnummer)
         val arkivreferanse = "im_$journalpostId"
         val inntektsmelding = mapInntektsmelding(arkivreferanse, aktorid, journalpostId, inntektsmeldingFraSimba)
         val dto = inntektsmeldingService.lagreBehandling(inntektsmelding, aktorid)
@@ -124,7 +124,7 @@ class InntektsmeldingConsumer(
         sikkerlogger.info("Publiserte inntektsmelding på topic: $inntektsmelding")
     }
 
-    private fun hentAktøridFraPDL(identitetsnummer: String): String {
+    private fun hentAktoeridFraPDL(identitetsnummer: String): String {
         val aktorid = pdlClient.getAktørid(identitetsnummer)
         if (aktorid == null) {
             sikkerlogger.error("Fant ikke aktøren for: $identitetsnummer")
