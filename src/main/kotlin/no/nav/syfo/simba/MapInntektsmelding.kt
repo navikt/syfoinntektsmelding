@@ -65,7 +65,7 @@ fun mapInntektsmelding(arkivreferanse: String, aktorId: String, journalpostId: S
         avsenderSystem = AvsenderSystem("NAV_NO", "1.0"),
         nærRelasjon = null,
         kontaktinformasjon = Kontaktinformasjon(im.innsenderNavn, im.telefonnummer),
-        innsendingstidspunkt = LocalDateTime.now(),
+        innsendingstidspunkt = im.tidspunkt.toLocalDateTime(),
         bruttoUtbetalt = im.fullLønnIArbeidsgiverPerioden?.utbetalt?.toBigDecimal(),
         årsakEndring = null,
         rapportertInntekt = im.inntekt?.tilRapportertInntekt()
