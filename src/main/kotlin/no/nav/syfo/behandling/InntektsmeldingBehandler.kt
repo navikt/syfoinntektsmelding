@@ -41,7 +41,7 @@ class InntektsmeldingBehandler(
         return behandleInntektsmelding(arkivreferanse, inntektsmelding)
     }
 
-    fun behandleInntektsmelding(arkivreferanse: String, inntektsmelding: Inntektsmelding): String? {
+    private fun behandleInntektsmelding(arkivreferanse: String, inntektsmelding: Inntektsmelding): String? {
         var ret: String? = null
         val consumerLock = consumerLocks.get(inntektsmelding.fnr)
         try {

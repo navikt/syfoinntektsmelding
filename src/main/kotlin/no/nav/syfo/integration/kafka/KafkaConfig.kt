@@ -31,7 +31,7 @@ fun joarkLocalProperties() = consumerLocalProperties() + mapOf(
 
 fun inntektsmeldingFraSimbaLocalProperties() = consumerLocalProperties() + mapOf(
     "schema.registry.url" to "http://kafka-schema-registry.tpa.svc.nais.local:8081",
-    ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to GenericAvroDeserializer::class.java,
+    ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
     ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
     ConsumerConfig.CLIENT_ID_CONFIG to "syfoinntektsmelding",
     ConsumerConfig.GROUP_ID_CONFIG to "syfoinntektsmelding-v1"
