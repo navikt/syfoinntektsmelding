@@ -81,7 +81,7 @@ class MapInntektsmeldingFraSimbaTest {
 
     @Test
     fun mapVedtaksperiodeID() {
-        val im = mapInntektsmelding("1", "2", "3", lagInntektsmelding().copy(inntekt = Mock.inntektEndringBonus))
+        val im = mapInntektsmelding("1", "2", "3", lagInntektsmelding())
         assertNull(im.vedtaksperiodeId)
         val vedtaksperiodeId = UUID.randomUUID()
         val im2 = mapInntektsmelding("1", "2", "3", lagInntektsmelding().copy(vedtaksperiodeId = vedtaksperiodeId))
