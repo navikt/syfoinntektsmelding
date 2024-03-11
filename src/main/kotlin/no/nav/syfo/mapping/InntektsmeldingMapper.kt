@@ -23,6 +23,7 @@ fun mapInntektsmeldingKontrakt(
 ): no.nav.inntektsmeldingkontrakt.Inntektsmelding {
     return no.nav.inntektsmeldingkontrakt.Inntektsmelding(
         inntektsmeldingId = uuid,
+        vedtaksperiodeId = inntektsmelding.vedtaksperiodeId,
         arbeidstakerFnr = inntektsmelding.fnr,
         arbeidstakerAktorId = arbeidstakerAktørId,
         virksomhetsnummer = inntektsmelding.arbeidsgiverOrgnummer,

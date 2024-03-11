@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.time.OffsetDateTime
+import java.util.UUID
 
 class MapInntektsmeldingFraSimbaTest {
     @Test
@@ -76,6 +77,15 @@ class MapInntektsmeldingFraSimbaTest {
         assertNull(im.rapportertInntekt?.endringAarsakData?.perioder)
         assertNull(im.rapportertInntekt?.endringAarsakData?.gjelderFra)
         assertNull(im.rapportertInntekt?.endringAarsakData?.bleKjent)
+    }
+
+    @Test
+    fun mapVedtaksperiodeID() {
+        val im = mapInntektsmelding("1", "2", "3", lagInntektsmelding().copy(inntekt = Mock.inntektEndringBonus))
+        assertNull(im.vedtaksperiodeId)
+        val vedtaksperiodeId = UUID.randomUUID()
+        val im2 = mapInntektsmelding("1", "2", "3", lagInntektsmelding().copy(vedtaksperiodeId = vedtaksperiodeId))
+        assertEquals(vedtaksperiodeId, im2.vedtaksperiodeId)
     }
 
     private fun lagInntektsmelding(): Inntektsmelding {

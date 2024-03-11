@@ -33,6 +33,7 @@ import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.Inntektsmeldin
 fun mapInntektsmelding(arkivreferanse: String, aktorId: String, journalpostId: String, im: InntektmeldingSimba): Inntektsmelding {
     return Inntektsmelding(
         id = "",
+        vedtaksperiodeId = im.vedtaksperiodeId,
         fnr = im.identitetsnummer,
         arbeidsgiverOrgnummer = im.orgnrUnderenhet,
         arbeidsgiverPrivatFnr = null,

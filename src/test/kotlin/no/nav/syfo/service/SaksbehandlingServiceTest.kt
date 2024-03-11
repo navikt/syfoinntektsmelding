@@ -9,12 +9,10 @@ import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
-import no.nav.syfo.util.Metrikk
 import no.nav.syfo.util.getAktørid
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.util.Collections.emptyList
 
 class SaksbehandlingServiceTest {
@@ -22,33 +20,11 @@ class SaksbehandlingServiceTest {
     private var oppgaveClient = mockk<OppgaveClient>(relaxed = true)
     private var pdlClient = mockk<PdlClient>(relaxed = true)
     private var inntektsmeldingService = mockk<InntektsmeldingService>(relaxed = true)
-    private val metrikk = mockk<Metrikk>(relaxed = true)
 
     @BeforeEach
     fun setup() {
         every { inntektsmeldingService.finnBehandledeInntektsmeldinger(any()) } returns emptyList()
         every { pdlClient.getAktørid(any()) } returns "aktorid"
-    }
-
-    private fun lagInntektsmelding(): Inntektsmelding {
-        return Inntektsmelding(
-            id = "ID",
-            fnr = "fnr",
-            arbeidsgiverOrgnummer = "orgnummer",
-            arbeidsforholdId = null,
-            journalpostId = "journalpostId",
-            arsakTilInnsending = "Ny",
-            journalStatus = JournalStatus.MOTTATT,
-            arbeidsgiverperioder = listOf(
-                Periode(
-                    fom = LocalDate.of(2019, 1, 4),
-                    tom = LocalDate.of(2019, 1, 20)
-                )
-            ),
-            arkivRefereranse = "ar123",
-            førsteFraværsdag = LocalDate.now(),
-            mottattDato = LocalDateTime.now()
-        )
     }
 
     @Test
@@ -58,7 +34,7 @@ class SaksbehandlingServiceTest {
         }
     }
 
-    private fun lagInntektsmelding2(
+    private fun lagInntektsmelding(
         aktorId: String,
         journalpostId: String,
         sakId: String,
@@ -85,7 +61,7 @@ class SaksbehandlingServiceTest {
     fun girNyInntektsmeldingEksisterendeSakIdOmFomOverlapper() {
         every { inntektsmeldingService.finnBehandledeInntektsmeldinger("aktorId") } returns
             listOf(
-                lagInntektsmelding2(
+                lagInntektsmelding(
                     aktorId = "aktorId",
                     journalpostId = "journalPostId",
                     sakId = "1",
@@ -103,7 +79,7 @@ class SaksbehandlingServiceTest {
     fun girNyInntektsmeldingEksisterendeSakIdOmFomOgTomOverlapper() {
         every { inntektsmeldingService.finnBehandledeInntektsmeldinger("aktorId") } returns
             listOf(
-                lagInntektsmelding2(
+                lagInntektsmelding(
                     aktorId = "aktorId",
                     journalpostId = "journalPostId",
                     sakId = "1",
