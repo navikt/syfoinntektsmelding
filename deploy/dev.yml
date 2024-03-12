@@ -6,6 +6,8 @@ metadata:
   labels:
     team: helsearbeidsgiver
 spec:
+  strategy:
+    type: Recreate
   ingresses:
     - https://spinosaurus.intern.dev.nav.no
   image: {{image}}
