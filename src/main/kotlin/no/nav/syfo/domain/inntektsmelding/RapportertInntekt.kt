@@ -5,7 +5,7 @@ import java.time.LocalDate
 
 /**
  * Basert på Inntekt fra Simba
- * @see no.nav.helsearbeidsgiver.domene.inntektsmelding.Inntekt
+ * @see no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.Inntekt
  **/
 
 data class RapportertInntekt(

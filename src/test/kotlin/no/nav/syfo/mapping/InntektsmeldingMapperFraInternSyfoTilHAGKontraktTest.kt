@@ -1,6 +1,6 @@
 package no.nav.syfo.mapping
 
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.BegrunnelseIngenEllerRedusertUtbetalingKode
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.BegrunnelseIngenEllerRedusertUtbetalingKode
 import no.nav.syfo.domain.Periode
 import no.nav.syfo.domain.inntektsmelding.Gyldighetsstatus
 import no.nav.syfo.domain.inntektsmelding.Kontaktinformasjon
@@ -66,5 +66,17 @@ class InntektsmeldingMapperFraInternSyfoTilHAGKontraktTest {
         assertEquals(1, inntektsmelding.inntektEndringAarsak?.perioder?.size)
         assertNull(inntektsmelding.inntektEndringAarsak?.gjelderFra)
         assertNull(inntektsmelding.inntektEndringAarsak?.bleKjent)
+    }
+
+    @Test
+    fun mapInntektsmeldingKontraktMedOgUtenVedtaksperiodeId() {
+        val inntektsmelding = grunnleggendeInntektsmelding
+        val kontraktIM = mapInntektsmeldingKontrakt(inntektsmelding, "123", Gyldighetsstatus.GYLDIG, "arkivref123", UUID.randomUUID().toString())
+        assertNull(kontraktIM.vedtaksperiodeId)
+
+        val vedtaksperiodeId = UUID.randomUUID()
+        val inntektsmeldingMedVedtaksperiodeID = inntektsmelding.copy(vedtaksperiodeId = vedtaksperiodeId)
+        val kontraktIMMedVedtaksperiodeId = mapInntektsmeldingKontrakt(inntektsmeldingMedVedtaksperiodeID, "123", Gyldighetsstatus.GYLDIG, "arkivref123", UUID.randomUUID().toString())
+        assertEquals(vedtaksperiodeId, kontraktIMMedVedtaksperiodeId.vedtaksperiodeId)
     }
 }
