@@ -27,7 +27,6 @@ import no.nav.syfo.domain.inntektsmelding.OpphoerAvNaturalytelse
 import no.nav.syfo.domain.inntektsmelding.RapportertInntekt
 import no.nav.syfo.domain.inntektsmelding.Refusjon
 import no.nav.syfo.domain.inntektsmelding.SpinnInntektEndringAarsak
-import java.time.LocalDateTime
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.Inntektsmelding as InntektmeldingSimba
 
 fun mapInntektsmelding(arkivreferanse: String, aktorId: String, journalpostId: String, im: InntektmeldingSimba): Inntektsmelding {
@@ -59,7 +58,7 @@ fun mapInntektsmelding(arkivreferanse: String, aktorId: String, journalpostId: S
         arkivRefereranse = arkivreferanse,
         feriePerioder = emptyList(),
         førsteFraværsdag = im.bestemmendeFraværsdag,
-        mottattDato = LocalDateTime.now(),
+        mottattDato = im.tidspunkt.toLocalDateTime(),
         sakId = "",
         aktorId = aktorId,
         begrunnelseRedusert = im.fullLønnIArbeidsgiverPerioden?.begrunnelse?.name.orEmpty(),
