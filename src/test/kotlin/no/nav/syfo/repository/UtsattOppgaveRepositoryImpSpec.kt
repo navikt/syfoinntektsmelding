@@ -3,7 +3,6 @@ package no.nav.syfo.repository
 import com.zaxxer.hikari.HikariDataSource
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.dto.UtsattOppgaveEntitet
-import no.nav.syfo.grunnleggendeInntektsmelding
 import no.nav.syfo.slowtests.SystemTestBase
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeAll
@@ -16,8 +15,6 @@ import java.util.UUID
 open class UtsattOppgaveRepositoryImpSpec : SystemTestBase() {
 
     lateinit var repository: UtsattOppgaveRepository
-
-    val testKrav = grunnleggendeInntektsmelding
 
     @BeforeAll
     fun setUp() {
