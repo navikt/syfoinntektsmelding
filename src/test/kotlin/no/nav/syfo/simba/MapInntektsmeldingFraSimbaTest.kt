@@ -15,7 +15,9 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import java.util.UUID
 
 class MapInntektsmeldingFraSimbaTest {
@@ -77,6 +79,14 @@ class MapInntektsmeldingFraSimbaTest {
         assertNull(im.rapportertInntekt?.endringAarsakData?.perioder)
         assertNull(im.rapportertInntekt?.endringAarsakData?.gjelderFra)
         assertNull(im.rapportertInntekt?.endringAarsakData?.bleKjent)
+    }
+
+    @Test
+    fun mapInnsendtTidspunktFraSimba() {
+        val localDateTime = LocalDateTime.of(2023, 2, 11, 14, 0)
+        val innsendt = OffsetDateTime.of(localDateTime, ZoneOffset.of("+1"))
+        val im = mapInntektsmelding("1", "2", "3", lagInntektsmelding().copy(tidspunkt = innsendt))
+        assertEquals(localDateTime, im.innsendingstidspunkt)
     }
 
     @Test
