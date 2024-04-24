@@ -27,6 +27,7 @@ const val BEHANDLINGSTEMA_SPEIL = "ab0455"
 const val BEHANDLINGSTEMA_UTBETALING_TIL_BRUKER = "ab0458"
 const val BEHANDLINGSTYPE_UTLAND = "ae0106"
 const val BEHANDLINGSTYPE_NORMAL = "ab0061"
+const val BEHANDLINGSTEMA_BETVILER_SYKEMELDING = "ab0421"
 
 class OppgaveClient(
     val oppgavebehandlingUrl: String,
@@ -103,6 +104,11 @@ class OppgaveClient(
                 loggOppgave("Utland")
                 Triple(BEHANDLINGSTYPE_UTLAND, null, false)
             }
+            tema == BehandlingsTema.BETVILER_SYKEMELDING -> {
+                loggOppgave("Betviler sykmelding")
+                Triple(null, BEHANDLINGSTEMA_BETVILER_SYKEMELDING, false)
+            }
+            //TODO flip condition ??
             tema != BehandlingsTema.REFUSJON_UTEN_DATO -> {
                 loggOppgave("Utbetaling til bruker")
                 Triple(null, BEHANDLINGSTEMA_UTBETALING_TIL_BRUKER, true)

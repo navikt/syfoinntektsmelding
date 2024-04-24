@@ -7,11 +7,16 @@ enum class BehandlingsTema {
     IKKE_REFUSJON,
     REFUSJON_UTEN_DATO,
     REFUSJON_MED_DATO,
-    REFUSJON_LITEN_LØNN
+    REFUSJON_LITEN_LØNN,
+    BETVILER_SYKEMELDING
 }
 
 fun finnBehandlingsTema(inntektsmelding: Inntektsmelding): BehandlingsTema {
     val refusjon = inntektsmelding.refusjon
+
+    if (inntektsmelding.begrunnelseRedusert == "BetvilerArbeidsufoerhet") {
+        return BehandlingsTema.BETVILER_SYKEMELDING
+    }
 
     if (refusjon.beloepPrMnd == null || refusjon.beloepPrMnd < BigDecimal(1)) {
         return BehandlingsTema.IKKE_REFUSJON
