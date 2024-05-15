@@ -19,11 +19,13 @@ fun mapInntektsmeldingKontrakt(
     arbeidstakerAktørId: String,
     gyldighetsstatus: Gyldighetsstatus,
     arkivreferanse: String,
-    uuid: String
+    uuid: String,
+    matcherSpleis: Boolean = true
 ): no.nav.inntektsmeldingkontrakt.Inntektsmelding {
     return no.nav.inntektsmeldingkontrakt.Inntektsmelding(
         inntektsmeldingId = uuid,
         vedtaksperiodeId = inntektsmelding.vedtaksperiodeId,
+        matcherSpleis = matcherSpleis,
         arbeidstakerFnr = inntektsmelding.fnr,
         arbeidstakerAktorId = arbeidstakerAktørId,
         virksomhetsnummer = inntektsmelding.arbeidsgiverOrgnummer,

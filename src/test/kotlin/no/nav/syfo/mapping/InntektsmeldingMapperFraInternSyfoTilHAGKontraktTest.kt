@@ -8,7 +8,9 @@ import no.nav.syfo.domain.inntektsmelding.RapportertInntekt
 import no.nav.syfo.domain.inntektsmelding.SpinnInntektEndringAarsak
 import no.nav.syfo.grunnleggendeInntektsmelding
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -66,6 +68,7 @@ class InntektsmeldingMapperFraInternSyfoTilHAGKontraktTest {
         assertEquals(1, inntektsmelding.inntektEndringAarsak?.perioder?.size)
         assertNull(inntektsmelding.inntektEndringAarsak?.gjelderFra)
         assertNull(inntektsmelding.inntektEndringAarsak?.bleKjent)
+        assertTrue(inntektsmelding.matcherSpleis)
     }
 
     @Test
@@ -78,5 +81,12 @@ class InntektsmeldingMapperFraInternSyfoTilHAGKontraktTest {
         val inntektsmeldingMedVedtaksperiodeID = inntektsmelding.copy(vedtaksperiodeId = vedtaksperiodeId)
         val kontraktIMMedVedtaksperiodeId = mapInntektsmeldingKontrakt(inntektsmeldingMedVedtaksperiodeID, "123", Gyldighetsstatus.GYLDIG, "arkivref123", UUID.randomUUID().toString())
         assertEquals(vedtaksperiodeId, kontraktIMMedVedtaksperiodeId.vedtaksperiodeId)
+    }
+
+    @Test
+    fun mapInntektsmeldingKontraktSelvbestemtMatcherIkkeSpleis() {
+        val inntektsmelding = grunnleggendeInntektsmelding
+        val kontraktIM = mapInntektsmeldingKontrakt(inntektsmelding, "123", Gyldighetsstatus.GYLDIG, "arkivref123", UUID.randomUUID().toString(), false)
+        assertFalse(kontraktIM.matcherSpleis)
     }
 }
