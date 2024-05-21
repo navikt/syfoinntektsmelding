@@ -96,7 +96,6 @@ class OppgaveClientTest {
     }
 
     @Test
-
     fun skal_opprette_speil() {
         runBlocking {
             oppgaveClient = OppgaveClient("url", buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk) { "mockToken" }
@@ -107,7 +106,18 @@ class OppgaveClientTest {
     }
 
     @Test
+    fun skal_opprette_betviler_sykemelding() {
+        runBlocking {
+            oppgaveClient = OppgaveClient("url", buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk) { "mockToken" }
+            oppgaveClient.opprettOppgave("123", "tildeltEnhet", "aktoerid", false, false, BehandlingsTema.BETVILER_SYKEMELDING)
+            val requestVerdier = hentRequestInnhold(oppgaveClient.httpClient)
+            assertThat(requestVerdier?.behandlingstema).isEqualTo("ab0421")
+            assertThat(requestVerdier?.behandlingstype).isEqualTo(null)
 
+        }
+    }
+
+    @Test
     fun henterRiktigFerdigstillelsesFrist() {
         oppgaveClient = OppgaveClient("url", buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk) { "mockToken" }
         val onsdag = LocalDate.of(2019, Month.NOVEMBER, 27)
