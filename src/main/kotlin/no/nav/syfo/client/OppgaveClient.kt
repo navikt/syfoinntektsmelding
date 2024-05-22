@@ -93,21 +93,22 @@ class OppgaveClient(
             logger.info("Oppretter oppgave: $type for journalpost $journalpostId")
         }
 
-        val (behandlingstype, behandlingstema, utbetalingBruker) = when {
-            behandlingsKategori == BehandlingsKategori.SPEIL_RELATERT -> {
+        val (behandlingstype, behandlingstema, utbetalingBruker) = when (behandlingsKategori) {
+            BehandlingsKategori.SPEIL_RELATERT -> {
                 loggOppgave("Speil")
                 Triple(null, BEHANDLINGSTEMA_SPEIL, false)
             }
-            behandlingsKategori == BehandlingsKategori.UTLAND -> {
+            BehandlingsKategori.UTLAND -> {
                 loggOppgave("Utland")
                 Triple(BEHANDLINGSTYPE_UTLAND, null, false)
             }
-            behandlingsKategori == BehandlingsKategori.BETVILER_SYKEMELDING -> {
+            BehandlingsKategori.BETVILER_SYKEMELDING -> {
                 loggOppgave("Betviler sykmelding")
                 Triple(null, BEHANDLINGSTEMA_BETVILER_SYKEMELDING, false)
             }
-            // TODO flip condition ??
-            behandlingsKategori != BehandlingsKategori.REFUSJON_UTEN_DATO -> {
+            BehandlingsKategori.IKKE_REFUSJON,
+            BehandlingsKategori.REFUSJON_MED_DATO,
+            BehandlingsKategori.REFUSJON_LITEN_LØNN -> {
                 loggOppgave("Utbetaling til bruker")
                 Triple(null, BEHANDLINGSTEMA_UTBETALING_TIL_BRUKER, true)
             }
