@@ -16,7 +16,7 @@ import no.nav.syfo.behandling.OpprettOppgaveException
 import no.nav.syfo.domain.OppgaveResultat
 import no.nav.syfo.helpers.retry
 import no.nav.syfo.util.Metrikk
-import no.nav.syfo.utsattoppgave.BehandlingsTema
+import no.nav.syfo.utsattoppgave.BehandlingsKategori
 import java.time.DayOfWeek
 import java.time.LocalDate
 
@@ -79,9 +79,7 @@ class OppgaveClient(
         journalpostId: String,
         tildeltEnhetsnr: String?,
         aktoerId: String,
-        gjelderUtland: Boolean,
-        gjelderSpeil: Boolean,
-        tema: BehandlingsTema
+        behandlingsKategori: BehandlingsKategori
     ): OppgaveResultat {
 
         val eksisterendeOppgave = hentHvisOppgaveFinnes(OPPGAVETYPE_INNTEKTSMELDING, journalpostId)
@@ -96,20 +94,20 @@ class OppgaveClient(
         }
 
         val (behandlingstype, behandlingstema, utbetalingBruker) = when {
-            gjelderSpeil -> {
+            behandlingsKategori == BehandlingsKategori.SPEIL_RELATERT -> {
                 loggOppgave("Speil")
                 Triple(null, BEHANDLINGSTEMA_SPEIL, false)
             }
-            gjelderUtland -> {
+            behandlingsKategori == BehandlingsKategori.UTLAND -> {
                 loggOppgave("Utland")
                 Triple(BEHANDLINGSTYPE_UTLAND, null, false)
             }
-            tema == BehandlingsTema.BETVILER_SYKEMELDING -> {
+            behandlingsKategori == BehandlingsKategori.BETVILER_SYKEMELDING -> {
                 loggOppgave("Betviler sykmelding")
                 Triple(null, BEHANDLINGSTEMA_BETVILER_SYKEMELDING, false)
             }
-            //TODO flip condition ??
-            tema != BehandlingsTema.REFUSJON_UTEN_DATO -> {
+            // TODO flip condition ??
+            behandlingsKategori != BehandlingsKategori.REFUSJON_UTEN_DATO -> {
                 loggOppgave("Utbetaling til bruker")
                 Triple(null, BEHANDLINGSTEMA_UTBETALING_TIL_BRUKER, true)
             }

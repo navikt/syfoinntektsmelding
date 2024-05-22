@@ -16,32 +16,32 @@ internal class FinnBehandlingsTemaKtTest {
 
     @Test
     fun krever_ikke_refusjon_ved_null_beløp() {
-        var inntektsmelding = mockInntektsmelding(Refusjon(beloepPrMnd = null, LocalDate.now()), BigDecimal(11000))
-        assertEquals(BehandlingsTema.IKKE_REFUSJON, finnBehandlingsTema(inntektsmelding))
+        val inntektsmelding = mockInntektsmelding(Refusjon(beloepPrMnd = null, LocalDate.now()), BigDecimal(11000))
+        assertEquals(BehandlingsKategori.IKKE_REFUSJON, finnBehandlingsKategori(inntektsmelding, false, false))
     }
 
     @Test
     fun krever_ikke_refusjon_ved_tomt_beløp() {
-        var inntektsmelding = mockInntektsmelding(Refusjon(beloepPrMnd = BigDecimal(0.2), LocalDate.now()), BigDecimal(11000))
-        assertEquals(BehandlingsTema.IKKE_REFUSJON, finnBehandlingsTema(inntektsmelding))
+        val inntektsmelding = mockInntektsmelding(Refusjon(beloepPrMnd = BigDecimal(0.2), LocalDate.now()), BigDecimal(11000))
+        assertEquals(BehandlingsKategori.IKKE_REFUSJON, finnBehandlingsKategori(inntektsmelding, false, false))
     }
 
     @Test
     fun krever_refusjon_med_dato() {
         val inntektsmelding = mockInntektsmelding(Refusjon(beloepPrMnd = BigDecimal(14000), LocalDate.now()), BigDecimal(11000))
-        assertEquals(BehandlingsTema.REFUSJON_MED_DATO, finnBehandlingsTema(inntektsmelding))
+        assertEquals(BehandlingsKategori.REFUSJON_MED_DATO, finnBehandlingsKategori(inntektsmelding, false, false))
     }
 
     @Test
     fun krever_refusjon_mindre_månedslønn() {
-        var inntektsmelding = mockInntektsmelding(Refusjon(beloepPrMnd = BigDecimal(10000), null), BigDecimal(11000))
-        assertEquals(BehandlingsTema.REFUSJON_LITEN_LØNN, finnBehandlingsTema(inntektsmelding))
+        val inntektsmelding = mockInntektsmelding(Refusjon(beloepPrMnd = BigDecimal(10000), null), BigDecimal(11000))
+        assertEquals(BehandlingsKategori.REFUSJON_LITEN_LØNN, finnBehandlingsKategori(inntektsmelding, false, false))
     }
 
     @Test
     fun vanlig_flyt_normal_lønn() {
-        var inntektsmelding = mockInntektsmelding(Refusjon(beloepPrMnd = BigDecimal(17000), null), BigDecimal(17000))
-        assertEquals(BehandlingsTema.REFUSJON_UTEN_DATO, finnBehandlingsTema(inntektsmelding))
+        val inntektsmelding = mockInntektsmelding(Refusjon(beloepPrMnd = BigDecimal(17000), null), BigDecimal(17000))
+        assertEquals(BehandlingsKategori.REFUSJON_UTEN_DATO, finnBehandlingsKategori(inntektsmelding, false, false))
     }
 
     fun mockInntektsmelding(refusjon: Refusjon, inntekt: BigDecimal): Inntektsmelding {

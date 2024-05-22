@@ -107,16 +107,14 @@ fun opprettOppgaveIGosys(
     )
     val gjelderUtland = (SYKEPENGER_UTLAND == behandlendeEnhet)
     val inntektsmelding = om.readValue<Inntektsmelding>(imEntitet.data!!)
-    val behandlingsTema = finnBehandlingsTema(inntektsmelding)
+    val behandlingsKategori = finnBehandlingsKategori(inntektsmelding, speil, gjelderUtland)
     logger.info("Fant enhet $behandlendeEnhet for ${utsattOppgave.arkivreferanse}")
     val resultat = runBlocking {
         oppgaveClient.opprettOppgave(
             journalpostId = utsattOppgave.journalpostId,
             tildeltEnhetsnr = null,
             aktoerId = utsattOppgave.aktørId,
-            gjelderUtland = gjelderUtland,
-            gjelderSpeil = speil,
-            tema = behandlingsTema
+            behandlingsKategori = behandlingsKategori
         )
     }
     utsattOppgave.enhet = behandlendeEnhet
