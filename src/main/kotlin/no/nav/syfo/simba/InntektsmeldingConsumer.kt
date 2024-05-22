@@ -94,12 +94,11 @@ class InntektsmeldingConsumer(
         val arkivreferanse = "im_$journalpostId"
         val inntektsmelding = mapInntektsmelding(arkivreferanse, aktorid, journalpostId, inntektsmeldingFraSimba)
         val dto = inntektsmeldingService.lagreBehandling(inntektsmelding, aktorid)
-        val timeout: LocalDateTime
-        if (selvbestemt) {
-            timeout = LocalDateTime.now()
+        val timeout = if (selvbestemt) {
             sikkerlogger.info("Mottok selvbestemtIM med journalpostId $journalpostId, oppretter gosys-oppgave umiddelbart")
+            LocalDateTime.now()
         } else {
-            timeout = LocalDateTime.now().plusHours(OPPRETT_OPPGAVE_FORSINKELSE)
+            LocalDateTime.now().plusHours(OPPRETT_OPPGAVE_FORSINKELSE)
         }
         utsattOppgaveService.opprett(
             UtsattOppgaveEntitet(
