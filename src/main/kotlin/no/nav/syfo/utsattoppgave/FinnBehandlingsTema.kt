@@ -13,31 +13,13 @@ enum class BehandlingsKategori {
     BETVILER_SYKEMELDING
 }
 
-fun finnBehandlingsKategori(inntektsmelding: Inntektsmelding, speilRelatert: Boolean, gjelderUtland: Boolean): BehandlingsKategori {
-
-    if (speilRelatert) {
-        return BehandlingsKategori.SPEIL_RELATERT
+fun finnBehandlingsKategori(inntektsmelding: Inntektsmelding, speilRelatert: Boolean, gjelderUtland: Boolean): BehandlingsKategori =
+    when {
+        speilRelatert -> BehandlingsKategori.SPEIL_RELATERT
+        gjelderUtland -> BehandlingsKategori.UTLAND
+        inntektsmelding.begrunnelseRedusert == "BetvilerArbeidsufoerhet" -> BehandlingsKategori.BETVILER_SYKEMELDING
+        inntektsmelding.refusjon.beloepPrMnd == null || inntektsmelding.refusjon.beloepPrMnd < BigDecimal(1) -> BehandlingsKategori.IKKE_REFUSJON
+        inntektsmelding.refusjon.opphoersdato != null -> BehandlingsKategori.REFUSJON_MED_DATO
+        inntektsmelding.refusjon.beloepPrMnd < inntektsmelding.beregnetInntekt -> BehandlingsKategori.REFUSJON_LITEN_LØNN
+        else -> BehandlingsKategori.REFUSJON_UTEN_DATO
     }
-    if (gjelderUtland) {
-        return BehandlingsKategori.UTLAND
-    }
-    val refusjon = inntektsmelding.refusjon
-
-    if (inntektsmelding.begrunnelseRedusert == "BetvilerArbeidsufoerhet") {
-        return BehandlingsKategori.BETVILER_SYKEMELDING
-    }
-
-    if (refusjon.beloepPrMnd == null || refusjon.beloepPrMnd < BigDecimal(1)) {
-        return BehandlingsKategori.IKKE_REFUSJON
-    }
-
-    if (refusjon.opphoersdato != null) {
-        return BehandlingsKategori.REFUSJON_MED_DATO
-    }
-
-    if (refusjon.beloepPrMnd < inntektsmelding.beregnetInntekt) {
-        return BehandlingsKategori.REFUSJON_LITEN_LØNN
-    }
-
-    return BehandlingsKategori.REFUSJON_UTEN_DATO
-}
