@@ -116,6 +116,7 @@ class InntektsmeldingConsumer(
                 utbetalingBruker = false
             )
         )
+        val matcherSpleis = !selvbestemt // senere kan dette bli flere tilfeller
 
         val mappedInntektsmelding = mapInntektsmeldingKontrakt(
             inntektsmelding,
@@ -123,12 +124,12 @@ class InntektsmeldingConsumer(
             validerInntektsmelding(inntektsmelding),
             arkivreferanse,
             dto.uuid,
-            selvbestemt
+            matcherSpleis
         )
 
         inntektsmeldingAivenProducer.leggMottattInntektsmeldingPåTopics(mappedInntektsmelding)
 
-        sikkerlogger.info("Publiserte inntektsmelding på topic: $inntektsmelding")
+        sikkerlogger.info("Publiserte inntektsmelding på topic: $mappedInntektsmelding")
     }
 
     private fun hentAktoeridFraPDL(identitetsnummer: String): String {
