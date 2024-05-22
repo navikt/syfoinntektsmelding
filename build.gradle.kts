@@ -5,7 +5,7 @@ val mainClass = "no.nav.syfo.AppKt"
 val group = "no.nav.syfo"
 val githubPassword: String by project
 
-// Dependencies
+//  Dependencies
 val micrometerVersion: String by project
 val flywayVersion: String by project
 val cxfVersion: String by project
