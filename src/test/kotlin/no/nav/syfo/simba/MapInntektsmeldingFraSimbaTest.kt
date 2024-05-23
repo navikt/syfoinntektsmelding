@@ -98,6 +98,16 @@ class MapInntektsmeldingFraSimbaTest {
         assertEquals(vedtaksperiodeId, im2.vedtaksperiodeId)
     }
 
+    @Test
+    fun mapAvsenderForSelvbestemtOgVanlig() {
+        val selvbestemtIM = mapInntektsmelding("1", "2", "3", lagInntektsmelding(), selvbestemt = true)
+        assertEquals(Avsender.NAV_NO_SELVBESTEMT, selvbestemtIM.avsenderSystem.navn)
+        assertEquals(Avsender.VERSJON, selvbestemtIM.avsenderSystem.versjon)
+        val im = mapInntektsmelding("1", "2", "3", lagInntektsmelding())
+        assertEquals(Avsender.NAV_NO, im.avsenderSystem.navn)
+        assertEquals(Avsender.VERSJON, im.avsenderSystem.versjon)
+    }
+
     private fun lagInntektsmelding(): Inntektsmelding {
         val dato1 = LocalDate.now().minusDays(7)
         val dato2 = LocalDate.now().minusDays(5)

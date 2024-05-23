@@ -29,7 +29,18 @@ import no.nav.syfo.domain.inntektsmelding.Refusjon
 import no.nav.syfo.domain.inntektsmelding.SpinnInntektEndringAarsak
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.Inntektsmelding as InntektmeldingSimba
 
-fun mapInntektsmelding(arkivreferanse: String, aktorId: String, journalpostId: String, im: InntektmeldingSimba): Inntektsmelding {
+object Avsender {
+    val NAV_NO = "NAV_NO"
+    val NAV_NO_SELVBESTEMT = NAV_NO + "_SELVBESTEMT"
+    val VERSJON = "1.0"
+}
+
+fun mapInntektsmelding(arkivreferanse: String, aktorId: String, journalpostId: String, im: InntektmeldingSimba, selvbestemt: Boolean = false): Inntektsmelding {
+    val avsenderSystem = if (selvbestemt) {
+        Avsender.NAV_NO_SELVBESTEMT
+    } else {
+        Avsender.NAV_NO
+    }
     return Inntektsmelding(
         id = "",
         vedtaksperiodeId = im.vedtaksperiodeId,
@@ -62,7 +73,7 @@ fun mapInntektsmelding(arkivreferanse: String, aktorId: String, journalpostId: S
         sakId = "",
         aktorId = aktorId,
         begrunnelseRedusert = im.fullLønnIArbeidsgiverPerioden?.begrunnelse?.name.orEmpty(),
-        avsenderSystem = AvsenderSystem("NAV_NO", "1.0"),
+        avsenderSystem = AvsenderSystem(avsenderSystem, Avsender.VERSJON),
         nærRelasjon = null,
         kontaktinformasjon = Kontaktinformasjon(im.innsenderNavn, im.telefonnummer),
         innsendingstidspunkt = im.tidspunkt.toLocalDateTime(),
