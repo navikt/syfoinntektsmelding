@@ -11,7 +11,7 @@ import io.ktor.http.content.TextContent
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.util.Metrikk
-import no.nav.syfo.utsattoppgave.BehandlingsTema
+import no.nav.syfo.utsattoppgave.BehandlingsKategori
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.DayOfWeek
@@ -32,7 +32,7 @@ class OppgaveClientTest {
     fun henterEksisterendeOppgave() {
         runBlocking {
             oppgaveClient = OppgaveClient("url", buildHttpClientJson(HttpStatusCode.OK, lagOppgaveResponse()), metrikk) { "mockToken" }
-            val resultat = oppgaveClient.opprettOppgave("123", "tildeltEnhet", "aktoerid", false, false, BehandlingsTema.REFUSJON_MED_DATO)
+            val resultat = oppgaveClient.opprettOppgave("123", "tildeltEnhet", "aktoerid", BehandlingsKategori.REFUSJON_MED_DATO)
             assertThat(resultat.oppgaveId).isEqualTo(OPPGAVE_ID)
             assertThat(resultat.duplikat).isTrue
         }
@@ -43,7 +43,7 @@ class OppgaveClientTest {
     fun oppretterNyOppgave() {
         runBlocking {
             oppgaveClient = OppgaveClient("url", buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk) { "mockToken" }
-            val resultat = oppgaveClient.opprettOppgave("123", "tildeltEnhet", "aktoerid", false, false, BehandlingsTema.REFUSJON_MED_DATO)
+            val resultat = oppgaveClient.opprettOppgave("123", "tildeltEnhet", "aktoerid", BehandlingsKategori.REFUSJON_MED_DATO)
             val requestVerdier = hentRequestInnhold(oppgaveClient.httpClient)
             assertThat(resultat.oppgaveId).isNotEqualTo(OPPGAVE_ID)
             assertThat(resultat.duplikat).isFalse
@@ -83,31 +83,40 @@ class OppgaveClientTest {
     fun skal_opprette_utland() {
         runBlocking {
             oppgaveClient = OppgaveClient("url", buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk) { "mockToken" }
-            oppgaveClient.opprettOppgave("123", "tildeltEnhet", "aktoerid", true, false, BehandlingsTema.REFUSJON_MED_DATO)
+            oppgaveClient.opprettOppgave("123", "tildeltEnhet", "aktoerid", BehandlingsKategori.UTLAND)
             val requestVerdier = hentRequestInnhold(oppgaveClient.httpClient)
             assertThat(requestVerdier?.behandlingstype).isEqualTo("ae0106")
         }
         runBlocking {
             oppgaveClient = OppgaveClient("url", buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk) { "mockToken" }
-            oppgaveClient.opprettOppgave("123", "tildeltEnhet", "aktoerid", true, false, BehandlingsTema.REFUSJON_UTEN_DATO)
+            oppgaveClient.opprettOppgave("123", "tildeltEnhet", "aktoerid", BehandlingsKategori.UTLAND)
             val requestVerdier = hentRequestInnhold(oppgaveClient.httpClient)
             assertThat(requestVerdier?.behandlingstype).isEqualTo("ae0106")
         }
     }
 
     @Test
-
     fun skal_opprette_speil() {
         runBlocking {
             oppgaveClient = OppgaveClient("url", buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk) { "mockToken" }
-            oppgaveClient.opprettOppgave("123", "tildeltEnhet", "aktoerid", true, true, BehandlingsTema.REFUSJON_UTEN_DATO)
+            oppgaveClient.opprettOppgave("123", "tildeltEnhet", "aktoerid", BehandlingsKategori.SPEIL_RELATERT)
             val requestVerdier = hentRequestInnhold(oppgaveClient.httpClient)
             assertThat(requestVerdier?.behandlingstema).isEqualTo("ab0455")
         }
     }
 
     @Test
+    fun skal_opprette_betviler_sykemelding() {
+        runBlocking {
+            oppgaveClient = OppgaveClient("url", buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk) { "mockToken" }
+            oppgaveClient.opprettOppgave("123", "tildeltEnhet", "aktoerid", BehandlingsKategori.BESTRIDER_SYKEMELDING)
+            val requestVerdier = hentRequestInnhold(oppgaveClient.httpClient)
+            assertThat(requestVerdier?.behandlingstema).isEqualTo("ab0421")
+            assertThat(requestVerdier?.behandlingstype).isEqualTo(null)
+        }
+    }
 
+    @Test
     fun henterRiktigFerdigstillelsesFrist() {
         oppgaveClient = OppgaveClient("url", buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk) { "mockToken" }
         val onsdag = LocalDate.of(2019, Month.NOVEMBER, 27)
@@ -126,19 +135,19 @@ class OppgaveClientTest {
     fun skal_utbetale_til_bruker() {
         runBlocking {
             oppgaveClient = OppgaveClient("url", buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk) { "mockToken" }
-            oppgaveClient.opprettOppgave("123", "tildeltEnhet", "aktoerid", false, false, BehandlingsTema.REFUSJON_MED_DATO)
+            oppgaveClient.opprettOppgave("123", "tildeltEnhet", "aktoerid", BehandlingsKategori.REFUSJON_MED_DATO)
             val requestVerdier = hentRequestInnhold(oppgaveClient.httpClient)
             assertThat(requestVerdier?.behandlingstema).isEqualTo("ab0458")
         }
         runBlocking {
             oppgaveClient = OppgaveClient("url", buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk) { "mockToken" }
-            oppgaveClient.opprettOppgave("123", "tildeltEnhet", "aktoerid", false, false, BehandlingsTema.IKKE_REFUSJON)
+            oppgaveClient.opprettOppgave("123", "tildeltEnhet", "aktoerid", BehandlingsKategori.IKKE_REFUSJON)
             val requestVerdier = hentRequestInnhold(oppgaveClient.httpClient)
             assertThat(requestVerdier?.behandlingstema).isEqualTo("ab0458")
         }
         runBlocking {
             oppgaveClient = OppgaveClient("url", buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk) { "mockToken" }
-            oppgaveClient.opprettOppgave("123", "tildeltEnhet", "aktoerid", false, false, BehandlingsTema.REFUSJON_LITEN_LØNN)
+            oppgaveClient.opprettOppgave("123", "tildeltEnhet", "aktoerid", BehandlingsKategori.REFUSJON_LITEN_LØNN)
             val requestVerdier = hentRequestInnhold(oppgaveClient.httpClient)
             assertThat(requestVerdier?.behandlingstema).isEqualTo("ab0458")
         }
