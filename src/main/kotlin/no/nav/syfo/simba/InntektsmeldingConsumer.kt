@@ -84,17 +84,22 @@ class InntektsmeldingConsumer(
         if (im != null) {
             sikkerlogger.info("InntektsmeldingConsumer: Behandler ikke ${meldingFraSimba.journalpostId}. Finnes allerede.")
         } else {
-            behandle(meldingFraSimba.journalpostId, meldingFraSimba.inntektsmelding)
-            log.info("InntektsmeldingConsumer: Behandlet inntektsmelding med journalpostid: ${meldingFraSimba.journalpostId}")
+            behandle(meldingFraSimba.journalpostId, meldingFraSimba.inntektsmelding, meldingFraSimba.selvbestemt)
+            log.info("InntektsmeldingConsumer: Behandlet inntektsmelding med journalpostId: ${meldingFraSimba.journalpostId}")
         }
     }
 
-    private fun behandle(journalpostId: String, inntektsmeldingFraSimba: Inntektsmelding) {
+    private fun behandle(journalpostId: String, inntektsmeldingFraSimba: Inntektsmelding, selvbestemt: Boolean) {
         val aktorid = hentAktoeridFraPDL(inntektsmeldingFraSimba.identitetsnummer)
         val arkivreferanse = "im_$journalpostId"
         val inntektsmelding = mapInntektsmelding(arkivreferanse, aktorid, journalpostId, inntektsmeldingFraSimba)
         val dto = inntektsmeldingService.lagreBehandling(inntektsmelding, aktorid)
-
+        val timeout = if (selvbestemt) {
+            sikkerlogger.info("Mottok selvbestemtIM med journalpostId $journalpostId, oppretter gosys-oppgave umiddelbart")
+            LocalDateTime.now()
+        } else {
+            LocalDateTime.now().plusHours(OPPRETT_OPPGAVE_FORSINKELSE)
+        }
         utsattOppgaveService.opprett(
             UtsattOppgaveEntitet(
                 fnr = inntektsmelding.fnr,
@@ -103,25 +108,27 @@ class InntektsmeldingConsumer(
                 arkivreferanse = inntektsmelding.arkivRefereranse,
                 inntektsmeldingId = dto.uuid,
                 tilstand = Tilstand.Utsatt,
-                timeout = LocalDateTime.now().plusHours(OPPRETT_OPPGAVE_FORSINKELSE),
+                timeout = timeout,
                 gosysOppgaveId = null,
                 oppdatert = null,
                 speil = false,
                 utbetalingBruker = false
             )
         )
+        val matcherSpleis = !selvbestemt // senere kan dette bli flere tilfeller
 
         val mappedInntektsmelding = mapInntektsmeldingKontrakt(
             inntektsmelding,
             aktorid,
             validerInntektsmelding(inntektsmelding),
             arkivreferanse,
-            dto.uuid
+            dto.uuid,
+            matcherSpleis
         )
 
         inntektsmeldingAivenProducer.leggMottattInntektsmeldingPåTopics(mappedInntektsmelding)
 
-        sikkerlogger.info("Publiserte inntektsmelding på topic: $inntektsmelding")
+        sikkerlogger.info("Publiserte inntektsmelding på topic: $mappedInntektsmelding")
     }
 
     private fun hentAktoeridFraPDL(identitetsnummer: String): String {
