@@ -12,7 +12,7 @@ import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-internal class FinnBehandlingsTemaKtTest {
+internal class FinnBehandlingsKategoriTest {
 
     @Test
     fun krever_ikke_refusjon_ved_null_beløp() {
@@ -42,6 +42,24 @@ internal class FinnBehandlingsTemaKtTest {
     fun vanlig_flyt_normal_lønn() {
         val inntektsmelding = mockInntektsmelding(Refusjon(beloepPrMnd = BigDecimal(17000), null), BigDecimal(17000))
         assertEquals(BehandlingsKategori.REFUSJON_UTEN_DATO, finnBehandlingsKategori(inntektsmelding, false, false))
+    }
+
+    @Test
+    fun betviler_sykemelding() {
+        val inntektsmelding = mockInntektsmelding(Refusjon(beloepPrMnd = BigDecimal(17000), null), BigDecimal(17000)).copy(begrunnelseRedusert = "BetvilerArbeidsufoerhet")
+        assertEquals(BehandlingsKategori.BETVILER_SYKEMELDING, finnBehandlingsKategori(inntektsmelding, false, false))
+    }
+
+    @Test
+    fun speil_relatert() {
+        val inntektsmelding = mockInntektsmelding(Refusjon(beloepPrMnd = BigDecimal(17000), null), BigDecimal(17000))
+        assertEquals(BehandlingsKategori.SPEIL_RELATERT, finnBehandlingsKategori(inntektsmelding, true, false))
+    }
+
+    @Test
+    fun gjelder_utland() {
+        val inntektsmelding = mockInntektsmelding(Refusjon(beloepPrMnd = BigDecimal(17000), null), BigDecimal(17000))
+        assertEquals(BehandlingsKategori.UTLAND, finnBehandlingsKategori(inntektsmelding, false, true))
     }
 
     fun mockInntektsmelding(refusjon: Refusjon, inntekt: BigDecimal): Inntektsmelding {
