@@ -109,7 +109,7 @@ class OppgaveClientTest {
     fun skal_opprette_betviler_sykemelding() {
         runBlocking {
             oppgaveClient = OppgaveClient("url", buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk) { "mockToken" }
-            oppgaveClient.opprettOppgave("123", "tildeltEnhet", "aktoerid", BehandlingsKategori.BETVILER_SYKEMELDING)
+            oppgaveClient.opprettOppgave("123", "tildeltEnhet", "aktoerid", BehandlingsKategori.BESTRIDER_SYKEMELDING)
             val requestVerdier = hentRequestInnhold(oppgaveClient.httpClient)
             assertThat(requestVerdier?.behandlingstema).isEqualTo("ab0421")
             assertThat(requestVerdier?.behandlingstype).isEqualTo(null)

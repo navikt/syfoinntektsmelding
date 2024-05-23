@@ -47,7 +47,7 @@ internal class FinnBehandlingsKategoriTest {
     @Test
     fun betviler_sykemelding() {
         val inntektsmelding = mockInntektsmelding(Refusjon(beloepPrMnd = BigDecimal(17000), null), BigDecimal(17000)).copy(begrunnelseRedusert = "BetvilerArbeidsufoerhet")
-        assertEquals(BehandlingsKategori.BETVILER_SYKEMELDING, finnBehandlingsKategori(inntektsmelding, false, false))
+        assertEquals(BehandlingsKategori.BESTRIDER_SYKEMELDING, finnBehandlingsKategori(inntektsmelding, false, false))
     }
 
     @Test
