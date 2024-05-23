@@ -17,49 +17,51 @@ internal class FinnBehandlingsKategoriTest {
     @Test
     fun krever_ikke_refusjon_ved_null_beløp() {
         val inntektsmelding = mockInntektsmelding(Refusjon(beloepPrMnd = null, LocalDate.now()), BigDecimal(11000))
-        assertEquals(BehandlingsKategori.IKKE_REFUSJON, finnBehandlingsKategori(inntektsmelding, false, false))
+        assertEquals(BehandlingsKategori.IKKE_REFUSJON, finnBehandlingsKategori(inntektsmelding = inntektsmelding, speilRelatert = false, gjelderUtland = false))
     }
 
     @Test
     fun krever_ikke_refusjon_ved_tomt_beløp() {
         val inntektsmelding = mockInntektsmelding(Refusjon(beloepPrMnd = BigDecimal(0.2), LocalDate.now()), BigDecimal(11000))
-        assertEquals(BehandlingsKategori.IKKE_REFUSJON, finnBehandlingsKategori(inntektsmelding, false, false))
+        assertEquals(BehandlingsKategori.IKKE_REFUSJON, finnBehandlingsKategori(inntektsmelding = inntektsmelding, speilRelatert = false, gjelderUtland = false))
     }
 
     @Test
     fun krever_refusjon_med_dato() {
         val inntektsmelding = mockInntektsmelding(Refusjon(beloepPrMnd = BigDecimal(14000), LocalDate.now()), BigDecimal(11000))
-        assertEquals(BehandlingsKategori.REFUSJON_MED_DATO, finnBehandlingsKategori(inntektsmelding, false, false))
+        assertEquals(BehandlingsKategori.REFUSJON_MED_DATO, finnBehandlingsKategori(inntektsmelding = inntektsmelding, speilRelatert = false, gjelderUtland = false))
     }
 
     @Test
     fun krever_refusjon_mindre_månedslønn() {
         val inntektsmelding = mockInntektsmelding(Refusjon(beloepPrMnd = BigDecimal(10000), null), BigDecimal(11000))
-        assertEquals(BehandlingsKategori.REFUSJON_LITEN_LØNN, finnBehandlingsKategori(inntektsmelding, false, false))
+        assertEquals(BehandlingsKategori.REFUSJON_LITEN_LØNN, finnBehandlingsKategori(inntektsmelding = inntektsmelding, speilRelatert = false, gjelderUtland = false))
     }
 
     @Test
     fun vanlig_flyt_normal_lønn() {
         val inntektsmelding = mockInntektsmelding(Refusjon(beloepPrMnd = BigDecimal(17000), null), BigDecimal(17000))
-        assertEquals(BehandlingsKategori.REFUSJON_UTEN_DATO, finnBehandlingsKategori(inntektsmelding, false, false))
+        assertEquals(BehandlingsKategori.REFUSJON_UTEN_DATO, finnBehandlingsKategori(inntektsmelding = inntektsmelding, speilRelatert = false, gjelderUtland = false))
     }
 
     @Test
-    fun betviler_sykemelding() {
-        val inntektsmelding = mockInntektsmelding(Refusjon(beloepPrMnd = BigDecimal(17000), null), BigDecimal(17000)).copy(begrunnelseRedusert = "BetvilerArbeidsufoerhet")
-        assertEquals(BehandlingsKategori.BESTRIDER_SYKEMELDING, finnBehandlingsKategori(inntektsmelding, false, false))
+    fun bestrider_sykemelding() {
+        val inntektsmelding =
+            mockInntektsmelding(Refusjon(beloepPrMnd = BigDecimal(17000), null), BigDecimal(17000)).copy(begrunnelseRedusert = "BetvilerArbeidsufoerhet")
+        assertEquals(BehandlingsKategori.BESTRIDER_SYKEMELDING, finnBehandlingsKategori(inntektsmelding = inntektsmelding, speilRelatert = false, gjelderUtland = false))
     }
 
     @Test
     fun speil_relatert() {
         val inntektsmelding = mockInntektsmelding(Refusjon(beloepPrMnd = BigDecimal(17000), null), BigDecimal(17000))
-        assertEquals(BehandlingsKategori.SPEIL_RELATERT, finnBehandlingsKategori(inntektsmelding, true, false))
+        assertEquals(BehandlingsKategori.SPEIL_RELATERT, finnBehandlingsKategori(inntektsmelding = inntektsmelding, speilRelatert = true, gjelderUtland = false))
+        assertEquals(BehandlingsKategori.SPEIL_RELATERT, finnBehandlingsKategori(inntektsmelding = inntektsmelding, speilRelatert = true, gjelderUtland = true))
     }
 
     @Test
     fun gjelder_utland() {
         val inntektsmelding = mockInntektsmelding(Refusjon(beloepPrMnd = BigDecimal(17000), null), BigDecimal(17000))
-        assertEquals(BehandlingsKategori.UTLAND, finnBehandlingsKategori(inntektsmelding, false, true))
+        assertEquals(BehandlingsKategori.UTLAND, finnBehandlingsKategori(inntektsmelding = inntektsmelding, speilRelatert = false, gjelderUtland = true))
     }
 
     fun mockInntektsmelding(refusjon: Refusjon, inntekt: BigDecimal): Inntektsmelding {
