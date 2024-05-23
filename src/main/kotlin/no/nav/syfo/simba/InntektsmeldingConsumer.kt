@@ -92,7 +92,7 @@ class InntektsmeldingConsumer(
     private fun behandle(journalpostId: String, inntektsmeldingFraSimba: Inntektsmelding, selvbestemt: Boolean) {
         val aktorid = hentAktoeridFraPDL(inntektsmeldingFraSimba.identitetsnummer)
         val arkivreferanse = "im_$journalpostId"
-        val inntektsmelding = mapInntektsmelding(arkivreferanse, aktorid, journalpostId, inntektsmeldingFraSimba)
+        val inntektsmelding = mapInntektsmelding(arkivreferanse, aktorid, journalpostId, inntektsmeldingFraSimba, selvbestemt)
         val dto = inntektsmeldingService.lagreBehandling(inntektsmelding, aktorid)
         val timeout = if (selvbestemt) {
             sikkerlogger.info("Mottok selvbestemtIM med journalpostId $journalpostId, oppretter gosys-oppgave umiddelbart")
