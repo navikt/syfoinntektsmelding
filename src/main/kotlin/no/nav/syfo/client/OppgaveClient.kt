@@ -94,12 +94,12 @@ class OppgaveClient(
         val eksisterendeOppgave = hentHvisOppgaveFinnes(Oppgavetype.INNTEKTSMELDING, journalpostId)
         metrikk.tellOpprettOppgave(eksisterendeOppgave != null)
         if (eksisterendeOppgave != null) {
-            logger.info("Det finnes allerede journalføringsoppgave for journalpost $journalpostId")
+            sikkerlogger.info("Det finnes allerede journalføringsoppgave for journalpost $journalpostId")
             return eksisterendeOppgave
         }
 
         fun loggOppgave(type: String) {
-            logger.info("Oppretter oppgave: $type for journalpost $journalpostId")
+            sikkerlogger.info("Oppretter oppgave: $type for journalpost $journalpostId")
         }
 
         val (behandlingstype, behandlingstema, utbetalingBruker) = when (behandlingsKategori) {
@@ -141,7 +141,7 @@ class OppgaveClient(
             fristFerdigstillelse = leggTilEnVirkeuke(LocalDate.now()),
             prioritet = "NORM"
         )
-        logger.info("Oppretter journalføringsoppgave på enhet $tildeltEnhetsnr")
+        sikkerlogger.info("Oppretter journalføringsoppgave på enhet $tildeltEnhetsnr")
         try {
             return OppgaveResultat(opprettOppgave(opprettOppgaveRequest).id, false, utbetalingBruker)
         } catch (ex: Exception) {
@@ -156,7 +156,7 @@ class OppgaveClient(
         val eksisterendeOppgave = hentHvisOppgaveFinnes(Oppgavetype.FORDELINGSOPPGAVE, journalpostId)
 
         if (eksisterendeOppgave != null) {
-            logger.info("Det finnes allerede fordelingsoppgave for journalpost $journalpostId")
+            sikkerlogger.info("Det finnes allerede fordelingsoppgave for journalpost $journalpostId")
             return eksisterendeOppgave
         }
 
