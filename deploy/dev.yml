@@ -13,7 +13,7 @@ spec:
   image: {{image}}
   port: 8080
   observability:
-    autoInstrument:
+    autoInstrumentation:
       enabled: true
       runtime: java
   prometheus:
