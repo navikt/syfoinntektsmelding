@@ -12,6 +12,10 @@ spec:
     - https://spinosaurus.intern.dev.nav.no
   image: {{image}}
   port: 8080
+  observability:
+    autoInstrument:
+      enabled: true
+      runtime: java
   prometheus:
     enabled: false
     path: /metrics
