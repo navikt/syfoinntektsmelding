@@ -89,7 +89,7 @@ spec:
     - name: PDL_URL
       value: "https://pdl-api.prod-fss-pub.nais.io/graphql"
     - name: NORG2_URL
-      value: "https://helsearbeidsgiver-proxy.prod-fss-pub.nais.io/norg"
+      value: "https://norg2.prod-fss-pub.nais.io/norg2/api/v1/arbeidsfordeling/enheter/bestmatch"
     - name: SAF_DOKUMENT_URL
       value: "https://saf.prod-fss-pub.nais.io/rest"
     - name: SAF_JOURNAL_URL

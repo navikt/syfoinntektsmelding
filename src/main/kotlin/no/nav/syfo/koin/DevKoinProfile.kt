@@ -143,7 +143,6 @@ fun devConfig(config: ApplicationConfig) = module {
         Norg2Client(
             config.getString("norg2_url"),
             get(),
-            get<AccessTokenProvider>(qualifier = named(AccessScope.PROXY))::getToken,
         )
     }
 

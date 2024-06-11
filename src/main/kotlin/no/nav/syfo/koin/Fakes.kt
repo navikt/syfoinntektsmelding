@@ -98,8 +98,7 @@ fun Module.mockExternalDependecies() {
     single {
         object : Norg2Client(
             "",
-            get(),
-            { "fake token" }
+            get()
         ) {
             override suspend fun hentAlleArbeidsfordelinger(
                 request: ArbeidsfordelingRequest,
