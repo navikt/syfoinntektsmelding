@@ -91,7 +91,7 @@ spec:
     - name: PDL_URL
       value: "https://pdl-api.dev-fss-pub.nais.io/graphql"
     - name: NORG2_URL
-      value: https://norg2.dev-fss-pub.nais.io/norg2/api/v1/arbeidsfordeling/enheter/bestmatch
+      value: "https://norg2.dev-fss-pub.nais.io/norg2/api/v1/arbeidsfordeling/enheter/bestmatch"
     - name: SAF_DOKUMENT_URL
       value: "https://saf.dev-fss-pub.nais.io/rest"
     - name: SAF_JOURNAL_URL
