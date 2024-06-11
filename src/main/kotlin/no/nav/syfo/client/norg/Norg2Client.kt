@@ -33,7 +33,8 @@ open class Norg2Client(
             httpClient.post<List<ArbeidsfordelingResponse>>(url) {
                 contentType(ContentType.Application.Json.withCharset(Charsets.UTF_8))
                 header("X-Correlation-ID", callId)
-                header("Authorization", "Bearer ${getAccessToken()}")
+                header("Nav-Call-Id", callId)
+                header("Nav-Consumer-Id", "spinosaurus")
                 body = request
             }
         }
