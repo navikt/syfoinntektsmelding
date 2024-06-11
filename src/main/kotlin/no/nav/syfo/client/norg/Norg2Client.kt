@@ -21,8 +21,7 @@ import java.time.LocalDate
  */
 open class Norg2Client(
     private val url: String,
-    private val httpClient: HttpClient,
-    private val getAccessToken: () -> String
+    private val httpClient: HttpClient
 ) {
 
     /**
