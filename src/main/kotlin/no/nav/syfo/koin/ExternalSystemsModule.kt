@@ -26,7 +26,6 @@ enum class AccessScope : Qualifier {
     DOKARKIV,
     OPPGAVE,
     PDL,
-    PROXY,
     SAF;
 
     override val value: QualifierValue
@@ -35,13 +34,6 @@ enum class AccessScope : Qualifier {
 
 fun Module.externalSystemClients(config: ApplicationConfig) {
     val clientConfig = config.configList("no.nav.security.jwt.client.registration.clients").first()
-
-    single(named(AccessScope.PROXY)) {
-        oauth2TokenProvider(
-            clientConfig,
-            clientConfig.getString("proxyscope")
-        )
-    } bind AccessTokenProvider::class
 
     single(named(AccessScope.OPPGAVE)) {
         oauth2TokenProvider(
