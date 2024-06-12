@@ -57,10 +57,6 @@ spec:
 
   accessPolicy:
     outbound:
-      rules:
-        - application: helsearbeidsgiver-proxy
-          namespace: helsearbeidsgiver
-          cluster: prod-fss
       external:
         - host: norg2.prod-fss-pub.nais.io
         - host: oppgave.prod-fss-pub.nais.io
@@ -102,6 +98,3 @@ spec:
       value: "api://prod-fss.oppgavehandtering.oppgave/.default"
     - name: PDL_SCOPE
       value: "api://prod-fss.pdl.pdl-api/.default"
-    - name: PROXY_SCOPE
-      value: "api://prod-fss.helsearbeidsgiver.helsearbeidsgiver-proxy/.default"
-
