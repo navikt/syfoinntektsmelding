@@ -86,7 +86,6 @@ class OppgaveClient(
 
     suspend fun opprettOppgave(
         journalpostId: String,
-        tildeltEnhetsnr: String?,
         aktoerId: String,
         behandlingsKategori: BehandlingsKategori
     ): OppgaveResultat {
@@ -128,7 +127,6 @@ class OppgaveClient(
         }
 
         val opprettOppgaveRequest = OpprettOppgaveRequest(
-            tildeltEnhetsnr = tildeltEnhetsnr,
             aktoerId = aktoerId,
             journalpostId = journalpostId,
             behandlesAvApplikasjon = "FS22",
@@ -141,7 +139,7 @@ class OppgaveClient(
             fristFerdigstillelse = leggTilEnVirkeuke(LocalDate.now()),
             prioritet = "NORM"
         )
-        sikkerlogger.info("Oppretter journalføringsoppgave på enhet $tildeltEnhetsnr")
+        sikkerlogger.info("Oppretter journalføringsoppgave")
         try {
             return OppgaveResultat(opprettOppgave(opprettOppgaveRequest).id, false, utbetalingBruker)
         } catch (ex: Exception) {
