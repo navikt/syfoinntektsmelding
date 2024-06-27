@@ -112,7 +112,6 @@ fun opprettOppgaveIGosys(
     val resultat = runBlocking {
         oppgaveClient.opprettOppgave(
             journalpostId = utsattOppgave.journalpostId,
-            tildeltEnhetsnr = null,
             aktoerId = utsattOppgave.aktørId,
             behandlingsKategori = behandlingsKategori
         )
