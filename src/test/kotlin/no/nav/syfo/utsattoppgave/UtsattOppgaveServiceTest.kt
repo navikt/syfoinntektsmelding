@@ -40,8 +40,8 @@ open class UtsattOppgaveServiceTest {
             .configure(KotlinFeature.SingletonSupport, false)
             .configure(KotlinFeature.StrictNullChecks, false)
             .build(),
-        JavaTimeModule())
-
+        JavaTimeModule()
+    )
 
     @BeforeEach
     fun setup() {
