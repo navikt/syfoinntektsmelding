@@ -8,14 +8,12 @@ import no.nav.helsearbeidsgiver.utils.log.sikkerLogger
 import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.domain.OppgaveResultat
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
-import no.nav.syfo.dto.InntektsmeldingEntitet
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.dto.UtsattOppgaveEntitet
 import no.nav.syfo.repository.InntektsmeldingRepository
 import no.nav.syfo.service.BehandlendeEnhetConsumer
 import no.nav.syfo.service.SYKEPENGER_UTLAND
 import no.nav.syfo.util.Metrikk
-import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -59,15 +57,26 @@ class UtsattOppgaveService(
                 logger.info("Endret oppgave: ${oppgave.arkivreferanse} til tilstand: ${Tilstand.Forkastet.name}")
             }
             (Tilstand.Utsatt to Handling.Opprett),
-            (Tilstand.Forkastet to Handling.Opprett) -> {
+            (Tilstand.Forkastet to Handling.Opprett),
+            -> {
                 val inntektsmeldingEntitet = inntektsmeldingRepository.findByUuid(oppgave.inntektsmeldingId)
-
                 if (inntektsmeldingEntitet != null) {
-                    val resultat = opprettOppgave(oppgave, gjelderSpeil, inntektsmeldingEntitet)
+                    val inntektsmelding = om.readValue<Inntektsmelding>(inntektsmeldingEntitet.data!!)
+                    val behandlendeEnhet =
+                        behandlendeEnhetConsumer.hentBehandlendeEnhet(
+                            oppgave.fnr,
+                            oppgave.inntektsmeldingId,
+                        )
+                    val gjelderUtland = (SYKEPENGER_UTLAND == behandlendeEnhet)
+                    logger.info("Fant enhet $behandlendeEnhet for ${oppgave.arkivreferanse}")
+                    val behandlingsKategori = finnBehandlingsKategori(inntektsmelding, gjelderSpeil, gjelderUtland)
+                    val resultat = opprettOppgave(oppgave, behandlingsKategori)
                     oppgave.oppdatert = LocalDateTime.now()
                     lagre(oppgave.copy(tilstand = Tilstand.Opprettet, speil = gjelderSpeil))
                     metrikk.tellUtsattOppgave_Opprett()
-                    logger.info("Endret oppgave: ${oppgave.inntektsmeldingId} til tilstand: ${Tilstand.Opprettet.name} gosys oppgaveID: ${resultat.oppgaveId} duplikat? ${resultat.duplikat}")
+                    logger.info(
+                        "Endret oppgave: ${oppgave.inntektsmeldingId} til tilstand: ${Tilstand.Opprettet.name} gosys oppgaveID: ${resultat.oppgaveId} duplikat? ${resultat.duplikat}",
+                    )
                 } else {
                     sikkerlogger.error("Fant ikke inntektsmelding for ID '${oppgave.inntektsmeldingId}'.")
                 }
@@ -86,37 +95,26 @@ class UtsattOppgaveService(
         utsattOppgaveDAO.opprett(utsattOppgave)
     }
 
-    fun opprettOppgave(oppgave: UtsattOppgaveEntitet, gjelderSpeil: Boolean, inntektsmeldingEntitet: InntektsmeldingEntitet): OppgaveResultat {
-        return opprettOppgaveIGosys(oppgave, oppgaveClient, utsattOppgaveDAO, behandlendeEnhetConsumer, gjelderSpeil, inntektsmeldingEntitet, om)
-    }
+    fun opprettOppgave(
+        oppgave: UtsattOppgaveEntitet,
+        behandlingsKategori: BehandlingsKategori
+    ): OppgaveResultat = opprettOppgaveIGosys(oppgave, oppgaveClient, utsattOppgaveDAO, behandlingsKategori)
 }
 
 fun opprettOppgaveIGosys(
     utsattOppgave: UtsattOppgaveEntitet,
     oppgaveClient: OppgaveClient,
     utsattOppgaveDAO: UtsattOppgaveDAO,
-    behandlendeEnhetConsumer: BehandlendeEnhetConsumer,
-    speil: Boolean,
-    imEntitet: InntektsmeldingEntitet,
-    om: ObjectMapper
+    behandlingsKategori: BehandlingsKategori
 ): OppgaveResultat {
-    val logger = LoggerFactory.getLogger(UtsattOppgaveService::class.java)!!
-    val behandlendeEnhet = behandlendeEnhetConsumer.hentBehandlendeEnhet(
-        utsattOppgave.fnr,
-        utsattOppgave.inntektsmeldingId
-    )
-    val gjelderUtland = (SYKEPENGER_UTLAND == behandlendeEnhet)
-    val inntektsmelding = om.readValue<Inntektsmelding>(imEntitet.data!!)
-    val behandlingsKategori = finnBehandlingsKategori(inntektsmelding, speil, gjelderUtland)
-    logger.info("Fant enhet $behandlendeEnhet for ${utsattOppgave.arkivreferanse}")
-    val resultat = runBlocking {
-        oppgaveClient.opprettOppgave(
-            journalpostId = utsattOppgave.journalpostId,
-            aktoerId = utsattOppgave.aktørId,
-            behandlingsKategori = behandlingsKategori
-        )
-    }
-    utsattOppgave.enhet = behandlendeEnhet
+    val resultat =
+        runBlocking {
+            oppgaveClient.opprettOppgave(
+                journalpostId = utsattOppgave.journalpostId,
+                aktoerId = utsattOppgave.aktørId,
+                behandlingsKategori = behandlingsKategori,
+            )
+        }
     utsattOppgave.gosysOppgaveId = resultat.oppgaveId.toString()
     utsattOppgave.utbetalingBruker = resultat.utbetalingBruker
     utsattOppgaveDAO.lagre(utsattOppgave)
@@ -127,9 +125,11 @@ class OppgaveOppdatering(
     val id: UUID,
     val handling: Handling,
     val timeout: LocalDateTime?,
-    val oppdateringstype: OppdateringstypeDTO
+    val oppdateringstype: OppdateringstypeDTO,
 )
 
 enum class Handling {
-    Utsett, Opprett, Forkast
+    Utsett,
+    Opprett,
+    Forkast,
 }

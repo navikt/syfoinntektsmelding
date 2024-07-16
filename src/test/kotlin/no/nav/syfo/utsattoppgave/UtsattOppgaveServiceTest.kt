@@ -1,15 +1,20 @@
 package no.nav.syfo.utsattoppgave
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.KotlinFeature
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
 import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.domain.OppgaveResultat
+import no.nav.syfo.dto.InntektsmeldingEntitet
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.dto.UtsattOppgaveEntitet
 import no.nav.syfo.repository.InntektsmeldingRepository
+import no.nav.syfo.repository.buildIM
 import no.nav.syfo.service.BehandlendeEnhetConsumer
 import no.nav.syfo.util.Metrikk
 import org.junit.jupiter.api.BeforeEach
@@ -26,13 +31,31 @@ open class UtsattOppgaveServiceTest {
     private lateinit var oppgaveService: UtsattOppgaveService
     private var metrikk: Metrikk = mockk(relaxed = true)
     private var inntektsmeldingRepository: InntektsmeldingRepository = mockk(relaxed = true)
-    private var om: ObjectMapper = mockk()
+    private var om: ObjectMapper = ObjectMapper().registerModules(
+        KotlinModule.Builder()
+            .withReflectionCacheSize(512)
+            .configure(KotlinFeature.NullToEmptyCollection, false)
+            .configure(KotlinFeature.NullToEmptyMap, false)
+            .configure(KotlinFeature.NullIsSameAsDefault, false)
+            .configure(KotlinFeature.SingletonSupport, false)
+            .configure(KotlinFeature.StrictNullChecks, false)
+            .build(),
+        JavaTimeModule())
+
 
     @BeforeEach
     fun setup() {
         oppgaveService = spyk(UtsattOppgaveService(utsattOppgaveDAO, oppgaveClient, behandlendeEnhetConsumer, inntektsmeldingRepository, om, metrikk))
         every { utsattOppgaveDAO.finn(any()) } returns oppgave
-        every { oppgaveService.opprettOppgave(any(), any(), any()) } returns OppgaveResultat(Random.nextInt(), false, false)
+        every { oppgaveService.opprettOppgave(any(), any()) } returns OppgaveResultat(Random.nextInt(), false, false)
+        every { inntektsmeldingRepository.findByUuid(any()) } returns InntektsmeldingEntitet(
+            aktorId = "aktoerid-123",
+            behandlet = LocalDateTime.now(),
+            orgnummer = "arb-org-123",
+            journalpostId = "jp-123",
+            data = om.writeValueAsString(buildIM())
+        )
+        every { behandlendeEnhetConsumer.hentBehandlendeEnhet(any(), any()) } returns "4488"
     }
 
     private val fnr = "fnr"

@@ -1,6 +1,7 @@
 package no.nav.syfo.prosesser
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import no.nav.helse.arbeidsgiver.utils.RecurringJob
@@ -11,8 +12,10 @@ import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.repository.InntektsmeldingRepository
 import no.nav.syfo.service.BehandlendeEnhetConsumer
+import no.nav.syfo.service.SYKEPENGER_UTLAND
 import no.nav.syfo.util.Metrikk
 import no.nav.syfo.utsattoppgave.UtsattOppgaveDAO
+import no.nav.syfo.utsattoppgave.finnBehandlingsKategori
 import no.nav.syfo.utsattoppgave.opprettOppgaveIGosys
 import org.slf4j.LoggerFactory
 import java.time.Duration
@@ -43,16 +46,24 @@ class FinnAlleUtgaandeOppgaverProcessor(
                 }
             }
             .forEach { (oppgaveEntitet, inntektsmeldingEntitet) ->
+
+                val inntektsmelding = om.readValue<no.nav.syfo.domain.inntektsmelding.Inntektsmelding>(inntektsmeldingEntitet.data!!)
+                val behandlendeEnhet =
+                    behandlendeEnhetConsumer.hentBehandlendeEnhet(
+                        oppgaveEntitet.fnr,
+                        oppgaveEntitet.inntektsmeldingId,
+                    )
+                val gjelderUtland = (SYKEPENGER_UTLAND == behandlendeEnhet)
+                logger.info("Fant enhet $behandlendeEnhet for ${oppgaveEntitet.arkivreferanse}")
+                val behandlingsKategori = finnBehandlingsKategori(inntektsmelding, oppgaveEntitet.speil, gjelderUtland)
+
                 try {
                     logger.info("Skal opprette oppgave for inntektsmelding: ${oppgaveEntitet.arkivreferanse}")
                     opprettOppgaveIGosys(
                         oppgaveEntitet,
                         oppgaveClient,
                         utsattOppgaveDAO,
-                        behandlendeEnhetConsumer,
-                        oppgaveEntitet.speil,
-                        inntektsmeldingEntitet,
-                        om
+                        behandlingsKategori
                     )
                     oppgaveEntitet.tilstand = Tilstand.OpprettetTimeout
                     oppgaveEntitet.oppdatert = LocalDateTime.now()
