@@ -145,5 +145,5 @@ class OppgaveOppdatering(
 )
 
 enum class Handling {
-    Utsett, Opprett, Forkast,
+    Utsett, Opprett, Forkast
 }
