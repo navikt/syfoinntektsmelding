@@ -10,11 +10,13 @@ enum class BehandlingsKategori {
     REFUSJON_UTEN_DATO,
     REFUSJON_MED_DATO,
     REFUSJON_LITEN_LØNN,
-    BESTRIDER_SYKEMELDING
+    BESTRIDER_SYKEMELDING,
+    IKKE_FRAVAER
 }
 
 fun finnBehandlingsKategori(inntektsmelding: Inntektsmelding, speilRelatert: Boolean, gjelderUtland: Boolean): BehandlingsKategori =
     when {
+        inntektsmelding.begrunnelseRedusert == "IkkeFravaer" -> BehandlingsKategori.IKKE_FRAVAER
         speilRelatert -> BehandlingsKategori.SPEIL_RELATERT
         gjelderUtland -> BehandlingsKategori.UTLAND
         inntektsmelding.begrunnelseRedusert == "BetvilerArbeidsufoerhet" -> BehandlingsKategori.BESTRIDER_SYKEMELDING

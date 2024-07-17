@@ -57,29 +57,29 @@ class UtsattOppgaveService(
                 logger.info("Endret oppgave: ${oppgave.arkivreferanse} til tilstand: ${Tilstand.Forkastet.name}")
             }
             (Tilstand.Utsatt to Handling.Opprett),
-            (Tilstand.Forkastet to Handling.Opprett),
-            -> {
-                val inntektsmeldingEntitet = inntektsmeldingRepository.findByUuid(oppgave.inntektsmeldingId)
-                if (inntektsmeldingEntitet != null) {
-                    val inntektsmelding = om.readValue<Inntektsmelding>(inntektsmeldingEntitet.data!!)
-                    val behandlendeEnhet =
-                        behandlendeEnhetConsumer.hentBehandlendeEnhet(
-                            oppgave.fnr,
-                            oppgave.inntektsmeldingId,
-                        )
-                    val gjelderUtland = (SYKEPENGER_UTLAND == behandlendeEnhet)
-                    logger.info("Fant enhet $behandlendeEnhet for ${oppgave.arkivreferanse}")
-                    val behandlingsKategori = finnBehandlingsKategori(inntektsmelding, gjelderSpeil, gjelderUtland)
-                    val resultat = opprettOppgave(oppgave, behandlingsKategori)
-                    oppgave.oppdatert = LocalDateTime.now()
-                    lagre(oppgave.copy(tilstand = Tilstand.Opprettet, speil = gjelderSpeil))
-                    metrikk.tellUtsattOppgave_Opprett()
-                    logger.info(
-                        "Endret oppgave: ${oppgave.inntektsmeldingId} til tilstand: ${Tilstand.Opprettet.name} gosys oppgaveID: ${resultat.oppgaveId} duplikat? ${resultat.duplikat}",
-                    )
-                } else {
-                    sikkerlogger.error("Fant ikke inntektsmelding for ID '${oppgave.inntektsmeldingId}'.")
-                }
+            (Tilstand.Forkastet to Handling.Opprett) -> {
+                hentInntektsmelding(oppgave)
+                    .onSuccess { inntektsmelding ->
+                        val behandlingsKategori = utledBehandlingsKategori(oppgave, inntektsmelding)
+                        if (BehandlingsKategori.IKKE_FRAVAER != behandlingsKategori) {
+                            val resultat = opprettOppgave(oppgave, behandlingsKategori)
+                            oppgave.oppdatert = LocalDateTime.now()
+                            lagre(oppgave.copy(tilstand = Tilstand.Opprettet, speil = gjelderSpeil))
+                            metrikk.tellUtsattOppgave_Opprett()
+                            logger.info(
+                                "Endret oppgave: ${oppgave.inntektsmeldingId} til tilstand: ${Tilstand.Opprettet.name} gosys oppgaveID: ${resultat.oppgaveId} duplikat? ${resultat.duplikat}",
+                            )
+                        } else {
+                            if (oppgave.tilstand == Tilstand.Utsatt) {
+                                oppgave.oppdatert = LocalDateTime.now()
+                                lagre(oppgave.copy(tilstand = Tilstand.Forkastet, speil = gjelderSpeil))
+                                sikkerlogger.info("Endret oppgave: ${oppgave.inntektsmeldingId} til tilstand: ${Tilstand.Forkastet.name} grunnet behandlingskategori: $behandlingsKategori")
+                            }
+                            logger.info("Oppgave: ${oppgave.inntektsmeldingId} blir ikke opprettet")
+                            sikkerlogger.info("Oppgave: ${oppgave.inntektsmeldingId} har behandlingskategori: $behandlingsKategori og blir ikke opprettet")
+                        }
+                    }
+                    .onFailure { sikkerlogger.error(it.message, it) }
             }
             else -> {
                 metrikk.tellUtsattOppgave_Irrelevant()
@@ -93,6 +93,22 @@ class UtsattOppgaveService(
 
     fun opprett(utsattOppgave: UtsattOppgaveEntitet) {
         utsattOppgaveDAO.opprett(utsattOppgave)
+    }
+
+    fun hentInntektsmelding(oppgave: UtsattOppgaveEntitet): Result<Inntektsmelding> {
+        val inntektsmelding = inntektsmeldingRepository.findByUuid(oppgave.inntektsmeldingId)
+        return if (inntektsmelding != null && inntektsmelding.data != null) {
+            Result.success(om.readValue<Inntektsmelding>(inntektsmelding.data!!))
+        } else {
+            Result.failure(Exception("Fant ikke inntektsmelding for ID '${oppgave.inntektsmeldingId}'."))
+        }
+    }
+
+    fun utledBehandlingsKategori(oppgave: UtsattOppgaveEntitet, inntektsmelding: Inntektsmelding): BehandlingsKategori {
+        val behandlendeEnhet = behandlendeEnhetConsumer.hentBehandlendeEnhet(oppgave.fnr, oppgave.inntektsmeldingId)
+        logger.info("Fant enhet $behandlendeEnhet for ${oppgave.arkivreferanse}")
+        val gjelderUtland = (SYKEPENGER_UTLAND == behandlendeEnhet)
+        return finnBehandlingsKategori(inntektsmelding, oppgave.speil, gjelderUtland)
     }
 
     fun opprettOppgave(

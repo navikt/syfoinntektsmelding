@@ -48,19 +48,21 @@ open class UtsattOppgaveServiceTest {
             JavaTimeModule(),
         )
 
+    val inntektsmeldingEntitet = InntektsmeldingEntitet(
+        aktorId = "aktoerid-123",
+        behandlet = LocalDateTime.now(),
+        orgnummer = "arb-org-123",
+        journalpostId = "jp-123",
+        data = om.writeValueAsString(buildIM()),
+    )
+    val inntektsmeldingEntitetIkkeFravaer = inntektsmeldingEntitet.copy(data = om.writeValueAsString(buildIM().copy(begrunnelseRedusert = "IkkeFravaer")))
+
     @BeforeEach
     fun setup() {
         oppgaveService = spyk(UtsattOppgaveService(utsattOppgaveDAO, oppgaveClient, behandlendeEnhetConsumer, inntektsmeldingRepository, om, metrikk))
-        every { utsattOppgaveDAO.finn(any()) } returns oppgave
+        every { utsattOppgaveDAO.finn(any()) } returns oppgave.copy()
         coEvery { oppgaveClient.opprettOppgave(any(), any(), any()) } returns OppgaveResultat(Random.nextInt(), false, false)
-        every { inntektsmeldingRepository.findByUuid(any()) } returns
-            InntektsmeldingEntitet(
-                aktorId = "aktoerid-123",
-                behandlet = LocalDateTime.now(),
-                orgnummer = "arb-org-123",
-                journalpostId = "jp-123",
-                data = om.writeValueAsString(buildIM()),
-            )
+        every { inntektsmeldingRepository.findByUuid(any()) } returns inntektsmeldingEntitet
         every { behandlendeEnhetConsumer.hentBehandlendeEnhet(any(), any()) } returns "4488"
     }
 
@@ -87,7 +89,7 @@ open class UtsattOppgaveServiceTest {
             OppdateringstypeDTO.OpprettSpeilRelatert
         )
         oppgaveService.prosesser(oppgaveOppdatering)
-        verify { utsattOppgaveDAO.lagre(eq(oppgave.copy(tilstand = Tilstand.Opprettet, speil = true, timeout = timeout))) }
+        verify { utsattOppgaveDAO.lagre(match { it.tilstand == Tilstand.Opprettet && it.speil && it.timeout == timeout }) }
         coVerify { oppgaveClient.opprettOppgave(any(), any(), any()) }
     }
 
@@ -100,7 +102,7 @@ open class UtsattOppgaveServiceTest {
             OppdateringstypeDTO.Opprett
         )
         oppgaveService.prosesser(oppgaveOppdatering)
-        verify { utsattOppgaveDAO.lagre(eq(oppgave.copy(tilstand = Tilstand.Opprettet, speil = false, timeout = timeout))) }
+        verify { utsattOppgaveDAO.lagre(match { it.tilstand == Tilstand.Opprettet && !it.speil && it.timeout == timeout }) }
         coVerify { oppgaveClient.opprettOppgave(any(), any(), any()) }
     }
 
@@ -114,7 +116,7 @@ open class UtsattOppgaveServiceTest {
             OppdateringstypeDTO.Utsett
         )
         oppgaveService.prosesser(oppgaveOppdatering)
-        verify { utsattOppgaveDAO.lagre(eq(oppgave.copy(tilstand = Tilstand.Utsatt, timeout = nyTimeout))) }
+        verify { utsattOppgaveDAO.lagre(match { it.tilstand == Tilstand.Utsatt && it.timeout == nyTimeout && it.oppdatert != oppgave.oppdatert }) }
         coVerify { oppgaveClient.opprettOppgave(any(), any(), any()) wasNot Called }
     }
 
@@ -127,8 +129,39 @@ open class UtsattOppgaveServiceTest {
             OppdateringstypeDTO.Ferdigbehandlet
         )
         oppgaveService.prosesser(oppgaveOppdatering)
-        verify { utsattOppgaveDAO.lagre(eq(oppgave.copy(tilstand = Tilstand.Forkastet, timeout = timeout))) }
-        coVerify { oppgaveClient.opprettOppgave(any(), any(), any()) wasNot Called }
+        verify { utsattOppgaveDAO.lagre(match { it.tilstand == Tilstand.Forkastet && it.timeout == timeout && it.oppdatert != oppgave.oppdatert }) }
+        coVerify(exactly = 0) { oppgaveClient.opprettOppgave(any(), any(), any()) }
+    }
+
+    @Test
+    fun `Oppretter Ikke Oppgave hvis begrunnelseRedusert = IkkeFravaer hvis oppgave utsatt`() {
+        every { inntektsmeldingRepository.findByUuid(any()) } returns inntektsmeldingEntitetIkkeFravaer
+        val oppgaveOppdatering = OppgaveOppdatering(
+            UUID.randomUUID(),
+            OppdateringstypeDTO.Opprett.tilHandling(),
+            timeout.plusDays(7),
+            OppdateringstypeDTO.Opprett
+        )
+        oppgaveService.prosesser(oppgaveOppdatering)
+        verify { utsattOppgaveDAO.lagre(match { it.tilstand == Tilstand.Forkastet && it.oppdatert != oppgave.oppdatert }) }
+        coVerify(exactly = 0) { oppgaveClient.opprettOppgave(any(), any(), any()) }
+    }
+
+    @Test
+    fun `Oppretter Ikke Oppgave hvis begrunnelseRedusert = IkkeFravaer og oppgave allerede forkastet`() {
+        every { inntektsmeldingRepository.findByUuid(any()) } returns inntektsmeldingEntitetIkkeFravaer
+        val forkastetTidspunkt = LocalDateTime.of(2023, 4, 6, 9, 0)
+        val forkastetOppgave = oppgave.copy(tilstand = Tilstand.Forkastet, oppdatert = forkastetTidspunkt)
+        every { utsattOppgaveDAO.finn(any()) } returns forkastetOppgave
+        val oppgaveOppdatering = OppgaveOppdatering(
+            UUID.randomUUID(),
+            OppdateringstypeDTO.Opprett.tilHandling(),
+            timeout.plusDays(7),
+            OppdateringstypeDTO.Opprett
+        )
+        oppgaveService.prosesser(oppgaveOppdatering)
+        verify(exactly = 0) { utsattOppgaveDAO.lagre(any()) }
+        coVerify(exactly = 0) { oppgaveClient.opprettOppgave(any(), any(), any()) }
     }
 
     private fun enOppgave(
