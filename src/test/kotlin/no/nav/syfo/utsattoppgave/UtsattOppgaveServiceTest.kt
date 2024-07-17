@@ -164,10 +164,7 @@ open class UtsattOppgaveServiceTest {
         coVerify(exactly = 0) { oppgaveClient.opprettOppgave(any(), any(), any()) }
     }
 
-    private fun enOppgave(
-        timeout: LocalDateTime,
-        tilstand: Tilstand = Tilstand.Utsatt,
-    ) = UtsattOppgaveEntitet(
+    private fun enOppgave(timeout: LocalDateTime, tilstand: Tilstand = Tilstand.Utsatt) = UtsattOppgaveEntitet(
         fnr = fnr,
         aktørId = aktørId,
         journalpostId = journalpostId,
@@ -178,6 +175,6 @@ open class UtsattOppgaveServiceTest {
         gosysOppgaveId = null,
         oppdatert = null,
         speil = false,
-        utbetalingBruker = false,
+        utbetalingBruker = false
     )
 }
