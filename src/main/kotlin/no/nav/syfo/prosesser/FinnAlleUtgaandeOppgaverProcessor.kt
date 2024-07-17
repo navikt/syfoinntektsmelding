@@ -58,6 +58,8 @@ class FinnAlleUtgaandeOppgaverProcessor(
                 val behandlingsKategori = finnBehandlingsKategori(inntektsmelding, oppgaveEntitet.speil, gjelderUtland)
 
                 try {
+
+                    //TODO: Bytt til bruke samme funksjonalitet som i UtsattOppgaveService
                     logger.info("Skal opprette oppgave for inntektsmelding: ${oppgaveEntitet.arkivreferanse}")
                     opprettOppgaveIGosys(
                         oppgaveEntitet,
