@@ -141,11 +141,9 @@ class OppgaveOppdatering(
     val id: UUID,
     val handling: Handling,
     val timeout: LocalDateTime?,
-    val oppdateringstype: OppdateringstypeDTO,
+    val oppdateringstype: OppdateringstypeDTO
 )
 
 enum class Handling {
-    Utsett,
-    Opprett,
-    Forkast,
+    Utsett, Opprett, Forkast,
 }
