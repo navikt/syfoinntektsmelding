@@ -4,6 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import io.mockk.Called
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.spyk
@@ -31,30 +34,33 @@ open class UtsattOppgaveServiceTest {
     private lateinit var oppgaveService: UtsattOppgaveService
     private var metrikk: Metrikk = mockk(relaxed = true)
     private var inntektsmeldingRepository: InntektsmeldingRepository = mockk(relaxed = true)
-    private var om: ObjectMapper = ObjectMapper().registerModules(
-        KotlinModule.Builder()
-            .withReflectionCacheSize(512)
-            .configure(KotlinFeature.NullToEmptyCollection, false)
-            .configure(KotlinFeature.NullToEmptyMap, false)
-            .configure(KotlinFeature.NullIsSameAsDefault, false)
-            .configure(KotlinFeature.SingletonSupport, false)
-            .configure(KotlinFeature.StrictNullChecks, false)
-            .build(),
-        JavaTimeModule()
-    )
+    private var om: ObjectMapper =
+        ObjectMapper().registerModules(
+            KotlinModule
+                .Builder()
+                .withReflectionCacheSize(512)
+                .configure(KotlinFeature.NullToEmptyCollection, false)
+                .configure(KotlinFeature.NullToEmptyMap, false)
+                .configure(KotlinFeature.NullIsSameAsDefault, false)
+                .configure(KotlinFeature.SingletonSupport, false)
+                .configure(KotlinFeature.StrictNullChecks, false)
+                .build(),
+            JavaTimeModule(),
+        )
 
     @BeforeEach
     fun setup() {
         oppgaveService = spyk(UtsattOppgaveService(utsattOppgaveDAO, oppgaveClient, behandlendeEnhetConsumer, inntektsmeldingRepository, om, metrikk))
         every { utsattOppgaveDAO.finn(any()) } returns oppgave
-        every { oppgaveService.opprettOppgave(any(), any()) } returns OppgaveResultat(Random.nextInt(), false, false)
-        every { inntektsmeldingRepository.findByUuid(any()) } returns InntektsmeldingEntitet(
-            aktorId = "aktoerid-123",
-            behandlet = LocalDateTime.now(),
-            orgnummer = "arb-org-123",
-            journalpostId = "jp-123",
-            data = om.writeValueAsString(buildIM())
-        )
+        coEvery { oppgaveClient.opprettOppgave(any(), any(), any()) } returns OppgaveResultat(Random.nextInt(), false, false)
+        every { inntektsmeldingRepository.findByUuid(any()) } returns
+            InntektsmeldingEntitet(
+                aktorId = "aktoerid-123",
+                behandlet = LocalDateTime.now(),
+                orgnummer = "arb-org-123",
+                journalpostId = "jp-123",
+                data = om.writeValueAsString(buildIM()),
+            )
         every { behandlendeEnhetConsumer.hentBehandlendeEnhet(any(), any()) } returns "4488"
     }
 
@@ -82,6 +88,7 @@ open class UtsattOppgaveServiceTest {
         )
         oppgaveService.prosesser(oppgaveOppdatering)
         verify { utsattOppgaveDAO.lagre(eq(oppgave.copy(tilstand = Tilstand.Opprettet, speil = true, timeout = timeout))) }
+        coVerify { oppgaveClient.opprettOppgave(any(), any(), any()) }
     }
 
     @Test
@@ -94,6 +101,7 @@ open class UtsattOppgaveServiceTest {
         )
         oppgaveService.prosesser(oppgaveOppdatering)
         verify { utsattOppgaveDAO.lagre(eq(oppgave.copy(tilstand = Tilstand.Opprettet, speil = false, timeout = timeout))) }
+        coVerify { oppgaveClient.opprettOppgave(any(), any(), any()) }
     }
 
     @Test
@@ -107,7 +115,9 @@ open class UtsattOppgaveServiceTest {
         )
         oppgaveService.prosesser(oppgaveOppdatering)
         verify { utsattOppgaveDAO.lagre(eq(oppgave.copy(tilstand = Tilstand.Utsatt, timeout = nyTimeout))) }
+        coVerify { oppgaveClient.opprettOppgave(any(), any(), any()) wasNot Called }
     }
+
     @Test
     fun `Lagrer utsatt oppgave med tilstand Forkastet ved Ferdigbehandlet`() {
         val oppgaveOppdatering = OppgaveOppdatering(
@@ -118,9 +128,13 @@ open class UtsattOppgaveServiceTest {
         )
         oppgaveService.prosesser(oppgaveOppdatering)
         verify { utsattOppgaveDAO.lagre(eq(oppgave.copy(tilstand = Tilstand.Forkastet, timeout = timeout))) }
+        coVerify { oppgaveClient.opprettOppgave(any(), any(), any()) wasNot Called }
     }
 
-    private fun enOppgave(timeout: LocalDateTime, tilstand: Tilstand = Tilstand.Utsatt) = UtsattOppgaveEntitet(
+    private fun enOppgave(
+        timeout: LocalDateTime,
+        tilstand: Tilstand = Tilstand.Utsatt,
+    ) = UtsattOppgaveEntitet(
         fnr = fnr,
         aktørId = aktørId,
         journalpostId = journalpostId,
@@ -131,6 +145,6 @@ open class UtsattOppgaveServiceTest {
         gosysOppgaveId = null,
         oppdatert = null,
         speil = false,
-        utbetalingBruker = false
+        utbetalingBruker = false,
     )
 }
