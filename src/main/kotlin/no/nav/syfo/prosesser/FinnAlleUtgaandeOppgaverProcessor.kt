@@ -67,8 +67,7 @@ class FinnAlleUtgaandeOppgaverProcessor(
                         )
                         logger.info("Oppgave opprettet i gosys pga timeout for inntektsmelding: ${oppgaveEntitet.arkivreferanse}")
                         oppgaveEntitet.tilstand = Tilstand.OpprettetTimeout
-                    }
-                    else {
+                    } else {
                         logger.info("Skal ikke opprette oppgave for inntektsmelding: ${oppgaveEntitet.arkivreferanse}")
                         sikkerlogger.info("Skal ikke opprette oppgave for inntektsmelding: ${oppgaveEntitet.arkivreferanse} grunnet ${behandlingsKategori.name}")
                         oppgaveEntitet.tilstand = Tilstand.Forkastet
