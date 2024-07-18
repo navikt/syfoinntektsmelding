@@ -121,7 +121,6 @@ open class UtsattOppgaveServiceTest {
     @Test
     fun `Oppretter Ikke Oppgave hvis begrunnelseRedusert = IkkeFravaer hvis oppgave utsatt`() {
         every { inntektsmeldingRepository.findByUuid(any()) } returns inntektsmeldingEntitetIkkeFravaer
-        // every { behandlendeEnhetConsumer.utledBehandlingsKategori(any(), any()) } returns BehandlingsKategori.IKKE_FRAVAER
         val oppgaveOppdatering = OppgaveOppdatering(
             UUID.randomUUID(),
             OppdateringstypeDTO.Opprett.tilHandling(),
