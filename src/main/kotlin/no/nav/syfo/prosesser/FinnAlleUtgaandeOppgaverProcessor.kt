@@ -14,6 +14,7 @@ import no.nav.syfo.repository.InntektsmeldingRepository
 import no.nav.syfo.service.BehandlendeEnhetConsumer
 import no.nav.syfo.service.SYKEPENGER_UTLAND
 import no.nav.syfo.util.Metrikk
+import no.nav.syfo.utsattoppgave.BehandlingsKategori
 import no.nav.syfo.utsattoppgave.UtsattOppgaveDAO
 import no.nav.syfo.utsattoppgave.finnBehandlingsKategori
 import no.nav.syfo.utsattoppgave.opprettOppgaveIGosys
@@ -46,7 +47,6 @@ class FinnAlleUtgaandeOppgaverProcessor(
                 }
             }
             .forEach { (oppgaveEntitet, inntektsmeldingEntitet) ->
-
                 val inntektsmelding = om.readValue<no.nav.syfo.domain.inntektsmelding.Inntektsmelding>(inntektsmeldingEntitet.data!!)
                 val behandlendeEnhet =
                     behandlendeEnhetConsumer.hentBehandlendeEnhet(
@@ -56,22 +56,26 @@ class FinnAlleUtgaandeOppgaverProcessor(
                 val gjelderUtland = (SYKEPENGER_UTLAND == behandlendeEnhet)
                 logger.info("Fant enhet $behandlendeEnhet for ${oppgaveEntitet.arkivreferanse}")
                 val behandlingsKategori = finnBehandlingsKategori(inntektsmelding, oppgaveEntitet.speil, gjelderUtland)
-
                 try {
-
-                    //TODO: Bytt til bruke samme funksjonalitet som i UtsattOppgaveService
-                    logger.info("Skal opprette oppgave for inntektsmelding: ${oppgaveEntitet.arkivreferanse}")
-                    opprettOppgaveIGosys(
-                        oppgaveEntitet,
-                        oppgaveClient,
-                        utsattOppgaveDAO,
-                        behandlingsKategori
-                    )
-                    oppgaveEntitet.tilstand = Tilstand.OpprettetTimeout
+                    if (behandlingsKategori != BehandlingsKategori.IKKE_FRAVAER) {
+                        logger.info("Skal opprette oppgave for inntektsmelding: ${oppgaveEntitet.arkivreferanse}")
+                        opprettOppgaveIGosys(
+                            oppgaveEntitet,
+                            oppgaveClient,
+                            utsattOppgaveDAO,
+                            behandlingsKategori
+                        )
+                        logger.info("Oppgave opprettet i gosys pga timeout for inntektsmelding: ${oppgaveEntitet.arkivreferanse}")
+                        oppgaveEntitet.tilstand = Tilstand.OpprettetTimeout
+                    }
+                    else {
+                        logger.info("Skal ikke opprette oppgave for inntektsmelding: ${oppgaveEntitet.arkivreferanse}")
+                        sikkerlogger.info("Skal ikke opprette oppgave for inntektsmelding: ${oppgaveEntitet.arkivreferanse} grunnet ${behandlingsKategori.name}")
+                        oppgaveEntitet.tilstand = Tilstand.Forkastet
+                    }
                     oppgaveEntitet.oppdatert = LocalDateTime.now()
                     metrikk.tellUtsattOppgave_OpprettTimeout()
                     utsattOppgaveDAO.lagre(oppgaveEntitet)
-                    logger.info("Oppgave opprettet i gosys pga timeout for inntektsmelding: ${oppgaveEntitet.arkivreferanse}")
                 } catch (e: OpprettOppgaveException) {
                     sikkerlogger.error("Feilet ved opprettelse av oppgave ved timeout i gosys for inntektsmelding: ${oppgaveEntitet.arkivreferanse}", e)
                     logger.error("Feilet ved opprettelse av oppgave ved timeout i gosys for inntektsmelding: ${oppgaveEntitet.arkivreferanse}")
