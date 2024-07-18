@@ -72,10 +72,10 @@ class UtsattOppgaveService(
                             if (oppgave.tilstand == Tilstand.Utsatt) {
                                 oppgave.oppdatert = LocalDateTime.now()
                                 lagre(oppgave.copy(tilstand = Tilstand.Forkastet, speil = gjelderSpeil))
-                                sikkerlogger.info("Endret oppgave: ${oppgave.inntektsmeldingId} til tilstand: ${Tilstand.Forkastet.name} grunnet behandlingskategori: $behandlingsKategori")
+                                sikkerlogger.info("Endret oppgave: ${oppgave.inntektsmeldingId} til tilstand: ${Tilstand.Forkastet.name} pga behandlingskategori: $behandlingsKategori")
                             }
                             logger.info("Oppgave: ${oppgave.inntektsmeldingId} blir ikke opprettet")
-                            sikkerlogger.info("Oppgave: ${oppgave.inntektsmeldingId} har behandlingskategori: $behandlingsKategori og blir ikke opprettet")
+                            sikkerlogger.info("Oppgave: ${oppgave.inntektsmeldingId}  blir ikke Opprettet, har behandlingskategori: $behandlingsKategori")
                         }
                     }
                     .onFailure { sikkerlogger.error(it.message, it) }
