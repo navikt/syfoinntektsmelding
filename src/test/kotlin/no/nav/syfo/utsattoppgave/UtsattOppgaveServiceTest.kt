@@ -1,9 +1,5 @@
 package no.nav.syfo.utsattoppgave
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.KotlinFeature
-import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.mockk.Called
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -16,6 +12,7 @@ import no.nav.syfo.domain.OppgaveResultat
 import no.nav.syfo.dto.InntektsmeldingEntitet
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.dto.UtsattOppgaveEntitet
+import no.nav.syfo.koin.buildObjectMapper
 import no.nav.syfo.repository.InntektsmeldingRepository
 import no.nav.syfo.repository.buildIM
 import no.nav.syfo.service.BehandlendeEnhetConsumer
@@ -28,25 +25,13 @@ import kotlin.random.Random
 
 open class UtsattOppgaveServiceTest {
 
-    private var utsattOppgaveDAO: UtsattOppgaveDAO = mockk(relaxed = true)
-    private var oppgaveClient: OppgaveClient = mockk(relaxed = true)
-    private var behandlendeEnhetConsumer: BehandlendeEnhetConsumer = mockk()
+    private val utsattOppgaveDAO: UtsattOppgaveDAO = mockk(relaxed = true)
+    private val oppgaveClient: OppgaveClient = mockk(relaxed = true)
+    private val behandlendeEnhetConsumer: BehandlendeEnhetConsumer = mockk(relaxed = true)
     private lateinit var oppgaveService: UtsattOppgaveService
-    private var metrikk: Metrikk = mockk(relaxed = true)
-    private var inntektsmeldingRepository: InntektsmeldingRepository = mockk(relaxed = true)
-    private var om: ObjectMapper =
-        ObjectMapper().registerModules(
-            KotlinModule
-                .Builder()
-                .withReflectionCacheSize(512)
-                .configure(KotlinFeature.NullToEmptyCollection, false)
-                .configure(KotlinFeature.NullToEmptyMap, false)
-                .configure(KotlinFeature.NullIsSameAsDefault, false)
-                .configure(KotlinFeature.SingletonSupport, false)
-                .configure(KotlinFeature.StrictNullChecks, false)
-                .build(),
-            JavaTimeModule(),
-        )
+    private val metrikk: Metrikk = mockk(relaxed = true)
+    private val inntektsmeldingRepository: InntektsmeldingRepository = mockk(relaxed = true)
+    private val om = buildObjectMapper()
 
     val inntektsmeldingEntitet = InntektsmeldingEntitet(
         aktorId = "aktoerid-123",
@@ -136,6 +121,7 @@ open class UtsattOppgaveServiceTest {
     @Test
     fun `Oppretter Ikke Oppgave hvis begrunnelseRedusert = IkkeFravaer hvis oppgave utsatt`() {
         every { inntektsmeldingRepository.findByUuid(any()) } returns inntektsmeldingEntitetIkkeFravaer
+        // every { behandlendeEnhetConsumer.utledBehandlingsKategori(any(), any()) } returns BehandlingsKategori.IKKE_FRAVAER
         val oppgaveOppdatering = OppgaveOppdatering(
             UUID.randomUUID(),
             OppdateringstypeDTO.Opprett.tilHandling(),

@@ -12,7 +12,6 @@ import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.dto.UtsattOppgaveEntitet
 import no.nav.syfo.repository.InntektsmeldingRepository
 import no.nav.syfo.service.BehandlendeEnhetConsumer
-import no.nav.syfo.service.SYKEPENGER_UTLAND
 import no.nav.syfo.util.Metrikk
 import java.time.LocalDateTime
 import java.util.UUID
@@ -25,7 +24,6 @@ class UtsattOppgaveService(
     private val om: ObjectMapper,
     private val metrikk: Metrikk
 ) {
-
     private val logger = this.logger()
     private val sikkerlogger = sikkerLogger()
 
@@ -58,9 +56,10 @@ class UtsattOppgaveService(
             }
             (Tilstand.Utsatt to Handling.Opprett),
             (Tilstand.Forkastet to Handling.Opprett) -> {
-                hentInntektsmelding(oppgave)
+                hentInntektsmelding(oppgave, inntektsmeldingRepository, om)
                     .onSuccess { inntektsmelding ->
-                        val behandlingsKategori = utledBehandlingsKategori(oppgave, inntektsmelding)
+                        val gjelderUtland = behandlendeEnhetConsumer.gjelderUtland(oppgave)
+                        val behandlingsKategori = utledBehandlingsKategori(oppgave, inntektsmelding, gjelderUtland)
                         if (BehandlingsKategori.IKKE_FRAVAER != behandlingsKategori) {
                             val resultat = opprettOppgave(oppgave, behandlingsKategori)
                             oppgave.oppdatert = LocalDateTime.now()
@@ -94,27 +93,19 @@ class UtsattOppgaveService(
     fun opprett(utsattOppgave: UtsattOppgaveEntitet) {
         utsattOppgaveDAO.opprett(utsattOppgave)
     }
-
-    fun hentInntektsmelding(oppgave: UtsattOppgaveEntitet): Result<Inntektsmelding> {
-        val inntektsmelding = inntektsmeldingRepository.findByUuid(oppgave.inntektsmeldingId)
-        return if (inntektsmelding != null && inntektsmelding.data != null) {
-            Result.success(om.readValue<Inntektsmelding>(inntektsmelding.data!!))
-        } else {
-            Result.failure(Exception("Fant ikke inntektsmelding for ID '${oppgave.inntektsmeldingId}'."))
-        }
-    }
-
-    fun utledBehandlingsKategori(oppgave: UtsattOppgaveEntitet, inntektsmelding: Inntektsmelding): BehandlingsKategori {
-        val behandlendeEnhet = behandlendeEnhetConsumer.hentBehandlendeEnhet(oppgave.fnr, oppgave.inntektsmeldingId)
-        logger.info("Fant enhet $behandlendeEnhet for ${oppgave.arkivreferanse}")
-        val gjelderUtland = (SYKEPENGER_UTLAND == behandlendeEnhet)
-        return finnBehandlingsKategori(inntektsmelding, oppgave.speil, gjelderUtland)
-    }
-
     fun opprettOppgave(
         oppgave: UtsattOppgaveEntitet,
         behandlingsKategori: BehandlingsKategori
     ): OppgaveResultat = opprettOppgaveIGosys(oppgave, oppgaveClient, utsattOppgaveDAO, behandlingsKategori)
+}
+
+fun hentInntektsmelding(oppgave: UtsattOppgaveEntitet, inntektsmeldingRepository: InntektsmeldingRepository, om: ObjectMapper): Result<Inntektsmelding> {
+    val inntektsmelding = inntektsmeldingRepository.findByUuid(oppgave.inntektsmeldingId)
+    return if (inntektsmelding != null && inntektsmelding.data != null) {
+        Result.success(om.readValue<Inntektsmelding>(inntektsmelding.data!!))
+    } else {
+        Result.failure(Exception("Fant ikke inntektsmelding for ID '${oppgave.inntektsmeldingId}'."))
+    }
 }
 
 fun opprettOppgaveIGosys(

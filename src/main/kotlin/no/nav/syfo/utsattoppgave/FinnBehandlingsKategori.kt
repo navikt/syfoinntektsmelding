@@ -1,6 +1,7 @@
 package no.nav.syfo.utsattoppgave
 
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
+import no.nav.syfo.dto.UtsattOppgaveEntitet
 import java.math.BigDecimal
 
 enum class BehandlingsKategori {
@@ -25,3 +26,11 @@ fun finnBehandlingsKategori(inntektsmelding: Inntektsmelding, speilRelatert: Boo
         inntektsmelding.refusjon.beloepPrMnd < inntektsmelding.beregnetInntekt -> BehandlingsKategori.REFUSJON_LITEN_LØNN
         else -> BehandlingsKategori.REFUSJON_UTEN_DATO
     }
+
+fun utledBehandlingsKategori(
+    oppgave: UtsattOppgaveEntitet,
+    inntektsmelding: Inntektsmelding,
+    gjelderUtland: Boolean
+): BehandlingsKategori {
+    return finnBehandlingsKategori(inntektsmelding, oppgave.speil, gjelderUtland)
+}
