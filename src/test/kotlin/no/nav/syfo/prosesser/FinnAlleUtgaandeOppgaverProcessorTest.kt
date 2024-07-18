@@ -29,6 +29,7 @@ class FinnAlleUtgaandeOppgaverProcessorTest {
     private val om = buildObjectMapper()
     private lateinit var processor: FinnAlleUtgaandeOppgaverProcessor
 
+    private val oppgave = UtsattOppgaveMockData.oppgave.copy()
     private val timeout = LocalDateTime.of(2023, 4, 6, 9, 0)
 
     @BeforeEach
@@ -43,16 +44,16 @@ class FinnAlleUtgaandeOppgaverProcessorTest {
                 om
             )
         )
-        every { utsattOppgaveDAO.finn(any()) } returns UtsattOppgaveMockData.oppgave.copy()
-        every { utsattOppgaveDAO.finnAlleUtgåtteOppgaver() } returns listOf(UtsattOppgaveMockData.oppgave.copy())
+        every { utsattOppgaveDAO.finnAlleUtgåtteOppgaver() } returns listOf(oppgave.copy())
         coEvery { oppgaveClient.opprettOppgave(any(), any(), any()) } returns OppgaveResultat(Random.nextInt(), false, false)
         every { inntektsmeldingRepository.findByUuid(any()) } returns UtsattOppgaveMockData.inntektsmeldingEntitet
         every { behandlendeEnhetConsumer.hentBehandlendeEnhet(any(), any()) } returns "4488"
     }
+
     @Test
     fun `Oppretter oppgave ved timout og lagrer tilstand OpprettetTimeout`() {
         processor.doJob()
-        verify { utsattOppgaveDAO.lagre(match { it.tilstand == Tilstand.OpprettetTimeout && !it.speil && it.timeout == timeout }) }
+        verify { utsattOppgaveDAO.lagre(match { it.tilstand == Tilstand.OpprettetTimeout && !it.speil && it.timeout == timeout && it.oppdatert != oppgave.oppdatert }) }
         coVerify { oppgaveClient.opprettOppgave(any(), any(), any()) }
     }
 
@@ -60,7 +61,7 @@ class FinnAlleUtgaandeOppgaverProcessorTest {
     fun `Oppretter ikke oppgave ved timeout hvis begrunnelseRedusert = IkkeFravaer`() {
         every { inntektsmeldingRepository.findByUuid(any()) } returns UtsattOppgaveMockData.inntektsmeldingEntitetIkkeFravaer
         processor.doJob()
-        verify { utsattOppgaveDAO.lagre(match { it.tilstand == Tilstand.Forkastet && !it.speil && it.timeout == timeout }) }
+        verify { utsattOppgaveDAO.lagre(match { it.tilstand == Tilstand.Forkastet && !it.speil && it.timeout == timeout && it.oppdatert != oppgave.oppdatert }) }
         coVerify(exactly = 0) { oppgaveClient.opprettOppgave(any(), any(), any()) }
     }
 }
