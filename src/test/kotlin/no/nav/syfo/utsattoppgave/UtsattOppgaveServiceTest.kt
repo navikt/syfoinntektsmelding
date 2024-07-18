@@ -42,7 +42,6 @@ open class UtsattOppgaveServiceTest {
         every { behandlendeEnhetConsumer.hentBehandlendeEnhet(any(), any()) } returns "4488"
     }
 
-
     @Test
     fun `Oppretter forsinket oppgave med timeout`() {
         oppgaveService.opprett(oppgave)
