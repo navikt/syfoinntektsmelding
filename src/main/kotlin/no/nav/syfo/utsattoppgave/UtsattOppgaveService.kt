@@ -74,8 +74,8 @@ class UtsattOppgaveService(
                                 lagre(oppgave.copy(tilstand = Tilstand.Forkastet, speil = gjelderSpeil))
                                 sikkerlogger.info("Endret oppgave: ${oppgave.inntektsmeldingId} til tilstand: ${Tilstand.Forkastet.name} pga behandlingskategori: $behandlingsKategori")
                             }
-                            logger.info("Oppgave: ${oppgave.inntektsmeldingId} blir ikke opprettet")
-                            sikkerlogger.info("Oppgave: ${oppgave.inntektsmeldingId}  blir ikke Opprettet, har behandlingskategori: $behandlingsKategori")
+                            logger.info("Oppgave blir ikke opprettet for inntektsmeldingId: ${oppgave.inntektsmeldingId}")
+                            sikkerlogger.info("ppgave blir ikke opprettet for inntektsmeldingId: ${oppgave.inntektsmeldingId}, har behandlingskategori: $behandlingsKategori")
                         }
                     }
                     .onFailure { sikkerlogger.error(it.message, it) }
