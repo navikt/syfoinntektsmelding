@@ -8,7 +8,7 @@ import no.nav.syfo.repository.buildIM
 import java.time.LocalDateTime
 import java.util.UUID
 
-object UtsattOppgaveMockData {
+object UtsattOppgaveTestData {
     val fnr = "fnr"
     val aktørId = "aktørId"
     val journalpostId = "journalpostId"

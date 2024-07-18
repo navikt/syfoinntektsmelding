@@ -7,7 +7,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
-import no.nav.syfo.UtsattOppgaveMockData
+import no.nav.syfo.UtsattOppgaveTestData
 import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.domain.OppgaveResultat
 import no.nav.syfo.dto.Tilstand
@@ -30,7 +30,7 @@ open class UtsattOppgaveServiceTest {
     private val metrikk: Metrikk = mockk(relaxed = true)
     private val inntektsmeldingRepository: InntektsmeldingRepository = mockk(relaxed = true)
     private val om = buildObjectMapper()
-    private val oppgave = UtsattOppgaveMockData.oppgave.copy()
+    private val oppgave = UtsattOppgaveTestData.oppgave.copy()
     private val timeout = LocalDateTime.of(2023, 4, 6, 9, 0)
 
     @BeforeEach
@@ -38,7 +38,7 @@ open class UtsattOppgaveServiceTest {
         oppgaveService = spyk(UtsattOppgaveService(utsattOppgaveDAO, oppgaveClient, behandlendeEnhetConsumer, inntektsmeldingRepository, om, metrikk))
         every { utsattOppgaveDAO.finn(any()) } returns oppgave.copy()
         coEvery { oppgaveClient.opprettOppgave(any(), any(), any()) } returns OppgaveResultat(Random.nextInt(), false, false)
-        every { inntektsmeldingRepository.findByUuid(any()) } returns UtsattOppgaveMockData.inntektsmeldingEntitet
+        every { inntektsmeldingRepository.findByUuid(any()) } returns UtsattOppgaveTestData.inntektsmeldingEntitet
         every { behandlendeEnhetConsumer.hentBehandlendeEnhet(any(), any()) } returns "4488"
     }
 
@@ -103,7 +103,7 @@ open class UtsattOppgaveServiceTest {
 
     @Test
     fun `Oppretter Ikke Oppgave hvis begrunnelseRedusert = IkkeFravaer hvis oppgave utsatt`() {
-        every { inntektsmeldingRepository.findByUuid(any()) } returns UtsattOppgaveMockData.inntektsmeldingEntitetIkkeFravaer
+        every { inntektsmeldingRepository.findByUuid(any()) } returns UtsattOppgaveTestData.inntektsmeldingEntitetIkkeFravaer
         val oppgaveOppdatering = OppgaveOppdatering(
             UUID.randomUUID(),
             OppdateringstypeDTO.Opprett.tilHandling(),
@@ -117,7 +117,7 @@ open class UtsattOppgaveServiceTest {
 
     @Test
     fun `Oppretter Ikke Oppgave hvis begrunnelseRedusert = IkkeFravaer og oppgave allerede forkastet`() {
-        every { inntektsmeldingRepository.findByUuid(any()) } returns UtsattOppgaveMockData.inntektsmeldingEntitetIkkeFravaer
+        every { inntektsmeldingRepository.findByUuid(any()) } returns UtsattOppgaveTestData.inntektsmeldingEntitetIkkeFravaer
         val forkastetTidspunkt = LocalDateTime.of(2023, 4, 6, 9, 0)
         val forkastetOppgave = oppgave.copy(tilstand = Tilstand.Forkastet, oppdatert = forkastetTidspunkt)
         every { utsattOppgaveDAO.finn(any()) } returns forkastetOppgave
