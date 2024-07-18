@@ -7,14 +7,12 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
+import no.nav.syfo.UtsattOppgaveMockData
 import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.domain.OppgaveResultat
-import no.nav.syfo.dto.InntektsmeldingEntitet
 import no.nav.syfo.dto.Tilstand
-import no.nav.syfo.dto.UtsattOppgaveEntitet
 import no.nav.syfo.koin.buildObjectMapper
 import no.nav.syfo.repository.InntektsmeldingRepository
-import no.nav.syfo.repository.buildIM
 import no.nav.syfo.service.BehandlendeEnhetConsumer
 import no.nav.syfo.util.Metrikk
 import org.junit.jupiter.api.BeforeEach
@@ -32,32 +30,18 @@ open class UtsattOppgaveServiceTest {
     private val metrikk: Metrikk = mockk(relaxed = true)
     private val inntektsmeldingRepository: InntektsmeldingRepository = mockk(relaxed = true)
     private val om = buildObjectMapper()
-
-    val inntektsmeldingEntitet = InntektsmeldingEntitet(
-        aktorId = "aktoerid-123",
-        behandlet = LocalDateTime.now(),
-        orgnummer = "arb-org-123",
-        journalpostId = "jp-123",
-        data = om.writeValueAsString(buildIM()),
-    )
-    val inntektsmeldingEntitetIkkeFravaer = inntektsmeldingEntitet.copy(data = om.writeValueAsString(buildIM().copy(begrunnelseRedusert = "IkkeFravaer")))
+    private val oppgave = UtsattOppgaveMockData.oppgave.copy()
+    private val timeout = LocalDateTime.of(2023, 4, 6, 9, 0)
 
     @BeforeEach
     fun setup() {
         oppgaveService = spyk(UtsattOppgaveService(utsattOppgaveDAO, oppgaveClient, behandlendeEnhetConsumer, inntektsmeldingRepository, om, metrikk))
         every { utsattOppgaveDAO.finn(any()) } returns oppgave.copy()
         coEvery { oppgaveClient.opprettOppgave(any(), any(), any()) } returns OppgaveResultat(Random.nextInt(), false, false)
-        every { inntektsmeldingRepository.findByUuid(any()) } returns inntektsmeldingEntitet
+        every { inntektsmeldingRepository.findByUuid(any()) } returns UtsattOppgaveMockData.inntektsmeldingEntitet
         every { behandlendeEnhetConsumer.hentBehandlendeEnhet(any(), any()) } returns "4488"
     }
 
-    private val fnr = "fnr"
-    private val aktørId = "aktørId"
-    private val journalpostId = "journalpostId"
-    private val arkivreferanse = "123"
-
-    private val timeout = LocalDateTime.of(2023, 4, 6, 9, 0)
-    private val oppgave = enOppgave(timeout)
 
     @Test
     fun `Oppretter forsinket oppgave med timeout`() {
@@ -120,7 +104,7 @@ open class UtsattOppgaveServiceTest {
 
     @Test
     fun `Oppretter Ikke Oppgave hvis begrunnelseRedusert = IkkeFravaer hvis oppgave utsatt`() {
-        every { inntektsmeldingRepository.findByUuid(any()) } returns inntektsmeldingEntitetIkkeFravaer
+        every { inntektsmeldingRepository.findByUuid(any()) } returns UtsattOppgaveMockData.inntektsmeldingEntitetIkkeFravaer
         val oppgaveOppdatering = OppgaveOppdatering(
             UUID.randomUUID(),
             OppdateringstypeDTO.Opprett.tilHandling(),
@@ -134,7 +118,7 @@ open class UtsattOppgaveServiceTest {
 
     @Test
     fun `Oppretter Ikke Oppgave hvis begrunnelseRedusert = IkkeFravaer og oppgave allerede forkastet`() {
-        every { inntektsmeldingRepository.findByUuid(any()) } returns inntektsmeldingEntitetIkkeFravaer
+        every { inntektsmeldingRepository.findByUuid(any()) } returns UtsattOppgaveMockData.inntektsmeldingEntitetIkkeFravaer
         val forkastetTidspunkt = LocalDateTime.of(2023, 4, 6, 9, 0)
         val forkastetOppgave = oppgave.copy(tilstand = Tilstand.Forkastet, oppdatert = forkastetTidspunkt)
         every { utsattOppgaveDAO.finn(any()) } returns forkastetOppgave
@@ -148,18 +132,4 @@ open class UtsattOppgaveServiceTest {
         verify(exactly = 0) { utsattOppgaveDAO.lagre(any()) }
         coVerify(exactly = 0) { oppgaveClient.opprettOppgave(any(), any(), any()) }
     }
-
-    private fun enOppgave(timeout: LocalDateTime, tilstand: Tilstand = Tilstand.Utsatt) = UtsattOppgaveEntitet(
-        fnr = fnr,
-        aktørId = aktørId,
-        journalpostId = journalpostId,
-        arkivreferanse = arkivreferanse,
-        timeout = timeout,
-        inntektsmeldingId = UUID.randomUUID().toString(),
-        tilstand = tilstand,
-        gosysOppgaveId = null,
-        oppdatert = null,
-        speil = false,
-        utbetalingBruker = false
-    )
 }
