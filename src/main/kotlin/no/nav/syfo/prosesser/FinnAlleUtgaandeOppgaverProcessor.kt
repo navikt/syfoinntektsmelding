@@ -36,7 +36,7 @@ class FinnAlleUtgaandeOppgaverProcessor(
         utsattOppgaveDAO
             .finnAlleUtgåtteOppgaver()
             .forEach { oppgaveEntitet ->
-                hentInntektsmelding(oppgaveEntitet, inntektsmeldingRepository, om)
+                inntektsmeldingRepository.hentInntektsmelding(oppgaveEntitet, om)
                     .onFailure {
                         sikkerlogger.error("Fant ikke inntektsmelding for utsatt oppgave: ${oppgaveEntitet.arkivreferanse}", it)
                         logger.error("Fant ikke inntektsmelding for utsatt oppgave: ${oppgaveEntitet.arkivreferanse}")

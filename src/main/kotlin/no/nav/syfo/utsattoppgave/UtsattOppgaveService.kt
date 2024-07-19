@@ -56,7 +56,7 @@ class UtsattOppgaveService(
             }
             (Tilstand.Utsatt to Handling.Opprett),
             (Tilstand.Forkastet to Handling.Opprett) -> {
-                hentInntektsmelding(oppgave, inntektsmeldingRepository, om)
+                inntektsmeldingRepository.hentInntektsmelding(oppgave, om)
                     .onSuccess { inntektsmelding ->
                         val gjelderUtland = behandlendeEnhetConsumer.gjelderUtland(oppgave)
                         val behandlingsKategori = utledBehandlingsKategori(oppgave, inntektsmelding, gjelderUtland)
@@ -99,10 +99,10 @@ class UtsattOppgaveService(
     ): OppgaveResultat = opprettOppgaveIGosys(oppgave, oppgaveClient, utsattOppgaveDAO, behandlingsKategori)
 }
 
-fun hentInntektsmelding(oppgave: UtsattOppgaveEntitet, inntektsmeldingRepository: InntektsmeldingRepository, om: ObjectMapper): Result<Inntektsmelding> {
-    val inntektsmelding = inntektsmeldingRepository.findByUuid(oppgave.inntektsmeldingId)
-    return if (inntektsmelding != null && inntektsmelding.data != null) {
-        Result.success(om.readValue<Inntektsmelding>(inntektsmelding.data!!))
+fun InntektsmeldingRepository.hentInntektsmelding(oppgave: UtsattOppgaveEntitet, om: ObjectMapper): Result<Inntektsmelding> {
+    val inntektsmeldingData = this.findByUuid(oppgave.inntektsmeldingId)?.data
+    return if (inntektsmeldingData != null) {
+        Result.success(om.readValue<Inntektsmelding>(inntektsmeldingData))
     } else {
         Result.failure(Exception("Fant ikke inntektsmelding for ID '${oppgave.inntektsmeldingId}'."))
     }
