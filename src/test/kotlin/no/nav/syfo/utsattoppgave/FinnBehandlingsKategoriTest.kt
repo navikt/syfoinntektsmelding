@@ -64,6 +64,12 @@ internal class FinnBehandlingsKategoriTest {
         assertEquals(BehandlingsKategori.UTLAND, finnBehandlingsKategori(inntektsmelding = inntektsmelding, speilRelatert = false, gjelderUtland = true))
     }
 
+    @Test
+    fun ikke_fravaer() {
+        val inntektsmelding = mockInntektsmelding(Refusjon(beloepPrMnd = BigDecimal(17000), null), BigDecimal(17000)).copy(begrunnelseRedusert = "IkkeFravaer")
+        assertEquals(BehandlingsKategori.IKKE_FRAVAER, finnBehandlingsKategori(inntektsmelding = inntektsmelding, speilRelatert = false, gjelderUtland = false))
+    }
+
     fun mockInntektsmelding(refusjon: Refusjon, inntekt: BigDecimal): Inntektsmelding {
         return Inntektsmelding(
             id = "",

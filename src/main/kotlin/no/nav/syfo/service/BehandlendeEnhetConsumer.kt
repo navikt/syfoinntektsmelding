@@ -11,6 +11,7 @@ import no.nav.syfo.client.norg.ArbeidsfordelingRequest
 import no.nav.syfo.client.norg.ArbeidsfordelingResponse
 import no.nav.syfo.client.norg.Norg2Client
 import no.nav.syfo.domain.GeografiskTilknytningData
+import no.nav.syfo.dto.UtsattOppgaveEntitet
 import no.nav.syfo.util.Metrikk
 
 const val SYKEPENGER_UTLAND = "4474"
@@ -60,6 +61,12 @@ class BehandlendeEnhetConsumer(
                 diskresjonskode = it?.hentPerson?.trekkUtDiskresjonskode()
             )
         }
+    }
+
+    fun gjelderUtland(oppgave: UtsattOppgaveEntitet): Boolean {
+        val behandlendeEnhet = this.hentBehandlendeEnhet(oppgave.fnr, oppgave.inntektsmeldingId)
+        logger.info("Fant enhet $behandlendeEnhet for ${oppgave.arkivreferanse}")
+        return (SYKEPENGER_UTLAND == behandlendeEnhet)
     }
 }
 
