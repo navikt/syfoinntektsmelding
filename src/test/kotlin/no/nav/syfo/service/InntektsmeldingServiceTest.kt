@@ -174,6 +174,6 @@ class InntektsmeldingServiceTest {
     }
 
     fun lag(dager: Long, inntekt: Int): Inntektsmelding {
-        return buildIM().copy(innsendingstidspunkt = LocalDateTime.now().minusDays(dager), beregnetInntekt = BigDecimal(inntekt))
+        return buildIM().copy(mottattDato = LocalDateTime.now().minusDays(dager), beregnetInntekt = BigDecimal(inntekt))
     }
 }
