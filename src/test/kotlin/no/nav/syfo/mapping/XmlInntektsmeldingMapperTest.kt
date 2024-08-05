@@ -37,6 +37,7 @@ class XmlInntektsmeldingMapperTest {
         Assertions.assertThat(im.arbeidsgiverperioder.size).isEqualTo(1)
         Assertions.assertThat(im.begrunnelseRedusert).isEqualTo("")
         Assertions.assertThat(im.bruttoUtbetalt).isEqualTo(BigDecimal(18000))
+        Assertions.assertThat(im.innsendingstidspunkt).isNotNull
     }
 
     @Test
@@ -48,17 +49,31 @@ class XmlInntektsmeldingMapperTest {
         Assertions.assertThat(im.fnr).isEqualTo("fnr-2")
         Assertions.assertThat(im.journalpostId).isEqualTo("journalpostId")
         Assertions.assertThat(im.arbeidsgiverperioder.size).isEqualTo(2)
+        Assertions.assertThat(im.innsendingstidspunkt).isNotNull
     }
 
     @Test
     fun map20181211() {
-        val bytes: ByteArray = inntektsmeldingArbeidsgiverPrivat().toByteArray()
+        val bytes: ByteArray = inntektsmeldingArbeidsgiverPrivat("2023-03-05T10:00:00.000000").toByteArray()
         val im = XmlInntektsmeldingMapper().mapInntektsmelding(bytes, pdlClient, MOTTATT_DATO, JOURNALPOST_ID, JournalStatus.MOTTATT, ARKIV_REFERANSE)
         Assertions.assertThat(im.fnr).isEqualTo("fnr")
         Assertions.assertThat(im.journalpostId).isEqualTo("journalpostId")
         Assertions.assertThat(im.arbeidsgiverperioder.size).isEqualTo(1)
         Assertions.assertThat(im.begrunnelseRedusert).isEqualTo("")
         Assertions.assertThat(im.bruttoUtbetalt).isEqualTo(BigDecimal(9889))
+        Assertions.assertThat(im.innsendingstidspunkt).isNotNull
+    }
+
+    @Test
+    fun map20181211_med_tidssone() {
+        val bytes: ByteArray = inntektsmeldingArbeidsgiverPrivat("2023-03-05T10:00:00.000000+2:00").toByteArray()
+        val im = XmlInntektsmeldingMapper().mapInntektsmelding(bytes, pdlClient, MOTTATT_DATO, JOURNALPOST_ID, JournalStatus.MOTTATT, ARKIV_REFERANSE)
+        Assertions.assertThat(im.fnr).isEqualTo("fnr")
+        Assertions.assertThat(im.journalpostId).isEqualTo("journalpostId")
+        Assertions.assertThat(im.arbeidsgiverperioder.size).isEqualTo(1)
+        Assertions.assertThat(im.begrunnelseRedusert).isEqualTo("")
+        Assertions.assertThat(im.bruttoUtbetalt).isEqualTo(BigDecimal(9889))
+        Assertions.assertThat(im.innsendingstidspunkt).isNull()
     }
 
     companion object {
@@ -103,6 +118,7 @@ class XmlInntektsmeldingMapperTest {
         <ns2:avsendersystem>
             <ns2:systemnavn>AltinnPortal</ns2:systemnavn>
             <ns2:systemversjon>1.0</ns2:systemversjon>
+            <ns2:innsendingstidspunkt>2023-03-05T10:00:00.000000</ns2:innsendingstidspunkt>
         </ns2:avsendersystem>
     </ns2:Skjemainnhold>
 </ns2:melding>"""
@@ -150,6 +166,7 @@ class XmlInntektsmeldingMapperTest {
                 "        <ns6:avsendersystem>" +
                 "            <ns6:systemnavn>AltinnPortal</ns6:systemnavn>" +
                 "            <ns6:systemversjon>1.0</ns6:systemversjon>" +
+                "            <ns6:innsendingstidspunkt>2023-03-05T10:00:00.000000</ns6:innsendingstidspunkt>" +
                 "        </ns6:avsendersystem>" +
                 "        <ns6:pleiepengerPerioder/>" +
                 "        <ns6:omsorgspenger>" +
@@ -160,7 +177,7 @@ class XmlInntektsmeldingMapperTest {
                 "</ns6:melding>"
         }
 
-        fun inntektsmeldingArbeidsgiverPrivat(): String {
+        fun inntektsmeldingArbeidsgiverPrivat(innsendt: String): String {
             return "<ns7:melding xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:seres=\"http://seres.no/xsd/forvaltningsdata\" xmlns:ns1=\"http://seres.no/xsd/NAV/Inntektsmelding_M/2017\" xmlns:ns2=\"http://seres.no/xsd/NAV/Inntektsmelding_M/20171205\" xmlns:dfs=\"http://schemas.microsoft.com/office/infopath/2003/dataFormSolution\" xmlns:tns=\"http://www.altinn.no/services/ServiceEngine/ServiceMetaData/2009/10\" xmlns:q1=\"http://schemas.altinn.no/services/ServiceEngine/ServiceMetaData/2009/10\" xmlns:q2=\"http://schemas.altinn.no/serviceengine/formsengine/2009/10\" xmlns:ns3=\"http://www.altinn.no/services/2009/10\" xmlns:q3=\"http://www.altinn.no/services/common/fault/2009/10\" xmlns:ns4=\"http://schemas.microsoft.com/2003/10/Serialization/\" xmlns:ns5=\"http://seres.no/xsd/NAV/Inntektsmelding_M/20180618\" xmlns:ns6=\"http://seres.no/xsd/NAV/Inntektsmelding_M/20180924\" xmlns:my=\"http://schemas.microsoft.com/office/infopath/2003/myXSD/2017-10-18T12:15:13\" xmlns:xd=\"http://schemas.microsoft.com/office/infopath/2003\" xmlns:ns7=\"http://seres.no/xsd/NAV/Inntektsmelding_M/20181211\">\n" +
                 "<ns7:Skjemainnhold>" +
                 "<ns7:ytelse>Sykepenger</ns7:ytelse>" +
@@ -200,6 +217,7 @@ class XmlInntektsmeldingMapperTest {
                 "<ns7:avsendersystem>" +
                 "<ns7:systemnavn>AltinnPortal</ns7:systemnavn>" +
                 "<ns7:systemversjon>1.0</ns7:systemversjon>" +
+                "<ns7:innsendingstidspunkt>"+innsendt+"</ns7:innsendingstidspunkt>" +
                 "</ns7:avsendersystem>" +
                 "<ns7:pleiepengerPerioder/>" +
                 "<ns7:omsorgspenger>" +

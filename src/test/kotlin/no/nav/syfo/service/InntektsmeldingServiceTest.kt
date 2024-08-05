@@ -70,6 +70,21 @@ class InntektsmeldingServiceTest {
     }
 
     @Test
+    fun `Skal være duplikat av sist innsendt nr 2`() {
+        val inntekt = 100
+        val im = lag(0, inntekt)
+        val list = listOf(
+            lag(null, inntekt),
+            lag(null, inntekt + 100),
+            lag(null, inntekt + 200),
+        )
+        println("list: "+list.map { it.beregnetInntekt })
+        println("last:"+list.last().beregnetInntekt)
+        assertTrue(isDuplicateWithLatest(logger, im, list))
+        assertTrue(isDuplicateWithLatest(logger, im, list.asReversed()))
+    }
+
+    @Test
     fun `Skal finne inntektsmeldinger og mappe de om til domene objekter`() {
         val repository = mockk<InntektsmeldingRepository>(relaxed = true)
         val service = InntektsmeldingService(repository, objectMapper)
@@ -173,7 +188,7 @@ class InntektsmeldingServiceTest {
         )
     }
 
-    fun lag(dager: Long, inntekt: Int): Inntektsmelding {
-        return buildIM().copy(innsendingstidspunkt = LocalDateTime.now().minusDays(dager), beregnetInntekt = BigDecimal(inntekt))
+    fun lag(dager: Long?, inntekt: Int): Inntektsmelding {
+        return buildIM().copy(innsendingstidspunkt = dager?.let { LocalDateTime.now().minusDays(it) }, beregnetInntekt = BigDecimal(inntekt))
     }
 }
