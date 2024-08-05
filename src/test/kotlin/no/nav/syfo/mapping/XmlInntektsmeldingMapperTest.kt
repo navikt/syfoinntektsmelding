@@ -217,7 +217,7 @@ class XmlInntektsmeldingMapperTest {
                 "<ns7:avsendersystem>" +
                 "<ns7:systemnavn>AltinnPortal</ns7:systemnavn>" +
                 "<ns7:systemversjon>1.0</ns7:systemversjon>" +
-                "<ns7:innsendingstidspunkt>"+innsendt+"</ns7:innsendingstidspunkt>" +
+                "<ns7:innsendingstidspunkt>" + innsendt + "</ns7:innsendingstidspunkt>" +
                 "</ns7:avsendersystem>" +
                 "<ns7:pleiepengerPerioder/>" +
                 "<ns7:omsorgspenger>" +

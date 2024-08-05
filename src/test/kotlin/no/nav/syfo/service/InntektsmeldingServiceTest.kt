@@ -78,8 +78,8 @@ class InntektsmeldingServiceTest {
             lag(null, inntekt + 100),
             lag(null, inntekt + 200),
         )
-        println("list: "+list.map { it.beregnetInntekt })
-        println("last:"+list.last().beregnetInntekt)
+        println("list: " + list.map { it.beregnetInntekt })
+        println("last:" + list.last().beregnetInntekt)
         assertTrue(isDuplicateWithLatest(logger, im, list))
         assertTrue(isDuplicateWithLatest(logger, im, list.asReversed()))
     }
