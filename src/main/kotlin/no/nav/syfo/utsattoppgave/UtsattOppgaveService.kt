@@ -8,14 +8,11 @@ import no.nav.helsearbeidsgiver.utils.log.sikkerLogger
 import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.domain.OppgaveResultat
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
-import no.nav.syfo.dto.InntektsmeldingEntitet
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.dto.UtsattOppgaveEntitet
 import no.nav.syfo.repository.InntektsmeldingRepository
 import no.nav.syfo.service.BehandlendeEnhetConsumer
-import no.nav.syfo.service.SYKEPENGER_UTLAND
 import no.nav.syfo.util.Metrikk
-import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -27,7 +24,6 @@ class UtsattOppgaveService(
     private val om: ObjectMapper,
     private val metrikk: Metrikk
 ) {
-
     private val logger = this.logger()
     private val sikkerlogger = sikkerLogger()
 
@@ -60,17 +56,29 @@ class UtsattOppgaveService(
             }
             (Tilstand.Utsatt to Handling.Opprett),
             (Tilstand.Forkastet to Handling.Opprett) -> {
-                val inntektsmeldingEntitet = inntektsmeldingRepository.findByUuid(oppgave.inntektsmeldingId)
-
-                if (inntektsmeldingEntitet != null) {
-                    val resultat = opprettOppgave(oppgave, gjelderSpeil, inntektsmeldingEntitet)
-                    oppgave.oppdatert = LocalDateTime.now()
-                    lagre(oppgave.copy(tilstand = Tilstand.Opprettet, speil = gjelderSpeil))
-                    metrikk.tellUtsattOppgave_Opprett()
-                    logger.info("Endret oppgave: ${oppgave.inntektsmeldingId} til tilstand: ${Tilstand.Opprettet.name} gosys oppgaveID: ${resultat.oppgaveId} duplikat? ${resultat.duplikat}")
-                } else {
-                    sikkerlogger.error("Fant ikke inntektsmelding for ID '${oppgave.inntektsmeldingId}'.")
-                }
+                inntektsmeldingRepository.hentInntektsmelding(oppgave, om)
+                    .onSuccess { inntektsmelding ->
+                        val gjelderUtland = behandlendeEnhetConsumer.gjelderUtland(oppgave)
+                        val behandlingsKategori = utledBehandlingsKategori(oppgave, inntektsmelding, gjelderUtland)
+                        if (BehandlingsKategori.IKKE_FRAVAER != behandlingsKategori) {
+                            val resultat = opprettOppgave(oppgave, behandlingsKategori)
+                            oppgave.oppdatert = LocalDateTime.now()
+                            lagre(oppgave.copy(tilstand = Tilstand.Opprettet, speil = gjelderSpeil))
+                            metrikk.tellUtsattOppgave_Opprett()
+                            logger.info(
+                                "Endret oppgave: ${oppgave.inntektsmeldingId} til tilstand: ${Tilstand.Opprettet.name} gosys oppgaveID: ${resultat.oppgaveId} duplikat? ${resultat.duplikat}",
+                            )
+                        } else {
+                            if (oppgave.tilstand == Tilstand.Utsatt) {
+                                oppgave.oppdatert = LocalDateTime.now()
+                                lagre(oppgave.copy(tilstand = Tilstand.Forkastet, speil = gjelderSpeil))
+                                sikkerlogger.info("Endret oppgave: ${oppgave.inntektsmeldingId} til tilstand: ${Tilstand.Forkastet.name} pga behandlingskategori: $behandlingsKategori")
+                            }
+                            logger.info("Oppgave blir ikke opprettet for inntektsmeldingId: ${oppgave.inntektsmeldingId}")
+                            sikkerlogger.info("ppgave blir ikke opprettet for inntektsmeldingId: ${oppgave.inntektsmeldingId}, har behandlingskategori: $behandlingsKategori")
+                        }
+                    }
+                    .onFailure { sikkerlogger.error(it.message, it) }
             }
             else -> {
                 metrikk.tellUtsattOppgave_Irrelevant()
@@ -85,9 +93,18 @@ class UtsattOppgaveService(
     fun opprett(utsattOppgave: UtsattOppgaveEntitet) {
         utsattOppgaveDAO.opprett(utsattOppgave)
     }
+    fun opprettOppgave(
+        oppgave: UtsattOppgaveEntitet,
+        behandlingsKategori: BehandlingsKategori
+    ): OppgaveResultat = opprettOppgaveIGosys(oppgave, oppgaveClient, utsattOppgaveDAO, behandlingsKategori)
+}
 
-    fun opprettOppgave(oppgave: UtsattOppgaveEntitet, gjelderSpeil: Boolean, inntektsmeldingEntitet: InntektsmeldingEntitet): OppgaveResultat {
-        return opprettOppgaveIGosys(oppgave, oppgaveClient, utsattOppgaveDAO, behandlendeEnhetConsumer, gjelderSpeil, inntektsmeldingEntitet, om)
+fun InntektsmeldingRepository.hentInntektsmelding(oppgave: UtsattOppgaveEntitet, om: ObjectMapper): Result<Inntektsmelding> {
+    val inntektsmeldingData = this.findByUuid(oppgave.inntektsmeldingId)?.data
+    return if (inntektsmeldingData != null) {
+        Result.success(om.readValue<Inntektsmelding>(inntektsmeldingData))
+    } else {
+        Result.failure(Exception("Fant ikke inntektsmelding for ID '${oppgave.inntektsmeldingId}'."))
     }
 }
 
@@ -95,31 +112,16 @@ fun opprettOppgaveIGosys(
     utsattOppgave: UtsattOppgaveEntitet,
     oppgaveClient: OppgaveClient,
     utsattOppgaveDAO: UtsattOppgaveDAO,
-    behandlendeEnhetConsumer: BehandlendeEnhetConsumer,
-    speil: Boolean,
-    imEntitet: InntektsmeldingEntitet,
-    om: ObjectMapper
+    behandlingsKategori: BehandlingsKategori
 ): OppgaveResultat {
-    val logger = LoggerFactory.getLogger(UtsattOppgaveService::class.java)!!
-    val behandlendeEnhet = behandlendeEnhetConsumer.hentBehandlendeEnhet(
-        utsattOppgave.fnr,
-        utsattOppgave.inntektsmeldingId
-    )
-    val gjelderUtland = (SYKEPENGER_UTLAND == behandlendeEnhet)
-    val inntektsmelding = om.readValue<Inntektsmelding>(imEntitet.data!!)
-    val behandlingsTema = finnBehandlingsTema(inntektsmelding)
-    logger.info("Fant enhet $behandlendeEnhet for ${utsattOppgave.arkivreferanse}")
-    val resultat = runBlocking {
-        oppgaveClient.opprettOppgave(
-            journalpostId = utsattOppgave.journalpostId,
-            tildeltEnhetsnr = null,
-            aktoerId = utsattOppgave.aktørId,
-            gjelderUtland = gjelderUtland,
-            gjelderSpeil = speil,
-            tema = behandlingsTema
-        )
-    }
-    utsattOppgave.enhet = behandlendeEnhet
+    val resultat =
+        runBlocking {
+            oppgaveClient.opprettOppgave(
+                journalpostId = utsattOppgave.journalpostId,
+                aktoerId = utsattOppgave.aktørId,
+                behandlingsKategori = behandlingsKategori,
+            )
+        }
     utsattOppgave.gosysOppgaveId = resultat.oppgaveId.toString()
     utsattOppgave.utbetalingBruker = resultat.utbetalingBruker
     utsattOppgaveDAO.lagre(utsattOppgave)

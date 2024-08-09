@@ -10,7 +10,6 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
-import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
 import no.nav.helsearbeidsgiver.utils.log.logger
 import no.nav.helsearbeidsgiver.utils.log.sikkerLogger
 import no.nav.syfo.helpers.retry
@@ -22,8 +21,8 @@ val AUTOMATISK_JOURNALFOERING_ENHET = "9999"
 
 class DokArkivClient(
     private val url: String,
-    private val accessTokenProvider: AccessTokenProvider,
-    private val httpClient: HttpClient
+    private val httpClient: HttpClient,
+    private val getAccessToken: () -> String
 ) {
     private val logger = this.logger()
     private val sikkerlogger = sikkerLogger()
@@ -53,7 +52,7 @@ class DokArkivClient(
             return httpClient.patch<String>("$url/journalpost/$journalpostId/ferdigstill") {
                 contentType(ContentType.Application.Json)
                 accept(ContentType.Application.Json)
-                header("Authorization", "Bearer ${accessTokenProvider.getToken()}")
+                header("Authorization", "Bearer ${getAccessToken()}")
                 header("Nav-Callid", msgId)
                 body = ferdigstillRequest
             }.also { logger.info("Ferdigstilte journalpost {}", journalpostId) }
@@ -97,7 +96,7 @@ class DokArkivClient(
             httpClient.put<HttpResponse>("$url/journalpost/$journalpostId") {
                 contentType(ContentType.Application.Json)
                 accept(ContentType.Application.Json)
-                header("Authorization", "Bearer ${accessTokenProvider.getToken()}")
+                header("Authorization", "Bearer ${getAccessToken()}")
                 header("Nav-Callid", msgId)
                 body = oppdaterJournalpostRequest
             }.also { logger.info("Oppdatering av journalpost ok for journalpostid {}, msgId {}", journalpostId, msgId) }
@@ -124,7 +123,7 @@ class DokArkivClient(
             httpClient.patch<HttpResponse>("$url/journalpost/$journalpostId/feilregistrer/feilregistrerSakstilknytning") {
                 contentType(ContentType.Application.Json)
                 accept(ContentType.Application.Json)
-                header("Authorization", "Bearer ${accessTokenProvider.getToken()}")
+                header("Authorization", "Bearer ${getAccessToken()}")
                 header("Nav-Callid", msgId)
             }.also { logger.info("Feilregistrerte journalpost {}", journalpostId) }
         } catch (e: Exception) {

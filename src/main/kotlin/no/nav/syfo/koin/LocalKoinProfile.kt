@@ -61,59 +61,34 @@ fun localDevConfig(config: ApplicationConfig) = module {
     } bind DataSource::class
     single { UtsattOppgaveRepositoryImp(get()) } bind UtsattOppgaveRepository::class
 
-    single { FinnAlleUtgaandeOppgaverProcessor(get(), get(), get(), get(), get(), get()) } bind FinnAlleUtgaandeOppgaverProcessor::class
+    single { FinnAlleUtgaandeOppgaverProcessor(get(), get(), get(), get(), get(), get()) }
 
     single {
         JournalpostHendelseConsumer(
-            joarkLocalProperties().toMutableMap(),
-            config.getString("kafka_joark_hendelse_topic"),
-            get(),
-            get()
+            joarkLocalProperties(), config.getString("kafka_joark_hendelse_topic"), get(), get()
         )
     }
     single {
-        UtsattOppgaveConsumer(
-            utsattOppgaveLocalProperties().toMutableMap(),
-            config.getString("kafka_utsatt_oppgave_topic"),
-            get(),
-            get(),
-            get()
-        )
+        UtsattOppgaveConsumer(utsattOppgaveLocalProperties(), config.getString("kafka_utsatt_oppgave_topic"), get(), get(), get())
     }
     single { PostgresBakgrunnsjobbRepository(get()) } bind BakgrunnsjobbRepository::class
     single { BakgrunnsjobbService(get()) }
-    single { BehandlendeEnhetConsumer(get(), get(), get()) } bind BehandlendeEnhetConsumer::class
+    single { BehandlendeEnhetConsumer(get(), get(), get()) }
     single { UtsattOppgaveDAO(UtsattOppgaveRepositoryMockk()) }
-    single { OppgaveClient(config.getString("oppgavebehandling_url"), get(), get()) { "local token" } } bind OppgaveClient::class
-    single { UtsattOppgaveService(get(), get(), get(), get(), get(), get()) } bind UtsattOppgaveService::class
+    single { OppgaveClient(config.getString("oppgavebehandling_url"), get(), get()) { "local token" } }
+    single { UtsattOppgaveService(get(), get(), get(), get(), get(), get()) }
     single { FeiletUtsattOppgaveMeldingProsessor(get(), get()) }
 
-    single { FjernInntektsmeldingByBehandletProcessor(get(), 1) } bind FjernInntektsmeldingByBehandletProcessor::class
+    single { FjernInntektsmeldingByBehandletProcessor(get(), 1) }
 
-    single {
-        InntektsmeldingBehandler(
-            get(),
-            get(),
-            get(),
-            get(),
-            get(),
-            get()
-        )
-    } bind InntektsmeldingBehandler::class
-    single { InngaaendeJournalConsumer(get()) } bind InngaaendeJournalConsumer::class
-    single { BehandleInngaaendeJournalConsumer(get()) } bind BehandleInngaaendeJournalConsumer::class
-    single { JournalConsumer(get(), get(), get()) } bind JournalConsumer::class
+    single { InntektsmeldingBehandler(get(), get(), get(), get(), get(), get()) }
+    single { InngaaendeJournalConsumer(get()) }
+    single { BehandleInngaaendeJournalConsumer(get()) }
+    single { JournalConsumer(get(), get(), get()) }
     single { Metrikk() } bind Metrikk::class
-    single { JournalpostService(get(), get(), get(), get(), get()) } bind JournalpostService::class
-    single { InntektsmeldingService(InntektsmeldingRepositoryImp(get()), get()) } bind InntektsmeldingService::class
-    single {
-        JoarkInntektsmeldingHendelseProsessor(
-            get(),
-            get(),
-            get(),
-            get()
-        )
-    } bind JoarkInntektsmeldingHendelseProsessor::class
+    single { JournalpostService(get(), get(), get(), get(), get()) }
+    single { InntektsmeldingService(InntektsmeldingRepositoryImp(get()), get()) }
+    single { JoarkInntektsmeldingHendelseProsessor(get(), get(), get(), get()) }
 
     single {
         InntektsmeldingAivenProducer(producerLocalProperties(config.getString("kafka_bootstrap_servers")))
@@ -123,25 +98,25 @@ fun localDevConfig(config: ApplicationConfig) = module {
         SafJournalpostClient(
             get(),
             "http://localhost",
-            get()
+            ::fakeToken
         )
-    } bind SafJournalpostClient::class
+    }
 
     single {
         SafDokumentClient(
             config.getString("saf_dokument_url"),
             get(),
-            get()
+            ::fakeToken
         )
-    } bind SafDokumentClient::class
+    }
 
     single {
         DokArkivClient(
             config.getString("dokarkiv_url"),
             get(),
-            get()
+            ::fakeToken
         )
-    } bind DokArkivClient::class
+    }
 
     single { ArbeidsgiverperiodeRepositoryImp(get()) } bind ArbeidsgiverperiodeRepository::class
 
@@ -156,3 +131,6 @@ fun localDevConfig(config: ApplicationConfig) = module {
         )
     }
 }
+
+private fun fakeToken(): String =
+    "fake token"

@@ -1,21 +1,24 @@
 package no.nav.syfo.simba
 
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.AarsakInnsending
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.BegrunnelseIngenEllerRedusertUtbetalingKode
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.Bonus
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.FullLoennIArbeidsgiverPerioden
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.Inntekt
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.Inntektsmelding
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.Naturalytelse
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.NaturalytelseKode
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.Periode
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.Refusjon
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.RefusjonEndring
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.AarsakInnsending
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.BegrunnelseIngenEllerRedusertUtbetalingKode
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.Bonus
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.FullLoennIArbeidsgiverPerioden
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.Inntekt
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.Inntektsmelding
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.Naturalytelse
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.NaturalytelseKode
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.Refusjon
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.RefusjonEndring
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.v1.Periode
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.OffsetDateTime
+import java.time.ZoneOffset
+import java.util.UUID
 
 class MapInntektsmeldingFraSimbaTest {
     @Test
@@ -76,6 +79,33 @@ class MapInntektsmeldingFraSimbaTest {
         assertNull(im.rapportertInntekt?.endringAarsakData?.perioder)
         assertNull(im.rapportertInntekt?.endringAarsakData?.gjelderFra)
         assertNull(im.rapportertInntekt?.endringAarsakData?.bleKjent)
+    }
+
+    @Test
+    fun mapInnsendtTidspunktFraSimba() {
+        val localDateTime = LocalDateTime.of(2023, 2, 11, 14, 0)
+        val innsendt = OffsetDateTime.of(localDateTime, ZoneOffset.of("+1"))
+        val im = mapInntektsmelding("1", "2", "3", lagInntektsmelding().copy(tidspunkt = innsendt))
+        assertEquals(localDateTime, im.innsendingstidspunkt)
+    }
+
+    @Test
+    fun mapVedtaksperiodeID() {
+        val im = mapInntektsmelding("1", "2", "3", lagInntektsmelding())
+        assertNull(im.vedtaksperiodeId)
+        val vedtaksperiodeId = UUID.randomUUID()
+        val im2 = mapInntektsmelding("1", "2", "3", lagInntektsmelding().copy(vedtaksperiodeId = vedtaksperiodeId))
+        assertEquals(vedtaksperiodeId, im2.vedtaksperiodeId)
+    }
+
+    @Test
+    fun mapAvsenderForSelvbestemtOgVanlig() {
+        val selvbestemtIM = mapInntektsmelding("1", "2", "3", lagInntektsmelding(), selvbestemt = true)
+        assertEquals(Avsender.NAV_NO_SELVBESTEMT, selvbestemtIM.avsenderSystem.navn)
+        assertEquals(Avsender.VERSJON, selvbestemtIM.avsenderSystem.versjon)
+        val im = mapInntektsmelding("1", "2", "3", lagInntektsmelding())
+        assertEquals(Avsender.NAV_NO, im.avsenderSystem.navn)
+        assertEquals(Avsender.VERSJON, im.avsenderSystem.versjon)
     }
 
     private fun lagInntektsmelding(): Inntektsmelding {

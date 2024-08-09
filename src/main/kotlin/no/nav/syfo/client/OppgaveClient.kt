@@ -16,20 +16,30 @@ import no.nav.syfo.behandling.OpprettOppgaveException
 import no.nav.syfo.domain.OppgaveResultat
 import no.nav.syfo.helpers.retry
 import no.nav.syfo.util.Metrikk
-import no.nav.syfo.utsattoppgave.BehandlingsTema
+import no.nav.syfo.utsattoppgave.BehandlingsKategori
 import java.time.DayOfWeek
 import java.time.LocalDate
 
-const val OPPGAVETYPE_INNTEKTSMELDING = "INNT"
-const val OPPGAVETYPE_FORDELINGSOPPGAVE = "FDR"
 const val TEMA = "SYK"
-const val BEHANDLINGSTEMA_SPEIL = "ab0455"
-const val BEHANDLINGSTEMA_UTBETALING_TIL_BRUKER = "ab0458"
-const val BEHANDLINGSTYPE_UTLAND = "ae0106"
-const val BEHANDLINGSTYPE_NORMAL = "ab0061"
+
+object Oppgavetype {
+    const val INNTEKTSMELDING = "INNT"
+    const val FORDELINGSOPPGAVE = "FDR"
+}
+
+object Behandlingstype {
+    const val UTLAND = "ae0106"
+}
+
+object Behandlingstema {
+    const val NORMAL = "ab0061"
+    const val SPEIL = "ab0455"
+    const val UTBETALING_TIL_BRUKER = "ab0458"
+    const val BESTRIDER_SYKEMELDING = "ab0421"
+}
 
 class OppgaveClient(
-    val oppgavebehndlingUrl: String,
+    val oppgavebehandlingUrl: String,
     val httpClient: HttpClient,
     val metrikk: Metrikk,
     val getAccessToken: () -> String
@@ -38,7 +48,7 @@ class OppgaveClient(
     private val sikkerlogger = sikkerLogger()
 
     private suspend fun opprettOppgave(opprettOppgaveRequest: OpprettOppgaveRequest): OpprettOppgaveResponse = retry("opprett_oppgave") {
-        httpClient.post<OpprettOppgaveResponse>(oppgavebehndlingUrl) {
+        httpClient.post<OpprettOppgaveResponse>(oppgavebehandlingUrl) {
             contentType(ContentType.Application.Json)
             this.header("Authorization", "Bearer ${getAccessToken()}")
             this.header("X-Correlation-ID", MdcUtils.getCallId())
@@ -50,7 +60,7 @@ class OppgaveClient(
         return retry("hent_oppgave") {
             val callId = MdcUtils.getCallId()
             logger.info("Henter oppgave med CallId $callId")
-            httpClient.get<OppgaveResponse>(oppgavebehndlingUrl) {
+            httpClient.get<OppgaveResponse>(oppgavebehandlingUrl) {
                 this.header("Authorization", "Bearer ${getAccessToken()}")
                 this.header("X-Correlation-ID", callId)
                 parameter("tema", TEMA)
@@ -76,58 +86,60 @@ class OppgaveClient(
 
     suspend fun opprettOppgave(
         journalpostId: String,
-        tildeltEnhetsnr: String?,
         aktoerId: String,
-        gjelderUtland: Boolean,
-        gjelderSpeil: Boolean,
-        tema: BehandlingsTema
+        behandlingsKategori: BehandlingsKategori
     ): OppgaveResultat {
 
-        val eksisterendeOppgave = hentHvisOppgaveFinnes(OPPGAVETYPE_INNTEKTSMELDING, journalpostId)
+        val eksisterendeOppgave = hentHvisOppgaveFinnes(Oppgavetype.INNTEKTSMELDING, journalpostId)
         metrikk.tellOpprettOppgave(eksisterendeOppgave != null)
         if (eksisterendeOppgave != null) {
-            logger.info("Det finnes allerede journalføringsoppgave for journalpost $journalpostId")
+            sikkerlogger.info("Det finnes allerede journalføringsoppgave for journalpost $journalpostId")
             return eksisterendeOppgave
         }
 
         fun loggOppgave(type: String) {
-            logger.info("Oppretter oppgave: $type for journalpost $journalpostId")
+            sikkerlogger.info("Oppretter oppgave: $type for journalpost $journalpostId")
         }
 
-        val (behandlingstype, behandlingstema, utbetalingBruker) = when {
-            gjelderSpeil -> {
+        val (behandlingstype, behandlingstema, utbetalingBruker) = when (behandlingsKategori) {
+            BehandlingsKategori.SPEIL_RELATERT -> {
                 loggOppgave("Speil")
-                Triple(null, BEHANDLINGSTEMA_SPEIL, false)
+                Triple(null, Behandlingstema.SPEIL, false)
             }
-            gjelderUtland -> {
+            BehandlingsKategori.UTLAND -> {
                 loggOppgave("Utland")
-                Triple(BEHANDLINGSTYPE_UTLAND, null, false)
+                Triple(Behandlingstype.UTLAND, null, false)
             }
-            tema != BehandlingsTema.REFUSJON_UTEN_DATO -> {
+            BehandlingsKategori.BESTRIDER_SYKEMELDING -> {
+                loggOppgave("Bestrider sykmelding")
+                Triple(null, Behandlingstema.BESTRIDER_SYKEMELDING, false)
+            }
+            BehandlingsKategori.IKKE_REFUSJON,
+            BehandlingsKategori.REFUSJON_MED_DATO,
+            BehandlingsKategori.REFUSJON_LITEN_LØNN -> {
                 loggOppgave("Utbetaling til bruker")
-                Triple(null, BEHANDLINGSTEMA_UTBETALING_TIL_BRUKER, true)
+                Triple(null, Behandlingstema.UTBETALING_TIL_BRUKER, true)
             }
             else -> {
                 loggOppgave("Normal")
-                Triple(null, BEHANDLINGSTYPE_NORMAL, false)
+                Triple(null, Behandlingstema.NORMAL, false)
             }
         }
 
         val opprettOppgaveRequest = OpprettOppgaveRequest(
-            tildeltEnhetsnr = tildeltEnhetsnr,
             aktoerId = aktoerId,
             journalpostId = journalpostId,
             behandlesAvApplikasjon = "FS22",
             beskrivelse = "Det har kommet en inntektsmelding på sykepenger.",
             tema = "SYK",
-            oppgavetype = OPPGAVETYPE_INNTEKTSMELDING,
+            oppgavetype = Oppgavetype.INNTEKTSMELDING,
             behandlingstype = behandlingstype,
             behandlingstema = behandlingstema,
             aktivDato = LocalDate.now(),
             fristFerdigstillelse = leggTilEnVirkeuke(LocalDate.now()),
             prioritet = "NORM"
         )
-        logger.info("Oppretter journalføringsoppgave på enhet $tildeltEnhetsnr")
+        sikkerlogger.info("Oppretter journalføringsoppgave")
         try {
             return OppgaveResultat(opprettOppgave(opprettOppgaveRequest).id, false, utbetalingBruker)
         } catch (ex: Exception) {
@@ -139,10 +151,10 @@ class OppgaveClient(
         journalpostId: String
     ): OppgaveResultat {
 
-        val eksisterendeOppgave = hentHvisOppgaveFinnes(OPPGAVETYPE_FORDELINGSOPPGAVE, journalpostId)
+        val eksisterendeOppgave = hentHvisOppgaveFinnes(Oppgavetype.FORDELINGSOPPGAVE, journalpostId)
 
         if (eksisterendeOppgave != null) {
-            logger.info("Det finnes allerede fordelingsoppgave for journalpost $journalpostId")
+            sikkerlogger.info("Det finnes allerede fordelingsoppgave for journalpost $journalpostId")
             return eksisterendeOppgave
         }
 
@@ -153,7 +165,7 @@ class OppgaveClient(
             behandlesAvApplikasjon = "FS22",
             beskrivelse = "Fordelingsoppgave for inntektsmelding på sykepenger",
             tema = TEMA,
-            oppgavetype = OPPGAVETYPE_FORDELINGSOPPGAVE,
+            oppgavetype = Oppgavetype.FORDELINGSOPPGAVE,
             behandlingstype = behandlingstype,
             aktivDato = LocalDate.now(),
             fristFerdigstillelse = leggTilEnVirkeuke(LocalDate.now()),

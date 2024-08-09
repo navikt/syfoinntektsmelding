@@ -1,19 +1,19 @@
 package no.nav.syfo.simba
 
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.Bonus
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.Feilregistrert
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.Ferie
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.Ferietrekk
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.Inntekt
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.InntektEndringAarsak
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.NyStilling
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.NyStillingsprosent
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.Nyansatt
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.Permisjon
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.Permittering
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.Sykefravaer
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.Tariffendring
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.VarigLonnsendring
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.Bonus
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.Feilregistrert
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.Ferie
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.Ferietrekk
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.Inntekt
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.InntektEndringAarsak
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.NyStilling
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.NyStillingsprosent
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.Nyansatt
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.Permisjon
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.Permittering
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.Sykefravaer
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.Tariffendring
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.VarigLonnsendring
 import no.nav.helsearbeidsgiver.utils.pipe.orDefault
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
@@ -27,12 +27,23 @@ import no.nav.syfo.domain.inntektsmelding.OpphoerAvNaturalytelse
 import no.nav.syfo.domain.inntektsmelding.RapportertInntekt
 import no.nav.syfo.domain.inntektsmelding.Refusjon
 import no.nav.syfo.domain.inntektsmelding.SpinnInntektEndringAarsak
-import java.time.LocalDateTime
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.Inntektsmelding as InntektmeldingSimba
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.Inntektsmelding as InntektmeldingSimba
 
-fun mapInntektsmelding(arkivreferanse: String, aktorId: String, journalpostId: String, im: InntektmeldingSimba): Inntektsmelding {
+object Avsender {
+    val NAV_NO = "NAV_NO"
+    val NAV_NO_SELVBESTEMT = NAV_NO + "_SELVBESTEMT"
+    val VERSJON = "1.0"
+}
+
+fun mapInntektsmelding(arkivreferanse: String, aktorId: String, journalpostId: String, im: InntektmeldingSimba, selvbestemt: Boolean = false): Inntektsmelding {
+    val avsenderSystem = if (selvbestemt) {
+        Avsender.NAV_NO_SELVBESTEMT
+    } else {
+        Avsender.NAV_NO
+    }
     return Inntektsmelding(
         id = "",
+        vedtaksperiodeId = im.vedtaksperiodeId,
         fnr = im.identitetsnummer,
         arbeidsgiverOrgnummer = im.orgnrUnderenhet,
         arbeidsgiverPrivatFnr = null,
@@ -58,14 +69,14 @@ fun mapInntektsmelding(arkivreferanse: String, aktorId: String, journalpostId: S
         arkivRefereranse = arkivreferanse,
         feriePerioder = emptyList(),
         førsteFraværsdag = im.bestemmendeFraværsdag,
-        mottattDato = LocalDateTime.now(),
+        mottattDato = im.tidspunkt.toLocalDateTime(),
         sakId = "",
         aktorId = aktorId,
         begrunnelseRedusert = im.fullLønnIArbeidsgiverPerioden?.begrunnelse?.name.orEmpty(),
-        avsenderSystem = AvsenderSystem("NAV_NO", "1.0"),
+        avsenderSystem = AvsenderSystem(avsenderSystem, Avsender.VERSJON),
         nærRelasjon = null,
         kontaktinformasjon = Kontaktinformasjon(im.innsenderNavn, im.telefonnummer),
-        innsendingstidspunkt = LocalDateTime.now(),
+        innsendingstidspunkt = im.tidspunkt.toLocalDateTime(),
         bruttoUtbetalt = im.fullLønnIArbeidsgiverPerioden?.utbetalt?.toBigDecimal(),
         årsakEndring = null,
         rapportertInntekt = im.inntekt?.tilRapportertInntekt()

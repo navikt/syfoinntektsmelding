@@ -6,6 +6,8 @@ metadata:
   labels:
     team: helsearbeidsgiver
 spec:
+  strategy:
+    type: Recreate
   ingresses:
     - https://spinosaurus.intern.dev.nav.no
   image: {{image}}
@@ -57,10 +59,6 @@ spec:
 
   accessPolicy:
     outbound:
-      rules:
-        - application: helsearbeidsgiver-proxy
-          namespace: helsearbeidsgiver
-          cluster: dev-fss
       external:
         - host: norg2.dev-fss-pub.nais.io
         - host: oppgave-q1.dev-fss-pub.nais.io
@@ -89,7 +87,7 @@ spec:
     - name: PDL_URL
       value: "https://pdl-api.dev-fss-pub.nais.io/graphql"
     - name: NORG2_URL
-      value: https://helsearbeidsgiver-proxy.dev-fss-pub.nais.io/norg
+      value: "https://norg2.dev-fss-pub.nais.io/norg2/api/v1/arbeidsfordeling/enheter/bestmatch"
     - name: SAF_DOKUMENT_URL
       value: "https://saf.dev-fss-pub.nais.io/rest"
     - name: SAF_JOURNAL_URL
@@ -102,6 +100,3 @@ spec:
       value: api://dev-fss.oppgavehandtering.oppgave-q1/.default
     - name: PDL_SCOPE
       value: api://dev-fss.pdl.pdl-api/.default
-    - name: PROXY_SCOPE
-      value: api://dev-fss.helsearbeidsgiver.helsearbeidsgiver-proxy/.default
-

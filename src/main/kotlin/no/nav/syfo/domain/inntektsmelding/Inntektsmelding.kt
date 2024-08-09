@@ -5,6 +5,7 @@ import no.nav.syfo.domain.Periode
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.util.UUID
 
 data class Inntektsmelding(
     val id: String = "",
@@ -38,6 +39,7 @@ data class Inntektsmelding(
     val bruttoUtbetalt: BigDecimal? = null,
     val årsakEndring: String? = null,
     val rapportertInntekt: RapportertInntekt? = null,
+    val vedtaksperiodeId: UUID? = null
 ) {
     fun isDuplicate(inntektsmelding: Inntektsmelding): Boolean {
         return this.equals(
