@@ -52,6 +52,7 @@ spec:
           - name: spinosaurus
             users:
               - name: spinosaurus_datastream_bruker
+        tier: db-f1-micro
         diskAutoresize: true
         flags:
           - name: cloudsql.logical_decoding
