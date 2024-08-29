@@ -79,6 +79,6 @@ data class Inntektsmelding(
 
     // TODO: kanskje kan vi fjerne dette, hvis vedtaksperiodeId *alltid* skal komme i selvbestemtIM
     fun matcherSpleis(): Boolean {
-        return !(NAV_NO_SELVBESTEMT == avsenderSystem.navn && vedtaksperiodeId == null)
+        return !(avsenderSystem.navn == NAV_NO_SELVBESTEMT && vedtaksperiodeId == null)
     }
 }

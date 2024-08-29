@@ -87,11 +87,11 @@ class InntektsmeldingTest {
         val imFraSimbaMedVedtaksperiodeId = im1.copy(vedtaksperiodeId = UUID.randomUUID(), avsenderSystem = AvsenderSystem(Avsender.NAV_NO))
         val imFraEksterntSystemUtenVedtaksperiodeId = im1.copy(vedtaksperiodeId = null, avsenderSystem = AvsenderSystem("Whatever Payment Co"))
         val imFraEksterntSystemMedVedtaksperiodeId = im1.copy(vedtaksperiodeId = UUID.randomUUID(), avsenderSystem = AvsenderSystem("Donald Duck & Co"))
-        val selvbestemtMedVedtaksperiodeId = im1.copy(vedtaksperiodeId = null, avsenderSystem = AvsenderSystem(Avsender.NAV_NO_SELVBESTEMT))
+        val selvbestemtUtenVedtaksperiodeId = im1.copy(vedtaksperiodeId = null, avsenderSystem = AvsenderSystem(Avsender.NAV_NO_SELVBESTEMT))
         assertTrue(imFraSimbaUtenVedtaksperiodeId.matcherSpleis())
         assertTrue(imFraSimbaMedVedtaksperiodeId.matcherSpleis())
         assertTrue(imFraEksterntSystemUtenVedtaksperiodeId.matcherSpleis())
         assertTrue(imFraEksterntSystemMedVedtaksperiodeId.matcherSpleis())
-        assertFalse(selvbestemtMedVedtaksperiodeId.matcherSpleis())
+        assertFalse(selvbestemtUtenVedtaksperiodeId.matcherSpleis())
     }
 }
