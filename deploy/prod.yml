@@ -58,7 +58,6 @@ spec:
   accessPolicy:
     outbound:
       external:
-        - host: norg2.prod-fss-pub.nais.io
         - host: oppgave.prod-fss-pub.nais.io
         - host: pdl-api.prod-fss-pub.nais.io
         - host: dokarkiv.prod-fss-pub.nais.io
