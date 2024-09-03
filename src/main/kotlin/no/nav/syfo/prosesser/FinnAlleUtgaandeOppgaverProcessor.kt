@@ -33,6 +33,7 @@ class FinnAlleUtgaandeOppgaverProcessor(
     private val sikkerlogger = LoggerFactory.getLogger("tjenestekall")
 
     override fun doJob(): Unit = MdcUtils.withCallIdAsUuid {
+        logger.info("Finner alle utgåtte oppgaver")
         utsattOppgaveDAO
             .finnAlleUtgåtteOppgaver()
             .forEach { oppgaveEntitet ->
