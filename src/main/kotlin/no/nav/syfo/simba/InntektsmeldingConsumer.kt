@@ -94,11 +94,12 @@ class InntektsmeldingConsumer(
         val arkivreferanse = "im_$journalpostId"
         val inntektsmelding = mapInntektsmelding(arkivreferanse, aktorid, journalpostId, inntektsmeldingFraSimba, selvbestemt)
         val dto = inntektsmeldingService.lagreBehandling(inntektsmelding, aktorid)
-        val timeout = if (selvbestemt) {
-            sikkerlogger.info("Mottok selvbestemtIM med journalpostId $journalpostId, oppretter gosys-oppgave umiddelbart")
-            LocalDateTime.now()
-        } else {
+        val matcherSpleis = inntektsmelding.matcherSpleis()
+        val timeout = if (matcherSpleis) {
             LocalDateTime.now().plusHours(OPPRETT_OPPGAVE_FORSINKELSE)
+        } else {
+            sikkerlogger.info("Mottok selvbestemtIM uten vedtaksperiode med journalpostId $journalpostId, oppretter gosys-oppgave umiddelbart")
+            LocalDateTime.now()
         }
         utsattOppgaveService.opprett(
             UtsattOppgaveEntitet(
@@ -115,7 +116,6 @@ class InntektsmeldingConsumer(
                 utbetalingBruker = false
             )
         )
-        val matcherSpleis = !selvbestemt // senere kan dette bli flere tilfeller
 
         val mappedInntektsmelding = mapInntektsmeldingKontrakt(
             inntektsmelding,
