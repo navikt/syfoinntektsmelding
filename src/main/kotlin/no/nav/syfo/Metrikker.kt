@@ -1,7 +1,7 @@
 package no.nav.syfo
 
 import io.prometheus.client.Counter
-import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsvarsler
+import no.nav.hag.utils.bakgrunnsjobb.Bakgrunnsvarsler
 
 const val METRICS_NS = "spinn"
 
@@ -11,8 +11,10 @@ class MetrikkVarsler : Bakgrunnsvarsler {
     }
 }
 
-val FEILET_JOBB_COUNTER = Counter.build()
-    .namespace(METRICS_NS)
-    .name("feilet_jobb")
-    .help("Counts the number of permanently failed jobs")
-    .register()
+val FEILET_JOBB_COUNTER =
+    Counter
+        .build()
+        .namespace(METRICS_NS)
+        .name("feilet_jobb")
+        .help("Counts the number of permanently failed jobs")
+        .register()

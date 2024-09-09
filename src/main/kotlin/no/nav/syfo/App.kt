@@ -7,9 +7,7 @@ import io.ktor.server.engine.connector
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.netty.NettyApplicationEngine
-import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
-import no.nav.helse.arbeidsgiver.kubernetes.KubernetesProbeManager
-import no.nav.helse.arbeidsgiver.system.getString
+import no.nav.hag.utils.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.helsearbeidsgiver.utils.log.logger
 import no.nav.helsearbeidsgiver.utils.log.sikkerLogger
 import no.nav.syfo.integration.kafka.UtsattOppgaveConsumer
@@ -19,6 +17,8 @@ import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
 import no.nav.syfo.prosesser.FjernInntektsmeldingByBehandletProcessor
 import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
 import no.nav.syfo.simba.InntektsmeldingConsumer
+import no.nav.syfo.util.KubernetesProbeManager
+import no.nav.syfo.util.getString
 import no.nav.syfo.utsattoppgave.FeiletUtsattOppgaveMeldingProsessor
 import no.nav.syfo.web.inntektsmeldingModule
 import no.nav.syfo.web.nais.nais
@@ -31,7 +31,9 @@ import org.koin.core.context.stopKoin
 import org.slf4j.Logger
 import kotlin.concurrent.thread
 
-class SpinnApplication(val port: Int = 8080) : KoinComponent {
+class SpinnApplication(
+    val port: Int = 8080,
+) : KoinComponent {
     private val logger: Logger = this.logger()
     private var webserver: NettyApplicationEngine? = null
     private var appConfig: HoconApplicationConfig = HoconApplicationConfig(ConfigFactory.load())
@@ -91,20 +93,21 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
     }
 
     private fun configAndStartWebserver() {
-        webserver = embeddedServer(
-            Netty,
-            applicationEngineEnvironment {
-                config = appConfig
-                connector {
-                    port = this@SpinnApplication.port
-                }
+        webserver =
+            embeddedServer(
+                Netty,
+                applicationEngineEnvironment {
+                    config = appConfig
+                    connector {
+                        port = this@SpinnApplication.port
+                    }
 
-                module {
-                    nais()
-                    inntektsmeldingModule(config)
-                }
-            }
-        )
+                    module {
+                        nais()
+                        inntektsmeldingModule(config)
+                    }
+                },
+            )
 
         webserver!!.start(wait = false)
     }
@@ -114,7 +117,6 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
             get<FinnAlleUtgaandeOppgaverProcessor>().startAsync(true)
 
             get<BakgrunnsjobbService>().apply {
-
                 registrer(get<FeiletUtsattOppgaveMeldingProsessor>())
                 registrer(get<FjernInntektsmeldingByBehandletProcessor>())
                 registrer(get<JoarkInntektsmeldingHendelseProsessor>())
@@ -127,7 +129,9 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
     private fun migrateDatabase() {
         logger.info("Starter databasemigrering")
 
-        Flyway.configure().baselineOnMigrate(true)
+        Flyway
+            .configure()
+            .baselineOnMigrate(true)
             .dataSource(GlobalContext.getKoinApplicationOrNull()?.koin?.get())
             .load()
             .migrate()
@@ -153,6 +157,6 @@ fun main() {
             logger.info("Fikk shutdown-signal, avslutter...")
             application.shutdown()
             logger.info("Avsluttet OK")
-        }
+        },
     )
 }

@@ -44,7 +44,7 @@ val altinnCorrespondanceVersion: String by project
 val logbackClassicVersion: String by project
 val hagDomeneInntektsmeldingVersion: String by project
 val kotlinxSerializationVersion: String by project
-
+val bakgrunnsjobbVersion: String by project
 plugins {
     kotlin("jvm")
     kotlin("plugin.serialization")
@@ -160,7 +160,7 @@ dependencies {
     implementation("no.nav.syfo.sm:syfosm-common-rest-sts:$navSyfoCommonVersion")
     implementation("no.nav.syfo.sm:syfosm-common-networking:$navSyfoCommonVersion")
     implementation("no.nav.common:log:$navLogVersion")
-    implementation("no.nav.helsearbeidsgiver:helse-arbeidsgiver-felles-backend:$fellesBackendVersion")
+    implementation("no.nav.helsearbeidsgiver:hag-bakgrunnsjobb:$bakgrunnsjobbVersion")
     implementation("no.nav.helsearbeidsgiver:utils:$hagUtilsVersion")
     implementation("no.nav.security:token-client-core:$tokenSupportVersion")
     implementation("no.nav.security:token-validation-ktor:$tokenSupportVersion")

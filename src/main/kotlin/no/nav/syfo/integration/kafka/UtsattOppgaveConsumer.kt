@@ -2,13 +2,13 @@ package no.nav.syfo.integration.kafka
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
-import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
-import no.nav.helse.arbeidsgiver.kubernetes.LivenessComponent
-import no.nav.helse.arbeidsgiver.kubernetes.ReadynessComponent
+import no.nav.hag.utils.bakgrunnsjobb.Bakgrunnsjobb
+import no.nav.hag.utils.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.helsearbeidsgiver.utils.log.MdcUtils
 import no.nav.helsearbeidsgiver.utils.log.logger
 import no.nav.helsearbeidsgiver.utils.log.sikkerLogger
+import no.nav.syfo.util.LivenessComponent
+import no.nav.syfo.util.ReadynessComponent
 import no.nav.syfo.utsattoppgave.DokumentTypeDTO
 import no.nav.syfo.utsattoppgave.FeiletUtsattOppgaveMeldingProsessor
 import no.nav.syfo.utsattoppgave.OppgaveOppdatering
@@ -26,8 +26,8 @@ class UtsattOppgaveConsumer(
     val om: ObjectMapper,
     val utsattOppgaveService: UtsattOppgaveService,
     val bakgrunnsjobbRepo: BakgrunnsjobbRepository,
-) : ReadynessComponent, LivenessComponent {
-
+) : ReadynessComponent,
+    LivenessComponent {
     private val consumer: KafkaConsumer<String, String> = KafkaConsumer(props, StringDeserializer(), StringDeserializer())
     private val logger = this.logger()
     private val sikkerlogger = sikkerLogger()
@@ -73,7 +73,10 @@ class UtsattOppgaveConsumer(
         }
     }
 
-    fun behandle(hendelse: UtsattOppgaveDTO, raw: String) {
+    fun behandle(
+        hendelse: UtsattOppgaveDTO,
+        raw: String,
+    ) {
         try {
             logger.info("Behandler UtsattOppgave...")
             utsattOppgaveService.prosesser(
@@ -81,8 +84,8 @@ class UtsattOppgaveConsumer(
                     hendelse.dokumentId,
                     hendelse.oppdateringstype.tilHandling(),
                     hendelse.timeout,
-                    hendelse.oppdateringstype
-                )
+                    hendelse.oppdateringstype,
+                ),
             )
         } catch (ex: Exception) {
             logger.info("Det oppstod en feil ved behandling av UtsattOppgave. Oppretter bakgrunnsjobb.")
@@ -91,8 +94,8 @@ class UtsattOppgaveConsumer(
                     type = FeiletUtsattOppgaveMeldingProsessor.JOB_TYPE,
                     kjoeretid = LocalDateTime.now().plusMinutes(30),
                     maksAntallForsoek = 10,
-                    data = raw
-                )
+                    data = raw,
+                ),
             )
         }
     }
