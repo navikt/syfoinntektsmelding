@@ -1,7 +1,7 @@
 package no.nav.syfo.service
 
 import kotlinx.coroutines.runBlocking
-import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClient
+import no.nav.helsearbeidsgiver.pdl.PdlClient
 import no.nav.helsearbeidsgiver.utils.log.sikkerLogger
 import no.nav.syfo.behandling.HentDokumentFeiletException
 import no.nav.syfo.client.saf.SafDokumentClient

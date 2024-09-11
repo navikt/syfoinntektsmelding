@@ -6,11 +6,7 @@ import io.ktor.config.ApplicationConfig
 import no.nav.hag.utils.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.hag.utils.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.hag.utils.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
-
-import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
-import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClient
-import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClientImpl
-
+import no.nav.helsearbeidsgiver.tokenprovider.AccessTokenProvider
 import no.nav.syfo.MetrikkVarsler
 import no.nav.syfo.behandling.InntektsmeldingBehandler
 import no.nav.syfo.client.OppgaveClient
@@ -131,15 +127,6 @@ fun prodConfig(config: ApplicationConfig) = module {
             get<AccessTokenProvider>(qualifier = named(AccessScope.OPPGAVE))::getToken
         )
     }
-
-    single {
-        PdlClientImpl(
-            config.getString("pdl_url"),
-            get<AccessTokenProvider>(qualifier = named(AccessScope.PDL)),
-            get(),
-            get()
-        )
-    } bind PdlClient::class
 
     single {
         Norg2Client(

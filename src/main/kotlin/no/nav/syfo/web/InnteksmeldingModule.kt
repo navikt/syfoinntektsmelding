@@ -11,8 +11,8 @@ import io.ktor.http.ContentType
 import io.ktor.jackson.JacksonConverter
 import io.ktor.routing.route
 import io.ktor.routing.routing
-import no.nav.helse.arbeidsgiver.system.getString
 import no.nav.security.token.support.ktor.tokenValidationSupport
+import no.nav.syfo.util.getString
 import no.nav.syfo.web.api.syfoinntektsmelding
 import org.koin.ktor.ext.get
 

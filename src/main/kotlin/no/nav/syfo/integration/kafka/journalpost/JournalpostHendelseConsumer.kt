@@ -3,7 +3,6 @@ package no.nav.syfo.integration.kafka.journalpost
 import com.fasterxml.jackson.databind.ObjectMapper
 import no.nav.hag.utils.bakgrunnsjobb.Bakgrunnsjobb
 import no.nav.hag.utils.bakgrunnsjobb.BakgrunnsjobbRepository
-
 import no.nav.helsearbeidsgiver.utils.log.sikkerLogger
 import no.nav.syfo.kafkamottak.InngaaendeJournalpostDTO
 import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor

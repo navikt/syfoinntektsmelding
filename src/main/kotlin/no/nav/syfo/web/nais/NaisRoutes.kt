@@ -12,7 +12,6 @@ import io.ktor.routing.routing
 import io.ktor.util.pipeline.PipelineContext
 import io.prometheus.client.CollectorRegistry
 import io.prometheus.client.exporter.common.TextFormat
-
 import no.nav.helsearbeidsgiver.utils.log.sikkerLogger
 import no.nav.syfo.util.KubernetesProbeManager
 import no.nav.syfo.util.ProbeResult

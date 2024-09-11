@@ -2,7 +2,7 @@ package no.nav.syfo.service
 
 import io.mockk.every
 import io.mockk.mockk
-import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClient
+import no.nav.helsearbeidsgiver.pdl.PdlClient
 import no.nav.syfo.behandling.HentDokumentFeiletException
 import no.nav.syfo.client.saf.SafDokumentClient
 import no.nav.syfo.client.saf.SafJournalpostClient

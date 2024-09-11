@@ -3,7 +3,7 @@ package no.nav.syfo.behandling
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClient
+import no.nav.helsearbeidsgiver.pdl.PdlClient
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.dto.InntektsmeldingEntitet

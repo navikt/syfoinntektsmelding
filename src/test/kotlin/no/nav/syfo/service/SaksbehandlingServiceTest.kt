@@ -4,7 +4,7 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
-import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClient
+import no.nav.helsearbeidsgiver.pdl.PdlClient
 import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode

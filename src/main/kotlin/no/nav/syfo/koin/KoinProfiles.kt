@@ -15,7 +15,7 @@ import io.ktor.client.engine.apache.Apache
 import io.ktor.client.features.json.JacksonSerializer
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.config.ApplicationConfig
-import no.nav.helse.arbeidsgiver.kubernetes.KubernetesProbeManager
+import no.nav.syfo.util.KubernetesProbeManager
 import org.koin.core.module.Module
 import org.koin.dsl.module
 

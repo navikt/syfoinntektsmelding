@@ -2,17 +2,6 @@ package no.nav.syfo.koin
 
 import io.mockk.coEvery
 import io.mockk.mockk
-import no.nav.helse.arbeidsgiver.integrasjoner.oppgave.OppgaveKlient
-import no.nav.helse.arbeidsgiver.integrasjoner.oppgave.OppgaveResponse
-import no.nav.helse.arbeidsgiver.integrasjoner.oppgave.OpprettOppgaveRequest
-import no.nav.helse.arbeidsgiver.integrasjoner.oppgave.OpprettOppgaveResponse
-import no.nav.helse.arbeidsgiver.integrasjoner.oppgave.Prioritet
-import no.nav.helse.arbeidsgiver.integrasjoner.oppgave.Status
-import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlHentFullPerson
-import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlHentPersonNavn
-import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlIdent
-import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlPersonNavnMetadata
-import no.nav.helsearbeidsgiver.pdl.Behandlingsgrunnlag
 import no.nav.helsearbeidsgiver.pdl.PdlClient
 import no.nav.helsearbeidsgiver.pdl.domene.FullPerson
 import no.nav.helsearbeidsgiver.pdl.domene.PersonNavn
@@ -23,12 +12,10 @@ import no.nav.syfo.client.norg.Norg2Client
 import org.koin.core.module.Module
 import org.koin.dsl.bind
 import java.time.LocalDate
-import java.time.LocalDate.now
-import java.time.LocalDateTime
 
 fun Module.mockExternalDependecies() {
     single {
-         DokArkivClient("",get()) { "" }
+        DokArkivClient("", get()) { "" }
     } bind DokArkivClient::class
     single {
         mockk<PdlClient> {
@@ -41,6 +28,7 @@ fun Module.mockExternalDependecies() {
                 geografiskTilknytning = "SWE"
             )
         }
+    }
 
   /*  single {
           PdlClient("", Behandlingsgrunnlag.INNTEKTSMELDING, { "" }) {
@@ -78,36 +66,6 @@ fun Module.mockExternalDependecies() {
         }
     } bind PdlClient::class
 */
-    single {
-        object : OppgaveKlient {
-            override suspend fun hentOppgave(
-                oppgaveId: Int,
-                callId: String,
-            ): OppgaveResponse =
-                OppgaveResponse(
-                    oppgaveId,
-                    1,
-                    oppgavetype = "SYK",
-                    aktivDato = LocalDateTime.now().minusDays(3).toLocalDate(),
-                    prioritet = Prioritet.NORM.toString(),
-                )
-
-            override suspend fun opprettOppgave(
-                opprettOppgaveRequest: OpprettOppgaveRequest,
-                callId: String,
-            ): OpprettOppgaveResponse =
-                OpprettOppgaveResponse(
-                    1234,
-                    "321",
-                    "awdawd",
-                    "SYK",
-                    1,
-                    now(),
-                    Prioritet.NORM,
-                    Status.OPPRETTET,
-                )
-        }
-    } bind OppgaveKlient::class
 
     single {
         object : Norg2Client(
