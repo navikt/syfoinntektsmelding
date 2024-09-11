@@ -1,19 +1,22 @@
 package no.nav.syfo.koin
 
-import no.nav.helse.arbeidsgiver.integrasjoner.dokarkiv.DokarkivKlient
-import no.nav.helse.arbeidsgiver.integrasjoner.dokarkiv.JournalpostRequest
-import no.nav.helse.arbeidsgiver.integrasjoner.dokarkiv.JournalpostResponse
+import io.mockk.coEvery
+import io.mockk.mockk
 import no.nav.helse.arbeidsgiver.integrasjoner.oppgave.OppgaveKlient
 import no.nav.helse.arbeidsgiver.integrasjoner.oppgave.OppgaveResponse
 import no.nav.helse.arbeidsgiver.integrasjoner.oppgave.OpprettOppgaveRequest
 import no.nav.helse.arbeidsgiver.integrasjoner.oppgave.OpprettOppgaveResponse
 import no.nav.helse.arbeidsgiver.integrasjoner.oppgave.Prioritet
 import no.nav.helse.arbeidsgiver.integrasjoner.oppgave.Status
-import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClient
 import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlHentFullPerson
 import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlHentPersonNavn
 import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlIdent
 import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlPersonNavnMetadata
+import no.nav.helsearbeidsgiver.pdl.Behandlingsgrunnlag
+import no.nav.helsearbeidsgiver.pdl.PdlClient
+import no.nav.helsearbeidsgiver.pdl.domene.FullPerson
+import no.nav.helsearbeidsgiver.pdl.domene.PersonNavn
+import no.nav.syfo.client.dokarkiv.DokArkivClient
 import no.nav.syfo.client.norg.ArbeidsfordelingRequest
 import no.nav.syfo.client.norg.ArbeidsfordelingResponse
 import no.nav.syfo.client.norg.Norg2Client
@@ -25,17 +28,22 @@ import java.time.LocalDateTime
 
 fun Module.mockExternalDependecies() {
     single {
-        object : DokarkivKlient {
-            override fun journalførDokument(
-                journalpost: JournalpostRequest,
-                forsoekFerdigstill: Boolean,
-                callId: String,
-            ): JournalpostResponse = JournalpostResponse("arkiv-ref", true, "J", null, emptyList())
-        }
-    } bind DokarkivKlient::class
-
+         DokArkivClient("",get()) { "" }
+    } bind DokArkivClient::class
     single {
-        object : PdlClient {
+        mockk<PdlClient> {
+            coEvery { personNavn(any()) } returns PersonNavn("Ola", "M", "Avsender")
+            coEvery { fullPerson(any()) } returns FullPerson(
+                navn = PersonNavn(fornavn = "Per", mellomnavn = "", etternavn = "Ulv"),
+                foedselsdato = LocalDate.of(1900, 1, 1),
+                ident = "aktør-id",
+                diskresjonskode = "SPSF",
+                geografiskTilknytning = "SWE"
+            )
+        }
+
+  /*  single {
+          PdlClient("", Behandlingsgrunnlag.INNTEKTSMELDING, { "" }) {
             override fun fullPerson(ident: String) =
                 PdlHentFullPerson(
                     PdlHentFullPerson.PdlFullPersonliste(
@@ -69,7 +77,7 @@ fun Module.mockExternalDependecies() {
                 )
         }
     } bind PdlClient::class
-
+*/
     single {
         object : OppgaveKlient {
             override suspend fun hentOppgave(

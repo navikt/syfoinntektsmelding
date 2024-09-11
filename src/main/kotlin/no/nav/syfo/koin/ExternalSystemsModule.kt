@@ -2,9 +2,10 @@ package no.nav.syfo.koin
 
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod
 import io.ktor.config.ApplicationConfig
-import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
-import no.nav.helse.arbeidsgiver.integrasjoner.OAuth2TokenProvider
-
+import no.nav.helsearbeidsgiver.pdl.Behandlingsgrunnlag
+import no.nav.helsearbeidsgiver.pdl.PdlClient
+import no.nav.helsearbeidsgiver.tokenprovider.AccessTokenProvider
+import no.nav.helsearbeidsgiver.tokenprovider.OAuth2TokenProvider
 import no.nav.security.token.support.client.core.ClientAuthenticationProperties
 import no.nav.security.token.support.client.core.ClientProperties
 import no.nav.security.token.support.client.core.OAuth2GrantType
@@ -64,6 +65,10 @@ fun Module.externalSystemClients(config: ApplicationConfig) {
             clientConfig.getString("pdlscope"),
         )
     } bind AccessTokenProvider::class
+    single {
+        val tokenProvider: AccessTokenProvider = get(qualifier = named("PDL"))
+        PdlClient(config.getString("pdl_url"), Behandlingsgrunnlag.INNTEKTSMELDING, tokenProvider::getToken)
+    } bind PdlClient::class
 }
 
 private fun Scope.oauth2TokenProvider(

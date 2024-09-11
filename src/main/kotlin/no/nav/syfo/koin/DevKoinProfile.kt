@@ -6,11 +6,15 @@ import io.ktor.config.ApplicationConfig
 import no.nav.hag.utils.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.hag.utils.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.hag.utils.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
+import no.nav.helsearbeidsgiver.pdl.Behandlingsgrunnlag
+import no.nav.helsearbeidsgiver.pdl.PdlClient
+import no.nav.helsearbeidsgiver.tokenprovider.AccessTokenProvider
 import no.nav.syfo.MetrikkVarsler
 import no.nav.syfo.behandling.InntektsmeldingBehandler
 import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.client.dokarkiv.DokArkivClient
 import no.nav.syfo.client.norg.Norg2Client
+import no.nav.syfo.client.pdl.PdlService
 import no.nav.syfo.client.saf.SafDokumentClient
 import no.nav.syfo.client.saf.SafJournalpostClient
 import no.nav.syfo.integration.kafka.UtsattOppgaveConsumer
@@ -144,14 +148,8 @@ fun devConfig(config: ApplicationConfig) =
             )
         }
 
-        single {
-            PdlClientImpl(
-                config.getString("pdl_url"),
-                get(qualifier = named(AccessScope.PDL)),
-                get(),
-                get(),
-            )
-        } bind PdlClient::class
+
+        single { PdlService(pdlClient = get()) }
 
         single {
             Norg2Client(

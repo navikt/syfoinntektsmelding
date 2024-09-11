@@ -45,6 +45,8 @@ val logbackClassicVersion: String by project
 val hagDomeneInntektsmeldingVersion: String by project
 val kotlinxSerializationVersion: String by project
 val bakgrunnsjobbVersion: String by project
+val pdlClientVersion: String by project
+val tokenProviderVersion: String by project
 plugins {
     kotlin("jvm")
     kotlin("plugin.serialization")
@@ -165,6 +167,9 @@ dependencies {
     implementation("no.nav.security:token-client-core:$tokenSupportVersion")
     implementation("no.nav.security:token-validation-ktor:$tokenSupportVersion")
     implementation("no.nav.security:mock-oauth2-server:$mockOAuth2ServerVersion")
+    implementation("no.nav.helsearbeidsgiver:pdl-client:$pdlClientVersion")
+    implementation("no.nav.helsearbeidsgiver:tokenprovider:$tokenProviderVersion")
+
     implementation("com.zaxxer:HikariCP:$hikariVersion")
     implementation("org.slf4j:slf4j-api:$slf4Version")
     implementation("net.logstash.logback:logstash-logback-encoder:$logbackVersion")
@@ -195,6 +200,7 @@ dependencies {
     implementation("javax.annotation:javax.annotation-api:$annotationApiVersion")
     implementation("no.nav.helsearbeidsgiver:domene-inntektsmelding:$hagDomeneInntektsmeldingVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion")
+    implementation("io.mockk:mockk:$mockkVersion")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
@@ -204,6 +210,6 @@ dependencies {
     testImplementation("io.ktor:ktor-client-mock-jvm:$ktorVersion")
     testImplementation("io.ktor:ktor-client-mock:$ktorVersion")
     testImplementation("io.ktor:ktor-server-tests:$ktorVersion")
-    testImplementation("io.mockk:mockk:$mockkVersion")
+
     testImplementation("org.assertj:assertj-core:$assertJVersion")
 }

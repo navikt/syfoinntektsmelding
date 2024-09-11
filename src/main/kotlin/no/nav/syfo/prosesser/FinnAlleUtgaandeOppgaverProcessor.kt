@@ -5,7 +5,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import no.nav.hag.utils.bakgrunnsjobb.RecurringJob
 import no.nav.helsearbeidsgiver.utils.log.MdcUtils
-import no.nav.helsearbeidsgiver.utils.log.logger
 import no.nav.syfo.behandling.OpprettOppgaveException
 import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.dto.Tilstand
