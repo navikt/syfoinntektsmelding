@@ -29,10 +29,8 @@ fun Module.mockExternalDependecies() {
             override fun journalførDokument(
                 journalpost: JournalpostRequest,
                 forsoekFerdigstill: Boolean,
-                callId: String
-            ): JournalpostResponse {
-                return JournalpostResponse("arkiv-ref", true, "J", null, emptyList())
-            }
+                callId: String,
+            ): JournalpostResponse = JournalpostResponse("arkiv-ref", true, "J", null, emptyList())
         }
     } bind DokarkivKlient::class
 
@@ -47,17 +45,15 @@ fun Module.mockExternalDependecies() {
                         emptyList(),
                         emptyList(),
                         emptyList(),
-                        emptyList()
+                        emptyList(),
                     ),
-
                     PdlHentFullPerson.PdlIdentResponse(listOf(PdlIdent("aktør-id", PdlIdent.PdlIdentGruppe.AKTORID))),
-
                     PdlHentFullPerson.PdlGeografiskTilknytning(
                         PdlHentFullPerson.PdlGeografiskTilknytning.PdlGtType.UTLAND,
                         null,
                         null,
-                        "SWE"
-                    )
+                        "SWE",
+                    ),
                 )
 
             override fun personNavn(ident: String) =
@@ -67,63 +63,74 @@ fun Module.mockExternalDependecies() {
                             "Ola",
                             "M",
                             "Avsender",
-                            PdlPersonNavnMetadata("freg")
-                        )
-                    )
+                            PdlPersonNavnMetadata("freg"),
+                        ),
+                    ),
                 )
         }
     } bind PdlClient::class
 
     single {
         object : OppgaveKlient {
-            override suspend fun hentOppgave(oppgaveId: Int, callId: String): OppgaveResponse {
-                return OppgaveResponse(oppgaveId, 1, oppgavetype = "SYK", aktivDato = LocalDateTime.now().minusDays(3).toLocalDate(), prioritet = Prioritet.NORM.toString())
-            }
+            override suspend fun hentOppgave(
+                oppgaveId: Int,
+                callId: String,
+            ): OppgaveResponse =
+                OppgaveResponse(
+                    oppgaveId,
+                    1,
+                    oppgavetype = "SYK",
+                    aktivDato = LocalDateTime.now().minusDays(3).toLocalDate(),
+                    prioritet = Prioritet.NORM.toString(),
+                )
+
             override suspend fun opprettOppgave(
                 opprettOppgaveRequest: OpprettOppgaveRequest,
-                callId: String
-            ): OpprettOppgaveResponse = OpprettOppgaveResponse(
-                1234,
-                "321",
-                "awdawd",
-                "SYK",
-                1,
-                now(),
-                Prioritet.NORM,
-                Status.OPPRETTET
-            )
+                callId: String,
+            ): OpprettOppgaveResponse =
+                OpprettOppgaveResponse(
+                    1234,
+                    "321",
+                    "awdawd",
+                    "SYK",
+                    1,
+                    now(),
+                    Prioritet.NORM,
+                    Status.OPPRETTET,
+                )
         }
     } bind OppgaveKlient::class
 
     single {
         object : Norg2Client(
             "",
-            get()
+            get(),
         ) {
             override suspend fun hentAlleArbeidsfordelinger(
                 request: ArbeidsfordelingRequest,
-                callId: String?
-            ): List<ArbeidsfordelingResponse> = listOf(
-                ArbeidsfordelingResponse(
-                    aktiveringsdato = LocalDate.of(2020, 11, 31),
-                    antallRessurser = 0,
-                    enhetId = 123456789,
-                    enhetNr = "1234",
-                    kanalstrategi = null,
-                    navn = "NAV Område",
-                    nedleggelsesdato = null,
-                    oppgavebehandler = false,
-                    orgNivaa = "SPESEN",
-                    orgNrTilKommunaltNavKontor = "",
-                    organisasjonsnummer = null,
-                    sosialeTjenester = "",
-                    status = "Aktiv",
-                    type = "KO",
-                    underAvviklingDato = null,
-                    underEtableringDato = LocalDate.of(2020, 11, 30),
-                    versjon = 1
+                callId: String?,
+            ): List<ArbeidsfordelingResponse> =
+                listOf(
+                    ArbeidsfordelingResponse(
+                        aktiveringsdato = LocalDate.of(2020, 11, 31),
+                        antallRessurser = 0,
+                        enhetId = 123456789,
+                        enhetNr = "1234",
+                        kanalstrategi = null,
+                        navn = "NAV Område",
+                        nedleggelsesdato = null,
+                        oppgavebehandler = false,
+                        orgNivaa = "SPESEN",
+                        orgNrTilKommunaltNavKontor = "",
+                        organisasjonsnummer = null,
+                        sosialeTjenester = "",
+                        status = "Aktiv",
+                        type = "KO",
+                        underAvviklingDato = null,
+                        underEtableringDato = LocalDate.of(2020, 11, 30),
+                        versjon = 1,
+                    ),
                 )
-            )
         }
     } bind Norg2Client::class
 }

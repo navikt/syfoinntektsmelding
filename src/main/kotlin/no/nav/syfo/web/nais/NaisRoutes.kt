@@ -12,10 +12,11 @@ import io.ktor.routing.routing
 import io.ktor.util.pipeline.PipelineContext
 import io.prometheus.client.CollectorRegistry
 import io.prometheus.client.exporter.common.TextFormat
-import no.nav.helse.arbeidsgiver.kubernetes.KubernetesProbeManager
-import no.nav.helse.arbeidsgiver.kubernetes.ProbeResult
-import no.nav.helse.arbeidsgiver.kubernetes.ProbeState
+
 import no.nav.helsearbeidsgiver.utils.log.sikkerLogger
+import no.nav.syfo.util.KubernetesProbeManager
+import no.nav.syfo.util.ProbeResult
+import no.nav.syfo.util.ProbeState
 import org.koin.ktor.ext.get
 import java.util.Collections
 
