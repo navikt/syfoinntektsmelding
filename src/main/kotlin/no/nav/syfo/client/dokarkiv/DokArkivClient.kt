@@ -1,12 +1,13 @@
 package no.nav.syfo.client.dokarkiv
 
 import io.ktor.client.HttpClient
-import io.ktor.client.features.ClientRequestException
+import io.ktor.client.call.body
+import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.request.accept
 import io.ktor.client.request.header
 import io.ktor.client.request.patch
 import io.ktor.client.request.put
-import io.ktor.client.statement.HttpResponse
+import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
@@ -22,7 +23,7 @@ val AUTOMATISK_JOURNALFOERING_ENHET = "9999"
 class DokArkivClient(
     private val url: String,
     private val httpClient: HttpClient,
-    private val getAccessToken: () -> String
+    private val getAccessToken: () -> String,
 ) {
     private val logger = this.logger()
     private val sikkerlogger = sikkerLogger()
@@ -46,16 +47,20 @@ class DokArkivClient(
     suspend fun ferdigstillJournalpost(
         journalpostId: String,
         ferdigstillRequest: FerdigstillRequest,
-        msgId: String
+        msgId: String,
     ): String {
         try {
-            return httpClient.patch<String>("$url/journalpost/$journalpostId/ferdigstill") {
-                contentType(ContentType.Application.Json)
-                accept(ContentType.Application.Json)
-                header("Authorization", "Bearer ${getAccessToken()}")
-                header("Nav-Callid", msgId)
-                body = ferdigstillRequest
-            }.also { logger.info("Ferdigstilte journalpost {}", journalpostId) }
+            val httpResponse =
+                httpClient.patch("$url/journalpost/$journalpostId/ferdigstill") {
+                    contentType(ContentType.Application.Json)
+                    accept(ContentType.Application.Json)
+                    header("Authorization", "Bearer ${getAccessToken()}")
+                    header("Nav-Callid", msgId)
+                    setBody(ferdigstillRequest)
+                }
+
+            httpResponse.also { logger.info("Ferdigstilte journalpost {}", journalpostId) }
+            return httpResponse.call.response.body()
         } catch (e: Exception) {
             if (e is ClientRequestException) {
                 when (e.response.status) {
@@ -63,6 +68,7 @@ class DokArkivClient(
                         sikkerlogger.error("Journalposten finnes ikke for journalpostid $journalpostId", e)
                         throw RuntimeException("Ferdigstilling: Journalposten finnes ikke for journalpostid $journalpostId", e)
                     }
+
                     else -> {
                         sikkerlogger.error("Fikk http status ${e.response.status} for journalpostid $journalpostId", e)
                         throw RuntimeException("Ferdigstilling: Fikk feilmelding for journalpostid $journalpostId", e)
@@ -78,9 +84,7 @@ class DokArkivClient(
     suspend fun ferdigstillJournalpost(
         journalpostId: String,
         msgId: String,
-    ): String {
-        return ferdigstillJournalpost(journalpostId, FerdigstillRequest(AUTOMATISK_JOURNALFOERING_ENHET), msgId)
-    }
+    ): String = ferdigstillJournalpost(journalpostId, FerdigstillRequest(AUTOMATISK_JOURNALFOERING_ENHET), msgId)
 
     /**
      *
@@ -90,16 +94,17 @@ class DokArkivClient(
     suspend fun oppdaterJournalpost(
         journalpostId: String,
         oppdaterJournalpostRequest: OppdaterJournalpostRequest,
-        msgId: String
+        msgId: String,
     ) = retry("oppdater_journalpost") {
         try {
-            httpClient.put<HttpResponse>("$url/journalpost/$journalpostId") {
-                contentType(ContentType.Application.Json)
-                accept(ContentType.Application.Json)
-                header("Authorization", "Bearer ${getAccessToken()}")
-                header("Nav-Callid", msgId)
-                body = oppdaterJournalpostRequest
-            }.also { logger.info("Oppdatering av journalpost ok for journalpostid {}, msgId {}", journalpostId, msgId) }
+            httpClient
+                .put("$url/journalpost/$journalpostId") {
+                    contentType(ContentType.Application.Json)
+                    accept(ContentType.Application.Json)
+                    header("Authorization", "Bearer ${getAccessToken()}")
+                    header("Nav-Callid", msgId)
+                    setBody(oppdaterJournalpostRequest)
+                }.also { logger.info("Oppdatering av journalpost ok for journalpostid {}, msgId {}", journalpostId, msgId) }
         } catch (e: Exception) {
             if (e is ClientRequestException) {
                 when (e.response.status) {
@@ -107,6 +112,7 @@ class DokArkivClient(
                         sikkerlogger.error("Oppdatering: Journalposten finnes ikke for journalpostid {}, msgId {}", journalpostId, msgId)
                         throw RuntimeException("Oppdatering: Journalposten finnes ikke for journalpostid $journalpostId msgid $msgId")
                     }
+
                     else -> {
                         sikkerlogger.error("Fikk http status {} ved oppdatering av journalpostid {}, msgId {}", e.response.status, journalpostId, msgId)
                         throw RuntimeException("Fikk feilmelding ved oppdatering av journalpostid $journalpostId msgid $msgId")
@@ -118,14 +124,18 @@ class DokArkivClient(
         }
     }
 
-    suspend fun feilregistrerJournalpost(journalpostId: String, msgId: String) {
+    suspend fun feilregistrerJournalpost(
+        journalpostId: String,
+        msgId: String,
+    ) {
         try {
-            httpClient.patch<HttpResponse>("$url/journalpost/$journalpostId/feilregistrer/feilregistrerSakstilknytning") {
-                contentType(ContentType.Application.Json)
-                accept(ContentType.Application.Json)
-                header("Authorization", "Bearer ${getAccessToken()}")
-                header("Nav-Callid", msgId)
-            }.also { logger.info("Feilregistrerte journalpost {}", journalpostId) }
+            httpClient
+                .patch("$url/journalpost/$journalpostId/feilregistrer/feilregistrerSakstilknytning") {
+                    contentType(ContentType.Application.Json)
+                    accept(ContentType.Application.Json)
+                    header("Authorization", "Bearer ${getAccessToken()}")
+                    header("Nav-Callid", msgId)
+                }.also { logger.info("Feilregistrerte journalpost {}", journalpostId) }
         } catch (e: Exception) {
             if (e is ClientRequestException) {
                 when (e.response.status) {
@@ -133,6 +143,7 @@ class DokArkivClient(
                         sikkerlogger.error("Klarte ikke feilregistrere journalpost $journalpostId", e)
                         throw RuntimeException("feilregistrering: Journalposten finnes ikke for journalpostid $journalpostId", e)
                     }
+
                     else -> {
                         sikkerlogger.error("Fikk http status ${e.response.status} ved feilregistrering av journalpost $journalpostId", e)
                         throw RuntimeException("Fikk feilmelding ved feilregistrering av journalpostid $journalpostId", e)

@@ -1,11 +1,14 @@
 package no.nav.syfo.client
 
 import io.ktor.client.HttpClient
+import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
+import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import no.nav.helsearbeidsgiver.utils.log.MdcUtils
 import no.nav.helsearbeidsgiver.utils.log.logger
@@ -14,7 +17,6 @@ import no.nav.syfo.behandling.HentOppgaveException
 import no.nav.syfo.behandling.OpprettFordelingsOppgaveException
 import no.nav.syfo.behandling.OpprettOppgaveException
 import no.nav.syfo.domain.OppgaveResultat
-import no.nav.syfo.helpers.retry
 import no.nav.syfo.util.Metrikk
 import no.nav.syfo.utsattoppgave.BehandlingsKategori
 import java.time.DayOfWeek
@@ -42,27 +44,47 @@ class OppgaveClient(
     val oppgavebehandlingUrl: String,
     val httpClient: HttpClient,
     val metrikk: Metrikk,
-    val getAccessToken: () -> String
+    val getAccessToken: () -> String,
 ) {
     private val logger = this.logger()
     private val sikkerlogger = sikkerLogger()
 
-    private suspend fun opprettOppgave(opprettOppgaveRequest: OpprettOppgaveRequest): OpprettOppgaveResponse = retry("opprett_oppgave") {
-        httpClient.post<OpprettOppgaveResponse>(oppgavebehandlingUrl) {
-            contentType(ContentType.Application.Json)
-            this.header("Authorization", "Bearer ${getAccessToken()}")
-            this.header("X-Correlation-ID", MdcUtils.getCallId())
-            body = opprettOppgaveRequest
+    private suspend fun opprettOppgave(opprettOppgaveRequest: OpprettOppgaveRequest): OpprettOppgaveResponse {
+        val httpResponse =
+            httpClient.post(oppgavebehandlingUrl) {
+                contentType(ContentType.Application.Json)
+                this.header("Authorization", "Bearer ${getAccessToken()}")
+                this.header("X-Correlation-ID", MdcUtils.getCallId())
+                setBody(opprettOppgaveRequest)
+            }
+        return when (httpResponse.status) {
+            HttpStatusCode.OK -> {
+                httpResponse.call.response.body()
+            }
+
+            HttpStatusCode.Created -> {
+                httpResponse.call.response.body()
+            }
+
+            else -> {
+                logger().error("Feilet å opprette oppgave : $httpResponse")
+                throw RuntimeException("Feilet å opprette oppgave : $httpResponse")
+                // TODO throw RuntimeException(opprettOppgaveRequest, httpResponse.status)
+            }
         }
     }
 
-    private suspend fun hentOppgave(oppgavetype: String, journalpostId: String): OppgaveResponse {
-        return retry("hent_oppgave") {
-            val callId = MdcUtils.getCallId()
-            logger.info("Henter oppgave med CallId $callId")
-            httpClient.get<OppgaveResponse>(oppgavebehandlingUrl) {
-                this.header("Authorization", "Bearer ${getAccessToken()}")
-                this.header("X-Correlation-ID", callId)
+    private suspend fun hentOppgave(
+        oppgavetype: String,
+        journalpostId: String,
+    ): OppgaveResponse {
+        val stsToken = getAccessToken()
+        val callId = MdcUtils.getCallId()
+        val httpResponse =
+            httpClient.get(oppgavebehandlingUrl) {
+                contentType(ContentType.Application.Json)
+                header("Authorization", "Bearer $stsToken")
+                header("X-Correlation-ID", callId)
                 parameter("tema", TEMA)
                 parameter("oppgavetype", oppgavetype)
                 parameter("journalpostId", journalpostId)
@@ -71,10 +93,22 @@ class OppgaveClient(
                 parameter("sorteringsfelt", "FRIST")
                 parameter("limit", "10")
             }
+        return when (httpResponse.status) {
+            HttpStatusCode.OK -> {
+                httpResponse.call.response.body()
+            }
+
+            else -> {
+                // TODO: Lag en exception for dette som sier at oppgave ikke finnes : throw HentOppgaveUnauthorizedException(oppgaveId, httpResponse.status)
+                throw RuntimeException("Feilet å hente oppgave : $httpResponse")
+            }
         }
     }
 
-    private suspend fun hentHvisOppgaveFinnes(oppgavetype: String, journalpostId: String): OppgaveResultat? {
+    private suspend fun hentHvisOppgaveFinnes(
+        oppgavetype: String,
+        journalpostId: String,
+    ): OppgaveResultat? {
         try {
             val oppgaveResponse = hentOppgave(oppgavetype = oppgavetype, journalpostId = journalpostId)
             return if (oppgaveResponse.antallTreffTotalt > 0) OppgaveResultat(oppgaveResponse.oppgaver.first().id, true, false) else null
@@ -87,9 +121,8 @@ class OppgaveClient(
     suspend fun opprettOppgave(
         journalpostId: String,
         aktoerId: String,
-        behandlingsKategori: BehandlingsKategori
+        behandlingsKategori: BehandlingsKategori,
     ): OppgaveResultat {
-
         val eksisterendeOppgave = hentHvisOppgaveFinnes(Oppgavetype.INNTEKTSMELDING, journalpostId)
         metrikk.tellOpprettOppgave(eksisterendeOppgave != null)
         if (eksisterendeOppgave != null) {
@@ -101,44 +134,51 @@ class OppgaveClient(
             sikkerlogger.info("Oppretter oppgave: $type for journalpost $journalpostId")
         }
 
-        val (behandlingstype, behandlingstema, utbetalingBruker) = when (behandlingsKategori) {
-            BehandlingsKategori.SPEIL_RELATERT -> {
-                loggOppgave("Speil")
-                Triple(null, Behandlingstema.SPEIL, false)
-            }
-            BehandlingsKategori.UTLAND -> {
-                loggOppgave("Utland")
-                Triple(Behandlingstype.UTLAND, null, false)
-            }
-            BehandlingsKategori.BESTRIDER_SYKEMELDING -> {
-                loggOppgave("Bestrider sykmelding")
-                Triple(null, Behandlingstema.BESTRIDER_SYKEMELDING, false)
-            }
-            BehandlingsKategori.IKKE_REFUSJON,
-            BehandlingsKategori.REFUSJON_MED_DATO,
-            BehandlingsKategori.REFUSJON_LITEN_LØNN -> {
-                loggOppgave("Utbetaling til bruker")
-                Triple(null, Behandlingstema.UTBETALING_TIL_BRUKER, true)
-            }
-            else -> {
-                loggOppgave("Normal")
-                Triple(null, Behandlingstema.NORMAL, false)
-            }
-        }
+        val (behandlingstype, behandlingstema, utbetalingBruker) =
+            when (behandlingsKategori) {
+                BehandlingsKategori.SPEIL_RELATERT -> {
+                    loggOppgave("Speil")
+                    Triple(null, Behandlingstema.SPEIL, false)
+                }
 
-        val opprettOppgaveRequest = OpprettOppgaveRequest(
-            aktoerId = aktoerId,
-            journalpostId = journalpostId,
-            behandlesAvApplikasjon = "FS22",
-            beskrivelse = "Det har kommet en inntektsmelding på sykepenger.",
-            tema = "SYK",
-            oppgavetype = Oppgavetype.INNTEKTSMELDING,
-            behandlingstype = behandlingstype,
-            behandlingstema = behandlingstema,
-            aktivDato = LocalDate.now(),
-            fristFerdigstillelse = leggTilEnVirkeuke(LocalDate.now()),
-            prioritet = "NORM"
-        )
+                BehandlingsKategori.UTLAND -> {
+                    loggOppgave("Utland")
+                    Triple(Behandlingstype.UTLAND, null, false)
+                }
+
+                BehandlingsKategori.BESTRIDER_SYKEMELDING -> {
+                    loggOppgave("Bestrider sykmelding")
+                    Triple(null, Behandlingstema.BESTRIDER_SYKEMELDING, false)
+                }
+
+                BehandlingsKategori.IKKE_REFUSJON,
+                BehandlingsKategori.REFUSJON_MED_DATO,
+                BehandlingsKategori.REFUSJON_LITEN_LØNN,
+                -> {
+                    loggOppgave("Utbetaling til bruker")
+                    Triple(null, Behandlingstema.UTBETALING_TIL_BRUKER, true)
+                }
+
+                else -> {
+                    loggOppgave("Normal")
+                    Triple(null, Behandlingstema.NORMAL, false)
+                }
+            }
+
+        val opprettOppgaveRequest =
+            OpprettOppgaveRequest(
+                aktoerId = aktoerId,
+                journalpostId = journalpostId,
+                behandlesAvApplikasjon = "FS22",
+                beskrivelse = "Det har kommet en inntektsmelding på sykepenger.",
+                tema = "SYK",
+                oppgavetype = Oppgavetype.INNTEKTSMELDING,
+                behandlingstype = behandlingstype,
+                behandlingstema = behandlingstema,
+                aktivDato = LocalDate.now(),
+                fristFerdigstillelse = leggTilEnVirkeuke(LocalDate.now()),
+                prioritet = "NORM",
+            )
         sikkerlogger.info("Oppretter journalføringsoppgave")
         try {
             return OppgaveResultat(opprettOppgave(opprettOppgaveRequest).id, false, utbetalingBruker)
@@ -147,10 +187,7 @@ class OppgaveClient(
         }
     }
 
-    suspend fun opprettFordelingsOppgave(
-        journalpostId: String
-    ): OppgaveResultat {
-
+    suspend fun opprettFordelingsOppgave(journalpostId: String): OppgaveResultat {
         val eksisterendeOppgave = hentHvisOppgaveFinnes(Oppgavetype.FORDELINGSOPPGAVE, journalpostId)
 
         if (eksisterendeOppgave != null) {
@@ -160,17 +197,18 @@ class OppgaveClient(
 
         val behandlingstype: String? = null
 
-        val opprettOppgaveRequest = OpprettOppgaveRequest(
-            journalpostId = journalpostId,
-            behandlesAvApplikasjon = "FS22",
-            beskrivelse = "Fordelingsoppgave for inntektsmelding på sykepenger",
-            tema = TEMA,
-            oppgavetype = Oppgavetype.FORDELINGSOPPGAVE,
-            behandlingstype = behandlingstype,
-            aktivDato = LocalDate.now(),
-            fristFerdigstillelse = leggTilEnVirkeuke(LocalDate.now()),
-            prioritet = "NORM"
-        )
+        val opprettOppgaveRequest =
+            OpprettOppgaveRequest(
+                journalpostId = journalpostId,
+                behandlesAvApplikasjon = "FS22",
+                beskrivelse = "Fordelingsoppgave for inntektsmelding på sykepenger",
+                tema = TEMA,
+                oppgavetype = Oppgavetype.FORDELINGSOPPGAVE,
+                behandlingstype = behandlingstype,
+                aktivDato = LocalDate.now(),
+                fristFerdigstillelse = leggTilEnVirkeuke(LocalDate.now()),
+                prioritet = "NORM",
+            )
         logger.info("Oppretter fordelingsoppgave")
         try {
             return OppgaveResultat(opprettOppgave(opprettOppgaveRequest).id, false, false)
@@ -179,13 +217,12 @@ class OppgaveClient(
         }
     }
 
-    fun leggTilEnVirkeuke(dato: LocalDate): LocalDate {
-        return when (dato.dayOfWeek) {
+    fun leggTilEnVirkeuke(dato: LocalDate): LocalDate =
+        when (dato.dayOfWeek) {
             DayOfWeek.SATURDAY -> dato.plusDays(9)
             DayOfWeek.SUNDAY -> dato.plusDays(8)
             else -> dato.plusDays(7)
         }
-    }
 }
 
 data class OpprettOppgaveRequest(
@@ -201,16 +238,16 @@ data class OpprettOppgaveRequest(
     val behandlingstema: String? = null,
     val aktivDato: LocalDate,
     val fristFerdigstillelse: LocalDate? = null,
-    val prioritet: String
+    val prioritet: String,
 )
 
 data class OpprettOppgaveResponse(
-    val id: Int
+    val id: Int,
 )
 
 data class OppgaveResponse(
     val antallTreffTotalt: Int,
-    val oppgaver: List<Oppgave>
+    val oppgaver: List<Oppgave>,
 )
 
 data class Oppgave(
@@ -220,5 +257,5 @@ data class Oppgave(
     val journalpostId: String?,
     val saksreferanse: String?,
     val tema: String?,
-    val oppgavetype: String?
+    val oppgavetype: String?,
 )
