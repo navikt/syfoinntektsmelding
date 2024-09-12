@@ -66,8 +66,7 @@ fun Module.externalSystemClients(config: ApplicationConfig) {
         )
     } bind AccessTokenProvider::class
     single {
-        val tokenProvider: AccessTokenProvider = get(qualifier = named("PDL"))
-        PdlClient(config.getString("pdl_url"), Behandlingsgrunnlag.INNTEKTSMELDING, tokenProvider::getToken)
+        PdlClient(config.getString("pdl_url"), Behandlingsgrunnlag.INNTEKTSMELDING,get<AccessTokenProvider>(qualifier = named(AccessScope.PDL))::getToken)
     } bind PdlClient::class
 }
 
