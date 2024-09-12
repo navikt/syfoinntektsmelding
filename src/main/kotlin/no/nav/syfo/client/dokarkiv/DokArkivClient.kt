@@ -57,8 +57,8 @@ class DokArkivClient(
                     header("Authorization", "Bearer ${getAccessToken()}")
                     header("Nav-Callid", msgId)
                     setBody(ferdigstillRequest)
-                }
 
+                }
             httpResponse.also { logger.info("Ferdigstilte journalpost {}", journalpostId) }
             return httpResponse.call.response.body()
         } catch (e: Exception) {

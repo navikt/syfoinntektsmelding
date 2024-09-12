@@ -6,11 +6,13 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
+import io.ktor.client.engine.mock.toByteArray
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.TextContent
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.util.Metrikk
+import no.nav.syfo.util.customObjectMapper
 import no.nav.syfo.utsattoppgave.BehandlingsKategori
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -153,15 +155,14 @@ class OppgaveClientTest {
         }
     }
 
-    private fun hentRequestInnhold(client: HttpClient): OpprettOppgaveRequest? {
+    private suspend fun hentRequestInnhold(client: HttpClient): OpprettOppgaveRequest? {
+        //TODO skriv om dette
         val requestHistorikk = (client.engine as MockEngine).requestHistory
         for (req in requestHistorikk) {
 
             if (req.method.value == "POST") {
-                val mapper = jacksonObjectMapper()
-                mapper.registerKotlinModule()
-                mapper.registerModule(JavaTimeModule())
-                return mapper.readValue((req.body as TextContent).text)
+                val mapper = customObjectMapper()
+                return req.body.toByteArray().let { mapper.readValue(it) }
             }
         }
         return null

@@ -1,14 +1,13 @@
 package no.nav.syfo.slowtests
 
 import io.ktor.client.HttpClient
+import io.ktor.client.call.body
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.url
-import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
-import io.ktor.http.setCookie
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.SpinnApplication
@@ -60,12 +59,12 @@ open class SystemTestBase : KoinTest {
      * Hjelpefunksjon for å hente ut gyldig JWT-token og legge det til som Auth header på en request
      */
     suspend fun HttpRequestBuilder.loggedInAs(subject: String) {
-        val response = httpClient.get<HttpResponse> {
-            appUrl("/local/cookie-please?subject=$subject")
+        val response = httpClient.get {
+            appUrl("/local/token-please?subject=$subject")
             contentType(ContentType.Application.Json)
-        }
+        }.body<String>()
 
-        header("Authorization", "Bearer ${response.setCookie()[0].value}")
+        header("Authorization", "Bearer $response")
     }
 
     /**

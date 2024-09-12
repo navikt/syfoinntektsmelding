@@ -221,7 +221,7 @@ dependencies {
     testImplementation("io.ktor:ktor-client-mock:$ktorVersion")
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
     testImplementation("io.ktor:ktor-server-tests:$ktorVersion")
-
+    testImplementation("io.insert-koin:koin-test:$koinVersion")
 
 
     testImplementation("org.assertj:assertj-core:$assertJVersion")

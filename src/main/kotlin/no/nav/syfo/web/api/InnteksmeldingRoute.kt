@@ -24,7 +24,7 @@ fun Route.syfoinntektsmelding(
 ) {
     val logger = this.logger()
     route("/inntektsmelding") {
-        get ("/{inntektsmeldingId}") {
+        get("/{inntektsmeldingId}") {
             val inntektsmeldingId = call.parameters["inntektsmeldingId"] ?: throw IllegalArgumentException("Forventet inntektsmeldingId som path parameter")
             logger.info("Fikk request om å hente inntektsmelding med id: $inntektsmeldingId")
             val dto = imRepo.findByUuid(inntektsmeldingId)
