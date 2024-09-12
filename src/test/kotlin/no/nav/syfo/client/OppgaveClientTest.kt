@@ -1,14 +1,10 @@
 package no.nav.syfo.client
 
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.toByteArray
 import io.ktor.http.HttpStatusCode
-import io.ktor.http.content.TextContent
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.util.Metrikk
@@ -156,7 +152,7 @@ class OppgaveClientTest {
     }
 
     private suspend fun hentRequestInnhold(client: HttpClient): OpprettOppgaveRequest? {
-        //TODO skriv om dette
+        // TODO skriv om dette
         val requestHistorikk = (client.engine as MockEngine).requestHistory
         for (req in requestHistorikk) {
 
