@@ -66,7 +66,7 @@ fun Module.externalSystemClients(config: ApplicationConfig) {
         )
     } bind AccessTokenProvider::class
     single {
-        PdlClient(config.getString("pdl_url"), Behandlingsgrunnlag.INNTEKTSMELDING,get<AccessTokenProvider>(qualifier = named(AccessScope.PDL))::getToken)
+        PdlClient(config.getString("pdl_url"), Behandlingsgrunnlag.INNTEKTSMELDING, get<AccessTokenProvider>(qualifier = named(AccessScope.PDL))::getToken)
     } bind PdlClient::class
 }
 
