@@ -1,9 +1,12 @@
 package no.nav.syfo.client.saf
 
 import io.ktor.client.HttpClient
+import io.ktor.client.call.body
 import io.ktor.client.request.header
 import io.ktor.client.request.post
+import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import kotlinx.coroutines.runBlocking
 import no.nav.helsearbeidsgiver.utils.log.logger
@@ -22,20 +25,17 @@ class SafJournalpostClient(
         val accessToken = getAccessToken()
         logger.info("Henter journalpostmetadata for $journalpostId with token size " + accessToken.length)
         val response = runBlocking {
-            httpClient.post<JournalResponse>(basePath) {
+            httpClient.post(basePath) {
                 contentType(ContentType.Application.Json)
                 header("Authorization", "Bearer $accessToken")
                 header("X-Correlation-ID", journalpostId)
-                body = GetJournalpostRequest(query = lagQuery(journalpostId))
+                setBody(GetJournalpostRequest(query = lagQuery(journalpostId)))
             }
         }
-        if (response.status == 401) {
+        if (response.status == HttpStatusCode.Unauthorized) {
             throw NotAuthorizedException(journalpostId)
         }
-        if (response.errors != null && response.errors.isNotEmpty()) {
-            throw ErrorException(journalpostId, response.errors.toString())
-        }
-        return response.data!!.journalpost
+        return runBlocking { response.call.response.body<JournalResponse>().data?.journalpost ?: throw ErrorException(journalpostId, response.call.response.body()) }
     }
 }
 

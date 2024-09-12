@@ -1,8 +1,12 @@
 package no.nav.syfo.client.norg
 
 import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.call.receive
 import io.ktor.client.request.header
 import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.client.statement.request
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.http.withCharset
@@ -29,13 +33,14 @@ open class Norg2Client(
      */
     open suspend fun hentAlleArbeidsfordelinger(request: ArbeidsfordelingRequest, callId: String?): List<ArbeidsfordelingResponse> {
         return runBlocking {
-            httpClient.post<List<ArbeidsfordelingResponse>>(url) {
+            val httpResponse = httpClient.post(url) {
                 contentType(ContentType.Application.Json.withCharset(Charsets.UTF_8))
                 header("X-Correlation-ID", callId)
                 header("Nav-Call-Id", callId)
                 header("Nav-Consumer-Id", "spinosaurus")
-                body = request
+                setBody(request)
             }
+            return@runBlocking httpResponse.call.response.body()
         }
     }
 }
