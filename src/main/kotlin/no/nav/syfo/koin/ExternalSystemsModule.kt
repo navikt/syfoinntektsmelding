@@ -2,7 +2,6 @@ package no.nav.syfo.koin
 
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod
 import io.ktor.server.config.ApplicationConfig
-
 import no.nav.helsearbeidsgiver.pdl.Behandlingsgrunnlag
 import no.nav.helsearbeidsgiver.pdl.PdlClient
 import no.nav.helsearbeidsgiver.tokenprovider.AccessTokenProvider
