@@ -1,7 +1,7 @@
 package no.nav.syfo.koin
 
 import com.zaxxer.hikari.HikariDataSource
-import io.ktor.config.ApplicationConfig
+import io.ktor.server.config.ApplicationConfig
 import no.nav.hag.utils.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.hag.utils.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.hag.utils.bakgrunnsjobb.PostgresBakgrunnsjobbRepository

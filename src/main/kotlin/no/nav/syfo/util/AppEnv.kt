@@ -1,6 +1,6 @@
 package no.nav.syfo.util
 
-import io.ktor.config.ApplicationConfig
+import io.ktor.server.config.ApplicationConfig
 
 enum class AppEnv {
     TEST,

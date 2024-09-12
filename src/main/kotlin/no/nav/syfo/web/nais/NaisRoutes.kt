@@ -1,14 +1,14 @@
 package no.nav.syfo.web.nais
 
-import io.ktor.application.Application
-import io.ktor.application.ApplicationCall
-import io.ktor.application.call
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
-import io.ktor.response.respond
-import io.ktor.response.respondTextWriter
-import io.ktor.routing.get
-import io.ktor.routing.routing
+import io.ktor.server.application.Application
+import io.ktor.server.application.ApplicationCall
+import io.ktor.server.application.call
+import io.ktor.server.response.respond
+import io.ktor.server.response.respondTextWriter
+import io.ktor.server.routing.get
+import io.ktor.server.routing.routing
 import io.ktor.util.pipeline.PipelineContext
 import io.prometheus.client.CollectorRegistry
 import io.prometheus.client.exporter.common.TextFormat
@@ -33,8 +33,8 @@ fun Application.nais() {
     }
 
     routing {
-        get("/health/is-alive") {
-            val kubernetesProbeManager = this@routing.get<KubernetesProbeManager>()
+        get ("/health/is-alive") {
+            val kubernetesProbeManager = KubernetesProbeManager()
             val checkResults = kubernetesProbeManager.runLivenessProbe()
             returnResultOfChecks(checkResults)
         }
