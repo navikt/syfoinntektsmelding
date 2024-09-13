@@ -23,7 +23,7 @@ val AUTOMATISK_JOURNALFOERING_ENHET = "9999"
 class DokArkivClient(
     private val url: String,
     private val httpClient: HttpClient,
-    private val getAccessToken: () -> String,
+    private val getAccessToken: () -> String
 ) {
     private val logger = this.logger()
     private val sikkerlogger = sikkerLogger()
@@ -47,7 +47,7 @@ class DokArkivClient(
     suspend fun ferdigstillJournalpost(
         journalpostId: String,
         ferdigstillRequest: FerdigstillRequest,
-        msgId: String,
+        msgId: String
     ): String {
         try {
             val httpResponse =
@@ -93,7 +93,7 @@ class DokArkivClient(
     suspend fun oppdaterJournalpost(
         journalpostId: String,
         oppdaterJournalpostRequest: OppdaterJournalpostRequest,
-        msgId: String,
+        msgId: String
     ) = retry("oppdater_journalpost") {
         try {
             httpClient
@@ -123,10 +123,7 @@ class DokArkivClient(
         }
     }
 
-    suspend fun feilregistrerJournalpost(
-        journalpostId: String,
-        msgId: String,
-    ) {
+    suspend fun feilregistrerJournalpost(journalpostId: String, msgId: String) {
         try {
             httpClient
                 .patch("$url/journalpost/$journalpostId/feilregistrer/feilregistrerSakstilknytning") {

@@ -44,7 +44,7 @@ class OppgaveClient(
     val oppgavebehandlingUrl: String,
     val httpClient: HttpClient,
     val metrikk: Metrikk,
-    val getAccessToken: () -> String,
+    val getAccessToken: () -> String
 ) {
     private val logger = this.logger()
     private val sikkerlogger = sikkerLogger()
@@ -105,10 +105,7 @@ class OppgaveClient(
         }
     }
 
-    private suspend fun hentHvisOppgaveFinnes(
-        oppgavetype: String,
-        journalpostId: String,
-    ): OppgaveResultat? {
+    private suspend fun hentHvisOppgaveFinnes(oppgavetype: String, journalpostId: String): OppgaveResultat? {
         try {
             val oppgaveResponse = hentOppgave(oppgavetype = oppgavetype, journalpostId = journalpostId)
             return if (oppgaveResponse.antallTreffTotalt > 0) OppgaveResultat(oppgaveResponse.oppgaver.first().id, true, false) else null
@@ -121,8 +118,9 @@ class OppgaveClient(
     suspend fun opprettOppgave(
         journalpostId: String,
         aktoerId: String,
-        behandlingsKategori: BehandlingsKategori,
+        behandlingsKategori: BehandlingsKategori
     ): OppgaveResultat {
+
         val eksisterendeOppgave = hentHvisOppgaveFinnes(Oppgavetype.INNTEKTSMELDING, journalpostId)
         metrikk.tellOpprettOppgave(eksisterendeOppgave != null)
         if (eksisterendeOppgave != null) {
@@ -134,51 +132,44 @@ class OppgaveClient(
             sikkerlogger.info("Oppretter oppgave: $type for journalpost $journalpostId")
         }
 
-        val (behandlingstype, behandlingstema, utbetalingBruker) =
-            when (behandlingsKategori) {
-                BehandlingsKategori.SPEIL_RELATERT -> {
-                    loggOppgave("Speil")
-                    Triple(null, Behandlingstema.SPEIL, false)
-                }
-
-                BehandlingsKategori.UTLAND -> {
-                    loggOppgave("Utland")
-                    Triple(Behandlingstype.UTLAND, null, false)
-                }
-
-                BehandlingsKategori.BESTRIDER_SYKEMELDING -> {
-                    loggOppgave("Bestrider sykmelding")
-                    Triple(null, Behandlingstema.BESTRIDER_SYKEMELDING, false)
-                }
-
-                BehandlingsKategori.IKKE_REFUSJON,
-                BehandlingsKategori.REFUSJON_MED_DATO,
-                BehandlingsKategori.REFUSJON_LITEN_LØNN,
-                -> {
-                    loggOppgave("Utbetaling til bruker")
-                    Triple(null, Behandlingstema.UTBETALING_TIL_BRUKER, true)
-                }
-
-                else -> {
-                    loggOppgave("Normal")
-                    Triple(null, Behandlingstema.NORMAL, false)
-                }
+        val (behandlingstype, behandlingstema, utbetalingBruker) = when (behandlingsKategori) {
+            BehandlingsKategori.SPEIL_RELATERT -> {
+                loggOppgave("Speil")
+                Triple(null, Behandlingstema.SPEIL, false)
             }
+            BehandlingsKategori.UTLAND -> {
+                loggOppgave("Utland")
+                Triple(Behandlingstype.UTLAND, null, false)
+            }
+            BehandlingsKategori.BESTRIDER_SYKEMELDING -> {
+                loggOppgave("Bestrider sykmelding")
+                Triple(null, Behandlingstema.BESTRIDER_SYKEMELDING, false)
+            }
+            BehandlingsKategori.IKKE_REFUSJON,
+            BehandlingsKategori.REFUSJON_MED_DATO,
+            BehandlingsKategori.REFUSJON_LITEN_LØNN -> {
+                loggOppgave("Utbetaling til bruker")
+                Triple(null, Behandlingstema.UTBETALING_TIL_BRUKER, true)
+            }
+            else -> {
+                loggOppgave("Normal")
+                Triple(null, Behandlingstema.NORMAL, false)
+            }
+        }
 
-        val opprettOppgaveRequest =
-            OpprettOppgaveRequest(
-                aktoerId = aktoerId,
-                journalpostId = journalpostId,
-                behandlesAvApplikasjon = "FS22",
-                beskrivelse = "Det har kommet en inntektsmelding på sykepenger.",
-                tema = "SYK",
-                oppgavetype = Oppgavetype.INNTEKTSMELDING,
-                behandlingstype = behandlingstype,
-                behandlingstema = behandlingstema,
-                aktivDato = LocalDate.now(),
-                fristFerdigstillelse = leggTilEnVirkeuke(LocalDate.now()),
-                prioritet = "NORM",
-            )
+        val opprettOppgaveRequest = OpprettOppgaveRequest(
+            aktoerId = aktoerId,
+            journalpostId = journalpostId,
+            behandlesAvApplikasjon = "FS22",
+            beskrivelse = "Det har kommet en inntektsmelding på sykepenger.",
+            tema = "SYK",
+            oppgavetype = Oppgavetype.INNTEKTSMELDING,
+            behandlingstype = behandlingstype,
+            behandlingstema = behandlingstema,
+            aktivDato = LocalDate.now(),
+            fristFerdigstillelse = leggTilEnVirkeuke(LocalDate.now()),
+            prioritet = "NORM"
+        )
         sikkerlogger.info("Oppretter journalføringsoppgave")
         try {
             return OppgaveResultat(opprettOppgave(opprettOppgaveRequest).id, false, utbetalingBruker)
@@ -238,16 +229,16 @@ data class OpprettOppgaveRequest(
     val behandlingstema: String? = null,
     val aktivDato: LocalDate,
     val fristFerdigstillelse: LocalDate? = null,
-    val prioritet: String,
+    val prioritet: String
 )
 
 data class OpprettOppgaveResponse(
-    val id: Int,
+    val id: Int
 )
 
 data class OppgaveResponse(
     val antallTreffTotalt: Int,
-    val oppgaver: List<Oppgave>,
+    val oppgaver: List<Oppgave>
 )
 
 data class Oppgave(
@@ -257,5 +248,5 @@ data class Oppgave(
     val journalpostId: String?,
     val saksreferanse: String?,
     val tema: String?,
-    val oppgavetype: String?,
+    val oppgavetype: String?
 )
