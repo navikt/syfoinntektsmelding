@@ -2,6 +2,7 @@ package no.nav.syfo.client.saf
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
@@ -24,18 +25,28 @@ class SafJournalpostClient(
     fun getJournalpostMetadata(journalpostId: String): Journalpost? {
         val accessToken = getAccessToken()
         logger.info("Henter journalpostmetadata for $journalpostId with token size " + accessToken.length)
-        val response = runBlocking {
-            httpClient.post(basePath) {
-                contentType(ContentType.Application.Json)
-                header("Authorization", "Bearer $accessToken")
-                header("X-Correlation-ID", journalpostId)
-                setBody(GetJournalpostRequest(query = lagQuery(journalpostId)))
+        try {
+            val response: JournalResponse = runBlocking {
+                httpClient.post(basePath) {
+                    contentType(ContentType.Application.Json)
+                    header("Authorization", "Bearer $accessToken")
+                    header("X-Correlation-ID", journalpostId)
+                    setBody(GetJournalpostRequest(query = lagQuery(journalpostId)))
+                }.call.response.body<JournalResponse>()
+            }
+            if (response.errors != null && response.errors.isNotEmpty()) {
+                throw ErrorException(journalpostId, response.errors.toString())
+            }
+            if (response.data?.journalpost == null) {
+                throw EmptyException(journalpostId)
+            }
+            return response.data.journalpost
+        } catch (e: ClientRequestException) {
+            when (e.response.status) {
+                HttpStatusCode.Unauthorized -> throw NotAuthorizedException(journalpostId)
+                else -> throw ErrorException(journalpostId, runBlocking { e.response.body() })
             }
         }
-        if (response.status == HttpStatusCode.Unauthorized) {
-            throw NotAuthorizedException(journalpostId)
-        }
-        return runBlocking { response.call.response.body<JournalResponse>().data?.journalpost ?: throw ErrorException(journalpostId, response.call.response.body()) }
     }
 }
 
