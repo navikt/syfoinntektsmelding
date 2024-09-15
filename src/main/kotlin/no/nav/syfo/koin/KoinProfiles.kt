@@ -17,6 +17,8 @@ import io.ktor.http.ContentType
 import io.ktor.serialization.jackson.JacksonConverter
 import io.ktor.serialization.jackson.jackson
 import io.ktor.server.config.ApplicationConfig
+import no.nav.syfo.util.AppEnv.DEV
+import no.nav.syfo.util.AppEnv.PROD
 import no.nav.syfo.util.KubernetesProbeManager
 import no.nav.syfo.util.customObjectMapper
 import org.koin.core.module.Module
@@ -25,8 +27,8 @@ import org.koin.dsl.module
 fun selectModuleBasedOnProfile(config: ApplicationConfig): List<Module> {
     val envModule =
         when (config.property("koin.profile").getString()) {
-            "PROD" -> prodConfig(config)
-            "DEV" -> devConfig(config)
+            PROD.name -> prodConfig(config)
+            DEV.name -> devConfig(config)
             else -> localDevConfig(config)
         }
     return listOf(common, envModule)

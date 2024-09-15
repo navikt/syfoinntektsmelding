@@ -3,10 +3,9 @@ package no.nav.syfo.util
 import io.ktor.server.config.ApplicationConfig
 
 enum class AppEnv {
-    TEST,
     LOCAL,
-    PREPROD,
-    PROD,
+    DEV,
+    PROD
 }
 
 fun ApplicationConfig.getEnvironment(): AppEnv = AppEnv.valueOf(getString("koin.profile"))
