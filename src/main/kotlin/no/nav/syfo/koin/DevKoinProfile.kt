@@ -206,16 +206,16 @@ fun devConfig(config: ApplicationConfig) =
         single {
             InntektsmeldingConsumer(
                 props =
-                    commonAivenProperties() +
-                        mapOf(
-                            ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
-                            ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG to "false",
-                            ConsumerConfig.MAX_POLL_RECORDS_CONFIG to "1",
-                            ConsumerConfig.CLIENT_ID_CONFIG to "syfoinntektsmelding-im-consumer",
-                            ConsumerConfig.GROUP_ID_CONFIG to "syfoinntektsmelding-im-v1",
-                            ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
-                            ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
-                        ),
+                commonAivenProperties() +
+                    mapOf(
+                        ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
+                        ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG to "false",
+                        ConsumerConfig.MAX_POLL_RECORDS_CONFIG to "1",
+                        ConsumerConfig.CLIENT_ID_CONFIG to "syfoinntektsmelding-im-consumer",
+                        ConsumerConfig.GROUP_ID_CONFIG to "syfoinntektsmelding-im-v1",
+                        ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
+                        ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
+                    ),
                 topicName = "helsearbeidsgiver.inntektsmelding",
                 inntektsmeldingService = get(),
                 inntektsmeldingAivenProducer = get(),
