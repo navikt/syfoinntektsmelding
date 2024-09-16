@@ -47,6 +47,7 @@ val kotlinxSerializationVersion: String by project
 val bakgrunnsjobbVersion: String by project
 val pdlClientVersion: String by project
 val tokenProviderVersion: String by project
+
 plugins {
     kotlin("jvm")
     kotlin("plugin.serialization")

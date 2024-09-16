@@ -62,37 +62,78 @@ fun localDevConfig(config: ApplicationConfig) =
         } bind DataSource::class
         single { UtsattOppgaveRepositoryImp(get()) } bind UtsattOppgaveRepository::class
 
-        single { FinnAlleUtgaandeOppgaverProcessor(get(), get(), get(), get(), get(), get()) }
+        single {
+            FinnAlleUtgaandeOppgaverProcessor(
+                utsattOppgaveDAO = get(),
+                oppgaveClient = get(),
+                behandlendeEnhetConsumer = get(),
+                metrikk = get(),
+                inntektsmeldingRepository = get(),
+                om = get(),
+            )
+        }
 
         single {
             JournalpostHendelseConsumer(
-                joarkLocalProperties(),
-                config.getString("kafka_joark_hendelse_topic"),
-                get(),
-                get(),
+                props = joarkLocalProperties(),
+                topicName = config.getString("kafka_joark_hendelse_topic"),
+                bakgrunnsjobbRepo = get(),
+                om = get(),
             )
         }
         single {
-            UtsattOppgaveConsumer(utsattOppgaveLocalProperties(), config.getString("kafka_utsatt_oppgave_topic"), get(), get(), get())
+            UtsattOppgaveConsumer(
+                props = utsattOppgaveLocalProperties(),
+                topicName = config.getString("kafka_utsatt_oppgave_topic"),
+                om = get(),
+                utsattOppgaveService = get(),
+                bakgrunnsjobbRepo = get(),
+            )
         }
-        single { PostgresBakgrunnsjobbRepository(get()) } bind BakgrunnsjobbRepository::class
-        single { BakgrunnsjobbService(get()) }
-        single { BehandlendeEnhetConsumer(get(), get(), get()) }
-        single { UtsattOppgaveDAO(UtsattOppgaveRepositoryMockk()) }
-        single { OppgaveClient(config.getString("oppgavebehandling_url"), get(), get()) { "local token" } }
-        single { UtsattOppgaveService(get(), get(), get(), get(), get(), get()) }
-        single { FeiletUtsattOppgaveMeldingProsessor(get(), get()) }
+        single { PostgresBakgrunnsjobbRepository(dataSource = get()) } bind BakgrunnsjobbRepository::class
+        single { BakgrunnsjobbService(bakgrunnsjobbRepository = get()) }
+        single { BehandlendeEnhetConsumer(pdlClient = get(), norg2Client = get(), metrikk = get()) }
+        single { UtsattOppgaveDAO(utsattOppgaveRepository = UtsattOppgaveRepositoryMockk()) }
+        single { OppgaveClient(oppgavebehandlingUrl = config.getString("oppgavebehandling_url"), httpClient = get(), metrikk = get()) { "local token" } }
+        single {
+            UtsattOppgaveService(
+                utsattOppgaveDAO = get(),
+                oppgaveClient = get(),
+                behandlendeEnhetConsumer = get(),
+                inntektsmeldingRepository = get(),
+                om = get(),
+                metrikk = get(),
+            )
+        }
+        single { FeiletUtsattOppgaveMeldingProsessor(om = get(), oppgaveService = get()) }
 
-        single { FjernInntektsmeldingByBehandletProcessor(get(), 1) }
+        single { FjernInntektsmeldingByBehandletProcessor(repository = get(), lagringstidMåneder = 1) }
 
-        single { InntektsmeldingBehandler(get(), get(), get(), get(), get(), get()) }
-        single { InngaaendeJournalConsumer(get()) }
-        single { BehandleInngaaendeJournalConsumer(get()) }
-        single { JournalConsumer(get(), get(), get()) }
+        single {
+            InntektsmeldingBehandler(
+                journalpostService = get(),
+                metrikk = get(),
+                inntektsmeldingService = get(),
+                inntektsmeldingAivenProducer = get(),
+                utsattOppgaveService = get(),
+                pdlClient = get(),
+            )
+        }
+        single { InngaaendeJournalConsumer(safJournalpostClient = get()) }
+        single { BehandleInngaaendeJournalConsumer(dokArkivClient = get()) }
+        single { JournalConsumer(safDokumentClient = get(), safJournalpostClient = get(), pdlClient = get()) }
         single { Metrikk() } bind Metrikk::class
-        single { JournalpostService(get(), get(), get(), get(), get()) }
-        single { InntektsmeldingService(InntektsmeldingRepositoryImp(get()), get()) }
-        single { JoarkInntektsmeldingHendelseProsessor(get(), get(), get(), get()) }
+        single {
+            JournalpostService(
+                inngaaendeJournalConsumer = get(),
+                behandleInngaaendeJournalConsumer = get(),
+                journalConsumer = get(),
+                behandlendeEnhetConsumer = get(),
+                metrikk = get(),
+            )
+        }
+        single { InntektsmeldingService(InntektsmeldingRepositoryImp(ds = get()), get()) }
+        single { JoarkInntektsmeldingHendelseProsessor(om = get(), metrikk = get(), inntektsmeldingBehandler = get(), oppgaveClient = get()) }
 
         single {
             InntektsmeldingAivenProducer(producerLocalProperties(config.getString("kafka_bootstrap_servers")))
@@ -126,12 +167,12 @@ fun localDevConfig(config: ApplicationConfig) =
 
         single {
             InntektsmeldingConsumer(
-                inntektsmeldingFraSimbaLocalProperties(),
-                "inntektsmelding",
-                get(),
-                get(),
-                get(),
-                get(),
+                props = inntektsmeldingFraSimbaLocalProperties(),
+                topicName = "inntektsmelding",
+                inntektsmeldingService = get(),
+                inntektsmeldingAivenProducer = get(),
+                utsattOppgaveService = get(),
+                pdlClient = get(),
             )
         }
     }
