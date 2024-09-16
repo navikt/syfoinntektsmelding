@@ -63,12 +63,12 @@ class OppgaveClient(
         oppgavetype: String,
         journalpostId: String,
     ): OppgaveResponse {
-        val stsToken = getAccessToken()
+        val token = getAccessToken()
         val callId = MdcUtils.getCallId()
         val httpResponse =
             httpClient.get(oppgavebehandlingUrl) {
                 contentType(ContentType.Application.Json)
-                header("Authorization", "Bearer $stsToken")
+                header("Authorization", "Bearer $token")
                 header("X-Correlation-ID", callId)
                 parameter("tema", TEMA)
                 parameter("oppgavetype", oppgavetype)
