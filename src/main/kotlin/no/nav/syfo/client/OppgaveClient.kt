@@ -8,7 +8,6 @@ import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
-import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import no.nav.helsearbeidsgiver.utils.log.MdcUtils
 import no.nav.helsearbeidsgiver.utils.log.logger
@@ -57,21 +56,7 @@ class OppgaveClient(
                 this.header("X-Correlation-ID", MdcUtils.getCallId())
                 setBody(opprettOppgaveRequest)
             }
-        return when (httpResponse.status) {
-            HttpStatusCode.OK -> {
-                httpResponse.call.response.body()
-            }
-
-            HttpStatusCode.Created -> {
-                httpResponse.call.response.body()
-            }
-
-            else -> {
-                logger().error("Feilet å opprette oppgave : $httpResponse")
-                throw RuntimeException("Feilet å opprette oppgave : $httpResponse")
-                // TODO throw RuntimeException(opprettOppgaveRequest, httpResponse.status)
-            }
-        }
+        return httpResponse.call.response.body()
     }
 
     private suspend fun hentOppgave(
@@ -93,16 +78,7 @@ class OppgaveClient(
                 parameter("sorteringsfelt", "FRIST")
                 parameter("limit", "10")
             }
-        return when (httpResponse.status) {
-            HttpStatusCode.OK -> {
-                httpResponse.call.response.body()
-            }
-
-            else -> {
-                // TODO: Lag en exception for dette som sier at oppgave ikke finnes : throw HentOppgaveUnauthorizedException(oppgaveId, httpResponse.status)
-                throw RuntimeException("Feilet å hente oppgave : $httpResponse")
-            }
-        }
+        return httpResponse.call.response.body()
     }
 
     private suspend fun hentHvisOppgaveFinnes(oppgavetype: String, journalpostId: String): OppgaveResultat? {
