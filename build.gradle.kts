@@ -47,7 +47,6 @@ val kotlinxSerializationVersion: String by project
 val bakgrunnsjobbVersion: String by project
 val pdlClientVersion: String by project
 val tokenProviderVersion: String by project
-val h2DatabaseVersion: String by project
 
 plugins {
     kotlin("jvm")
@@ -224,5 +223,4 @@ dependencies {
     testImplementation("io.insert-koin:koin-test:$koinVersion")
 
     testImplementation("org.assertj:assertj-core:$assertJVersion")
-    testImplementation("com.h2database:h2:$h2DatabaseVersion")
 }

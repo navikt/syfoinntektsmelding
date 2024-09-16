@@ -13,8 +13,6 @@ import no.nav.syfo.client.saf.SafDokumentClient
 import no.nav.syfo.repository.InntektsmeldingRepository
 import no.nav.syfo.util.AppEnv
 import no.nav.syfo.util.Metrikk
-import no.nav.syfo.util.getString
-import org.h2.jdbcx.JdbcDataSource
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.koin.core.context.startKoin
@@ -35,7 +33,7 @@ class KoinProfilesKtTest : KoinTest {
     private val accessTokenProvider = mockk<AccessTokenProvider>(relaxed = true)
     private val metrikk = mockk<Metrikk>(relaxed = true)
 
-    private val dataSource: DataSource by inject()
+    private val dataSource = mockk<DataSource>(relaxed = true)
     private val inntektsmeldingRepository: InntektsmeldingRepository by inject()
     private val pdlClient: PdlClient by inject()
     private val safDokumentClient: SafDokumentClient by inject()
@@ -94,13 +92,7 @@ class KoinProfilesKtTest : KoinTest {
     private fun getTestModules(): Module {
         val testModule =
             module {
-                single {
-                    JdbcDataSource().apply {
-                        setURL(config.getjdbcUrlFromProperties())
-                        user = config.getString("database.username")
-                        password = config.getString("database.password")
-                    }
-                } bind DataSource::class
+                single { dataSource } bind DataSource::class
                 single(named(AccessScope.PDL)) { accessTokenProvider } bind AccessTokenProvider::class
                 single(named(AccessScope.SAF)) { accessTokenProvider } bind AccessTokenProvider::class
                 single(named(AccessScope.OPPGAVE)) { accessTokenProvider } bind AccessTokenProvider::class
@@ -115,8 +107,5 @@ class KoinProfilesKtTest : KoinTest {
         every { config.configList("no.nav.security.jwt.client.registration.clients") } returns listOf(clientConfig)
         every { config.property("saf_dokument_url").getString() } returns "saf_url"
         every { config.property("dokarkiv_url").getString() } returns "dokarkiv_url"
-        every { config.getjdbcUrlFromProperties() } returns "jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1"
-        every { config.getString("database.username") } returns "sa"
-        every { config.getString("database.password") } returns ""
     }
 }
