@@ -78,6 +78,8 @@ class OppgaveClient(
                 parameter("sorteringsfelt", "FRIST")
                 parameter("limit", "10")
             }
+        httpResponse.also { logger.info("Oppretter oppgave for journalpostId {}", journalpostId) }
+
         return httpResponse.call.response.body()
     }
 
