@@ -6,11 +6,13 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import no.nav.helsearbeidsgiver.pdl.PdlClient
 import no.nav.helsearbeidsgiver.tokenprovider.AccessTokenProvider
+import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.client.dokarkiv.DokArkivClient
 import no.nav.syfo.client.norg.Norg2Client
 import no.nav.syfo.client.saf.SafDokumentClient
 import no.nav.syfo.repository.InntektsmeldingRepository
 import no.nav.syfo.util.AppEnv
+import no.nav.syfo.util.Metrikk
 import no.nav.syfo.util.getString
 import org.h2.jdbcx.JdbcDataSource
 import org.junit.jupiter.api.Test
@@ -31,6 +33,8 @@ class KoinProfilesKtTest : KoinTest {
     private val config = mockk<ApplicationConfig>(relaxed = true)
     private val clientConfig = mockk<ApplicationConfig>(relaxed = true)
     private val accessTokenProvider = mockk<AccessTokenProvider>(relaxed = true)
+    private val metrikk = mockk<Metrikk>(relaxed = true)
+
     private val dataSource: DataSource by inject()
     private val inntektsmeldingRepository: InntektsmeldingRepository by inject()
     private val pdlClient: PdlClient by inject()
@@ -38,6 +42,7 @@ class KoinProfilesKtTest : KoinTest {
     private val safJournalpostClient: SafDokumentClient by inject()
     private val dokArkivClient: DokArkivClient by inject()
     private val norg2Client: Norg2Client by inject()
+    private val oppgaveClient: OppgaveClient by inject()
 
     @Test
     fun `test prodConfig`() {
@@ -47,7 +52,7 @@ class KoinProfilesKtTest : KoinTest {
             modules(selectModuleBasedOnProfile(config) + getTestModules())
         }
 
-        AssertKoin()
+        assertKoin()
         stopKoin()
     }
 
@@ -59,7 +64,7 @@ class KoinProfilesKtTest : KoinTest {
             modules(selectModuleBasedOnProfile(config) + getTestModules())
         }
 
-        AssertKoin()
+        assertKoin()
         stopKoin()
     }
 
@@ -71,18 +76,18 @@ class KoinProfilesKtTest : KoinTest {
             modules(selectModuleBasedOnProfile(config) + getTestModules())
         }
 
-        AssertKoin()
+        assertKoin()
         stopKoin()
     }
 
-    private fun AssertKoin() {
+    private fun assertKoin() {
         assertNotNull(dataSource)
         assertNotNull(inntektsmeldingRepository)
         assertNotNull(pdlClient)
         assertNotNull(safDokumentClient)
         assertNotNull(dokArkivClient)
         assertNotNull(norg2Client)
-
+        assertNotNull(oppgaveClient)
         assertNotNull(safJournalpostClient)
     }
 
@@ -100,6 +105,7 @@ class KoinProfilesKtTest : KoinTest {
                 single(named(AccessScope.SAF)) { accessTokenProvider } bind AccessTokenProvider::class
                 single(named(AccessScope.OPPGAVE)) { accessTokenProvider } bind AccessTokenProvider::class
                 single(named(AccessScope.DOKARKIV)) { accessTokenProvider } bind AccessTokenProvider::class
+                single { metrikk }
             }
         return testModule
     }

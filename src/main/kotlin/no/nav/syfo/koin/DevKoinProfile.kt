@@ -69,49 +69,57 @@ fun devConfig(config: ApplicationConfig) =
 
         single {
             JoarkInntektsmeldingHendelseProsessor(
-                get(),
-                get(),
-                get(),
-                get(),
+                om = get(),
+                metrikk = get(),
+                inntektsmeldingBehandler = get(),
+                oppgaveClient = get(),
             )
         }
 
         single {
             InntektsmeldingBehandler(
-                get(),
-                get(),
-                get(),
-                get(),
-                get(),
-                get(),
+                journalpostService = get(),
+                metrikk = get(),
+                inntektsmeldingService = get(),
+                inntektsmeldingAivenProducer = get(),
+                utsattOppgaveService = get(),
+                pdlClient = get(),
             )
         }
 
-        single { InngaaendeJournalConsumer(get()) }
-        single { BehandleInngaaendeJournalConsumer(get()) }
-        single { JournalConsumer(get(), get(), get()) }
+        single { InngaaendeJournalConsumer(safJournalpostClient = get()) }
+        single { BehandleInngaaendeJournalConsumer(dokArkivClient = get()) }
+        single { JournalConsumer(safDokumentClient = get(), safJournalpostClient = get(), pdlClient = get()) }
         single { Metrikk() }
-        single { BehandlendeEnhetConsumer(get(), get(), get()) }
-        single { JournalpostService(get(), get(), get(), get(), get()) }
-        single { InntektsmeldingRepositoryImp(get()) } bind InntektsmeldingRepository::class
-        single { InntektsmeldingService(get(), get()) }
-        single { ArbeidsgiverperiodeRepositoryImp(get()) } bind ArbeidsgiverperiodeRepository::class
+        single { BehandlendeEnhetConsumer(pdlClient = get(), norg2Client = get(), metrikk = get()) }
+        single {
+            JournalpostService(
+                inngaaendeJournalConsumer = get(),
+                behandleInngaaendeJournalConsumer = get(),
+                journalConsumer = get(),
+                behandlendeEnhetConsumer = get(),
+                metrikk = get(),
+            )
+        }
+        single { InntektsmeldingRepositoryImp(ds = get()) } bind InntektsmeldingRepository::class
+        single { InntektsmeldingService(repository = get(), objectMapper = get()) }
+        single { ArbeidsgiverperiodeRepositoryImp(ds = get()) } bind ArbeidsgiverperiodeRepository::class
 
         single {
             JournalpostHendelseConsumer(
-                joarkAivenProperties(),
-                config.getString("kafka_joark_hendelse_topic"),
-                get(),
-                get(),
+                props = joarkAivenProperties(),
+                topicName = config.getString("kafka_joark_hendelse_topic"),
+                bakgrunnsjobbRepo = get(),
+                om = get(),
             )
         }
         single {
             UtsattOppgaveConsumer(
-                utsattOppgaveAivenProperties(),
-                config.getString("kafka_utsatt_oppgave_topic"),
-                get(),
-                get(),
-                get(),
+                props = utsattOppgaveAivenProperties(),
+                topicName = config.getString("kafka_utsatt_oppgave_topic"),
+                om = get(),
+                utsattOppgaveService = get(),
+                bakgrunnsjobbRepo = get(),
             )
         }
 
@@ -122,8 +130,17 @@ fun devConfig(config: ApplicationConfig) =
         }
 
         single { UtsattOppgaveDAO(UtsattOppgaveRepositoryImp(get())) }
-        single { UtsattOppgaveService(get(), get(), get(), get(), get(), get()) }
-        single { FeiletUtsattOppgaveMeldingProsessor(get(), get()) }
+        single {
+            UtsattOppgaveService(
+                utsattOppgaveDAO = get(),
+                oppgaveClient = get(),
+                behandlendeEnhetConsumer = get(),
+                inntektsmeldingRepository = get(),
+                om = get(),
+                metrikk = get(),
+            )
+        }
+        single { FeiletUtsattOppgaveMeldingProsessor(om = get(), oppgaveService = get()) }
 
         single {
             FjernInntektsmeldingByBehandletProcessor(
@@ -131,69 +148,79 @@ fun devConfig(config: ApplicationConfig) =
                 config.getString("lagringstidMåneder").toInt(),
             )
         }
-        single { FinnAlleUtgaandeOppgaverProcessor(get(), get(), get(), get(), get(), get()) }
+        single {
+            FinnAlleUtgaandeOppgaverProcessor(
+                utsattOppgaveDAO = get(),
+                oppgaveClient = get(),
+                behandlendeEnhetConsumer = get(),
+                metrikk = get(),
+                inntektsmeldingRepository = get(),
+                om = get(),
+            )
+        }
 
-        single { PostgresBakgrunnsjobbRepository(get()) } bind BakgrunnsjobbRepository::class
-        single { BakgrunnsjobbService(get(), bakgrunnsvarsler = MetrikkVarsler()) }
+        single { PostgresBakgrunnsjobbRepository(dataSource = get()) } bind BakgrunnsjobbRepository::class
+        single { BakgrunnsjobbService(bakgrunnsjobbRepository = get(), bakgrunnsvarsler = MetrikkVarsler()) }
 
         single {
             OppgaveClient(
-                config.getString("oppgavebehandling_url"),
-                get(),
-                get(),
-                get<AccessTokenProvider>(qualifier = named(AccessScope.OPPGAVE))::getToken,
+                oppgavebehandlingUrl = config.getString("oppgavebehandling_url"),
+                httpClient = get(),
+                metrikk = get(),
+                getAccessToken = get<AccessTokenProvider>(qualifier = named(AccessScope.OPPGAVE))::getToken,
             )
         }
 
         single {
             Norg2Client(
-                config.getString("norg2_url"),
-                get(),
+                url = config.getString("norg2_url"),
+                httpClient = get(),
             )
         }
 
         single {
             SafJournalpostClient(
-                get(),
-                config.getString("saf_journal_url"),
-                get<AccessTokenProvider>(qualifier = named(AccessScope.SAF))::getToken,
+                httpClient = get(),
+                basePath = config.getString("saf_journal_url"),
+                getAccessToken = get<AccessTokenProvider>(qualifier = named(AccessScope.SAF))::getToken,
             )
         }
 
         single {
             SafDokumentClient(
-                config.getString("saf_dokument_url"),
-                get(),
-                get<AccessTokenProvider>(qualifier = named(AccessScope.SAF))::getToken,
+                url = config.getString("saf_dokument_url"),
+                httpClient = get(),
+                getAccessToken = get<AccessTokenProvider>(qualifier = named(AccessScope.SAF))::getToken,
             )
         }
 
         single {
             DokArkivClient(
-                config.getString("dokarkiv_url"),
-                get(),
-                get<AccessTokenProvider>(qualifier = named(AccessScope.DOKARKIV))::getToken,
+                url = config.getString("dokarkiv_url"),
+                httpClient = get(),
+                getAccessToken = get<AccessTokenProvider>(qualifier = named(AccessScope.DOKARKIV))::getToken,
             )
         }
 
 // TODO: trekk ut topic og consumerConfig-properties
         single {
             InntektsmeldingConsumer(
-                commonAivenProperties() +
-                    mapOf(
-                        ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
-                        ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG to "false",
-                        ConsumerConfig.MAX_POLL_RECORDS_CONFIG to "1",
-                        ConsumerConfig.CLIENT_ID_CONFIG to "syfoinntektsmelding-im-consumer",
-                        ConsumerConfig.GROUP_ID_CONFIG to "syfoinntektsmelding-im-v1",
-                        ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
-                        ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
-                    ),
-                "helsearbeidsgiver.inntektsmelding",
-                get(),
-                get(),
-                get(),
-                get(),
+                props =
+                    commonAivenProperties() +
+                        mapOf(
+                            ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
+                            ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG to "false",
+                            ConsumerConfig.MAX_POLL_RECORDS_CONFIG to "1",
+                            ConsumerConfig.CLIENT_ID_CONFIG to "syfoinntektsmelding-im-consumer",
+                            ConsumerConfig.GROUP_ID_CONFIG to "syfoinntektsmelding-im-v1",
+                            ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
+                            ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
+                        ),
+                topicName = "helsearbeidsgiver.inntektsmelding",
+                inntektsmeldingService = get(),
+                inntektsmeldingAivenProducer = get(),
+                utsattOppgaveService = get(),
+                pdlClient = get(),
             )
         }
     }
