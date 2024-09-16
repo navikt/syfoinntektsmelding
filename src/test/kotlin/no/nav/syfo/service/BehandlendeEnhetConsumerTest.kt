@@ -64,6 +64,6 @@ class BehandlendeEnhetConsumerTest {
         foedselsdato = 1.januar(1986),
         ident = FNR,
         diskresjonskode = diskresjonskode,
-        geografiskTilknytning = "Oslo",
+        geografiskTilknytning = "1851",
     )
 }
