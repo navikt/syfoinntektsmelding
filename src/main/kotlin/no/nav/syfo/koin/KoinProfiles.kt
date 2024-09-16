@@ -42,6 +42,7 @@ val common =
 
         single {
             HttpClient(Apache) {
+                expectSuccess = true
                 install(ContentNegotiation) {
                     register(ContentType.Application.Json, JacksonConverter(customObjectMapper()))
                     jackson {
