@@ -60,7 +60,7 @@ class BehandlendeEnhetConsumerTest {
     }
 
     fun mockFullPerson(diskresjonskode: String) = FullPerson(
-        navn = PersonNavn("Ole", "Doffen", "Olsen"),
+        navn = PersonNavn("Jeppe", "På", "Bjerget"),
         foedselsdato = 1.januar(1986),
         ident = FNR,
         diskresjonskode = diskresjonskode,
