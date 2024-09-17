@@ -3,9 +3,8 @@ package no.nav.syfo.prosesser
 import com.fasterxml.jackson.databind.ObjectMapper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import no.nav.helse.arbeidsgiver.utils.RecurringJob
+import no.nav.hag.utils.bakgrunnsjobb.RecurringJob
 import no.nav.helsearbeidsgiver.utils.log.MdcUtils
-import no.nav.helsearbeidsgiver.utils.log.logger
 import no.nav.syfo.behandling.OpprettOppgaveException
 import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.dto.Tilstand
@@ -29,7 +28,7 @@ class FinnAlleUtgaandeOppgaverProcessor(
     private val inntektsmeldingRepository: InntektsmeldingRepository,
     private val om: ObjectMapper
 ) : RecurringJob(CoroutineScope(Dispatchers.IO), Duration.ofHours(6).toMillis()) {
-    private val logger = this.logger()
+
     private val sikkerlogger = LoggerFactory.getLogger("tjenestekall")
 
     override fun doJob(): Unit = MdcUtils.withCallIdAsUuid {

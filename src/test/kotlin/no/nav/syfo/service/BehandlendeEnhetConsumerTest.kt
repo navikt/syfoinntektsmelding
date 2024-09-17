@@ -1,10 +1,13 @@
 package no.nav.syfo.service
 
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
-import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClient
-import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlHentFullPerson
+import no.nav.helsearbeidsgiver.pdl.PdlClient
+import no.nav.helsearbeidsgiver.pdl.domene.FullPerson
+import no.nav.helsearbeidsgiver.pdl.domene.PersonNavn
+import no.nav.helsearbeidsgiver.utils.test.date.januar
 import no.nav.syfo.behandling.IngenAktivEnhetException
 import no.nav.syfo.client.norg.ArbeidsfordelingResponse
 import no.nav.syfo.client.norg.Norg2Client
@@ -28,9 +31,9 @@ class BehandlendeEnhetConsumerTest {
 
     @Test
     fun skal_finne_enhetsnr() {
-        every {
+        coEvery {
             pdlClient.fullPerson(FNR)
-        } returns buildPdlHentFullPerson(DISKRESJONSKODE)
+        } returns mockFullPerson(DISKRESJONSKODE)
         val arbeidsfordelinger = listOf<ArbeidsfordelingResponse>(buildArbeidsfordelingResponse(ENHET_NR, LocalDate.of(2000, 1, 1), LocalDate.of(2030, 1, 1)))
         every {
             runBlocking {
@@ -56,26 +59,11 @@ class BehandlendeEnhetConsumerTest {
         }.isInstanceOf(IngenAktivEnhetException::class.java)
     }
 
-    fun buildPdlHentFullPerson(diskresjonskode: String): PdlHentFullPerson {
-        return PdlHentFullPerson(
-            hentPerson = PdlHentFullPerson.PdlFullPersonliste(
-                navn = emptyList(),
-                foedsel = emptyList(),
-                doedsfall = emptyList(),
-                adressebeskyttelse = listOf<PdlHentFullPerson.PdlFullPersonliste.PdlAdressebeskyttelse>(
-                    PdlHentFullPerson.PdlFullPersonliste.PdlAdressebeskyttelse(diskresjonskode)
-                ),
-                statsborgerskap = emptyList(),
-                bostedsadresse = emptyList(),
-                kjoenn = emptyList()
-            ),
-            hentGeografiskTilknytning = PdlHentFullPerson.PdlGeografiskTilknytning(
-                gtBydel = "Oslo",
-                gtKommune = "",
-                gtType = PdlHentFullPerson.PdlGeografiskTilknytning.PdlGtType.KOMMUNE,
-                gtLand = ""
-            ),
-            hentIdenter = null
-        )
-    }
+    fun mockFullPerson(diskresjonskode: String) = FullPerson(
+        navn = PersonNavn("Jeppe", "På", "Bjerget"),
+        foedselsdato = 1.januar(1986),
+        ident = FNR,
+        diskresjonskode = diskresjonskode,
+        geografiskTilknytning = "1851",
+    )
 }

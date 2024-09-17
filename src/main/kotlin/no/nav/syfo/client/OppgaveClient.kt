@@ -1,10 +1,12 @@
 package no.nav.syfo.client
 
 import io.ktor.client.HttpClient
+import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
+import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import no.nav.helsearbeidsgiver.utils.log.MdcUtils
@@ -14,7 +16,6 @@ import no.nav.syfo.behandling.HentOppgaveException
 import no.nav.syfo.behandling.OpprettFordelingsOppgaveException
 import no.nav.syfo.behandling.OpprettOppgaveException
 import no.nav.syfo.domain.OppgaveResultat
-import no.nav.syfo.helpers.retry
 import no.nav.syfo.util.Metrikk
 import no.nav.syfo.utsattoppgave.BehandlingsKategori
 import java.time.DayOfWeek
@@ -47,22 +48,28 @@ class OppgaveClient(
     private val logger = this.logger()
     private val sikkerlogger = sikkerLogger()
 
-    private suspend fun opprettOppgave(opprettOppgaveRequest: OpprettOppgaveRequest): OpprettOppgaveResponse = retry("opprett_oppgave") {
-        httpClient.post<OpprettOppgaveResponse>(oppgavebehandlingUrl) {
-            contentType(ContentType.Application.Json)
-            this.header("Authorization", "Bearer ${getAccessToken()}")
-            this.header("X-Correlation-ID", MdcUtils.getCallId())
-            body = opprettOppgaveRequest
-        }
+    private suspend fun opprettOppgave(opprettOppgaveRequest: OpprettOppgaveRequest): OpprettOppgaveResponse {
+        val httpResponse =
+            httpClient.post(oppgavebehandlingUrl) {
+                contentType(ContentType.Application.Json)
+                this.header("Authorization", "Bearer ${getAccessToken()}")
+                this.header("X-Correlation-ID", MdcUtils.getCallId())
+                setBody(opprettOppgaveRequest)
+            }
+        return httpResponse.call.response.body()
     }
 
-    private suspend fun hentOppgave(oppgavetype: String, journalpostId: String): OppgaveResponse {
-        return retry("hent_oppgave") {
-            val callId = MdcUtils.getCallId()
-            logger.info("Henter oppgave med CallId $callId")
-            httpClient.get<OppgaveResponse>(oppgavebehandlingUrl) {
-                this.header("Authorization", "Bearer ${getAccessToken()}")
-                this.header("X-Correlation-ID", callId)
+    private suspend fun hentOppgave(
+        oppgavetype: String,
+        journalpostId: String,
+    ): OppgaveResponse {
+        val token = getAccessToken()
+        val callId = MdcUtils.getCallId()
+        val httpResponse =
+            httpClient.get(oppgavebehandlingUrl) {
+                contentType(ContentType.Application.Json)
+                header("Authorization", "Bearer $token")
+                header("X-Correlation-ID", callId)
                 parameter("tema", TEMA)
                 parameter("oppgavetype", oppgavetype)
                 parameter("journalpostId", journalpostId)
@@ -71,7 +78,9 @@ class OppgaveClient(
                 parameter("sorteringsfelt", "FRIST")
                 parameter("limit", "10")
             }
-        }
+        httpResponse.also { logger.info("Oppretter oppgave for journalpostId {}", journalpostId) }
+
+        return httpResponse.call.response.body()
     }
 
     private suspend fun hentHvisOppgaveFinnes(oppgavetype: String, journalpostId: String): OppgaveResultat? {
@@ -147,10 +156,7 @@ class OppgaveClient(
         }
     }
 
-    suspend fun opprettFordelingsOppgave(
-        journalpostId: String
-    ): OppgaveResultat {
-
+    suspend fun opprettFordelingsOppgave(journalpostId: String): OppgaveResultat {
         val eksisterendeOppgave = hentHvisOppgaveFinnes(Oppgavetype.FORDELINGSOPPGAVE, journalpostId)
 
         if (eksisterendeOppgave != null) {
@@ -160,17 +166,18 @@ class OppgaveClient(
 
         val behandlingstype: String? = null
 
-        val opprettOppgaveRequest = OpprettOppgaveRequest(
-            journalpostId = journalpostId,
-            behandlesAvApplikasjon = "FS22",
-            beskrivelse = "Fordelingsoppgave for inntektsmelding på sykepenger",
-            tema = TEMA,
-            oppgavetype = Oppgavetype.FORDELINGSOPPGAVE,
-            behandlingstype = behandlingstype,
-            aktivDato = LocalDate.now(),
-            fristFerdigstillelse = leggTilEnVirkeuke(LocalDate.now()),
-            prioritet = "NORM"
-        )
+        val opprettOppgaveRequest =
+            OpprettOppgaveRequest(
+                journalpostId = journalpostId,
+                behandlesAvApplikasjon = "FS22",
+                beskrivelse = "Fordelingsoppgave for inntektsmelding på sykepenger",
+                tema = TEMA,
+                oppgavetype = Oppgavetype.FORDELINGSOPPGAVE,
+                behandlingstype = behandlingstype,
+                aktivDato = LocalDate.now(),
+                fristFerdigstillelse = leggTilEnVirkeuke(LocalDate.now()),
+                prioritet = "NORM",
+            )
         logger.info("Oppretter fordelingsoppgave")
         try {
             return OppgaveResultat(opprettOppgave(opprettOppgaveRequest).id, false, false)
@@ -179,13 +186,12 @@ class OppgaveClient(
         }
     }
 
-    fun leggTilEnVirkeuke(dato: LocalDate): LocalDate {
-        return when (dato.dayOfWeek) {
+    fun leggTilEnVirkeuke(dato: LocalDate): LocalDate =
+        when (dato.dayOfWeek) {
             DayOfWeek.SATURDAY -> dato.plusDays(9)
             DayOfWeek.SUNDAY -> dato.plusDays(8)
             else -> dato.plusDays(7)
         }
-    }
 }
 
 data class OpprettOppgaveRequest(

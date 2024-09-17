@@ -4,15 +4,15 @@ import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
 import no.nav.syfo.repository.buildIM
 import no.nav.syfo.simba.Avsender
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotEquals
+import org.junit.Assert.assertTrue
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertNotEquals
-import kotlin.test.assertTrue
 
 class InntektsmeldingTest {
 

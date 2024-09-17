@@ -1,10 +1,13 @@
 package no.nav.syfo.koin
 
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod
-import io.ktor.config.ApplicationConfig
-import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
-import no.nav.helse.arbeidsgiver.integrasjoner.OAuth2TokenProvider
-import no.nav.helse.arbeidsgiver.system.getString
+import io.ktor.server.config.ApplicationConfig
+import no.nav.helsearbeidsgiver.pdl.Behandlingsgrunnlag
+import no.nav.helsearbeidsgiver.pdl.PdlClient
+import no.nav.helsearbeidsgiver.tokenprovider.AccessTokenProvider
+import no.nav.helsearbeidsgiver.tokenprovider.DefaultOAuth2HttpClient
+import no.nav.helsearbeidsgiver.tokenprovider.OAuth2TokenProvider
+import no.nav.helsearbeidsgiver.tokenprovider.TokenResolver
 import no.nav.security.token.support.client.core.ClientAuthenticationProperties
 import no.nav.security.token.support.client.core.ClientProperties
 import no.nav.security.token.support.client.core.OAuth2GrantType
@@ -12,8 +15,7 @@ import no.nav.security.token.support.client.core.oauth2.ClientCredentialsTokenCl
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.core.oauth2.OnBehalfOfTokenClient
 import no.nav.security.token.support.client.core.oauth2.TokenExchangeClient
-import no.nav.syfo.integration.oauth2.DefaultOAuth2HttpClient
-import no.nav.syfo.integration.oauth2.TokenResolver
+import no.nav.syfo.util.getString
 import org.koin.core.module.Module
 import org.koin.core.qualifier.Qualifier
 import org.koin.core.qualifier.QualifierValue
@@ -26,7 +28,8 @@ enum class AccessScope : Qualifier {
     DOKARKIV,
     OPPGAVE,
     PDL,
-    SAF;
+    SAF,
+    ;
 
     override val value: QualifierValue
         get() = name
@@ -38,45 +41,51 @@ fun Module.externalSystemClients(config: ApplicationConfig) {
     single(named(AccessScope.OPPGAVE)) {
         oauth2TokenProvider(
             clientConfig,
-            clientConfig.getString("oppgavescope")
+            clientConfig.getString("oppgavescope"),
         )
     } bind AccessTokenProvider::class
 
     single(named(AccessScope.DOKARKIV)) {
         oauth2TokenProvider(
             clientConfig,
-            clientConfig.getString("dokarkivscope")
+            clientConfig.getString("dokarkivscope"),
         )
     } bind AccessTokenProvider::class
 
     single(named(AccessScope.SAF)) {
         oauth2TokenProvider(
             clientConfig,
-            clientConfig.getString("safscope")
+            clientConfig.getString("safscope"),
         )
     } bind AccessTokenProvider::class
 
     single(named(AccessScope.PDL)) {
         oauth2TokenProvider(
             clientConfig,
-            clientConfig.getString("pdlscope")
+            clientConfig.getString("pdlscope"),
         )
     } bind AccessTokenProvider::class
+    single {
+        PdlClient(config.getString("pdl_url"), Behandlingsgrunnlag.INNTEKTSMELDING, get<AccessTokenProvider>(qualifier = named(AccessScope.PDL))::getToken)
+    } bind PdlClient::class
 }
 
-private fun Scope.oauth2TokenProvider(config: ApplicationConfig, scope: String): OAuth2TokenProvider =
+private fun Scope.oauth2TokenProvider(
+    config: ApplicationConfig,
+    scope: String,
+): OAuth2TokenProvider =
     OAuth2TokenProvider(
-        oauth2Service = accessTokenService(this),
-        clientProperties = config.azureAdConfig(scope)
+        oauth2Service = accessTokenService(),
+        clientProperties = config.azureAdConfig(scope),
     )
 
-private fun accessTokenService(scope: Scope): OAuth2AccessTokenService =
-    DefaultOAuth2HttpClient(scope.get()).let {
+private fun accessTokenService(): OAuth2AccessTokenService =
+    DefaultOAuth2HttpClient().let {
         OAuth2AccessTokenService(
             TokenResolver(),
             OnBehalfOfTokenClient(it),
             ClientCredentialsTokenClient(it),
-            TokenExchangeClient(it)
+            TokenExchangeClient(it),
         )
     }
 
@@ -88,7 +97,7 @@ private fun ApplicationConfig.azureAdConfig(scope: String): ClientProperties =
         scope.split(","),
         authProps(),
         null,
-        null
+        null,
     )
 
 private fun ApplicationConfig.authProps(): ClientAuthenticationProperties {
@@ -97,6 +106,6 @@ private fun ApplicationConfig.authProps(): ClientAuthenticationProperties {
         getString("$prefix.client_id"),
         getString("$prefix.client_auth_method").let(::ClientAuthenticationMethod),
         getString("$prefix.client_secret"),
-        null
+        null,
     )
 }

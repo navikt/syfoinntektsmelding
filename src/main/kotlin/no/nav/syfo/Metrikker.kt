@@ -1,7 +1,7 @@
 package no.nav.syfo
 
 import io.prometheus.client.Counter
-import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsvarsler
+import no.nav.hag.utils.bakgrunnsjobb.Bakgrunnsvarsler
 
 const val METRICS_NS = "spinn"
 

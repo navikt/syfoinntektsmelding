@@ -6,12 +6,12 @@
 package no.nav.syfo.web.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
-import io.ktor.response.respond
-import io.ktor.routing.Route
-import io.ktor.routing.get
-import io.ktor.routing.route
+import io.ktor.server.application.call
+import io.ktor.server.response.respond
+import io.ktor.server.routing.Route
+import io.ktor.server.routing.get
+import io.ktor.server.routing.route
 import no.nav.helsearbeidsgiver.utils.log.logger
 import no.nav.syfo.mapping.mapInntektsmeldingKontrakt
 import no.nav.syfo.mapping.toInntektsmelding

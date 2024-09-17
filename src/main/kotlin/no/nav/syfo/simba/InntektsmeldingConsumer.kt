@@ -1,12 +1,10 @@
 package no.nav.syfo.simba
 
-import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClient
-import no.nav.helse.arbeidsgiver.kubernetes.LivenessComponent
-import no.nav.helse.arbeidsgiver.kubernetes.ReadynessComponent
-import no.nav.helse.arbeidsgiver.utils.logger
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.Inntektsmelding
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.JournalfoertInntektsmelding
+import no.nav.helsearbeidsgiver.pdl.PdlClient
 import no.nav.helsearbeidsgiver.utils.json.fromJson
+import no.nav.helsearbeidsgiver.utils.log.logger
 import no.nav.helsearbeidsgiver.utils.log.sikkerLogger
 import no.nav.syfo.behandling.FantIkkeAktørException
 import no.nav.syfo.behandling.OPPRETT_OPPGAVE_FORSINKELSE
@@ -15,6 +13,8 @@ import no.nav.syfo.dto.UtsattOppgaveEntitet
 import no.nav.syfo.mapping.mapInntektsmeldingKontrakt
 import no.nav.syfo.producer.InntektsmeldingAivenProducer
 import no.nav.syfo.service.InntektsmeldingService
+import no.nav.syfo.util.LivenessComponent
+import no.nav.syfo.util.ReadynessComponent
 import no.nav.syfo.util.getAktørid
 import no.nav.syfo.util.validerInntektsmelding
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService

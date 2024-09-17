@@ -5,7 +5,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.runBlocking
-import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
+import no.nav.hag.utils.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.syfo.utsattoppgave.DokumentTypeDTO
 import no.nav.syfo.utsattoppgave.OppdateringstypeDTO
 import no.nav.syfo.utsattoppgave.UtsattOppgaveDTO

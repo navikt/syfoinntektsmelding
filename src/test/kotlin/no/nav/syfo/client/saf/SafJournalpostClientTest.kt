@@ -38,7 +38,7 @@ class SafJournalpostClientTest {
 
     @Test
     fun `Skal håndtere ikke autorisert`() {
-        client = SafJournalpostClient(buildHttpClientJson(HttpStatusCode.OK, unauthorizedJson()), "http://localhost", ::mockAccessToken)
+        client = SafJournalpostClient(buildHttpClientJson(HttpStatusCode.Unauthorized, unauthorizedJson()), "http://localhost", ::mockAccessToken)
         runBlocking {
             assertThrows<NotAuthorizedException> {
                 client.getJournalpostMetadata("123")

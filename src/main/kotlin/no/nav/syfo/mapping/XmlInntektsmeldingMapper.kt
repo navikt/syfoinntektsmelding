@@ -1,6 +1,6 @@
 package no.nav.syfo.mapping
 
-import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClient
+import no.nav.helsearbeidsgiver.pdl.PdlClient
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.util.JAXB

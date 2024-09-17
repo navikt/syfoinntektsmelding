@@ -1,14 +1,5 @@
 package no.nav.syfo.slowtests
 
-import io.ktor.client.HttpClient
-import io.ktor.client.request.HttpRequestBuilder
-import io.ktor.client.request.get
-import io.ktor.client.request.header
-import io.ktor.client.request.url
-import io.ktor.client.statement.HttpResponse
-import io.ktor.http.ContentType
-import io.ktor.http.contentType
-import io.ktor.http.setCookie
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.SpinnApplication
@@ -16,7 +7,6 @@ import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.TestInstance
 import org.koin.test.KoinTest
-import org.koin.test.inject
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 
@@ -28,8 +18,6 @@ import org.koin.test.inject
  * 3) Kjøre ende til ende-tester (feks teste at en søknad send inn på HTTP-endepunktet havner i databasen riktig)
  */
 open class SystemTestBase : KoinTest {
-
-    protected val httpClient by inject<HttpClient>()
 
     companion object {
         const val testServerPort = 8989
@@ -47,25 +35,6 @@ open class SystemTestBase : KoinTest {
 
     @AfterAll
     fun after() {
-    }
-
-    /**
-     * Hjelpefunksjon for å kalle HTTP-endepunktene med riktig port i testene
-     */
-    private fun HttpRequestBuilder.appUrl(relativePath: String) {
-        url("http://localhost:$testServerPort$relativePath")
-    }
-
-    /**
-     * Hjelpefunksjon for å hente ut gyldig JWT-token og legge det til som Auth header på en request
-     */
-    suspend fun HttpRequestBuilder.loggedInAs(subject: String) {
-        val response = httpClient.get<HttpResponse> {
-            appUrl("/local/cookie-please?subject=$subject")
-            contentType(ContentType.Application.Json)
-        }
-
-        header("Authorization", "Bearer ${response.setCookie()[0].value}")
     }
 
     /**

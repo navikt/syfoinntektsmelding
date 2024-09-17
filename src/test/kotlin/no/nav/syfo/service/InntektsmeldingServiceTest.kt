@@ -14,12 +14,12 @@ import no.nav.syfo.mapping.toInntektsmelding
 import no.nav.syfo.repository.InntektsmeldingRepository
 import no.nav.syfo.repository.buildIM
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal
 import java.time.LocalDateTime
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 class InntektsmeldingServiceTest {
 

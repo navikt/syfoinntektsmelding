@@ -1,7 +1,7 @@
 package no.nav.syfo.service
 
 import kotlinx.coroutines.runBlocking
-import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClient
+import no.nav.helsearbeidsgiver.pdl.PdlClient
 import no.nav.helsearbeidsgiver.utils.log.MdcUtils
 import no.nav.helsearbeidsgiver.utils.log.logger
 import no.nav.helsearbeidsgiver.utils.log.sikkerLogger
@@ -55,10 +55,12 @@ class BehandlendeEnhetConsumer(
     }
 
     fun hentGeografiskTilknytning(fnr: String): GeografiskTilknytningData {
-        pdlClient.fullPerson(fnr).let {
+        runBlocking {
+            pdlClient.fullPerson(fnr)
+        }.let {
             return GeografiskTilknytningData(
-                geografiskTilknytning = it?.hentGeografiskTilknytning?.hentTilknytning(),
-                diskresjonskode = it?.hentPerson?.trekkUtDiskresjonskode()
+                geografiskTilknytning = it?.geografiskTilknytning,
+                diskresjonskode = it?.diskresjonskode
             )
         }
     }

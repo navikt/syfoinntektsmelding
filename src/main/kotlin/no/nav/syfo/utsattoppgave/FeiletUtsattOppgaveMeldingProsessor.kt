@@ -2,8 +2,8 @@ package no.nav.syfo.utsattoppgave
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
-import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbProsesserer
+import no.nav.hag.utils.bakgrunnsjobb.Bakgrunnsjobb
+import no.nav.hag.utils.bakgrunnsjobb.BakgrunnsjobbProsesserer
 import no.nav.helsearbeidsgiver.utils.log.MdcUtils
 import no.nav.helsearbeidsgiver.utils.log.logger
 

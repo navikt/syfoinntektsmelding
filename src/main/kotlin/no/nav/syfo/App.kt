@@ -1,15 +1,13 @@
 package no.nav.syfo
 
 import com.typesafe.config.ConfigFactory
-import io.ktor.config.HoconApplicationConfig
+import io.ktor.server.config.HoconApplicationConfig
 import io.ktor.server.engine.applicationEngineEnvironment
 import io.ktor.server.engine.connector
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.netty.NettyApplicationEngine
-import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
-import no.nav.helse.arbeidsgiver.kubernetes.KubernetesProbeManager
-import no.nav.helse.arbeidsgiver.system.getString
+import no.nav.hag.utils.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.helsearbeidsgiver.utils.log.logger
 import no.nav.helsearbeidsgiver.utils.log.sikkerLogger
 import no.nav.syfo.integration.kafka.UtsattOppgaveConsumer
@@ -19,6 +17,8 @@ import no.nav.syfo.prosesser.FinnAlleUtgaandeOppgaverProcessor
 import no.nav.syfo.prosesser.FjernInntektsmeldingByBehandletProcessor
 import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
 import no.nav.syfo.simba.InntektsmeldingConsumer
+import no.nav.syfo.util.KubernetesProbeManager
+import no.nav.syfo.util.getString
 import no.nav.syfo.utsattoppgave.FeiletUtsattOppgaveMeldingProsessor
 import no.nav.syfo.web.inntektsmeldingModule
 import no.nav.syfo.web.nais.nais

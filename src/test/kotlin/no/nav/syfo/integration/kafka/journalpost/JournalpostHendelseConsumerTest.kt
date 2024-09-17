@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.runBlocking
-import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
+import no.nav.hag.utils.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.syfo.integration.kafka.joarkLocalProperties
 import no.nav.syfo.kafkamottak.InngaaendeJournalpostDTO
 import org.junit.jupiter.api.Assertions.assertEquals

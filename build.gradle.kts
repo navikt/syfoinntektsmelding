@@ -44,6 +44,9 @@ val altinnCorrespondanceVersion: String by project
 val logbackClassicVersion: String by project
 val hagDomeneInntektsmeldingVersion: String by project
 val kotlinxSerializationVersion: String by project
+val bakgrunnsjobbVersion: String by project
+val pdlClientVersion: String by project
+val tokenProviderVersion: String by project
 
 plugins {
     kotlin("jvm")
@@ -160,11 +163,15 @@ dependencies {
     implementation("no.nav.syfo.sm:syfosm-common-rest-sts:$navSyfoCommonVersion")
     implementation("no.nav.syfo.sm:syfosm-common-networking:$navSyfoCommonVersion")
     implementation("no.nav.common:log:$navLogVersion")
-    implementation("no.nav.helsearbeidsgiver:helse-arbeidsgiver-felles-backend:$fellesBackendVersion")
+    implementation("no.nav.helsearbeidsgiver:hag-bakgrunnsjobb:$bakgrunnsjobbVersion")
     implementation("no.nav.helsearbeidsgiver:utils:$hagUtilsVersion")
     implementation("no.nav.security:token-client-core:$tokenSupportVersion")
-    implementation("no.nav.security:token-validation-ktor:$tokenSupportVersion")
+
     implementation("no.nav.security:mock-oauth2-server:$mockOAuth2ServerVersion")
+    implementation("no.nav.helsearbeidsgiver:pdl-client:$pdlClientVersion")
+    implementation("no.nav.helsearbeidsgiver:tokenprovider:$tokenProviderVersion")
+    implementation("no.nav.security:token-validation-ktor-v2:$tokenSupportVersion")
+
     implementation("com.zaxxer:HikariCP:$hikariVersion")
     implementation("org.slf4j:slf4j-api:$slf4Version")
     implementation("net.logstash.logback:logstash-logback-encoder:$logbackVersion")
@@ -174,15 +181,21 @@ dependencies {
     implementation("io.confluent:kafka-streams-avro-serde:$kafkaVersion")
     implementation("io.confluent:kafka-avro-serializer:$kafkaVersion")
     implementation("org.apache.kafka:kafka-streams:$apacheKafkaStreamsVersion")
-    implementation("io.ktor:ktor-client-core:$ktorVersion")
+
+    implementation("io.ktor:ktor-server:$ktorVersion")
+    implementation("io.ktor:ktor-server-cors:$ktorVersion")
+    implementation("io.ktor:ktor-server-auth:$ktorVersion")
     implementation("io.ktor:ktor-client-apache:$ktorVersion")
-    implementation("io.ktor:ktor-server-netty:$ktorVersion")
-    implementation("io.ktor:ktor-auth:$ktorVersion")
     implementation("io.ktor:ktor-client-core-jvm:$ktorVersion")
-    implementation("io.ktor:ktor-client-json:$ktorVersion")
+    implementation("io.ktor:ktor-client-core:$ktorVersion")
     implementation("io.ktor:ktor-client-jackson:$ktorVersion")
-    implementation("io.ktor:ktor-jackson:$ktorVersion")
-    implementation("io.ktor:ktor-locations:$ktorVersion")
+    implementation("io.ktor:ktor-client-json:$ktorVersion")
+    implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
+    implementation("io.ktor:ktor-serialization-jackson:$ktorVersion")
+    implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
+    implementation("io.ktor:ktor-server-locations:$ktorVersion")
+    implementation("io.ktor:ktor-server-netty:$ktorVersion")
+
     implementation("io.insert-koin:koin-core-jvm:$koinVersion")
     implementation("io.insert-koin:koin-core:$koinVersion")
     implementation("io.insert-koin:koin-ktor:$koinVersion")
@@ -195,15 +208,19 @@ dependencies {
     implementation("javax.annotation:javax.annotation-api:$annotationApiVersion")
     implementation("no.nav.helsearbeidsgiver:domene-inntektsmelding:$hagDomeneInntektsmeldingVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion")
+    implementation("io.mockk:mockk:$mockkVersion")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion")
     testImplementation(testFixtures("no.nav.helsearbeidsgiver:utils:$hagUtilsVersion"))
-    testImplementation("io.insert-koin:koin-test:$koinVersion")
+
     testImplementation("io.ktor:ktor-client-mock-jvm:$ktorVersion")
+
     testImplementation("io.ktor:ktor-client-mock:$ktorVersion")
+    testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
     testImplementation("io.ktor:ktor-server-tests:$ktorVersion")
-    testImplementation("io.mockk:mockk:$mockkVersion")
+    testImplementation("io.insert-koin:koin-test:$koinVersion")
+
     testImplementation("org.assertj:assertj-core:$assertJVersion")
 }

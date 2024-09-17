@@ -1,13 +1,12 @@
 package no.nav.syfo.client.saf
 
 import io.ktor.client.HttpClient
+import io.ktor.client.call.body
 import io.ktor.client.request.accept
 import io.ktor.client.request.get
 import io.ktor.client.request.header
-import io.ktor.client.statement.HttpStatement
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
-import io.ktor.util.toByteArray
 import kotlinx.coroutines.runBlocking
 import no.nav.helsearbeidsgiver.utils.log.MdcUtils
 import no.nav.helsearbeidsgiver.utils.log.logger
@@ -30,19 +29,19 @@ class SafDokumentClient(
     ): ByteArray? {
         logger.info("Henter dokument fra journalpostId $journalpostId, og dokumentInfoId $dokumentInfoId")
         val response = runBlocking {
-            httpClient.get<HttpStatement>("$url/hentdokument/$journalpostId/$dokumentInfoId/ORIGINAL") {
+            httpClient.get("$url/hentdokument/$journalpostId/$dokumentInfoId/ORIGINAL") {
                 accept(ContentType.Application.Xml)
                 header("Authorization", "Bearer ${getAccessToken()}")
                 header("Nav-Callid", MdcUtils.getCallId())
                 header("Nav-Consumer-Id", "syfoinntektsmelding")
-            }.execute()
+            }
         }
         if (response.status != HttpStatusCode.OK) {
             logger.info("Saf returnerte: httpstatus {}", response.status)
             return null
         }
         return runBlocking {
-            response.content.toByteArray()
+            response.call.response.body<ByteArray>()
         }
     }
 }

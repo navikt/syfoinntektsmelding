@@ -1,13 +1,13 @@
 package no.nav.syfo.integration.kafka.journalpost
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
-import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
-import no.nav.helse.arbeidsgiver.kubernetes.LivenessComponent
-import no.nav.helse.arbeidsgiver.kubernetes.ReadynessComponent
+import no.nav.hag.utils.bakgrunnsjobb.Bakgrunnsjobb
+import no.nav.hag.utils.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.helsearbeidsgiver.utils.log.sikkerLogger
 import no.nav.syfo.kafkamottak.InngaaendeJournalpostDTO
 import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
+import no.nav.syfo.util.LivenessComponent
+import no.nav.syfo.util.ReadynessComponent
 import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.slf4j.LoggerFactory
@@ -15,7 +15,9 @@ import java.time.Duration.ofMillis
 import java.time.LocalDateTime
 
 enum class JournalpostStatus {
-    Ny, IkkeInntektsmelding, FeilHendelseType
+    Ny,
+    IkkeInntektsmelding,
+    FeilHendelseType,
 }
 
 class JournalpostHendelseConsumer(
@@ -110,6 +112,5 @@ class JournalpostHendelseConsumer(
     }
 }
 
-fun isInntektsmelding(hendelse: InngaaendeJournalpostDTO): Boolean {
-    return hendelse.temaNytt == "SYK" && hendelse.mottaksKanal == "ALTINN" && hendelse.journalpostStatus == "MOTTATT"
-}
+fun isInntektsmelding(hendelse: InngaaendeJournalpostDTO): Boolean =
+    hendelse.temaNytt == "SYK" && hendelse.mottaksKanal == "ALTINN" && hendelse.journalpostStatus == "MOTTATT"
