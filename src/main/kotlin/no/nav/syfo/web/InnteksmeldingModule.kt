@@ -34,6 +34,7 @@ fun Application.inntektsmeldingModule(config: ApplicationConfig = environment.co
     }
     install(ContentNegotiation) {
         register(ContentType.Application.Json, JacksonConverter(customObjectMapper()))
+        // Kan denne fjernes? JavaTimeModule er allerede registrert i customObjectMapper
         jackson {
             registerModule(JavaTimeModule())
         }
