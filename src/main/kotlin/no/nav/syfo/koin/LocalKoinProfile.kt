@@ -6,7 +6,7 @@ import no.nav.hag.utils.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.hag.utils.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.hag.utils.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
 import no.nav.syfo.behandling.InntektsmeldingBehandler
-import no.nav.syfo.client.OppgaveClient
+import no.nav.syfo.client.OppgaveService
 import no.nav.syfo.client.dokarkiv.DokArkivClient
 import no.nav.syfo.client.saf.SafDokumentClient
 import no.nav.syfo.client.saf.SafJournalpostClient
@@ -65,7 +65,7 @@ fun localDevConfig(config: ApplicationConfig) =
         single {
             FinnAlleUtgaandeOppgaverProcessor(
                 utsattOppgaveDAO = get(),
-                oppgaveClient = get(),
+                oppgaveService = get(),
                 behandlendeEnhetConsumer = get(),
                 metrikk = get(),
                 inntektsmeldingRepository = get(),
@@ -94,11 +94,11 @@ fun localDevConfig(config: ApplicationConfig) =
         single { BakgrunnsjobbService(bakgrunnsjobbRepository = get()) }
         single { BehandlendeEnhetConsumer(pdlClient = get(), norg2Client = get(), metrikk = get()) }
         single { UtsattOppgaveDAO(utsattOppgaveRepository = UtsattOppgaveRepositoryMockk()) }
-        single { OppgaveClient(oppgavebehandlingUrl = config.getString("oppgavebehandling_url"), httpClient = get(), metrikk = get()) { "local token" } }
+        single { OppgaveService(oppgavebehandlingUrl = config.getString("oppgavebehandling_url"), httpClient = get(), metrikk = get()) { "local token" } }
         single {
             UtsattOppgaveService(
                 utsattOppgaveDAO = get(),
-                oppgaveClient = get(),
+                oppgaveService = get(),
                 behandlendeEnhetConsumer = get(),
                 inntektsmeldingRepository = get(),
                 om = get(),
@@ -133,7 +133,7 @@ fun localDevConfig(config: ApplicationConfig) =
             )
         }
         single { InntektsmeldingService(InntektsmeldingRepositoryImp(ds = get()), get()) }
-        single { JoarkInntektsmeldingHendelseProsessor(om = get(), metrikk = get(), inntektsmeldingBehandler = get(), oppgaveClient = get()) }
+        single { JoarkInntektsmeldingHendelseProsessor(om = get(), metrikk = get(), inntektsmeldingBehandler = get(), oppgaveService = get()) }
 
         single {
             InntektsmeldingAivenProducer(producerLocalProperties(config.getString("kafka_bootstrap_servers")))

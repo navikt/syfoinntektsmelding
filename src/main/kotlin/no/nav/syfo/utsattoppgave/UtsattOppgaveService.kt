@@ -5,7 +5,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import kotlinx.coroutines.runBlocking
 import no.nav.helsearbeidsgiver.utils.log.logger
 import no.nav.helsearbeidsgiver.utils.log.sikkerLogger
-import no.nav.syfo.client.OppgaveClient
+import no.nav.syfo.client.OppgaveService
 import no.nav.syfo.domain.OppgaveResultat
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.dto.Tilstand
@@ -18,7 +18,7 @@ import java.util.UUID
 
 class UtsattOppgaveService(
     private val utsattOppgaveDAO: UtsattOppgaveDAO,
-    private val oppgaveClient: OppgaveClient,
+    private val oppgaveService: OppgaveService,
     private val behandlendeEnhetConsumer: BehandlendeEnhetConsumer,
     private val inntektsmeldingRepository: InntektsmeldingRepository,
     private val om: ObjectMapper,
@@ -96,7 +96,7 @@ class UtsattOppgaveService(
     fun opprettOppgave(
         oppgave: UtsattOppgaveEntitet,
         behandlingsKategori: BehandlingsKategori
-    ): OppgaveResultat = opprettOppgaveIGosys(oppgave, oppgaveClient, utsattOppgaveDAO, behandlingsKategori)
+    ): OppgaveResultat = opprettOppgaveIGosys(oppgave, oppgaveService, utsattOppgaveDAO, behandlingsKategori)
 }
 
 fun InntektsmeldingRepository.hentInntektsmelding(oppgave: UtsattOppgaveEntitet, om: ObjectMapper): Result<Inntektsmelding> {
@@ -110,13 +110,13 @@ fun InntektsmeldingRepository.hentInntektsmelding(oppgave: UtsattOppgaveEntitet,
 
 fun opprettOppgaveIGosys(
     utsattOppgave: UtsattOppgaveEntitet,
-    oppgaveClient: OppgaveClient,
+    oppgaveService: OppgaveService,
     utsattOppgaveDAO: UtsattOppgaveDAO,
     behandlingsKategori: BehandlingsKategori
 ): OppgaveResultat {
     val resultat =
         runBlocking {
-            oppgaveClient.opprettOppgave(
+            oppgaveService.opprettOppgave(
                 journalpostId = utsattOppgave.journalpostId,
                 aktoerId = utsattOppgave.aktørId,
                 behandlingsKategori = behandlingsKategori,

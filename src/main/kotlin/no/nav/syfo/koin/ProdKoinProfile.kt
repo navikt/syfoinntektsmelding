@@ -9,7 +9,7 @@ import no.nav.hag.utils.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
 import no.nav.helsearbeidsgiver.tokenprovider.AccessTokenProvider
 import no.nav.syfo.MetrikkVarsler
 import no.nav.syfo.behandling.InntektsmeldingBehandler
-import no.nav.syfo.client.OppgaveClient
+import no.nav.syfo.client.OppgaveService
 import no.nav.syfo.client.dokarkiv.DokArkivClient
 import no.nav.syfo.client.norg.Norg2Client
 import no.nav.syfo.client.saf.SafDokumentClient
@@ -72,7 +72,7 @@ fun prodConfig(config: ApplicationConfig) =
                 om = get(),
                 metrikk = get(),
                 inntektsmeldingBehandler = get(),
-                oppgaveClient = get(),
+                oppgaveService = get(),
             )
         }
 
@@ -126,7 +126,7 @@ fun prodConfig(config: ApplicationConfig) =
         single {
             UtsattOppgaveService(
                 utsattOppgaveDAO = get(),
-                oppgaveClient = get(),
+                oppgaveService = get(),
                 behandlendeEnhetConsumer = get(),
                 inntektsmeldingRepository = get(),
                 om = get(),
@@ -146,7 +146,7 @@ fun prodConfig(config: ApplicationConfig) =
         single {
             FinnAlleUtgaandeOppgaverProcessor(
                 utsattOppgaveDAO = get(),
-                oppgaveClient = get(),
+                oppgaveService = get(),
                 behandlendeEnhetConsumer = get(),
                 metrikk = get(),
                 inntektsmeldingRepository = get(),
@@ -159,7 +159,7 @@ fun prodConfig(config: ApplicationConfig) =
         single { BakgrunnsjobbService(get(), bakgrunnsvarsler = MetrikkVarsler()) }
 
         single {
-            OppgaveClient(
+            OppgaveService(
                 oppgavebehandlingUrl = config.getString("oppgavebehandling_url"),
                 httpClient = get(),
                 metrikk = get(),

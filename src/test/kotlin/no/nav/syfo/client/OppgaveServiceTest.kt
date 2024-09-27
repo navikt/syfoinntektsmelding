@@ -19,18 +19,18 @@ import java.time.Month
 private const val OPPGAVE_ID = 1234
 private const val FORDELINGSOPPGAVE_ID = 5678
 
-class OppgaveClientTest {
+class OppgaveServiceTest {
 
     private var metrikk = mockk<Metrikk>(relaxed = true)
 
-    private lateinit var oppgaveClient: OppgaveClient
+    private lateinit var oppgaveService: OppgaveService
 
     @Test
 
     fun henterEksisterendeOppgave() {
         runBlocking {
-            oppgaveClient = OppgaveClient("url", buildHttpClientJson(HttpStatusCode.OK, lagOppgaveResponse()), metrikk) { "mockToken" }
-            val resultat = oppgaveClient.opprettOppgave("123", "aktoerid", BehandlingsKategori.REFUSJON_MED_DATO)
+            oppgaveService = OppgaveService("url", buildHttpClientJson(HttpStatusCode.OK, lagOppgaveResponse()), metrikk) { "mockToken" }
+            val resultat = oppgaveService.opprettOppgave("123", "aktoerid", BehandlingsKategori.REFUSJON_MED_DATO)
             assertThat(resultat.oppgaveId).isEqualTo(OPPGAVE_ID)
             assertThat(resultat.duplikat).isTrue
         }
@@ -40,9 +40,9 @@ class OppgaveClientTest {
 
     fun oppretterNyOppgave() {
         runBlocking {
-            oppgaveClient = OppgaveClient("url", buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk) { "mockToken" }
-            val resultat = oppgaveClient.opprettOppgave("123", "aktoerid", BehandlingsKategori.REFUSJON_MED_DATO)
-            val requestVerdier = hentRequestInnhold(oppgaveClient.httpClient)
+            oppgaveService = OppgaveService("url", buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk) { "mockToken" }
+            val resultat = oppgaveService.opprettOppgave("123", "aktoerid", BehandlingsKategori.REFUSJON_MED_DATO)
+            val requestVerdier = hentRequestInnhold(oppgaveService.httpClient)
             assertThat(resultat.oppgaveId).isNotEqualTo(OPPGAVE_ID)
             assertThat(resultat.duplikat).isFalse
             assertThat(requestVerdier?.journalpostId).isEqualTo("123")
@@ -55,9 +55,9 @@ class OppgaveClientTest {
 
     fun oppretterNyFordelingsOppgave() {
         runBlocking {
-            oppgaveClient = OppgaveClient("url", buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk) { "mockToken" }
-            val resultat = oppgaveClient.opprettFordelingsOppgave("journalpostId")
-            val requestVerdier = hentRequestInnhold(oppgaveClient.httpClient)
+            oppgaveService = OppgaveService("url", buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk) { "mockToken" }
+            val resultat = oppgaveService.opprettFordelingsOppgave("journalpostId")
+            val requestVerdier = hentRequestInnhold(oppgaveService.httpClient)
             assertThat(resultat.oppgaveId).isNotEqualTo(FORDELINGSOPPGAVE_ID)
             assertThat(resultat.duplikat).isFalse
             assertThat(requestVerdier?.oppgavetype).isEqualTo("FDR")
@@ -69,8 +69,8 @@ class OppgaveClientTest {
 
     fun henterEksisterendeFordelingsOppgave() {
         runBlocking {
-            oppgaveClient = OppgaveClient("url", buildHttpClientJson(HttpStatusCode.OK, lagFordelingsOppgaveResponse()), metrikk) { "mockToken" }
-            val resultat = oppgaveClient.opprettFordelingsOppgave("journalpostId")
+            oppgaveService = OppgaveService("url", buildHttpClientJson(HttpStatusCode.OK, lagFordelingsOppgaveResponse()), metrikk) { "mockToken" }
+            val resultat = oppgaveService.opprettFordelingsOppgave("journalpostId")
             assertThat(resultat.oppgaveId).isEqualTo(FORDELINGSOPPGAVE_ID)
             assertThat(resultat.duplikat).isTrue
         }
@@ -80,15 +80,15 @@ class OppgaveClientTest {
 
     fun skal_opprette_utland() {
         runBlocking {
-            oppgaveClient = OppgaveClient("url", buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk) { "mockToken" }
-            oppgaveClient.opprettOppgave("123", "aktoerid", BehandlingsKategori.UTLAND)
-            val requestVerdier = hentRequestInnhold(oppgaveClient.httpClient)
+            oppgaveService = OppgaveService("url", buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk) { "mockToken" }
+            oppgaveService.opprettOppgave("123", "aktoerid", BehandlingsKategori.UTLAND)
+            val requestVerdier = hentRequestInnhold(oppgaveService.httpClient)
             assertThat(requestVerdier?.behandlingstype).isEqualTo("ae0106")
         }
         runBlocking {
-            oppgaveClient = OppgaveClient("url", buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk) { "mockToken" }
-            oppgaveClient.opprettOppgave("123", "aktoerid", BehandlingsKategori.UTLAND)
-            val requestVerdier = hentRequestInnhold(oppgaveClient.httpClient)
+            oppgaveService = OppgaveService("url", buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk) { "mockToken" }
+            oppgaveService.opprettOppgave("123", "aktoerid", BehandlingsKategori.UTLAND)
+            val requestVerdier = hentRequestInnhold(oppgaveService.httpClient)
             assertThat(requestVerdier?.behandlingstype).isEqualTo("ae0106")
         }
     }
@@ -96,9 +96,9 @@ class OppgaveClientTest {
     @Test
     fun skal_opprette_speil() {
         runBlocking {
-            oppgaveClient = OppgaveClient("url", buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk) { "mockToken" }
-            oppgaveClient.opprettOppgave("123", "aktoerid", BehandlingsKategori.SPEIL_RELATERT)
-            val requestVerdier = hentRequestInnhold(oppgaveClient.httpClient)
+            oppgaveService = OppgaveService("url", buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk) { "mockToken" }
+            oppgaveService.opprettOppgave("123", "aktoerid", BehandlingsKategori.SPEIL_RELATERT)
+            val requestVerdier = hentRequestInnhold(oppgaveService.httpClient)
             assertThat(requestVerdier?.behandlingstema).isEqualTo("ab0455")
         }
     }
@@ -106,9 +106,9 @@ class OppgaveClientTest {
     @Test
     fun skal_opprette_betviler_sykemelding() {
         runBlocking {
-            oppgaveClient = OppgaveClient("url", buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk) { "mockToken" }
-            oppgaveClient.opprettOppgave("123", "aktoerid", BehandlingsKategori.BESTRIDER_SYKEMELDING)
-            val requestVerdier = hentRequestInnhold(oppgaveClient.httpClient)
+            oppgaveService = OppgaveService("url", buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk) { "mockToken" }
+            oppgaveService.opprettOppgave("123", "aktoerid", BehandlingsKategori.BESTRIDER_SYKEMELDING)
+            val requestVerdier = hentRequestInnhold(oppgaveService.httpClient)
             assertThat(requestVerdier?.behandlingstema).isEqualTo("ab0421")
             assertThat(requestVerdier?.behandlingstype).isEqualTo(null)
         }
@@ -116,37 +116,37 @@ class OppgaveClientTest {
 
     @Test
     fun henterRiktigFerdigstillelsesFrist() {
-        oppgaveClient = OppgaveClient("url", buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk) { "mockToken" }
+        oppgaveService = OppgaveService("url", buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk) { "mockToken" }
         val onsdag = LocalDate.of(2019, Month.NOVEMBER, 27)
         val fredag = LocalDate.of(2019, Month.NOVEMBER, 29)
         val lørdag = LocalDate.of(2019, Month.NOVEMBER, 30)
         val søndag = LocalDate.of(2019, Month.DECEMBER, 1)
 
-        assertThat(oppgaveClient.leggTilEnVirkeuke(onsdag).dayOfWeek).isEqualTo(DayOfWeek.WEDNESDAY)
-        assertThat(oppgaveClient.leggTilEnVirkeuke(fredag).dayOfWeek).isEqualTo(DayOfWeek.FRIDAY)
-        assertThat(oppgaveClient.leggTilEnVirkeuke(lørdag).dayOfWeek).isEqualTo(DayOfWeek.MONDAY)
-        assertThat(oppgaveClient.leggTilEnVirkeuke(søndag).dayOfWeek).isEqualTo(DayOfWeek.MONDAY)
+        assertThat(oppgaveService.leggTilEnVirkeuke(onsdag).dayOfWeek).isEqualTo(DayOfWeek.WEDNESDAY)
+        assertThat(oppgaveService.leggTilEnVirkeuke(fredag).dayOfWeek).isEqualTo(DayOfWeek.FRIDAY)
+        assertThat(oppgaveService.leggTilEnVirkeuke(lørdag).dayOfWeek).isEqualTo(DayOfWeek.MONDAY)
+        assertThat(oppgaveService.leggTilEnVirkeuke(søndag).dayOfWeek).isEqualTo(DayOfWeek.MONDAY)
     }
 
     @Test
 
     fun skal_utbetale_til_bruker() {
         runBlocking {
-            oppgaveClient = OppgaveClient("url", buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk) { "mockToken" }
-            oppgaveClient.opprettOppgave("123", "aktoerid", BehandlingsKategori.REFUSJON_MED_DATO)
-            val requestVerdier = hentRequestInnhold(oppgaveClient.httpClient)
+            oppgaveService = OppgaveService("url", buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk) { "mockToken" }
+            oppgaveService.opprettOppgave("123", "aktoerid", BehandlingsKategori.REFUSJON_MED_DATO)
+            val requestVerdier = hentRequestInnhold(oppgaveService.httpClient)
             assertThat(requestVerdier?.behandlingstema).isEqualTo("ab0458")
         }
         runBlocking {
-            oppgaveClient = OppgaveClient("url", buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk) { "mockToken" }
-            oppgaveClient.opprettOppgave("123", "aktoerid", BehandlingsKategori.IKKE_REFUSJON)
-            val requestVerdier = hentRequestInnhold(oppgaveClient.httpClient)
+            oppgaveService = OppgaveService("url", buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk) { "mockToken" }
+            oppgaveService.opprettOppgave("123", "aktoerid", BehandlingsKategori.IKKE_REFUSJON)
+            val requestVerdier = hentRequestInnhold(oppgaveService.httpClient)
             assertThat(requestVerdier?.behandlingstema).isEqualTo("ab0458")
         }
         runBlocking {
-            oppgaveClient = OppgaveClient("url", buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk) { "mockToken" }
-            oppgaveClient.opprettOppgave("123", "aktoerid", BehandlingsKategori.REFUSJON_LITEN_LØNN)
-            val requestVerdier = hentRequestInnhold(oppgaveClient.httpClient)
+            oppgaveService = OppgaveService("url", buildHttpClientJson(HttpStatusCode.OK, lagTomOppgaveResponse()), metrikk) { "mockToken" }
+            oppgaveService.opprettOppgave("123", "aktoerid", BehandlingsKategori.REFUSJON_LITEN_LØNN)
+            val requestVerdier = hentRequestInnhold(oppgaveService.httpClient)
             assertThat(requestVerdier?.behandlingstema).isEqualTo("ab0458")
         }
     }

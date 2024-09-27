@@ -39,7 +39,7 @@ object Behandlingstema {
     const val BESTRIDER_SYKEMELDING = "ab0421"
 }
 
-class OppgaveClient(
+class OppgaveService(
     val oppgavebehandlingUrl: String,
     val httpClient: HttpClient,
     val metrikk: Metrikk,
