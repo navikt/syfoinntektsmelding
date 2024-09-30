@@ -47,7 +47,7 @@ val kotlinxSerializationVersion: String by project
 val bakgrunnsjobbVersion: String by project
 val pdlClientVersion: String by project
 val tokenProviderVersion: String by project
-
+val oppgaveClientVersion: String by project
 plugins {
     kotlin("jvm")
     kotlin("plugin.serialization")
@@ -209,7 +209,7 @@ dependencies {
     implementation("no.nav.helsearbeidsgiver:domene-inntektsmelding:$hagDomeneInntektsmeldingVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion")
     implementation("io.mockk:mockk:$mockkVersion")
-
+    implementation("no.nav.helsearbeidsgiver:oppgave-client:$oppgaveClientVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion")
