@@ -5,6 +5,7 @@ import io.ktor.server.config.ApplicationConfig
 import no.nav.hag.utils.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.hag.utils.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.hag.utils.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
+import no.nav.helsearbeidsgiver.oppgave.OppgaveClient
 import no.nav.syfo.behandling.InntektsmeldingBehandler
 import no.nav.syfo.client.OppgaveService
 import no.nav.syfo.client.dokarkiv.DokArkivClient
@@ -94,7 +95,10 @@ fun localDevConfig(config: ApplicationConfig) =
         single { BakgrunnsjobbService(bakgrunnsjobbRepository = get()) }
         single { BehandlendeEnhetConsumer(pdlClient = get(), norg2Client = get(), metrikk = get()) }
         single { UtsattOppgaveDAO(utsattOppgaveRepository = UtsattOppgaveRepositoryMockk()) }
-        single { OppgaveService(oppgavebehandlingUrl = config.getString("oppgavebehandling_url"), httpClient = get(), metrikk = get()) { "local token" } }
+
+        single { OppgaveService(oppgaveClient = get(), metrikk = get()) }
+        single { OppgaveClient(url = config.getString("oppgavebehandling_url"), getToken = { "local token" }) }
+
         single {
             UtsattOppgaveService(
                 utsattOppgaveDAO = get(),

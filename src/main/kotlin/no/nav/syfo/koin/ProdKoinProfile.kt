@@ -6,6 +6,7 @@ import io.ktor.server.config.ApplicationConfig
 import no.nav.hag.utils.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.hag.utils.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.hag.utils.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
+import no.nav.helsearbeidsgiver.oppgave.OppgaveClient
 import no.nav.helsearbeidsgiver.tokenprovider.AccessTokenProvider
 import no.nav.syfo.MetrikkVarsler
 import no.nav.syfo.behandling.InntektsmeldingBehandler
@@ -160,13 +161,16 @@ fun prodConfig(config: ApplicationConfig) =
 
         single {
             OppgaveService(
-                oppgavebehandlingUrl = config.getString("oppgavebehandling_url"),
-                httpClient = get(),
+                oppgaveClient = get(),
                 metrikk = get(),
-                getAccessToken = get<AccessTokenProvider>(qualifier = named(AccessScope.OPPGAVE))::getToken,
             )
         }
-
+        single {
+            OppgaveClient(
+                config.getString("oppgavebehandling_url"),
+                get<AccessTokenProvider>(qualifier = named(AccessScope.OPPGAVE))::getToken,
+            )
+        }
         single {
             Norg2Client(
                 url = config.getString("norg2_url"),

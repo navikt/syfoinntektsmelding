@@ -1,6 +1,5 @@
 package no.nav.syfo.client
 
-import io.ktor.client.HttpClient
 import no.nav.helsearbeidsgiver.oppgave.OppgaveClient
 import no.nav.helsearbeidsgiver.oppgave.domain.Behandlingstema
 import no.nav.helsearbeidsgiver.oppgave.domain.Behandlingstype
@@ -22,33 +21,26 @@ import java.time.DayOfWeek
 import java.time.LocalDate
 
 class OppgaveService(
-    val oppgavebehandlingUrl: String,
-    val httpClient: HttpClient,
+    val oppgaveClient: OppgaveClient,
     val metrikk: Metrikk,
-    val getAccessToken: () -> String,
 ) {
     private val sikkerlogger = sikkerLogger()
-    private val oppgaveClient = OppgaveClient(oppgavebehandlingUrl, getAccessToken)
 
     private suspend fun hentOppgave(
         oppgavetype: String,
         journalpostId: String,
-    ): OppgaveListeResponse {
-        return oppgaveClient
+    ): OppgaveListeResponse =
+        oppgaveClient
             .hentOppgaver(
                 HentOppgaverRequest(
                     oppgavetype = oppgavetype,
                     tema = Tema.SYK,
                     statuskategori = Statuskategori.AAPEN,
                     journalpostId = journalpostId,
+                    sorteringsrekkefolge = "ASC",
+                    sorteringsfelt = "FRIST",
                 ),
             ).also { sikkerlogger.info("Hentet oppgave for journalpostId {}", journalpostId) }
-        /*
-       //TODO: Legg til sorteringsfelt og sorteringsrekkefolge hvis de brukes
-                parameter("sorteringsrekkefolge", "ASC")
-                parameter("sorteringsfelt", "FRIST")
-         */
-    }
 
     private suspend fun hentHvisOppgaveFinnes(
         oppgavetype: String,
@@ -169,7 +161,7 @@ class OppgaveService(
         }
     }
 
-    fun leggTilEnVirkeuke(dato: LocalDate): LocalDate =
+    private fun leggTilEnVirkeuke(dato: LocalDate): LocalDate =
         when (dato.dayOfWeek) {
             DayOfWeek.SATURDAY -> dato.plusDays(9)
             DayOfWeek.SUNDAY -> dato.plusDays(8)
