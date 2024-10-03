@@ -1,8 +1,6 @@
 package no.nav.syfo.client
 
 import no.nav.helsearbeidsgiver.oppgave.OppgaveClient
-import no.nav.helsearbeidsgiver.oppgave.domain.Behandlingstema
-import no.nav.helsearbeidsgiver.oppgave.domain.Behandlingstype
 import no.nav.helsearbeidsgiver.oppgave.domain.HentOppgaverRequest
 import no.nav.helsearbeidsgiver.oppgave.domain.OppgaveListeResponse
 import no.nav.helsearbeidsgiver.oppgave.domain.Oppgavetype
@@ -48,14 +46,10 @@ class OppgaveService(
     ): OppgaveResultat? {
         try {
             val oppgaveResponse = hentOppgave(oppgavetype = oppgavetype, journalpostId = journalpostId)
-            return if (oppgaveResponse.antallTreffTotalt > 0) {
-                oppgaveResponse.oppgaver
-                    .first()
-                    .id
-                    ?.let { OppgaveResultat(it, true, false) }
-            } else {
-                null
-            }
+            return oppgaveResponse.oppgaver
+                .firstOrNull()
+                ?.id
+                ?.let { OppgaveResultat(oppgaveId = it, duplikat = true, utbetalingBruker = false) }
         } catch (ex: Exception) {
             sikkerlogger.error("Feil ved sjekking av eksisterende oppgave", ex)
             throw HentOppgaveException(journalpostId, oppgavetype, ex)
@@ -74,40 +68,7 @@ class OppgaveService(
             return eksisterendeOppgave
         }
 
-        fun loggOppgave(type: String) {
-            sikkerlogger.info("Oppretter oppgave: $type for journalpost $journalpostId")
-        }
-
-        val (behandlingstype, behandlingstema, utbetalingBruker) =
-            when (behandlingsKategori) {
-                BehandlingsKategori.SPEIL_RELATERT -> {
-                    loggOppgave("Speil")
-                    Triple(null, Behandlingstema.SPEIL, false)
-                }
-
-                BehandlingsKategori.UTLAND -> {
-                    loggOppgave("Utland")
-                    Triple(Behandlingstype.UTLAND, null, false)
-                }
-
-                BehandlingsKategori.BESTRIDER_SYKEMELDING -> {
-                    loggOppgave("Bestrider sykmelding")
-                    Triple(null, Behandlingstema.BESTRIDER_SYKEMELDING, false)
-                }
-
-                BehandlingsKategori.IKKE_REFUSJON,
-                BehandlingsKategori.REFUSJON_MED_DATO,
-                BehandlingsKategori.REFUSJON_LITEN_LØNN,
-                -> {
-                    loggOppgave("Utbetaling til bruker")
-                    Triple(null, Behandlingstema.UTBETALING_TIL_BRUKER, true)
-                }
-
-                else -> {
-                    loggOppgave("Normal")
-                    Triple(null, Behandlingstema.NORMAL, false)
-                }
-            }
+        sikkerlogger.info("Oppretter oppgave: ${behandlingsKategori.oppgaveBeskrivelse} for journalpost $journalpostId")
 
         val opprettOppgaveRequest =
             OpprettOppgaveRequest(
@@ -117,15 +78,15 @@ class OppgaveService(
                 beskrivelse = "Det har kommet en inntektsmelding på sykepenger.",
                 tema = Tema.SYK,
                 oppgavetype = Oppgavetype.INNTEKTSMELDING,
-                behandlingstype = behandlingstype,
-                behandlingstema = behandlingstema,
+                behandlingstype = behandlingsKategori.getBehandlingsType(),
+                behandlingstema = behandlingsKategori.getBehandlingstema(),
                 aktivDato = LocalDate.now(),
                 fristFerdigstillelse = leggTilEnVirkeuke(LocalDate.now()),
                 prioritet = Prioritet.NORM,
             )
         sikkerlogger.info("Oppretter journalføringsoppgave")
         try {
-            return OppgaveResultat(oppgaveClient.opprettOppgave(opprettOppgaveRequest).id, false, utbetalingBruker)
+            return OppgaveResultat(oppgaveClient.opprettOppgave(opprettOppgaveRequest).id, false, behandlingsKategori.getUtbetalingBruker())
         } catch (ex: Exception) {
             throw OpprettOppgaveException(journalpostId, ex)
         }
@@ -139,8 +100,6 @@ class OppgaveService(
             return eksisterendeOppgave
         }
 
-        val behandlingstype: String? = null
-
         val opprettOppgaveRequest =
             OpprettOppgaveRequest(
                 journalpostId = journalpostId,
@@ -148,7 +107,6 @@ class OppgaveService(
                 beskrivelse = "Fordelingsoppgave for inntektsmelding på sykepenger",
                 tema = Tema.SYK,
                 oppgavetype = Oppgavetype.FORDELINGSOPPGAVE,
-                behandlingstype = behandlingstype,
                 aktivDato = LocalDate.now(),
                 fristFerdigstillelse = leggTilEnVirkeuke(LocalDate.now()),
                 prioritet = Prioritet.NORM,
