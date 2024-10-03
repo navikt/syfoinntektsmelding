@@ -57,6 +57,7 @@ class OppgaveServiceTest {
 
             coVerify { oppgaveClient.opprettOppgave(match { it.behandlingstype == null }) }
             coVerify { oppgaveClient.opprettOppgave(match { it.journalpostId == journalpostId }) }
+            coVerify { oppgaveClient.opprettOppgave(match { it.oppgavetype == Oppgavetype.FORDELINGSOPPGAVE }) }
             assertNotNull(result)
             assertEquals(1, result.oppgaveId)
             assertFalse(result.utbetalingBruker)
@@ -131,6 +132,11 @@ class OppgaveServiceTest {
         runBlocking {
             val behandlingsKategori = BehandlingsKategori.SPEIL_RELATERT
             val result = mockAndRunOpprettOppgave(behandlingsKategori)
+
+            coVerify { oppgaveClient.opprettOppgave(match { it.behandlingstema == Behandlingstema.SPEIL }) }
+            coVerify { oppgaveClient.opprettOppgave(match { it.behandlingstype == null }) }
+            coVerify { oppgaveClient.opprettOppgave(match { it.oppgavetype == Oppgavetype.INNTEKTSMELDING }) }
+
             assertNotNull(result)
             assertEquals(1, result.oppgaveId)
             assertEquals(false, result.utbetalingBruker)
@@ -144,6 +150,7 @@ class OppgaveServiceTest {
             val result = mockAndRunOpprettOppgave(behandlingsKategori)
             coVerify { oppgaveClient.opprettOppgave(match { it.behandlingstema == Behandlingstema.BESTRIDER_SYKEMELDING }) }
             coVerify { oppgaveClient.opprettOppgave(match { it.behandlingstype == null }) }
+            coVerify { oppgaveClient.opprettOppgave(match { it.oppgavetype == Oppgavetype.INNTEKTSMELDING }) }
 
             assertNotNull(result)
             assertEquals(1, result.oppgaveId)
@@ -159,6 +166,7 @@ class OppgaveServiceTest {
 
             coVerify { oppgaveClient.opprettOppgave(match { it.behandlingstema == Behandlingstema.NORMAL }) }
             coVerify { oppgaveClient.opprettOppgave(match { it.behandlingstype == Behandlingstype.UTLAND }) }
+            coVerify { oppgaveClient.opprettOppgave(match { it.oppgavetype == Oppgavetype.INNTEKTSMELDING }) }
 
             assertNotNull(result)
             assertEquals(1, result.oppgaveId)
@@ -174,7 +182,7 @@ class OppgaveServiceTest {
 
             coVerify { oppgaveClient.opprettOppgave(match { it.behandlingstema == Behandlingstema.NORMAL }) }
             coVerify { oppgaveClient.opprettOppgave(match { it.behandlingstype == null }) }
-
+            coVerify { oppgaveClient.opprettOppgave(match { it.oppgavetype == Oppgavetype.INNTEKTSMELDING }) }
             assertNotNull(result)
             assertEquals(1, result.oppgaveId)
             assertEquals(false, result.utbetalingBruker)
@@ -189,6 +197,7 @@ class OppgaveServiceTest {
 
             coVerify { oppgaveClient.opprettOppgave(match { it.behandlingstema == Behandlingstema.NORMAL }) }
             coVerify { oppgaveClient.opprettOppgave(match { it.behandlingstype == null }) }
+            coVerify { oppgaveClient.opprettOppgave(match { it.oppgavetype == Oppgavetype.INNTEKTSMELDING }) }
 
             assertNotNull(result)
             assertEquals(1, result.oppgaveId)
@@ -221,6 +230,7 @@ class OppgaveServiceTest {
 
         coVerify { oppgaveClient.opprettOppgave(match { it.behandlingstema == Behandlingstema.UTBETALING_TIL_BRUKER }) }
         coVerify { oppgaveClient.opprettOppgave(match { it.behandlingstype == null }) }
+        coVerify { oppgaveClient.opprettOppgave(match { it.oppgavetype == Oppgavetype.INNTEKTSMELDING }) }
 
         assertNotNull(result)
         assertEquals(1, result.oppgaveId)
