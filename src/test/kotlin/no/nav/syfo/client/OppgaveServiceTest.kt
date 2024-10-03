@@ -205,14 +205,14 @@ class OppgaveServiceTest {
     @Test
     fun `Skal opprette oppgave med riktig behandlingstema og behandlingsType og utbetaling til bruker REFUSJON_MED_DATO `() =
         runBlocking {
-            val behandlingsKategori = BehandlingsKategori.IKKE_REFUSJON
+            val behandlingsKategori = BehandlingsKategori.REFUSJON_MED_DATO
             assertBehandlingsTemaUtbetalingTilBruker(behandlingsKategori)
         }
 
     @Test
     fun `Skal opprette oppgave med riktig behandlingstema og behandlingsType og utbetaling til bruker REFUSJON_LITEN_LØNN `() =
         runBlocking {
-            val behandlingsKategori = BehandlingsKategori.IKKE_REFUSJON
+            val behandlingsKategori = BehandlingsKategori.REFUSJON_LITEN_LØNN
             assertBehandlingsTemaUtbetalingTilBruker(behandlingsKategori)
         }
 
