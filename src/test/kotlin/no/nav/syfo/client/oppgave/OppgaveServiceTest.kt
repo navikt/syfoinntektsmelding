@@ -169,7 +169,7 @@ class OppgaveServiceTest {
 
             assertNotNull(result)
             assertEquals(1, result.oppgaveId)
-            assertEquals(false, result.utbetalingBruker)
+            assertFalse( result.utbetalingBruker)
         }
 
     @Test
@@ -184,7 +184,7 @@ class OppgaveServiceTest {
             coVerify { oppgaveClient.opprettOppgave(match { it.oppgavetype == Oppgavetype.INNTEKTSMELDING }) }
             assertNotNull(result)
             assertEquals(1, result.oppgaveId)
-            assertEquals(false, result.utbetalingBruker)
+            assertFalse( result.utbetalingBruker)
         }
 
     @Test
@@ -200,7 +200,7 @@ class OppgaveServiceTest {
 
             assertNotNull(result)
             assertEquals(1, result.oppgaveId)
-            assertEquals(false, result.utbetalingBruker)
+            assertFalse( result.utbetalingBruker)
         }
 
     @Test
