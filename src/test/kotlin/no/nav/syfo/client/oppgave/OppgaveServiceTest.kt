@@ -91,8 +91,6 @@ class OppgaveServiceTest {
             val journalpostId = "123"
             val aktoerId = "456"
 
-            val expectedOppgaveResultat = OppgaveResultat(oppgaveId = 1, false, false)
-            coEvery { oppgaveClient.opprettOppgave(any()) } returns OpprettOppgaveResponse(1)
             coEvery { metrikk.tellOpprettOppgave(any()) } just Runs
             coEvery { oppgaveClient.hentOppgaver(any()) } returns
                 OppgaveListeResponse(
@@ -105,8 +103,9 @@ class OppgaveServiceTest {
             }
 
             assertNotNull(result)
-            assertEquals(expectedOppgaveResultat.oppgaveId, result.oppgaveId)
-            assertEquals(expectedOppgaveResultat.utbetalingBruker, result.utbetalingBruker)
+            assertEquals(1, result.oppgaveId)
+            assertFalse(result.utbetalingBruker)
+            assertTrue(result.duplikat)
         }
 
     @Test
