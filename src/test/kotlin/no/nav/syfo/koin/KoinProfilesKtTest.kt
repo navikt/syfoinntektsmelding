@@ -6,9 +6,9 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import no.nav.helsearbeidsgiver.pdl.PdlClient
 import no.nav.helsearbeidsgiver.tokenprovider.AccessTokenProvider
-import no.nav.syfo.client.oppgave.OppgaveService
 import no.nav.syfo.client.dokarkiv.DokArkivClient
 import no.nav.syfo.client.norg.Norg2Client
+import no.nav.syfo.client.oppgave.OppgaveService
 import no.nav.syfo.client.saf.SafDokumentClient
 import no.nav.syfo.repository.InntektsmeldingRepository
 import no.nav.syfo.util.AppEnv

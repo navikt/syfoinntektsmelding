@@ -163,13 +163,13 @@ class OppgaveServiceTest {
 
             val result = mockAndRunOpprettOppgave(behandlingsKategori)
 
-            coVerify { oppgaveClient.opprettOppgave(match { it.behandlingstema == null}) }
+            coVerify { oppgaveClient.opprettOppgave(match { it.behandlingstema == null }) }
             coVerify { oppgaveClient.opprettOppgave(match { it.behandlingstype == Behandlingstype.UTLAND }) }
             coVerify { oppgaveClient.opprettOppgave(match { it.oppgavetype == Oppgavetype.INNTEKTSMELDING }) }
 
             assertNotNull(result)
             assertEquals(1, result.oppgaveId)
-            assertFalse( result.utbetalingBruker)
+            assertFalse(result.utbetalingBruker)
         }
 
     @Test
@@ -184,7 +184,7 @@ class OppgaveServiceTest {
             coVerify { oppgaveClient.opprettOppgave(match { it.oppgavetype == Oppgavetype.INNTEKTSMELDING }) }
             assertNotNull(result)
             assertEquals(1, result.oppgaveId)
-            assertFalse( result.utbetalingBruker)
+            assertFalse(result.utbetalingBruker)
         }
 
     @Test
@@ -200,7 +200,7 @@ class OppgaveServiceTest {
 
             assertNotNull(result)
             assertEquals(1, result.oppgaveId)
-            assertFalse( result.utbetalingBruker)
+            assertFalse(result.utbetalingBruker)
         }
 
     @Test

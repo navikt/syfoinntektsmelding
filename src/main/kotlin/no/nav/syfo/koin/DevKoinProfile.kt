@@ -10,9 +10,9 @@ import no.nav.helsearbeidsgiver.oppgave.OppgaveClient
 import no.nav.helsearbeidsgiver.tokenprovider.AccessTokenProvider
 import no.nav.syfo.MetrikkVarsler
 import no.nav.syfo.behandling.InntektsmeldingBehandler
-import no.nav.syfo.client.oppgave.OppgaveService
 import no.nav.syfo.client.dokarkiv.DokArkivClient
 import no.nav.syfo.client.norg.Norg2Client
+import no.nav.syfo.client.oppgave.OppgaveService
 import no.nav.syfo.client.saf.SafDokumentClient
 import no.nav.syfo.client.saf.SafJournalpostClient
 import no.nav.syfo.integration.kafka.UtsattOppgaveConsumer
