@@ -7,7 +7,7 @@ import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
 import no.nav.syfo.UtsattOppgaveTestData
-import no.nav.syfo.client.OppgaveService
+import no.nav.syfo.client.oppgave.OppgaveService
 import no.nav.syfo.domain.OppgaveResultat
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.koin.buildObjectMapper

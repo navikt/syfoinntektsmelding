@@ -14,7 +14,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.runBlocking
 import no.nav.helsearbeidsgiver.pdl.PdlClient
-import no.nav.syfo.client.OppgaveService
+import no.nav.syfo.client.oppgave.OppgaveService
 import no.nav.syfo.client.saf.SafDokumentClient
 import no.nav.syfo.client.saf.SafJournalpostClient
 import no.nav.syfo.client.saf.model.Dokument

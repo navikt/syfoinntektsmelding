@@ -5,7 +5,7 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import no.nav.helsearbeidsgiver.pdl.PdlClient
-import no.nav.syfo.client.OppgaveService
+import no.nav.syfo.client.oppgave.OppgaveService
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding

@@ -1,4 +1,4 @@
-package no.nav.syfo.client
+package no.nav.syfo.client.oppgave
 
 import io.mockk.MockKAnnotations
 import io.mockk.Runs

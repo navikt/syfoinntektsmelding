@@ -1,4 +1,4 @@
-package no.nav.syfo.client
+package no.nav.syfo.client.oppgave
 
 import no.nav.helsearbeidsgiver.oppgave.OppgaveClient
 import no.nav.helsearbeidsgiver.oppgave.domain.HentOppgaverRequest

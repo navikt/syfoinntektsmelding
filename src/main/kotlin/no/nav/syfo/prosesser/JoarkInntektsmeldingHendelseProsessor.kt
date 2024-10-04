@@ -10,7 +10,7 @@ import no.nav.helsearbeidsgiver.utils.log.logger
 import no.nav.syfo.behandling.BehandlingException
 import no.nav.syfo.behandling.Feiltype
 import no.nav.syfo.behandling.InntektsmeldingBehandler
-import no.nav.syfo.client.OppgaveService
+import no.nav.syfo.client.oppgave.OppgaveService
 import no.nav.syfo.kafkamottak.InngaaendeJournalpostDTO
 import no.nav.syfo.kafkamottak.InntektsmeldingConsumerException
 import no.nav.syfo.util.Metrikk
