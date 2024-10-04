@@ -10,7 +10,7 @@ import no.nav.helsearbeidsgiver.utils.log.logger
 import no.nav.syfo.behandling.BehandlingException
 import no.nav.syfo.behandling.Feiltype
 import no.nav.syfo.behandling.InntektsmeldingBehandler
-import no.nav.syfo.client.OppgaveClient
+import no.nav.syfo.client.oppgave.OppgaveService
 import no.nav.syfo.kafkamottak.InngaaendeJournalpostDTO
 import no.nav.syfo.kafkamottak.InntektsmeldingConsumerException
 import no.nav.syfo.util.Metrikk
@@ -24,7 +24,7 @@ class JoarkInntektsmeldingHendelseProsessor(
     private val om: ObjectMapper,
     private val metrikk: Metrikk,
     private val inntektsmeldingBehandler: InntektsmeldingBehandler,
-    private val oppgaveClient: OppgaveClient
+    private val oppgaveService: OppgaveService
 ) : BakgrunnsjobbProsesserer {
     private val logger = this.logger()
     private val sikkerlogger = LoggerFactory.getLogger("tjenestekall")
@@ -72,6 +72,6 @@ class JoarkInntektsmeldingHendelseProsessor(
     }
 
     private suspend fun opprettFordelingsoppgave(journalpostId: String) {
-        oppgaveClient.opprettFordelingsOppgave(journalpostId)
+        oppgaveService.opprettFordelingsOppgave(journalpostId)
     }
 }

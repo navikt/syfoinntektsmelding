@@ -8,7 +8,7 @@ import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
 import no.nav.syfo.UtsattOppgaveTestData
-import no.nav.syfo.client.OppgaveClient
+import no.nav.syfo.client.oppgave.OppgaveService
 import no.nav.syfo.domain.OppgaveResultat
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.koin.buildObjectMapper
@@ -24,7 +24,7 @@ import kotlin.random.Random
 open class UtsattOppgaveServiceTest {
 
     private val utsattOppgaveDAO: UtsattOppgaveDAO = mockk(relaxed = true)
-    private val oppgaveClient: OppgaveClient = mockk(relaxed = true)
+    private val oppgaveClient: OppgaveService = mockk(relaxed = true)
     private val behandlendeEnhetConsumer: BehandlendeEnhetConsumer = mockk(relaxed = true)
     private lateinit var oppgaveService: UtsattOppgaveService
     private val metrikk: Metrikk = mockk(relaxed = true)

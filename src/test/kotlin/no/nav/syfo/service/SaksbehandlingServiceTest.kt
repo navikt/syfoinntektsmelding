@@ -5,7 +5,7 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import no.nav.helsearbeidsgiver.pdl.PdlClient
-import no.nav.syfo.client.OppgaveClient
+import no.nav.syfo.client.oppgave.OppgaveService
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
@@ -17,7 +17,7 @@ import java.util.Collections.emptyList
 
 class SaksbehandlingServiceTest {
 
-    private var oppgaveClient = mockk<OppgaveClient>(relaxed = true)
+    private var oppgaveService = mockk<OppgaveService>(relaxed = true)
     private var pdlClient = mockk<PdlClient>(relaxed = true)
     private var inntektsmeldingService = mockk<InntektsmeldingService>(relaxed = true)
 
@@ -30,7 +30,7 @@ class SaksbehandlingServiceTest {
     @Test
     fun oppretterIkkeOppgaveForSak() {
         runBlocking {
-            coVerify(exactly = 0) { oppgaveClient.opprettOppgave(any(), any(), any()) }
+            coVerify(exactly = 0) { oppgaveService.opprettOppgave(any(), any(), any()) }
         }
     }
 

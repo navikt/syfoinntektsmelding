@@ -7,7 +7,7 @@ import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
 import no.nav.syfo.UtsattOppgaveTestData
-import no.nav.syfo.client.OppgaveClient
+import no.nav.syfo.client.oppgave.OppgaveService
 import no.nav.syfo.domain.OppgaveResultat
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.koin.buildObjectMapper
@@ -22,7 +22,7 @@ import kotlin.random.Random
 
 class FinnAlleUtgaandeOppgaverProcessorTest {
     private val utsattOppgaveDAO: UtsattOppgaveDAO = mockk(relaxed = true)
-    private val oppgaveClient: OppgaveClient = mockk(relaxed = true)
+    private val oppgaveService: OppgaveService = mockk(relaxed = true)
     private val behandlendeEnhetConsumer: BehandlendeEnhetConsumer = mockk(relaxed = true)
     private val metrikk: Metrikk = mockk(relaxed = true)
     private val inntektsmeldingRepository: InntektsmeldingRepository = mockk(relaxed = true)
@@ -37,7 +37,7 @@ class FinnAlleUtgaandeOppgaverProcessorTest {
         processor = spyk(
             FinnAlleUtgaandeOppgaverProcessor(
                 utsattOppgaveDAO,
-                oppgaveClient,
+                oppgaveService,
                 behandlendeEnhetConsumer,
                 metrikk,
                 inntektsmeldingRepository,
@@ -45,7 +45,7 @@ class FinnAlleUtgaandeOppgaverProcessorTest {
             )
         )
         every { utsattOppgaveDAO.finnAlleUtgåtteOppgaver() } returns listOf(oppgave.copy())
-        coEvery { oppgaveClient.opprettOppgave(any(), any(), any()) } returns OppgaveResultat(Random.nextInt(), false, false)
+        coEvery { oppgaveService.opprettOppgave(any(), any(), any()) } returns OppgaveResultat(Random.nextInt(), false, false)
         every { inntektsmeldingRepository.findByUuid(any()) } returns UtsattOppgaveTestData.inntektsmeldingEntitet
         every { behandlendeEnhetConsumer.hentBehandlendeEnhet(any(), any()) } returns "4488"
     }
@@ -54,7 +54,7 @@ class FinnAlleUtgaandeOppgaverProcessorTest {
     fun `Oppretter oppgave ved timout og lagrer tilstand OpprettetTimeout`() {
         processor.doJob()
         verify { utsattOppgaveDAO.lagre(match { it.tilstand == Tilstand.OpprettetTimeout && !it.speil && it.timeout == timeout && it.oppdatert != oppgave.oppdatert }) }
-        coVerify { oppgaveClient.opprettOppgave(any(), any(), any()) }
+        coVerify { oppgaveService.opprettOppgave(any(), any(), any()) }
     }
 
     @Test
@@ -62,6 +62,6 @@ class FinnAlleUtgaandeOppgaverProcessorTest {
         every { inntektsmeldingRepository.findByUuid(any()) } returns UtsattOppgaveTestData.inntektsmeldingEntitetIkkeFravaer
         processor.doJob()
         verify { utsattOppgaveDAO.lagre(match { it.tilstand == Tilstand.Forkastet && !it.speil && it.timeout == timeout && it.oppdatert != oppgave.oppdatert }) }
-        coVerify(exactly = 0) { oppgaveClient.opprettOppgave(any(), any(), any()) }
+        coVerify(exactly = 0) { oppgaveService.opprettOppgave(any(), any(), any()) }
     }
 }

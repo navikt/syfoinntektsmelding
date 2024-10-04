@@ -5,9 +5,10 @@ import io.ktor.server.config.ApplicationConfig
 import no.nav.hag.utils.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.hag.utils.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.hag.utils.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
+import no.nav.helsearbeidsgiver.oppgave.OppgaveClient
 import no.nav.syfo.behandling.InntektsmeldingBehandler
-import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.client.dokarkiv.DokArkivClient
+import no.nav.syfo.client.oppgave.OppgaveService
 import no.nav.syfo.client.saf.SafDokumentClient
 import no.nav.syfo.client.saf.SafJournalpostClient
 import no.nav.syfo.integration.kafka.UtsattOppgaveConsumer
@@ -65,7 +66,7 @@ fun localDevConfig(config: ApplicationConfig) =
         single {
             FinnAlleUtgaandeOppgaverProcessor(
                 utsattOppgaveDAO = get(),
-                oppgaveClient = get(),
+                oppgaveService = get(),
                 behandlendeEnhetConsumer = get(),
                 metrikk = get(),
                 inntektsmeldingRepository = get(),
@@ -94,11 +95,14 @@ fun localDevConfig(config: ApplicationConfig) =
         single { BakgrunnsjobbService(bakgrunnsjobbRepository = get()) }
         single { BehandlendeEnhetConsumer(pdlClient = get(), norg2Client = get(), metrikk = get()) }
         single { UtsattOppgaveDAO(utsattOppgaveRepository = UtsattOppgaveRepositoryMockk()) }
-        single { OppgaveClient(oppgavebehandlingUrl = config.getString("oppgavebehandling_url"), httpClient = get(), metrikk = get()) { "local token" } }
+
+        single { OppgaveService(oppgaveClient = get(), metrikk = get()) }
+        single { OppgaveClient(url = config.getString("oppgavebehandling_url"), getToken = { "local token" }) }
+
         single {
             UtsattOppgaveService(
                 utsattOppgaveDAO = get(),
-                oppgaveClient = get(),
+                oppgaveService = get(),
                 behandlendeEnhetConsumer = get(),
                 inntektsmeldingRepository = get(),
                 om = get(),
@@ -133,7 +137,7 @@ fun localDevConfig(config: ApplicationConfig) =
             )
         }
         single { InntektsmeldingService(InntektsmeldingRepositoryImp(ds = get()), get()) }
-        single { JoarkInntektsmeldingHendelseProsessor(om = get(), metrikk = get(), inntektsmeldingBehandler = get(), oppgaveClient = get()) }
+        single { JoarkInntektsmeldingHendelseProsessor(om = get(), metrikk = get(), inntektsmeldingBehandler = get(), oppgaveService = get()) }
 
         single {
             InntektsmeldingAivenProducer(producerLocalProperties(config.getString("kafka_bootstrap_servers")))

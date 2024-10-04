@@ -14,7 +14,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.runBlocking
 import no.nav.helsearbeidsgiver.pdl.PdlClient
-import no.nav.syfo.client.OppgaveClient
+import no.nav.syfo.client.oppgave.OppgaveService
 import no.nav.syfo.client.saf.SafDokumentClient
 import no.nav.syfo.client.saf.SafJournalpostClient
 import no.nav.syfo.client.saf.model.Dokument
@@ -70,7 +70,7 @@ class InntektsmeldingBehandlerTest2 {
     private var metrikk = mockk<Metrikk>(relaxed = true)
     private var behandleInngaaendeJournalConsumer = mockk<BehandleInngaaendeJournalConsumer>(relaxed = true)
     private var behandlendeEnhetConsumer = mockk<BehandlendeEnhetConsumer>(relaxed = true)
-    var oppgaveClient = mockk<OppgaveClient>(relaxed = true)
+    var oppgaveService = mockk<OppgaveService>(relaxed = true)
     private var journalpostService = mockk<JournalpostService>(relaxed = true)
 
     private var inntektsmeldingRepository = mockk<InntektsmeldingRepository>(relaxed = true)

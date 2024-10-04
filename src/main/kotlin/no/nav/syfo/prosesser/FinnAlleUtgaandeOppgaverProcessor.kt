@@ -6,7 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import no.nav.hag.utils.bakgrunnsjobb.RecurringJob
 import no.nav.helsearbeidsgiver.utils.log.MdcUtils
 import no.nav.syfo.behandling.OpprettOppgaveException
-import no.nav.syfo.client.OppgaveClient
+import no.nav.syfo.client.oppgave.OppgaveService
 import no.nav.syfo.dto.Tilstand
 import no.nav.syfo.repository.InntektsmeldingRepository
 import no.nav.syfo.service.BehandlendeEnhetConsumer
@@ -22,7 +22,7 @@ import java.time.LocalDateTime
 
 class FinnAlleUtgaandeOppgaverProcessor(
     private val utsattOppgaveDAO: UtsattOppgaveDAO,
-    private val oppgaveClient: OppgaveClient,
+    private val oppgaveService: OppgaveService,
     private val behandlendeEnhetConsumer: BehandlendeEnhetConsumer,
     private val metrikk: Metrikk,
     private val inntektsmeldingRepository: InntektsmeldingRepository,
@@ -51,7 +51,7 @@ class FinnAlleUtgaandeOppgaverProcessor(
                                 logger.info("Skal opprette oppgave for inntektsmelding: ${oppgaveEntitet.arkivreferanse}")
                                 opprettOppgaveIGosys(
                                     oppgaveEntitet,
-                                    oppgaveClient,
+                                    oppgaveService,
                                     utsattOppgaveDAO,
                                     behandlingsKategori
                                 )

@@ -6,9 +6,9 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import no.nav.helsearbeidsgiver.pdl.PdlClient
 import no.nav.helsearbeidsgiver.tokenprovider.AccessTokenProvider
-import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.client.dokarkiv.DokArkivClient
 import no.nav.syfo.client.norg.Norg2Client
+import no.nav.syfo.client.oppgave.OppgaveService
 import no.nav.syfo.client.saf.SafDokumentClient
 import no.nav.syfo.repository.InntektsmeldingRepository
 import no.nav.syfo.util.AppEnv
@@ -40,7 +40,7 @@ class KoinProfilesKtTest : KoinTest {
     private val safJournalpostClient: SafDokumentClient by inject()
     private val dokArkivClient: DokArkivClient by inject()
     private val norg2Client: Norg2Client by inject()
-    private val oppgaveClient: OppgaveClient by inject()
+    private val oppgaveService: OppgaveService by inject()
 
     @Test
     fun `test prodConfig`() {
@@ -85,7 +85,7 @@ class KoinProfilesKtTest : KoinTest {
         assertNotNull(safDokumentClient)
         assertNotNull(dokArkivClient)
         assertNotNull(norg2Client)
-        assertNotNull(oppgaveClient)
+        assertNotNull(oppgaveService)
         assertNotNull(safJournalpostClient)
     }
 

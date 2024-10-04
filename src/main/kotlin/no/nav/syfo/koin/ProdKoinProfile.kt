@@ -6,12 +6,13 @@ import io.ktor.server.config.ApplicationConfig
 import no.nav.hag.utils.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.hag.utils.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.hag.utils.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
+import no.nav.helsearbeidsgiver.oppgave.OppgaveClient
 import no.nav.helsearbeidsgiver.tokenprovider.AccessTokenProvider
 import no.nav.syfo.MetrikkVarsler
 import no.nav.syfo.behandling.InntektsmeldingBehandler
-import no.nav.syfo.client.OppgaveClient
 import no.nav.syfo.client.dokarkiv.DokArkivClient
 import no.nav.syfo.client.norg.Norg2Client
+import no.nav.syfo.client.oppgave.OppgaveService
 import no.nav.syfo.client.saf.SafDokumentClient
 import no.nav.syfo.client.saf.SafJournalpostClient
 import no.nav.syfo.integration.kafka.UtsattOppgaveConsumer
@@ -72,7 +73,7 @@ fun prodConfig(config: ApplicationConfig) =
                 om = get(),
                 metrikk = get(),
                 inntektsmeldingBehandler = get(),
-                oppgaveClient = get(),
+                oppgaveService = get(),
             )
         }
 
@@ -126,7 +127,7 @@ fun prodConfig(config: ApplicationConfig) =
         single {
             UtsattOppgaveService(
                 utsattOppgaveDAO = get(),
-                oppgaveClient = get(),
+                oppgaveService = get(),
                 behandlendeEnhetConsumer = get(),
                 inntektsmeldingRepository = get(),
                 om = get(),
@@ -146,7 +147,7 @@ fun prodConfig(config: ApplicationConfig) =
         single {
             FinnAlleUtgaandeOppgaverProcessor(
                 utsattOppgaveDAO = get(),
-                oppgaveClient = get(),
+                oppgaveService = get(),
                 behandlendeEnhetConsumer = get(),
                 metrikk = get(),
                 inntektsmeldingRepository = get(),
@@ -159,14 +160,17 @@ fun prodConfig(config: ApplicationConfig) =
         single { BakgrunnsjobbService(get(), bakgrunnsvarsler = MetrikkVarsler()) }
 
         single {
-            OppgaveClient(
-                oppgavebehandlingUrl = config.getString("oppgavebehandling_url"),
-                httpClient = get(),
+            OppgaveService(
+                oppgaveClient = get(),
                 metrikk = get(),
-                getAccessToken = get<AccessTokenProvider>(qualifier = named(AccessScope.OPPGAVE))::getToken,
             )
         }
-
+        single {
+            OppgaveClient(
+                config.getString("oppgavebehandling_url"),
+                get<AccessTokenProvider>(qualifier = named(AccessScope.OPPGAVE))::getToken,
+            )
+        }
         single {
             Norg2Client(
                 url = config.getString("norg2_url"),
