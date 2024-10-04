@@ -163,7 +163,7 @@ class OppgaveServiceTest {
 
             val result = mockAndRunOpprettOppgave(behandlingsKategori)
 
-            coVerify { oppgaveClient.opprettOppgave(match { it.behandlingstema == Behandlingstema.NORMAL }) }
+            coVerify { oppgaveClient.opprettOppgave(match { it.behandlingstema == null}) }
             coVerify { oppgaveClient.opprettOppgave(match { it.behandlingstype == Behandlingstype.UTLAND }) }
             coVerify { oppgaveClient.opprettOppgave(match { it.oppgavetype == Oppgavetype.INNTEKTSMELDING }) }
 
