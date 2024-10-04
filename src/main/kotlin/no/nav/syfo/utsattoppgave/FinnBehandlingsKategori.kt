@@ -21,11 +21,12 @@ enum class BehandlingsKategori(
 
     fun getBehandlingsType(): String? = if (this == UTLAND) Behandlingstype.UTLAND else null
 
-    fun getBehandlingstema(): String =
+    fun getBehandlingstema(): String? =
         when (this) {
             SPEIL_RELATERT -> Behandlingstema.SPEIL
             BESTRIDER_SYKEMELDING -> Behandlingstema.BESTRIDER_SYKEMELDING
             IKKE_REFUSJON, REFUSJON_MED_DATO, REFUSJON_LITEN_LØNN -> Behandlingstema.UTBETALING_TIL_BRUKER
+            UTLAND -> null
             else -> Behandlingstema.NORMAL
         }
 
