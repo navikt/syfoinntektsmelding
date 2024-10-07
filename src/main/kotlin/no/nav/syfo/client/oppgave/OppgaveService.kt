@@ -14,6 +14,7 @@ import no.nav.syfo.behandling.OpprettFordelingsOppgaveException
 import no.nav.syfo.behandling.OpprettOppgaveException
 import no.nav.syfo.domain.OppgaveResultat
 import no.nav.syfo.util.Metrikk
+import no.nav.syfo.util.customObjectMapper
 import no.nav.syfo.utsattoppgave.BehandlingsKategori
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -84,6 +85,9 @@ class OppgaveService(
                 fristFerdigstillelse = leggTilEnVirkeuke(LocalDate.now()),
                 prioritet = Prioritet.NORM,
             )
+        val objectMapper = customObjectMapper()
+        sikkerlogger.info("oppretteOppgave: ${objectMapper.writeValueAsString(opprettOppgaveRequest)}")
+
         sikkerlogger.info("Oppretter journalføringsoppgave")
         try {
             return OppgaveResultat(oppgaveClient.opprettOppgave(opprettOppgaveRequest).id, false, behandlingsKategori.getUtbetalingBruker())
