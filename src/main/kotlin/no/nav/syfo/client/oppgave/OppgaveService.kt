@@ -84,6 +84,7 @@ class OppgaveService(
                 fristFerdigstillelse = leggTilEnVirkeuke(LocalDate.now()),
                 prioritet = Prioritet.NORM,
             )
+
         sikkerlogger.info("Oppretter journalføringsoppgave")
         try {
             return OppgaveResultat(oppgaveClient.opprettOppgave(opprettOppgaveRequest).id, false, behandlingsKategori.getUtbetalingBruker())

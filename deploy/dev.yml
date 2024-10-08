@@ -61,7 +61,7 @@ spec:
   accessPolicy:
     outbound:
       external:
-        - host: oppgave-q1.dev-fss-pub.nais.io
+        - host: oppgave.dev-fss-pub.nais.io
         - host: pdl-api.dev-fss-pub.nais.io
         - host: dokarkiv.dev-fss-pub.nais.io
         - host: saf.dev-fss-pub.nais.io
@@ -86,7 +86,7 @@ spec:
     - name: DOKARKIV_URL
       value: "https://dokarkiv.dev-fss-pub.nais.io/rest/journalpostapi/v1"
     - name: OPPGAVEBEHANDLING_URL
-      value: "https://oppgave-q1.dev-fss-pub.nais.io/api/v1/oppgaver"
+      value: "https://oppgave.dev-fss-pub.nais.io/api/v1/oppgaver"
     - name: PDL_URL
       value: "https://pdl-api.dev-fss-pub.nais.io/graphql"
     - name: NORG2_URL
@@ -100,6 +100,6 @@ spec:
     - name: SAF_SCOPE
       value: api://dev-fss.teamdokumenthandtering.saf-q1/.default
     - name: OPPGAVE_SCOPE
-      value: api://dev-fss.oppgavehandtering.oppgave-q1/.default
+      value: api://dev-fss.oppgavehandtering.oppgave/.default
     - name: PDL_SCOPE
       value: api://dev-fss.pdl.pdl-api/.default
