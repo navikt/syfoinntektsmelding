@@ -100,6 +100,6 @@ spec:
     - name: SAF_SCOPE
       value: api://dev-fss.teamdokumenthandtering.saf-q1/.default
     - name: OPPGAVE_SCOPE
-      value: api://oppgave.dev-fss-pub.nais.io/.default
+      value: api://dev-fss.oppgavehandtering.oppgave-q1/.default
     - name: PDL_SCOPE
       value: api://dev-fss.pdl.pdl-api/.default
