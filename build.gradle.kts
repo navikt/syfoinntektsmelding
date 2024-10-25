@@ -179,9 +179,10 @@ dependencies {
     implementation("io.micrometer:micrometer-core:$micrometerVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")
     implementation("io.confluent:kafka-streams-avro-serde:$kafkaVersion")
-    implementation("io.confluent:kafka-avro-serializer:$kafkaVersion")
+    implementation("io.confluent:kafka-avro-serializer:$kafkaVersion") {
+        exclude("org.apache.avro:avro")
+    }
     implementation("org.apache.kafka:kafka-streams:$apacheKafkaStreamsVersion")
-
     implementation("io.ktor:ktor-server:$ktorVersion")
     implementation("io.ktor:ktor-server-cors:$ktorVersion")
     implementation("io.ktor:ktor-server-auth:$ktorVersion")
