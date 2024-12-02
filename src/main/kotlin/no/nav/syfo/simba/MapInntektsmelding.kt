@@ -67,12 +67,12 @@ fun mapInntektsmelding(
         bruttoUtbetalt = im.agp?.redusertLoennIAgp?.beloep?.toBigDecimal(),
         begrunnelseRedusert = im.agp?.redusertLoennIAgp?.begrunnelse?.name.orEmpty(),
         beregnetInntekt = im.inntekt!!.beloep.toBigDecimal(),
-        inntektsdato = im.inntekt?.inntektsdato, // TODO greit nok?
+        inntektsdato = im.inntekt?.inntektsdato,
         opphørAvNaturalYtelse = im.inntekt?.naturalytelser?.map(NaturalytelseV1::tilNaturalytelse).orEmpty(),
         rapportertInntekt = im.inntekt?.tilRapportertInntekt(),
         refusjon = im.refusjon.tilRefusjon(),
         endringerIRefusjon = im.refusjon?.endringer?.map(RefusjonEndring::tilEndringIRefusjon).orEmpty(),
-        førsteFraværsdag = bestemmendeFravaersdag, // TODO greit nok?
+        førsteFraværsdag = bestemmendeFravaersdag,
         arsakTilInnsending = im.aarsakInnsending.name,
         mottattDato = im.mottatt.toLocalDateTime(),
         innsendingstidspunkt = im.mottatt.toLocalDateTime()
