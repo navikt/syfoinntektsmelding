@@ -44,7 +44,7 @@ class MapInntektsmeldingFraSimbaTest {
             )
         }
         val mapped = mapInntektsmelding(
-            arkivreferanse = "1323",
+            arkivreferanse = "im1323",
             aktorId = "sdfds",
             journalpostId = "134",
             im = imd,
@@ -60,7 +60,7 @@ class MapInntektsmeldingFraSimbaTest {
         val refusjonEndringer = listOf(RefusjonEndring(123.0, 1.desember(2025)))
         val refusjon = Refusjon(10.0, refusjonEndringer, 12.desember(2025))
         val mapped = mapInntektsmelding(
-            arkivreferanse = "1323",
+            arkivreferanse = "im1323",
             aktorId = "sdfds",
             journalpostId = "134",
             im = lagInntektsmelding().copy(refusjon = refusjon),
@@ -84,7 +84,7 @@ class MapInntektsmeldingFraSimbaTest {
                 )
             }
 
-            val mapped = mapInntektsmelding("123", "abc", "345", im, 10.januar)
+            val mapped = mapInntektsmelding("im123", "abc", "345", im, 10.januar)
 
             assertEquals(begrunnelse.name, mapped.begrunnelseRedusert, "Feil ved mapping: $begrunnelse")
             assertEquals(1.0.toBigDecimal(), mapped.bruttoUtbetalt, "Feil ved mapping: $begrunnelse")
@@ -100,7 +100,7 @@ class MapInntektsmeldingFraSimbaTest {
                 )
             )
         }
-        val mapped = mapInntektsmelding("1", "2", "3", im, 10.januar)
+        val mapped = mapInntektsmelding("im1", "2", "3", im, 10.januar)
         assertEquals("", mapped.begrunnelseRedusert)
         assertNull(mapped.bruttoUtbetalt)
     }
@@ -115,7 +115,7 @@ class MapInntektsmeldingFraSimbaTest {
                 endringAarsak = Bonus,
             )
         )
-        val mapped = mapInntektsmelding("1", "2", "3", im, 10.januar)
+        val mapped = mapInntektsmelding("im1", "2", "3", im, 10.januar)
         assertEquals("Bonus", mapped.rapportertInntekt?.endringAarsak)
         assertEquals("Bonus", mapped.rapportertInntekt?.endringAarsakData?.aarsak)
         assertNull(mapped.rapportertInntekt?.endringAarsakData?.perioder)
@@ -127,25 +127,25 @@ class MapInntektsmeldingFraSimbaTest {
     fun mapInnsendtTidspunktFraSimba() {
         val localDateTime = LocalDateTime.of(2023, 2, 11, 14, 0)
         val innsendt = OffsetDateTime.of(localDateTime, ZoneOffset.of("+1"))
-        val im = mapInntektsmelding("1", "2", "3", lagInntektsmelding().copy(mottatt = innsendt), 10.januar)
+        val im = mapInntektsmelding("im1", "2", "3", lagInntektsmelding().copy(mottatt = innsendt), 10.januar)
         assertEquals(localDateTime, im.innsendingstidspunkt)
     }
 
     @Test
     fun mapVedtaksperiodeID() {
-        val im = mapInntektsmelding("1", "2", "3", lagInntektsmelding().copy(vedtaksperiodeId = null), 10.januar)
+        val im = mapInntektsmelding("im1", "2", "3", lagInntektsmelding().copy(vedtaksperiodeId = null), 10.januar)
         assertNull(im.vedtaksperiodeId)
         val vedtaksperiodeId = UUID.randomUUID()
-        val im2 = mapInntektsmelding("1", "2", "3", lagInntektsmelding().copy(vedtaksperiodeId = vedtaksperiodeId), 10.januar)
+        val im2 = mapInntektsmelding("im1", "2", "3", lagInntektsmelding().copy(vedtaksperiodeId = vedtaksperiodeId), 10.januar)
         assertEquals(vedtaksperiodeId, im2.vedtaksperiodeId)
     }
 
     @Test
     fun mapAvsenderForSelvbestemtOgVanlig() {
-        val selvbestemtIM = mapInntektsmelding("1", "2", "3", lagInntektsmelding(), 10.januar, selvbestemt = true)
+        val selvbestemtIM = mapInntektsmelding("im1", "2", "3", lagInntektsmelding(), 10.januar, selvbestemt = true)
         assertEquals(MuligAvsender.NAV_NO_SELVBESTEMT, selvbestemtIM.avsenderSystem.navn)
         assertEquals(MuligAvsender.VERSJON, selvbestemtIM.avsenderSystem.versjon)
-        val im = mapInntektsmelding("1", "2", "3", lagInntektsmelding(), 10.januar)
+        val im = mapInntektsmelding("im1", "2", "3", lagInntektsmelding(), 10.januar)
         assertEquals(MuligAvsender.NAV_NO, im.avsenderSystem.navn)
         assertEquals(MuligAvsender.VERSJON, im.avsenderSystem.versjon)
     }
