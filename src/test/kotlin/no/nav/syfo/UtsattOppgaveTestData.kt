@@ -30,6 +30,7 @@ object UtsattOppgaveTestData {
     )
 
     val inntektsmeldingEntitet = InntektsmeldingEntitet(
+        uuid = UUID.randomUUID().toString(),
         aktorId = "aktoerid-123",
         behandlet = LocalDateTime.now(),
         orgnummer = "arb-org-123",

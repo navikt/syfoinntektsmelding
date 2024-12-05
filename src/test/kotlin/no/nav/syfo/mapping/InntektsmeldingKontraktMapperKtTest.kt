@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.util.UUID
 
 class InntektsmeldingKontraktMapperKtTest {
 
@@ -49,6 +50,7 @@ class InntektsmeldingKontraktMapperKtTest {
     @Test
     fun toInntektsmelding() {
         val dto = InntektsmeldingEntitet(
+            uuid = UUID.randomUUID().toString(),
             journalpostId = grunnleggendeInntektsmelding.journalpostId,
             behandlet = LocalDateTime.of(2019, 10, 25, 0, 0, 0, 0),
             orgnummer = grunnleggendeInntektsmelding.arbeidsgiverOrgnummer,

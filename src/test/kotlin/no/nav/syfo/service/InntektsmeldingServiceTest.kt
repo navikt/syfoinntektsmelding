@@ -20,6 +20,7 @@ import org.junit.Assert.assertTrue
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal
 import java.time.LocalDateTime
+import java.util.UUID
 
 class InntektsmeldingServiceTest {
 
@@ -165,6 +166,7 @@ class InntektsmeldingServiceTest {
 
     fun buildEntitet(aktorId: String, im: Inntektsmelding): InntektsmeldingEntitet {
         return InntektsmeldingEntitet(
+            uuid = UUID.randomUUID().toString(),
             aktorId = aktorId,
             behandlet = LocalDateTime.now(),
             orgnummer = "arb-org-123",

@@ -4,7 +4,9 @@ import kotlinx.serialization.Serializable
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.Inntektsmelding
 import no.nav.helsearbeidsgiver.pdl.PdlClient
 import no.nav.helsearbeidsgiver.utils.json.fromJson
+import no.nav.helsearbeidsgiver.utils.json.parseJson
 import no.nav.helsearbeidsgiver.utils.json.serializer.LocalDateSerializer
+import no.nav.helsearbeidsgiver.utils.json.toPretty
 import no.nav.helsearbeidsgiver.utils.log.logger
 import no.nav.helsearbeidsgiver.utils.log.sikkerLogger
 import no.nav.syfo.behandling.FantIkkeAktørException
@@ -79,9 +81,9 @@ class InntektsmeldingConsumer(
     private fun behandleRecord(
         record: ConsumerRecord<String, String>,
     ) {
-        val value = record.value()
-        sikkerlogger.info("InntektsmeldingConsumer: Mottar record fra Simba: $value")
-        val meldingFraSimba = value.fromJson(JournalfoertInntektsmelding.serializer())
+        val json = record.value().parseJson()
+        sikkerlogger.info("InntektsmeldingConsumer: Mottar record fra Simba.\n${json.toPretty()}")
+        val meldingFraSimba = json.fromJson(JournalfoertInntektsmelding.serializer())
 
         val im = inntektsmeldingService.findByJournalpost(meldingFraSimba.journalpostId)
         if (im != null) {

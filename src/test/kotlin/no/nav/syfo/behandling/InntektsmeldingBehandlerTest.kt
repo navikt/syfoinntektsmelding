@@ -17,6 +17,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.util.UUID
 
 class InntektsmeldingBehandlerTest {
 
@@ -40,6 +41,7 @@ class InntektsmeldingBehandlerTest {
         every { pdlClient.getAktørid("fnr") } returns "aktorId" // inntektsmelding.fnr
         every { inntektsmeldingService.lagreBehandling(any(), any()) } returns
             InntektsmeldingEntitet(
+                uuid = UUID.randomUUID().toString(),
                 orgnummer = "orgnummer",
                 arbeidsgiverPrivat = "123",
                 aktorId = "aktorId",

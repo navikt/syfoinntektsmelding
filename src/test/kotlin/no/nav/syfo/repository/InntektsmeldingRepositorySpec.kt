@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.util.UUID
 
 open class InntektsmeldingRepositorySpec : SystemTestBase() {
 
@@ -41,6 +42,7 @@ open class InntektsmeldingRepositorySpec : SystemTestBase() {
     @Test
     fun findByJournalpostId() {
         val inntektsmelding = InntektsmeldingEntitet(
+            uuid = UUID.randomUUID().toString(),
             journalpostId = "jp-123-987",
             behandlet = LocalDateTime.of(2019, 10, 1, 5, 18, 45, 0),
             orgnummer = "orgnummer",
@@ -55,6 +57,7 @@ open class InntektsmeldingRepositorySpec : SystemTestBase() {
     fun findByAktorId() {
         val behandlet = LocalDateTime.of(2019, 10, 1, 5, 18, 45, 0)
         val inntektsmelding = InntektsmeldingEntitet(
+            uuid = UUID.randomUUID().toString(),
             journalpostId = "journalpostId",
             behandlet = behandlet,
             orgnummer = "orgnummer",
@@ -83,6 +86,7 @@ open class InntektsmeldingRepositorySpec : SystemTestBase() {
     fun lagre_flere_arbeidsgiverperioder() {
         val behandlet = LocalDateTime.of(2019, 10, 1, 5, 18, 45, 0)
         val inntektsmelding = InntektsmeldingEntitet(
+            uuid = UUID.randomUUID().toString(),
             journalpostId = "journalpostId",
             behandlet = behandlet,
             orgnummer = "orgnummer",
@@ -106,6 +110,7 @@ open class InntektsmeldingRepositorySpec : SystemTestBase() {
     fun lagre_uten_arbeidsgiverperioder() {
         val behandlet = LocalDateTime.of(2019, 10, 1, 5, 18, 45, 0)
         val inntektsmelding = InntektsmeldingEntitet(
+            uuid = UUID.randomUUID().toString(),
             journalpostId = "journalpostId",
             behandlet = behandlet,
             orgnummer = "orgnummer",
@@ -164,6 +169,7 @@ open class InntektsmeldingRepositorySpec : SystemTestBase() {
         )
         val mapper = JacksonJsonConfig.objectMapperFactory.opprettObjectMapper()
         val inntektsmelding = InntektsmeldingEntitet(
+            uuid = UUID.randomUUID().toString(),
             journalpostId = "journalpostId",
             behandlet = LocalDateTime.now(),
             orgnummer = "orgnummer",
@@ -225,6 +231,7 @@ open class InntektsmeldingRepositorySpec : SystemTestBase() {
 
     private fun lagInntektsmelding(behandlet: LocalDateTime): InntektsmeldingEntitet {
         return InntektsmeldingEntitet(
+            uuid = UUID.randomUUID().toString(),
             journalpostId = "journalpostId",
             behandlet = behandlet,
             orgnummer = "orgnummer",
