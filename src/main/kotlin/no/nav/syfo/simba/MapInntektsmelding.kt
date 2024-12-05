@@ -56,6 +56,7 @@ fun mapInntektsmelding(
         journalStatus = JournalStatus.FERDIGSTILT,
         sakId = "",
         arkivRefereranse = arkivreferanse,
+        id = im.id.toString(),
         aktorId = aktorId,
         journalpostId = journalpostId,
         avsenderSystem = AvsenderSystem(avsenderSystem, Avsender.VERSJON),
