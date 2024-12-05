@@ -1,9 +1,10 @@
 package no.nav.syfo.simba
 
+import kotlinx.serialization.Serializable
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.Inntektsmelding
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.JournalfoertInntektsmelding
 import no.nav.helsearbeidsgiver.pdl.PdlClient
 import no.nav.helsearbeidsgiver.utils.json.fromJson
+import no.nav.helsearbeidsgiver.utils.json.serializer.LocalDateSerializer
 import no.nav.helsearbeidsgiver.utils.log.logger
 import no.nav.helsearbeidsgiver.utils.log.sikkerLogger
 import no.nav.syfo.behandling.FantIkkeAktørException
@@ -21,7 +22,9 @@ import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import java.time.Duration
+import java.time.LocalDate
 import java.time.LocalDateTime
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.v1.Inntektsmelding as InntektsmeldingV1
 
 class InntektsmeldingConsumer(
     props: Map<String, Any>,
@@ -84,15 +87,15 @@ class InntektsmeldingConsumer(
         if (im != null) {
             sikkerlogger.info("InntektsmeldingConsumer: Behandler ikke ${meldingFraSimba.journalpostId}. Finnes allerede.")
         } else {
-            behandle(meldingFraSimba.journalpostId, meldingFraSimba.inntektsmelding, meldingFraSimba.selvbestemt)
+            behandle(meldingFraSimba.journalpostId, meldingFraSimba.inntektsmeldingV1, meldingFraSimba.bestemmendeFravaersdag, meldingFraSimba.selvbestemt)
             log.info("InntektsmeldingConsumer: Behandlet inntektsmelding med journalpostId: ${meldingFraSimba.journalpostId}")
         }
     }
 
-    private fun behandle(journalpostId: String, inntektsmeldingFraSimba: Inntektsmelding, selvbestemt: Boolean) {
-        val aktorid = hentAktoeridFraPDL(inntektsmeldingFraSimba.identitetsnummer)
+    private fun behandle(journalpostId: String, inntektsmeldingFraSimba: InntektsmeldingV1, bestemmendeFravaersdag: LocalDate?, selvbestemt: Boolean) {
+        val aktorid = hentAktoeridFraPDL(inntektsmeldingFraSimba.sykmeldt.fnr.verdi)
         val arkivreferanse = "im_$journalpostId"
-        val inntektsmelding = mapInntektsmelding(arkivreferanse, aktorid, journalpostId, inntektsmeldingFraSimba, selvbestemt)
+        val inntektsmelding = mapInntektsmelding(arkivreferanse, aktorid, journalpostId, inntektsmeldingFraSimba, bestemmendeFravaersdag, selvbestemt)
         val dto = inntektsmeldingService.lagreBehandling(inntektsmelding, aktorid)
         val matcherSpleis = inntektsmelding.matcherSpleis()
         val timeout = if (matcherSpleis) {
@@ -154,3 +157,14 @@ class InntektsmeldingConsumer(
         }
     }
 }
+
+// Midlertidig klasse som inneholder både gammelt og nytt format
+@Serializable
+private data class JournalfoertInntektsmelding(
+    val journalpostId: String,
+    val inntektsmeldingV1: InntektsmeldingV1,
+    @Serializable(LocalDateSerializer::class)
+    val bestemmendeFravaersdag: LocalDate?,
+    val inntektsmelding: Inntektsmelding,
+    val selvbestemt: Boolean, // for å skille på selvbestemt og vanlig i spinosaurus, før V1 tas i bruk overalt
+)

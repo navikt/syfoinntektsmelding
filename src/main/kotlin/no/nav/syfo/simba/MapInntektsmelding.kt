@@ -1,25 +1,25 @@
 package no.nav.syfo.simba
 
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.Bonus
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.Feilregistrert
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.Ferie
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.Ferietrekk
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.Inntekt
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.InntektEndringAarsak
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.NyStilling
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.NyStillingsprosent
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.Nyansatt
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.Permisjon
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.Permittering
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.Sykefravaer
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.Tariffendring
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.VarigLonnsendring
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.v1.Bonus
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.v1.Feilregistrert
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.v1.Ferie
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.v1.Ferietrekk
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.v1.Inntekt
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.v1.InntektEndringAarsak
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.v1.NyStilling
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.v1.NyStillingsprosent
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.v1.Nyansatt
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.v1.Permisjon
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.v1.Permittering
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.v1.RefusjonEndring
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.v1.Sykefravaer
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.v1.Tariffendring
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.v1.VarigLoennsendring
 import no.nav.helsearbeidsgiver.utils.pipe.orDefault
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
 import no.nav.syfo.domain.inntektsmelding.AvsenderSystem
 import no.nav.syfo.domain.inntektsmelding.EndringIRefusjon
-import no.nav.syfo.domain.inntektsmelding.Gyldighetsstatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.domain.inntektsmelding.Kontaktinformasjon
 import no.nav.syfo.domain.inntektsmelding.Naturalytelse
@@ -27,87 +27,107 @@ import no.nav.syfo.domain.inntektsmelding.OpphoerAvNaturalytelse
 import no.nav.syfo.domain.inntektsmelding.RapportertInntekt
 import no.nav.syfo.domain.inntektsmelding.Refusjon
 import no.nav.syfo.domain.inntektsmelding.SpinnInntektEndringAarsak
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.Inntektsmelding as InntektmeldingSimba
+import java.time.LocalDate
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.v1.Inntektsmelding as InntektmeldingV1
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.v1.Naturalytelse as NaturalytelseV1
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.v1.Periode as PeriodeV1
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.v1.Refusjon as RefusjonV1
 
 object Avsender {
-    val NAV_NO = "NAV_NO"
-    val NAV_NO_SELVBESTEMT = NAV_NO + "_SELVBESTEMT"
-    val VERSJON = "1.0"
+    const val NAV_NO = "NAV_NO"
+    const val NAV_NO_SELVBESTEMT = NAV_NO + "_SELVBESTEMT"
+    const val VERSJON = "1.0"
 }
 
-fun mapInntektsmelding(arkivreferanse: String, aktorId: String, journalpostId: String, im: InntektmeldingSimba, selvbestemt: Boolean = false): Inntektsmelding {
+fun mapInntektsmelding(
+    arkivreferanse: String,
+    aktorId: String,
+    journalpostId: String,
+    im: InntektmeldingV1,
+    bestemmendeFravaersdag: LocalDate?,
+    selvbestemt: Boolean = false
+): Inntektsmelding {
     val avsenderSystem = if (selvbestemt) {
         Avsender.NAV_NO_SELVBESTEMT
     } else {
         Avsender.NAV_NO
     }
     return Inntektsmelding(
-        id = "",
-        vedtaksperiodeId = im.vedtaksperiodeId,
-        fnr = im.identitetsnummer,
-        arbeidsgiverOrgnummer = im.orgnrUnderenhet,
-        arbeidsgiverPrivatFnr = null,
-        arbeidsgiverPrivatAktørId = null,
-        arbeidsforholdId = null,
-        journalpostId = journalpostId,
-        arsakTilInnsending = im.årsakInnsending.name.lowercase().replaceFirstChar { it.uppercase() },
         journalStatus = JournalStatus.FERDIGSTILT,
-        arbeidsgiverperioder = im.arbeidsgiverperioder.map { Periode(it.fom, it.tom) },
-        beregnetInntekt = im.beregnetInntekt.toBigDecimal(),
-        inntektsdato = im.inntektsdato,
-        refusjon = Refusjon(im.refusjon.refusjonPrMnd.orDefault(0.0).toBigDecimal(), im.refusjon.refusjonOpphører),
-        endringerIRefusjon = im.refusjon.refusjonEndringer?.map { EndringIRefusjon(it.dato, it.beløp?.toBigDecimal()) }.orEmpty(),
-        opphørAvNaturalYtelse = im.naturalytelser?.map {
-            OpphoerAvNaturalytelse(
-                Naturalytelse.valueOf(it.naturalytelse.name),
-                it.dato,
-                it.beløp.toBigDecimal()
-            )
-        }.orEmpty(),
-        gjenopptakelserNaturalYtelse = emptyList(),
-        gyldighetsStatus = Gyldighetsstatus.GYLDIG,
-        arkivRefereranse = arkivreferanse,
-        feriePerioder = emptyList(),
-        førsteFraværsdag = im.bestemmendeFraværsdag,
-        mottattDato = im.tidspunkt.toLocalDateTime(),
         sakId = "",
+        arkivRefereranse = arkivreferanse,
         aktorId = aktorId,
-        begrunnelseRedusert = im.fullLønnIArbeidsgiverPerioden?.begrunnelse?.name.orEmpty(),
+        journalpostId = journalpostId,
         avsenderSystem = AvsenderSystem(avsenderSystem, Avsender.VERSJON),
-        nærRelasjon = null,
-        kontaktinformasjon = Kontaktinformasjon(im.innsenderNavn, im.telefonnummer),
-        innsendingstidspunkt = im.tidspunkt.toLocalDateTime(),
-        bruttoUtbetalt = im.fullLønnIArbeidsgiverPerioden?.utbetalt?.toBigDecimal(),
-        årsakEndring = null,
-        rapportertInntekt = im.inntekt?.tilRapportertInntekt()
+        vedtaksperiodeId = im.vedtaksperiodeId,
+        fnr = im.sykmeldt.fnr.verdi,
+        arbeidsgiverOrgnummer = im.avsender.orgnr.verdi,
+        kontaktinformasjon = im.avsender.let { Kontaktinformasjon(it.navn, it.tlf) },
+        arbeidsgiverperioder = im.agp?.perioder?.map(PeriodeV1::tilPeriode).orEmpty(),
+        bruttoUtbetalt = im.agp?.redusertLoennIAgp?.beloep?.toBigDecimal(),
+        begrunnelseRedusert = im.agp?.redusertLoennIAgp?.begrunnelse?.name.orEmpty(),
+        beregnetInntekt = im.inntekt!!.beloep.toBigDecimal(),
+        inntektsdato = im.inntekt?.inntektsdato,
+        opphørAvNaturalYtelse = im.inntekt?.naturalytelser?.map(NaturalytelseV1::tilNaturalytelse).orEmpty(),
+        rapportertInntekt = im.inntekt?.tilRapportertInntekt(),
+        refusjon = im.refusjon.tilRefusjon(),
+        endringerIRefusjon = im.refusjon?.endringer?.map(RefusjonEndring::tilEndringIRefusjon).orEmpty(),
+        førsteFraværsdag = bestemmendeFravaersdag,
+        arsakTilInnsending = im.aarsakInnsending.name,
+        mottattDato = im.mottatt.toLocalDateTime(),
+        innsendingstidspunkt = im.mottatt.toLocalDateTime()
     )
 }
 
-fun Inntekt.tilRapportertInntekt() =
-    RapportertInntekt(
-        bekreftet = this.bekreftet,
-        beregnetInntekt = this.beregnetInntekt,
-        endringAarsak = this.endringÅrsak?.aarsak(),
-        endringAarsakData = this.endringÅrsak?.tilSpinnInntektEndringAarsak(),
-        manueltKorrigert = this.manueltKorrigert
+private fun NaturalytelseV1.tilNaturalytelse(): OpphoerAvNaturalytelse =
+    OpphoerAvNaturalytelse(
+        naturalytelse = naturalytelse.name.let(Naturalytelse::valueOf),
+        fom = sluttdato,
+        beloepPrMnd = verdiBeloep.toBigDecimal()
     )
 
-fun InntektEndringAarsak.aarsak(): String =
-    this.tilSpinnInntektEndringAarsak()?.aarsak ?: this::class.simpleName ?: "Ukjent"
+private fun Inntekt.tilRapportertInntekt(): RapportertInntekt {
+    val spinnEndringAarsak = endringAarsak?.tilSpinnInntektEndringAarsak()
 
-fun InntektEndringAarsak.tilSpinnInntektEndringAarsak(): SpinnInntektEndringAarsak? =
+    return RapportertInntekt(
+        bekreftet = true,
+        beregnetInntekt = beloep,
+        endringAarsak = spinnEndringAarsak?.aarsak,
+        endringAarsakData = spinnEndringAarsak,
+        manueltKorrigert = endringAarsak != null
+    )
+}
+
+private fun RefusjonV1?.tilRefusjon(): Refusjon =
+    Refusjon(
+        beloepPrMnd = this?.beloepPerMaaned.orDefault(0.0).toBigDecimal(),
+        opphoersdato = this?.sluttdato
+    )
+
+private fun RefusjonEndring.tilEndringIRefusjon(): EndringIRefusjon =
+    EndringIRefusjon(
+        endringsdato = startdato,
+        beloep = beloep.toBigDecimal()
+    )
+
+private fun InntektEndringAarsak.tilSpinnInntektEndringAarsak(): SpinnInntektEndringAarsak =
     when (this) {
-        is Permisjon -> SpinnInntektEndringAarsak(aarsak = "Permisjon", perioder = liste.map { Periode(it.fom, it.tom) })
-        is Ferie -> SpinnInntektEndringAarsak(aarsak = "Ferie", perioder = liste.map { Periode(it.fom, it.tom) })
+        is Bonus -> SpinnInntektEndringAarsak(aarsak = "Bonus")
+        is Feilregistrert -> SpinnInntektEndringAarsak(aarsak = "Feilregistrert")
+        is Ferie -> SpinnInntektEndringAarsak(aarsak = "Ferie", perioder = ferier.map(PeriodeV1::tilPeriode))
         is Ferietrekk -> SpinnInntektEndringAarsak(aarsak = "Ferietrekk")
-        is Permittering -> SpinnInntektEndringAarsak(aarsak = "Permittering", perioder = liste.map { Periode(it.fom, it.tom) })
-        is Tariffendring -> SpinnInntektEndringAarsak("Tariffendring", gjelderFra = gjelderFra, bleKjent = bleKjent)
-        is VarigLonnsendring -> SpinnInntektEndringAarsak("VarigLonnsendring", gjelderFra = gjelderFra)
         is NyStilling -> SpinnInntektEndringAarsak(aarsak = "NyStilling", gjelderFra = gjelderFra)
         is NyStillingsprosent -> SpinnInntektEndringAarsak(aarsak = "NyStillingsprosent", gjelderFra = gjelderFra)
-        is Bonus -> SpinnInntektEndringAarsak(aarsak = "Bonus")
-        is Sykefravaer -> SpinnInntektEndringAarsak(aarsak = "Sykefravaer", perioder = liste.map { Periode(it.fom, it.tom) })
         is Nyansatt -> SpinnInntektEndringAarsak(aarsak = "Nyansatt")
-        is Feilregistrert -> SpinnInntektEndringAarsak(aarsak = "Feilregistrert")
-        else -> null
+        is Permisjon -> SpinnInntektEndringAarsak(aarsak = "Permisjon", perioder = permisjoner.map(PeriodeV1::tilPeriode))
+        is Permittering -> SpinnInntektEndringAarsak(aarsak = "Permittering", perioder = permitteringer.map(PeriodeV1::tilPeriode))
+        is Sykefravaer -> SpinnInntektEndringAarsak(aarsak = "Sykefravaer", perioder = sykefravaer.map(PeriodeV1::tilPeriode))
+        is Tariffendring -> SpinnInntektEndringAarsak(aarsak = "Tariffendring", gjelderFra = gjelderFra, bleKjent = bleKjent)
+        is VarigLoennsendring -> SpinnInntektEndringAarsak(aarsak = "VarigLonnsendring", gjelderFra = gjelderFra)
     }
+
+private fun PeriodeV1.tilPeriode(): Periode =
+    Periode(
+        fom = fom,
+        tom = tom,
+    )
