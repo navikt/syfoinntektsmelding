@@ -41,29 +41,9 @@ class Metrikk {
         "Metrikker for feilregistrerte inntektsmeldinger", "type"
     )
 
-    val OVERLAPPENDEINNTEKTSMELDING = proseseringsMetrikker(
-        "syfoinntektsmelding_inntektsmeldinger_kobling",
-        "Metrikker for inntektsmeldinger kobling", "type", "kobling"
-    )
-
-    val SAK = proseseringsMetrikker(
-        "syfoinntektsmelding_sak",
-        "Hvordan man finner sakId", "type", "grunn"
-    )
-
     val INNTEKTSMELDINGSYKEPENGERUTLAND = proseseringsMetrikker(
         "syfoinntektsmelding_sykepenger_utland",
         "Metrikker for sykepenger utland", "type"
-    )
-
-    val FEILETBAKGRUNNSJOBB = proseseringsMetrikker(
-        "syfoinntektsmelding_bakgrunnsjobb_feilet",
-        "Metrikker for feilt bakgrunnjobb", "type"
-    )
-
-    val STOPPETBAKGRUNNSJOBB = proseseringsMetrikker(
-        "syfoinntektsmelding_bakgrunnsjobb_stoppet",
-        "Metrikker for stoppet bakgrunnsjob", "type"
     )
 
     val BEHANDLINGSFEIL = proseseringsMetrikker(
@@ -159,16 +139,7 @@ class Metrikk {
     fun tellInntektsmeldingerJournalfort() = INNTEKTS_MELDINGER_JOURNALFORT.labels("info").inc()
     fun tellInntektsmeldingerFeilregistrert() = INNTEKTS_MELDINGER_FEILREGISTRERT.labels("info").inc()
 
-    fun tellOverlappendeInntektsmelding() = OVERLAPPENDEINNTEKTSMELDING.labels("info", OVERLAPPENDE).inc()
-
-    fun tellInntektsmeldingSaksIdFraDB() = SAK.labels("info", EKSISTERER).inc()
-    fun tellInntektsmeldingNySak() = SAK.labels("info", OPPRETT).inc()
-
     fun tellInntektsmeldingSykepengerUtland() = INNTEKTSMELDINGSYKEPENGERUTLAND.labels("info").inc()
-
-    fun tellFeiletBakgrunnsjobb() = FEILETBAKGRUNNSJOBB.labels("info").inc()
-
-    fun tellStoppetBakgrunnsjobb() = STOPPETBAKGRUNNSJOBB.labels("info").inc()
 
     fun tellBehandlingsfeil(feiltype: Feiltype) = BEHANDLINGSFEIL.labels("${feiltype.navn}").inc()
 
@@ -201,11 +172,4 @@ class Metrikk {
     fun tellUtsattOppgave_Opprett() = UTSATT_OPPGAVE_OPPRETT.labels("info").inc()
     fun tellUtsattOppgave_OpprettTimeout() = UTSATT_OPPGAVE_OPPRETT_TIMEOUT.labels("info").inc()
     fun tellUtsattOppgave_Irrelevant() = UTSATT_OPPGAVE_IRRELEVANT.labels("info").inc()
-
-    companion object {
-        private const val OVERLAPPENDE = "overlappende"
-        private const val HENT = "hent"
-        private const val OPPRETT = "opprett"
-        private const val EKSISTERER = "eksisterer"
-    }
 }

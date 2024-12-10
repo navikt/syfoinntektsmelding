@@ -30,43 +30,6 @@ fun Module.mockExternalDependecies() {
         }
     }
 
-  /*  single {
-          PdlClient("", Behandlingsgrunnlag.INNTEKTSMELDING, { "" }) {
-            override fun fullPerson(ident: String) =
-                PdlHentFullPerson(
-                    PdlHentFullPerson.PdlFullPersonliste(
-                        emptyList(),
-                        emptyList(),
-                        emptyList(),
-                        emptyList(),
-                        emptyList(),
-                        emptyList(),
-                        emptyList(),
-                    ),
-                    PdlHentFullPerson.PdlIdentResponse(listOf(PdlIdent("aktør-id", PdlIdent.PdlIdentGruppe.AKTORID))),
-                    PdlHentFullPerson.PdlGeografiskTilknytning(
-                        PdlHentFullPerson.PdlGeografiskTilknytning.PdlGtType.UTLAND,
-                        null,
-                        null,
-                        "SWE",
-                    ),
-                )
-
-            override fun personNavn(ident: String) =
-                PdlHentPersonNavn.PdlPersonNavneliste(
-                    listOf(
-                        PdlHentPersonNavn.PdlPersonNavneliste.PdlPersonNavn(
-                            "Ola",
-                            "M",
-                            "Avsender",
-                            PdlPersonNavnMetadata("freg"),
-                        ),
-                    ),
-                )
-        }
-    } bind PdlClient::class
-*/
-
     single {
         object : Norg2Client(
             "",

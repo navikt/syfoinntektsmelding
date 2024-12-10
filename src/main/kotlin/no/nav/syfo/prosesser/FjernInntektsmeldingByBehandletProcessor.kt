@@ -5,7 +5,6 @@ import no.nav.hag.utils.bakgrunnsjobb.BakgrunnsjobbProsesserer
 import no.nav.helsearbeidsgiver.utils.log.logger
 import no.nav.syfo.repository.InntektsmeldingRepository
 import java.time.LocalDate
-import java.util.UUID
 
 class FjernInntektsmeldingByBehandletProcessor(
     private val repository: InntektsmeldingRepository,
@@ -22,6 +21,4 @@ class FjernInntektsmeldingByBehandletProcessor(
         val antallSlettet = repository.deleteByBehandletBefore(konfigurertAntallMånederSiden)
         logger.info("Slettet $antallSlettet inntektsmeldinger")
     }
-
-    data class JobbData(val id: UUID)
 }

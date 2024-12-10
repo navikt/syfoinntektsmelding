@@ -23,11 +23,5 @@ fun createHikariConfig(
         prometheusMetricsTrackerFactory?.let { metricsTrackerFactory = prometheusMetricsTrackerFactory }
     }
 
-enum class Role {
-    admin, user, readonly;
-
-    override fun toString() = name.lowercase()
-}
-
 fun createTestHikariConfig() =
     createHikariConfig("jdbc:postgresql://localhost:5432/spinn", "spinn", "spinn", null)
