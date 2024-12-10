@@ -19,7 +19,6 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 class JournalConsumerTest {
-
     private val pdlClient = mockk<PdlClient>(relaxed = true)
     private val dokumentClient = mockk<SafDokumentClient>(relaxed = true)
     private val safJournalpostClient = mockk<SafJournalpostClient>(relaxed = true)
@@ -29,15 +28,17 @@ class JournalConsumerTest {
 
     @Test
     fun hentInntektsmelding() {
-        val periode = Periode(
-            LocalDate.of(2021, 7, 1),
-            LocalDate.of(2021, 7, 19)
-        )
-        val journalpost = Journalpost(
-            JournalStatus.MOTTATT,
-            LocalDateTime.now(),
-            dokumenter = listOf(Dokument(dokumentInfoId = "dokumentId"))
-        )
+        val periode =
+            Periode(
+                LocalDate.of(2021, 7, 1),
+                LocalDate.of(2021, 7, 19),
+            )
+        val journalpost =
+            Journalpost(
+                JournalStatus.MOTTATT,
+                LocalDateTime.now(),
+                dokumenter = listOf(Dokument(dokumentInfoId = "dokumentId")),
+            )
         every {
             safJournalpostClient.getJournalpostMetadata(any())
         } returns journalpost
@@ -52,11 +53,12 @@ class JournalConsumerTest {
 
     @Test
     fun parserInntektsmeldingUtenPerioder() {
-        val journalresponse = Journalpost(
-            JournalStatus.MOTTATT,
-            LocalDateTime.now(),
-            dokumenter = listOf(Dokument(dokumentInfoId = "dokumentId"))
-        )
+        val journalresponse =
+            Journalpost(
+                JournalStatus.MOTTATT,
+                LocalDateTime.now(),
+                dokumenter = listOf(Dokument(dokumentInfoId = "dokumentId")),
+            )
         every {
             safJournalpostClient.getJournalpostMetadata(any())
         } returns journalresponse
@@ -71,11 +73,12 @@ class JournalConsumerTest {
 
     @Test
     fun parseInntektsmeldingV7() {
-        val journalresponse = Journalpost(
-            JournalStatus.MOTTATT,
-            LocalDateTime.now(),
-            dokumenter = listOf(Dokument(dokumentInfoId = "dokumentId"))
-        )
+        val journalresponse =
+            Journalpost(
+                JournalStatus.MOTTATT,
+                LocalDateTime.now(),
+                dokumenter = listOf(Dokument(dokumentInfoId = "dokumentId")),
+            )
         every {
             safJournalpostClient.getJournalpostMetadata(any())
         } returns journalresponse
@@ -84,10 +87,11 @@ class JournalConsumerTest {
             dokumentClient.hentDokument(any(), any())
         } returns fakeInntekt.toByteArray()
 
-        val (_, _, _, arbeidsgiverPrivat, _, _, _, _, _, arbeidsgiverperioder) = journalConsumer.hentInntektsmelding(
-            "journalpostId",
-            "AR-123"
-        )
+        val (_, _, _, arbeidsgiverPrivat, _, _, _, _, _, arbeidsgiverperioder) =
+            journalConsumer.hentInntektsmelding(
+                "journalpostId",
+                "AR-123",
+            )
 
         assertThat(arbeidsgiverperioder.isEmpty()).isFalse
         assertThat(arbeidsgiverPrivat != null).isTrue
@@ -95,41 +99,45 @@ class JournalConsumerTest {
 
     @Test
     fun parseInntektsmelding0924() {
-        val journalresponse = Journalpost(
-            JournalStatus.MOTTATT,
-            LocalDateTime.now(),
-            dokumenter = listOf(Dokument(dokumentInfoId = "dokumentId"))
-        )
+        val journalresponse =
+            Journalpost(
+                JournalStatus.MOTTATT,
+                LocalDateTime.now(),
+                dokumenter = listOf(Dokument(dokumentInfoId = "dokumentId")),
+            )
         every {
             safJournalpostClient.getJournalpostMetadata(any())
         } returns journalresponse
 
         every {
             dokumentClient.hentDokument(any(), any())
-        } returns inntektsmeldingArbeidsgiver(
-            listOf(
-                Periode(
-                    LocalDate.of(2019, 2, 1),
-                    LocalDate.of(2019, 2, 16)
-                )
-            )
-        ).toByteArray()
+        } returns
+            inntektsmeldingArbeidsgiver(
+                listOf(
+                    Periode(
+                        LocalDate.of(2019, 2, 1),
+                        LocalDate.of(2019, 2, 16),
+                    ),
+                ),
+            ).toByteArray()
 
-        val (_, _, arbeidsgiverOrgnummer, arbeidsgiverPrivat) = journalConsumer.hentInntektsmelding(
-            "journalpostId",
-            "AR-123"
-        )
+        val (_, _, arbeidsgiverOrgnummer, arbeidsgiverPrivat) =
+            journalConsumer.hentInntektsmelding(
+                "journalpostId",
+                "AR-123",
+            )
         assertThat(arbeidsgiverOrgnummer).isNotNull()
         assertThat(arbeidsgiverPrivat != null).isFalse
     }
 
     @Test
     fun feil_i_graphql_spørring() {
-        val journalresponse = Journalpost(
-            JournalStatus.MOTTATT,
-            LocalDateTime.now(),
-            dokumenter = listOf(Dokument(dokumentInfoId = "dokumentId"))
-        )
+        val journalresponse =
+            Journalpost(
+                JournalStatus.MOTTATT,
+                LocalDateTime.now(),
+                dokumenter = listOf(Dokument(dokumentInfoId = "dokumentId")),
+            )
         every {
             safJournalpostClient.getJournalpostMetadata(any())
         } returns journalresponse

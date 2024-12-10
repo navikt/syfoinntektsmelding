@@ -14,6 +14,6 @@ fun mapJournalpostHendelse(record: GenericRecord): InngaaendeJournalpostDTO {
         record.get("temaNytt") as String,
         record.get("mottaksKanal") as String,
         record.get("kanalReferanseId") as String,
-        record.get("behandlingstema") as String
+        record.get("behandlingstema") as String,
     )
 }

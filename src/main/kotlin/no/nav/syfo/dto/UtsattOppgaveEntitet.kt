@@ -15,9 +15,12 @@ data class UtsattOppgaveEntitet(
     var gosysOppgaveId: String?,
     var oppdatert: LocalDateTime?,
     var speil: Boolean,
-    var utbetalingBruker: Boolean
+    var utbetalingBruker: Boolean,
 )
 
 enum class Tilstand {
-    Utsatt, Forkastet, Opprettet, OpprettetTimeout
+    Utsatt,
+    Forkastet,
+    Opprettet,
+    OpprettetTimeout,
 }

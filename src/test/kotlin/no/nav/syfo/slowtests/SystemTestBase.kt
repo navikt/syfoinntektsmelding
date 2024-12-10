@@ -8,8 +8,6 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.TestInstance
 import org.koin.test.KoinTest
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-
 /**
  * Denne klassen kjører opp applikasjonen med Koin-profilen LOCAL
  * slik at man kan
@@ -17,17 +15,17 @@ import org.koin.test.KoinTest
  * 2) Kjøre tester mot systemet (bakgrunnsjobber feks) mens de er realistisk  konfigurert
  * 3) Kjøre ende til ende-tester (feks teste at en søknad send inn på HTTP-endepunktet havner i databasen riktig)
  */
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 open class SystemTestBase : KoinTest {
-
     companion object {
-        const val testServerPort = 8989
+        const val TEST_SERVER_PORT = 8989
         var app: SpinnApplication? = null
     }
 
     @BeforeAll
     fun before() {
         if (app == null) {
-            app = SpinnApplication(port = testServerPort)
+            app = SpinnApplication(port = TEST_SERVER_PORT)
             app!!.start()
             Thread.sleep(200)
         }

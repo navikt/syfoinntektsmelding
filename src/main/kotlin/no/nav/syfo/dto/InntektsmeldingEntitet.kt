@@ -10,11 +10,14 @@ data class InntektsmeldingEntitet(
     var orgnummer: String? = null,
     var arbeidsgiverPrivat: String? = null,
     var behandlet: LocalDateTime? = LocalDateTime.now(),
-    var data: String? = null
+    var data: String? = null,
 ) {
     var arbeidsgiverperioder: MutableList<ArbeidsgiverperiodeEntitet> = ArrayList()
 
-    fun leggtilArbeidsgiverperiode(fom: LocalDate, tom: LocalDate) {
+    fun leggtilArbeidsgiverperiode(
+        fom: LocalDate,
+        tom: LocalDate,
+    ) {
         val periode = ArbeidsgiverperiodeEntitet(fom = fom, tom = tom)
         periode.inntektsmelding = this
         arbeidsgiverperioder.add(periode)

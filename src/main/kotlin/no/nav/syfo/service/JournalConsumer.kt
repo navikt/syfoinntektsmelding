@@ -18,7 +18,7 @@ import javax.xml.bind.JAXBElement
 class JournalConsumer(
     private val safDokumentClient: SafDokumentClient,
     private val safJournalpostClient: SafJournalpostClient,
-    private val pdlClient: PdlClient
+    private val pdlClient: PdlClient,
 ) {
     private val sikkerlogger = sikkerLogger()
 
@@ -28,19 +28,37 @@ class JournalConsumer(
      * 2 - mapper om i to separate format
      * 3 - privat mapper henter ut aktørID
      */
-    fun hentInntektsmelding(journalpostId: String, arkivReferanse: String): Inntektsmelding {
+    fun hentInntektsmelding(
+        journalpostId: String,
+        arkivReferanse: String,
+    ): Inntektsmelding {
         try {
             val journalpost = safJournalpostClient.getJournalpostMetadata(journalpostId)
-            val inntektsmeldingRAW = runBlocking {
-                safDokumentClient.hentDokument(journalpostId, journalpost?.dokumenter!![0].dokumentInfoId)
-            }
+            val inntektsmeldingRAW =
+                runBlocking {
+                    safDokumentClient.hentDokument(journalpostId, journalpost?.dokumenter!![0].dokumentInfoId)
+                }
             val jaxbInntektsmelding = JAXB.unmarshalInntektsmelding<JAXBElement<Any>>(inntektsmeldingRAW?.decodeToString())
             val mottattDato: LocalDateTime = journalpost!!.datoOpprettet
             val journalStatus: JournalStatus = journalpost.journalstatus
-            return if (jaxbInntektsmelding.value is XMLInntektsmeldingM)
-                InntektsmeldingArbeidsgiver20180924Mapper.fraXMLInntektsmelding(jaxbInntektsmelding, journalpostId, mottattDato, journalStatus, arkivReferanse)
-            else
-                InntektsmeldingArbeidsgiverPrivat20181211Mapper.fraXMLInntektsmelding(jaxbInntektsmelding, journalpostId, mottattDato, journalStatus, arkivReferanse, pdlClient)
+            return if (jaxbInntektsmelding.value is XMLInntektsmeldingM) {
+                InntektsmeldingArbeidsgiver20180924Mapper.fraXMLInntektsmelding(
+                    jaxbInntektsmelding,
+                    journalpostId,
+                    mottattDato,
+                    journalStatus,
+                    arkivReferanse,
+                )
+            } else {
+                InntektsmeldingArbeidsgiverPrivat20181211Mapper.fraXMLInntektsmelding(
+                    jaxbInntektsmelding,
+                    journalpostId,
+                    mottattDato,
+                    journalStatus,
+                    arkivReferanse,
+                    pdlClient,
+                )
+            }
         } catch (e: RuntimeException) {
             sikkerlogger.error("Klarte ikke å hente inntektsmelding med journalpostId: $journalpostId", e)
             throw HentDokumentFeiletException(journalpostId, e)

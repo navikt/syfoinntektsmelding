@@ -20,13 +20,14 @@ fun Module.mockExternalDependecies() {
     single {
         mockk<PdlClient> {
             coEvery { personNavn(any()) } returns PersonNavn("Ola", "M", "Avsender")
-            coEvery { fullPerson(any()) } returns FullPerson(
-                navn = PersonNavn(fornavn = "Per", mellomnavn = "", etternavn = "Ulv"),
-                foedselsdato = LocalDate.of(1900, 1, 1),
-                ident = "aktør-id",
-                diskresjonskode = "SPSF",
-                geografiskTilknytning = "SWE"
-            )
+            coEvery { fullPerson(any()) } returns
+                FullPerson(
+                    navn = PersonNavn(fornavn = "Per", mellomnavn = "", etternavn = "Ulv"),
+                    foedselsdato = LocalDate.of(1900, 1, 1),
+                    ident = "aktør-id",
+                    diskresjonskode = "SPSF",
+                    geografiskTilknytning = "SWE",
+                )
         }
     }
 

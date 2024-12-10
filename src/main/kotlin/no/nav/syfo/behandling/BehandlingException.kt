@@ -19,10 +19,10 @@ open class HentOppgaveException(
     oppgaveType: String,
     cause: Exception?,
 ) : OppgaveException(
-    Feiltype.OPPGAVE_HENT,
-    "Feil ved oppslag til oppgave for journalpostId $journalpostId med oppgavetype $oppgaveType!",
-    cause,
-)
+        Feiltype.OPPGAVE_HENT,
+        "Feil ved oppslag til oppgave for journalpostId $journalpostId med oppgavetype $oppgaveType!",
+        cause,
+    )
 
 open class OpprettOppgaveException(
     journalpostId: String,

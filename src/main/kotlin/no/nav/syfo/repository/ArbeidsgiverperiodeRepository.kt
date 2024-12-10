@@ -6,17 +6,24 @@ import java.sql.ResultSet
 import javax.sql.DataSource
 
 interface ArbeidsgiverperiodeRepository {
-    fun lagreData(agp: ArbeidsgiverperiodeEntitet, connection: Connection): List<ArbeidsgiverperiodeEntitet>
+    fun lagreData(
+        agp: ArbeidsgiverperiodeEntitet,
+        connection: Connection,
+    ): List<ArbeidsgiverperiodeEntitet>
+
     fun deleteAll()
 }
 
 class ArbeidsgiverperiodeRepositoryImp(private val ds: DataSource) : ArbeidsgiverperiodeRepository {
-
-    override fun lagreData(agp: ArbeidsgiverperiodeEntitet, connection: Connection): List<ArbeidsgiverperiodeEntitet> {
+    override fun lagreData(
+        agp: ArbeidsgiverperiodeEntitet,
+        connection: Connection,
+    ): List<ArbeidsgiverperiodeEntitet> {
         val insertStatement =
             """INSERT INTO ARBEIDSGIVERPERIODE (PERIODE_UUID, INNTEKTSMELDING_UUID, FOM, TOM)
         VALUES (?, ?, ?::date, ?::date)
-        RETURNING *;""".trimMargin()
+        RETURNING *;
+            """.trimMargin()
         val arbeidsgiverperioder = ArrayList<ArbeidsgiverperiodeEntitet>()
         val prepareStatement = connection.prepareStatement(insertStatement)
         prepareStatement.setString(1, "${agp.uuid}")
@@ -27,7 +34,10 @@ class ArbeidsgiverperiodeRepositoryImp(private val ds: DataSource) : Arbeidsgive
         return resultLoop(res, arbeidsgiverperioder)
     }
 
-    fun lagreDataer(arbeidsgiverperiodeEntiteter: List<ArbeidsgiverperiodeEntitet>, connection: Connection) {
+    fun lagreDataer(
+        arbeidsgiverperiodeEntiteter: List<ArbeidsgiverperiodeEntitet>,
+        connection: Connection,
+    ) {
         arbeidsgiverperiodeEntiteter.forEach { agiver ->
             lagreData(agiver, connection)
         }
@@ -62,7 +72,7 @@ class ArbeidsgiverperiodeRepositoryImp(private val ds: DataSource) : Arbeidsgive
 
     private fun resultLoop(
         res: ResultSet,
-        returnValue: ArrayList<ArbeidsgiverperiodeEntitet>
+        returnValue: ArrayList<ArbeidsgiverperiodeEntitet>,
     ): ArrayList<ArbeidsgiverperiodeEntitet> {
         while (res.next()) {
             returnValue.add(
@@ -71,8 +81,8 @@ class ArbeidsgiverperiodeRepositoryImp(private val ds: DataSource) : Arbeidsgive
                     inntektsmelding = null, // inntektsmeldingRepository.findByUuid(res.getString("INNTEKTSMELDING_UUID") ),
                     fom = res.getDate("FOM").toLocalDate(),
                     tom = res.getDate("TOM").toLocalDate(),
-                    inntektsmelding_uuid = res.getString("INNTEKTSMELDING_UUID")
-                )
+                    inntektsmelding_uuid = res.getString("INNTEKTSMELDING_UUID"),
+                ),
             )
         }
         return returnValue

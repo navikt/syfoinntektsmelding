@@ -72,7 +72,14 @@ class OppgaveServiceTest {
             coEvery { oppgaveClient.hentOppgaver(any()) } returns
                 OppgaveListeResponse(
                     1,
-                    listOf(Oppgave(id = 1, oppgavetype = Oppgavetype.INNTEKTSMELDING, prioritet = Prioritet.NORM.name, aktivDato = LocalDate.now())),
+                    listOf(
+                        Oppgave(
+                            id = 1,
+                            oppgavetype = Oppgavetype.INNTEKTSMELDING,
+                            prioritet = Prioritet.NORM.name,
+                            aktivDato = LocalDate.now(),
+                        ),
+                    ),
                 )
             val result = oppgaveService.opprettFordelingsOppgave(journalpostId)
             coVerify(exactly = 0) {
@@ -95,7 +102,14 @@ class OppgaveServiceTest {
             coEvery { oppgaveClient.hentOppgaver(any()) } returns
                 OppgaveListeResponse(
                     1,
-                    listOf(Oppgave(id = 1, oppgavetype = Oppgavetype.INNTEKTSMELDING, prioritet = Prioritet.NORM.name, aktivDato = LocalDate.now())),
+                    listOf(
+                        Oppgave(
+                            id = 1,
+                            oppgavetype = Oppgavetype.INNTEKTSMELDING,
+                            prioritet = Prioritet.NORM.name,
+                            aktivDato = LocalDate.now(),
+                        ),
+                    ),
                 )
             val result = oppgaveService.opprettOppgave(journalpostId, aktoerId, behandlingsKategori)
             coVerify(exactly = 0) {
@@ -115,7 +129,11 @@ class OppgaveServiceTest {
             val aktoerId = "456"
             val behandlingsKategori = BehandlingsKategori.REFUSJON_MED_DATO
             coEvery { oppgaveClient.hentOppgaver(any()) } returns OppgaveListeResponse(0, emptyList())
-            coEvery { oppgaveClient.opprettOppgave(any()) } throws OpprettOppgaveFeiletException(Exception("Feil ved oppretting av oppgave"))
+            coEvery {
+                oppgaveClient.opprettOppgave(
+                    any(),
+                )
+            } throws OpprettOppgaveFeiletException(Exception("Feil ved oppretting av oppgave"))
             coEvery { metrikk.tellOpprettOppgave(any()) } just Runs
 
             val exception =

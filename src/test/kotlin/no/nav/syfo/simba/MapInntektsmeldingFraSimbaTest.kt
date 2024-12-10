@@ -36,20 +36,23 @@ class MapInntektsmeldingFraSimbaTest {
     fun mapInntektsmeldingMedNaturalytelser() {
         val naturalytelser = Naturalytelse.Kode.entries.map { Naturalytelse(it, 1.0, LocalDate.now()) }
         val antallNaturalytelser = naturalytelser.count()
-        val imd = lagInntektsmelding().let {
-            it.copy(
-                inntekt = it.inntekt?.copy(
-                    naturalytelser = naturalytelser
+        val imd =
+            lagInntektsmelding().let {
+                it.copy(
+                    inntekt =
+                        it.inntekt?.copy(
+                            naturalytelser = naturalytelser,
+                        ),
                 )
+            }
+        val mapped =
+            mapInntektsmelding(
+                arkivreferanse = "im1323",
+                aktorId = "sdfds",
+                journalpostId = "134",
+                im = imd,
+                bestemmendeFravaersdag = 10.januar,
             )
-        }
-        val mapped = mapInntektsmelding(
-            arkivreferanse = "im1323",
-            aktorId = "sdfds",
-            journalpostId = "134",
-            im = imd,
-            bestemmendeFravaersdag = 10.januar
-        )
         assertEquals(antallNaturalytelser, mapped.opphørAvNaturalYtelse.size)
         val naturalytelse = mapped.opphørAvNaturalYtelse[0]
         assertEquals(no.nav.syfo.domain.inntektsmelding.Naturalytelse.AKSJERGRUNNFONDSBEVISTILUNDERKURS, naturalytelse.naturalytelse)
@@ -59,13 +62,14 @@ class MapInntektsmeldingFraSimbaTest {
     fun mapRefusjon() {
         val refusjonEndringer = listOf(RefusjonEndring(123.0, 1.desember(2025)))
         val refusjon = Refusjon(10.0, refusjonEndringer, 12.desember(2025))
-        val mapped = mapInntektsmelding(
-            arkivreferanse = "im1323",
-            aktorId = "sdfds",
-            journalpostId = "134",
-            im = lagInntektsmelding().copy(refusjon = refusjon),
-            bestemmendeFravaersdag = 10.januar
-        )
+        val mapped =
+            mapInntektsmelding(
+                arkivreferanse = "im1323",
+                aktorId = "sdfds",
+                journalpostId = "134",
+                im = lagInntektsmelding().copy(refusjon = refusjon),
+                bestemmendeFravaersdag = 10.januar,
+            )
         assertEquals(mapped.refusjon.opphoersdato, refusjon.sluttdato)
         assertEquals(mapped.endringerIRefusjon.size, 1)
     }
@@ -73,16 +77,19 @@ class MapInntektsmeldingFraSimbaTest {
     @Test
     fun mapBegrunnelseRedusert() {
         RedusertLoennIAgp.Begrunnelse.entries.forEach { begrunnelse ->
-            val im = lagInntektsmelding().let {
-                it.copy(
-                    agp = it.agp?.copy(
-                        redusertLoennIAgp = RedusertLoennIAgp(
-                            beloep = 1.0,
-                            begrunnelse = begrunnelse
-                        )
+            val im =
+                lagInntektsmelding().let {
+                    it.copy(
+                        agp =
+                            it.agp?.copy(
+                                redusertLoennIAgp =
+                                    RedusertLoennIAgp(
+                                        beloep = 1.0,
+                                        begrunnelse = begrunnelse,
+                                    ),
+                            ),
                     )
-                )
-            }
+                }
 
             val mapped = mapInntektsmelding("im123", "abc", "345", im, 10.januar)
 
@@ -93,13 +100,15 @@ class MapInntektsmeldingFraSimbaTest {
 
     @Test
     fun mapIngenBegrunnelseRedusert() {
-        val im = lagInntektsmelding().let {
-            it.copy(
-                agp = it.agp?.copy(
-                    redusertLoennIAgp = null
+        val im =
+            lagInntektsmelding().let {
+                it.copy(
+                    agp =
+                        it.agp?.copy(
+                            redusertLoennIAgp = null,
+                        ),
                 )
-            )
-        }
+            }
         val mapped = mapInntektsmelding("im1", "2", "3", im, 10.januar)
         assertEquals("", mapped.begrunnelseRedusert)
         assertNull(mapped.bruttoUtbetalt)
@@ -107,14 +116,16 @@ class MapInntektsmeldingFraSimbaTest {
 
     @Test
     fun mapInntektEndringAarsak() {
-        val im = lagInntektsmelding().copy(
-            inntekt = Inntekt(
-                beloep = 60_000.0,
-                inntektsdato = 3.mai,
-                naturalytelser = emptyList(),
-                endringAarsak = Bonus,
+        val im =
+            lagInntektsmelding().copy(
+                inntekt =
+                    Inntekt(
+                        beloep = 60_000.0,
+                        inntektsdato = 3.mai,
+                        naturalytelser = emptyList(),
+                        endringAarsak = Bonus,
+                    ),
             )
-        )
         val mapped = mapInntektsmelding("im1", "2", "3", im, 10.januar)
         assertEquals("Bonus", mapped.rapportertInntekt?.endringAarsak)
         assertEquals("Bonus", mapped.rapportertInntekt?.endringAarsakData?.aarsak)
@@ -154,75 +165,89 @@ class MapInntektsmeldingFraSimbaTest {
 fun lagInntektsmelding(): Inntektsmelding =
     Inntektsmelding(
         id = UUID.randomUUID(),
-        type = Inntektsmelding.Type.Forespurt(
-            id = UUID.randomUUID()
-        ),
+        type =
+            Inntektsmelding.Type.Forespurt(
+                id = UUID.randomUUID(),
+            ),
         vedtaksperiodeId = UUID.randomUUID(),
-        sykmeldt = Sykmeldt(
-            fnr = Fnr.genererGyldig(),
-            navn = "Syk Sykesen",
-        ),
-        avsender = Avsender(
-            orgnr = Orgnr.genererGyldig(),
-            orgNavn = "Blåbærsyltetøy A/S",
-            navn = "Hå Erresen",
-            tlf = "22555555",
-        ),
-        sykmeldingsperioder = listOf(
-            10.januar til 31.januar,
-            10.februar til 28.februar,
-        ),
-        agp = Arbeidsgiverperiode(
-            perioder = listOf(
-                1.januar til 3.januar,
-                5.januar til 5.januar,
-                10.januar til 21.januar,
+        sykmeldt =
+            Sykmeldt(
+                fnr = Fnr.genererGyldig(),
+                navn = "Syk Sykesen",
             ),
-            egenmeldinger = listOf(
-                1.januar til 3.januar,
-                5.januar til 5.januar,
+        avsender =
+            Avsender(
+                orgnr = Orgnr.genererGyldig(),
+                orgNavn = "Blåbærsyltetøy A/S",
+                navn = "Hå Erresen",
+                tlf = "22555555",
             ),
-            redusertLoennIAgp = RedusertLoennIAgp(
-                beloep = 55_555.0,
-                begrunnelse = RedusertLoennIAgp.Begrunnelse.Permittering,
+        sykmeldingsperioder =
+            listOf(
+                10.januar til 31.januar,
+                10.februar til 28.februar,
             ),
-        ),
-        inntekt = Inntekt(
-            beloep = 66_666.0,
-            inntektsdato = 10.januar,
-            naturalytelser = listOf(
-                Naturalytelse(
-                    naturalytelse = Naturalytelse.Kode.BIL,
-                    verdiBeloep = 123.0,
-                    sluttdato = 1.februar,
-                ),
-                Naturalytelse(
-                    naturalytelse = Naturalytelse.Kode.FRITRANSPORT,
-                    verdiBeloep = 456.0,
-                    sluttdato = 15.februar,
-                ),
+        agp =
+            Arbeidsgiverperiode(
+                perioder =
+                    listOf(
+                        1.januar til 3.januar,
+                        5.januar til 5.januar,
+                        10.januar til 21.januar,
+                    ),
+                egenmeldinger =
+                    listOf(
+                        1.januar til 3.januar,
+                        5.januar til 5.januar,
+                    ),
+                redusertLoennIAgp =
+                    RedusertLoennIAgp(
+                        beloep = 55_555.0,
+                        begrunnelse = RedusertLoennIAgp.Begrunnelse.Permittering,
+                    ),
             ),
-            endringAarsak = Permisjon(
-                permisjoner = listOf(
-                    6.januar til 6.januar,
-                    8.januar til 8.januar,
-                )
+        inntekt =
+            Inntekt(
+                beloep = 66_666.0,
+                inntektsdato = 10.januar,
+                naturalytelser =
+                    listOf(
+                        Naturalytelse(
+                            naturalytelse = Naturalytelse.Kode.BIL,
+                            verdiBeloep = 123.0,
+                            sluttdato = 1.februar,
+                        ),
+                        Naturalytelse(
+                            naturalytelse = Naturalytelse.Kode.FRITRANSPORT,
+                            verdiBeloep = 456.0,
+                            sluttdato = 15.februar,
+                        ),
+                    ),
+                endringAarsak =
+                    Permisjon(
+                        permisjoner =
+                            listOf(
+                                6.januar til 6.januar,
+                                8.januar til 8.januar,
+                            ),
+                    ),
             ),
-        ),
-        refusjon = Refusjon(
-            beloepPerMaaned = 22_222.0,
-            endringer = listOf(
-                RefusjonEndring(
-                    beloep = 22_111.0,
-                    startdato = 1.februar,
-                ),
-                RefusjonEndring(
-                    beloep = 22_000.0,
-                    startdato = 2.februar,
-                ),
+        refusjon =
+            Refusjon(
+                beloepPerMaaned = 22_222.0,
+                endringer =
+                    listOf(
+                        RefusjonEndring(
+                            beloep = 22_111.0,
+                            startdato = 1.februar,
+                        ),
+                        RefusjonEndring(
+                            beloep = 22_000.0,
+                            startdato = 2.februar,
+                        ),
+                    ),
+                sluttdato = 25.februar,
             ),
-            sluttdato = 25.februar,
-        ),
         aarsakInnsending = AarsakInnsending.Ny,
         mottatt = 1.mars.atStartOfDay().atOffset(ZoneOffset.ofHours(1)),
     )

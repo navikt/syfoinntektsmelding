@@ -10,17 +10,25 @@ import javax.sql.DataSource
 
 interface InntektsmeldingRepository {
     fun findByJournalpost(journalpostId: String): InntektsmeldingEntitet?
+
     fun findByUuid(uuid: String): InntektsmeldingEntitet?
+
     fun findByAktorId(aktoerId: String): List<InntektsmeldingEntitet>
+
     fun findFirst100ByBehandletBefore(førDato: LocalDateTime): List<InntektsmeldingEntitet>
+
     fun deleteByBehandletBefore(førDato: LocalDateTime): Int
+
     fun lagreInnteksmelding(innteksmelding: InntektsmeldingEntitet): InntektsmeldingEntitet
+
     fun deleteAll()
+
     fun findAll(): List<InntektsmeldingEntitet>
 }
 
 class InntektsmeldingRepositoryMock : InntektsmeldingRepository {
     private val mockrepo = mutableSetOf<InntektsmeldingEntitet>()
+
     override fun findByAktorId(aktoerId: String): List<InntektsmeldingEntitet> {
         return mockrepo.filter { it.aktorId == aktoerId }
     }
@@ -56,17 +64,19 @@ class InntektsmeldingRepositoryMock : InntektsmeldingRepository {
 }
 
 class InntektsmeldingRepositoryImp(
-    private val ds: DataSource
+    private val ds: DataSource,
 ) : InntektsmeldingRepository {
     private val agpRepo = ArbeidsgiverperiodeRepositoryImp(ds)
+
     override fun findByJournalpost(journalpostId: String): InntektsmeldingEntitet? {
         val findByAktorId = "SELECT * FROM INNTEKTSMELDING WHERE JOURNALPOST_ID = ?;"
         val inntektsmeldinger = ArrayList<InntektsmeldingEntitet>()
         val result: InntektsmeldingEntitet?
         ds.connection.use {
-            val res = it.prepareStatement(findByAktorId).apply {
-                setString(1, journalpostId)
-            }.executeQuery()
+            val res =
+                it.prepareStatement(findByAktorId).apply {
+                    setString(1, journalpostId)
+                }.executeQuery()
             result = resultLoop(res, inntektsmeldinger).firstOrNull()
         }
         return result
@@ -77,9 +87,10 @@ class InntektsmeldingRepositoryImp(
         val inntektsmeldinger = ArrayList<InntektsmeldingEntitet>()
         val result: InntektsmeldingEntitet?
         ds.connection.use {
-            val res = it.prepareStatement(findByAktorId).apply {
-                setString(1, uuid)
-            }.executeQuery()
+            val res =
+                it.prepareStatement(findByAktorId).apply {
+                    setString(1, uuid)
+                }.executeQuery()
             result = resultLoop(res, inntektsmeldinger).firstOrNull()
         }
         if (result != null) {
@@ -93,9 +104,10 @@ class InntektsmeldingRepositoryImp(
         val inntektsmeldinger = ArrayList<InntektsmeldingEntitet>()
         val results: ArrayList<InntektsmeldingEntitet>
         ds.connection.use {
-            val res = it.prepareStatement(findByAktorId).apply {
-                setString(1, aktoerId.toString())
-            }.executeQuery()
+            val res =
+                it.prepareStatement(findByAktorId).apply {
+                    setString(1, aktoerId.toString())
+                }.executeQuery()
             results = resultLoop(res, inntektsmeldinger)
         }
         return addArbeidsgiverperioderTilInnteksmelding(results)
@@ -162,7 +174,10 @@ class InntektsmeldingRepositoryImp(
         return results
     }
 
-    private fun lagreArbeidsgiverperioder(arbeidsgiverperioder: List<ArbeidsgiverperiodeEntitet>, connection: Connection) {
+    private fun lagreArbeidsgiverperioder(
+        arbeidsgiverperioder: List<ArbeidsgiverperiodeEntitet>,
+        connection: Connection,
+    ) {
         val rep = agpRepo
         rep.lagreDataer(arbeidsgiverperioder, connection)
     }
@@ -185,7 +200,7 @@ class InntektsmeldingRepositoryImp(
 
     private fun resultLoop(
         res: ResultSet,
-        returnValue: ArrayList<InntektsmeldingEntitet>
+        returnValue: ArrayList<InntektsmeldingEntitet>,
     ): ArrayList<InntektsmeldingEntitet> {
         while (res.next()) {
             returnValue.add(
@@ -196,8 +211,8 @@ class InntektsmeldingRepositoryImp(
                     journalpostId = res.getString("JOURNALPOST_ID"),
                     behandlet = res.getTimestamp("BEHANDLET").toLocalDateTime(),
                     arbeidsgiverPrivat = res.getString("ARBEIDSGIVER_PRIVAT"),
-                    data = res.getString("data")
-                )
+                    data = res.getString("data"),
+                ),
             )
         }
 

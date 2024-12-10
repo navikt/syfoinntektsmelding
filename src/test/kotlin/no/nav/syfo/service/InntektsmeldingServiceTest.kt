@@ -23,19 +23,19 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 class InntektsmeldingServiceTest {
-
-    val objectMapper = ObjectMapper().registerModules(
-        KotlinModule.Builder()
-            .withReflectionCacheSize(512)
-            .configure(KotlinFeature.NullToEmptyCollection, false)
-            .configure(KotlinFeature.NullToEmptyMap, false)
-            .configure(KotlinFeature.NullIsSameAsDefault, false)
-            .configure(KotlinFeature.SingletonSupport, false)
-            .configure(KotlinFeature.StrictNullChecks, false)
-            .build(),
-        JavaTimeModule()
-    )
-    val AKTOR_ID_FOUND = "aktør-123"
+    val objectMapper =
+        ObjectMapper().registerModules(
+            KotlinModule.Builder()
+                .withReflectionCacheSize(512)
+                .configure(KotlinFeature.NullToEmptyCollection, false)
+                .configure(KotlinFeature.NullToEmptyMap, false)
+                .configure(KotlinFeature.NullIsSameAsDefault, false)
+                .configure(KotlinFeature.SingletonSupport, false)
+                .configure(KotlinFeature.StrictNullChecks, false)
+                .build(),
+            JavaTimeModule(),
+        )
+    val aktorIdFound = "aktør-123"
     val logger = this.logger()
 
     @Test
@@ -48,11 +48,12 @@ class InntektsmeldingServiceTest {
     fun `Skal ikke være duplikat dersom nest siste eller tidligere var lik`() {
         val inntekt = 100
         val im = lag(0, inntekt)
-        val list = listOf(
-            lag(1, inntekt + 300),
-            lag(2, inntekt),
-            lag(3, inntekt + 200)
-        )
+        val list =
+            listOf(
+                lag(1, inntekt + 300),
+                lag(2, inntekt),
+                lag(3, inntekt + 200),
+            )
         assertFalse(isDuplicateWithLatest(logger, im, list))
         assertFalse(isDuplicateWithLatest(logger, im, list.asReversed()))
     }
@@ -61,11 +62,12 @@ class InntektsmeldingServiceTest {
     fun `Skal være duplikat av sist innsendt`() {
         val inntekt = 100
         val im = lag(0, inntekt)
-        val list = listOf(
-            lag(1, inntekt),
-            lag(2, inntekt + 100),
-            lag(3, inntekt + 200),
-        )
+        val list =
+            listOf(
+                lag(1, inntekt),
+                lag(2, inntekt + 100),
+                lag(3, inntekt + 200),
+            )
         assertTrue(isDuplicateWithLatest(logger, im, list))
         assertTrue(isDuplicateWithLatest(logger, im, list.asReversed()))
     }
@@ -74,15 +76,15 @@ class InntektsmeldingServiceTest {
     fun `Skal finne inntektsmeldinger og mappe de om til domene objekter`() {
         val repository = mockk<InntektsmeldingRepository>(relaxed = true)
         val service = InntektsmeldingService(repository, objectMapper)
-        every { repository.findByAktorId(any()) } returns listOf(buildEntitet(AKTOR_ID_FOUND, buildIM()))
-        assertEquals(1, service.finnBehandledeInntektsmeldinger(AKTOR_ID_FOUND).size)
+        every { repository.findByAktorId(any()) } returns listOf(buildEntitet(aktorIdFound, buildIM()))
+        assertEquals(1, service.finnBehandledeInntektsmeldinger(aktorIdFound).size)
     }
 
     @Test
     fun `isDuplicate - Skal detektere eksisterende inntektsmeldingene som allerede er lagret`() {
         val repository = mockk<InntektsmeldingRepository>(relaxed = true)
         val service = InntektsmeldingService(repository, objectMapper)
-        val ent = buildEntitet(AKTOR_ID_FOUND, buildIM())
+        val ent = buildEntitet(aktorIdFound, buildIM())
         val im = toInntektsmelding(ent, objectMapper)
         every { repository.findByAktorId(any()) } returns listOf(ent)
         assertTrue(service.isDuplicate(im))
@@ -92,7 +94,7 @@ class InntektsmeldingServiceTest {
     fun `isDuplicate - Skal detektere at de er litt ulike`() {
         val repository = mockk<InntektsmeldingRepository>(relaxed = true)
         val service = InntektsmeldingService(repository, objectMapper)
-        val ent = buildEntitet(AKTOR_ID_FOUND, buildIM())
+        val ent = buildEntitet(aktorIdFound, buildIM())
         val im = toInntektsmelding(ent, objectMapper).copy(arbeidsforholdId = "abc")
         every { repository.findByAktorId(any()) } returns listOf(ent)
         assertFalse(service.isDuplicate(im))
@@ -158,24 +160,30 @@ class InntektsmeldingServiceTest {
         assertThat(node.get("opphørAvNaturalYtelse")[0].get("fom").toString()).isEqualTo("[2015,5,5]")
         assertThat(node.get("opphørAvNaturalYtelse")[0].get("beloepPrMnd").asLong()).isEqualTo(555555555555)
         assertThat(
-            node.get("opphørAvNaturalYtelse")[1].get("naturalytelse").asText()
+            node.get("opphørAvNaturalYtelse")[1].get("naturalytelse").asText(),
         ).isEqualTo("TILSKUDDBARNEHAGEPLASS")
         assertThat(node.get("opphørAvNaturalYtelse")[1].get("fom").toString()).isEqualTo("[2016,6,6]")
         assertThat(node.get("opphørAvNaturalYtelse")[1].get("beloepPrMnd").asLong()).isEqualTo(666666666666)
     }
 
-    fun buildEntitet(aktorId: String, im: Inntektsmelding): InntektsmeldingEntitet {
+    fun buildEntitet(
+        aktorId: String,
+        im: Inntektsmelding,
+    ): InntektsmeldingEntitet {
         return InntektsmeldingEntitet(
             uuid = UUID.randomUUID().toString(),
             aktorId = aktorId,
             behandlet = LocalDateTime.now(),
             orgnummer = "arb-org-123",
             journalpostId = "jp-123",
-            data = objectMapper.writeValueAsString(im)
+            data = objectMapper.writeValueAsString(im),
         )
     }
 
-    fun lag(dager: Long, inntekt: Int): Inntektsmelding {
+    fun lag(
+        dager: Long,
+        inntekt: Int,
+    ): Inntektsmelding {
         return buildIM().copy(mottattDato = LocalDateTime.now().minusDays(dager), beregnetInntekt = BigDecimal(inntekt))
     }
 }

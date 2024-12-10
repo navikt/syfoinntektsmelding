@@ -20,33 +20,41 @@ const val SYKEPENGER = "SYK"
 class BehandlendeEnhetConsumer(
     private val pdlClient: PdlClient,
     private val norg2Client: Norg2Client,
-    private val metrikk: Metrikk
+    private val metrikk: Metrikk,
 ) {
     private val logger = this.logger()
     private val sikkerlogger = sikkerLogger()
 
-    fun hentBehandlendeEnhet(fnr: String, uuid: String): String {
+    fun hentBehandlendeEnhet(
+        fnr: String,
+        uuid: String,
+    ): String {
         val geografiskTilknytning = hentGeografiskTilknytning(fnr)
 
-        val criteria = ArbeidsfordelingRequest(
-            tema = SYKEPENGER,
-            diskresjonskode = geografiskTilknytning.diskresjonskode,
-            geografiskOmraade = geografiskTilknytning.geografiskTilknytning
-        )
+        val criteria =
+            ArbeidsfordelingRequest(
+                tema = SYKEPENGER,
+                diskresjonskode = geografiskTilknytning.diskresjonskode,
+                geografiskOmraade = geografiskTilknytning.geografiskTilknytning,
+            )
 
         try {
-            val arbeidsfordelinger = runBlocking {
-                norg2Client.hentAlleArbeidsfordelinger(criteria, MdcUtils.getCallId())
-            }
+            val arbeidsfordelinger =
+                runBlocking {
+                    norg2Client.hentAlleArbeidsfordelinger(criteria, MdcUtils.getCallId())
+                }
             logger.info("Fant enheter: " + arbeidsfordelinger.toString())
-            val behandlendeEnhet = finnAktivBehandlendeEnhet(
-                arbeidsfordelinger,
-                geografiskTilknytning.geografiskTilknytning
-            )
+            val behandlendeEnhet =
+                finnAktivBehandlendeEnhet(
+                    arbeidsfordelinger,
+                    geografiskTilknytning.geografiskTilknytning,
+                )
             if (SYKEPENGER_UTLAND == behandlendeEnhet) {
                 metrikk.tellInntektsmeldingSykepengerUtland()
             }
-            logger.info("Fant geografiskTilknytning ${geografiskTilknytning.geografiskTilknytning} med behandlendeEnhet $behandlendeEnhet for inntektsmelding $uuid")
+            logger.info(
+                "Fant geografiskTilknytning ${geografiskTilknytning.geografiskTilknytning} med behandlendeEnhet $behandlendeEnhet for inntektsmelding $uuid",
+            )
             return behandlendeEnhet
         } catch (e: RuntimeException) {
             sikkerlogger.error("Klarte ikke å hente behandlende enhet!", e)
@@ -60,7 +68,7 @@ class BehandlendeEnhetConsumer(
         }.let {
             return GeografiskTilknytningData(
                 geografiskTilknytning = it?.geografiskTilknytning,
-                diskresjonskode = it?.diskresjonskode
+                diskresjonskode = it?.diskresjonskode,
             )
         }
     }
@@ -72,7 +80,10 @@ class BehandlendeEnhetConsumer(
     }
 }
 
-fun finnAktivBehandlendeEnhet(arbeidsfordelinger: List<ArbeidsfordelingResponse>, geografiskTilknytning: String?): String {
+fun finnAktivBehandlendeEnhet(
+    arbeidsfordelinger: List<ArbeidsfordelingResponse>,
+    geografiskTilknytning: String?,
+): String {
     return arbeidsfordelinger
         .stream()
         .findFirst().orElseThrow { IngenAktivEnhetException(geografiskTilknytning, null) }.enhetNr!!

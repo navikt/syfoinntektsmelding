@@ -13,14 +13,16 @@ class UtsattOppgaveDAO(private val utsattOppgaveRepository: UtsattOppgaveReposit
         return utsattOppgaveRepository.opprett(oppgave).id
     }
 
-    fun finn(id: String) =
-        utsattOppgaveRepository.findByInntektsmeldingId(id)
+    fun finn(id: String) = utsattOppgaveRepository.findByInntektsmeldingId(id)
 
     fun lagre(oppgave: UtsattOppgaveEntitet) {
         utsattOppgaveRepository.oppdater(oppgave)
     }
 
     fun finnAlleUtgåtteOppgaver(): List<UtsattOppgaveEntitet> =
-        utsattOppgaveRepository.findUtsattOppgaveEntitetByTimeoutBeforeAndTilstandEquals(LocalDateTime.now().minusHours(168), Tilstand.Utsatt)
+        utsattOppgaveRepository.findUtsattOppgaveEntitetByTimeoutBeforeAndTilstandEquals(
+            LocalDateTime.now().minusHours(168),
+            Tilstand.Utsatt,
+        )
             .also { logger.info("Fant ${it.size} utsatte oppgaver som har timet ut hvor vi skal opprette en oppgave i gosys") }
 }

@@ -15,9 +15,10 @@ data class RapportertInntekt(
     val endringAarsakData: SpinnInntektEndringAarsak? = null,
     val manueltKorrigert: Boolean,
 )
+
 data class SpinnInntektEndringAarsak(
     val aarsak: String,
     val perioder: List<Periode>? = null,
     val gjelderFra: LocalDate? = null,
-    val bleKjent: LocalDate? = null
+    val bleKjent: LocalDate? = null,
 )

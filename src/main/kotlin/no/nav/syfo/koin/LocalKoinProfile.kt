@@ -137,7 +137,14 @@ fun localDevConfig(config: ApplicationConfig) =
             )
         }
         single { InntektsmeldingService(InntektsmeldingRepositoryImp(ds = get()), get()) }
-        single { JoarkInntektsmeldingHendelseProsessor(om = get(), metrikk = get(), inntektsmeldingBehandler = get(), oppgaveService = get()) }
+        single {
+            JoarkInntektsmeldingHendelseProsessor(
+                om = get(),
+                metrikk = get(),
+                inntektsmeldingBehandler = get(),
+                oppgaveService = get(),
+            )
+        }
 
         single {
             InntektsmeldingAivenProducer(producerLocalProperties(config.getString("kafka_bootstrap_servers")))

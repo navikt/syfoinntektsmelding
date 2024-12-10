@@ -11,8 +11,9 @@ class MetrikkVarsler : Bakgrunnsvarsler {
     }
 }
 
-val FEILET_JOBB_COUNTER = Counter.build()
-    .namespace(METRICS_NS)
-    .name("feilet_jobb")
-    .help("Counts the number of permanently failed jobs")
-    .register()
+val FEILET_JOBB_COUNTER =
+    Counter.build()
+        .namespace(METRICS_NS)
+        .name("feilet_jobb")
+        .help("Counts the number of permanently failed jobs")
+        .register()
