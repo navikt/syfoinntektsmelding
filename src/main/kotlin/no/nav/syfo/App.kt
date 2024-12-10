@@ -91,20 +91,21 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
     }
 
     private fun configAndStartWebserver() {
-        webserver = embeddedServer(
-            Netty,
-            applicationEngineEnvironment {
-                config = appConfig
-                connector {
-                    port = this@SpinnApplication.port
-                }
+        webserver =
+            embeddedServer(
+                Netty,
+                applicationEngineEnvironment {
+                    config = appConfig
+                    connector {
+                        port = this@SpinnApplication.port
+                    }
 
-                module {
-                    nais()
-                    inntektsmeldingModule(config)
-                }
-            }
-        )
+                    module {
+                        nais()
+                        inntektsmeldingModule(config)
+                    }
+                },
+            )
 
         webserver!!.start(wait = false)
     }
@@ -114,7 +115,6 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
             get<FinnAlleUtgaandeOppgaverProcessor>().startAsync(true)
 
             get<BakgrunnsjobbService>().apply {
-
                 registrer(get<FeiletUtsattOppgaveMeldingProsessor>())
                 registrer(get<FjernInntektsmeldingByBehandletProcessor>())
                 registrer(get<JoarkInntektsmeldingHendelseProsessor>())
@@ -153,6 +153,6 @@ fun main() {
             logger.info("Fikk shutdown-signal, avslutter...")
             application.shutdown()
             logger.info("Avsluttet OK")
-        }
+        },
     )
 }

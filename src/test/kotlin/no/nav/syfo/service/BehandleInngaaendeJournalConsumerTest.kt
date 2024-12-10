@@ -8,7 +8,6 @@ import no.nav.syfo.domain.InngaendeJournalpost
 import org.junit.jupiter.api.Test
 
 class BehandleInngaaendeJournalConsumerTest {
-
     private val dokArkivClient = mockk<DokArkivClient>(relaxed = true)
 
     private val behandleInngaaendeJournalConsumer = BehandleInngaaendeJournalConsumer(dokArkivClient)
@@ -18,7 +17,12 @@ class BehandleInngaaendeJournalConsumerTest {
         val behandlendeEngetId = "behandlendeEngetId"
         val journalpostId = "journalpostId"
         behandleInngaaendeJournalConsumer.ferdigstillJournalpost(
-            InngaendeJournalpost(behandlendeEnhetId = behandlendeEngetId, journalpostId = journalpostId, dokumentId = "dokumentId", fnr = "fnr")
+            InngaendeJournalpost(
+                behandlendeEnhetId = behandlendeEngetId,
+                journalpostId = journalpostId,
+                dokumentId = "dokumentId",
+                fnr = "fnr",
+            ),
         )
         verify {
             runBlocking {
@@ -29,12 +33,13 @@ class BehandleInngaaendeJournalConsumerTest {
 
     @Test
     fun oppdaterJournalpostMedPrivatAvsender() {
-        val inngaendeJournalpost = InngaendeJournalpost(
-            fnr = "fnr",
-            behandlendeEnhetId = "enhet",
-            dokumentId = "dokumentId",
-            journalpostId = "journalpostId",
-        )
+        val inngaendeJournalpost =
+            InngaendeJournalpost(
+                fnr = "fnr",
+                behandlendeEnhetId = "enhet",
+                dokumentId = "dokumentId",
+                journalpostId = "journalpostId",
+            )
         behandleInngaaendeJournalConsumer.oppdaterJournalpost("fnr", inngaendeJournalpost, false)
         verify {
             runBlocking {

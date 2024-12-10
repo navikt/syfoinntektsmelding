@@ -9,33 +9,32 @@ import java.time.LocalDateTime
 import javax.xml.bind.JAXBElement
 
 class XmlInntektsmeldingMapper {
-
     fun mapInntektsmelding(
         inntektsmeldingRAW: ByteArray,
         pdlClient: PdlClient,
         mottattDato: LocalDateTime,
         journalpostId: String,
         journalStatus: JournalStatus,
-        arkivReferanse: String
+        arkivReferanse: String,
     ): Inntektsmelding {
         val inntektsmelding = String(inntektsmeldingRAW)
         val jaxbInntektsmelding = JAXB.unmarshalInntektsmelding<JAXBElement<Any>>(inntektsmelding)
-        return if (jaxbInntektsmelding.value is XMLInntektsmeldingM)
+        return if (jaxbInntektsmelding.value is XMLInntektsmeldingM) {
             InntektsmeldingArbeidsgiver20180924Mapper.fraXMLInntektsmelding(
                 jaxbInntektsmelding,
                 journalpostId,
                 mottattDato,
                 journalStatus,
-                arkivReferanse
+                arkivReferanse,
             )
-        else {
+        } else {
             InntektsmeldingArbeidsgiverPrivat20181211Mapper.fraXMLInntektsmelding(
                 jaxbInntektsmelding,
                 journalpostId,
                 mottattDato,
                 journalStatus,
                 arkivReferanse,
-                pdlClient
+                pdlClient,
             )
         }
     }

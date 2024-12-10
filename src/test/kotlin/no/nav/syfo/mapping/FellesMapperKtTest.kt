@@ -7,7 +7,6 @@ import javax.xml.bind.JAXBElement
 import javax.xml.namespace.QName
 
 class FellesMapperKtTest {
-
     @Test
     fun skal_mappe_ytelse_til_riktig_verdi() {
         assertEquals(mapNaturalytelseType(opprettJaxbElement("kostDoegn")), Naturalytelse.KOSTDOEGN)

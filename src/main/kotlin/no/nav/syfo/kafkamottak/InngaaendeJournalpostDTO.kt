@@ -10,5 +10,5 @@ data class InngaaendeJournalpostDTO(
     val temaNytt: String,
     val mottaksKanal: String,
     val kanalReferanseId: String,
-    val behandlingstema: String
+    val behandlingstema: String,
 )

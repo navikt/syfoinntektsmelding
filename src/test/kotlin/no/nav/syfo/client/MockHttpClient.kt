@@ -14,15 +14,18 @@ import io.ktor.serialization.jackson.jackson
 import no.nav.syfo.koin.buildObjectMapper
 import no.nav.syfo.util.customObjectMapper
 
-fun buildHttpClientText(status: HttpStatusCode, text: String = ""): HttpClient {
-
-    val mockEngine = MockEngine {
-        respond(
-            text,
-            status = status,
-            headers = headersOf(HttpHeaders.ContentType, ContentType.Text.Plain.toString())
-        )
-    }
+fun buildHttpClientText(
+    status: HttpStatusCode,
+    text: String = "",
+): HttpClient {
+    val mockEngine =
+        MockEngine {
+            respond(
+                text,
+                status = status,
+                headers = headersOf(HttpHeaders.ContentType, ContentType.Text.Plain.toString()),
+            )
+        }
     return HttpClient(mockEngine) {
         expectSuccess = true
 
@@ -35,7 +38,10 @@ fun buildHttpClientText(status: HttpStatusCode, text: String = ""): HttpClient {
     }
 }
 
-fun buildHttpClientJson(status: HttpStatusCode, response: Any): HttpClient {
+fun buildHttpClientJson(
+    status: HttpStatusCode,
+    response: Any,
+): HttpClient {
     return HttpClient(MockEngine) {
         expectSuccess = true
         install(ContentNegotiation) {
@@ -49,7 +55,7 @@ fun buildHttpClientJson(status: HttpStatusCode, response: Any): HttpClient {
                 respond(
                     buildObjectMapper().writeValueAsString(response),
                     headers = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString())),
-                    status = status
+                    status = status,
                 )
             }
         }

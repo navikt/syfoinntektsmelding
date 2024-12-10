@@ -52,7 +52,7 @@ class Metrikk {
             "Metrikker for feilregistrerte inntektsmeldinger",
             "type",
         )
-
+    
     val inntektsmeldingSykepengerUtland =
         proseseringsMetrikker(
             "syfoinntektsmelding_sykepenger_utland",
@@ -191,6 +191,7 @@ class Metrikk {
 
     fun tellInntektsmeldingerJournalfort() = inntektsmeldingerJournalfort.labels("info").inc()
 
+
     fun tellInntektsmeldingerFeilregistrert() = inntektsmeldingerFeilregistrert.labels("info").inc()
 
     fun tellInntektsmeldingSykepengerUtland() = inntektsmeldingSykepengerUtland.labels("info").inc()
@@ -222,6 +223,7 @@ class Metrikk {
     fun tellOpprettOppgave(eksisterer: Boolean) = opprettOppgave.labels("info", if (eksisterer) "J" else "N").inc()
 
     fun tellOpprettFordelingsoppgave() = opprettFordelingsoppgave.labels("info").inc()
+
 
     fun tellRekjørerFeilet() = rekjørerFeilet.labels("warning").inc()
 

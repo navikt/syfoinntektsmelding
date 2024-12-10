@@ -13,7 +13,6 @@ import java.time.LocalDateTime.now
 import java.util.UUID
 
 open class UtsattOppgaveDAOTest {
-
     private var repository: UtsattOppgaveRepository = UtsattOppgaveRepositoryMockk()
 
     private lateinit var utsattOppgaveDAO: UtsattOppgaveDAO
@@ -39,10 +38,10 @@ open class UtsattOppgaveDAOTest {
         val id1 = utsattOppgaveDAO.opprett(oppgave1)
         val id2 = utsattOppgaveDAO.opprett(oppgave2)
 
-        val _oppgave1 = utsattOppgaveDAO.finn(oppgave1.inntektsmeldingId)!!
-        assertEquals(id1, _oppgave1.id)
-        val _oppgave2 = utsattOppgaveDAO.finn(oppgave2.inntektsmeldingId)!!
-        assertEquals(id2, _oppgave2.id)
+        val funnetOppgave1 = utsattOppgaveDAO.finn(oppgave1.inntektsmeldingId)!!
+        assertEquals(id1, funnetOppgave1.id)
+        val funnetOppgave2 = utsattOppgaveDAO.finn(oppgave2.inntektsmeldingId)!!
+        assertEquals(id2, funnetOppgave2.id)
     }
 
     @Test
@@ -55,10 +54,10 @@ open class UtsattOppgaveDAOTest {
         oppgave1.tilstand = Tilstand.Forkastet
         utsattOppgaveDAO.lagre(oppgave1)
 
-        val _oppgave1 = utsattOppgaveDAO.finn(oppgave1.inntektsmeldingId)!!
-        assertEquals(Tilstand.Forkastet, _oppgave1.tilstand)
-        val _oppgave2 = utsattOppgaveDAO.finn(oppgave2.inntektsmeldingId)!!
-        assertEquals(Tilstand.Utsatt, _oppgave2.tilstand)
+        val funnetOppgave1 = utsattOppgaveDAO.finn(oppgave1.inntektsmeldingId)!!
+        assertEquals(Tilstand.Forkastet, funnetOppgave1.tilstand)
+        val funnetOppgave2 = utsattOppgaveDAO.finn(oppgave2.inntektsmeldingId)!!
+        assertEquals(Tilstand.Utsatt, funnetOppgave2.tilstand)
     }
 
     @Test
@@ -67,17 +66,18 @@ open class UtsattOppgaveDAOTest {
         Assertions.assertNull(maybeOppgave)
     }
 
-    private fun oppgave() = UtsattOppgaveEntitet(
-        fnr = "fnr",
-        aktørId = "aktørId",
-        journalpostId = "journalpostId",
-        arkivreferanse = "arkivreferanse",
-        timeout = now(),
-        inntektsmeldingId = UUID.randomUUID().toString(),
-        tilstand = Tilstand.Utsatt,
-        gosysOppgaveId = null,
-        oppdatert = null,
-        speil = false,
-        utbetalingBruker = false
-    )
+    private fun oppgave() =
+        UtsattOppgaveEntitet(
+            fnr = "fnr",
+            aktørId = "aktørId",
+            journalpostId = "journalpostId",
+            arkivreferanse = "arkivreferanse",
+            timeout = now(),
+            inntektsmeldingId = UUID.randomUUID().toString(),
+            tilstand = Tilstand.Utsatt,
+            gosysOppgaveId = null,
+            oppdatert = null,
+            speil = false,
+            utbetalingBruker = false,
+        )
 }

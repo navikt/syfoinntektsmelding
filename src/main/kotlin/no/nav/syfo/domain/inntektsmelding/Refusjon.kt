@@ -5,5 +5,5 @@ import java.time.LocalDate
 
 data class Refusjon(
     val beloepPrMnd: BigDecimal? = null,
-    val opphoersdato: LocalDate? = null
+    val opphoersdato: LocalDate? = null,
 )

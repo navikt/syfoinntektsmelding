@@ -16,7 +16,6 @@ import java.time.LocalDate
 import java.util.Collections.emptyList
 
 class SaksbehandlingServiceTest {
-
     private var oppgaveService = mockk<OppgaveService>(relaxed = true)
     private var pdlClient = mockk<PdlClient>(relaxed = true)
     private var inntektsmeldingService = mockk<InntektsmeldingService>(relaxed = true)
@@ -38,7 +37,7 @@ class SaksbehandlingServiceTest {
         aktorId: String,
         journalpostId: String,
         sakId: String,
-        arbeidsgiverperioder: List<Periode>
+        arbeidsgiverperioder: List<Periode>,
     ): Inntektsmelding {
         return Inntektsmelding(
             id = "ID",
@@ -53,7 +52,7 @@ class SaksbehandlingServiceTest {
             førsteFraværsdag = LocalDate.now(),
             mottattDato = LocalDate.of(2019, 2, 6).atStartOfDay(),
             sakId = sakId,
-            aktorId = aktorId
+            aktorId = aktorId,
         )
     }
 
@@ -65,13 +64,14 @@ class SaksbehandlingServiceTest {
                     aktorId = "aktorId",
                     journalpostId = "journalPostId",
                     sakId = "1",
-                    arbeidsgiverperioder = listOf(
-                        Periode(
-                            fom = LocalDate.of(2019, 1, 1),
-                            tom = LocalDate.of(2019, 1, 24)
-                        )
-                    )
-                )
+                    arbeidsgiverperioder =
+                        listOf(
+                            Periode(
+                                fom = LocalDate.of(2019, 1, 1),
+                                tom = LocalDate.of(2019, 1, 24),
+                            ),
+                        ),
+                ),
             )
     }
 
@@ -83,13 +83,14 @@ class SaksbehandlingServiceTest {
                     aktorId = "aktorId",
                     journalpostId = "journalPostId",
                     sakId = "1",
-                    arbeidsgiverperioder = listOf(
-                        Periode(
-                            fom = LocalDate.of(2019, 1, 1),
-                            tom = LocalDate.of(2019, 1, 20)
-                        )
-                    )
-                )
+                    arbeidsgiverperioder =
+                        listOf(
+                            Periode(
+                                fom = LocalDate.of(2019, 1, 1),
+                                tom = LocalDate.of(2019, 1, 20),
+                            ),
+                        ),
+                ),
             )
     }
 }

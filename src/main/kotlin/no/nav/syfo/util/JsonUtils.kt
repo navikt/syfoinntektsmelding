@@ -14,7 +14,7 @@ fun customObjectMapper(customPrettyPrinter: Boolean = true): ObjectMapper =
     jacksonObjectMapper().apply {
         registerModules(
             Jdk8Module(),
-            JavaTimeModule()
+            JavaTimeModule(),
         )
 
         enable(SerializationFeature.INDENT_OUTPUT)
@@ -29,7 +29,7 @@ fun customObjectMapper(customPrettyPrinter: Boolean = true): ObjectMapper =
                 DefaultPrettyPrinter().apply {
                     indentArraysWith(DefaultPrettyPrinter.FixedSpaceIndenter.instance)
                     indentObjectsWith(DefaultIndenter("  ", "\n"))
-                }
+                },
             )
         }
     }

@@ -8,5 +8,5 @@ data class ArbeidsgiverperiodeEntitet(
     var inntektsmelding: InntektsmeldingEntitet? = null,
     var fom: LocalDate,
     var tom: LocalDate,
-    var inntektsmelding_uuid: String = ""
+    var inntektsmelding_uuid: String = "",
 )

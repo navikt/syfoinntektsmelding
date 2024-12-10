@@ -11,8 +11,10 @@ class JournalpostService(
     private val behandlendeEnhetConsumer: BehandlendeEnhetConsumer,
     private val metrikk: Metrikk,
 ) {
-
-    fun hentInntektsmelding(journalpostId: String, arkivReferanse: String): Inntektsmelding {
+    fun hentInntektsmelding(
+        journalpostId: String,
+        arkivReferanse: String,
+    ): Inntektsmelding {
         return journalConsumer.hentInntektsmelding(journalpostId, arkivReferanse)
     }
 
@@ -31,7 +33,7 @@ class JournalpostService(
             fnr = inntektsmelding.fnr,
             journalpostId = inntektsmelding.journalpostId,
             dokumentId = inngaaendeJournal.dokumentId,
-            behandlendeEnhetId = behandlendeEnhet
+            behandlendeEnhetId = behandlendeEnhet,
         )
     }
 

@@ -45,13 +45,14 @@ fun mapInntektsmelding(
     journalpostId: String,
     im: InntektmeldingV1,
     bestemmendeFravaersdag: LocalDate?,
-    selvbestemt: Boolean = false
+    selvbestemt: Boolean = false,
 ): Inntektsmelding {
-    val avsenderSystem = if (selvbestemt) {
-        Avsender.NAV_NO_SELVBESTEMT
-    } else {
-        Avsender.NAV_NO
-    }
+    val avsenderSystem =
+        if (selvbestemt) {
+            Avsender.NAV_NO_SELVBESTEMT
+        } else {
+            Avsender.NAV_NO
+        }
     return Inntektsmelding(
         journalStatus = JournalStatus.FERDIGSTILT,
         sakId = "",
@@ -76,7 +77,7 @@ fun mapInntektsmelding(
         førsteFraværsdag = bestemmendeFravaersdag,
         arsakTilInnsending = im.aarsakInnsending.name,
         mottattDato = im.mottatt.toLocalDateTime(),
-        innsendingstidspunkt = im.mottatt.toLocalDateTime()
+        innsendingstidspunkt = im.mottatt.toLocalDateTime(),
     )
 }
 
@@ -84,7 +85,7 @@ private fun NaturalytelseV1.tilNaturalytelse(): OpphoerAvNaturalytelse =
     OpphoerAvNaturalytelse(
         naturalytelse = naturalytelse.name.let(Naturalytelse::valueOf),
         fom = sluttdato,
-        beloepPrMnd = verdiBeloep.toBigDecimal()
+        beloepPrMnd = verdiBeloep.toBigDecimal(),
     )
 
 private fun Inntekt.tilRapportertInntekt(): RapportertInntekt {
@@ -95,20 +96,20 @@ private fun Inntekt.tilRapportertInntekt(): RapportertInntekt {
         beregnetInntekt = beloep,
         endringAarsak = spinnEndringAarsak?.aarsak,
         endringAarsakData = spinnEndringAarsak,
-        manueltKorrigert = endringAarsak != null
+        manueltKorrigert = endringAarsak != null,
     )
 }
 
 private fun RefusjonV1?.tilRefusjon(): Refusjon =
     Refusjon(
         beloepPrMnd = this?.beloepPerMaaned.orDefault(0.0).toBigDecimal(),
-        opphoersdato = this?.sluttdato
+        opphoersdato = this?.sluttdato,
     )
 
 private fun RefusjonEndring.tilEndringIRefusjon(): EndringIRefusjon =
     EndringIRefusjon(
         endringsdato = startdato,
-        beloep = beloep.toBigDecimal()
+        beloep = beloep.toBigDecimal(),
     )
 
 private fun InntektEndringAarsak.tilSpinnInntektEndringAarsak(): SpinnInntektEndringAarsak =

@@ -43,7 +43,11 @@ fun finnBehandlingsKategori(
         speilRelatert -> BehandlingsKategori.SPEIL_RELATERT
         gjelderUtland -> BehandlingsKategori.UTLAND
         inntektsmelding.begrunnelseRedusert == "BetvilerArbeidsufoerhet" -> BehandlingsKategori.BESTRIDER_SYKEMELDING
-        inntektsmelding.refusjon.beloepPrMnd == null || inntektsmelding.refusjon.beloepPrMnd < BigDecimal(1) -> BehandlingsKategori.IKKE_REFUSJON
+        inntektsmelding.refusjon.beloepPrMnd == null || inntektsmelding.refusjon.beloepPrMnd <
+            BigDecimal(
+                1,
+            )
+        -> BehandlingsKategori.IKKE_REFUSJON
         inntektsmelding.refusjon.opphoersdato != null -> BehandlingsKategori.REFUSJON_MED_DATO
         inntektsmelding.refusjon.beloepPrMnd < inntektsmelding.beregnetInntekt -> BehandlingsKategori.REFUSJON_LITEN_LØNN
         else -> BehandlingsKategori.REFUSJON_UTEN_DATO

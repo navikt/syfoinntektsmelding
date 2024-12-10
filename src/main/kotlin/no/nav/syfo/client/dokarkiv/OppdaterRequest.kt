@@ -1,4 +1,5 @@
 package no.nav.syfo.client.dokarkiv
+
 /**
  * val journalpostId = inngaendeJournalpost.journalpostId
  * val avsenderNr = inngaendeJournalpost.arbeidsgiverOrgnummer
@@ -16,38 +17,37 @@ data class OppdaterJournalpostRequest(
     val sak: Sak? = null,
     val tema: String? = null,
     val tittel: String? = null,
-    val dokumenter: List<Dokument>? = null
+    val dokumenter: List<Dokument>? = null,
 )
 
 data class Dokument(
     val dokumentInfoId: String,
-    val tittel: String? = null
+    val tittel: String? = null,
 )
 
 data class Bruker(
     val id: String,
-    val idType: String
+    val idType: String,
 )
 
 data class AvsenderMottaker(
     val id: String,
     val idType: String,
-    val navn: String
+    val navn: String,
 )
 
 data class Sak(
     val sakstype: String,
-    val arkivsaksystem: String? = null
+    val arkivsaksystem: String? = null,
 )
 
-fun mapOppdaterRequest(
-    fnr: String,
-): OppdaterJournalpostRequest {
+fun mapOppdaterRequest(fnr: String): OppdaterJournalpostRequest {
     return OppdaterJournalpostRequest(
-        bruker = Bruker(
-            fnr,
-            "FNR"
-        ),
+        bruker =
+            Bruker(
+                fnr,
+                "FNR",
+            ),
         sak = Sak("GENERELL_SAK"),
         tema = "SYK",
     )

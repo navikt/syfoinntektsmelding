@@ -22,19 +22,18 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 
 class MapInntektEndringAarsakFraSimbaTest {
-
     companion object {
-
         // SpinnInntektEndringAarsak som tilsvarer InntektEndringAarsak
         @JvmStatic
         fun inntektEndringerProvider(): List<Pair<SpinnInntektEndringAarsak, InntektEndringAarsak>> {
             val perioder = listOf(1.januar til 31.januar)
-            val spinnPerioder = perioder.map {
-                no.nav.syfo.domain.Periode(
-                    fom = it.fom,
-                    tom = it.tom
-                )
-            }
+            val spinnPerioder =
+                perioder.map {
+                    no.nav.syfo.domain.Periode(
+                        fom = it.fom,
+                        tom = it.tom,
+                    )
+                }
             return listOf(
                 SpinnInntektEndringAarsak("Bonus") to Bonus,
                 SpinnInntektEndringAarsak("Feilregistrert") to Feilregistrert,
@@ -46,7 +45,11 @@ class MapInntektEndringAarsakFraSimbaTest {
                 SpinnInntektEndringAarsak("Permisjon", perioder = spinnPerioder) to Permisjon(permisjoner = perioder),
                 SpinnInntektEndringAarsak("Permittering", perioder = spinnPerioder) to Permittering(permitteringer = perioder),
                 SpinnInntektEndringAarsak("Sykefravaer", perioder = spinnPerioder) to Sykefravaer(sykefravaer = perioder),
-                SpinnInntektEndringAarsak("Tariffendring", gjelderFra = 1.januar, bleKjent = 1.mai) to Tariffendring(gjelderFra = 1.januar, bleKjent = 1.mai),
+                SpinnInntektEndringAarsak(
+                    "Tariffendring",
+                    gjelderFra = 1.januar,
+                    bleKjent = 1.mai,
+                ) to Tariffendring(gjelderFra = 1.januar, bleKjent = 1.mai),
                 SpinnInntektEndringAarsak("VarigLonnsendring", gjelderFra = 1.januar) to VarigLoennsendring(gjelderFra = 1.januar),
             )
         }
@@ -56,13 +59,15 @@ class MapInntektEndringAarsakFraSimbaTest {
     @MethodSource("inntektEndringerProvider")
     fun `InntektEndringAarsak mappes til riktig SpinnInntektEndringAarsak`(pair: Pair<SpinnInntektEndringAarsak, InntektEndringAarsak>) {
         val (spinnInntektEndringAarsak, inntektEndringAarsak) = pair
-        val im = lagInntektsmelding().let {
-            it.copy(
-                inntekt = it.inntekt?.copy(
-                    endringAarsak = inntektEndringAarsak
+        val im =
+            lagInntektsmelding().let {
+                it.copy(
+                    inntekt =
+                        it.inntekt?.copy(
+                            endringAarsak = inntektEndringAarsak,
+                        ),
                 )
-            )
-        }
+            }
 
         val mapped = mapInntektsmelding("1", "2", "3", im, 1.januar)
 

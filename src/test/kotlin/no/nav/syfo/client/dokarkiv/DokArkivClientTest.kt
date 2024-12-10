@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 class DokArkivClientTest {
-
     private lateinit var dokArkivClient: DokArkivClient
 
     @Test
@@ -64,5 +63,4 @@ class DokArkivClientTest {
     }
 }
 
-private fun mockAccessToken(): String =
-    "mock dokarkiv token"
+private fun mockAccessToken(): String = "mock dokarkiv token"

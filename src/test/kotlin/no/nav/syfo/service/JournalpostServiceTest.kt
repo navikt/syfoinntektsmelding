@@ -19,13 +19,14 @@ class JournalpostServiceTest {
     private var behandleInngaaendeJournalConsumer = mockk<BehandleInngaaendeJournalConsumer>(relaxed = true)
     private val metrikk = mockk<Metrikk>(relaxed = true)
 
-    private val journalpostService = JournalpostService(
-        inngaaendeJournalConsumer,
-        behandleInngaaendeJournalConsumer,
-        journalConsumer,
-        behandlendeEnhetConsumer,
-        metrikk,
-    )
+    private val journalpostService =
+        JournalpostService(
+            inngaaendeJournalConsumer,
+            behandleInngaaendeJournalConsumer,
+            journalConsumer,
+            behandlendeEnhetConsumer,
+            metrikk,
+        )
 
     @Test
     fun ferdigstillJournalpost() {
@@ -43,8 +44,8 @@ class JournalpostServiceTest {
                 journalStatus = JournalStatus.MOTTATT,
                 arkivRefereranse = "AR123",
                 førsteFraværsdag = LocalDate.now(),
-                mottattDato = LocalDateTime.now()
-            )
+                mottattDato = LocalDateTime.now(),
+            ),
         )
 
         verify { behandlendeEnhetConsumer.hentBehandlendeEnhet("fnr", "") }
@@ -67,7 +68,7 @@ class JournalpostServiceTest {
                 journalStatus = JournalStatus.MOTTATT,
                 arkivRefereranse = "AR123",
                 førsteFraværsdag = LocalDate.now(),
-                mottattDato = LocalDateTime.now()
+                mottattDato = LocalDateTime.now(),
             )
 
         val (_, fnr, _, arbeidsgiverPrivat) = journalpostService.hentInntektsmelding("journalpostId", "AR-1234")

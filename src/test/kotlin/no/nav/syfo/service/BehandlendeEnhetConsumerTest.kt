@@ -18,37 +18,36 @@ import org.junit.jupiter.api.Test
 import java.time.LocalDate
 
 class BehandlendeEnhetConsumerTest {
-
     var pdlClient = mockk<PdlClient>(relaxed = true)
     var norg2Client = mockk<Norg2Client>(relaxed = true)
     var metrikk = mockk<Metrikk>(relaxed = true)
 
-    val TIDSPUNKT = LocalDate.of(2021, 7, 1)
-    val FNR = "123456789"
-    val UUID = "abcdefgh"
-    val DISKRESJONSKODE = "SPFO"
-    val ENHET_NR = "enhet_nr_007"
+    val fnr = "123456789"
+    val uuid = "abcdefgh"
+    val diskresjonskode = "SPFO"
+    val enhetNr = "enhet_nr_007"
 
     @Test
     fun skal_finne_enhetsnr() {
         coEvery {
-            pdlClient.fullPerson(FNR)
-        } returns mockFullPerson(DISKRESJONSKODE)
-        val arbeidsfordelinger = listOf<ArbeidsfordelingResponse>(buildArbeidsfordelingResponse(ENHET_NR, LocalDate.of(2000, 1, 1), LocalDate.of(2030, 1, 1)))
+            pdlClient.fullPerson(fnr)
+        } returns mockFullPerson(diskresjonskode)
+        val arbeidsfordelinger =
+            listOf(buildArbeidsfordelingResponse(enhetNr, LocalDate.of(2000, 1, 1), LocalDate.of(2030, 1, 1)))
         every {
             runBlocking {
                 norg2Client.hentAlleArbeidsfordelinger(any(), any())
             }
         } returns arbeidsfordelinger
-        val enhet = BehandlendeEnhetConsumer(pdlClient, norg2Client, metrikk).hentBehandlendeEnhet(FNR, UUID)
-        Assertions.assertThat(enhet).isEqualTo(ENHET_NR)
+        val enhet = BehandlendeEnhetConsumer(pdlClient, norg2Client, metrikk).hentBehandlendeEnhet(fnr, uuid)
+        Assertions.assertThat(enhet).isEqualTo(enhetNr)
     }
 
     @Test
     fun skal_finne_aktiv_arbeidsfordeling() {
-        val fordelinger = listOf(buildArbeidsfordelingResponse(ENHET_NR, LocalDate.of(2021, 1, 1), LocalDate.of(2022, 1, 1), "Aktiv"))
+        val fordelinger = listOf(buildArbeidsfordelingResponse(enhetNr, LocalDate.of(2021, 1, 1), LocalDate.of(2022, 1, 1), "Aktiv"))
         val enhet = finnAktivBehandlendeEnhet(fordelinger, "")
-        Assertions.assertThat(enhet).isEqualTo(ENHET_NR)
+        Assertions.assertThat(enhet).isEqualTo(enhetNr)
     }
 
     @Test
@@ -59,11 +58,12 @@ class BehandlendeEnhetConsumerTest {
         }.isInstanceOf(IngenAktivEnhetException::class.java)
     }
 
-    fun mockFullPerson(diskresjonskode: String) = FullPerson(
-        navn = PersonNavn("Jeppe", "På", "Bjerget"),
-        foedselsdato = 1.januar(1986),
-        ident = FNR,
-        diskresjonskode = diskresjonskode,
-        geografiskTilknytning = "1851",
-    )
+    fun mockFullPerson(diskresjonskode: String) =
+        FullPerson(
+            navn = PersonNavn("Jeppe", "På", "Bjerget"),
+            foedselsdato = 1.januar(1986),
+            ident = fnr,
+            diskresjonskode = diskresjonskode,
+            geografiskTilknytning = "1851",
+        )
 }

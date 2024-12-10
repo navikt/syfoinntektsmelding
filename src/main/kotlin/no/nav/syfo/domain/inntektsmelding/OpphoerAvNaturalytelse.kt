@@ -6,5 +6,5 @@ import java.time.LocalDate
 data class OpphoerAvNaturalytelse(
     val naturalytelse: Naturalytelse? = null,
     val fom: LocalDate? = null,
-    val beloepPrMnd: BigDecimal? = null
+    val beloepPrMnd: BigDecimal? = null,
 )

@@ -9,14 +9,18 @@ import javax.sql.DataSource
 
 interface UtsattOppgaveRepository {
     fun findByInntektsmeldingId(inntektsmeldingId: String): UtsattOppgaveEntitet?
+
     fun findUtsattOppgaveEntitetByTimeoutBeforeAndTilstandEquals(
         timeout: LocalDateTime,
-        tilstand: Tilstand
+        tilstand: Tilstand,
     ): List<UtsattOppgaveEntitet>
 
     fun opprett(uo: UtsattOppgaveEntitet): UtsattOppgaveEntitet
+
     fun oppdater(uo: UtsattOppgaveEntitet): UtsattOppgaveEntitet
+
     fun deleteAll()
+
     fun findAll(): List<UtsattOppgaveEntitet>
 }
 
@@ -29,7 +33,7 @@ class UtsattOppgaveRepositoryMockk : UtsattOppgaveRepository {
 
     override fun findUtsattOppgaveEntitetByTimeoutBeforeAndTilstandEquals(
         timeout: LocalDateTime,
-        tilstand: Tilstand
+        tilstand: Tilstand,
     ): List<UtsattOppgaveEntitet> {
         return mockrepo.filter { it.timeout < timeout && it.tilstand == tilstand }
     }
@@ -57,9 +61,10 @@ class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepo
         val findByInnteksmeldingId = "SELECT * FROM UTSATT_OPPGAVE WHERE INNTEKTSMELDING_ID = ?;"
         val inntektsmeldinger = ArrayList<UtsattOppgaveEntitet>()
         ds.connection.use {
-            val res = it.prepareStatement(findByInnteksmeldingId).apply {
-                setString(1, inntektsmeldingId)
-            }.executeQuery()
+            val res =
+                it.prepareStatement(findByInnteksmeldingId).apply {
+                    setString(1, inntektsmeldingId)
+                }.executeQuery()
             val list: ArrayList<UtsattOppgaveEntitet> = resultLoop(res, inntektsmeldinger)
             if (list.isEmpty()) {
                 return null
@@ -70,7 +75,7 @@ class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepo
 
     override fun findUtsattOppgaveEntitetByTimeoutBeforeAndTilstandEquals(
         timeout: LocalDateTime,
-        tilstand: Tilstand
+        tilstand: Tilstand,
     ): List<UtsattOppgaveEntitet> {
         val queryString = " SELECT * FROM UTSATT_OPPGAVE WHERE TIMEOUT < ? AND TILSTAND = ?;"
         val utsattoppgaver = ArrayList<UtsattOppgaveEntitet>()
@@ -166,7 +171,7 @@ class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepo
 
     private fun resultLoop(
         res: ResultSet,
-        returnValue: ArrayList<UtsattOppgaveEntitet>
+        returnValue: ArrayList<UtsattOppgaveEntitet>,
     ): ArrayList<UtsattOppgaveEntitet> {
         while (res.next()) {
             returnValue.add(
@@ -183,8 +188,8 @@ class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepo
                     gosysOppgaveId = res.getString("GOSYS_OPPGAVE_ID"),
                     oppdatert = null,
                     speil = res.getBoolean("SPEIL"),
-                    utbetalingBruker = res.getBoolean("UTBETALING_BRUKER")
-                )
+                    utbetalingBruker = res.getBoolean("UTBETALING_BRUKER"),
+                ),
             )
         }
 

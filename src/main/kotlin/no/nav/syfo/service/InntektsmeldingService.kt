@@ -11,7 +11,7 @@ import org.slf4j.Logger
 
 class InntektsmeldingService(
     private val repository: InntektsmeldingRepository,
-    private val objectMapper: ObjectMapper
+    private val objectMapper: ObjectMapper,
 ) {
     private val logger = this.logger()
 
@@ -32,7 +32,7 @@ class InntektsmeldingService(
 
     fun lagreBehandling(
         inntektsmelding: Inntektsmelding,
-        aktorid: String
+        aktorid: String,
     ): InntektsmeldingEntitet {
         val dto = toInntektsmeldingEntitet(inntektsmelding)
         dto.aktorId = aktorid
@@ -46,13 +46,19 @@ fun Inntektsmelding.asJsonString(objectMapper: ObjectMapper): String {
     return objectMapper.writeValueAsString(im)
 }
 
-fun isDuplicateWithLatest(logger: Logger, inntektsmelding: Inntektsmelding, list: List<Inntektsmelding>): Boolean {
+fun isDuplicateWithLatest(
+    logger: Logger,
+    inntektsmelding: Inntektsmelding,
+    list: List<Inntektsmelding>,
+): Boolean {
     if (list.isEmpty()) {
         return false
     }
     val nyesteInntektsmelding = list.sortedBy { it.mottattDato }.last()
     val duplikatLatest = inntektsmelding.isDuplicate(nyesteInntektsmelding)
     val duplikatExclusive = inntektsmelding.isDuplicateExclusiveArsakInnsending(nyesteInntektsmelding) // TODO: Fjerne denne sjekken?
-    logger.info("Likhetssjekk: Er duplikat ekslusive ÅrsakInnsending? ${!duplikatLatest && duplikatExclusive} Journalpost: ${inntektsmelding.journalpostId} ")
+    logger.info(
+        "Likhetssjekk: Er duplikat ekslusive ÅrsakInnsending? ${!duplikatLatest && duplikatExclusive} Journalpost: ${inntektsmelding.journalpostId} ",
+    )
     return duplikatLatest
 }

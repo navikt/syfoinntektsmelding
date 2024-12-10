@@ -6,7 +6,6 @@ import org.junit.Assert.assertEquals
 import org.junit.jupiter.api.Test
 
 class InntektsmeldingValidatorKtTest {
-
     @Test
     fun skal_validere_normal_inntektsmelding_ok() {
         assertEquals(validerInntektsmelding(grunnleggendeInntektsmelding), Gyldighetsstatus.GYLDIG)

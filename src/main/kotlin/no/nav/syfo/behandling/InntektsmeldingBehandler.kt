@@ -29,19 +29,25 @@ class InntektsmeldingBehandler(
     private val inntektsmeldingService: InntektsmeldingService,
     private val inntektsmeldingAivenProducer: InntektsmeldingAivenProducer,
     private val utsattOppgaveService: UtsattOppgaveService,
-    private val pdlClient: PdlClient
+    private val pdlClient: PdlClient,
 ) {
     private val logger: Logger = this.logger()
     private val sikkerlogger = LoggerFactory.getLogger("tjenestekall")
     private val consumerLocks = Striped.lock(8)
 
-    fun behandle(arkivId: String, arkivreferanse: String): String? {
+    fun behandle(
+        arkivId: String,
+        arkivreferanse: String,
+    ): String? {
         logger.info("Henter inntektsmelding for $arkivreferanse")
         val inntektsmelding = journalpostService.hentInntektsmelding(arkivId, arkivreferanse)
         return behandleInntektsmelding(arkivreferanse, inntektsmelding)
     }
 
-    private fun behandleInntektsmelding(arkivreferanse: String, inntektsmelding: Inntektsmelding): String? {
+    private fun behandleInntektsmelding(
+        arkivreferanse: String,
+        inntektsmelding: Inntektsmelding,
+    ): String? {
         var ret: String? = null
         val consumerLock = consumerLocks.get(inntektsmelding.fnr)
         try {
@@ -85,18 +91,19 @@ class InntektsmeldingBehandler(
                             gosysOppgaveId = null,
                             oppdatert = null,
                             speil = false,
-                            utbetalingBruker = false
-                        )
+                            utbetalingBruker = false,
+                        ),
                     )
                     logger.info("Lagrer UtsattOppgave i databasen for ${inntektsmelding.arkivRefereranse}")
 
-                    val mappedInntektsmelding = mapInntektsmeldingKontrakt(
-                        inntektsmelding,
-                        aktorid,
-                        validerInntektsmelding(inntektsmelding),
-                        arkivreferanse,
-                        dto.uuid
-                    )
+                    val mappedInntektsmelding =
+                        mapInntektsmeldingKontrakt(
+                            inntektsmelding,
+                            aktorid,
+                            validerInntektsmelding(inntektsmelding),
+                            arkivreferanse,
+                            dto.uuid,
+                        )
 
                     inntektsmeldingAivenProducer.leggMottattInntektsmeldingPåTopics(mappedInntektsmelding)
                     tellMetrikker(inntektsmelding)
@@ -104,14 +111,14 @@ class InntektsmeldingBehandler(
                         "Inntektsmelding {} er journalført for {} refusjon {}",
                         inntektsmelding.journalpostId,
                         arkivreferanse,
-                        inntektsmelding.refusjon.beloepPrMnd
+                        inntektsmelding.refusjon.beloepPrMnd,
                     )
                     ret = dto.uuid
                 } else {
                     logger.info(
                         "Behandler ikke inntektsmelding {} da den har status: {}",
                         inntektsmelding.journalpostId,
-                        inntektsmelding.journalStatus
+                        inntektsmelding.journalStatus,
                     )
                 }
             }

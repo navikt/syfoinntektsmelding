@@ -18,26 +18,26 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 class InntektsmeldingKontraktMapperKtTest {
-
     val om = buildObjectMapper()
 
     @Test
     fun toInntektsmeldingDTO() {
-        val inntektsmelding = Inntektsmelding(
-            fnr = "fnr",
-            arbeidsgiverPrivatFnr = "fnr",
-            journalpostId = "journalpostId",
-            arsakTilInnsending = "",
-            journalStatus = JournalStatus.MOTTATT,
-            arbeidsgiverperioder = ArrayList(),
-            refusjon = Refusjon(BigDecimal.ONE),
-            gyldighetsStatus = Gyldighetsstatus.GYLDIG,
-            arkivRefereranse = "ar123",
-            førsteFraværsdag = LocalDate.now(),
-            mottattDato = LocalDateTime.of(2019, 10, 1, 5, 18, 45, 0),
-            sakId = "sakId",
-            aktorId = "aktorId"
-        )
+        val inntektsmelding =
+            Inntektsmelding(
+                fnr = "fnr",
+                arbeidsgiverPrivatFnr = "fnr",
+                journalpostId = "journalpostId",
+                arsakTilInnsending = "",
+                journalStatus = JournalStatus.MOTTATT,
+                arbeidsgiverperioder = ArrayList(),
+                refusjon = Refusjon(BigDecimal.ONE),
+                gyldighetsStatus = Gyldighetsstatus.GYLDIG,
+                arkivRefereranse = "ar123",
+                førsteFraværsdag = LocalDate.now(),
+                mottattDato = LocalDateTime.of(2019, 10, 1, 5, 18, 45, 0),
+                sakId = "sakId",
+                aktorId = "aktorId",
+            )
         val dto = toInntektsmeldingEntitet(inntektsmelding)
         assertThat(dto.journalpostId).isEqualTo("journalpostId")
         assertThat(dto.aktorId).isEqualTo("aktorId")
@@ -49,15 +49,16 @@ class InntektsmeldingKontraktMapperKtTest {
 
     @Test
     fun toInntektsmelding() {
-        val dto = InntektsmeldingEntitet(
-            uuid = UUID.randomUUID().toString(),
-            journalpostId = grunnleggendeInntektsmelding.journalpostId,
-            behandlet = LocalDateTime.of(2019, 10, 25, 0, 0, 0, 0),
-            orgnummer = grunnleggendeInntektsmelding.arbeidsgiverOrgnummer,
-            arbeidsgiverPrivat = "arbeidsgiverPrivat",
-            aktorId = grunnleggendeInntektsmelding.aktorId.toString(),
-            data = om.writeValueAsString(grunnleggendeInntektsmelding)
-        )
+        val dto =
+            InntektsmeldingEntitet(
+                uuid = UUID.randomUUID().toString(),
+                journalpostId = grunnleggendeInntektsmelding.journalpostId,
+                behandlet = LocalDateTime.of(2019, 10, 25, 0, 0, 0, 0),
+                orgnummer = grunnleggendeInntektsmelding.arbeidsgiverOrgnummer,
+                arbeidsgiverPrivat = "arbeidsgiverPrivat",
+                aktorId = grunnleggendeInntektsmelding.aktorId.toString(),
+                data = om.writeValueAsString(grunnleggendeInntektsmelding),
+            )
         val i = toInntektsmelding(dto, om)
         assertThat(i.journalpostId).isEqualTo("123")
         assertThat(i.sakId).isEqualTo("sakId")
@@ -84,8 +85,8 @@ class InntektsmeldingKontraktMapperKtTest {
     fun skal_finne_arbeidsgivertype_privat() {
         assertThat(
             mapArbeidsgivertype(
-                grunnleggendeInntektsmelding.copy(arbeidsgiverOrgnummer = null, arbeidsgiverPrivatFnr = "00")
-            )
+                grunnleggendeInntektsmelding.copy(arbeidsgiverOrgnummer = null, arbeidsgiverPrivatFnr = "00"),
+            ),
         ).isEqualTo(Arbeidsgivertype.PRIVAT)
     }
 }

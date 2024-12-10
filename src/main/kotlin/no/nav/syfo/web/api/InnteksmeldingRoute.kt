@@ -1,6 +1,7 @@
 @file:Suppress(
-    "BlockingMethodInNonBlockingContext", "BlockingMethodInNonBlockingContext",
-    "BlockingMethodInNonBlockingContext"
+    "BlockingMethodInNonBlockingContext",
+    "BlockingMethodInNonBlockingContext",
+    "BlockingMethodInNonBlockingContext",
 )
 
 package no.nav.syfo.web.api
@@ -20,24 +21,28 @@ import no.nav.syfo.util.validerInntektsmelding
 
 fun Route.syfoinntektsmelding(
     imRepo: InntektsmeldingRepository,
-    om: ObjectMapper
+    om: ObjectMapper,
 ) {
     val logger = this.logger()
     route("/inntektsmelding") {
         get("/{inntektsmeldingId}") {
-            val inntektsmeldingId = call.parameters["inntektsmeldingId"] ?: throw IllegalArgumentException("Forventet inntektsmeldingId som path parameter")
+            val inntektsmeldingId =
+                call.parameters["inntektsmeldingId"] ?: throw IllegalArgumentException(
+                    "Forventet inntektsmeldingId som path parameter",
+                )
             logger.info("Fikk request om å hente inntektsmelding med id: $inntektsmeldingId")
             val dto = imRepo.findByUuid(inntektsmeldingId)
             if (dto != null) {
                 val inntektsmelding = toInntektsmelding(dto, om)
 
-                val mappedInntektsmelding = mapInntektsmeldingKontrakt(
-                    inntektsmelding,
-                    dto.aktorId,
-                    validerInntektsmelding(inntektsmelding),
-                    inntektsmelding.arkivRefereranse,
-                    dto.uuid
-                )
+                val mappedInntektsmelding =
+                    mapInntektsmeldingKontrakt(
+                        inntektsmelding,
+                        dto.aktorId,
+                        validerInntektsmelding(inntektsmelding),
+                        inntektsmelding.arkivRefereranse,
+                        dto.uuid,
+                    )
 
                 logger.info("Henter inntektsmelding med arkivreferanse: ${inntektsmelding.arkivRefereranse}")
 

@@ -3,7 +3,12 @@ package no.nav.syfo.service
 import no.nav.syfo.client.norg.ArbeidsfordelingResponse
 import java.time.LocalDate
 
-fun buildArbeidsfordelingResponse(enhetNr: String, fra: LocalDate, til: LocalDate, status: String = "Aktiv"): ArbeidsfordelingResponse {
+fun buildArbeidsfordelingResponse(
+    enhetNr: String,
+    fra: LocalDate,
+    til: LocalDate,
+    status: String = "Aktiv",
+): ArbeidsfordelingResponse {
     return ArbeidsfordelingResponse(
         aktiveringsdato = fra,
         antallRessurser = 0,
@@ -21,6 +26,6 @@ fun buildArbeidsfordelingResponse(enhetNr: String, fra: LocalDate, til: LocalDat
         type = "KO",
         underAvviklingDato = null,
         underEtableringDato = LocalDate.of(2020, 12, 30),
-        versjon = 1
+        versjon = 1,
     )
 }

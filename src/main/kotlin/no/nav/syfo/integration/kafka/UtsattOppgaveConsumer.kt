@@ -27,7 +27,6 @@ class UtsattOppgaveConsumer(
     val utsattOppgaveService: UtsattOppgaveService,
     val bakgrunnsjobbRepo: BakgrunnsjobbRepository,
 ) : ReadynessComponent, LivenessComponent {
-
     private val consumer: KafkaConsumer<String, String> = KafkaConsumer(props, StringDeserializer(), StringDeserializer())
     private val logger = this.logger()
     private val sikkerlogger = sikkerLogger()
@@ -73,7 +72,10 @@ class UtsattOppgaveConsumer(
         }
     }
 
-    fun behandle(hendelse: UtsattOppgaveDTO, raw: String) {
+    fun behandle(
+        hendelse: UtsattOppgaveDTO,
+        raw: String,
+    ) {
         try {
             logger.info("Behandler UtsattOppgave...")
             utsattOppgaveService.prosesser(
@@ -81,8 +83,8 @@ class UtsattOppgaveConsumer(
                     hendelse.dokumentId,
                     hendelse.oppdateringstype.tilHandling(),
                     hendelse.timeout,
-                    hendelse.oppdateringstype
-                )
+                    hendelse.oppdateringstype,
+                ),
             )
         } catch (ex: Exception) {
             logger.info("Det oppstod en feil ved behandling av UtsattOppgave. Oppretter bakgrunnsjobb.")
@@ -91,8 +93,8 @@ class UtsattOppgaveConsumer(
                     type = FeiletUtsattOppgaveMeldingProsessor.JOB_TYPE,
                     kjoeretid = LocalDateTime.now().plusMinutes(30),
                     maksAntallForsoek = 10,
-                    data = raw
-                )
+                    data = raw,
+                ),
             )
         }
     }

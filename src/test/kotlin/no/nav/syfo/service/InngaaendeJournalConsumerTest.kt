@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 
 class InngaaendeJournalConsumerTest {
-
     private val safJournalpostClient = mockk<SafJournalpostClient>(relaxed = true)
 
     private val inngaaendeJournalConsumer = InngaaendeJournalConsumer(safJournalpostClient)
@@ -23,11 +22,12 @@ class InngaaendeJournalConsumerTest {
         val dokumentId1 = "dokumentId"
         val journalpostId = "journalpostId"
 
-        val journalpost = Journalpost(
-            JournalStatus.MOTTATT,
-            datoOpprettet = LocalDateTime.now(),
-            dokumenter = listOf(Dokument(dokumentId1))
-        )
+        val journalpost =
+            Journalpost(
+                JournalStatus.MOTTATT,
+                datoOpprettet = LocalDateTime.now(),
+                dokumenter = listOf(Dokument(dokumentId1)),
+            )
 
         every {
             safJournalpostClient.getJournalpostMetadata(any())

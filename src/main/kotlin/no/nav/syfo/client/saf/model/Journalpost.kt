@@ -10,5 +10,5 @@ data class Journalpost(
 )
 
 data class Dokument(
-    val dokumentInfoId: String
+    val dokumentInfoId: String,
 )

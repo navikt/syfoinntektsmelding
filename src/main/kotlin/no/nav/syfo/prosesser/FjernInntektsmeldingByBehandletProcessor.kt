@@ -8,11 +8,14 @@ import java.time.LocalDate
 
 class FjernInntektsmeldingByBehandletProcessor(
     private val repository: InntektsmeldingRepository,
-    private val lagringstidMåneder: Int
+    private val lagringstidMåneder: Int,
 ) : BakgrunnsjobbProsesserer {
     private val logger = this.logger()
 
-    companion object { const val JOB_TYPE = "fjern-inntektsmelding-via-behnadling" }
+    companion object {
+        const val JOB_TYPE = "fjern-inntektsmelding-via-behnadling"
+    }
+
     override val type: String get() = JOB_TYPE
 
     override fun prosesser(jobb: Bakgrunnsjobb) {

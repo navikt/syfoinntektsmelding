@@ -23,7 +23,6 @@ import java.time.LocalDateTime
 import javax.xml.bind.JAXBElement
 
 internal object InntektsmeldingArbeidsgiverPrivat20181211Mapper {
-
     private val logger = this.logger()
 
     fun fraXMLInntektsmelding(
@@ -32,7 +31,7 @@ internal object InntektsmeldingArbeidsgiverPrivat20181211Mapper {
         mottattDato: LocalDateTime,
         journalStatus: JournalStatus,
         arkivReferanse: String,
-        pdlClient: PdlClient
+        pdlClient: PdlClient,
     ): Inntektsmelding {
         logger.info("Behandling inntektsmelding på 20181211 format")
         val skjemainnhold = (jaxbInntektsmelding.value as XMLInntektsmeldingM).skjemainnhold
@@ -45,13 +44,14 @@ internal object InntektsmeldingArbeidsgiverPrivat20181211Mapper {
         val bruttoUtbetalt = skjemainnhold.sykepengerIArbeidsgiverperioden?.value?.bruttoUtbetalt?.value
         val årsakEndring = skjemainnhold.arbeidsforhold?.value?.beregnetInntekt?.value?.aarsakVedEndring?.value
 
-        val perioder = skjemainnhold
-            ?.sykepengerIArbeidsgiverperioden?.value
-            ?.arbeidsgiverperiodeListe?.value
-            ?.arbeidsgiverperiode
-            ?.filter { xmlPeriode -> xmlPeriode.fom != null && xmlPeriode.tom != null }
-            ?.map { Periode(it.fom.value, it.tom.value) }
-            ?: emptyList()
+        val perioder =
+            skjemainnhold
+                ?.sykepengerIArbeidsgiverperioden?.value
+                ?.arbeidsgiverperiodeListe?.value
+                ?.arbeidsgiverperiode
+                ?.filter { xmlPeriode -> xmlPeriode.fom != null && xmlPeriode.tom != null }
+                ?.map { Periode(it.fom.value, it.tom.value) }
+                ?: emptyList()
 
         return Inntektsmelding(
             fnr = skjemainnhold.arbeidstakerFnr,
@@ -74,16 +74,19 @@ internal object InntektsmeldingArbeidsgiverPrivat20181211Mapper {
             feriePerioder = mapFerie(skjemainnhold.arbeidsforhold),
             førsteFraværsdag = mapFørsteFraværsdag(skjemainnhold.arbeidsforhold),
             mottattDato = mottattDato,
-            begrunnelseRedusert = skjemainnhold.sykepengerIArbeidsgiverperioden.value.begrunnelseForReduksjonEllerIkkeUtbetalt?.value
-                ?: "",
+            begrunnelseRedusert =
+                skjemainnhold.sykepengerIArbeidsgiverperioden.value.begrunnelseForReduksjonEllerIkkeUtbetalt?.value
+                    ?: "",
             avsenderSystem = AvsenderSystem(skjemainnhold.avsendersystem.systemnavn, skjemainnhold.avsendersystem.systemversjon),
             nærRelasjon = skjemainnhold.isNaerRelasjon,
-            kontaktinformasjon = Kontaktinformasjon(
-                skjemainnhold.arbeidsgiver?.value?.kontaktinformasjon?.kontaktinformasjonNavn, skjemainnhold.arbeidsgiver?.value?.kontaktinformasjon?.telefonnummer
-            ),
+            kontaktinformasjon =
+                Kontaktinformasjon(
+                    skjemainnhold.arbeidsgiver?.value?.kontaktinformasjon?.kontaktinformasjonNavn,
+                    skjemainnhold.arbeidsgiver?.value?.kontaktinformasjon?.telefonnummer,
+                ),
             innsendingstidspunkt = innsendingstidspunkt,
             bruttoUtbetalt = bruttoUtbetalt,
-            årsakEndring = årsakEndring
+            årsakEndring = årsakEndring,
         )
     }
 
@@ -96,9 +99,15 @@ internal object InntektsmeldingArbeidsgiverPrivat20181211Mapper {
         return arbeidsforhold?.value?.foersteFravaersdag?.value
     }
 
-    private fun mapXmlGjenopptakelseNaturalytelser(xmlGjenopptakelseListe: JAXBElement<XMLGjenopptakelseNaturalytelseListe>?): List<GjenopptakelseNaturalytelse> {
+    private fun mapXmlGjenopptakelseNaturalytelser(
+        xmlGjenopptakelseListe: JAXBElement<XMLGjenopptakelseNaturalytelseListe>?,
+    ): List<GjenopptakelseNaturalytelse> {
         return xmlGjenopptakelseListe?.value?.naturalytelseDetaljer?.map { gjenopptakelse ->
-            GjenopptakelseNaturalytelse(mapNaturalytelseType(gjenopptakelse.naturalytelseType), gjenopptakelse.fom?.value, gjenopptakelse.beloepPrMnd?.value)
+            GjenopptakelseNaturalytelse(
+                mapNaturalytelseType(gjenopptakelse.naturalytelseType),
+                gjenopptakelse.fom?.value,
+                gjenopptakelse.beloepPrMnd?.value,
+            )
         }
             ?: emptyList()
     }
@@ -111,7 +120,10 @@ internal object InntektsmeldingArbeidsgiverPrivat20181211Mapper {
     }
 
     private fun mapXmlEndringRefusjon(xmlRefusjon: JAXBElement<XMLRefusjon>?): List<EndringIRefusjon> {
-        return xmlRefusjon?.value?.endringIRefusjonListe?.value?.endringIRefusjon?.map { endring -> EndringIRefusjon(endring.endringsdato?.value, endring.refusjonsbeloepPrMnd?.value) }
+        return xmlRefusjon?.value?.endringIRefusjonListe?.value?.endringIRefusjon?.map {
+                endring ->
+            EndringIRefusjon(endring.endringsdato?.value, endring.refusjonsbeloepPrMnd?.value)
+        }
             ?: emptyList()
     }
 

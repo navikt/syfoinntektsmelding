@@ -15,15 +15,15 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 class JournalpostHendelseConsumerTest {
-
     var bakgrunnsjobbRepo: BakgrunnsjobbRepository = mockk(relaxed = true)
     var om: ObjectMapper = mockk(relaxed = true)
     var props = joarkLocalProperties().toMap()
     val topicName = "topic"
     lateinit var consumer: JournalpostHendelseConsumer
-    val GYLDIG_INNTEKTSMELDING = InngaaendeJournalpostDTO("abc", 1, "JournalpostMottatt", 111, "MOTTATT", "", "SYK", "ALTINN", "", "")
-    val IKKE_INNTEKTSMELDING = InngaaendeJournalpostDTO("abc", 1, "JournalpostMottatt", 333, "IKKE_MOTTATT", "", "IKKE_SYK", "IKKE_ALTINN", "", "")
-    val FEIL_HENDELSE_TYPE = InngaaendeJournalpostDTO("abc", 1, "TemaEndret", 333, "MOTTATT", "", "SYK", "ALTINN", "", "")
+    val gyldigInntektsmelding = InngaaendeJournalpostDTO("abc", 1, "JournalpostMottatt", 111, "MOTTATT", "", "SYK", "ALTINN", "", "")
+    val ikkeInntektsmelding =
+        InngaaendeJournalpostDTO("abc", 1, "JournalpostMottatt", 333, "IKKE_MOTTATT", "", "IKKE_SYK", "IKKE_ALTINN", "", "")
+    val feilHendelseType = InngaaendeJournalpostDTO("abc", 1, "TemaEndret", 333, "MOTTATT", "", "SYK", "ALTINN", "", "")
 
     @BeforeEach
     fun before() {
@@ -67,32 +67,32 @@ class JournalpostHendelseConsumerTest {
 
     @Test
     fun skal_lagre_inntektsmelding() {
-        consumer.processHendelse(GYLDIG_INNTEKTSMELDING)
+        consumer.processHendelse(gyldigInntektsmelding)
         verify(exactly = 1) { bakgrunnsjobbRepo.save(any()) }
     }
 
     @Test
     fun skal_gjenkjenne_nye() {
-        assertEquals(JournalpostStatus.Ny, consumer.findStatus(GYLDIG_INNTEKTSMELDING))
+        assertEquals(JournalpostStatus.Ny, consumer.findStatus(gyldigInntektsmelding))
     }
 
     @Test
     fun skal_gjenkjenne_ikke_inntektsmeldinger() {
-        assertEquals(JournalpostStatus.IkkeInntektsmelding, consumer.findStatus(IKKE_INNTEKTSMELDING))
+        assertEquals(JournalpostStatus.IkkeInntektsmelding, consumer.findStatus(ikkeInntektsmelding))
         verify(exactly = 0) { bakgrunnsjobbRepo.save(any()) }
     }
 
     @Test
     fun skal_gjenkjenne_feil_hendelser() {
-        assertEquals(JournalpostStatus.FeilHendelseType, consumer.findStatus(FEIL_HENDELSE_TYPE))
+        assertEquals(JournalpostStatus.FeilHendelseType, consumer.findStatus(feilHendelseType))
         verify(exactly = 0) { bakgrunnsjobbRepo.save(any()) }
     }
 
     @Test
     fun skal_sjekke_om_inntektsmelding() {
-        assertTrue(isInntektsmelding(GYLDIG_INNTEKTSMELDING))
-        assertFalse(isInntektsmelding(GYLDIG_INNTEKTSMELDING.copy(journalpostStatus = "IKKE_MOTTATT")))
-        assertFalse(isInntektsmelding(GYLDIG_INNTEKTSMELDING.copy(temaNytt = "IKKE_SYK")))
-        assertFalse(isInntektsmelding(GYLDIG_INNTEKTSMELDING.copy(mottaksKanal = "IKKE_ALTINN")))
+        assertTrue(isInntektsmelding(gyldigInntektsmelding))
+        assertFalse(isInntektsmelding(gyldigInntektsmelding.copy(journalpostStatus = "IKKE_MOTTATT")))
+        assertFalse(isInntektsmelding(gyldigInntektsmelding.copy(temaNytt = "IKKE_SYK")))
+        assertFalse(isInntektsmelding(gyldigInntektsmelding.copy(mottaksKanal = "IKKE_ALTINN")))
     }
 }
