@@ -22,6 +22,4 @@ class FjernInntektsmeldingByBehandletProcessor(
         val antallSlettet = repository.deleteByBehandletBefore(konfigurertAntallMånederSiden)
         logger.info("Slettet $antallSlettet inntektsmeldinger")
     }
-
-    data class JobbData(val id: UUID)
 }

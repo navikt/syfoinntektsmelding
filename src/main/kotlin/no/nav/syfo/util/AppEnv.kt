@@ -8,6 +8,4 @@ enum class AppEnv {
     PROD
 }
 
-fun ApplicationConfig.getEnvironment(): AppEnv = AppEnv.valueOf(getString("koin.profile"))
-
 fun ApplicationConfig.getString(path: String): String = property(path).getString()
