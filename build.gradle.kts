@@ -48,6 +48,7 @@ val bakgrunnsjobbVersion: String by project
 val pdlClientVersion: String by project
 val tokenProviderVersion: String by project
 val oppgaveClientVersion: String by project
+
 plugins {
     kotlin("jvm")
     kotlin("plugin.serialization")
@@ -103,15 +104,17 @@ tasks.jar {
     archiveBaseName.set("app")
     manifest {
         attributes["Main-Class"] = mainClass
-        attributes["Class-Path"] = configurations.runtimeClasspath.get().joinToString(separator = " ") {
-            it.name
-        }
+        attributes["Class-Path"] =
+            configurations.runtimeClasspath.get().joinToString(separator = " ") {
+                it.name
+            }
     }
     doLast {
         configurations.runtimeClasspath.get().forEach {
             val file = layout.buildDirectory.file("libs/${it.name}").get().asFile
-            if (!file.exists())
+            if (!file.exists()) {
                 it.copyTo(file)
+            }
         }
     }
 }
