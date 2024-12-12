@@ -48,24 +48,24 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.atomic.AtomicInteger
 
 class InntektsmeldingBehandlerTest2 {
-
-    private var objectMapper = ObjectMapper()
-        .registerModule(
-            KotlinModule.Builder()
-                .withReflectionCacheSize(512)
-                .configure(KotlinFeature.NullToEmptyCollection, false)
-                .configure(KotlinFeature.NullToEmptyMap, false)
-                .configure(KotlinFeature.NullIsSameAsDefault, false)
-                .configure(KotlinFeature.SingletonSupport, false)
-                .configure(KotlinFeature.StrictNullChecks, false)
-                .build()
-        )
-        .registerModule(Jdk8Module())
-        .registerModule(JavaTimeModule())
-        .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-        .configure(SerializationFeature.INDENT_OUTPUT, true)
-        .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
-        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+    private var objectMapper =
+        ObjectMapper()
+            .registerModule(
+                KotlinModule.Builder()
+                    .withReflectionCacheSize(512)
+                    .configure(KotlinFeature.NullToEmptyCollection, false)
+                    .configure(KotlinFeature.NullToEmptyMap, false)
+                    .configure(KotlinFeature.NullIsSameAsDefault, false)
+                    .configure(KotlinFeature.SingletonSupport, false)
+                    .configure(KotlinFeature.StrictNullChecks, false)
+                    .build(),
+            )
+            .registerModule(Jdk8Module())
+            .registerModule(JavaTimeModule())
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+            .configure(SerializationFeature.INDENT_OUTPUT, true)
+            .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     private var inngaaendeJournalConsumer = mockk<InngaaendeJournalConsumer>(relaxed = true)
     private var metrikk = mockk<Metrikk>(relaxed = true)
     private var behandleInngaaendeJournalConsumer = mockk<BehandleInngaaendeJournalConsumer>(relaxed = true)
@@ -75,7 +75,11 @@ class InntektsmeldingBehandlerTest2 {
 
     private var inntektsmeldingRepository = mockk<InntektsmeldingRepository>(relaxed = true)
     private var mockInnteksmeldingRepo = InntektsmeldingRepositoryMock()
-    private var inntektsmeldingService = InntektsmeldingService(mockInnteksmeldingRepo, objectMapper) // mockk<InntektsmeldingService>(relaxed = true)
+    private var inntektsmeldingService =
+        InntektsmeldingService(
+            mockInnteksmeldingRepo,
+            objectMapper,
+        ) // mockk<InntektsmeldingService>(relaxed = true)
 
     lateinit var utsattOppgaveDAO: UtsattOppgaveDAO
     private var utsattOppgaveService = mockk<UtsattOppgaveService>(relaxed = true)
@@ -92,22 +96,24 @@ class InntektsmeldingBehandlerTest2 {
     fun setup() {
         inntektsmeldingRepository.deleteAll()
         journalConsumer = JournalConsumer(safDokumentClient, safJournalpostClient, pdlClient)
-        journalpostService = JournalpostService(
-            inngaaendeJournalConsumer,
-            behandleInngaaendeJournalConsumer,
-            journalConsumer,
-            behandlendeEnhetConsumer,
-            metrikk,
-        )
+        journalpostService =
+            JournalpostService(
+                inngaaendeJournalConsumer,
+                behandleInngaaendeJournalConsumer,
+                journalConsumer,
+                behandlendeEnhetConsumer,
+                metrikk,
+            )
 
-        inntektsmeldingBehandler = InntektsmeldingBehandler(
-            journalpostService,
-            metrikk,
-            inntektsmeldingService,
-            aivenInntektsmeldingBehandler,
-            utsattOppgaveService,
-            pdlClient
-        )
+        inntektsmeldingBehandler =
+            InntektsmeldingBehandler(
+                journalpostService,
+                metrikk,
+                inntektsmeldingService,
+                aivenInntektsmeldingBehandler,
+                utsattOppgaveService,
+                pdlClient,
+            )
         MockKAnnotations.init(inntektsmeldingBehandler)
 
         every { inngaaendeJournalConsumer.hentDokumentId("arkivId") } returns inngaaendeJournal("arkivId")
@@ -117,11 +123,12 @@ class InntektsmeldingBehandlerTest2 {
         every { behandlendeEnhetConsumer.hentBehandlendeEnhet(any(), any()) } returns "enhet"
         every { behandlendeEnhetConsumer.hentGeografiskTilknytning(any()) } returns
             GeografiskTilknytningData(geografiskTilknytning = "tilknytning", diskresjonskode = "")
-        val journalpost = Journalpost(
-            JournalStatus.MOTTATT,
-            LocalDateTime.now(),
-            dokumenter = listOf(Dokument(dokumentInfoId = "dokumentId"))
-        )
+        val journalpost =
+            Journalpost(
+                JournalStatus.MOTTATT,
+                LocalDateTime.now(),
+                dokumenter = listOf(Dokument(dokumentInfoId = "dokumentId")),
+            )
         every {
             safJournalpostClient.getJournalpostMetadata(any())
         } returns journalpost
@@ -188,12 +195,13 @@ class InntektsmeldingBehandlerTest2 {
     @Test
     fun `Mottar inntektsmelding med flere perioder`() {
         every { pdlClient.getAktørid(any()) } returnsMany listOf("aktorId_for_8", "aktorId_for_8")
-        val dokumentResponse = lagDokumentRespons(
-            LocalDate.of(2019, 1, 1),
-            LocalDate.of(2019, 1, 12),
-            LocalDate.of(2019, 1, 12),
-            LocalDate.of(2019, 1, 14)
-        )
+        val dokumentResponse =
+            lagDokumentRespons(
+                LocalDate.of(2019, 1, 1),
+                LocalDate.of(2019, 1, 12),
+                LocalDate.of(2019, 1, 12),
+                LocalDate.of(2019, 1, 14),
+            )
         every {
             safDokumentClient.hentDokument(any(), any())
         } returns dokumentResponse.toByteArray()
@@ -231,11 +239,12 @@ class InntektsmeldingBehandlerTest2 {
 
     @Test
     fun `Behandler inntektsmelding som en sak ved lik periode`() {
-        val dokumentResponse = inntektsmeldingArbeidsgiver(
-            listOf(
-                Periode(LocalDate.now(), LocalDate.now().plusDays(20))
+        val dokumentResponse =
+            inntektsmeldingArbeidsgiver(
+                listOf(
+                    Periode(LocalDate.now(), LocalDate.now().plusDays(20)),
+                ),
             )
-        )
         every { inngaaendeJournalConsumer.hentDokumentId("arkivId") } returns inngaaendeJournal("arkivId")
         every {
             safDokumentClient.hentDokument("arkivId", any())
@@ -248,30 +257,34 @@ class InntektsmeldingBehandlerTest2 {
     }
 
     @Test
-    fun `Behandler inntektsmeldinger for flere personer samtidig`() = runBlocking {
-        val fnr = AtomicInteger()
-        every {
-            safDokumentClient.hentDokument(any(), any())
-        } answers { build(fnr).toByteArray() }
+    fun `Behandler inntektsmeldinger for flere personer samtidig`() =
+        runBlocking {
+            val fnr = AtomicInteger()
+            every {
+                safDokumentClient.hentDokument(any(), any())
+            } answers { build(fnr).toByteArray() }
 
-        val numThreads = 16
-        produceParallelMessages(numThreads, "arkivId")
-        verify(exactly = numThreads) { behandleInngaaendeJournalConsumer.ferdigstillJournalpost(any()) }
-    }
+            val numThreads = 16
+            produceParallelMessages(numThreads, "arkivId")
+            verify(exactly = numThreads) { behandleInngaaendeJournalConsumer.ferdigstillJournalpost(any()) }
+        }
 
     private fun build(fnr: AtomicInteger): String {
         return inntektsmeldingArbeidsgiver(
             listOf(
                 Periode(
                     fom = LocalDate.now(),
-                    tom = LocalDate.now().plusDays(20)
-                )
+                    tom = LocalDate.now().plusDays(20),
+                ),
             ),
-            "fnr" + fnr.incrementAndGet()
+            "fnr" + fnr.incrementAndGet(),
         )
     }
 
-    fun produceParallelMessages(numThreads: Int, arkivId: String) {
+    fun produceParallelMessages(
+        numThreads: Int,
+        arkivId: String,
+    ) {
         val countdown = CountDownLatch(numThreads)
 
         repeat(numThreads) {
@@ -283,15 +296,18 @@ class InntektsmeldingBehandlerTest2 {
         countdown.await()
     }
 
-    private fun lagDokumentRespons(fom: LocalDate, tom: LocalDate): String {
+    private fun lagDokumentRespons(
+        fom: LocalDate,
+        tom: LocalDate,
+    ): String {
         return inntektsmeldingArbeidsgiver(
-            listOf(Periode(fom, tom))
+            listOf(Periode(fom, tom)),
         )
     }
 
     private fun lagDokumentRespons(): String {
         return inntektsmeldingArbeidsgiver(
-            ArrayList()
+            ArrayList(),
         )
     }
 
@@ -299,10 +315,10 @@ class InntektsmeldingBehandlerTest2 {
         fom: LocalDate,
         tom: LocalDate,
         fom2: LocalDate,
-        tom2: LocalDate
+        tom2: LocalDate,
     ): String {
         return inntektsmeldingArbeidsgiver(
-            listOf(Periode(fom, tom), Periode(fom2, tom2))
+            listOf(Periode(fom, tom), Periode(fom2, tom2)),
         )
     }
 
@@ -310,7 +326,7 @@ class InntektsmeldingBehandlerTest2 {
         return InngaaendeJournal(
             dokumentId = arkivId,
             status = JournalStatus.MOTTATT,
-            mottattDato = LocalDateTime.now()
+            mottattDato = LocalDateTime.now(),
         )
     }
 }

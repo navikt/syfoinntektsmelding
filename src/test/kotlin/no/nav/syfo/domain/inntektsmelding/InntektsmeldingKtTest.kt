@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Test
 
 internal class InntektsmeldingKtTest {
-
     @Test
     fun `Skal være ulike`() {
         assertNotEquals(buildIM().copy(aktorId = "abc"), buildIM().copy(aktorId = "xyz"))

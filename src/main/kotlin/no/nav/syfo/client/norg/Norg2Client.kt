@@ -24,21 +24,24 @@ import java.time.LocalDate
  */
 open class Norg2Client(
     private val url: String,
-    private val httpClient: HttpClient
+    private val httpClient: HttpClient,
 ) {
-
     /**
      * Oppslag av informasjon om ruting av arbeidsoppgaver til enheter.
      */
-    open suspend fun hentAlleArbeidsfordelinger(request: ArbeidsfordelingRequest, callId: String?): List<ArbeidsfordelingResponse> {
+    open suspend fun hentAlleArbeidsfordelinger(
+        request: ArbeidsfordelingRequest,
+        callId: String?,
+    ): List<ArbeidsfordelingResponse> {
         return runBlocking {
-            val httpResponse = httpClient.post(url) {
-                contentType(ContentType.Application.Json.withCharset(Charsets.UTF_8))
-                header("X-Correlation-ID", callId)
-                header("Nav-Call-Id", callId)
-                header("Nav-Consumer-Id", "spinosaurus")
-                setBody(request)
-            }
+            val httpResponse =
+                httpClient.post(url) {
+                    contentType(ContentType.Application.Json.withCharset(Charsets.UTF_8))
+                    header("X-Correlation-ID", callId)
+                    header("Nav-Call-Id", callId)
+                    header("Nav-Consumer-Id", "spinosaurus")
+                    setBody(request)
+                }
             return@runBlocking httpResponse.call.response.body()
         }
     }
@@ -51,9 +54,9 @@ data class ArbeidsfordelingRequest(
     var enhetNummer: String? = null,
     var geografiskOmraade: String? = null,
     var oppgavetype: String? = null,
-    var skjermet:	Boolean? = null,
+    var skjermet: Boolean? = null,
     var tema: String? = null,
-    var temagruppe: String? = null
+    var temagruppe: String? = null,
 )
 
 data class ArbeidsfordelingResponse(
@@ -73,5 +76,5 @@ data class ArbeidsfordelingResponse(
     val type: String?,
     val underAvviklingDato: LocalDate?,
     val underEtableringDato: LocalDate?,
-    val versjon: Int?
+    val versjon: Int?,
 )

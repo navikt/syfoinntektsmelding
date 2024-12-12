@@ -20,7 +20,6 @@ import org.koin.ktor.ext.get
 import java.util.Collections
 
 fun Application.nais() {
-
     val sikkerlogger = sikkerLogger()
 
     suspend fun PipelineContext<Unit, ApplicationCall>.returnResultOfChecks(checkResults: ProbeResult) {
@@ -56,12 +55,13 @@ fun Application.nais() {
             val kubernetesProbeManager = this@routing.get<KubernetesProbeManager>()
             val readyResults = kubernetesProbeManager.runReadynessProbe()
             val liveResults = kubernetesProbeManager.runLivenessProbe()
-            val combinedResults = ProbeResult(
-                liveResults.healthyComponents +
-                    liveResults.unhealthyComponents +
-                    readyResults.healthyComponents +
-                    readyResults.unhealthyComponents
-            )
+            val combinedResults =
+                ProbeResult(
+                    liveResults.healthyComponents +
+                        liveResults.unhealthyComponents +
+                        readyResults.healthyComponents +
+                        readyResults.unhealthyComponents,
+                )
 
             returnResultOfChecks(combinedResults)
         }

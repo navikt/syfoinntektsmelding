@@ -8,18 +8,22 @@ import no.nav.syfo.client.dokarkiv.mapOppdaterRequest
 import no.nav.syfo.domain.InngaendeJournalpost
 
 class BehandleInngaaendeJournalConsumer(private val dokArkivClient: DokArkivClient) {
-
     /**
      * Oppdaterer journalposten
      */
 
-    fun oppdaterJournalpost(fnr: String, inngaendeJournalpost: InngaendeJournalpost, feilregistrert: Boolean) {
+    fun oppdaterJournalpost(
+        fnr: String,
+        inngaendeJournalpost: InngaendeJournalpost,
+        feilregistrert: Boolean,
+    ) {
         val journalpostId = inngaendeJournalpost.journalpostId
-        val req = if (feilregistrert) {
-            mapFeilregistrertRequest(fnr, inngaendeJournalpost.dokumentId)
-        } else {
-            mapOppdaterRequest(fnr)
-        }
+        val req =
+            if (feilregistrert) {
+                mapFeilregistrertRequest(fnr, inngaendeJournalpost.dokumentId)
+            } else {
+                mapOppdaterRequest(fnr)
+            }
         runBlocking {
             dokArkivClient.oppdaterJournalpost(
                 journalpostId,

@@ -15,7 +15,6 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 class InntektsmeldingTest {
-
     val im1 = buildIM().copy(bruttoUtbetalt = BigDecimal(100))
     val im2 = buildIM().copy(bruttoUtbetalt = BigDecimal(200))
     val im3 = buildIM().copy(bruttoUtbetalt = BigDecimal(100))
@@ -54,8 +53,16 @@ class InntektsmeldingTest {
         assertFalse(im1.copy(arbeidsgiverperioder = listOf(Periode(fom = LocalDate.now(), tom = LocalDate.now()))).isDuplicate(im1))
         assertFalse(im1.copy(beregnetInntekt = BigDecimal(200)).isDuplicate(im1))
         assertFalse(im1.copy(refusjon = Refusjon(BigDecimal(123), LocalDate.now())).isDuplicate(im1))
-        assertFalse(im1.copy(endringerIRefusjon = listOf(EndringIRefusjon(endringsdato = LocalDate.now(), beloep = BigDecimal(123)))).isDuplicate(im1))
-        assertFalse(im1.copy(opphørAvNaturalYtelse = listOf(OpphoerAvNaturalytelse(Naturalytelse.BIL, LocalDate.now(), beloepPrMnd = BigDecimal(123)))).isDuplicate(im1))
+        assertFalse(
+            im1.copy(
+                endringerIRefusjon = listOf(EndringIRefusjon(endringsdato = LocalDate.now(), beloep = BigDecimal(123))),
+            ).isDuplicate(im1),
+        )
+        assertFalse(
+            im1.copy(
+                opphørAvNaturalYtelse = listOf(OpphoerAvNaturalytelse(Naturalytelse.BIL, LocalDate.now(), beloepPrMnd = BigDecimal(123))),
+            ).isDuplicate(im1),
+        )
         assertFalse(im1.copy(gjenopptakelserNaturalYtelse = listOf(GjenopptakelseNaturalytelse(Naturalytelse.BOLIG))).isDuplicate(im1))
         assertTrue(im1.copy(gyldighetsStatus = Gyldighetsstatus.GYLDIG).isDuplicate(im1))
         assertTrue(im1.copy(arkivRefereranse = "asd").isDuplicate(im1))
@@ -75,8 +82,16 @@ class InntektsmeldingTest {
 
     @Test
     fun `selvbestemt matcher spleis bare hvis vedtaksperiodeId er satt`() {
-        val selvbestemtUtenVedtaksperiodeId = im1.copy(vedtaksperiodeId = null, avsenderSystem = AvsenderSystem(Avsender.NAV_NO_SELVBESTEMT))
-        val selvbestemtMedVedtaksperiodeId = im1.copy(vedtaksperiodeId = UUID.randomUUID(), avsenderSystem = AvsenderSystem(Avsender.NAV_NO_SELVBESTEMT))
+        val selvbestemtUtenVedtaksperiodeId =
+            im1.copy(
+                vedtaksperiodeId = null,
+                avsenderSystem = AvsenderSystem(Avsender.NAV_NO_SELVBESTEMT),
+            )
+        val selvbestemtMedVedtaksperiodeId =
+            im1.copy(
+                vedtaksperiodeId = UUID.randomUUID(),
+                avsenderSystem = AvsenderSystem(Avsender.NAV_NO_SELVBESTEMT),
+            )
         assertFalse(selvbestemtUtenVedtaksperiodeId.matcherSpleis())
         assertTrue(selvbestemtMedVedtaksperiodeId.matcherSpleis())
     }
@@ -85,9 +100,21 @@ class InntektsmeldingTest {
     fun `Alle avsendere bortsett fra selvbestemt matcher alltid spleis som default`() {
         val imFraSimbaUtenVedtaksperiodeId = im1.copy(vedtaksperiodeId = null, avsenderSystem = AvsenderSystem(Avsender.NAV_NO))
         val imFraSimbaMedVedtaksperiodeId = im1.copy(vedtaksperiodeId = UUID.randomUUID(), avsenderSystem = AvsenderSystem(Avsender.NAV_NO))
-        val imFraEksterntSystemUtenVedtaksperiodeId = im1.copy(vedtaksperiodeId = null, avsenderSystem = AvsenderSystem("Whatever Payment Co"))
-        val imFraEksterntSystemMedVedtaksperiodeId = im1.copy(vedtaksperiodeId = UUID.randomUUID(), avsenderSystem = AvsenderSystem("Donald Duck & Co"))
-        val selvbestemtUtenVedtaksperiodeId = im1.copy(vedtaksperiodeId = null, avsenderSystem = AvsenderSystem(Avsender.NAV_NO_SELVBESTEMT))
+        val imFraEksterntSystemUtenVedtaksperiodeId =
+            im1.copy(
+                vedtaksperiodeId = null,
+                avsenderSystem = AvsenderSystem("Whatever Payment Co"),
+            )
+        val imFraEksterntSystemMedVedtaksperiodeId =
+            im1.copy(
+                vedtaksperiodeId = UUID.randomUUID(),
+                avsenderSystem = AvsenderSystem("Donald Duck & Co"),
+            )
+        val selvbestemtUtenVedtaksperiodeId =
+            im1.copy(
+                vedtaksperiodeId = null,
+                avsenderSystem = AvsenderSystem(Avsender.NAV_NO_SELVBESTEMT),
+            )
         assertTrue(imFraSimbaUtenVedtaksperiodeId.matcherSpleis())
         assertTrue(imFraSimbaMedVedtaksperiodeId.matcherSpleis())
         assertTrue(imFraEksterntSystemUtenVedtaksperiodeId.matcherSpleis())

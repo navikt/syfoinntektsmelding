@@ -20,21 +20,21 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 class InntektsmeldingBehandlerTest {
-
     private val metrikk = mockk<Metrikk>(relaxed = true)
     private var journalpostService = mockk<JournalpostService>(relaxed = true)
     private var utsattOppgaveService = mockk<UtsattOppgaveService>(relaxed = true)
     private var inntektsmeldingService = mockk<InntektsmeldingService>(relaxed = true)
     private val aivenInntektsmeldingProducer = mockk<InntektsmeldingAivenProducer>(relaxed = true)
     private val pdlClient = mockk<PdlClient>(relaxed = true)
-    private var inntektsmeldingBehandler = InntektsmeldingBehandler(
-        journalpostService,
-        metrikk,
-        inntektsmeldingService,
-        aivenInntektsmeldingProducer,
-        utsattOppgaveService,
-        pdlClient
-    )
+    private var inntektsmeldingBehandler =
+        InntektsmeldingBehandler(
+            journalpostService,
+            metrikk,
+            inntektsmeldingService,
+            aivenInntektsmeldingProducer,
+            utsattOppgaveService,
+            pdlClient,
+        )
 
     @BeforeEach
     fun setup() {
@@ -46,7 +46,7 @@ class InntektsmeldingBehandlerTest {
                 arbeidsgiverPrivat = "123",
                 aktorId = "aktorId",
                 journalpostId = "arkivId",
-                behandlet = LocalDateTime.now()
+                behandlet = LocalDateTime.now(),
             )
     }
 
@@ -65,7 +65,7 @@ class InntektsmeldingBehandlerTest {
                 arbeidsgiverperioder = emptyList(),
                 arkivRefereranse = "AR-123",
                 førsteFraværsdag = LocalDate.now(),
-                mottattDato = LocalDate.of(2019, 2, 6).atStartOfDay()
+                mottattDato = LocalDate.of(2019, 2, 6).atStartOfDay(),
             )
         every { inntektsmeldingService.isDuplicate(any()) } returns true
         // Kjør
@@ -91,7 +91,7 @@ class InntektsmeldingBehandlerTest {
                 arbeidsgiverperioder = emptyList(),
                 arkivRefereranse = "AR-123",
                 førsteFraværsdag = LocalDate.now(),
-                mottattDato = LocalDate.of(2019, 2, 6).atStartOfDay()
+                mottattDato = LocalDate.of(2019, 2, 6).atStartOfDay(),
             )
         every { inntektsmeldingService.isDuplicate(any()) } returns false
         // Kjør
@@ -115,7 +115,7 @@ class InntektsmeldingBehandlerTest {
                 arbeidsgiverperioder = emptyList(),
                 arkivRefereranse = "AR-123",
                 førsteFraværsdag = LocalDate.now(),
-                mottattDato = LocalDate.of(2019, 2, 6).atStartOfDay()
+                mottattDato = LocalDate.of(2019, 2, 6).atStartOfDay(),
             )
         every { inntektsmeldingService.isDuplicate(any()) } returns false
         // Kjør
@@ -139,7 +139,7 @@ class InntektsmeldingBehandlerTest {
                 arbeidsgiverperioder = emptyList(),
                 arkivRefereranse = "AR-123",
                 førsteFraværsdag = LocalDate.now(),
-                mottattDato = LocalDate.of(2019, 2, 6).atStartOfDay()
+                mottattDato = LocalDate.of(2019, 2, 6).atStartOfDay(),
             )
         every { inntektsmeldingService.isDuplicate(any()) } returns false
         // Kjør

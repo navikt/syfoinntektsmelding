@@ -13,7 +13,6 @@ import java.time.LocalDateTime.now
 import java.util.UUID
 
 open class UtsattOppgaveRepositoryImpSpec : SystemTestBase() {
-
     lateinit var repository: UtsattOppgaveRepository
 
     @BeforeAll
@@ -42,8 +41,8 @@ open class UtsattOppgaveRepositoryImpSpec : SystemTestBase() {
                 gosysOppgaveId = null,
                 oppdatert = null,
                 speil = false,
-                utbetalingBruker = false
-            )
+                utbetalingBruker = false,
+            ),
         )
 
         val oppgaver =
@@ -67,8 +66,8 @@ open class UtsattOppgaveRepositoryImpSpec : SystemTestBase() {
                 gosysOppgaveId = null,
                 oppdatert = null,
                 speil = false,
-                utbetalingBruker = false
-            )
+                utbetalingBruker = false,
+            ),
         )
 
         val oppgaver =
@@ -79,37 +78,39 @@ open class UtsattOppgaveRepositoryImpSpec : SystemTestBase() {
 
     @Test
     fun `Databasen angir ID ved opprettelse`() {
-        val firstId = repository.opprett(
-            UtsattOppgaveEntitet(
-                inntektsmeldingId = "id",
-                arkivreferanse = "arkivref",
-                fnr = "fnr",
-                aktørId = "aktørId",
-                journalpostId = "journalpostId",
-                timeout = now().minusHours(1),
-                tilstand = Tilstand.Utsatt,
-                gosysOppgaveId = null,
-                oppdatert = null,
-                speil = false,
-                utbetalingBruker = false
-            )
-        ).id
+        val firstId =
+            repository.opprett(
+                UtsattOppgaveEntitet(
+                    inntektsmeldingId = "id",
+                    arkivreferanse = "arkivref",
+                    fnr = "fnr",
+                    aktørId = "aktørId",
+                    journalpostId = "journalpostId",
+                    timeout = now().minusHours(1),
+                    tilstand = Tilstand.Utsatt,
+                    gosysOppgaveId = null,
+                    oppdatert = null,
+                    speil = false,
+                    utbetalingBruker = false,
+                ),
+            ).id
 
-        val secondId = repository.opprett(
-            UtsattOppgaveEntitet(
-                inntektsmeldingId = "id2",
-                arkivreferanse = "arkivref",
-                fnr = "fnr",
-                aktørId = "aktørId",
-                journalpostId = "journalpostId",
-                timeout = now().minusHours(1),
-                tilstand = Tilstand.Utsatt,
-                gosysOppgaveId = null,
-                oppdatert = null,
-                speil = false,
-                utbetalingBruker = false
-            )
-        ).id
+        val secondId =
+            repository.opprett(
+                UtsattOppgaveEntitet(
+                    inntektsmeldingId = "id2",
+                    arkivreferanse = "arkivref",
+                    fnr = "fnr",
+                    aktørId = "aktørId",
+                    journalpostId = "journalpostId",
+                    timeout = now().minusHours(1),
+                    tilstand = Tilstand.Utsatt,
+                    gosysOppgaveId = null,
+                    oppdatert = null,
+                    speil = false,
+                    utbetalingBruker = false,
+                ),
+            ).id
 
         Assertions.assertNotEquals(firstId, secondId)
     }
@@ -118,22 +119,23 @@ open class UtsattOppgaveRepositoryImpSpec : SystemTestBase() {
     fun `oppdaterer oppgaver med enhet`() {
         val enhet = "Test123"
 
-        val utsattOppgave = repository.opprett(
-            UtsattOppgaveEntitet(
-                inntektsmeldingId = "id3",
-                arkivreferanse = "arkivref",
-                fnr = "fnr",
-                aktørId = "aktørId",
-                journalpostId = "journalpostId",
-                timeout = now().minusHours(1),
-                tilstand = Tilstand.Utsatt,
-                enhet = "",
-                gosysOppgaveId = null,
-                oppdatert = null,
-                speil = false,
-                utbetalingBruker = false
+        val utsattOppgave =
+            repository.opprett(
+                UtsattOppgaveEntitet(
+                    inntektsmeldingId = "id3",
+                    arkivreferanse = "arkivref",
+                    fnr = "fnr",
+                    aktørId = "aktørId",
+                    journalpostId = "journalpostId",
+                    timeout = now().minusHours(1),
+                    tilstand = Tilstand.Utsatt,
+                    enhet = "",
+                    gosysOppgaveId = null,
+                    oppdatert = null,
+                    speil = false,
+                    utbetalingBruker = false,
+                ),
             )
-        )
 
         utsattOppgave.enhet = enhet
         repository.oppdater(utsattOppgave)
@@ -149,8 +151,8 @@ open class UtsattOppgaveRepositoryImpSpec : SystemTestBase() {
                 id = 0,
                 timeout = now().minusHours(1),
                 tilstand = Tilstand.Utsatt,
-                inntektsmeldingsId = "id1"
-            )
+                inntektsmeldingsId = "id1",
+            ),
         )
 
         repository.opprett(
@@ -158,16 +160,16 @@ open class UtsattOppgaveRepositoryImpSpec : SystemTestBase() {
                 id = 1,
                 timeout = now().minusHours(1),
                 tilstand = Tilstand.Forkastet,
-                inntektsmeldingsId = "id2"
-            )
+                inntektsmeldingsId = "id2",
+            ),
         )
         repository.opprett(
             enOppgaveEntitet(
                 id = 2,
                 timeout = now().plusHours(1),
                 tilstand = Tilstand.Utsatt,
-                inntektsmeldingsId = "id3"
-            )
+                inntektsmeldingsId = "id3",
+            ),
         )
 
         repository.opprett(
@@ -175,8 +177,8 @@ open class UtsattOppgaveRepositoryImpSpec : SystemTestBase() {
                 id = 3,
                 timeout = now().minusHours(1),
                 tilstand = Tilstand.Opprettet,
-                inntektsmeldingsId = "id4"
-            )
+                inntektsmeldingsId = "id4",
+            ),
         )
 
         val oppgaver =
@@ -200,8 +202,8 @@ open class UtsattOppgaveRepositoryImpSpec : SystemTestBase() {
                 gosysOppgaveId = null,
                 oppdatert = null,
                 speil = false,
-                utbetalingBruker = false
-            )
+                utbetalingBruker = false,
+            ),
         )
 
         repository.opprett(
@@ -217,8 +219,8 @@ open class UtsattOppgaveRepositoryImpSpec : SystemTestBase() {
                 oppdatert = null,
                 gosysOppgaveId = null,
                 speil = false,
-                utbetalingBruker = false
-            )
+                utbetalingBruker = false,
+            ),
         )
 
         val oppgaver =
@@ -231,7 +233,7 @@ open class UtsattOppgaveRepositoryImpSpec : SystemTestBase() {
         id: Int,
         timeout: LocalDateTime,
         tilstand: Tilstand = Tilstand.Utsatt,
-        inntektsmeldingsId: String = UUID.randomUUID().toString()
+        inntektsmeldingsId: String = UUID.randomUUID().toString(),
     ) = UtsattOppgaveEntitet(
         id = id,
         fnr = "fnr",
@@ -245,6 +247,6 @@ open class UtsattOppgaveRepositoryImpSpec : SystemTestBase() {
         gosysOppgaveId = null,
         oppdatert = null,
         speil = false,
-        utbetalingBruker = false
+        utbetalingBruker = false,
     )
 }

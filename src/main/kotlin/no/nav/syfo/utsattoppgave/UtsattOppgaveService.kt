@@ -22,7 +22,7 @@ class UtsattOppgaveService(
     private val behandlendeEnhetConsumer: BehandlendeEnhetConsumer,
     private val inntektsmeldingRepository: InntektsmeldingRepository,
     private val om: ObjectMapper,
-    private val metrikk: Metrikk
+    private val metrikk: Metrikk,
 ) {
     private val logger = this.logger()
     private val sikkerlogger = sikkerLogger()
@@ -30,7 +30,7 @@ class UtsattOppgaveService(
     fun prosesser(oppdatering: OppgaveOppdatering) {
         val oppgave = utsattOppgaveDAO.finn(oppdatering.id.toString())
         if (oppgave == null) {
-            metrikk.tellUtsattOppgave_Ukjent()
+            metrikk.tellUtsattOppgaveUkjent()
             logger.info("Mottok oppdatering på en ukjent oppgave for id: ${oppdatering.id}")
             return
         }
@@ -45,17 +45,18 @@ class UtsattOppgaveService(
                     speil = gjelderSpeil
                 }
                 lagre(oppgave)
-                metrikk.tellUtsattOppgave_Utsett()
+                metrikk.tellUtsattOppgaveUtsett()
                 logger.info("Oppdaterte timeout på inntektsmelding: ${oppgave.arkivreferanse} til ${oppdatering.timeout}")
             }
             (Tilstand.Utsatt to Handling.Forkast) -> {
                 oppgave.oppdatert = LocalDateTime.now()
                 lagre(oppgave.copy(tilstand = Tilstand.Forkastet, speil = gjelderSpeil))
-                metrikk.tellUtsattOppgave_Forkast()
+                metrikk.tellUtsattOppgaveForkast()
                 logger.info("Endret oppgave: ${oppgave.arkivreferanse} til tilstand: ${Tilstand.Forkastet.name}")
             }
             (Tilstand.Utsatt to Handling.Opprett),
-            (Tilstand.Forkastet to Handling.Opprett) -> {
+            (Tilstand.Forkastet to Handling.Opprett),
+            -> {
                 inntektsmeldingRepository.hentInntektsmelding(oppgave, om)
                     .onSuccess { inntektsmelding ->
                         val gjelderUtland = behandlendeEnhetConsumer.gjelderUtland(oppgave)
@@ -64,7 +65,7 @@ class UtsattOppgaveService(
                             val resultat = opprettOppgave(oppgave, behandlingsKategori)
                             oppgave.oppdatert = LocalDateTime.now()
                             lagre(oppgave.copy(tilstand = Tilstand.Opprettet, speil = gjelderSpeil))
-                            metrikk.tellUtsattOppgave_Opprett()
+                            metrikk.tellUtsattOppgaveOpprett()
                             logger.info(
                                 "Endret oppgave: ${oppgave.inntektsmeldingId} til tilstand: ${Tilstand.Opprettet.name} gosys oppgaveID: ${resultat.oppgaveId} duplikat? ${resultat.duplikat}",
                             )
@@ -72,20 +73,25 @@ class UtsattOppgaveService(
                             if (oppgave.tilstand == Tilstand.Utsatt) {
                                 oppgave.oppdatert = LocalDateTime.now()
                                 lagre(oppgave.copy(tilstand = Tilstand.Forkastet, speil = gjelderSpeil))
-                                sikkerlogger.info("Endret oppgave: ${oppgave.inntektsmeldingId} til tilstand: ${Tilstand.Forkastet.name} pga behandlingskategori: $behandlingsKategori")
+                                sikkerlogger.info(
+                                    "Endret oppgave: ${oppgave.inntektsmeldingId} til tilstand: ${Tilstand.Forkastet.name} pga behandlingskategori: $behandlingsKategori",
+                                )
                             }
                             logger.info("Oppgave blir ikke opprettet for inntektsmeldingId: ${oppgave.inntektsmeldingId}")
-                            sikkerlogger.info("ppgave blir ikke opprettet for inntektsmeldingId: ${oppgave.inntektsmeldingId}, har behandlingskategori: $behandlingsKategori")
+                            sikkerlogger.info(
+                                "ppgave blir ikke opprettet for inntektsmeldingId: ${oppgave.inntektsmeldingId}, har behandlingskategori: $behandlingsKategori",
+                            )
                         }
                     }
                     .onFailure { sikkerlogger.error(it.message, it) }
             }
             else -> {
-                metrikk.tellUtsattOppgave_Irrelevant()
+                metrikk.tellUtsattOppgaveIrrelevant()
                 logger.info("Oppdatering på dokumentId: ${oppdatering.id} ikke relevant")
             }
         }
     }
+
     fun lagre(oppgave: UtsattOppgaveEntitet) {
         utsattOppgaveDAO.lagre(oppgave)
     }
@@ -93,13 +99,17 @@ class UtsattOppgaveService(
     fun opprett(utsattOppgave: UtsattOppgaveEntitet) {
         utsattOppgaveDAO.opprett(utsattOppgave)
     }
+
     fun opprettOppgave(
         oppgave: UtsattOppgaveEntitet,
-        behandlingsKategori: BehandlingsKategori
+        behandlingsKategori: BehandlingsKategori,
     ): OppgaveResultat = opprettOppgaveIGosys(oppgave, oppgaveService, utsattOppgaveDAO, behandlingsKategori)
 }
 
-fun InntektsmeldingRepository.hentInntektsmelding(oppgave: UtsattOppgaveEntitet, om: ObjectMapper): Result<Inntektsmelding> {
+fun InntektsmeldingRepository.hentInntektsmelding(
+    oppgave: UtsattOppgaveEntitet,
+    om: ObjectMapper,
+): Result<Inntektsmelding> {
     val inntektsmeldingData = this.findByUuid(oppgave.inntektsmeldingId)?.data
     return if (inntektsmeldingData != null) {
         Result.success(om.readValue<Inntektsmelding>(inntektsmeldingData))
@@ -112,7 +122,7 @@ fun opprettOppgaveIGosys(
     utsattOppgave: UtsattOppgaveEntitet,
     oppgaveService: OppgaveService,
     utsattOppgaveDAO: UtsattOppgaveDAO,
-    behandlingsKategori: BehandlingsKategori
+    behandlingsKategori: BehandlingsKategori,
 ): OppgaveResultat {
     val resultat =
         runBlocking {
@@ -132,9 +142,11 @@ class OppgaveOppdatering(
     val id: UUID,
     val handling: Handling,
     val timeout: LocalDateTime?,
-    val oppdateringstype: OppdateringstypeDTO
+    val oppdateringstype: OppdateringstypeDTO,
 )
 
 enum class Handling {
-    Utsett, Opprett, Forkast
+    Utsett,
+    Opprett,
+    Forkast,
 }

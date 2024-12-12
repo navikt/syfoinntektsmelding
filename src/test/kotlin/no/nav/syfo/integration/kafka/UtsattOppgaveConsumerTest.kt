@@ -17,25 +17,24 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 internal class UtsattOppgaveConsumerTest {
-
     lateinit var consumer: UtsattOppgaveConsumer
     var om: ObjectMapper = mockk(relaxed = true)
     var props = joarkLocalProperties().toMap()
     var utsattOppgaveService: UtsattOppgaveService = mockk(relaxed = true)
     var bakgrunnsjobbRepo: BakgrunnsjobbRepository = mockk(relaxed = true)
-    val TOPIC_NAME = "topic"
-    val TIMEOUT = LocalDateTime.now()
-    val utsattOppgaveDTO = UtsattOppgaveDTO(DokumentTypeDTO.Inntektsmelding, OppdateringstypeDTO.Opprett, UUID.randomUUID(), TIMEOUT)
-    val RAW = "raw"
+    val topicName = "topic"
+    val timeout = LocalDateTime.now()
+    val utsattOppgaveDTO = UtsattOppgaveDTO(DokumentTypeDTO.Inntektsmelding, OppdateringstypeDTO.Opprett, UUID.randomUUID(), timeout)
+    val raw = "raw"
 
     @BeforeEach
     fun before() {
-        consumer = UtsattOppgaveConsumer(props, TOPIC_NAME, om, utsattOppgaveService, bakgrunnsjobbRepo)
+        consumer = UtsattOppgaveConsumer(props, topicName, om, utsattOppgaveService, bakgrunnsjobbRepo)
     }
 
     @Test
     fun `Skal behandle UtsattOppgave`() {
-        consumer.behandle(utsattOppgaveDTO, RAW)
+        consumer.behandle(utsattOppgaveDTO, raw)
         verify(exactly = 1) { utsattOppgaveService.prosesser(any()) }
     }
 
@@ -44,7 +43,7 @@ internal class UtsattOppgaveConsumerTest {
         every {
             utsattOppgaveService.prosesser(any())
         } throws RuntimeException("Feil!")
-        consumer.behandle(utsattOppgaveDTO, RAW)
+        consumer.behandle(utsattOppgaveDTO, raw)
         verify(exactly = 1) { bakgrunnsjobbRepo.save(any()) }
     }
 

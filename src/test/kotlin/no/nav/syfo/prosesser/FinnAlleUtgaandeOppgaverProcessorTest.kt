@@ -34,16 +34,17 @@ class FinnAlleUtgaandeOppgaverProcessorTest {
 
     @BeforeEach
     fun setup() {
-        processor = spyk(
-            FinnAlleUtgaandeOppgaverProcessor(
-                utsattOppgaveDAO,
-                oppgaveService,
-                behandlendeEnhetConsumer,
-                metrikk,
-                inntektsmeldingRepository,
-                om
+        processor =
+            spyk(
+                FinnAlleUtgaandeOppgaverProcessor(
+                    utsattOppgaveDAO,
+                    oppgaveService,
+                    behandlendeEnhetConsumer,
+                    metrikk,
+                    inntektsmeldingRepository,
+                    om,
+                ),
             )
-        )
         every { utsattOppgaveDAO.finnAlleUtgåtteOppgaver() } returns listOf(oppgave.copy())
         coEvery { oppgaveService.opprettOppgave(any(), any(), any()) } returns OppgaveResultat(Random.nextInt(), false, false)
         every { inntektsmeldingRepository.findByUuid(any()) } returns UtsattOppgaveTestData.inntektsmeldingEntitet
@@ -53,7 +54,11 @@ class FinnAlleUtgaandeOppgaverProcessorTest {
     @Test
     fun `Oppretter oppgave ved timout og lagrer tilstand OpprettetTimeout`() {
         processor.doJob()
-        verify { utsattOppgaveDAO.lagre(match { it.tilstand == Tilstand.OpprettetTimeout && !it.speil && it.timeout == timeout && it.oppdatert != oppgave.oppdatert }) }
+        verify {
+            utsattOppgaveDAO.lagre(
+                match { it.tilstand == Tilstand.OpprettetTimeout && !it.speil && it.timeout == timeout && it.oppdatert != oppgave.oppdatert },
+            )
+        }
         coVerify { oppgaveService.opprettOppgave(any(), any(), any()) }
     }
 
@@ -61,7 +66,11 @@ class FinnAlleUtgaandeOppgaverProcessorTest {
     fun `Oppretter ikke oppgave ved timeout hvis begrunnelseRedusert = IkkeFravaer`() {
         every { inntektsmeldingRepository.findByUuid(any()) } returns UtsattOppgaveTestData.inntektsmeldingEntitetIkkeFravaer
         processor.doJob()
-        verify { utsattOppgaveDAO.lagre(match { it.tilstand == Tilstand.Forkastet && !it.speil && it.timeout == timeout && it.oppdatert != oppgave.oppdatert }) }
+        verify {
+            utsattOppgaveDAO.lagre(
+                match { it.tilstand == Tilstand.Forkastet && !it.speil && it.timeout == timeout && it.oppdatert != oppgave.oppdatert },
+            )
+        }
         coVerify(exactly = 0) { oppgaveService.opprettOppgave(any(), any(), any()) }
     }
 }

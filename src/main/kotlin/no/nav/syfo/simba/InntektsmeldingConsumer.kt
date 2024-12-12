@@ -35,9 +35,8 @@ class InntektsmeldingConsumer(
     private val inntektsmeldingAivenProducer: InntektsmeldingAivenProducer,
     private val utsattOppgaveService: UtsattOppgaveService,
     private val pdlClient: PdlClient,
-    private val skalKasteExceptionVedPDLFeil: Boolean = true
+    private val skalKasteExceptionVedPDLFeil: Boolean = true,
 ) : ReadynessComponent, LivenessComponent {
-
     private val consumer = KafkaConsumer<String, String>(props)
     private var ready = false
     private var error = false
@@ -78,9 +77,7 @@ class InntektsmeldingConsumer(
         }
     }
 
-    private fun behandleRecord(
-        record: ConsumerRecord<String, String>,
-    ) {
+    private fun behandleRecord(record: ConsumerRecord<String, String>) {
         val json = record.value().parseJson()
         sikkerlogger.info("InntektsmeldingConsumer: Mottar record fra Simba.\n${json.toPretty()}")
         val meldingFraSimba = json.fromJson(JournalfoertInntektsmelding.serializer())
@@ -89,23 +86,37 @@ class InntektsmeldingConsumer(
         if (im != null) {
             sikkerlogger.info("InntektsmeldingConsumer: Behandler ikke ${meldingFraSimba.journalpostId}. Finnes allerede.")
         } else {
-            behandle(meldingFraSimba.journalpostId, meldingFraSimba.inntektsmeldingV1, meldingFraSimba.bestemmendeFravaersdag, meldingFraSimba.selvbestemt)
+            behandle(
+                meldingFraSimba.journalpostId,
+                meldingFraSimba.inntektsmeldingV1,
+                meldingFraSimba.bestemmendeFravaersdag,
+                meldingFraSimba.selvbestemt,
+            )
             log.info("InntektsmeldingConsumer: Behandlet inntektsmelding med journalpostId: ${meldingFraSimba.journalpostId}")
         }
     }
 
-    private fun behandle(journalpostId: String, inntektsmeldingFraSimba: InntektsmeldingV1, bestemmendeFravaersdag: LocalDate?, selvbestemt: Boolean) {
+    private fun behandle(
+        journalpostId: String,
+        inntektsmeldingFraSimba: InntektsmeldingV1,
+        bestemmendeFravaersdag: LocalDate?,
+        selvbestemt: Boolean,
+    ) {
         val aktorid = hentAktoeridFraPDL(inntektsmeldingFraSimba.sykmeldt.fnr.verdi)
         val arkivreferanse = "im_$journalpostId"
-        val inntektsmelding = mapInntektsmelding(arkivreferanse, aktorid, journalpostId, inntektsmeldingFraSimba, bestemmendeFravaersdag, selvbestemt)
+        val inntektsmelding =
+            mapInntektsmelding(arkivreferanse, aktorid, journalpostId, inntektsmeldingFraSimba, bestemmendeFravaersdag, selvbestemt)
         val dto = inntektsmeldingService.lagreBehandling(inntektsmelding, aktorid)
         val matcherSpleis = inntektsmelding.matcherSpleis()
-        val timeout = if (matcherSpleis) {
-            LocalDateTime.now().plusHours(OPPRETT_OPPGAVE_FORSINKELSE)
-        } else {
-            sikkerlogger.info("Mottok selvbestemtIM uten vedtaksperiode med journalpostId $journalpostId, oppretter gosys-oppgave umiddelbart")
-            LocalDateTime.now()
-        }
+        val timeout =
+            if (matcherSpleis) {
+                LocalDateTime.now().plusHours(OPPRETT_OPPGAVE_FORSINKELSE)
+            } else {
+                sikkerlogger.info(
+                    "Mottok selvbestemtIM uten vedtaksperiode med journalpostId $journalpostId, oppretter gosys-oppgave umiddelbart",
+                )
+                LocalDateTime.now()
+            }
         utsattOppgaveService.opprett(
             UtsattOppgaveEntitet(
                 fnr = inntektsmelding.fnr,
@@ -118,18 +129,19 @@ class InntektsmeldingConsumer(
                 gosysOppgaveId = null,
                 oppdatert = null,
                 speil = false,
-                utbetalingBruker = false
-            )
+                utbetalingBruker = false,
+            ),
         )
 
-        val mappedInntektsmelding = mapInntektsmeldingKontrakt(
-            inntektsmelding,
-            aktorid,
-            validerInntektsmelding(inntektsmelding),
-            arkivreferanse,
-            dto.uuid,
-            matcherSpleis
-        )
+        val mappedInntektsmelding =
+            mapInntektsmeldingKontrakt(
+                inntektsmelding,
+                aktorid,
+                validerInntektsmelding(inntektsmelding),
+                arkivreferanse,
+                dto.uuid,
+                matcherSpleis,
+            )
 
         inntektsmeldingAivenProducer.leggMottattInntektsmeldingPåTopics(mappedInntektsmelding)
 

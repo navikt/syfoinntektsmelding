@@ -40,7 +40,7 @@ data class Inntektsmelding(
     val bruttoUtbetalt: BigDecimal? = null,
     val årsakEndring: String? = null,
     val rapportertInntekt: RapportertInntekt? = null,
-    val vedtaksperiodeId: UUID? = null
+    val vedtaksperiodeId: UUID? = null,
 ) {
     fun isDuplicate(inntektsmelding: Inntektsmelding): Boolean {
         return this.equals(
@@ -54,8 +54,8 @@ data class Inntektsmelding(
                 aktorId = this.aktorId,
                 sakId = this.sakId,
                 innsendingstidspunkt = this.innsendingstidspunkt,
-                avsenderSystem = this.avsenderSystem
-            )
+                avsenderSystem = this.avsenderSystem,
+            ),
         )
     }
 
@@ -72,8 +72,8 @@ data class Inntektsmelding(
                 sakId = this.sakId,
                 innsendingstidspunkt = this.innsendingstidspunkt,
                 avsenderSystem = this.avsenderSystem,
-                arsakTilInnsending = this.arsakTilInnsending
-            )
+                arsakTilInnsending = this.arsakTilInnsending,
+            ),
         )
     }
 

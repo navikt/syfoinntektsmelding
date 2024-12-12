@@ -5,5 +5,5 @@ import java.time.LocalDate
 
 data class EndringIRefusjon(
     val endringsdato: LocalDate? = null,
-    val beloep: BigDecimal? = null
+    val beloep: BigDecimal? = null,
 )
