@@ -1,53 +1,8 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 val version = "1.0"
 val mainClass = "no.nav.syfo.AppKt"
 val group = "no.nav.syfo"
-val githubPassword: String by project
-
-// Dependencies
-val micrometerVersion: String by project
-val flywayVersion: String by project
-val cxfVersion: String by project
-val kotlinVersion: String by project
-val hikariVersion: String by project
-val ktorVersion: String by project
-val koinVersion: String by project
-val tokenSupportVersion: String by project
-val mockOAuth2ServerVersion: String by project
-val brukernotifikasjonSchemasVersion: String by project
-val jacksonVersion: String by project
-val junitJupiterVersion: String by project
-val assertJVersion: String by project
-val prometheusVersion: String by project
-val joarkHendelseVersion: String by project
-val mockkVersion: String by project
-val jetbrainsStdLib: String by project
-val guavaVersion: String by project
-val kotlinLibsVersion: String by project
-val postgresVersion: String by project
-val neethiVersion: String by project
-val imkontraktVersion: String by project
-val altinnInntektsmeldingVersion: String by project
-val navSyfoCommonVersion: String by project
-val navLogVersion: String by project
-val fellesBackendVersion: String by project
-val hagUtilsVersion: String by project
-val slf4Version: String by project
-val logbackVersion: String by project
-val apacheHttpClientVersion: String by project
-val kotlinCoroutinesVersion: String by project
-val kafkaVersion: String by project
-val apacheKafkaStreamsVersion: String by project
-val annotationApiVersion: String by project
-val altinnCorrespondanceVersion: String by project
-val logbackClassicVersion: String by project
-val hagDomeneInntektsmeldingVersion: String by project
-val kotlinxSerializationVersion: String by project
-val bakgrunnsjobbVersion: String by project
-val pdlClientVersion: String by project
-val tokenProviderVersion: String by project
-val oppgaveClientVersion: String by project
 
 plugins {
     kotlin("jvm")
@@ -58,8 +13,10 @@ plugins {
     application
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "17"
+kotlin {
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_21
+    }
 }
 
 tasks.test {
@@ -120,111 +77,133 @@ tasks.jar {
 }
 
 repositories {
+    val githubPassword: String by project
     mavenCentral()
-    google()
-    maven(url = "https://packages.confluent.io/maven/")
+    maven("https://packages.confluent.io/maven/")
     maven {
+        setUrl("https://maven.pkg.github.com/navikt/*")
         credentials {
             username = "x-access-token"
             password = githubPassword
         }
-        setUrl("https://maven.pkg.github.com/navikt/inntektsmelding-kontrakt")
-    }
-    maven {
-        credentials {
-            username = "x-access-token"
-            password = githubPassword
-        }
-        setUrl("https://maven.pkg.github.com/navikt/helse-arbeidsgiver-felles-backend")
-    }
-    maven {
-        credentials {
-            username = "x-access-token"
-            password = githubPassword
-        }
-        setUrl("https://maven.pkg.github.com/navikt/helsearbeidsgiver-inntektsmelding")
     }
 }
 
 dependencies {
+    val altinnCorrespondanceVersion: String by project
+    val altinnInntektsmeldingVersion: String by project
+    val annotationApiVersion: String by project
+    val apacheHttpClientVersion: String by project
+    val apacheKafkaStreamsVersion: String by project
+    val assertJVersion: String by project
+    val bakgrunnsjobbVersion: String by project
+    val brukernotifikasjonSchemasVersion: String by project
+    val cxfVersion: String by project
+    val fellesBackendVersion: String by project
+    val flywayVersion: String by project
+    val guavaVersion: String by project
+    val hagDomeneInntektsmeldingVersion: String by project
+    val hagUtilsVersion: String by project
+    val hikariVersion: String by project
+    val imkontraktVersion: String by project
+    val jacksonVersion: String by project
+    val jetbrainsStdLib: String by project
+    val joarkHendelseVersion: String by project
+    val junitJupiterVersion: String by project
+    val kafkaVersion: String by project
+    val koinVersion: String by project
+    val kotlinCoroutinesVersion: String by project
+    val kotlinLibsVersion: String by project
+    val kotlinVersion: String by project
+    val kotlinxSerializationVersion: String by project
+    val ktorVersion: String by project
+    val logbackClassicVersion: String by project
+    val logbackVersion: String by project
+    val micrometerVersion: String by project
+    val mockOAuth2ServerVersion: String by project
+    val mockkVersion: String by project
+    val navLogVersion: String by project
+    val navSyfoCommonVersion: String by project
+    val neethiVersion: String by project
+    val oppgaveClientVersion: String by project
+    val pdlClientVersion: String by project
+    val postgresVersion: String by project
+    val prometheusVersion: String by project
+    val slf4Version: String by project
+    val tokenProviderVersion: String by project
+    val tokenSupportVersion: String by project
+
     runtimeOnly("ch.qos.logback:logback-classic:$logbackClassicVersion")
     runtimeOnly("io.micrometer:micrometer-registry-prometheus:$micrometerVersion")
 
-    implementation("no.nav.teamdokumenthandtering:teamdokumenthandtering-avro-schemas:$joarkHendelseVersion")
-    implementation("org.jetbrains.kotlin:$jetbrainsStdLib")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$jacksonVersion")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
     implementation("com.google.guava:guava:$guavaVersion")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinLibsVersion")
-    implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinLibsVersion")
-    implementation("org.apache.cxf:cxf-core:$cxfVersion")
-    implementation("org.apache.cxf:cxf-rt-databinding-jaxb:$cxfVersion")
-    implementation("org.postgresql:postgresql:$postgresVersion")
-    implementation("org.apache.neethi:neethi:$neethiVersion")
-    implementation("org.flywaydb:flyway-core:$flywayVersion")
-    implementation("org.flywaydb:flyway-database-postgresql:$flywayVersion")
-    implementation("no.nav.sykepenger.kontrakter:inntektsmelding-kontrakt:$imkontraktVersion")
-    implementation("no.nav.tjenestespesifikasjoner:nav-altinn-inntektsmelding:$altinnInntektsmeldingVersion")
-    implementation("no.nav.syfo.sm:syfosm-common-rest-sts:$navSyfoCommonVersion")
-    implementation("no.nav.syfo.sm:syfosm-common-networking:$navSyfoCommonVersion")
-    implementation("no.nav.common:log:$navLogVersion")
-    implementation("no.nav.helsearbeidsgiver:hag-bakgrunnsjobb:$bakgrunnsjobbVersion")
-    implementation("no.nav.helsearbeidsgiver:utils:$hagUtilsVersion")
-    implementation("no.nav.security:token-client-core:$tokenSupportVersion")
-
-    implementation("no.nav.security:mock-oauth2-server:$mockOAuth2ServerVersion")
-    implementation("no.nav.helsearbeidsgiver:pdl-client:$pdlClientVersion")
-    implementation("no.nav.helsearbeidsgiver:tokenprovider:$tokenProviderVersion")
-    implementation("no.nav.security:token-validation-ktor-v2:$tokenSupportVersion")
-
     implementation("com.zaxxer:HikariCP:$hikariVersion")
-    implementation("org.slf4j:slf4j-api:$slf4Version")
-    implementation("net.logstash.logback:logstash-logback-encoder:$logbackVersion")
-    implementation("org.apache.httpcomponents:httpclient:$apacheHttpClientVersion")
-    implementation("io.micrometer:micrometer-core:$micrometerVersion")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")
+    implementation("io.confluent:kafka-avro-serializer:$kafkaVersion") { exclude("org.apache.avro:avro") }
     implementation("io.confluent:kafka-streams-avro-serde:$kafkaVersion")
-    implementation("io.confluent:kafka-avro-serializer:$kafkaVersion") {
-        exclude("org.apache.avro:avro")
-    }
-    implementation("org.apache.kafka:kafka-streams:$apacheKafkaStreamsVersion")
-    implementation("io.ktor:ktor-server:$ktorVersion")
-    implementation("io.ktor:ktor-server-cors:$ktorVersion")
-    implementation("io.ktor:ktor-server-auth:$ktorVersion")
+    implementation("io.insert-koin:koin-core-jvm:$koinVersion")
+    implementation("io.insert-koin:koin-core:$koinVersion")
+    implementation("io.insert-koin:koin-ktor:$koinVersion")
     implementation("io.ktor:ktor-client-apache:$ktorVersion")
+    implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-client-core-jvm:$ktorVersion")
     implementation("io.ktor:ktor-client-core:$ktorVersion")
     implementation("io.ktor:ktor-client-jackson:$ktorVersion")
     implementation("io.ktor:ktor-client-json:$ktorVersion")
-    implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-serialization-jackson:$ktorVersion")
+    implementation("io.ktor:ktor-server-auth:$ktorVersion")
     implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
+    implementation("io.ktor:ktor-server-cors:$ktorVersion")
     implementation("io.ktor:ktor-server-locations:$ktorVersion")
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
-
-    implementation("io.insert-koin:koin-core-jvm:$koinVersion")
-    implementation("io.insert-koin:koin-core:$koinVersion")
-    implementation("io.insert-koin:koin-ktor:$koinVersion")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$jacksonVersion")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
+    implementation("io.ktor:ktor-server:$ktorVersion")
+    implementation("io.micrometer:micrometer-core:$micrometerVersion")
+    implementation("io.mockk:mockk:$mockkVersion")
     implementation("io.prometheus:simpleclient_common:$prometheusVersion")
     implementation("io.prometheus:simpleclient_hotspot:$prometheusVersion")
-    implementation("no.nav.tjenestespesifikasjoner:altinn-correspondence-agency-external-basic:$altinnCorrespondanceVersion")
     implementation("javax.annotation:javax.annotation-api:$annotationApiVersion")
+    implementation("net.logstash.logback:logstash-logback-encoder:$logbackVersion")
+    implementation("no.nav.common:log:$navLogVersion")
     implementation("no.nav.helsearbeidsgiver:domene-inntektsmelding:$hagDomeneInntektsmeldingVersion")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion")
-    implementation("io.mockk:mockk:$mockkVersion")
+    implementation("no.nav.helsearbeidsgiver:hag-bakgrunnsjobb:$bakgrunnsjobbVersion")
     implementation("no.nav.helsearbeidsgiver:oppgave-client:$oppgaveClientVersion")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
-    testImplementation("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion")
+    implementation("no.nav.helsearbeidsgiver:pdl-client:$pdlClientVersion")
+    implementation("no.nav.helsearbeidsgiver:tokenprovider:$tokenProviderVersion")
+    implementation("no.nav.helsearbeidsgiver:utils:$hagUtilsVersion")
+    implementation("no.nav.security:mock-oauth2-server:$mockOAuth2ServerVersion")
+    implementation("no.nav.security:token-client-core:$tokenSupportVersion")
+    implementation("no.nav.security:token-validation-ktor-v2:$tokenSupportVersion")
+    implementation("no.nav.syfo.sm:syfosm-common-networking:$navSyfoCommonVersion")
+    implementation("no.nav.syfo.sm:syfosm-common-rest-sts:$navSyfoCommonVersion")
+    implementation("no.nav.sykepenger.kontrakter:inntektsmelding-kontrakt:$imkontraktVersion")
+    implementation("no.nav.teamdokumenthandtering:teamdokumenthandtering-avro-schemas:$joarkHendelseVersion")
+    implementation("no.nav.tjenestespesifikasjoner:altinn-correspondence-agency-external-basic:$altinnCorrespondanceVersion")
+    implementation("no.nav.tjenestespesifikasjoner:nav-altinn-inntektsmelding:$altinnInntektsmeldingVersion")
+    implementation("org.apache.cxf:cxf-core:$cxfVersion")
+    implementation("org.apache.cxf:cxf-rt-databinding-jaxb:$cxfVersion")
+    implementation("org.apache.httpcomponents:httpclient:$apacheHttpClientVersion")
+    implementation("org.apache.kafka:kafka-streams:$apacheKafkaStreamsVersion")
+    implementation("org.apache.neethi:neethi:$neethiVersion")
+    implementation("org.flywaydb:flyway-core:$flywayVersion")
+    implementation("org.flywaydb:flyway-database-postgresql:$flywayVersion")
+    implementation("org.jetbrains.kotlin:$jetbrainsStdLib")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinLibsVersion")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinLibsVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion")
+    implementation("org.postgresql:postgresql:$postgresVersion")
+    implementation("org.slf4j:slf4j-api:$slf4Version")
+
     testImplementation(testFixtures("no.nav.helsearbeidsgiver:utils:$hagUtilsVersion"))
-
+    testImplementation("io.insert-koin:koin-test:$koinVersion")
     testImplementation("io.ktor:ktor-client-mock-jvm:$ktorVersion")
-
     testImplementation("io.ktor:ktor-client-mock:$ktorVersion")
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
     testImplementation("io.ktor:ktor-server-tests:$ktorVersion")
-    testImplementation("io.insert-koin:koin-test:$koinVersion")
-
     testImplementation("org.assertj:assertj-core:$assertJVersion")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion")
 }
