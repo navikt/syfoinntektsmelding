@@ -3,8 +3,8 @@ package no.nav.syfo.integration.kafka.journalpost
 import no.nav.syfo.kafkamottak.InngaaendeJournalpostDTO
 import org.apache.avro.generic.GenericRecord
 
-fun mapJournalpostHendelse(record: GenericRecord): InngaaendeJournalpostDTO {
-    return InngaaendeJournalpostDTO(
+fun mapJournalpostHendelse(record: GenericRecord): InngaaendeJournalpostDTO =
+    InngaaendeJournalpostDTO(
         record.get("hendelsesId") as String,
         record.get("versjon") as Int,
         record.get("hendelsesType") as String,
@@ -16,4 +16,3 @@ fun mapJournalpostHendelse(record: GenericRecord): InngaaendeJournalpostDTO {
         record.get("kanalReferanseId") as String,
         record.get("behandlingstema") as String,
     )
-}

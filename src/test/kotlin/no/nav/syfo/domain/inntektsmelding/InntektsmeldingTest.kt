@@ -54,14 +54,16 @@ class InntektsmeldingTest {
         assertFalse(im1.copy(beregnetInntekt = BigDecimal(200)).isDuplicate(im1))
         assertFalse(im1.copy(refusjon = Refusjon(BigDecimal(123), LocalDate.now())).isDuplicate(im1))
         assertFalse(
-            im1.copy(
-                endringerIRefusjon = listOf(EndringIRefusjon(endringsdato = LocalDate.now(), beloep = BigDecimal(123))),
-            ).isDuplicate(im1),
+            im1
+                .copy(
+                    endringerIRefusjon = listOf(EndringIRefusjon(endringsdato = LocalDate.now(), beloep = BigDecimal(123))),
+                ).isDuplicate(im1),
         )
         assertFalse(
-            im1.copy(
-                opphørAvNaturalYtelse = listOf(OpphoerAvNaturalytelse(Naturalytelse.BIL, LocalDate.now(), beloepPrMnd = BigDecimal(123))),
-            ).isDuplicate(im1),
+            im1
+                .copy(
+                    opphørAvNaturalYtelse = listOf(OpphoerAvNaturalytelse(Naturalytelse.BIL, LocalDate.now(), beloepPrMnd = BigDecimal(123))),
+                ).isDuplicate(im1),
         )
         assertFalse(im1.copy(gjenopptakelserNaturalYtelse = listOf(GjenopptakelseNaturalytelse(Naturalytelse.BOLIG))).isDuplicate(im1))
         assertTrue(im1.copy(gyldighetsStatus = Gyldighetsstatus.GYLDIG).isDuplicate(im1))

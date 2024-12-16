@@ -42,8 +42,8 @@ data class Inntektsmelding(
     val rapportertInntekt: RapportertInntekt? = null,
     val vedtaksperiodeId: UUID? = null,
 ) {
-    fun isDuplicate(inntektsmelding: Inntektsmelding): Boolean {
-        return this.equals(
+    fun isDuplicate(inntektsmelding: Inntektsmelding): Boolean =
+        this.equals(
             inntektsmelding.copy(
                 id = this.id,
                 fnr = this.fnr,
@@ -57,10 +57,9 @@ data class Inntektsmelding(
                 avsenderSystem = this.avsenderSystem,
             ),
         )
-    }
 
-    fun isDuplicateExclusiveArsakInnsending(inntektsmelding: Inntektsmelding): Boolean {
-        return this.equals(
+    fun isDuplicateExclusiveArsakInnsending(inntektsmelding: Inntektsmelding): Boolean =
+        this.equals(
             inntektsmelding.copy(
                 id = this.id,
                 fnr = this.fnr,
@@ -75,10 +74,7 @@ data class Inntektsmelding(
                 arsakTilInnsending = this.arsakTilInnsending,
             ),
         )
-    }
 
     // TODO: kanskje kan vi fjerne dette, hvis vedtaksperiodeId *alltid* skal komme i selvbestemtIM
-    fun matcherSpleis(): Boolean {
-        return !(avsenderSystem.navn == NAV_NO_SELVBESTEMT && vedtaksperiodeId == null)
-    }
+    fun matcherSpleis(): Boolean = !(avsenderSystem.navn == NAV_NO_SELVBESTEMT && vedtaksperiodeId == null)
 }

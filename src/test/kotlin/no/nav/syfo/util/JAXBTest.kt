@@ -10,7 +10,8 @@ class JAXBTest {
     @Test
     fun unmarshalInntektsmelding() {
         val inntektsmeldingM = unmarshalInntektsmelding<JAXBElement<XMLInntektsmeldingM>>(inntektsmelding)
-        Assertions.assertThat(inntektsmeldingM.value.skjemainnhold.arbeidsgiver.virksomhetsnummer)
+        Assertions
+            .assertThat(inntektsmeldingM.value.skjemainnhold.arbeidsgiver.virksomhetsnummer)
             .isEqualTo("910969900")
     }
 

@@ -15,13 +15,9 @@ class InntektsmeldingService(
 ) {
     private val logger = this.logger()
 
-    fun finnBehandledeInntektsmeldinger(aktoerId: String): List<Inntektsmelding> {
-        return repository.findByAktorId(aktoerId).map { toInntektsmelding(it, objectMapper) }
-    }
+    fun finnBehandledeInntektsmeldinger(aktoerId: String): List<Inntektsmelding> = repository.findByAktorId(aktoerId).map { toInntektsmelding(it, objectMapper) }
 
-    fun findByJournalpost(journalpostId: String): InntektsmeldingEntitet? {
-        return repository.findByJournalpost(journalpostId)
-    }
+    fun findByJournalpost(journalpostId: String): InntektsmeldingEntitet? = repository.findByJournalpost(journalpostId)
 
     fun isDuplicate(inntektsmelding: Inntektsmelding): Boolean {
         if (inntektsmelding.aktorId == null) {

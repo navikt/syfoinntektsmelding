@@ -12,7 +12,8 @@ class MetrikkVarsler : Bakgrunnsvarsler {
 }
 
 val FEILET_JOBB_COUNTER =
-    Counter.build()
+    Counter
+        .build()
         .namespace(METRICS_NS)
         .name("feilet_jobb")
         .help("Counts the number of permanently failed jobs")

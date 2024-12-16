@@ -27,44 +27,40 @@ interface UtsattOppgaveRepository {
 class UtsattOppgaveRepositoryMockk : UtsattOppgaveRepository {
     private val mockrepo = mutableSetOf<UtsattOppgaveEntitet>()
 
-    override fun findByInntektsmeldingId(inntektsmeldingId: String): UtsattOppgaveEntitet? {
-        return mockrepo.firstOrNull { it.inntektsmeldingId == inntektsmeldingId }
-    }
+    override fun findByInntektsmeldingId(inntektsmeldingId: String): UtsattOppgaveEntitet? = mockrepo.firstOrNull { it.inntektsmeldingId == inntektsmeldingId }
 
     override fun findUtsattOppgaveEntitetByTimeoutBeforeAndTilstandEquals(
         timeout: LocalDateTime,
         tilstand: Tilstand,
-    ): List<UtsattOppgaveEntitet> {
-        return mockrepo.filter { it.timeout < timeout && it.tilstand == tilstand }
-    }
+    ): List<UtsattOppgaveEntitet> = mockrepo.filter { it.timeout < timeout && it.tilstand == tilstand }
 
     override fun opprett(uo: UtsattOppgaveEntitet): UtsattOppgaveEntitet {
         mockrepo.add(uo)
         return uo
     }
 
-    override fun oppdater(uo: UtsattOppgaveEntitet): UtsattOppgaveEntitet {
-        return uo
-    }
+    override fun oppdater(uo: UtsattOppgaveEntitet): UtsattOppgaveEntitet = uo
 
     override fun deleteAll() {
         mockrepo.forEach { mockrepo.remove(it) }
     }
 
-    override fun findAll(): List<UtsattOppgaveEntitet> {
-        return mockrepo.toList()
-    }
+    override fun findAll(): List<UtsattOppgaveEntitet> = mockrepo.toList()
 }
 
-class UtsattOppgaveRepositoryImp(private val ds: DataSource) : UtsattOppgaveRepository {
+class UtsattOppgaveRepositoryImp(
+    private val ds: DataSource,
+) : UtsattOppgaveRepository {
     override fun findByInntektsmeldingId(inntektsmeldingId: String): UtsattOppgaveEntitet? {
         val findByInnteksmeldingId = "SELECT * FROM UTSATT_OPPGAVE WHERE INNTEKTSMELDING_ID = ?;"
         val inntektsmeldinger = ArrayList<UtsattOppgaveEntitet>()
         ds.connection.use {
             val res =
-                it.prepareStatement(findByInnteksmeldingId).apply {
-                    setString(1, inntektsmeldingId)
-                }.executeQuery()
+                it
+                    .prepareStatement(findByInnteksmeldingId)
+                    .apply {
+                        setString(1, inntektsmeldingId)
+                    }.executeQuery()
             val list: ArrayList<UtsattOppgaveEntitet> = resultLoop(res, inntektsmeldinger)
             if (list.isEmpty()) {
                 return null

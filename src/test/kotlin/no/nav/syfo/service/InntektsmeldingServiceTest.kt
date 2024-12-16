@@ -25,7 +25,8 @@ import java.util.UUID
 class InntektsmeldingServiceTest {
     val objectMapper =
         ObjectMapper().registerModules(
-            KotlinModule.Builder()
+            KotlinModule
+                .Builder()
                 .withReflectionCacheSize(512)
                 .configure(KotlinFeature.NullToEmptyCollection, false)
                 .configure(KotlinFeature.NullToEmptyMap, false)
@@ -169,8 +170,8 @@ class InntektsmeldingServiceTest {
     fun buildEntitet(
         aktorId: String,
         im: Inntektsmelding,
-    ): InntektsmeldingEntitet {
-        return InntektsmeldingEntitet(
+    ): InntektsmeldingEntitet =
+        InntektsmeldingEntitet(
             uuid = UUID.randomUUID().toString(),
             aktorId = aktorId,
             behandlet = LocalDateTime.now(),
@@ -178,12 +179,9 @@ class InntektsmeldingServiceTest {
             journalpostId = "jp-123",
             data = objectMapper.writeValueAsString(im),
         )
-    }
 
     fun lag(
         dager: Long,
         inntekt: Int,
-    ): Inntektsmelding {
-        return buildIM().copy(mottattDato = LocalDateTime.now().minusDays(dager), beregnetInntekt = BigDecimal(inntekt))
-    }
+    ): Inntektsmelding = buildIM().copy(mottattDato = LocalDateTime.now().minusDays(dager), beregnetInntekt = BigDecimal(inntekt))
 }

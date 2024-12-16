@@ -43,7 +43,9 @@ class InntektsmeldingMapperFraInternSyfoTilHAGKontraktTest {
                 bruttoUtbetalt = bruttoUtbetalt,
                 begrunnelseRedusert = begrunnelse,
                 kontaktinformasjon = Kontaktinformasjon(navn = innsenderNavn, telefon = innsenderTelefon),
-                avsenderSystem = no.nav.syfo.domain.inntektsmelding.AvsenderSystem("NAV_NO", "1.0"),
+                avsenderSystem =
+                    no.nav.syfo.domain.inntektsmelding
+                        .AvsenderSystem("NAV_NO", "1.0"),
                 rapportertInntekt =
                     RapportertInntekt(
                         bekreftet = true,

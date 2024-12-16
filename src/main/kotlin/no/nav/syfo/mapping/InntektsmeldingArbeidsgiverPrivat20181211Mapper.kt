@@ -36,18 +36,40 @@ internal object InntektsmeldingArbeidsgiverPrivat20181211Mapper {
         logger.info("Behandling inntektsmelding på 20181211 format")
         val skjemainnhold = (jaxbInntektsmelding.value as XMLInntektsmeldingM).skjemainnhold
 
-        val arbeidsforholdId = skjemainnhold.arbeidsforhold.value.arbeidsforholdId?.value
-        val beregnetInntekt = skjemainnhold.arbeidsforhold.value.beregnetInntekt?.value?.beloep?.value
-        val arbeidsGiverAktørId = skjemainnhold.arbeidsgiverPrivat?.value?.arbeidsgiverFnr?.let { fnr -> pdlClient.getAktørid(fnr) }
+        val arbeidsforholdId =
+            skjemainnhold.arbeidsforhold.value.arbeidsforholdId
+                ?.value
+        val beregnetInntekt =
+            skjemainnhold.arbeidsforhold.value.beregnetInntekt
+                ?.value
+                ?.beloep
+                ?.value
+        val arbeidsGiverAktørId =
+            skjemainnhold.arbeidsgiverPrivat
+                ?.value
+                ?.arbeidsgiverFnr
+                ?.let { fnr -> pdlClient.getAktørid(fnr) }
 
         val innsendingstidspunkt = skjemainnhold.avsendersystem?.innsendingstidspunkt?.value
-        val bruttoUtbetalt = skjemainnhold.sykepengerIArbeidsgiverperioden?.value?.bruttoUtbetalt?.value
-        val årsakEndring = skjemainnhold.arbeidsforhold?.value?.beregnetInntekt?.value?.aarsakVedEndring?.value
+        val bruttoUtbetalt =
+            skjemainnhold.sykepengerIArbeidsgiverperioden
+                ?.value
+                ?.bruttoUtbetalt
+                ?.value
+        val årsakEndring =
+            skjemainnhold.arbeidsforhold
+                ?.value
+                ?.beregnetInntekt
+                ?.value
+                ?.aarsakVedEndring
+                ?.value
 
         val perioder =
             skjemainnhold
-                ?.sykepengerIArbeidsgiverperioden?.value
-                ?.arbeidsgiverperiodeListe?.value
+                ?.sykepengerIArbeidsgiverperioden
+                ?.value
+                ?.arbeidsgiverperiodeListe
+                ?.value
                 ?.arbeidsgiverperiode
                 ?.filter { xmlPeriode -> xmlPeriode.fom != null && xmlPeriode.tom != null }
                 ?.map { Periode(it.fom.value, it.tom.value) }
@@ -75,14 +97,21 @@ internal object InntektsmeldingArbeidsgiverPrivat20181211Mapper {
             førsteFraværsdag = mapFørsteFraværsdag(skjemainnhold.arbeidsforhold),
             mottattDato = mottattDato,
             begrunnelseRedusert =
-                skjemainnhold.sykepengerIArbeidsgiverperioden.value.begrunnelseForReduksjonEllerIkkeUtbetalt?.value
+                skjemainnhold.sykepengerIArbeidsgiverperioden.value.begrunnelseForReduksjonEllerIkkeUtbetalt
+                    ?.value
                     ?: "",
             avsenderSystem = AvsenderSystem(skjemainnhold.avsendersystem.systemnavn, skjemainnhold.avsendersystem.systemversjon),
             nærRelasjon = skjemainnhold.isNaerRelasjon,
             kontaktinformasjon =
                 Kontaktinformasjon(
-                    skjemainnhold.arbeidsgiver?.value?.kontaktinformasjon?.kontaktinformasjonNavn,
-                    skjemainnhold.arbeidsgiver?.value?.kontaktinformasjon?.telefonnummer,
+                    skjemainnhold.arbeidsgiver
+                        ?.value
+                        ?.kontaktinformasjon
+                        ?.kontaktinformasjonNavn,
+                    skjemainnhold.arbeidsgiver
+                        ?.value
+                        ?.kontaktinformasjon
+                        ?.telefonnummer,
                 ),
             innsendingstidspunkt = innsendingstidspunkt,
             bruttoUtbetalt = bruttoUtbetalt,
@@ -90,19 +119,20 @@ internal object InntektsmeldingArbeidsgiverPrivat20181211Mapper {
         )
     }
 
-    private fun mapFerie(arbeidsforhold: JAXBElement<XMLArbeidsforhold>): List<Periode> {
-        return arbeidsforhold.value?.avtaltFerieListe?.value?.avtaltFerie?.map { f -> Periode(f.fom.value, f.tom.value) }
+    private fun mapFerie(arbeidsforhold: JAXBElement<XMLArbeidsforhold>): List<Periode> =
+        arbeidsforhold.value
+            ?.avtaltFerieListe
+            ?.value
+            ?.avtaltFerie
+            ?.map { f -> Periode(f.fom.value, f.tom.value) }
             ?: emptyList()
-    }
 
-    private fun mapFørsteFraværsdag(arbeidsforhold: JAXBElement<XMLArbeidsforhold>?): LocalDate? {
-        return arbeidsforhold?.value?.foersteFravaersdag?.value
-    }
+    private fun mapFørsteFraværsdag(arbeidsforhold: JAXBElement<XMLArbeidsforhold>?): LocalDate? = arbeidsforhold?.value?.foersteFravaersdag?.value
 
     private fun mapXmlGjenopptakelseNaturalytelser(
         xmlGjenopptakelseListe: JAXBElement<XMLGjenopptakelseNaturalytelseListe>?,
-    ): List<GjenopptakelseNaturalytelse> {
-        return xmlGjenopptakelseListe?.value?.naturalytelseDetaljer?.map { gjenopptakelse ->
+    ): List<GjenopptakelseNaturalytelse> =
+        xmlGjenopptakelseListe?.value?.naturalytelseDetaljer?.map { gjenopptakelse ->
             GjenopptakelseNaturalytelse(
                 mapNaturalytelseType(gjenopptakelse.naturalytelseType),
                 gjenopptakelse.fom?.value,
@@ -110,24 +140,18 @@ internal object InntektsmeldingArbeidsgiverPrivat20181211Mapper {
             )
         }
             ?: emptyList()
-    }
 
-    private fun mapXmlOpphørNaturalytelser(xmlOpphørsliste: JAXBElement<XMLOpphoerAvNaturalytelseListe>?): List<OpphoerAvNaturalytelse> {
-        return xmlOpphørsliste?.value?.opphoerAvNaturalytelse?.map { opphør ->
+    private fun mapXmlOpphørNaturalytelser(xmlOpphørsliste: JAXBElement<XMLOpphoerAvNaturalytelseListe>?): List<OpphoerAvNaturalytelse> =
+        xmlOpphørsliste?.value?.opphoerAvNaturalytelse?.map { opphør ->
             OpphoerAvNaturalytelse(mapNaturalytelseType(opphør.naturalytelseType), opphør.fom?.value, opphør.beloepPrMnd.value)
         }
             ?: emptyList()
-    }
 
-    private fun mapXmlEndringRefusjon(xmlRefusjon: JAXBElement<XMLRefusjon>?): List<EndringIRefusjon> {
-        return xmlRefusjon?.value?.endringIRefusjonListe?.value?.endringIRefusjon?.map {
-                endring ->
+    private fun mapXmlEndringRefusjon(xmlRefusjon: JAXBElement<XMLRefusjon>?): List<EndringIRefusjon> =
+        xmlRefusjon?.value?.endringIRefusjonListe?.value?.endringIRefusjon?.map { endring ->
             EndringIRefusjon(endring.endringsdato?.value, endring.refusjonsbeloepPrMnd?.value)
         }
             ?: emptyList()
-    }
 
-    private fun mapXmlRefusjon(refusjon: JAXBElement<XMLRefusjon>?): Refusjon {
-        return Refusjon(refusjon?.value?.refusjonsbeloepPrMnd?.value, refusjon?.value?.refusjonsopphoersdato?.value)
-    }
+    private fun mapXmlRefusjon(refusjon: JAXBElement<XMLRefusjon>?): Refusjon = Refusjon(refusjon?.value?.refusjonsbeloepPrMnd?.value, refusjon?.value?.refusjonsopphoersdato?.value)
 }

@@ -51,7 +51,8 @@ class InntektsmeldingBehandlerTest2 {
     private var objectMapper =
         ObjectMapper()
             .registerModule(
-                KotlinModule.Builder()
+                KotlinModule
+                    .Builder()
                     .withReflectionCacheSize(512)
                     .configure(KotlinFeature.NullToEmptyCollection, false)
                     .configure(KotlinFeature.NullToEmptyMap, false)
@@ -59,8 +60,7 @@ class InntektsmeldingBehandlerTest2 {
                     .configure(KotlinFeature.SingletonSupport, false)
                     .configure(KotlinFeature.StrictNullChecks, false)
                     .build(),
-            )
-            .registerModule(Jdk8Module())
+            ).registerModule(Jdk8Module())
             .registerModule(JavaTimeModule())
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
             .configure(SerializationFeature.INDENT_OUTPUT, true)
@@ -269,8 +269,8 @@ class InntektsmeldingBehandlerTest2 {
             verify(exactly = numThreads) { behandleInngaaendeJournalConsumer.ferdigstillJournalpost(any()) }
         }
 
-    private fun build(fnr: AtomicInteger): String {
-        return inntektsmeldingArbeidsgiver(
+    private fun build(fnr: AtomicInteger): String =
+        inntektsmeldingArbeidsgiver(
             listOf(
                 Periode(
                     fom = LocalDate.now(),
@@ -279,7 +279,6 @@ class InntektsmeldingBehandlerTest2 {
             ),
             "fnr" + fnr.incrementAndGet(),
         )
-    }
 
     fun produceParallelMessages(
         numThreads: Int,
@@ -299,34 +298,30 @@ class InntektsmeldingBehandlerTest2 {
     private fun lagDokumentRespons(
         fom: LocalDate,
         tom: LocalDate,
-    ): String {
-        return inntektsmeldingArbeidsgiver(
+    ): String =
+        inntektsmeldingArbeidsgiver(
             listOf(Periode(fom, tom)),
         )
-    }
 
-    private fun lagDokumentRespons(): String {
-        return inntektsmeldingArbeidsgiver(
+    private fun lagDokumentRespons(): String =
+        inntektsmeldingArbeidsgiver(
             ArrayList(),
         )
-    }
 
     private fun lagDokumentRespons(
         fom: LocalDate,
         tom: LocalDate,
         fom2: LocalDate,
         tom2: LocalDate,
-    ): String {
-        return inntektsmeldingArbeidsgiver(
+    ): String =
+        inntektsmeldingArbeidsgiver(
             listOf(Periode(fom, tom), Periode(fom2, tom2)),
         )
-    }
 
-    private fun inngaaendeJournal(arkivId: String): InngaaendeJournal {
-        return InngaaendeJournal(
+    private fun inngaaendeJournal(arkivId: String): InngaaendeJournal =
+        InngaaendeJournal(
             dokumentId = arkivId,
             status = JournalStatus.MOTTATT,
             mottattDato = LocalDateTime.now(),
         )
-    }
 }

@@ -13,8 +13,8 @@ import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-fun buildIM(): Inntektsmelding {
-    return Inntektsmelding(
+fun buildIM(): Inntektsmelding =
+    Inntektsmelding(
         id = "id-abc",
         fnr = "fnr-123",
         arbeidsgiverOrgnummer = "arb-org-123",
@@ -63,4 +63,3 @@ fun buildIM(): Inntektsmelding {
         aktorId = "aktør-123",
         begrunnelseRedusert = "Grunn til reduksjon",
     )
-}

@@ -83,8 +83,9 @@ class BehandlendeEnhetConsumer(
 fun finnAktivBehandlendeEnhet(
     arbeidsfordelinger: List<ArbeidsfordelingResponse>,
     geografiskTilknytning: String?,
-): String {
-    return arbeidsfordelinger
+): String =
+    arbeidsfordelinger
         .stream()
-        .findFirst().orElseThrow { IngenAktivEnhetException(geografiskTilknytning, null) }.enhetNr!!
-}
+        .findFirst()
+        .orElseThrow { IngenAktivEnhetException(geografiskTilknytning, null) }
+        .enhetNr!!

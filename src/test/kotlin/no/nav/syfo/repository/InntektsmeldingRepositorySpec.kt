@@ -238,8 +238,8 @@ open class InntektsmeldingRepositorySpec : SystemTestBase() {
         assertThat(repository.findAll().size).isEqualTo(5)
     }
 
-    private fun lagInntektsmelding(behandlet: LocalDateTime): InntektsmeldingEntitet {
-        return InntektsmeldingEntitet(
+    private fun lagInntektsmelding(behandlet: LocalDateTime): InntektsmeldingEntitet =
+        InntektsmeldingEntitet(
             uuid = UUID.randomUUID().toString(),
             journalpostId = "journalpostId",
             behandlet = behandlet,
@@ -247,5 +247,4 @@ open class InntektsmeldingRepositorySpec : SystemTestBase() {
             arbeidsgiverPrivat = "arbeidsgiverPrivat",
             aktorId = "aktorId1",
         )
-    }
 }

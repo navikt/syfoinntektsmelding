@@ -70,29 +70,17 @@ class SafJournalpostClientTest {
         notFoundJson()
     }
 
-    fun getResource(path: String): String {
-        return object {}.javaClass.getResource(path).readText()
-    }
+    fun getResource(path: String): String = object {}.javaClass.getResource(path).readText()
 
-    fun getJsonFile(path: String): JournalResponse {
-        return objectMapper.readValue(getResource(path), JournalResponse::class.java)
-    }
+    fun getJsonFile(path: String): JournalResponse = objectMapper.readValue(getResource(path), JournalResponse::class.java)
 
-    fun validJson(): JournalResponse {
-        return getJsonFile("/saf_valid.json")
-    }
+    fun validJson(): JournalResponse = getJsonFile("/saf_valid.json")
 
-    fun errorJson(): JournalResponse {
-        return getJsonFile("/saf_error.json")
-    }
+    fun errorJson(): JournalResponse = getJsonFile("/saf_error.json")
 
-    fun notFoundJson(): JournalResponse {
-        return getJsonFile("/saf_not_found.json")
-    }
+    fun notFoundJson(): JournalResponse = getJsonFile("/saf_not_found.json")
 
-    fun unauthorizedJson(): JournalResponse {
-        return getJsonFile("/saf_unauthorized.json")
-    }
+    fun unauthorizedJson(): JournalResponse = getJsonFile("/saf_unauthorized.json")
 }
 
 private fun mockAccessToken(): String = "mock saf token"

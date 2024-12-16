@@ -45,7 +45,10 @@ fun Application.nais() {
         }
 
         get("/metrics") {
-            val names = call.request.queryParameters.getAll("name[]")?.toSet() ?: Collections.emptySet()
+            val names =
+                call.request.queryParameters
+                    .getAll("name[]")
+                    ?.toSet() ?: Collections.emptySet()
             call.respondTextWriter(ContentType.parse(TextFormat.CONTENT_TYPE_004)) {
                 TextFormat.write004(this, CollectorRegistry.defaultRegistry.filteredMetricFamilySamples(names))
             }

@@ -6,7 +6,9 @@ import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.slf4j.LoggerFactory
 
-class InntektsmeldingAivenProducer(producerProperties: Map<String, Any>) {
+class InntektsmeldingAivenProducer(
+    producerProperties: Map<String, Any>,
+) {
     private val sikkerlogger = LoggerFactory.getLogger("tjenestekall")
     private val inntektsmeldingTopics = listOf("helsearbeidsgiver.privat-sykepenger-inntektsmelding")
     val objectMapper = JacksonJsonConfig.objectMapperFactory.opprettObjectMapper()

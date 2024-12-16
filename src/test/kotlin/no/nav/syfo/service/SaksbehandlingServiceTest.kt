@@ -38,8 +38,8 @@ class SaksbehandlingServiceTest {
         journalpostId: String,
         sakId: String,
         arbeidsgiverperioder: List<Periode>,
-    ): Inntektsmelding {
-        return Inntektsmelding(
+    ): Inntektsmelding =
+        Inntektsmelding(
             id = "ID",
             fnr = "fnr",
             arbeidsgiverOrgnummer = "orgnummer",
@@ -54,7 +54,6 @@ class SaksbehandlingServiceTest {
             sakId = sakId,
             aktorId = aktorId,
         )
-    }
 
     @Test
     fun girNyInntektsmeldingEksisterendeSakIdOmFomOverlapper() {
