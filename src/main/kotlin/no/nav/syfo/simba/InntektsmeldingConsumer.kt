@@ -36,7 +36,8 @@ class InntektsmeldingConsumer(
     private val utsattOppgaveService: UtsattOppgaveService,
     private val pdlClient: PdlClient,
     private val skalKasteExceptionVedPDLFeil: Boolean = true,
-) : ReadynessComponent, LivenessComponent {
+) : ReadynessComponent,
+    LivenessComponent {
     private val consumer = KafkaConsumer<String, String>(props)
     private var ready = false
     private var error = false

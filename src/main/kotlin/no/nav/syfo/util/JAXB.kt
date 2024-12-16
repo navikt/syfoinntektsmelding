@@ -25,11 +25,10 @@ object JAXB {
     }
 
     @JvmStatic
-    fun <T> unmarshalInntektsmelding(melding: String?): T {
-        return try {
+    fun <T> unmarshalInntektsmelding(melding: String?): T =
+        try {
             inntektsmelding!!.createUnmarshaller().unmarshal(StringReader(melding)) as T
         } catch (e: JAXBException) {
             throw RuntimeException(e)
         }
-    }
 }

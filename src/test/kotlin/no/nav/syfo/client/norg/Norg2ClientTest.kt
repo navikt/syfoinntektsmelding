@@ -44,10 +44,9 @@ class Norg2ClientTest {
         return listOf(a)
     }
 
-    private fun lagRequest(): ArbeidsfordelingRequest {
-        return ArbeidsfordelingRequest(
+    private fun lagRequest(): ArbeidsfordelingRequest =
+        ArbeidsfordelingRequest(
             tema = "tema",
             oppgavetype = "INNT",
         )
-    }
 }

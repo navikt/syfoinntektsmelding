@@ -36,13 +36,13 @@ class FinnAlleUtgaandeOppgaverProcessor(
             utsattOppgaveDAO
                 .finnAlleUtgåtteOppgaver()
                 .forEach { oppgaveEntitet ->
-                    inntektsmeldingRepository.hentInntektsmelding(oppgaveEntitet, om)
+                    inntektsmeldingRepository
+                        .hentInntektsmelding(oppgaveEntitet, om)
                         .onFailure {
                             sikkerlogger.error("Fant ikke inntektsmelding for utsatt oppgave: ${oppgaveEntitet.arkivreferanse}", it)
                             logger.error("Fant ikke inntektsmelding for utsatt oppgave: ${oppgaveEntitet.arkivreferanse}")
                             return@forEach
-                        }
-                        .onSuccess { inntektsmelding ->
+                        }.onSuccess { inntektsmelding ->
 
                             val gjelderUtland = behandlendeEnhetConsumer.gjelderUtland(oppgaveEntitet)
                             val behandlingsKategori = utledBehandlingsKategori(oppgaveEntitet, inntektsmelding, gjelderUtland)

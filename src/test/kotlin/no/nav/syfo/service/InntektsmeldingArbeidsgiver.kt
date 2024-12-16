@@ -7,8 +7,8 @@ import java.util.function.BinaryOperator
 fun inntektsmeldingArbeidsgiver(
     perioder: List<Periode>,
     fnr: String = "fnr",
-): String {
-    return "<ns6:melding xmlns:ns6=\"http://seres.no/xsd/NAV/Inntektsmelding_M/20180924\">" +
+): String =
+    "<ns6:melding xmlns:ns6=\"http://seres.no/xsd/NAV/Inntektsmelding_M/20180924\">" +
         "    <ns6:Skjemainnhold>" +
         "        <ns6:ytelse>Sykepenger</ns6:ytelse>" +
         "        <ns6:aarsakTilInnsending>Ny</ns6:aarsakTilInnsending>" +
@@ -35,12 +35,14 @@ fun inntektsmeldingArbeidsgiver(
         "        </ns6:refusjon>" +
         "        <ns6:sykepengerIArbeidsgiverperioden>" +
         "            <ns6:arbeidsgiverperiodeListe>" +
-        perioder.stream().map { (fom, tom) ->
-            "<ns6:arbeidsgiverperiode>" +
-                "   <ns6:fom>" + DateTimeFormatter.ISO_DATE.format(fom) + "</ns6:fom>" +
-                "   <ns6:tom>" + DateTimeFormatter.ISO_DATE.format(tom) + "</ns6:tom>" +
-                "</ns6:arbeidsgiverperiode>"
-        }.reduce("", BinaryOperator<String> { obj, str -> obj + str }) +
+        perioder
+            .stream()
+            .map { (fom, tom) ->
+                "<ns6:arbeidsgiverperiode>" +
+                    "   <ns6:fom>" + DateTimeFormatter.ISO_DATE.format(fom) + "</ns6:fom>" +
+                    "   <ns6:tom>" + DateTimeFormatter.ISO_DATE.format(tom) + "</ns6:tom>" +
+                    "</ns6:arbeidsgiverperiode>"
+            }.reduce("", BinaryOperator<String> { obj, str -> obj + str }) +
         "            </ns6:arbeidsgiverperiodeListe>" +
         "            <ns6:bruttoUtbetalt>2000</ns6:bruttoUtbetalt>" +
         "        </ns6:sykepengerIArbeidsgiverperioden>" +
@@ -57,4 +59,3 @@ fun inntektsmeldingArbeidsgiver(
         "        </ns6:omsorgspenger>" +
         "    </ns6:Skjemainnhold>" +
         "</ns6:melding>"
-}

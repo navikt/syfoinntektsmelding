@@ -41,8 +41,8 @@ data class Sak(
     val arkivsaksystem: String? = null,
 )
 
-fun mapOppdaterRequest(fnr: String): OppdaterJournalpostRequest {
-    return OppdaterJournalpostRequest(
+fun mapOppdaterRequest(fnr: String): OppdaterJournalpostRequest =
+    OppdaterJournalpostRequest(
         bruker =
             Bruker(
                 fnr,
@@ -51,4 +51,3 @@ fun mapOppdaterRequest(fnr: String): OppdaterJournalpostRequest {
         sak = Sak("GENERELL_SAK"),
         tema = "SYK",
     )
-}

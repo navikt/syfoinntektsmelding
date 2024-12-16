@@ -13,12 +13,13 @@ class Metrikk {
         metricName: String,
         metricHelpText: String,
         vararg labelNames: String,
-    ): Counter {
-        return if (counters.containsKey(metricName)) {
+    ): Counter =
+        if (counters.containsKey(metricName)) {
             counters[metricName]!!
         } else {
             val counter =
-                Counter.build()
+                Counter
+                    .build()
                     .namespace(metricsNs)
                     .name(metricName)
                     .labelNames(*labelNames)
@@ -28,7 +29,6 @@ class Metrikk {
             counters[metricName] = counter
             counter
         }
-    }
 
     val inntektsmeldingerMottatt =
         proseseringsMetrikker(
@@ -202,10 +202,11 @@ class Metrikk {
     fun tellInntektsmeldingUtenArkivReferanse() = inntektsmeldingUtenArkivreferanse.labels("info").inc()
 
     fun tellInntektsmeldingerRedusertEllerIngenUtbetaling(begrunnelse: String?) =
-        inntektsmeldingerRedusertEllerIngenUtbetaling.labels(
-            "info",
-            "$begrunnelse",
-        ).inc()
+        inntektsmeldingerRedusertEllerIngenUtbetaling
+            .labels(
+                "info",
+                "$begrunnelse",
+            ).inc()
 
     fun tellArbeidsgiverperioder(antall: String?) = arbeidsgiverperioder.labels("info", "$antall").inc()
 

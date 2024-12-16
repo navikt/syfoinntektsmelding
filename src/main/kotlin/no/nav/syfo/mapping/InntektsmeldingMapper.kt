@@ -21,8 +21,8 @@ fun mapInntektsmeldingKontrakt(
     arkivreferanse: String,
     uuid: String,
     matcherSpleis: Boolean = true,
-): no.nav.inntektsmeldingkontrakt.Inntektsmelding {
-    return no.nav.inntektsmeldingkontrakt.Inntektsmelding(
+): no.nav.inntektsmeldingkontrakt.Inntektsmelding =
+    no.nav.inntektsmeldingkontrakt.Inntektsmelding(
         inntektsmeldingId = uuid,
         vedtaksperiodeId = inntektsmelding.vedtaksperiodeId,
         matcherSpleis = matcherSpleis,
@@ -53,7 +53,6 @@ fun mapInntektsmeldingKontrakt(
         avsenderSystem = mapAvsenderSystem(inntektsmelding.avsenderSystem),
         inntektEndringAarsak = inntektsmelding.rapportertInntekt?.endringAarsakData?.tilInntektEndringAarsak(),
     )
-}
 
 fun SpinnInntektEndringAarsak.tilInntektEndringAarsak(): InntektEndringAarsak =
     InntektEndringAarsak(
@@ -63,9 +62,7 @@ fun SpinnInntektEndringAarsak.tilInntektEndringAarsak(): InntektEndringAarsak =
         bleKjent = bleKjent,
     )
 
-fun mapFerieperioder(inntektsmelding: Inntektsmelding): List<Periode> {
-    return inntektsmelding.feriePerioder.map { p -> Periode(p.fom, p.tom) }
-}
+fun mapFerieperioder(inntektsmelding: Inntektsmelding): List<Periode> = inntektsmelding.feriePerioder.map { p -> Periode(p.fom, p.tom) }
 
 fun mapStatus(status: Gyldighetsstatus): Status {
     if (status == Gyldighetsstatus.GYLDIG) {
@@ -74,9 +71,7 @@ fun mapStatus(status: Gyldighetsstatus): Status {
     return Status.MANGELFULL
 }
 
-fun mapArbeidsgiverperioder(inntektsmelding: Inntektsmelding): List<Periode> {
-    return inntektsmelding.arbeidsgiverperioder.map { p -> Periode(p.fom, p.tom) }
-}
+fun mapArbeidsgiverperioder(inntektsmelding: Inntektsmelding): List<Periode> = inntektsmelding.arbeidsgiverperioder.map { p -> Periode(p.fom, p.tom) }
 
 fun mapArbeidsgivertype(inntektsmelding: Inntektsmelding): Arbeidsgivertype {
     if (inntektsmelding.arbeidsgiverOrgnummer.isNullOrEmpty()) {
@@ -85,36 +80,30 @@ fun mapArbeidsgivertype(inntektsmelding: Inntektsmelding): Arbeidsgivertype {
     return Arbeidsgivertype.VIRKSOMHET
 }
 
-fun mapGjenopptakelseAvNaturalytelser(inntektsmelding: Inntektsmelding): List<GjenopptakelseNaturalytelse> {
-    return inntektsmelding.gjenopptakelserNaturalYtelse.map { gjenopptakelse ->
+fun mapGjenopptakelseAvNaturalytelser(inntektsmelding: Inntektsmelding): List<GjenopptakelseNaturalytelse> =
+    inntektsmelding.gjenopptakelserNaturalYtelse.map { gjenopptakelse ->
         GjenopptakelseNaturalytelse(
             mapNaturalytelseType(gjenopptakelse.naturalytelse),
             gjenopptakelse.fom,
             gjenopptakelse.beloepPrMnd,
         )
     }
-}
 
-fun mapOpphørAvNaturalytelser(inntektsmelding: Inntektsmelding): List<OpphoerAvNaturalytelse> {
-    return inntektsmelding.opphørAvNaturalYtelse.map { opphør ->
+fun mapOpphørAvNaturalytelser(inntektsmelding: Inntektsmelding): List<OpphoerAvNaturalytelse> =
+    inntektsmelding.opphørAvNaturalYtelse.map { opphør ->
         OpphoerAvNaturalytelse(
             mapNaturalytelseType(opphør.naturalytelse),
             opphør.fom,
             opphør.beloepPrMnd,
         )
     }
-}
 
-fun mapEndringIRefusjon(inntektsmelding: Inntektsmelding): List<EndringIRefusjon> {
-    return inntektsmelding.endringerIRefusjon.map { endring -> EndringIRefusjon(endring.endringsdato, endring.beloep) }
-}
+fun mapEndringIRefusjon(inntektsmelding: Inntektsmelding): List<EndringIRefusjon> = inntektsmelding.endringerIRefusjon.map { endring -> EndringIRefusjon(endring.endringsdato, endring.beloep) }
 
-fun mapRefusjon(inntektsmelding: Inntektsmelding): Refusjon {
-    return Refusjon(inntektsmelding.refusjon.beloepPrMnd, inntektsmelding.refusjon.opphoersdato)
-}
+fun mapRefusjon(inntektsmelding: Inntektsmelding): Refusjon = Refusjon(inntektsmelding.refusjon.beloepPrMnd, inntektsmelding.refusjon.opphoersdato)
 
-fun mapNaturalytelseType(naturalytelseType: no.nav.syfo.domain.inntektsmelding.Naturalytelse?): Naturalytelse {
-    return naturalytelseType?.let { naturalytelse ->
+fun mapNaturalytelseType(naturalytelseType: no.nav.syfo.domain.inntektsmelding.Naturalytelse?): Naturalytelse =
+    naturalytelseType?.let { naturalytelse ->
         if (Naturalytelse.values().map { it.name }.contains(
                 naturalytelse.name,
             )
@@ -125,11 +114,9 @@ fun mapNaturalytelseType(naturalytelseType: no.nav.syfo.domain.inntektsmelding.N
         }
     }
         ?: Naturalytelse.ANNET
-}
 
-fun mapAvsenderSystem(avsenderSystem: no.nav.syfo.domain.inntektsmelding.AvsenderSystem): AvsenderSystem {
-    return AvsenderSystem(
+fun mapAvsenderSystem(avsenderSystem: no.nav.syfo.domain.inntektsmelding.AvsenderSystem): AvsenderSystem =
+    AvsenderSystem(
         navn = avsenderSystem.navn,
         versjon = avsenderSystem.versjon,
     )
-}

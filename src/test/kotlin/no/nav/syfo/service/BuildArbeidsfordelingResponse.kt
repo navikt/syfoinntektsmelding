@@ -8,8 +8,8 @@ fun buildArbeidsfordelingResponse(
     fra: LocalDate,
     til: LocalDate,
     status: String = "Aktiv",
-): ArbeidsfordelingResponse {
-    return ArbeidsfordelingResponse(
+): ArbeidsfordelingResponse =
+    ArbeidsfordelingResponse(
         aktiveringsdato = fra,
         antallRessurser = 0,
         enhetId = 123456789,
@@ -28,4 +28,3 @@ fun buildArbeidsfordelingResponse(
         underEtableringDato = LocalDate.of(2020, 12, 30),
         versjon = 1,
     )
-}

@@ -7,7 +7,9 @@ import no.nav.syfo.client.dokarkiv.mapFeilregistrertRequest
 import no.nav.syfo.client.dokarkiv.mapOppdaterRequest
 import no.nav.syfo.domain.InngaendeJournalpost
 
-class BehandleInngaaendeJournalConsumer(private val dokArkivClient: DokArkivClient) {
+class BehandleInngaaendeJournalConsumer(
+    private val dokArkivClient: DokArkivClient,
+) {
     /**
      * Oppdaterer journalposten
      */

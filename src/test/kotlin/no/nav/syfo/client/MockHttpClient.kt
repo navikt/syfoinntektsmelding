@@ -41,8 +41,8 @@ fun buildHttpClientText(
 fun buildHttpClientJson(
     status: HttpStatusCode,
     response: Any,
-): HttpClient {
-    return HttpClient(MockEngine) {
+): HttpClient =
+    HttpClient(MockEngine) {
         expectSuccess = true
         install(ContentNegotiation) {
             register(ContentType.Application.Json, JacksonConverter(customObjectMapper()))
@@ -60,4 +60,3 @@ fun buildHttpClientJson(
             }
         }
     }
-}

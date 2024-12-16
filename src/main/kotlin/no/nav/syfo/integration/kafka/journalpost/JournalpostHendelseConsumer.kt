@@ -25,7 +25,8 @@ class JournalpostHendelseConsumer(
     topicName: String,
     private val bakgrunnsjobbRepo: BakgrunnsjobbRepository,
     private val om: ObjectMapper,
-) : ReadynessComponent, LivenessComponent {
+) : ReadynessComponent,
+    LivenessComponent {
     private val log = LoggerFactory.getLogger(JournalpostHendelseConsumer::class.java)
     private val sikkerlogger = sikkerLogger()
     private val consumer: KafkaConsumer<String, GenericRecord> = KafkaConsumer(props)
@@ -113,5 +114,4 @@ class JournalpostHendelseConsumer(
     }
 }
 
-fun isInntektsmelding(hendelse: InngaaendeJournalpostDTO): Boolean =
-    hendelse.temaNytt == "SYK" && hendelse.mottaksKanal == "ALTINN" && hendelse.journalpostStatus == "MOTTATT"
+fun isInntektsmelding(hendelse: InngaaendeJournalpostDTO): Boolean = hendelse.temaNytt == "SYK" && hendelse.mottaksKanal == "ALTINN" && hendelse.journalpostStatus == "MOTTATT"
