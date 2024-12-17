@@ -109,8 +109,8 @@ internal class FinnBehandlingsKategoriTest {
     fun mockInntektsmelding(
         refusjon: Refusjon,
         inntekt: BigDecimal,
-    ): Inntektsmelding {
-        return Inntektsmelding(
+    ): Inntektsmelding =
+        Inntektsmelding(
             id = "",
             fnr = "",
             arbeidsgiverOrgnummer = "123",
@@ -141,5 +141,4 @@ internal class FinnBehandlingsKategoriTest {
             bruttoUtbetalt = BigDecimal(123),
             årsakEndring = "Ingen",
         )
-    }
 }

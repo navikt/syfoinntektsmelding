@@ -7,8 +7,8 @@ import no.nav.syfo.domain.InngaaendeJournal
 class InngaaendeJournalConsumer(
     private val safJournalpostClient: SafJournalpostClient,
 ) {
-    fun hentDokumentId(journalpostId: String): InngaaendeJournal {
-        return runBlocking {
+    fun hentDokumentId(journalpostId: String): InngaaendeJournal =
+        runBlocking {
             val journalpost = safJournalpostClient.getJournalpostMetadata(journalpostId)
             InngaaendeJournal(
                 dokumentId = journalpost?.dokumenter!![0].dokumentInfoId,
@@ -16,5 +16,4 @@ class InngaaendeJournalConsumer(
                 mottattDato = journalpost.datoOpprettet,
             )
         }
-    }
 }

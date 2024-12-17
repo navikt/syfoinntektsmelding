@@ -6,12 +6,12 @@ import no.nav.syfo.dto.UtsattOppgaveEntitet
 import no.nav.syfo.repository.UtsattOppgaveRepository
 import java.time.LocalDateTime
 
-class UtsattOppgaveDAO(private val utsattOppgaveRepository: UtsattOppgaveRepository) {
+class UtsattOppgaveDAO(
+    private val utsattOppgaveRepository: UtsattOppgaveRepository,
+) {
     private val logger = this.logger()
 
-    fun opprett(oppgave: UtsattOppgaveEntitet): Int {
-        return utsattOppgaveRepository.opprett(oppgave).id
-    }
+    fun opprett(oppgave: UtsattOppgaveEntitet): Int = utsattOppgaveRepository.opprett(oppgave).id
 
     fun finn(id: String) = utsattOppgaveRepository.findByInntektsmeldingId(id)
 

@@ -26,7 +26,8 @@ class UtsattOppgaveConsumer(
     val om: ObjectMapper,
     val utsattOppgaveService: UtsattOppgaveService,
     val bakgrunnsjobbRepo: BakgrunnsjobbRepository,
-) : ReadynessComponent, LivenessComponent {
+) : ReadynessComponent,
+    LivenessComponent {
     private val consumer: KafkaConsumer<String, String> = KafkaConsumer(props, StringDeserializer(), StringDeserializer())
     private val logger = this.logger()
     private val sikkerlogger = sikkerLogger()

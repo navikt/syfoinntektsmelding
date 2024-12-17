@@ -14,7 +14,9 @@ interface ArbeidsgiverperiodeRepository {
     fun deleteAll()
 }
 
-class ArbeidsgiverperiodeRepositoryImp(private val ds: DataSource) : ArbeidsgiverperiodeRepository {
+class ArbeidsgiverperiodeRepositoryImp(
+    private val ds: DataSource,
+) : ArbeidsgiverperiodeRepository {
     override fun lagreData(
         agp: ArbeidsgiverperiodeEntitet,
         connection: Connection,

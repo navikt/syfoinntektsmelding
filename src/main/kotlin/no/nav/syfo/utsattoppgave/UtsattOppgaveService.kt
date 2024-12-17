@@ -57,7 +57,8 @@ class UtsattOppgaveService(
             (Tilstand.Utsatt to Handling.Opprett),
             (Tilstand.Forkastet to Handling.Opprett),
             -> {
-                inntektsmeldingRepository.hentInntektsmelding(oppgave, om)
+                inntektsmeldingRepository
+                    .hentInntektsmelding(oppgave, om)
                     .onSuccess { inntektsmelding ->
                         val gjelderUtland = behandlendeEnhetConsumer.gjelderUtland(oppgave)
                         val behandlingsKategori = utledBehandlingsKategori(oppgave, inntektsmelding, gjelderUtland)
@@ -82,8 +83,7 @@ class UtsattOppgaveService(
                                 "ppgave blir ikke opprettet for inntektsmeldingId: ${oppgave.inntektsmeldingId}, har behandlingskategori: $behandlingsKategori",
                             )
                         }
-                    }
-                    .onFailure { sikkerlogger.error(it.message, it) }
+                    }.onFailure { sikkerlogger.error(it.message, it) }
             }
             else -> {
                 metrikk.tellUtsattOppgaveIrrelevant()

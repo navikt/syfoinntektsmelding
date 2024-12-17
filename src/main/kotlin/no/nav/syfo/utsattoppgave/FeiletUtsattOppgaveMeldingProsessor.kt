@@ -14,8 +14,7 @@ import no.nav.helsearbeidsgiver.utils.log.logger
 class FeiletUtsattOppgaveMeldingProsessor(
     private val om: ObjectMapper,
     val oppgaveService: UtsattOppgaveService,
-) :
-    BakgrunnsjobbProsesserer {
+) : BakgrunnsjobbProsesserer {
     private val logger = this.logger()
 
     override val type: String get() = JOB_TYPE

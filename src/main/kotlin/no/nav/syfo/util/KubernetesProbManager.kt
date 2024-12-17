@@ -101,7 +101,9 @@ data class ComponentProbeResult(
 /**
  * Hjelpeklasse for å hente ut det samlede resultatet av set sett med sjekker
  */
-data class ProbeResult(private val resultResults: Collection<ComponentProbeResult>) {
+data class ProbeResult(
+    private val resultResults: Collection<ComponentProbeResult>,
+) {
     val healthyComponents = resultResults.filter { it.state == ProbeState.HEALTHY }
     val unhealthyComponents = resultResults.filter { it.state == ProbeState.UN_HEALTHY }
     val state = if (unhealthyComponents.isEmpty()) ProbeState.HEALTHY else ProbeState.UN_HEALTHY

@@ -65,15 +65,36 @@ fun mapInntektsmelding(
         fnr = im.sykmeldt.fnr.verdi,
         arbeidsgiverOrgnummer = im.avsender.orgnr.verdi,
         kontaktinformasjon = im.avsender.let { Kontaktinformasjon(it.navn, it.tlf) },
-        arbeidsgiverperioder = im.agp?.perioder?.map(PeriodeV1::tilPeriode).orEmpty(),
-        bruttoUtbetalt = im.agp?.redusertLoennIAgp?.beloep?.toBigDecimal(),
-        begrunnelseRedusert = im.agp?.redusertLoennIAgp?.begrunnelse?.name.orEmpty(),
+        arbeidsgiverperioder =
+            im.agp
+                ?.perioder
+                ?.map(PeriodeV1::tilPeriode)
+                .orEmpty(),
+        bruttoUtbetalt =
+            im.agp
+                ?.redusertLoennIAgp
+                ?.beloep
+                ?.toBigDecimal(),
+        begrunnelseRedusert =
+            im.agp
+                ?.redusertLoennIAgp
+                ?.begrunnelse
+                ?.name
+                .orEmpty(),
         beregnetInntekt = im.inntekt!!.beloep.toBigDecimal(),
         inntektsdato = im.inntekt?.inntektsdato,
-        opphørAvNaturalYtelse = im.inntekt?.naturalytelser?.map(NaturalytelseV1::tilNaturalytelse).orEmpty(),
+        opphørAvNaturalYtelse =
+            im.inntekt
+                ?.naturalytelser
+                ?.map(NaturalytelseV1::tilNaturalytelse)
+                .orEmpty(),
         rapportertInntekt = im.inntekt?.tilRapportertInntekt(),
         refusjon = im.refusjon.tilRefusjon(),
-        endringerIRefusjon = im.refusjon?.endringer?.map(RefusjonEndring::tilEndringIRefusjon).orEmpty(),
+        endringerIRefusjon =
+            im.refusjon
+                ?.endringer
+                ?.map(RefusjonEndring::tilEndringIRefusjon)
+                .orEmpty(),
         førsteFraværsdag = bestemmendeFravaersdag,
         arsakTilInnsending = im.aarsakInnsending.name,
         mottattDato = im.mottatt.toLocalDateTime(),

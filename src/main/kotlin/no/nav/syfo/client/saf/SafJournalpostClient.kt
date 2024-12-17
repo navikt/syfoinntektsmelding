@@ -28,12 +28,14 @@ class SafJournalpostClient(
         try {
             val response: JournalResponse =
                 runBlocking {
-                    httpClient.post(basePath) {
-                        contentType(ContentType.Application.Json)
-                        header("Authorization", "Bearer $accessToken")
-                        header("X-Correlation-ID", journalpostId)
-                        setBody(GetJournalpostRequest(query = lagQuery(journalpostId)))
-                    }.call.response.body<JournalResponse>()
+                    httpClient
+                        .post(basePath) {
+                            contentType(ContentType.Application.Json)
+                            header("Authorization", "Bearer $accessToken")
+                            header("X-Correlation-ID", journalpostId)
+                            setBody(GetJournalpostRequest(query = lagQuery(journalpostId)))
+                        }.call.response
+                        .body<JournalResponse>()
                 }
             if (response.errors != null && response.errors.isNotEmpty()) {
                 throw ErrorException(journalpostId, response.errors.toString())
@@ -51,14 +53,23 @@ class SafJournalpostClient(
     }
 }
 
-open class SafJournalpostException(journalpostId: String) : Exception(journalpostId)
+open class SafJournalpostException(
+    journalpostId: String,
+) : Exception(journalpostId)
 
-open class NotAuthorizedException(journalpostId: String) : SafJournalpostException(
-    "SAF ga ikke tilgang til å lese ut journalpost '$journalpostId'",
-)
+open class NotAuthorizedException(
+    journalpostId: String,
+) : SafJournalpostException(
+        "SAF ga ikke tilgang til å lese ut journalpost '$journalpostId'",
+    )
 
-open class ErrorException(journalpostId: String, errors: String) : SafJournalpostException(
-    "SAF returnerte feil journalpost '$journalpostId': $errors",
-)
+open class ErrorException(
+    journalpostId: String,
+    errors: String,
+) : SafJournalpostException(
+        "SAF returnerte feil journalpost '$journalpostId': $errors",
+    )
 
-open class EmptyException(journalpostId: String) : SafJournalpostException("SAF returnerte tom journalpost '$journalpostId'")
+open class EmptyException(
+    journalpostId: String,
+) : SafJournalpostException("SAF returnerte tom journalpost '$journalpostId'")

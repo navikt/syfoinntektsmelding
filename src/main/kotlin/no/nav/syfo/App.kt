@@ -31,7 +31,9 @@ import org.koin.core.context.stopKoin
 import org.slf4j.Logger
 import kotlin.concurrent.thread
 
-class SpinnApplication(val port: Int = 8080) : KoinComponent {
+class SpinnApplication(
+    val port: Int = 8080,
+) : KoinComponent {
     private val logger: Logger = this.logger()
     private var webserver: NettyApplicationEngine? = null
     private var appConfig: HoconApplicationConfig = HoconApplicationConfig(ConfigFactory.load())
@@ -127,7 +129,9 @@ class SpinnApplication(val port: Int = 8080) : KoinComponent {
     private fun migrateDatabase() {
         logger.info("Starter databasemigrering")
 
-        Flyway.configure().baselineOnMigrate(true)
+        Flyway
+            .configure()
+            .baselineOnMigrate(true)
             .dataSource(GlobalContext.getKoinApplicationOrNull()?.koin?.get())
             .load()
             .migrate()

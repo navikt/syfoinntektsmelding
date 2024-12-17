@@ -3,8 +3,8 @@ package no.nav.syfo.client.dokarkiv
 fun mapFeilregistrertRequest(
     fnr: String,
     dokumentId: String,
-): OppdaterJournalpostRequest {
-    return OppdaterJournalpostRequest(
+): OppdaterJournalpostRequest =
+    OppdaterJournalpostRequest(
         bruker =
             Bruker(
                 fnr,
@@ -14,4 +14,3 @@ fun mapFeilregistrertRequest(
         tema = "SYK",
         dokumenter = listOf(Dokument(dokumentId, "Inntektsmelding duplikat")),
     )
-}

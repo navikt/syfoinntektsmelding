@@ -133,8 +133,8 @@ class XmlInntektsmeldingMapperTest {
         fun inntektsmeldingArbeidsgiver(
             perioder: List<Periode>,
             fnr: String = "fnr",
-        ): String {
-            return "<ns6:melding xmlns:ns6=\"http://seres.no/xsd/NAV/Inntektsmelding_M/20180924\">" +
+        ): String =
+            "<ns6:melding xmlns:ns6=\"http://seres.no/xsd/NAV/Inntektsmelding_M/20180924\">" +
                 "    <ns6:Skjemainnhold>" +
                 "        <ns6:ytelse>Sykepenger</ns6:ytelse>" +
                 "        <ns6:aarsakTilInnsending>Ny</ns6:aarsakTilInnsending>" +
@@ -161,12 +161,14 @@ class XmlInntektsmeldingMapperTest {
                 "        </ns6:refusjon>" +
                 "        <ns6:sykepengerIArbeidsgiverperioden>" +
                 "            <ns6:arbeidsgiverperiodeListe>" +
-                perioder.stream().map { (fom, tom) ->
-                    "<ns6:arbeidsgiverperiode>" +
-                        "   <ns6:fom>" + DateTimeFormatter.ISO_DATE.format(fom) + "</ns6:fom>" +
-                        "   <ns6:tom>" + DateTimeFormatter.ISO_DATE.format(tom) + "</ns6:tom>" +
-                        "</ns6:arbeidsgiverperiode>"
-                }.reduce("") { obj, str -> obj + str } +
+                perioder
+                    .stream()
+                    .map { (fom, tom) ->
+                        "<ns6:arbeidsgiverperiode>" +
+                            "   <ns6:fom>" + DateTimeFormatter.ISO_DATE.format(fom) + "</ns6:fom>" +
+                            "   <ns6:tom>" + DateTimeFormatter.ISO_DATE.format(tom) + "</ns6:tom>" +
+                            "</ns6:arbeidsgiverperiode>"
+                    }.reduce("") { obj, str -> obj + str } +
                 "            </ns6:arbeidsgiverperiodeListe>" +
                 "            <ns6:bruttoUtbetalt>2000</ns6:bruttoUtbetalt>" +
                 "        </ns6:sykepengerIArbeidsgiverperioden>" +
@@ -183,10 +185,9 @@ class XmlInntektsmeldingMapperTest {
                 "        </ns6:omsorgspenger>" +
                 "    </ns6:Skjemainnhold>" +
                 "</ns6:melding>"
-        }
 
-        fun inntektsmeldingArbeidsgiverPrivat(): String {
-            return "<ns7:melding xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:seres=\"http://seres.no/xsd/forvaltningsdata\" xmlns:ns1=\"http://seres.no/xsd/NAV/Inntektsmelding_M/2017\" xmlns:ns2=\"http://seres.no/xsd/NAV/Inntektsmelding_M/20171205\" xmlns:dfs=\"http://schemas.microsoft.com/office/infopath/2003/dataFormSolution\" xmlns:tns=\"http://www.altinn.no/services/ServiceEngine/ServiceMetaData/2009/10\" xmlns:q1=\"http://schemas.altinn.no/services/ServiceEngine/ServiceMetaData/2009/10\" xmlns:q2=\"http://schemas.altinn.no/serviceengine/formsengine/2009/10\" xmlns:ns3=\"http://www.altinn.no/services/2009/10\" xmlns:q3=\"http://www.altinn.no/services/common/fault/2009/10\" xmlns:ns4=\"http://schemas.microsoft.com/2003/10/Serialization/\" xmlns:ns5=\"http://seres.no/xsd/NAV/Inntektsmelding_M/20180618\" xmlns:ns6=\"http://seres.no/xsd/NAV/Inntektsmelding_M/20180924\" xmlns:my=\"http://schemas.microsoft.com/office/infopath/2003/myXSD/2017-10-18T12:15:13\" xmlns:xd=\"http://schemas.microsoft.com/office/infopath/2003\" xmlns:ns7=\"http://seres.no/xsd/NAV/Inntektsmelding_M/20181211\">\n" +
+        fun inntektsmeldingArbeidsgiverPrivat(): String =
+            "<ns7:melding xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:seres=\"http://seres.no/xsd/forvaltningsdata\" xmlns:ns1=\"http://seres.no/xsd/NAV/Inntektsmelding_M/2017\" xmlns:ns2=\"http://seres.no/xsd/NAV/Inntektsmelding_M/20171205\" xmlns:dfs=\"http://schemas.microsoft.com/office/infopath/2003/dataFormSolution\" xmlns:tns=\"http://www.altinn.no/services/ServiceEngine/ServiceMetaData/2009/10\" xmlns:q1=\"http://schemas.altinn.no/services/ServiceEngine/ServiceMetaData/2009/10\" xmlns:q2=\"http://schemas.altinn.no/serviceengine/formsengine/2009/10\" xmlns:ns3=\"http://www.altinn.no/services/2009/10\" xmlns:q3=\"http://www.altinn.no/services/common/fault/2009/10\" xmlns:ns4=\"http://schemas.microsoft.com/2003/10/Serialization/\" xmlns:ns5=\"http://seres.no/xsd/NAV/Inntektsmelding_M/20180618\" xmlns:ns6=\"http://seres.no/xsd/NAV/Inntektsmelding_M/20180924\" xmlns:my=\"http://schemas.microsoft.com/office/infopath/2003/myXSD/2017-10-18T12:15:13\" xmlns:xd=\"http://schemas.microsoft.com/office/infopath/2003\" xmlns:ns7=\"http://seres.no/xsd/NAV/Inntektsmelding_M/20181211\">\n" +
                 "<ns7:Skjemainnhold>" +
                 "<ns7:ytelse>Sykepenger</ns7:ytelse>" +
                 "<ns7:aarsakTilInnsending>Ny</ns7:aarsakTilInnsending>" +
@@ -233,6 +234,5 @@ class XmlInntektsmeldingMapperTest {
                 "</ns7:omsorgspenger>" +
                 "</ns7:Skjemainnhold>" +
                 "</ns7:melding>"
-        }
     }
 }

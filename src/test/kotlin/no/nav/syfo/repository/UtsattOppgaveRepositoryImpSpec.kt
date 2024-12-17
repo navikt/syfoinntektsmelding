@@ -79,38 +79,40 @@ open class UtsattOppgaveRepositoryImpSpec : SystemTestBase() {
     @Test
     fun `Databasen angir ID ved opprettelse`() {
         val firstId =
-            repository.opprett(
-                UtsattOppgaveEntitet(
-                    inntektsmeldingId = "id",
-                    arkivreferanse = "arkivref",
-                    fnr = "fnr",
-                    aktørId = "aktørId",
-                    journalpostId = "journalpostId",
-                    timeout = now().minusHours(1),
-                    tilstand = Tilstand.Utsatt,
-                    gosysOppgaveId = null,
-                    oppdatert = null,
-                    speil = false,
-                    utbetalingBruker = false,
-                ),
-            ).id
+            repository
+                .opprett(
+                    UtsattOppgaveEntitet(
+                        inntektsmeldingId = "id",
+                        arkivreferanse = "arkivref",
+                        fnr = "fnr",
+                        aktørId = "aktørId",
+                        journalpostId = "journalpostId",
+                        timeout = now().minusHours(1),
+                        tilstand = Tilstand.Utsatt,
+                        gosysOppgaveId = null,
+                        oppdatert = null,
+                        speil = false,
+                        utbetalingBruker = false,
+                    ),
+                ).id
 
         val secondId =
-            repository.opprett(
-                UtsattOppgaveEntitet(
-                    inntektsmeldingId = "id2",
-                    arkivreferanse = "arkivref",
-                    fnr = "fnr",
-                    aktørId = "aktørId",
-                    journalpostId = "journalpostId",
-                    timeout = now().minusHours(1),
-                    tilstand = Tilstand.Utsatt,
-                    gosysOppgaveId = null,
-                    oppdatert = null,
-                    speil = false,
-                    utbetalingBruker = false,
-                ),
-            ).id
+            repository
+                .opprett(
+                    UtsattOppgaveEntitet(
+                        inntektsmeldingId = "id2",
+                        arkivreferanse = "arkivref",
+                        fnr = "fnr",
+                        aktørId = "aktørId",
+                        journalpostId = "journalpostId",
+                        timeout = now().minusHours(1),
+                        tilstand = Tilstand.Utsatt,
+                        gosysOppgaveId = null,
+                        oppdatert = null,
+                        speil = false,
+                        utbetalingBruker = false,
+                    ),
+                ).id
 
         Assertions.assertNotEquals(firstId, secondId)
     }
