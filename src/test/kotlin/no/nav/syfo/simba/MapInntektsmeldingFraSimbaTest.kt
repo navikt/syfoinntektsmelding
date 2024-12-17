@@ -153,12 +153,17 @@ class MapInntektsmeldingFraSimbaTest {
 
     @Test
     fun mapAvsenderForSelvbestemtOgVanlig() {
-        val selvbestemtIM = mapInntektsmelding("im1", "2", "3", lagInntektsmelding(), 10.januar, selvbestemt = true)
-        assertEquals(MuligAvsender.NAV_NO_SELVBESTEMT, selvbestemtIM.avsenderSystem.navn)
-        assertEquals(MuligAvsender.VERSJON, selvbestemtIM.avsenderSystem.versjon)
-        val im = mapInntektsmelding("im1", "2", "3", lagInntektsmelding(), 10.januar)
-        assertEquals(MuligAvsender.NAV_NO, im.avsenderSystem.navn)
-        assertEquals(MuligAvsender.VERSJON, im.avsenderSystem.versjon)
+        val selvbestemtIm =
+            lagInntektsmelding().copy(
+                type = Inntektsmelding.Type.Selvbestemt(UUID.randomUUID()),
+            )
+        val selvbestemtMapped = mapInntektsmelding("im1", "2", "3", selvbestemtIm, 10.januar)
+        assertEquals(MuligAvsender.NAV_NO_SELVBESTEMT, selvbestemtMapped.avsenderSystem.navn)
+        assertEquals(MuligAvsender.VERSJON, selvbestemtMapped.avsenderSystem.versjon)
+
+        val mapped = mapInntektsmelding("im1", "2", "3", lagInntektsmelding(), 10.januar)
+        assertEquals(MuligAvsender.NAV_NO, mapped.avsenderSystem.navn)
+        assertEquals(MuligAvsender.VERSJON, mapped.avsenderSystem.versjon)
     }
 }
 

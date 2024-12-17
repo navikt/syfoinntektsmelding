@@ -45,13 +45,11 @@ fun mapInntektsmelding(
     journalpostId: String,
     im: InntektmeldingV1,
     bestemmendeFravaersdag: LocalDate?,
-    selvbestemt: Boolean = false,
 ): Inntektsmelding {
     val avsenderSystem =
-        if (selvbestemt) {
-            Avsender.NAV_NO_SELVBESTEMT
-        } else {
-            Avsender.NAV_NO
+        when (im.type) {
+            is InntektmeldingV1.Type.Forespurt -> Avsender.NAV_NO
+            is InntektmeldingV1.Type.Selvbestemt -> Avsender.NAV_NO_SELVBESTEMT
         }
     return Inntektsmelding(
         journalStatus = JournalStatus.FERDIGSTILT,
