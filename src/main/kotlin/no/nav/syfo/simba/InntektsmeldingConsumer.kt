@@ -1,7 +1,7 @@
 package no.nav.syfo.simba
 
 import kotlinx.serialization.Serializable
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.Inntektsmelding
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.v1.Inntektsmelding
 import no.nav.helsearbeidsgiver.pdl.PdlClient
 import no.nav.helsearbeidsgiver.utils.json.fromJson
 import no.nav.helsearbeidsgiver.utils.json.parseJson
@@ -26,7 +26,6 @@ import org.apache.kafka.clients.consumer.KafkaConsumer
 import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.v1.Inntektsmelding as InntektsmeldingV1
 
 class InntektsmeldingConsumer(
     props: Map<String, Any>,
@@ -87,35 +86,26 @@ class InntektsmeldingConsumer(
         if (im != null) {
             sikkerlogger.info("InntektsmeldingConsumer: Behandler ikke ${meldingFraSimba.journalpostId}. Finnes allerede.")
         } else {
-            behandle(
-                meldingFraSimba.journalpostId,
-                meldingFraSimba.inntektsmeldingV1,
-                meldingFraSimba.bestemmendeFravaersdag,
-                meldingFraSimba.selvbestemt,
-            )
+            behandle(meldingFraSimba.journalpostId, meldingFraSimba.inntektsmeldingV1, meldingFraSimba.bestemmendeFravaersdag)
             log.info("InntektsmeldingConsumer: Behandlet inntektsmelding med journalpostId: ${meldingFraSimba.journalpostId}")
         }
     }
 
     private fun behandle(
         journalpostId: String,
-        inntektsmeldingFraSimba: InntektsmeldingV1,
+        inntektsmeldingFraSimba: Inntektsmelding,
         bestemmendeFravaersdag: LocalDate?,
-        selvbestemt: Boolean,
     ) {
         val aktorid = hentAktoeridFraPDL(inntektsmeldingFraSimba.sykmeldt.fnr.verdi)
         val arkivreferanse = "im_$journalpostId"
-        val inntektsmelding =
-            mapInntektsmelding(arkivreferanse, aktorid, journalpostId, inntektsmeldingFraSimba, bestemmendeFravaersdag, selvbestemt)
+        val inntektsmelding = mapInntektsmelding(arkivreferanse, aktorid, journalpostId, inntektsmeldingFraSimba, bestemmendeFravaersdag)
         val dto = inntektsmeldingService.lagreBehandling(inntektsmelding, aktorid)
         val matcherSpleis = inntektsmelding.matcherSpleis()
         val timeout =
             if (matcherSpleis) {
                 LocalDateTime.now().plusHours(OPPRETT_OPPGAVE_FORSINKELSE)
             } else {
-                sikkerlogger.info(
-                    "Mottok selvbestemtIM uten vedtaksperiode med journalpostId $journalpostId, oppretter gosys-oppgave umiddelbart",
-                )
+                sikkerlogger.info("Mottok selvbestemtIM uten vedtaksperiode med journalpostId $journalpostId, oppretter gosys-oppgave umiddelbart")
                 LocalDateTime.now()
             }
         utsattOppgaveService.opprett(
@@ -173,13 +163,11 @@ class InntektsmeldingConsumer(
     }
 }
 
-// Midlertidig klasse som inneholder både gammelt og nytt format
+// Midlertidig klasse som inneholder bestemmende fraværsdag
 @Serializable
 private data class JournalfoertInntektsmelding(
     val journalpostId: String,
-    val inntektsmeldingV1: InntektsmeldingV1,
+    val inntektsmeldingV1: Inntektsmelding,
     @Serializable(LocalDateSerializer::class)
     val bestemmendeFravaersdag: LocalDate?,
-    val inntektsmelding: Inntektsmelding,
-    val selvbestemt: Boolean, // for å skille på selvbestemt og vanlig i spinosaurus, før V1 tas i bruk overalt
 )
