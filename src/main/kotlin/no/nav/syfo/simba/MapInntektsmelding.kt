@@ -27,7 +27,6 @@ import no.nav.syfo.domain.inntektsmelding.OpphoerAvNaturalytelse
 import no.nav.syfo.domain.inntektsmelding.RapportertInntekt
 import no.nav.syfo.domain.inntektsmelding.Refusjon
 import no.nav.syfo.domain.inntektsmelding.SpinnInntektEndringAarsak
-import java.time.LocalDate
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.v1.Inntektsmelding as InntektmeldingV1
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.v1.Naturalytelse as NaturalytelseV1
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.v1.Periode as PeriodeV1
@@ -44,7 +43,6 @@ fun mapInntektsmelding(
     aktorId: String,
     journalpostId: String,
     im: InntektmeldingV1,
-    bestemmendeFravaersdag: LocalDate?,
 ): Inntektsmelding {
     val avsenderSystem =
         when (im.type) {
@@ -93,7 +91,7 @@ fun mapInntektsmelding(
                 ?.endringer
                 ?.map(RefusjonEndring::tilEndringIRefusjon)
                 .orEmpty(),
-        førsteFraværsdag = bestemmendeFravaersdag,
+        førsteFraværsdag = null,
         arsakTilInnsending = im.aarsakInnsending.name,
         mottattDato = im.mottatt.toLocalDateTime(),
         innsendingstidspunkt = im.mottatt.toLocalDateTime(),
