@@ -51,7 +51,6 @@ class MapInntektsmeldingFraSimbaTest {
                 aktorId = "sdfds",
                 journalpostId = "134",
                 im = imd,
-                bestemmendeFravaersdag = 10.januar,
             )
         assertEquals(antallNaturalytelser, mapped.opphørAvNaturalYtelse.size)
         val naturalytelse = mapped.opphørAvNaturalYtelse[0]
@@ -68,7 +67,6 @@ class MapInntektsmeldingFraSimbaTest {
                 aktorId = "sdfds",
                 journalpostId = "134",
                 im = lagInntektsmelding().copy(refusjon = refusjon),
-                bestemmendeFravaersdag = 10.januar,
             )
         assertEquals(mapped.refusjon.opphoersdato, refusjon.sluttdato)
         assertEquals(mapped.endringerIRefusjon.size, 1)
@@ -91,7 +89,7 @@ class MapInntektsmeldingFraSimbaTest {
                     )
                 }
 
-            val mapped = mapInntektsmelding("im123", "abc", "345", im, 10.januar)
+            val mapped = mapInntektsmelding("im123", "abc", "345", im)
 
             assertEquals(begrunnelse.name, mapped.begrunnelseRedusert, "Feil ved mapping: $begrunnelse")
             assertEquals(1.0.toBigDecimal(), mapped.bruttoUtbetalt, "Feil ved mapping: $begrunnelse")
@@ -109,7 +107,7 @@ class MapInntektsmeldingFraSimbaTest {
                         ),
                 )
             }
-        val mapped = mapInntektsmelding("im1", "2", "3", im, 10.januar)
+        val mapped = mapInntektsmelding("im1", "2", "3", im)
         assertEquals("", mapped.begrunnelseRedusert)
         assertNull(mapped.bruttoUtbetalt)
     }
@@ -126,7 +124,7 @@ class MapInntektsmeldingFraSimbaTest {
                         endringAarsak = Bonus,
                     ),
             )
-        val mapped = mapInntektsmelding("im1", "2", "3", im, 10.januar)
+        val mapped = mapInntektsmelding("im1", "2", "3", im)
         assertEquals("Bonus", mapped.rapportertInntekt?.endringAarsak)
         assertEquals("Bonus", mapped.rapportertInntekt?.endringAarsakData?.aarsak)
         assertNull(mapped.rapportertInntekt?.endringAarsakData?.perioder)
@@ -138,16 +136,16 @@ class MapInntektsmeldingFraSimbaTest {
     fun mapInnsendtTidspunktFraSimba() {
         val localDateTime = LocalDateTime.of(2023, 2, 11, 14, 0)
         val innsendt = OffsetDateTime.of(localDateTime, ZoneOffset.of("+1"))
-        val im = mapInntektsmelding("im1", "2", "3", lagInntektsmelding().copy(mottatt = innsendt), 10.januar)
+        val im = mapInntektsmelding("im1", "2", "3", lagInntektsmelding().copy(mottatt = innsendt))
         assertEquals(localDateTime, im.innsendingstidspunkt)
     }
 
     @Test
     fun mapVedtaksperiodeID() {
-        val im = mapInntektsmelding("im1", "2", "3", lagInntektsmelding().copy(vedtaksperiodeId = null), 10.januar)
+        val im = mapInntektsmelding("im1", "2", "3", lagInntektsmelding().copy(vedtaksperiodeId = null))
         assertNull(im.vedtaksperiodeId)
         val vedtaksperiodeId = UUID.randomUUID()
-        val im2 = mapInntektsmelding("im1", "2", "3", lagInntektsmelding().copy(vedtaksperiodeId = vedtaksperiodeId), 10.januar)
+        val im2 = mapInntektsmelding("im1", "2", "3", lagInntektsmelding().copy(vedtaksperiodeId = vedtaksperiodeId))
         assertEquals(vedtaksperiodeId, im2.vedtaksperiodeId)
     }
 
@@ -157,11 +155,11 @@ class MapInntektsmeldingFraSimbaTest {
             lagInntektsmelding().copy(
                 type = Inntektsmelding.Type.Selvbestemt(UUID.randomUUID()),
             )
-        val selvbestemtMapped = mapInntektsmelding("im1", "2", "3", selvbestemtIm, 10.januar)
+        val selvbestemtMapped = mapInntektsmelding("im1", "2", "3", selvbestemtIm)
         assertEquals(MuligAvsender.NAV_NO_SELVBESTEMT, selvbestemtMapped.avsenderSystem.navn)
         assertEquals(MuligAvsender.VERSJON, selvbestemtMapped.avsenderSystem.versjon)
 
-        val mapped = mapInntektsmelding("im1", "2", "3", lagInntektsmelding(), 10.januar)
+        val mapped = mapInntektsmelding("im1", "2", "3", lagInntektsmelding())
         assertEquals(MuligAvsender.NAV_NO, mapped.avsenderSystem.navn)
         assertEquals(MuligAvsender.VERSJON, mapped.avsenderSystem.versjon)
     }

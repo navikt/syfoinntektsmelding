@@ -5,7 +5,6 @@ import no.nav.helsearbeidsgiver.domene.inntektsmelding.v1.Inntektsmelding
 import no.nav.helsearbeidsgiver.pdl.PdlClient
 import no.nav.helsearbeidsgiver.utils.json.fromJson
 import no.nav.helsearbeidsgiver.utils.json.parseJson
-import no.nav.helsearbeidsgiver.utils.json.serializer.LocalDateSerializer
 import no.nav.helsearbeidsgiver.utils.json.toPretty
 import no.nav.helsearbeidsgiver.utils.log.logger
 import no.nav.helsearbeidsgiver.utils.log.sikkerLogger
@@ -24,8 +23,8 @@ import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import java.time.Duration
-import java.time.LocalDate
 import java.time.LocalDateTime
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.v1.JournalfoertInntektsmelding as JournalfoertInntektsmeldingV1
 
 class InntektsmeldingConsumer(
     props: Map<String, Any>,
@@ -80,13 +79,21 @@ class InntektsmeldingConsumer(
     private fun behandleRecord(record: ConsumerRecord<String, String>) {
         val json = record.value().parseJson()
         sikkerlogger.info("InntektsmeldingConsumer: Mottar record fra Simba.\n${json.toPretty()}")
-        val meldingFraSimba = json.fromJson(JournalfoertInntektsmelding.serializer())
+        // Skal bytte fra JournalfoertInntektsmelding til JournalfoertInntektsmeldingV1. Tåler begge i overgangsfase.
+        val meldingFraSimba =
+            runCatching {
+                json.fromJson(JournalfoertInntektsmeldingV1.serializer())
+            }.recover { _ ->
+                json.fromJson(JournalfoertInntektsmelding.serializer()).let {
+                    JournalfoertInntektsmeldingV1(it.journalpostId, it.inntektsmeldingV1)
+                }
+            }.getOrThrow()
 
         val im = inntektsmeldingService.findByJournalpost(meldingFraSimba.journalpostId)
         if (im != null) {
             sikkerlogger.info("InntektsmeldingConsumer: Behandler ikke ${meldingFraSimba.journalpostId}. Finnes allerede.")
         } else {
-            behandle(meldingFraSimba.journalpostId, meldingFraSimba.inntektsmeldingV1, meldingFraSimba.bestemmendeFravaersdag)
+            behandle(meldingFraSimba.journalpostId, meldingFraSimba.inntektsmelding)
             log.info("InntektsmeldingConsumer: Behandlet inntektsmelding med journalpostId: ${meldingFraSimba.journalpostId}")
         }
     }
@@ -94,11 +101,10 @@ class InntektsmeldingConsumer(
     private fun behandle(
         journalpostId: String,
         inntektsmeldingFraSimba: Inntektsmelding,
-        bestemmendeFravaersdag: LocalDate?,
     ) {
         val aktorid = hentAktoeridFraPDL(inntektsmeldingFraSimba.sykmeldt.fnr.verdi)
         val arkivreferanse = "im_$journalpostId"
-        val inntektsmelding = mapInntektsmelding(arkivreferanse, aktorid, journalpostId, inntektsmeldingFraSimba, bestemmendeFravaersdag)
+        val inntektsmelding = mapInntektsmelding(arkivreferanse, aktorid, journalpostId, inntektsmeldingFraSimba)
         val dto = inntektsmeldingService.lagreBehandling(inntektsmelding, aktorid)
         val matcherSpleis = inntektsmelding.matcherSpleis()
         val timeout =
@@ -163,11 +169,9 @@ class InntektsmeldingConsumer(
     }
 }
 
-// Midlertidig klasse som inneholder bestemmende fraværsdag
+// Midlertidig klasse, skal erstattes med v1.JournalfoertInntektsmelding etter overgangsfase
 @Serializable
 private data class JournalfoertInntektsmelding(
     val journalpostId: String,
     val inntektsmeldingV1: Inntektsmelding,
-    @Serializable(LocalDateSerializer::class)
-    val bestemmendeFravaersdag: LocalDate?,
 )
