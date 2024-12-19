@@ -91,6 +91,7 @@ fun mapInntektsmelding(
                 ?.endringer
                 ?.map(RefusjonEndring::tilEndringIRefusjon)
                 .orEmpty(),
+        // Spleis trenger ikke denne datoen lenger for IM-er fra nav.no, da de utleder den selv
         førsteFraværsdag = null,
         arsakTilInnsending = im.aarsakInnsending.name,
         mottattDato = im.mottatt.toLocalDateTime(),
