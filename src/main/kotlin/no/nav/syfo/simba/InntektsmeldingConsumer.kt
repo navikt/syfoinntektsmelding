@@ -1,7 +1,7 @@
 package no.nav.syfo.simba
 
-import kotlinx.serialization.Serializable
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.v1.Inntektsmelding
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.v1.JournalfoertInntektsmelding
 import no.nav.helsearbeidsgiver.pdl.PdlClient
 import no.nav.helsearbeidsgiver.utils.json.fromJson
 import no.nav.helsearbeidsgiver.utils.json.parseJson
@@ -24,7 +24,6 @@ import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import java.time.Duration
 import java.time.LocalDateTime
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.v1.JournalfoertInntektsmelding as JournalfoertInntektsmeldingV1
 
 class InntektsmeldingConsumer(
     props: Map<String, Any>,
@@ -79,15 +78,7 @@ class InntektsmeldingConsumer(
     private fun behandleRecord(record: ConsumerRecord<String, String>) {
         val json = record.value().parseJson()
         sikkerlogger.info("InntektsmeldingConsumer: Mottar record fra Simba.\n${json.toPretty()}")
-        // Skal bytte fra JournalfoertInntektsmelding til JournalfoertInntektsmeldingV1. Tåler begge i overgangsfase.
-        val meldingFraSimba =
-            runCatching {
-                json.fromJson(JournalfoertInntektsmeldingV1.serializer())
-            }.recover { _ ->
-                json.fromJson(JournalfoertInntektsmelding.serializer()).let {
-                    JournalfoertInntektsmeldingV1(it.journalpostId, it.inntektsmeldingV1)
-                }
-            }.getOrThrow()
+        val meldingFraSimba = json.fromJson(JournalfoertInntektsmelding.serializer())
 
         val im = inntektsmeldingService.findByJournalpost(meldingFraSimba.journalpostId)
         if (im != null) {
@@ -168,10 +159,3 @@ class InntektsmeldingConsumer(
         }
     }
 }
-
-// Midlertidig klasse, skal erstattes med v1.JournalfoertInntektsmelding etter overgangsfase
-@Serializable
-private data class JournalfoertInntektsmelding(
-    val journalpostId: String,
-    val inntektsmeldingV1: Inntektsmelding,
-)
