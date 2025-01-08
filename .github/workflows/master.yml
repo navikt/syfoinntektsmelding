@@ -12,7 +12,7 @@ env:
 
 jobs:
   # Label of the container job
-  build:
+  build_and_deploy:
     # You must use a Linux environment when using service containers or container jobs
     runs-on: ubuntu-latest
     permissions:
@@ -66,15 +66,8 @@ jobs:
           identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
           project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
 
-  deploy:
-    name: Deploy to DEV
-    needs: build
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
-    steps:
-      - uses: nais/deploy/actions/deploy@v2
+      - name: Deploy to DEV
+        uses: nais/deploy/actions/deploy@v2
         env:
           CLUSTER: dev-gcp
           RESOURCE: deploy/dev.yml
