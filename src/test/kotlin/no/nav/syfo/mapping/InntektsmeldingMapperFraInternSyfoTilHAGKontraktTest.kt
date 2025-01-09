@@ -1,6 +1,7 @@
 package no.nav.syfo.mapping
 
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.BegrunnelseIngenEllerRedusertUtbetalingKode
+import no.nav.inntektsmeldingkontrakt.ArsakTilInnsending
 import no.nav.syfo.domain.Periode
 import no.nav.syfo.domain.inntektsmelding.Gyldighetsstatus
 import no.nav.syfo.domain.inntektsmelding.Kontaktinformasjon
@@ -12,6 +13,8 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.util.UUID
@@ -112,5 +115,22 @@ class InntektsmeldingMapperFraInternSyfoTilHAGKontraktTest {
         val kontraktIM =
             mapInntektsmeldingKontrakt(inntektsmelding, "123", Gyldighetsstatus.GYLDIG, "arkivref123", UUID.randomUUID().toString())
         assertTrue(kontraktIM.matcherSpleis)
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = arrayOf("Ny", "ny", "TEST", "ugyldig", "", "ENDRING", "Endret"))
+    fun `mapInntektsmeldingKontrakt felt arsakTilInnsending settes til defaultverdi Ny ved ugyldige verdier`(aarsak: String) {
+        val inntektsmelding = grunnleggendeInntektsmelding.copy(arsakTilInnsending = aarsak)
+        val kontraktIM =
+            mapInntektsmeldingKontrakt(inntektsmelding, "123", Gyldighetsstatus.GYLDIG, "arkivref123", UUID.randomUUID().toString())
+        assertEquals(ArsakTilInnsending.Ny, kontraktIM.arsakTilInnsending)
+    }
+
+    @Test
+    fun `mapInntektsmeldingKontrakt felt arsakTilInnsending settes til Endring`() {
+        val inntektsmelding = grunnleggendeInntektsmelding.copy(arsakTilInnsending = "Endring")
+        val kontraktIM =
+            mapInntektsmeldingKontrakt(inntektsmelding, "123", Gyldighetsstatus.GYLDIG, "arkivref123", UUID.randomUUID().toString())
+        assertEquals(ArsakTilInnsending.Endring, kontraktIM.arsakTilInnsending)
     }
 }

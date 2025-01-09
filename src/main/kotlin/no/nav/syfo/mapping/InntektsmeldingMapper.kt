@@ -1,6 +1,7 @@
 package no.nav.syfo.mapping
 
 import no.nav.inntektsmeldingkontrakt.Arbeidsgivertype
+import no.nav.inntektsmeldingkontrakt.ArsakTilInnsending
 import no.nav.inntektsmeldingkontrakt.AvsenderSystem
 import no.nav.inntektsmeldingkontrakt.EndringIRefusjon
 import no.nav.inntektsmeldingkontrakt.GjenopptakelseNaturalytelse
@@ -13,6 +14,9 @@ import no.nav.inntektsmeldingkontrakt.Status
 import no.nav.syfo.domain.inntektsmelding.Gyldighetsstatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.domain.inntektsmelding.SpinnInntektEndringAarsak
+import org.slf4j.LoggerFactory
+
+private val sikkerlogger = LoggerFactory.getLogger("tjenestekall")
 
 fun mapInntektsmeldingKontrakt(
     inntektsmelding: Inntektsmelding,
@@ -52,7 +56,16 @@ fun mapInntektsmeldingKontrakt(
         naerRelasjon = inntektsmelding.nærRelasjon,
         avsenderSystem = mapAvsenderSystem(inntektsmelding.avsenderSystem),
         inntektEndringAarsak = inntektsmelding.rapportertInntekt?.endringAarsakData?.tilInntektEndringAarsak(),
+        arsakTilInnsending = konverterArsakTilInnsending(inntektsmelding.arsakTilInnsending),
     )
+
+fun konverterArsakTilInnsending(arsakTilInnsending: String): ArsakTilInnsending =
+    try {
+        ArsakTilInnsending.valueOf(arsakTilInnsending)
+    } catch (e: IllegalArgumentException) {
+        sikkerlogger.error("Ugyldig verdi for årsakTilInnsending: $arsakTilInnsending, returnerer ${ArsakTilInnsending.Ny}")
+        ArsakTilInnsending.Ny
+    }
 
 fun SpinnInntektEndringAarsak.tilInntektEndringAarsak(): InntektEndringAarsak =
     InntektEndringAarsak(
