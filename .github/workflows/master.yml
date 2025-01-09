@@ -12,11 +12,12 @@ env:
 
 jobs:
   # Label of the container job
-  build:
+  build_and_deploy:
     # You must use a Linux environment when using service containers or container jobs
     runs-on: ubuntu-latest
     permissions:
-      packages: write
+      contents: read
+      id-token: write
     # Service containers to run with `container-job`
     services:
       # Label used to access the service container
@@ -56,26 +57,18 @@ jobs:
         env:
           ORG_GRADLE_PROJECT_githubUser: x-access-token
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
-      - name: Login to GitHub Packages Docker Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Build and publish Docker image
-        run: |
-          docker build --tag ${IMAGE} .
-          docker push ${IMAGE}
 
-  deploy:
-    name: Deploy to DEV
-    needs: build
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-    steps:
-      - uses: actions/checkout@v4
-      - uses: nais/deploy/actions/deploy@v2
+      - name: Push docker image to GAR
+        uses: nais/docker-build-push@v0
+        id: docker-build-push
+        with:
+          team: helsearbeidsgiver
+          identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
+          project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
+
+      - name: Deploy to DEV
+        uses: nais/deploy/actions/deploy@v2
         env:
           CLUSTER: dev-gcp
           RESOURCE: deploy/dev.yml
+          VAR: image=${{ steps.docker-build-push.outputs.image }}
