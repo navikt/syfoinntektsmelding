@@ -1,11 +1,5 @@
 # Syfoinntektsmelding
 
-[![Actions Status](https://github.com/navikt/syfoinntektsmelding/workflows/Bygg%20og%20deploy%20til%20prod/badge.svg)](https://github.com/navikt/syfoinntektsmelding/actions)  
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=navikt_syfoinntektsmelding&metric=alert_status)](https://sonarcloud.io/dashboard?id=navikt_syfoinntektsmelding) 
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=navikt_syfoinntektsmelding&metric=coverage)](https://sonarcloud.io/dashboard?id=navikt_syfoinntektsmelding) 
-[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=navikt_syfoinntektsmelding&metric=security_rating)](https://sonarcloud.io/dashboard?id=navikt_syfoinntektsmelding)
-[![Known Vulnerabilities](https://snyk.io/test/github/navikt/syfoinntektsmelding/badge.svg)](https://app.snyk.io/org/helsearbeidsgiver/project/5473b422-69d5-4b60-8596-0b7402691762) 
-
 ## Formål
 Applikasjonen tar imot innkommende inntektsmeldinger for sykepenger, journalfører dette og oppretter oppgaver i
 Gosys for behandlende enhet. Dersom behandlede enhet ikke er funnet blir det opprettet en fordelingsoppgave istedet.
@@ -57,16 +51,15 @@ i køen for Oppgave i avsnittet over.
 ## Utvikling
 
 ### Kjøre applikasjonen lokalt
-Applikasjonen er avhengig av mange tjenester og det enkleste er å starte den inne fra en 
-tynnklient hvor tjenestene er 
-tilgjengelige. 
+Om du ønsker å kjøre applikasjonen lokalt, må du starte kafka, zookeeper og database fra lokal docker: 
 
-Applikasjonen må kjøres som en spring-boot applikasjon med local som profil. For å kunne starte 
-så MÅ du sette tre 
-environment variabler ellers vil den ikke starte. Det er filen `application-local.properties` 
-som bestemmer hvilke tjenster som blir benytter lokalt. For å kunne kjøre må du påse at alle
-disse miljø innstillingene er riktig og fylle ut innstillinger for passord da de nå er satt 
-til dummy.
+``
+cd docker/local
+docker-compose up --remove-orphans
+``
+
+Og deretter starte App.kt fra din IDE
+
 
 ### Ktlint
 
