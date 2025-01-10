@@ -9,7 +9,15 @@ spec:
   strategy:
     type: Recreate
   image: {{image}}
-  port: 8080
+  resources:
+    requests:
+      cpu: 50m
+      memory: 1024Mi
+    limits:
+      memory: 2048Mi
+  replicas:
+    max: 1
+    min: 1
   prometheus:
     enabled: true
     path: /metrics
@@ -24,15 +32,6 @@ spec:
     path: /health/is-ready
     periodSeconds: 10
     timeout: 2
-  replicas:
-    max: 1
-    min: 1
-  resources:
-    limits:
-      memory: 1024Mi
-    requests:
-      cpu: 500m
-      memory: 386Mi
 
   secureLogs:
     enabled: true
