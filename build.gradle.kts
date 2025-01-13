@@ -11,6 +11,7 @@ plugins {
     id("com.github.ben-manes.versions")
     jacoco
     application
+    id("org.cyclonedx.bom") version "1.10.0"
 }
 
 kotlin {
@@ -78,6 +79,11 @@ tasks.jar {
             }
         }
     }
+}
+
+tasks.cyclonedxBom {
+    setIncludeConfigs(listOf("runtimeClasspath"))
+    setSkipConfigs(listOf("compileClasspath", "testCompileClasspath"))
 }
 
 repositories {
