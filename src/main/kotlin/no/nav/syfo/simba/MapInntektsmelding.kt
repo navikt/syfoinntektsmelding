@@ -77,7 +77,7 @@ fun mapInntektsmelding(
                 ?.begrunnelse
                 ?.name
                 .orEmpty(),
-        beregnetInntekt = im.inntekt!!.beloep.toBigDecimal(),
+        beregnetInntekt = im.inntekt?.beloep?.toBigDecimal(),
         inntektsdato = im.inntekt?.inntektsdato,
         opphørAvNaturalYtelse =
             im.inntekt
