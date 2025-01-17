@@ -66,8 +66,18 @@ tasks.jar {
                 it.name
             }
     }
-
-
+    doLast {
+        configurations.runtimeClasspath.get().forEach {
+            val file =
+                layout.buildDirectory
+                    .file("libs/${it.name}")
+                    .get()
+                    .asFile
+            if (!file.exists() && !it.name.contains("ktor-network-tls-1.2.3")) {
+                it.copyTo(file)
+            }
+        }
+    }
 }
 
 repositories {
