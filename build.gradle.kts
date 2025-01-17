@@ -73,7 +73,8 @@ tasks.jar {
                     .file("libs/${it.name}")
                     .get()
                     .asFile
-            if (!file.exists()) {
+            println("****$file")
+            if (!file.exists() && !it.name.contains("ktor-network-tls-1.2.3")) {
                 it.copyTo(file)
             }
         }
