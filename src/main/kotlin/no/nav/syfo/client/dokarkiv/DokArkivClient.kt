@@ -123,7 +123,7 @@ class DokArkivClient(
             }
             throw it
         }.onSuccess {
-            logger.info("Oppdatering av journalpost OK. $idFragment")
+            sikkerlogger.info("Oppdatering av journalpost OK. $idFragment")
         }.getOrThrow()
             .status
     }
