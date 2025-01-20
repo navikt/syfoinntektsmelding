@@ -36,7 +36,7 @@ class DokArkivClientTest {
         runBlocking {
             val req = mapOppdaterRequest("123", "dok123", "nyDokumentTittel")
             val resultat = dokArkivClient.oppdaterJournalpost("111", req, "")
-            assertEquals(HttpStatusCode.OK, resultat.status)
+            assertEquals(HttpStatusCode.OK, resultat)
         }
     }
 
@@ -46,7 +46,7 @@ class DokArkivClientTest {
         runBlocking {
             val req = mapFeilregistrertRequest("123", "dok123")
             val resultat = dokArkivClient.oppdaterJournalpost("111", req, "")
-            assertEquals(HttpStatusCode.OK, resultat.status)
+            assertEquals(HttpStatusCode.OK, resultat)
         }
     }
 
