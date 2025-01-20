@@ -3,7 +3,9 @@ package no.nav.syfo.client.dokarkiv
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.ClientRequestException
+import io.ktor.client.plugins.ResponseException
 import io.ktor.client.request.accept
+import io.ktor.client.request.bearerAuth
 import io.ktor.client.request.header
 import io.ktor.client.request.patch
 import io.ktor.client.request.put
@@ -13,7 +15,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import no.nav.helsearbeidsgiver.utils.log.logger
 import no.nav.helsearbeidsgiver.utils.log.sikkerLogger
-import no.nav.syfo.helpers.retry
+import no.nav.syfo.util.navCallId
 import java.io.IOException
 
 // NAV-enheten som personen som utfører journalføring jobber for. Ved automatisk journalføring uten
@@ -90,42 +92,40 @@ class DokArkivClient(
      *
      * https://confluence.adeo.no/display/BOA/oppdaterJournalpost
      */
+
     suspend fun oppdaterJournalpost(
         journalpostId: String,
         oppdaterJournalpostRequest: OppdaterJournalpostRequest,
-        msgId: String,
-    ) = retry("oppdater_journalpost") {
-        try {
-            httpClient
-                .put("$url/journalpost/$journalpostId") {
-                    contentType(ContentType.Application.Json)
-                    accept(ContentType.Application.Json)
-                    header("Authorization", "Bearer ${getAccessToken()}")
-                    header("Nav-Callid", msgId)
-                    setBody(oppdaterJournalpostRequest)
-                }.also { logger.info("Oppdatering av journalpost ok for journalpostid {}, msgId {}", journalpostId, msgId) }
-        } catch (e: Exception) {
-            if (e is ClientRequestException) {
-                when (e.response.status) {
+        callId: String,
+    ): HttpStatusCode {
+        val idFragment = "journalpostId=[$journalpostId] callId=[$callId]"
+
+        return runCatching {
+            httpClient.put("$url/journalpost/$journalpostId") {
+                contentType(ContentType.Application.Json)
+                bearerAuth(getAccessToken())
+                navCallId(callId)
+                setBody(oppdaterJournalpostRequest)
+            }
+        }.onFailure {
+            if (it is ResponseException) {
+                when (it.response.status) {
                     HttpStatusCode.NotFound -> {
-                        sikkerlogger.error("Oppdatering: Journalposten finnes ikke for journalpostid {}, msgId {}", journalpostId, msgId)
-                        throw RuntimeException("Oppdatering: Journalposten finnes ikke for journalpostid $journalpostId msgid $msgId")
+                        sikkerlogger.error("Journalposten finnes ikke for journalpostid $journalpostId", it)
+                        throw RuntimeException("Journalposten finnes ikke for journalpostid $journalpostId", it)
                     }
 
                     else -> {
-                        sikkerlogger.error(
-                            "Fikk http status {} ved oppdatering av journalpostid {}, msgId {}",
-                            e.response.status,
-                            journalpostId,
-                            msgId,
-                        )
-                        throw RuntimeException("Fikk feilmelding ved oppdatering av journalpostid $journalpostId msgid $msgId")
+                        sikkerlogger.error("Feil ved oppdatering av journalpost $journalpostId", it)
+                        throw RuntimeException("Feil ved oppdatering av journalpost $journalpostId", it)
                     }
                 }
             }
-            sikkerlogger.error("Dokarkiv svarte med feilmelding ved oppdatering av journalpost $journalpostId", e)
-            throw IOException("Dokarkiv svarte med feilmelding ved oppdatering av journalpost for $journalpostId msgid $msgId")
-        }
+            throw it
+        }.onSuccess {
+            logger.info("Oppdatering av journalpost OK. $idFragment")
+        }.getOrThrow()
+            .status
     }
 
     suspend fun feilregistrerJournalpost(

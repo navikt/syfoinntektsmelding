@@ -10,17 +10,11 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import io.ktor.client.HttpClient
-import io.ktor.client.engine.apache.Apache
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.http.ContentType
-import io.ktor.serialization.jackson.JacksonConverter
-import io.ktor.serialization.jackson.jackson
 import io.ktor.server.config.ApplicationConfig
 import no.nav.syfo.util.AppEnv.DEV
 import no.nav.syfo.util.AppEnv.PROD
 import no.nav.syfo.util.KubernetesProbeManager
-import no.nav.syfo.util.customObjectMapper
+import no.nav.syfo.util.createHttpClient
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
@@ -41,15 +35,7 @@ val common =
         single { KubernetesProbeManager() }
 
         single {
-            HttpClient(Apache) {
-                expectSuccess = true
-                install(ContentNegotiation) {
-                    register(ContentType.Application.Json, JacksonConverter(customObjectMapper()))
-                    jackson {
-                        registerModule(JavaTimeModule())
-                    }
-                }
-            }
+            createHttpClient(3)
         }
     }
 
