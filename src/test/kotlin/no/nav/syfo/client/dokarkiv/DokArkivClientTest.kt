@@ -34,7 +34,7 @@ class DokArkivClientTest {
     fun `Skal oppdatere journalpost når man får status OK`() {
         dokArkivClient = DokArkivClient("", buildHttpClientText(HttpStatusCode.OK), ::mockAccessToken)
         runBlocking {
-            val req = mapOppdaterRequest("123")
+            val req = mapOppdaterRequest("123", "dok123", "nyDokumentTittel")
             val resultat = dokArkivClient.oppdaterJournalpost("111", req, "")
             assertEquals(HttpStatusCode.OK, resultat.status)
         }
@@ -54,7 +54,7 @@ class DokArkivClientTest {
     @Test
     fun `Skal håndtere at oppdatering av journalpost feiler`() {
         dokArkivClient = DokArkivClient("", buildHttpClientText(HttpStatusCode.InternalServerError, ""), ::mockAccessToken)
-        val req = mapOppdaterRequest("123")
+        val req = mapOppdaterRequest("123", "dok123", "nyDokumentTittel")
         runBlocking {
             assertThrows<Exception> {
                 dokArkivClient.oppdaterJournalpost("111", req, "")

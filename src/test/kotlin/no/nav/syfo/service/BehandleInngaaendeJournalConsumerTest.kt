@@ -1,10 +1,12 @@
 package no.nav.syfo.service
 
+import io.mockk.coVerifySequence
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.client.dokarkiv.DokArkivClient
 import no.nav.syfo.domain.InngaendeJournalpost
+import no.nav.syfo.grunnleggendeInntektsmelding
 import org.junit.jupiter.api.Test
 
 class BehandleInngaaendeJournalConsumerTest {
@@ -40,11 +42,10 @@ class BehandleInngaaendeJournalConsumerTest {
                 dokumentId = "dokumentId",
                 journalpostId = "journalpostId",
             )
-        behandleInngaaendeJournalConsumer.oppdaterJournalpost("fnr", inngaendeJournalpost, false)
-        verify {
-            runBlocking {
-                dokArkivClient.oppdaterJournalpost("journalpostId", any(), any())
-            }
+        val dokumentTittel = "Inntektsmelding-(ingen orgnr)-01.01.2019 - 01.02.2019"
+        behandleInngaaendeJournalConsumer.oppdaterJournalpost(grunnleggendeInntektsmelding.copy(arbeidsgiverOrgnummer = null), inngaendeJournalpost, false)
+        coVerifySequence {
+            dokArkivClient.oppdaterJournalpost("journalpostId", match { it.dokumenter!!.first().tittel == dokumentTittel }, any())
         }
         // TODO - Asserten under må virke
 //        assertThat(captor.captured.inngaaendeJournalpost.avsender.avsenderId).isEqualTo("10101033333")
