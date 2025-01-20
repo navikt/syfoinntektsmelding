@@ -180,7 +180,6 @@ dependencies {
     implementation("no.nav.security:mock-oauth2-server:$mockOAuth2ServerVersion")
     implementation("no.nav.security:token-client-core:$tokenSupportVersion")
     implementation("no.nav.security:token-validation-ktor-v2:$tokenSupportVersion")
-    implementation("no.nav.syfo.sm:syfosm-common-rest-sts:$navSyfoCommonVersion")
     implementation("no.nav.sykepenger.kontrakter:inntektsmelding-kontrakt:$imkontraktVersion")
     implementation("no.nav.teamdokumenthandtering:teamdokumenthandtering-avro-schemas:$joarkHendelseVersion")
     implementation("no.nav.tjenestespesifikasjoner:altinn-correspondence-agency-external-basic:$altinnCorrespondanceVersion")
