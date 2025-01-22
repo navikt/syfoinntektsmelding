@@ -92,7 +92,7 @@ fun Module.externalSystemClients(config: ApplicationConfig) {
         val azureClient: AuthClient = get()
         OppgaveClient(
             url = config.getString("oppgavebehandling_url"),
-            getToken = azureClient.fetchToken(IdentityProvider.AZURE_AD, config.getString("oppgavescope")),
+            getToken = azureClient.fetchToken(IdentityProvider.AZURE_AD, config.getString("auth.oppgavescope")),
         )
     }
     single {
@@ -107,7 +107,7 @@ fun Module.externalSystemClients(config: ApplicationConfig) {
         SafJournalpostClient(
             httpClient = get(),
             basePath = config.getString("saf_journal_url"),
-            getAccessToken = azureClient.fetchToken(IdentityProvider.AZURE_AD, config.getString("safscope")),
+            getAccessToken = azureClient.fetchToken(IdentityProvider.AZURE_AD, config.getString("auth.safscope")),
         )
     }
 
@@ -116,7 +116,7 @@ fun Module.externalSystemClients(config: ApplicationConfig) {
         SafDokumentClient(
             url = config.getString("saf_dokument_url"),
             httpClient = get(),
-            getAccessToken = azureClient.fetchToken(IdentityProvider.AZURE_AD, config.getString("safscope")),
+            getAccessToken = azureClient.fetchToken(IdentityProvider.AZURE_AD, config.getString("auth.safscope")),
         )
     }
 
@@ -125,7 +125,7 @@ fun Module.externalSystemClients(config: ApplicationConfig) {
         DokArkivClient(
             url = config.getString("dokarkiv_url"),
             httpClient = get(),
-            getAccessToken = azureClient.fetchToken(IdentityProvider.AZURE_AD, config.getString("docarkivscope")),
+            getAccessToken = azureClient.fetchToken(IdentityProvider.AZURE_AD, config.getString("auth.docarkivscope")),
         )
     }
 }
