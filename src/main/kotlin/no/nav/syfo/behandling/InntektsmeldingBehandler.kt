@@ -38,17 +38,24 @@ class InntektsmeldingBehandler(
     fun behandle(
         arkivId: String,
         arkivreferanse: String,
-    ): String? {
+    ) {
         logger.info("Henter inntektsmelding for $arkivreferanse")
         val inntektsmelding = journalpostService.hentInntektsmelding(arkivId, arkivreferanse)
-        return behandleInntektsmelding(arkivreferanse, inntektsmelding)
+        behandleInntektsmelding(arkivreferanse, inntektsmelding)
     }
 
     private fun behandleInntektsmelding(
         arkivreferanse: String,
         inntektsmelding: Inntektsmelding,
-    ): String? {
-        var ret: String? = null
+    ) {
+        if (statusSkalIgnoreres(inntektsmelding.journalStatus)) {
+            logger.info(
+                "Behandler ikke inntektsmelding {} da den har status: {}",
+                inntektsmelding.journalpostId,
+                inntektsmelding.journalStatus,
+            )
+            return
+        }
         val consumerLock = consumerLocks.get(inntektsmelding.fnr)
         try {
             consumerLock.lock()
@@ -113,19 +120,16 @@ class InntektsmeldingBehandler(
                         arkivreferanse,
                         inntektsmelding.refusjon.beloepPrMnd,
                     )
-                    ret = dto.uuid
-                } else {
-                    logger.info(
-                        "Behandler ikke inntektsmelding {} da den har status: {}",
-                        inntektsmelding.journalpostId,
-                        inntektsmelding.journalStatus,
-                    )
                 }
             }
         } finally {
             consumerLock.unlock()
         }
-        return ret
+    }
+
+    private fun statusSkalIgnoreres(journalStatus: JournalStatus): Boolean {
+        // kan vurdere å bare sjekke om status != MOTTATT..
+        return journalStatus in listOf(JournalStatus.JOURNALFOERT, JournalStatus.FEILREGISTRERT, JournalStatus.UKJENT)
     }
 
     private fun tellMetrikker(inntektsmelding: Inntektsmelding) {
