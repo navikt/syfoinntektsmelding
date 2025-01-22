@@ -125,7 +125,7 @@ fun Module.externalSystemClients(config: ApplicationConfig) {
         DokArkivClient(
             url = config.getString("dokarkiv_url"),
             httpClient = get(),
-            getAccessToken = azureClient.fetchToken(IdentityProvider.AZURE_AD, config.getString("auth.docarkivscope")),
+            getAccessToken = azureClient.fetchToken(IdentityProvider.AZURE_AD, config.getString("auth.dokarkivscope")),
         )
     }
 }
