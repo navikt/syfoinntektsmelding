@@ -15,6 +15,8 @@ import no.nav.syfo.util.getAktørid
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.EnumSource
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
@@ -77,7 +79,7 @@ class InntektsmeldingBehandlerTest {
     }
 
     @Test
-    fun `Skal behandle midlertidig - ikke duplikat`() {
+    fun `Skal behandle mottatt - ikke duplikat`() {
         // Rigg
         every { journalpostService.hentInntektsmelding("arkivId", "AR-123") } returns
             Inntektsmelding(
@@ -102,8 +104,9 @@ class InntektsmeldingBehandlerTest {
         verify(exactly = 1) { aivenInntektsmeldingProducer.leggMottattInntektsmeldingPåTopics(any()) }
     }
 
-    @Test
-    fun `Skal ignorere alt unntatt midlertidig`() {
+    @ParameterizedTest
+    @EnumSource(JournalStatus::class, names = arrayOf("JOURNALFOERT", "FEILREGISTRERT", "UKJENT", "FERDIGSTILT"))
+    fun `Skal ignorere alt unntatt mottatt`(journalStatus: JournalStatus) {
         // Rigg
         every { journalpostService.hentInntektsmelding("arkivId", "AR-123") } returns
             Inntektsmelding(
@@ -111,7 +114,7 @@ class InntektsmeldingBehandlerTest {
                 arbeidsforholdId = "123",
                 journalpostId = "arkivId",
                 arsakTilInnsending = "",
-                journalStatus = JournalStatus.UKJENT,
+                journalStatus = journalStatus,
                 arbeidsgiverperioder = emptyList(),
                 arkivRefereranse = "AR-123",
                 førsteFraværsdag = LocalDate.now(),
@@ -123,30 +126,6 @@ class InntektsmeldingBehandlerTest {
         // Verifiser
         verify(exactly = 0) { journalpostService.feilregistrerJournalpost(any()) }
         verify(exactly = 0) { journalpostService.ferdigstillJournalpost(any()) }
-        verify(exactly = 0) { aivenInntektsmeldingProducer.leggMottattInntektsmeldingPåTopics(any()) }
-    }
-
-    @Test
-    fun `Skal ikke behandle ferdigstilt`() {
-        // Rigg
-        every { journalpostService.hentInntektsmelding("arkivId", "AR-123") } returns
-            Inntektsmelding(
-                fnr = "fnr",
-                arbeidsforholdId = "123",
-                journalpostId = "arkivId",
-                arsakTilInnsending = "",
-                journalStatus = JournalStatus.FERDIGSTILT,
-                arbeidsgiverperioder = emptyList(),
-                arkivRefereranse = "AR-123",
-                førsteFraværsdag = LocalDate.now(),
-                mottattDato = LocalDate.of(2019, 2, 6).atStartOfDay(),
-            )
-        every { inntektsmeldingService.isDuplicate(any()) } returns false
-        // Kjør
-        inntektsmeldingBehandler.behandle("arkivId", "AR-123")
-        // Verifiser
-        verify(exactly = 0) { journalpostService.feilregistrerJournalpost(any()) }
-        verify(exactly = 0) { journalpostService.ferdigstillJournalpost(any()) } // not
         verify(exactly = 0) { aivenInntektsmeldingProducer.leggMottattInntektsmeldingPåTopics(any()) }
     }
 }
