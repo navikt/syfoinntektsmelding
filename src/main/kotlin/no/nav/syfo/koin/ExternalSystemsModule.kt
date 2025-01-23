@@ -82,10 +82,11 @@ fun Module.externalSystemClients(config: ApplicationConfig) {
         )
     } bind AccessTokenProvider::class
     single {
+        val azureClient: AuthClient = get()
         PdlClient(
             config.getString("pdl_url"),
             Behandlingsgrunnlag.INNTEKTSMELDING,
-            get<AccessTokenProvider>(qualifier = named(AccessScope.PDL))::getToken,
+            azureClient.fetchToken(IdentityProvider.AZURE_AD, config.getString("auth.pdlscope")),
         )
     } bind PdlClient::class
     single {
