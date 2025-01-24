@@ -50,7 +50,7 @@ class InntektsmeldingBehandler(
     ) {
         if (statusSkalIgnoreres(inntektsmelding.journalStatus)) {
             logger.info(
-                "Behandler ikke inntektsmelding {} da den har status: {}",
+                "Behandler ikke journalpostId {} da den har status: {}",
                 inntektsmelding.journalpostId,
                 inntektsmelding.journalStatus,
             )
