@@ -169,7 +169,6 @@ dependencies {
     implementation("io.prometheus:simpleclient_hotspot:$prometheusVersion")
     implementation("javax.annotation:javax.annotation-api:$annotationApiVersion")
     implementation("net.logstash.logback:logstash-logback-encoder:$logbackVersion")
-    implementation("no.nav.common:log:$navLogVersion")
     implementation("no.nav.helsearbeidsgiver:domene-inntektsmelding:$hagDomeneInntektsmeldingVersion")
     implementation("no.nav.helsearbeidsgiver:hag-bakgrunnsjobb:$bakgrunnsjobbVersion")
     implementation("no.nav.helsearbeidsgiver:oppgave-client:$oppgaveClientVersion")
