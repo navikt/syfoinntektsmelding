@@ -126,21 +126,3 @@ fun AuthClient.fetchToken(
             }
         }
     }
-
-fun AuthClient.fetchOboToken(
-    target: String,
-    userToken: String,
-): () -> String =
-    {
-        runBlocking {
-            exchange(IdentityProvider.TOKEN_X, target, userToken).let {
-                when (it) {
-                    is TokenResponse.Success -> it.accessToken
-                    is TokenResponse.Error -> {
-                        sikkerLogger().error("Feilet å hente obo token status: ${it.status} - ${it.error.errorDescription}")
-                        throw RuntimeException("Feilet å hente obo token status: ${it.status} - ${it.error.errorDescription}")
-                    }
-                }
-            }
-        }
-    }
