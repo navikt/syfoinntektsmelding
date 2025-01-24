@@ -62,7 +62,7 @@ class AuthClient(
         target: String,
     ): TokenResponse =
         try {
-            sikkerLogger().info("Requesting token for $target from ${provider.alias} and endpoint $tokenEndpoint")
+            sikkerLogger().info("Forsøker å hente token for $target fra ${provider.alias} og endpoint $tokenEndpoint")
             httpClient
                 .submitForm(
                     tokenEndpoint,
@@ -119,8 +119,8 @@ fun AuthClient.fetchToken(
                 when (it) {
                     is TokenResponse.Success -> it.accessToken
                     is TokenResponse.Error -> {
-                        sikkerLogger().error("Feilet å hente token status: ${it.status} - ${it.error.errorDescription}")
-                        throw RuntimeException("Feilet å hente token status: ${it.status} - ${it.error.errorDescription}")
+                        sikkerLogger().error("Feilet å hente token. status: ${it.status} - ${it.error.errorDescription}")
+                        throw RuntimeException("Feilet å hente token. status: ${it.status} - ${it.error.errorDescription}")
                     }
                 }
             }
