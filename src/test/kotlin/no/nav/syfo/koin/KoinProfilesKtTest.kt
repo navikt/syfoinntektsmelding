@@ -5,7 +5,6 @@ import io.mockk.every
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import no.nav.helsearbeidsgiver.pdl.PdlClient
-import no.nav.helsearbeidsgiver.tokenprovider.AccessTokenProvider
 import no.nav.syfo.client.dokarkiv.DokArkivClient
 import no.nav.syfo.client.norg.Norg2Client
 import no.nav.syfo.client.oppgave.OppgaveService
@@ -18,7 +17,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.core.module.Module
-import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import org.koin.test.KoinTest
@@ -30,7 +28,6 @@ import kotlin.test.assertNotNull
 class KoinProfilesKtTest : KoinTest {
     private val config = mockk<ApplicationConfig>(relaxed = true)
     private val clientConfig = mockk<ApplicationConfig>(relaxed = true)
-    private val accessTokenProvider = mockk<AccessTokenProvider>(relaxed = true)
     private val metrikk = mockk<Metrikk>(relaxed = true)
 
     private val dataSource = mockk<DataSource>(relaxed = true)
@@ -93,10 +90,7 @@ class KoinProfilesKtTest : KoinTest {
         val testModule =
             module {
                 single { dataSource } bind DataSource::class
-                single(named(AccessScope.PDL)) { accessTokenProvider } bind AccessTokenProvider::class
-                single(named(AccessScope.SAF)) { accessTokenProvider } bind AccessTokenProvider::class
-                single(named(AccessScope.OPPGAVE)) { accessTokenProvider } bind AccessTokenProvider::class
-                single(named(AccessScope.DOKARKIV)) { accessTokenProvider } bind AccessTokenProvider::class
+
                 single { metrikk }
             }
         return testModule

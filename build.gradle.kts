@@ -175,7 +175,6 @@ dependencies {
     implementation("no.nav.helsearbeidsgiver:hag-bakgrunnsjobb:$bakgrunnsjobbVersion")
     implementation("no.nav.helsearbeidsgiver:oppgave-client:$oppgaveClientVersion")
     implementation("no.nav.helsearbeidsgiver:pdl-client:$pdlClientVersion")
-    implementation("no.nav.helsearbeidsgiver:tokenprovider:$tokenProviderVersion")
     implementation("no.nav.helsearbeidsgiver:utils:$hagUtilsVersion")
     implementation("no.nav.security:token-client-core:$tokenSupportVersion")
     implementation("no.nav.security:token-validation-ktor-v2:$tokenSupportVersion")
