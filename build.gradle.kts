@@ -135,6 +135,7 @@ dependencies {
     val prometheusVersion: String by project
     val slf4Version: String by project
     val tokenSupportVersion: String by project
+    val nettyVersion: String by project
 
     runtimeOnly("ch.qos.logback:logback-classic:$logbackClassicVersion")
     runtimeOnly("io.micrometer:micrometer-registry-prometheus:$micrometerVersion")
@@ -194,7 +195,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion")
     implementation("org.postgresql:postgresql:$postgresVersion")
     implementation("org.slf4j:slf4j-api:$slf4Version")
-    implementation("io.netty:netty-common:4.1.117.Final")
+    implementation("io.netty:netty-common:$nettyVersion")
 
     testImplementation(testFixtures("no.nav.helsearbeidsgiver:utils:$hagUtilsVersion"))
     testImplementation("io.insert-koin:koin-test:$koinVersion")
