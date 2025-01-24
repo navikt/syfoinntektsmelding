@@ -194,6 +194,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion")
     implementation("org.postgresql:postgresql:$postgresVersion")
     implementation("org.slf4j:slf4j-api:$slf4Version")
+    implementation("io.netty:netty-common:4.1.117.Final")
 
     testImplementation(testFixtures("no.nav.helsearbeidsgiver:utils:$hagUtilsVersion"))
     testImplementation("io.insert-koin:koin-test:$koinVersion")
