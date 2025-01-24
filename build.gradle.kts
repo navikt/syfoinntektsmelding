@@ -134,7 +134,6 @@ dependencies {
     val postgresVersion: String by project
     val prometheusVersion: String by project
     val slf4Version: String by project
-    val tokenProviderVersion: String by project
     val tokenSupportVersion: String by project
 
     runtimeOnly("ch.qos.logback:logback-classic:$logbackClassicVersion")
