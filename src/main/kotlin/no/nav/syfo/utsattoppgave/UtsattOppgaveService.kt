@@ -80,7 +80,7 @@ class UtsattOppgaveService(
                             }
                             logger.info("Oppgave blir ikke opprettet for inntektsmeldingId: ${oppgave.inntektsmeldingId}")
                             sikkerlogger.info(
-                                "ppgave blir ikke opprettet for inntektsmeldingId: ${oppgave.inntektsmeldingId}, har behandlingskategori: $behandlingsKategori",
+                                "Oppgave blir ikke opprettet for inntektsmeldingId: ${oppgave.inntektsmeldingId}, har behandlingskategori: $behandlingsKategori",
                             )
                         }
                     }.onFailure { sikkerlogger.error(it.message, it) }
