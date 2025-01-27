@@ -16,4 +16,6 @@ enum class JournalStatus {
     UKJENT, // Tidligere: ANNET
     FERDIGSTILT, // Tidligere: ENDELIG
     MIDLERTIDIG,
+    JOURNALFOERT,
+    FEILREGISTRERT,
 }
