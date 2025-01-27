@@ -5,6 +5,8 @@ metadata:
   namespace: helsearbeidsgiver
   labels:
     team: helsearbeidsgiver
+  annotations:
+     texas.nais.io/enabled: "true"
 spec:
   strategy:
     type: Recreate

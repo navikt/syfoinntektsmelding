@@ -134,8 +134,8 @@ dependencies {
     val postgresVersion: String by project
     val prometheusVersion: String by project
     val slf4Version: String by project
-    val tokenProviderVersion: String by project
     val tokenSupportVersion: String by project
+    val nettyVersion: String by project
 
     runtimeOnly("ch.qos.logback:logback-classic:$logbackClassicVersion")
     runtimeOnly("io.micrometer:micrometer-registry-prometheus:$micrometerVersion")
@@ -170,12 +170,10 @@ dependencies {
     implementation("io.prometheus:simpleclient_hotspot:$prometheusVersion")
     implementation("javax.annotation:javax.annotation-api:$annotationApiVersion")
     implementation("net.logstash.logback:logstash-logback-encoder:$logbackVersion")
-    implementation("no.nav.common:log:$navLogVersion")
     implementation("no.nav.helsearbeidsgiver:domene-inntektsmelding:$hagDomeneInntektsmeldingVersion")
     implementation("no.nav.helsearbeidsgiver:hag-bakgrunnsjobb:$bakgrunnsjobbVersion")
     implementation("no.nav.helsearbeidsgiver:oppgave-client:$oppgaveClientVersion")
     implementation("no.nav.helsearbeidsgiver:pdl-client:$pdlClientVersion")
-    implementation("no.nav.helsearbeidsgiver:tokenprovider:$tokenProviderVersion")
     implementation("no.nav.helsearbeidsgiver:utils:$hagUtilsVersion")
     implementation("no.nav.security:token-client-core:$tokenSupportVersion")
     implementation("no.nav.security:token-validation-ktor-v2:$tokenSupportVersion")
@@ -197,6 +195,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion")
     implementation("org.postgresql:postgresql:$postgresVersion")
     implementation("org.slf4j:slf4j-api:$slf4Version")
+    implementation("io.netty:netty-common:$nettyVersion")
 
     testImplementation(testFixtures("no.nav.helsearbeidsgiver:utils:$hagUtilsVersion"))
     testImplementation("io.insert-koin:koin-test:$koinVersion")

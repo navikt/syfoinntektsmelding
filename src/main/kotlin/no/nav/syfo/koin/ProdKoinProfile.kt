@@ -6,15 +6,9 @@ import io.ktor.server.config.ApplicationConfig
 import no.nav.hag.utils.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.hag.utils.bakgrunnsjobb.BakgrunnsjobbService
 import no.nav.hag.utils.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
-import no.nav.helsearbeidsgiver.oppgave.OppgaveClient
-import no.nav.helsearbeidsgiver.tokenprovider.AccessTokenProvider
 import no.nav.syfo.MetrikkVarsler
 import no.nav.syfo.behandling.InntektsmeldingBehandler
-import no.nav.syfo.client.dokarkiv.DokArkivClient
-import no.nav.syfo.client.norg.Norg2Client
 import no.nav.syfo.client.oppgave.OppgaveService
-import no.nav.syfo.client.saf.SafDokumentClient
-import no.nav.syfo.client.saf.SafJournalpostClient
 import no.nav.syfo.integration.kafka.UtsattOppgaveConsumer
 import no.nav.syfo.integration.kafka.commonAivenProperties
 import no.nav.syfo.integration.kafka.joarkAivenProperties
@@ -43,7 +37,6 @@ import no.nav.syfo.utsattoppgave.UtsattOppgaveDAO
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.common.serialization.StringDeserializer
-import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import javax.sql.DataSource
@@ -163,42 +156,6 @@ fun prodConfig(config: ApplicationConfig) =
             OppgaveService(
                 oppgaveClient = get(),
                 metrikk = get(),
-            )
-        }
-        single {
-            OppgaveClient(
-                config.getString("oppgavebehandling_url"),
-                get<AccessTokenProvider>(qualifier = named(AccessScope.OPPGAVE))::getToken,
-            )
-        }
-        single {
-            Norg2Client(
-                url = config.getString("norg2_url"),
-                httpClient = get(),
-            )
-        }
-
-        single {
-            SafJournalpostClient(
-                httpClient = get(),
-                basePath = config.getString("saf_journal_url"),
-                getAccessToken = get<AccessTokenProvider>(qualifier = named(AccessScope.SAF))::getToken,
-            )
-        }
-
-        single {
-            SafDokumentClient(
-                url = config.getString("saf_dokument_url"),
-                httpClient = get(),
-                getAccessToken = get<AccessTokenProvider>(qualifier = named(AccessScope.SAF))::getToken,
-            )
-        }
-
-        single {
-            DokArkivClient(
-                url = config.getString("dokarkiv_url"),
-                httpClient = get(),
-                getAccessToken = get<AccessTokenProvider>(qualifier = named(AccessScope.DOKARKIV))::getToken,
             )
         }
 
