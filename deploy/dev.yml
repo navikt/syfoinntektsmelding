@@ -57,6 +57,8 @@ spec:
           - name: cloudsql.logical_decoding
             value: "on"
 
+  ingresses:
+    - https://spinosaurus.intern.dev.nav.no
   accessPolicy:
     outbound:
       external:
