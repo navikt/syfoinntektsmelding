@@ -42,7 +42,7 @@ class BehandleInngaaendeJournalConsumerTest {
                 dokumentId = "dokumentId",
                 journalpostId = "journalpostId",
             )
-        val dokumentTittel = "Inntektsmelding-(ingen orgnr)-01.01.2019 - 01.02.2019"
+        val dokumentTittel = "Inntektsmelding-01.01.2019 - 01.02.2019"
         behandleInngaaendeJournalConsumer.oppdaterJournalpost(grunnleggendeInntektsmelding.copy(arbeidsgiverOrgnummer = null), inngaendeJournalpost, false)
         coVerifySequence {
             dokArkivClient.oppdaterJournalpost("journalpostId", match { it.dokumenter!!.first().tittel == dokumentTittel }, any())
