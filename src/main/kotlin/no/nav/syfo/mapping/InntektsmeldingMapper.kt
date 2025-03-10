@@ -55,7 +55,11 @@ fun mapInntektsmeldingKontrakt(
         innsenderTelefon = inntektsmelding.kontaktinformasjon.telefon.orEmpty(),
         naerRelasjon = inntektsmelding.nærRelasjon,
         avsenderSystem = mapAvsenderSystem(inntektsmelding.avsenderSystem),
-        inntektEndringAarsak = inntektsmelding.rapportertInntekt?.endringAarsakData?.tilInntektEndringAarsak(),
+        inntektEndringAarsak =
+            inntektsmelding.rapportertInntekt
+                ?.endringAarsakerData
+                ?.firstOrNull()
+                ?.tilInntektEndringAarsak(),
         inntektEndringAarsaker = inntektsmelding.rapportertInntekt?.endringAarsakerData?.map { it.tilInntektEndringAarsak() },
         arsakTilInnsending = konverterArsakTilInnsending(inntektsmelding.arsakTilInnsending),
     )
