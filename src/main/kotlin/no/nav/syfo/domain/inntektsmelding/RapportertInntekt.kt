@@ -13,6 +13,7 @@ data class RapportertInntekt(
     val beregnetInntekt: Double,
     val endringAarsak: String? = null,
     val endringAarsakData: SpinnInntektEndringAarsak? = null,
+    val endringAarsakerData: List<SpinnInntektEndringAarsak>? = null,
     val manueltKorrigert: Boolean,
 )
 
