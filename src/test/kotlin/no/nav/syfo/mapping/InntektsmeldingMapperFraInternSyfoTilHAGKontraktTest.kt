@@ -54,10 +54,13 @@ class InntektsmeldingMapperFraInternSyfoTilHAGKontraktTest {
                         bekreftet = true,
                         beregnetInntekt = 39013.0,
                         endringAarsak = "Ferie",
-                        endringAarsakData =
-                            SpinnInntektEndringAarsak(
-                                aarsak = "Ferie",
-                                perioder = listOf(Periode(LocalDate.of(2021, 1, 1), LocalDate.of(2021, 1, 31))),
+                        endringAarsakData = null,
+                        endringAarsakerData =
+                            listOf(
+                                SpinnInntektEndringAarsak(
+                                    aarsak = "Ferie",
+                                    perioder = listOf(Periode(LocalDate.of(2021, 1, 1), LocalDate.of(2021, 1, 31))),
+                                ),
                             ),
                         manueltKorrigert = true,
                     ),
