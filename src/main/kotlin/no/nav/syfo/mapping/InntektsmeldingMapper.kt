@@ -60,7 +60,11 @@ fun mapInntektsmeldingKontrakt(
                 ?.endringAarsakerData
                 ?.firstOrNull()
                 ?.tilInntektEndringAarsak(),
-        inntektEndringAarsaker = inntektsmelding.rapportertInntekt?.endringAarsakerData?.map { it.tilInntektEndringAarsak() },
+        inntektEndringAarsaker =
+            inntektsmelding.rapportertInntekt
+                ?.endringAarsakerData
+                .orEmpty()
+                .map { it.tilInntektEndringAarsak() },
         arsakTilInnsending = konverterArsakTilInnsending(inntektsmelding.arsakTilInnsending),
     )
 
