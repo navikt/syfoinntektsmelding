@@ -6,6 +6,7 @@ import no.nav.syfo.FØRSTE_JANUAR
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.inntektsmelding.Gyldighetsstatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
+import no.nav.syfo.domain.inntektsmelding.RapportertInntekt
 import no.nav.syfo.domain.inntektsmelding.Refusjon
 import no.nav.syfo.dto.InntektsmeldingEntitet
 import no.nav.syfo.grunnleggendeInntektsmelding
@@ -88,5 +89,30 @@ class InntektsmeldingKontraktMapperKtTest {
                 grunnleggendeInntektsmelding.copy(arbeidsgiverOrgnummer = null, arbeidsgiverPrivatFnr = "00"),
             ),
         ).isEqualTo(Arbeidsgivertype.PRIVAT)
+    }
+
+    @Test
+    fun `RapportertInntekt uten endringAarsakerData blir desirialisert riktig `() {
+        val rapportertInntektJson =
+            """
+            {
+                "bekreftet": true,
+                "endringAarsak": null,
+                "beregnetInntekt": 49000.0,
+                "manueltKorrigert": false,
+                "endringAarsakData": {
+                    "aarsak": "NyStillingsprosent",
+                    "bleKjent": null,
+                    "perioder": null,
+                    "gjelderFra": "2024-11-01"
+                  }
+              }
+            """.trimIndent()
+        val rapportertInntekt = om.readValue(rapportertInntektJson, RapportertInntekt::class.java)
+        assertThat(rapportertInntekt.endringAarsakerData).isNotEmpty()
+        assertThat(rapportertInntekt.endringAarsakerData.first().aarsak).isEqualTo("NyStillingsprosent")
+        assertThat(rapportertInntekt.endringAarsakerData.first().gjelderFra).isEqualTo("2024-11-01")
+        assertThat(rapportertInntekt.endringAarsakerData.first().bleKjent).isNull()
+        assertThat(rapportertInntekt.endringAarsakerData.first().perioder).isNull()
     }
 }
