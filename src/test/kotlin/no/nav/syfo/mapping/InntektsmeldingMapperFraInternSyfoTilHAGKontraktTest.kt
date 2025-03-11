@@ -41,6 +41,11 @@ class InntektsmeldingMapperFraInternSyfoTilHAGKontraktTest {
         val begrunnelse = BegrunnelseIngenEllerRedusertUtbetalingKode.FerieEllerAvspasering.name
         val innsenderNavn = "André Bjørke"
         val innsenderTelefon = "22555555"
+        val inntektEndringAarsak =
+            SpinnInntektEndringAarsak(
+                aarsak = "Ferie",
+                perioder = listOf(Periode(LocalDate.of(2021, 1, 1), LocalDate.of(2021, 1, 31))),
+            )
         val syfoInternInntektsmelding =
             grunnleggendeInntektsmelding.copy(
                 bruttoUtbetalt = bruttoUtbetalt,
@@ -55,13 +60,7 @@ class InntektsmeldingMapperFraInternSyfoTilHAGKontraktTest {
                         beregnetInntekt = 39013.0,
                         endringAarsak = "Ferie",
                         endringAarsakData = null,
-                        endringAarsakerData =
-                            listOf(
-                                SpinnInntektEndringAarsak(
-                                    aarsak = "Ferie",
-                                    perioder = listOf(Periode(LocalDate.of(2021, 1, 1), LocalDate.of(2021, 1, 31))),
-                                ),
-                            ),
+                        endringAarsakerData = listOf(inntektEndringAarsak),
                         manueltKorrigert = true,
                     ),
             )
@@ -81,6 +80,17 @@ class InntektsmeldingMapperFraInternSyfoTilHAGKontraktTest {
         assertEquals(1, inntektsmelding.inntektEndringAarsak?.perioder?.size)
         assertNull(inntektsmelding.inntektEndringAarsak?.gjelderFra)
         assertNull(inntektsmelding.inntektEndringAarsak?.bleKjent)
+        assertEquals(1, inntektsmelding.inntektEndringAarsaker?.size)
+        assertEquals(
+            inntektEndringAarsak.perioder.toString(),
+            inntektsmelding.inntektEndringAarsaker
+                ?.firstOrNull()
+                ?.perioder
+                .toString(),
+        )
+        assertEquals(inntektEndringAarsak.aarsak, inntektsmelding.inntektEndringAarsaker?.firstOrNull()?.aarsak)
+        assertEquals(inntektEndringAarsak.gjelderFra, inntektsmelding.inntektEndringAarsaker?.firstOrNull()?.gjelderFra)
+        assertEquals(inntektEndringAarsak.bleKjent, inntektsmelding.inntektEndringAarsaker?.firstOrNull()?.bleKjent)
         assertTrue(inntektsmelding.matcherSpleis)
     }
 
