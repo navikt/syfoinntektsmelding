@@ -27,7 +27,7 @@ class FinnAlleUtgaandeOppgaverProcessor(
     private val metrikk: Metrikk,
     private val inntektsmeldingRepository: InntektsmeldingRepository,
     private val om: ObjectMapper,
-) : RecurringJob(CoroutineScope(Dispatchers.IO), Duration.ofHours(6).toMillis()) {
+) : RecurringJob(CoroutineScope(Dispatchers.IO), Duration.ofHours(1).toMillis()) {
     private val sikkerlogger = LoggerFactory.getLogger("tjenestekall")
 
     override fun doJob(): Unit =
