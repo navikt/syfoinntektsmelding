@@ -43,10 +43,11 @@ class FinnAlleUtgaandeOppgaverProcessor(
                             logger.error("Fant ikke inntektsmelding for utsatt oppgave: ${oppgaveEntitet.arkivreferanse}")
                             return@forEach
                         }.onSuccess { inntektsmelding ->
-
-                            val gjelderUtland = behandlendeEnhetConsumer.gjelderUtland(oppgaveEntitet)
-                            val behandlingsKategori = utledBehandlingsKategori(oppgaveEntitet, inntektsmelding, gjelderUtland)
                             try {
+                                logger.info("Henter behandlende enhet for inntektsmelding: ${oppgaveEntitet.arkivreferanse}")
+                                val gjelderUtland = behandlendeEnhetConsumer.gjelderUtland(oppgaveEntitet)
+                                logger.info("Utleder behandlingskategori for inntektsmelding: ${oppgaveEntitet.arkivreferanse}")
+                                val behandlingsKategori = utledBehandlingsKategori(oppgaveEntitet, inntektsmelding, gjelderUtland)
                                 if (behandlingsKategori != BehandlingsKategori.IKKE_FRAVAER) {
                                     logger.info("Skal opprette oppgave for inntektsmelding: ${oppgaveEntitet.arkivreferanse}")
                                     opprettOppgaveIGosys(
