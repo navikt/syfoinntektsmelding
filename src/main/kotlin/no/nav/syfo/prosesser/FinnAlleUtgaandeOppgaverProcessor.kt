@@ -80,6 +80,15 @@ class FinnAlleUtgaandeOppgaverProcessor(
                                 logger.error(
                                     "Feilet ved opprettelse av oppgave ved timeout i gosys for inntektsmelding: ${oppgaveEntitet.arkivreferanse}",
                                 )
+                            } catch (e: Exception) {
+                                sikkerlogger.error(
+                                    "Feilet ved opprettelse av oppgave ved timeout for inntetksmelding: ${oppgaveEntitet.arkivreferanse}",
+                                    e,
+                                )
+                                logger.error(
+                                    "Feilet ved opprettelse av oppgave ved timeout for inntetksmelding: ${oppgaveEntitet.arkivreferanse}",
+                                )
+                                throw e
                             }
                         }
                 }
