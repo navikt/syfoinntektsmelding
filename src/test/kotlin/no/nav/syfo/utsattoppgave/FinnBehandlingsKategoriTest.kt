@@ -106,9 +106,27 @@ internal class FinnBehandlingsKategoriTest {
         )
     }
 
+    @Test
+    fun inntekt_null() {
+        val inntektsmelding = mockInntektsmelding(Refusjon(beloepPrMnd = BigDecimal(17000.21), null), null)
+        assertEquals(
+            BehandlingsKategori.REFUSJON_UTEN_DATO,
+            finnBehandlingsKategori(inntektsmelding = inntektsmelding, speilRelatert = false, gjelderUtland = false),
+        )
+    }
+
+    @Test
+    fun refusjon_og_inntekt_null() {
+        val inntektsmelding = mockInntektsmelding(Refusjon(beloepPrMnd = null, null), null)
+        assertEquals(
+            BehandlingsKategori.IKKE_REFUSJON,
+            finnBehandlingsKategori(inntektsmelding = inntektsmelding, speilRelatert = false, gjelderUtland = false),
+        )
+    }
+
     fun mockInntektsmelding(
         refusjon: Refusjon,
-        inntekt: BigDecimal,
+        inntekt: BigDecimal?,
     ): Inntektsmelding =
         Inntektsmelding(
             id = "",
