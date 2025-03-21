@@ -99,7 +99,7 @@ class InntektsmeldingKontraktMapperKtTest {
                 "bekreftet": true,
                 "endringAarsak": null,
                 "beregnetInntekt": 49000.0,
-                "manueltKorrigert": false,
+                "manueltKorrigert": true,
                 "endringAarsakData": {
                     "aarsak": "NyStillingsprosent",
                     "bleKjent": null,
@@ -110,6 +110,8 @@ class InntektsmeldingKontraktMapperKtTest {
             """.trimIndent()
         val rapportertInntekt = om.readValue(rapportertInntektJson, RapportertInntekt::class.java)
         assertThat(rapportertInntekt.endringAarsakerData).isNotEmpty()
+        assertThat(rapportertInntekt.manueltKorrigert).isTrue()
+        assertThat(rapportertInntekt.endringAarsakData?.aarsak).isEqualTo("NyStillingsprosent")
         assertThat(rapportertInntekt.endringAarsakerData.first().aarsak).isEqualTo("NyStillingsprosent")
         assertThat(rapportertInntekt.endringAarsakerData.first().gjelderFra).isEqualTo("2024-11-01")
         assertThat(rapportertInntekt.endringAarsakerData.first().bleKjent).isNull()
