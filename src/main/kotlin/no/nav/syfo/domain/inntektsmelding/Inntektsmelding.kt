@@ -2,7 +2,6 @@ package no.nav.syfo.domain.inntektsmelding
 
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
-import no.nav.syfo.simba.Avsender.NAV_NO_SELVBESTEMT
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -74,7 +73,4 @@ data class Inntektsmelding(
                 arsakTilInnsending = this.arsakTilInnsending,
             ),
         )
-
-    // TODO: kanskje kan vi fjerne dette, hvis vedtaksperiodeId *alltid* skal komme i selvbestemtIM
-    fun matcherSpleis(): Boolean = !(avsenderSystem.navn == NAV_NO_SELVBESTEMT && vedtaksperiodeId == null)
 }

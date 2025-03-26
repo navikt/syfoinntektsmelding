@@ -2,6 +2,7 @@ package no.nav.syfo
 
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
+import no.nav.syfo.domain.inntektsmelding.AvsenderSystem
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import java.time.LocalDate
 
@@ -22,4 +23,5 @@ val grunnleggendeInntektsmelding =
         arkivRefereranse = "AR123",
         førsteFraværsdag = LocalDate.of(2019, 10, 5),
         mottattDato = LocalDate.of(2019, 10, 25).atStartOfDay(),
+        avsenderSystem = AvsenderSystem("NAV_NO", "1.0"),
     )

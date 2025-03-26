@@ -9,7 +9,6 @@ import no.nav.syfo.domain.inntektsmelding.RapportertInntekt
 import no.nav.syfo.domain.inntektsmelding.SpinnInntektEndringAarsak
 import no.nav.syfo.grunnleggendeInntektsmelding
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -112,22 +111,6 @@ class InntektsmeldingMapperFraInternSyfoTilHAGKontraktTest {
                 UUID.randomUUID().toString(),
             )
         assertEquals(vedtaksperiodeId, kontraktIMMedVedtaksperiodeId.vedtaksperiodeId)
-    }
-
-    @Test
-    fun mapInntektsmeldingKontraktSelvbestemtMatcherIkkeSpleis() {
-        val inntektsmelding = grunnleggendeInntektsmelding
-        val kontraktIM =
-            mapInntektsmeldingKontrakt(inntektsmelding, "123", Gyldighetsstatus.GYLDIG, "arkivref123", UUID.randomUUID().toString(), false)
-        assertFalse(kontraktIM.matcherSpleis)
-    }
-
-    @Test
-    fun mapInntektsmeldingKontraktMatcherSpleisSomDefault() {
-        val inntektsmelding = grunnleggendeInntektsmelding
-        val kontraktIM =
-            mapInntektsmeldingKontrakt(inntektsmelding, "123", Gyldighetsstatus.GYLDIG, "arkivref123", UUID.randomUUID().toString())
-        assertTrue(kontraktIM.matcherSpleis)
     }
 
     @ParameterizedTest
