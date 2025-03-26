@@ -46,7 +46,7 @@ fun mapInntektsmelding(
 ): Inntektsmelding {
     val avsenderSystem =
         when (im.type) {
-            is InntektmeldingV1.Type.Forespurt -> Avsender.NAV_NO
+            is InntektmeldingV1.Type.Forespurt, is InntektmeldingV1.Type.ForespurtEkstern -> Avsender.NAV_NO
             is InntektmeldingV1.Type.Selvbestemt -> Avsender.NAV_NO_SELVBESTEMT
         }
     return Inntektsmelding(
