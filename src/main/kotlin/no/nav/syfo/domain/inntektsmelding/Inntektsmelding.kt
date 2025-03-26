@@ -40,6 +40,7 @@ data class Inntektsmelding(
     val årsakEndring: String? = null,
     val rapportertInntekt: RapportertInntekt? = null,
     val vedtaksperiodeId: UUID? = null,
+    val mottaksKanal: MottaksKanal = utledMottakskanal(avsenderSystem.navn),
 ) {
     fun isDuplicate(inntektsmelding: Inntektsmelding): Boolean =
         this.equals(
@@ -54,6 +55,7 @@ data class Inntektsmelding(
                 sakId = this.sakId,
                 innsendingstidspunkt = this.innsendingstidspunkt,
                 avsenderSystem = this.avsenderSystem,
+                mottaksKanal = this.mottaksKanal,
             ),
         )
 
@@ -74,3 +76,11 @@ data class Inntektsmelding(
             ),
         )
 }
+
+fun utledMottakskanal(ansenderSystemNavn: String?): MottaksKanal =
+    when (ansenderSystemNavn) {
+        "NAV_NO",
+        "NAV_NO_SELVBESTEMT",
+        -> MottaksKanal.NAV_NO
+        else -> MottaksKanal.ALTINN
+    }

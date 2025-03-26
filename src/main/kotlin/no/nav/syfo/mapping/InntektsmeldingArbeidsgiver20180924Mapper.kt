@@ -9,6 +9,7 @@ import no.nav.syfo.domain.inntektsmelding.GjenopptakelseNaturalytelse
 import no.nav.syfo.domain.inntektsmelding.Gyldighetsstatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.domain.inntektsmelding.Kontaktinformasjon
+import no.nav.syfo.domain.inntektsmelding.MottaksKanal
 import no.nav.syfo.domain.inntektsmelding.OpphoerAvNaturalytelse
 import no.nav.syfo.domain.inntektsmelding.Refusjon
 import no.seres.xsd.nav.inntektsmelding_m._20180924.XMLArbeidsforhold
@@ -102,6 +103,7 @@ internal object InntektsmeldingArbeidsgiver20180924Mapper {
             innsendingstidspunkt = innsendingstidspunkt,
             bruttoUtbetalt = bruttoUtbetalt,
             årsakEndring = årsakEndring,
+            mottaksKanal = MottaksKanal.ALTINN,
         )
     }
 

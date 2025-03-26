@@ -2,8 +2,11 @@ package no.nav.syfo.mapping
 
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.BegrunnelseIngenEllerRedusertUtbetalingKode
 import no.nav.inntektsmeldingkontrakt.ArsakTilInnsending
+import no.nav.inntektsmeldingkontrakt.MottaksKanal
 import no.nav.syfo.domain.Periode
+import no.nav.syfo.domain.inntektsmelding.AvsenderSystem
 import no.nav.syfo.domain.inntektsmelding.Gyldighetsstatus
+import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.domain.inntektsmelding.Kontaktinformasjon
 import no.nav.syfo.domain.inntektsmelding.RapportertInntekt
 import no.nav.syfo.domain.inntektsmelding.SpinnInntektEndringAarsak
@@ -23,12 +26,8 @@ class InntektsmeldingMapperFraInternSyfoTilHAGKontraktTest {
     fun mapInntektsmeldingKontraktUtenBegrunnelseOgBeløp() {
         val syfoInternInntektsmelding = grunnleggendeInntektsmelding
         val inntektsmelding =
-            mapInntektsmeldingKontrakt(
+            mapImKontrakt(
                 syfoInternInntektsmelding,
-                "123",
-                Gyldighetsstatus.GYLDIG,
-                "arkivref-123",
-                UUID.randomUUID().toString(),
             )
         assertNull(inntektsmelding.bruttoUtbetalt)
         assertEquals("", inntektsmelding.begrunnelseForReduksjonEllerIkkeUtbetalt)
@@ -64,12 +63,8 @@ class InntektsmeldingMapperFraInternSyfoTilHAGKontraktTest {
                     ),
             )
         val inntektsmelding =
-            mapInntektsmeldingKontrakt(
+            mapImKontrakt(
                 syfoInternInntektsmelding,
-                "123",
-                Gyldighetsstatus.GYLDIG,
-                "arkivref-123",
-                UUID.randomUUID().toString(),
             )
         assertEquals(bruttoUtbetalt, inntektsmelding.bruttoUtbetalt)
         assertEquals(begrunnelse, inntektsmelding.begrunnelseForReduksjonEllerIkkeUtbetalt)
@@ -91,24 +86,21 @@ class InntektsmeldingMapperFraInternSyfoTilHAGKontraktTest {
         assertEquals(inntektEndringAarsak.gjelderFra, inntektsmelding.inntektEndringAarsaker?.firstOrNull()?.gjelderFra)
         assertEquals(inntektEndringAarsak.bleKjent, inntektsmelding.inntektEndringAarsaker?.firstOrNull()?.bleKjent)
         assertTrue(inntektsmelding.matcherSpleis)
+        assertEquals(syfoInternInntektsmelding.mottaksKanal.name, inntektsmelding.mottaksKanal?.name)
     }
 
     @Test
     fun mapInntektsmeldingKontraktMedOgUtenVedtaksperiodeId() {
         val inntektsmelding = grunnleggendeInntektsmelding
         val kontraktIM =
-            mapInntektsmeldingKontrakt(inntektsmelding, "123", Gyldighetsstatus.GYLDIG, "arkivref123", UUID.randomUUID().toString())
+            mapImKontrakt(inntektsmelding)
         assertNull(kontraktIM.vedtaksperiodeId)
-
+        assertEquals(inntektsmelding.mottaksKanal.name, kontraktIM.mottaksKanal?.name)
         val vedtaksperiodeId = UUID.randomUUID()
         val inntektsmeldingMedVedtaksperiodeID = inntektsmelding.copy(vedtaksperiodeId = vedtaksperiodeId)
         val kontraktIMMedVedtaksperiodeId =
-            mapInntektsmeldingKontrakt(
+            mapImKontrakt(
                 inntektsmeldingMedVedtaksperiodeID,
-                "123",
-                Gyldighetsstatus.GYLDIG,
-                "arkivref123",
-                UUID.randomUUID().toString(),
             )
         assertEquals(vedtaksperiodeId, kontraktIMMedVedtaksperiodeId.vedtaksperiodeId)
     }
@@ -118,7 +110,7 @@ class InntektsmeldingMapperFraInternSyfoTilHAGKontraktTest {
     fun `mapInntektsmeldingKontrakt felt arsakTilInnsending settes til defaultverdi Ny ved ugyldige verdier`(aarsak: String) {
         val inntektsmelding = grunnleggendeInntektsmelding.copy(arsakTilInnsending = aarsak)
         val kontraktIM =
-            mapInntektsmeldingKontrakt(inntektsmelding, "123", Gyldighetsstatus.GYLDIG, "arkivref123", UUID.randomUUID().toString())
+            mapImKontrakt(inntektsmelding)
         assertEquals(ArsakTilInnsending.Ny, kontraktIM.arsakTilInnsending)
     }
 
@@ -126,7 +118,33 @@ class InntektsmeldingMapperFraInternSyfoTilHAGKontraktTest {
     fun `mapInntektsmeldingKontrakt felt arsakTilInnsending settes til Endring`() {
         val inntektsmelding = grunnleggendeInntektsmelding.copy(arsakTilInnsending = "Endring")
         val kontraktIM =
-            mapInntektsmeldingKontrakt(inntektsmelding, "123", Gyldighetsstatus.GYLDIG, "arkivref123", UUID.randomUUID().toString())
+            mapImKontrakt(inntektsmelding)
         assertEquals(ArsakTilInnsending.Endring, kontraktIM.arsakTilInnsending)
     }
+
+    @Test
+    fun `mapInntektsmeldingKontrakt felt mottakskanal settes riktig`() {
+        val altinnPortalInntektsmelding = grunnleggendeInntektsmelding.copy(
+            avsenderSystem = MockData.avsenderAltinn,
+            mottaksKanal = no.nav.syfo.domain.inntektsmelding.MottaksKanal.ALTINN
+        )
+        val kontraktIM = mapImKontrakt(altinnPortalInntektsmelding)
+        assertEquals(MottaksKanal.ALTINN, kontraktIM.mottaksKanal)
+    }
+}
+
+fun mapImKontrakt(inntektsmelding: Inntektsmelding) = mapInntektsmeldingKontrakt(
+    inntektsmelding = inntektsmelding,
+    arbeidstakerAktørId = MockData.aktørId,
+    gyldighetsstatus = MockData.gyldighetsstatus,
+    arkivreferanse = MockData.arkivreferanse,
+    uuid = MockData.uuid
+)
+
+object MockData {
+    val aktørId = "123"
+    val gyldighetsstatus = Gyldighetsstatus.GYLDIG
+    val arkivreferanse = "arkivref123"
+    val uuid = UUID.randomUUID().toString()
+    val avsenderAltinn = AvsenderSystem("AltinnPortal", "1.0")
 }
