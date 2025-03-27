@@ -77,7 +77,8 @@ data class Inntektsmelding(
         )
 }
 
-fun utledMottakskanal(ansenderSystemNavn: String?): MottaksKanal =
+// For å støtte gamle verdier som mangler mottakskanal
+private fun utledMottakskanal(ansenderSystemNavn: String?): MottaksKanal =
     when (ansenderSystemNavn) {
         "NAV_NO",
         "NAV_NO_SELVBESTEMT",
