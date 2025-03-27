@@ -172,5 +172,5 @@ object MockData {
     val uuid = UUID.randomUUID().toString()
     val avsenderAltinn = AvsenderSystem("AltinnPortal", "1.0")
     val avsenderNavPortal = AvsenderSystem("NAV_PORTAL", "1.0")
-    val avsenderTigerSys= AvsenderSystem("Tigersys", "3.0")
+    val avsenderTigerSys = AvsenderSystem("Tigersys", "3.0")
 }
