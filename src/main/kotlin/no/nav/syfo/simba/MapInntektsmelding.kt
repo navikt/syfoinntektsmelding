@@ -27,6 +27,7 @@ import no.nav.syfo.domain.inntektsmelding.OpphoerAvNaturalytelse
 import no.nav.syfo.domain.inntektsmelding.RapportertInntekt
 import no.nav.syfo.domain.inntektsmelding.Refusjon
 import no.nav.syfo.domain.inntektsmelding.SpinnInntektEndringAarsak
+import no.nav.syfo.domain.inntektsmelding.mapTilMottakskanal
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.v1.Inntektsmelding as InntektmeldingV1
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.v1.Naturalytelse as NaturalytelseV1
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.v1.Periode as PeriodeV1
@@ -96,6 +97,7 @@ fun mapInntektsmelding(
         arsakTilInnsending = im.aarsakInnsending.name,
         mottattDato = im.mottatt.toLocalDateTime(),
         innsendingstidspunkt = im.mottatt.toLocalDateTime(),
+        mottaksKanal = im.type.kanal().mapTilMottakskanal(),
     )
 }
 
