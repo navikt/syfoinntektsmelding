@@ -124,22 +124,46 @@ class InntektsmeldingMapperFraInternSyfoTilHAGKontraktTest {
 
     @Test
     fun `mapInntektsmeldingKontrakt felt mottakskanal settes riktig`() {
-        val altinnPortalInntektsmelding = grunnleggendeInntektsmelding.copy(
-            avsenderSystem = MockData.avsenderAltinn,
-            mottaksKanal = no.nav.syfo.domain.inntektsmelding.MottaksKanal.ALTINN
-        )
+        val altinnPortalInntektsmelding =
+            grunnleggendeInntektsmelding.copy(
+                avsenderSystem = MockData.avsenderAltinn,
+                mottaksKanal = no.nav.syfo.domain.inntektsmelding.MottaksKanal.ALTINN,
+            )
         val kontraktIM = mapImKontrakt(altinnPortalInntektsmelding)
         assertEquals(MottaksKanal.ALTINN, kontraktIM.mottaksKanal)
     }
+
+    @Test
+    fun `mapInntektsmeldingKontrakt felt mottakskanal settes til nav_no`() {
+        val altinnPortalInntektsmelding =
+            grunnleggendeInntektsmelding.copy(
+                avsenderSystem = MockData.avsenderNavPortal,
+                mottaksKanal = no.nav.syfo.domain.inntektsmelding.MottaksKanal.NAV_NO,
+            )
+        val kontraktIM = mapImKontrakt(altinnPortalInntektsmelding)
+        assertEquals(MottaksKanal.NAV_NO, kontraktIM.mottaksKanal)
+    }
+
+    @Test
+    fun `mapInntektsmeldingKontrakt felt mottakskanal settes til hr_system_api`() {
+        val altinnPortalInntektsmelding =
+            grunnleggendeInntektsmelding.copy(
+                avsenderSystem = MockData.avsenderTigerSys,
+                mottaksKanal = no.nav.syfo.domain.inntektsmelding.MottaksKanal.HR_SYSTEM_API,
+            )
+        val kontraktIM = mapImKontrakt(altinnPortalInntektsmelding)
+        assertEquals(MottaksKanal.HR_SYSTEM_API, kontraktIM.mottaksKanal)
+    }
 }
 
-fun mapImKontrakt(inntektsmelding: Inntektsmelding) = mapInntektsmeldingKontrakt(
-    inntektsmelding = inntektsmelding,
-    arbeidstakerAktørId = MockData.aktørId,
-    gyldighetsstatus = MockData.gyldighetsstatus,
-    arkivreferanse = MockData.arkivreferanse,
-    uuid = MockData.uuid
-)
+fun mapImKontrakt(inntektsmelding: Inntektsmelding) =
+    mapInntektsmeldingKontrakt(
+        inntektsmelding = inntektsmelding,
+        arbeidstakerAktørId = MockData.aktørId,
+        gyldighetsstatus = MockData.gyldighetsstatus,
+        arkivreferanse = MockData.arkivreferanse,
+        uuid = MockData.uuid,
+    )
 
 object MockData {
     val aktørId = "123"
@@ -147,4 +171,6 @@ object MockData {
     val arkivreferanse = "arkivref123"
     val uuid = UUID.randomUUID().toString()
     val avsenderAltinn = AvsenderSystem("AltinnPortal", "1.0")
+    val avsenderNavPortal = AvsenderSystem("NAV_PORTAL", "1.0")
+    val avsenderTigerSys= AvsenderSystem("Tigersys", "3.0")
 }

@@ -14,9 +14,9 @@ import no.nav.inntektsmeldingkontrakt.Refusjon
 import no.nav.inntektsmeldingkontrakt.Status
 import no.nav.syfo.domain.inntektsmelding.Gyldighetsstatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
-import no.nav.syfo.domain.inntektsmelding.MottaksKanal as Kanal
 import no.nav.syfo.domain.inntektsmelding.SpinnInntektEndringAarsak
 import org.slf4j.LoggerFactory
+import no.nav.syfo.domain.inntektsmelding.MottaksKanal as Kanal
 
 private val sikkerlogger = LoggerFactory.getLogger("tjenestekall")
 
@@ -68,7 +68,7 @@ fun mapInntektsmeldingKontrakt(
                 .orEmpty()
                 .map { it.tilInntektEndringAarsak() },
         arsakTilInnsending = konverterArsakTilInnsending(inntektsmelding.arsakTilInnsending),
-        mottaksKanal = inntektsmelding.mottaksKanal.konverterMottakskanal()
+        mottaksKanal = inntektsmelding.mottaksKanal.konverterMottakskanal(),
     )
 
 fun konverterArsakTilInnsending(arsakTilInnsending: String): ArsakTilInnsending =
@@ -78,11 +78,13 @@ fun konverterArsakTilInnsending(arsakTilInnsending: String): ArsakTilInnsending 
         sikkerlogger.error("Ugyldig verdi for årsakTilInnsending: $arsakTilInnsending, returnerer ${ArsakTilInnsending.Ny}")
         ArsakTilInnsending.Ny
     }
-fun Kanal.konverterMottakskanal(): MottaksKanal = when (this) {
-    Kanal.NAV_NO -> MottaksKanal.NAV_NO
-    Kanal.HR_SYSTEM_API -> MottaksKanal.HR_SYSTEM_API
-    Kanal.ALTINN -> MottaksKanal.ALTINN
-}
+
+fun Kanal.konverterMottakskanal(): MottaksKanal =
+    when (this) {
+        Kanal.NAV_NO -> MottaksKanal.NAV_NO
+        Kanal.HR_SYSTEM_API -> MottaksKanal.HR_SYSTEM_API
+        Kanal.ALTINN -> MottaksKanal.ALTINN
+    }
 
 fun SpinnInntektEndringAarsak.tilInntektEndringAarsak(): InntektEndringAarsak =
     InntektEndringAarsak(

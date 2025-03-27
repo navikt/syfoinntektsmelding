@@ -25,5 +25,5 @@ val grunnleggendeInntektsmelding =
         førsteFraværsdag = LocalDate.of(2019, 10, 5),
         mottattDato = LocalDate.of(2019, 10, 25).atStartOfDay(),
         avsenderSystem = AvsenderSystem("NAV_NO", "1.0"),
-        mottaksKanal = MottaksKanal.NAV_NO
+        mottaksKanal = MottaksKanal.NAV_NO,
     )
