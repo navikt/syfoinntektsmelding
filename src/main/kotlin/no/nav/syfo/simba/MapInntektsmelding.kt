@@ -6,6 +6,7 @@ import no.nav.helsearbeidsgiver.domene.inntektsmelding.v1.Ferie
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.v1.Ferietrekk
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.v1.Inntekt
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.v1.InntektEndringAarsak
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.v1.Inntektsmelding.Type
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.v1.NyStilling
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.v1.NyStillingsprosent
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.v1.Nyansatt
@@ -45,10 +46,13 @@ fun mapInntektsmelding(
     journalpostId: String,
     im: InntektmeldingV1,
 ): Inntektsmelding {
-    val avsenderSystem =
+    val (
+        avsenderSystem: String,
+        forespurt: Boolean,
+    ) =
         when (im.type) {
-            is InntektmeldingV1.Type.Forespurt, is InntektmeldingV1.Type.ForespurtEkstern -> Avsender.NAV_NO
-            is InntektmeldingV1.Type.Selvbestemt -> Avsender.NAV_NO_SELVBESTEMT
+            is Type.Forespurt, is Type.ForespurtEkstern -> (Avsender.NAV_NO to true)
+            is Type.Selvbestemt -> (Avsender.NAV_NO_SELVBESTEMT to false)
         }
     return Inntektsmelding(
         journalStatus = JournalStatus.FERDIGSTILT,
@@ -98,6 +102,7 @@ fun mapInntektsmelding(
         mottattDato = im.mottatt.toLocalDateTime(),
         innsendingstidspunkt = im.mottatt.toLocalDateTime(),
         mottaksKanal = im.type.kanal().mapTilMottakskanal(),
+        forespurt = forespurt,
     )
 }
 
