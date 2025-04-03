@@ -4,6 +4,7 @@ import no.nav.inntektsmeldingkontrakt.Arbeidsgivertype
 import no.nav.inntektsmeldingkontrakt.ArsakTilInnsending
 import no.nav.inntektsmeldingkontrakt.AvsenderSystem
 import no.nav.inntektsmeldingkontrakt.EndringIRefusjon
+import no.nav.inntektsmeldingkontrakt.Format
 import no.nav.inntektsmeldingkontrakt.GjenopptakelseNaturalytelse
 import no.nav.inntektsmeldingkontrakt.InntektEndringAarsak
 import no.nav.inntektsmeldingkontrakt.MottaksKanal
@@ -69,6 +70,8 @@ fun mapInntektsmeldingKontrakt(
                 .map { it.tilInntektEndringAarsak() },
         arsakTilInnsending = konverterArsakTilInnsending(inntektsmelding.arsakTilInnsending),
         mottaksKanal = inntektsmelding.mottaksKanal.konverterMottakskanal(),
+        format = inntektsmelding.mottaksKanal.utledFormat(),
+        forespurt = inntektsmelding.forespurt,
     )
 
 fun konverterArsakTilInnsending(arsakTilInnsending: String): ArsakTilInnsending =
@@ -84,6 +87,12 @@ fun Kanal.konverterMottakskanal(): MottaksKanal =
         Kanal.NAV_NO -> MottaksKanal.NAV_NO
         Kanal.HR_SYSTEM_API -> MottaksKanal.HR_SYSTEM_API
         Kanal.ALTINN -> MottaksKanal.ALTINN
+    }
+
+fun Kanal.utledFormat(): Format =
+    when (this) {
+        Kanal.ALTINN -> Format.Inntektsmelding
+        else -> Format.Arbeidsgiveropplysninger
     }
 
 fun SpinnInntektEndringAarsak.tilInntektEndringAarsak(): InntektEndringAarsak =

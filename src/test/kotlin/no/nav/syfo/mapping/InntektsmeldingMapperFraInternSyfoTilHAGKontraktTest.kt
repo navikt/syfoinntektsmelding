@@ -2,6 +2,7 @@ package no.nav.syfo.mapping
 
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.BegrunnelseIngenEllerRedusertUtbetalingKode
 import no.nav.inntektsmeldingkontrakt.ArsakTilInnsending
+import no.nav.inntektsmeldingkontrakt.Format
 import no.nav.inntektsmeldingkontrakt.MottaksKanal
 import no.nav.syfo.domain.Periode
 import no.nav.syfo.domain.inntektsmelding.AvsenderSystem
@@ -12,6 +13,7 @@ import no.nav.syfo.domain.inntektsmelding.RapportertInntekt
 import no.nav.syfo.domain.inntektsmelding.SpinnInntektEndringAarsak
 import no.nav.syfo.grunnleggendeInntektsmelding
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -131,6 +133,8 @@ class InntektsmeldingMapperFraInternSyfoTilHAGKontraktTest {
             )
         val kontraktIM = mapImKontrakt(altinnPortalInntektsmelding)
         assertEquals(MottaksKanal.ALTINN, kontraktIM.mottaksKanal)
+        assertEquals(Format.Inntektsmelding, kontraktIM.format)
+        assertFalse(kontraktIM.forespurt)
     }
 
     @Test
@@ -139,9 +143,12 @@ class InntektsmeldingMapperFraInternSyfoTilHAGKontraktTest {
             grunnleggendeInntektsmelding.copy(
                 avsenderSystem = MockData.avsenderNavPortal,
                 mottaksKanal = no.nav.syfo.domain.inntektsmelding.MottaksKanal.NAV_NO,
+                forespurt = true,
             )
         val kontraktIM = mapImKontrakt(altinnPortalInntektsmelding)
         assertEquals(MottaksKanal.NAV_NO, kontraktIM.mottaksKanal)
+        assertEquals(Format.Arbeidsgiveropplysninger, kontraktIM.format)
+        assertTrue(kontraktIM.forespurt)
     }
 
     @Test
@@ -150,9 +157,12 @@ class InntektsmeldingMapperFraInternSyfoTilHAGKontraktTest {
             grunnleggendeInntektsmelding.copy(
                 avsenderSystem = MockData.avsenderTigerSys,
                 mottaksKanal = no.nav.syfo.domain.inntektsmelding.MottaksKanal.HR_SYSTEM_API,
+                forespurt = true,
             )
         val kontraktIM = mapImKontrakt(altinnPortalInntektsmelding)
         assertEquals(MottaksKanal.HR_SYSTEM_API, kontraktIM.mottaksKanal)
+        assertEquals(Format.Arbeidsgiveropplysninger, kontraktIM.format)
+        assertTrue(kontraktIM.forespurt)
     }
 }
 
