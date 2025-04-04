@@ -27,12 +27,10 @@ fun mapInntektsmeldingKontrakt(
     gyldighetsstatus: Gyldighetsstatus,
     arkivreferanse: String,
     uuid: String,
-    matcherSpleis: Boolean = true,
 ): no.nav.inntektsmeldingkontrakt.Inntektsmelding =
     no.nav.inntektsmeldingkontrakt.Inntektsmelding(
         inntektsmeldingId = uuid,
         vedtaksperiodeId = inntektsmelding.vedtaksperiodeId,
-        matcherSpleis = matcherSpleis,
         arbeidstakerFnr = inntektsmelding.fnr,
         arbeidstakerAktorId = arbeidstakerAktørId,
         virksomhetsnummer = inntektsmelding.arbeidsgiverOrgnummer,
