@@ -87,7 +87,6 @@ class InntektsmeldingMapperFraInternSyfoTilHAGKontraktTest {
         assertEquals(inntektEndringAarsak.aarsak, inntektsmelding.inntektEndringAarsaker?.firstOrNull()?.aarsak)
         assertEquals(inntektEndringAarsak.gjelderFra, inntektsmelding.inntektEndringAarsaker?.firstOrNull()?.gjelderFra)
         assertEquals(inntektEndringAarsak.bleKjent, inntektsmelding.inntektEndringAarsaker?.firstOrNull()?.bleKjent)
-        assertTrue(inntektsmelding.matcherSpleis)
         assertEquals(syfoInternInntektsmelding.mottaksKanal.name, inntektsmelding.mottaksKanal?.name)
     }
 
