@@ -56,6 +56,7 @@ fun mapInntektsmeldingKontrakt(
         innsenderTelefon = inntektsmelding.kontaktinformasjon.telefon.orEmpty(),
         naerRelasjon = inntektsmelding.nærRelasjon,
         avsenderSystem = mapAvsenderSystem(inntektsmelding.avsenderSystem),
+        // TODO: inntektEndringAarsak kan fjernes når flex og spleis bare leser inntektEndringAarsaker
         inntektEndringAarsak =
             inntektsmelding.rapportertInntekt
                 ?.endringAarsakerData
