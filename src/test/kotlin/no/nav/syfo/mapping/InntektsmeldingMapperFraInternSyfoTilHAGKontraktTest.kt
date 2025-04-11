@@ -1,6 +1,6 @@
 package no.nav.syfo.mapping
 
-import no.nav.helsearbeidsgiver.domene.inntektsmelding.deprecated.BegrunnelseIngenEllerRedusertUtbetalingKode
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.v1.RedusertLoennIAgp
 import no.nav.inntektsmeldingkontrakt.ArsakTilInnsending
 import no.nav.inntektsmeldingkontrakt.Format
 import no.nav.inntektsmeldingkontrakt.MottaksKanal
@@ -38,7 +38,7 @@ class InntektsmeldingMapperFraInternSyfoTilHAGKontraktTest {
     @Test
     fun mapInntektsmeldingKontrakt() {
         val bruttoUtbetalt = BigDecimal(39013)
-        val begrunnelse = BegrunnelseIngenEllerRedusertUtbetalingKode.FerieEllerAvspasering.name
+        val begrunnelse = RedusertLoennIAgp.Begrunnelse.FerieEllerAvspasering.name
         val innsenderNavn = "André Bjørke"
         val innsenderTelefon = "22555555"
         val inntektEndringAarsak =
@@ -58,8 +58,6 @@ class InntektsmeldingMapperFraInternSyfoTilHAGKontraktTest {
                     RapportertInntekt(
                         bekreftet = true,
                         beregnetInntekt = 39013.0,
-                        endringAarsak = "Ferie",
-                        endringAarsakData = null,
                         endringAarsakerData = listOf(inntektEndringAarsak),
                         manueltKorrigert = true,
                     ),

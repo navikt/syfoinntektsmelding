@@ -121,15 +121,15 @@ class MapInntektsmeldingFraSimbaTest {
                         beloep = 60_000.0,
                         inntektsdato = 3.mai,
                         naturalytelser = emptyList(),
-                        endringAarsak = Bonus,
+                        endringAarsaker = listOf(Bonus),
                     ),
             )
         val mapped = mapInntektsmelding("im1", "2", "3", im)
-        assertEquals("Bonus", mapped.rapportertInntekt?.endringAarsak)
-        assertEquals("Bonus", mapped.rapportertInntekt?.endringAarsakData?.aarsak)
-        assertNull(mapped.rapportertInntekt?.endringAarsakData?.perioder)
-        assertNull(mapped.rapportertInntekt?.endringAarsakData?.gjelderFra)
-        assertNull(mapped.rapportertInntekt?.endringAarsakData?.bleKjent)
+        val endringAarsak = mapped.rapportertInntekt?.endringAarsakerData?.get(0)!!
+        assertEquals("Bonus", endringAarsak.aarsak)
+        assertNull(endringAarsak.perioder)
+        assertNull(endringAarsak.gjelderFra)
+        assertNull(endringAarsak.bleKjent)
     }
 
     @Test
@@ -226,13 +226,15 @@ fun lagInntektsmelding(): Inntektsmelding =
                             sluttdato = 15.februar,
                         ),
                     ),
-                endringAarsak =
-                    Permisjon(
-                        permisjoner =
-                            listOf(
-                                6.januar til 6.januar,
-                                8.januar til 8.januar,
-                            ),
+                endringAarsaker =
+                    listOf(
+                        Permisjon(
+                            permisjoner =
+                                listOf(
+                                    6.januar til 6.januar,
+                                    8.januar til 8.januar,
+                                ),
+                        ),
                     ),
             ),
         refusjon =

@@ -64,13 +64,13 @@ class MapInntektEndringAarsakFraSimbaTest {
                 it.copy(
                     inntekt =
                         it.inntekt?.copy(
-                            endringAarsak = inntektEndringAarsak,
+                            endringAarsaker = listOf(inntektEndringAarsak),
                         ),
                 )
             }
 
         val mapped = mapInntektsmelding("1", "2", "3", im)
 
-        assertEquals(spinnInntektEndringAarsak, mapped.rapportertInntekt?.endringAarsakData)
+        assertEquals(spinnInntektEndringAarsak, mapped.rapportertInntekt?.endringAarsakerData?.get(0))
     }
 }

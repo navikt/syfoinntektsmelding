@@ -92,7 +92,7 @@ class InntektsmeldingKontraktMapperKtTest {
     }
 
     @Test
-    fun `RapportertInntekt uten endringAarsakerData blir desirialisert riktig `() {
+    fun `RapportertInntekt med endringAarsakerData blir deserialisert riktig `() {
         val rapportertInntektJson =
             """
             {
@@ -100,18 +100,17 @@ class InntektsmeldingKontraktMapperKtTest {
                 "endringAarsak": null,
                 "beregnetInntekt": 49000.0,
                 "manueltKorrigert": true,
-                "endringAarsakData": {
+                "endringAarsakerData": [{
                     "aarsak": "NyStillingsprosent",
                     "bleKjent": null,
                     "perioder": null,
                     "gjelderFra": "2024-11-01"
-                  }
+                  }]
               }
             """.trimIndent()
         val rapportertInntekt = om.readValue(rapportertInntektJson, RapportertInntekt::class.java)
         assertThat(rapportertInntekt.endringAarsakerData).isNotEmpty()
         assertThat(rapportertInntekt.manueltKorrigert).isTrue()
-        assertThat(rapportertInntekt.endringAarsakData?.aarsak).isEqualTo("NyStillingsprosent")
         assertThat(rapportertInntekt.endringAarsakerData.first().aarsak).isEqualTo("NyStillingsprosent")
         assertThat(rapportertInntekt.endringAarsakerData.first().gjelderFra).isEqualTo("2024-11-01")
         assertThat(rapportertInntekt.endringAarsakerData.first().bleKjent).isNull()
