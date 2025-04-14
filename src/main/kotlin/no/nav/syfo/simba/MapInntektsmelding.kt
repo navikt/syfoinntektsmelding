@@ -115,10 +115,13 @@ private fun NaturalytelseV1.tilNaturalytelse(): OpphoerAvNaturalytelse =
 
 private fun Inntekt.tilRapportertInntekt(): RapportertInntekt {
     val spinnEndringAarsaker = endringAarsaker.map { it.tilSpinnInntektEndringAarsak() }
+    val spinnEndringAarsak = spinnEndringAarsaker.firstOrNull()
 
     return RapportertInntekt(
         bekreftet = true,
         beregnetInntekt = beloep,
+        endringAarsak = spinnEndringAarsak?.aarsak,
+        endringAarsakData = spinnEndringAarsak,
         endringAarsakerData = spinnEndringAarsaker,
         manueltKorrigert = spinnEndringAarsaker.isNotEmpty(),
     )

@@ -58,6 +58,8 @@ class InntektsmeldingMapperFraInternSyfoTilHAGKontraktTest {
                     RapportertInntekt(
                         bekreftet = true,
                         beregnetInntekt = 39013.0,
+                        endringAarsak = "Ferie",
+                        endringAarsakData = null,
                         endringAarsakerData = listOf(inntektEndringAarsak),
                         manueltKorrigert = true,
                     ),
