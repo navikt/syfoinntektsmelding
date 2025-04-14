@@ -11,7 +11,9 @@ import java.time.LocalDate
 data class RapportertInntekt(
     val bekreftet: Boolean,
     val beregnetInntekt: Double,
-    val endringAarsakerData: List<SpinnInntektEndringAarsak>,
+    val endringAarsak: String? = null,
+    val endringAarsakData: SpinnInntektEndringAarsak? = null,
+    val endringAarsakerData: List<SpinnInntektEndringAarsak> = listOfNotNull(endringAarsakData),
     val manueltKorrigert: Boolean,
 )
 
