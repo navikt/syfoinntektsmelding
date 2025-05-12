@@ -74,6 +74,8 @@ spec:
         - application: im-bro-spinn
         - application: sparkel-dokumenter
           namespace: tbd
+        - application: bakrommet
+          namespace: speilvendt
 
   env:
     - name: KOIN_PROFILE
