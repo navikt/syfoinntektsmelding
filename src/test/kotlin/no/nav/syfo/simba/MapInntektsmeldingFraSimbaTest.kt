@@ -60,7 +60,7 @@ class MapInntektsmeldingFraSimbaTest {
     @Test
     fun mapRefusjon() {
         val refusjonEndringer = listOf(RefusjonEndring(123.0, 1.desember(2025)))
-        val refusjon = Refusjon(10.0, refusjonEndringer, 12.desember(2025))
+        val refusjon = Refusjon(10.0, refusjonEndringer)
         val mapped =
             mapInntektsmelding(
                 arkivreferanse = "im1323",
@@ -68,7 +68,7 @@ class MapInntektsmeldingFraSimbaTest {
                 journalpostId = "134",
                 im = lagInntektsmelding().copy(refusjon = refusjon),
             )
-        assertEquals(mapped.refusjon.opphoersdato, refusjon.sluttdato)
+        assertNull(mapped.refusjon.opphoersdato)
         assertEquals(mapped.endringerIRefusjon.size, 1)
     }
 
@@ -251,7 +251,6 @@ fun lagInntektsmelding(): Inntektsmelding =
                             startdato = 2.februar,
                         ),
                     ),
-                sluttdato = 25.februar,
             ),
         aarsakInnsending = AarsakInnsending.Ny,
         mottatt = 1.mars.atStartOfDay().atOffset(ZoneOffset.ofHours(1)),
