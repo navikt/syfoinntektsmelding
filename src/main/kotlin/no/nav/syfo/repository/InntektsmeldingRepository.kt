@@ -24,6 +24,12 @@ interface InntektsmeldingRepository {
     fun deleteAll()
 
     fun findAll(): List<InntektsmeldingEntitet>
+
+    fun findByFnrInPeriod(
+        fnr: String,
+        fom: LocalDateTime? = null,
+        tom: LocalDateTime? = null,
+    ): List<InntektsmeldingEntitet>
 }
 
 class InntektsmeldingRepositoryMock : InntektsmeldingRepository {
@@ -48,6 +54,14 @@ class InntektsmeldingRepositoryMock : InntektsmeldingRepository {
     override fun deleteAll() {}
 
     override fun findAll(): List<InntektsmeldingEntitet> = mockrepo.toList()
+
+    override fun findByFnrInPeriod(
+        fnr: String,
+        fom: LocalDateTime?,
+        tom: LocalDateTime?,
+    ): List<InntektsmeldingEntitet> {
+        TODO("Not yet implemented")
+    }
 
     override fun findByJournalpost(journalpostId: String): InntektsmeldingEntitet? {
         TODO("Not yet implemented")
@@ -195,6 +209,37 @@ class InntektsmeldingRepositoryImp(
             val res = it.prepareStatement(findall).executeQuery()
             return resultLoop(res, inntektsmeldinger)
         }
+    }
+
+    override fun findByFnrInPeriod(
+        fnr: String,
+        fom: LocalDateTime?,
+        tom: LocalDateTime?,
+    ): List<InntektsmeldingEntitet> {
+        val findByFnrInPeriod =
+            StringBuilder(
+                "SELECT * FROM INNTEKTSMELDING im " +
+                    "JOIN UTSATT_OPPGAVE u ON im.INNTEKTSMELDING_UUID = u.INNTEKTSMELDING_ID " +
+                    "WHERE u.FNR = ?",
+            )
+        if (fom != null) findByFnrInPeriod.append(" AND im.BEHANDLET >= ?")
+        if (tom != null) findByFnrInPeriod.append(" AND im.BEHANDLET <= ?")
+
+        val inntektsmeldinger = ArrayList<InntektsmeldingEntitet>()
+        ds.connection.use {
+            val ps = it.prepareStatement(findByFnrInPeriod.toString())
+            ps.setString(1, fnr)
+            var index = 2
+            if (fom != null) {
+                ps.setTimestamp(index++, Timestamp.valueOf(fom))
+            }
+            if (tom != null) {
+                ps.setTimestamp(index, Timestamp.valueOf(tom))
+            }
+            val res = ps.executeQuery()
+            resultLoop(res, inntektsmeldinger)
+        }
+        return inntektsmeldinger
     }
 
     private fun resultLoop(

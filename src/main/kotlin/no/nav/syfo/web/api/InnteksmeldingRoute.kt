@@ -3,9 +3,11 @@ package no.nav.syfo.web.api
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
+import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
+import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 import no.nav.helsearbeidsgiver.utils.log.logger
 import no.nav.syfo.mapping.mapInntektsmeldingKontrakt
@@ -13,6 +15,7 @@ import no.nav.syfo.mapping.toInntektsmelding
 import no.nav.syfo.repository.InntektsmeldingRepository
 import no.nav.syfo.util.validerInntektsmelding
 import org.slf4j.LoggerFactory
+import java.time.LocalDateTime
 
 fun Route.syfoinntektsmelding(
     imRepo: InntektsmeldingRepository,
@@ -55,5 +58,26 @@ fun Route.syfoinntektsmelding(
                 call.respond(HttpStatusCode.InternalServerError)
             }
         }
+        post("/inntektsmelding") {
+            try {
+                val request = call.receive<FinnInntektsmeldingRequest>()
+                val results = imRepo.findByFnrInPeriod(request.fnr, request.fom, request.tom)
+                if (results.isEmpty()) {
+                    call.respond(HttpStatusCode.NotFound)
+                    return@post
+                }
+                call.respond(HttpStatusCode.OK, results)
+            } catch (e: Exception) {
+                logger.error("Feil ved henting av inntektsmelding (se securelogs for mer detaljer)")
+                sikkerlogger.error("Feil ved henting av inntektsmelding - ${e.message}", e)
+                call.respond(HttpStatusCode.InternalServerError, "An error occurred")
+            }
+        }
     }
 }
+
+data class FinnInntektsmeldingRequest(
+    val fnr: String,
+    val fom: LocalDateTime? = null,
+    val tom: LocalDateTime? = null,
+)
