@@ -15,7 +15,6 @@ import no.nav.syfo.mapping.toInntektsmelding
 import no.nav.syfo.repository.InntektsmeldingRepository
 import no.nav.syfo.util.validerInntektsmelding
 import org.slf4j.LoggerFactory
-import java.time.LocalDateTime
 
 fun Route.syfoinntektsmelding(
     imRepo: InntektsmeldingRepository,
@@ -58,7 +57,7 @@ fun Route.syfoinntektsmelding(
                 call.respond(HttpStatusCode.InternalServerError)
             }
         }
-        post("/inntektsmelding") {
+        post("/soek") {
             try {
                 val request = call.receive<FinnInntektsmeldingRequest>()
                 val results = imRepo.findByFnrInPeriod(request.fnr, request.fom, request.tom)
@@ -75,9 +74,3 @@ fun Route.syfoinntektsmelding(
         }
     }
 }
-
-data class FinnInntektsmeldingRequest(
-    val fnr: String,
-    val fom: LocalDateTime? = null,
-    val tom: LocalDateTime? = null,
-)
