@@ -62,14 +62,17 @@ fun Route.syfoinntektsmelding(
                 val request = call.receive<FinnInntektsmeldingRequest>()
                 val results = imRepo.findByFnrInPeriod(request.fnr, request.fom, request.tom)
                 if (results.isEmpty()) {
-                    call.respond(HttpStatusCode.NotFound, "Ingen inntektsmeldinger funnet")
+                    call.respond(
+                        HttpStatusCode.NotFound,
+                        mapOf("code" to HttpStatusCode.NotFound.value, "message" to "Ingen inntektsmeldinger funnet"),
+                    )
                     return@post
                 }
                 call.respond(HttpStatusCode.OK, results)
             } catch (e: Exception) {
                 logger.error("Feil ved henting av inntektsmelding (se securelogs for mer detaljer)")
                 sikkerlogger.error("Feil ved henting av inntektsmelding - ${e.message}", e)
-                call.respond(HttpStatusCode.InternalServerError, "An error occurred")
+                call.respond(HttpStatusCode.InternalServerError, "Feil ved henting av inntektsmelding")
             }
         }
     }
