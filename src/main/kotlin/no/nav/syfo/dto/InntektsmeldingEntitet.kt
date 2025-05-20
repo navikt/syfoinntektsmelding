@@ -10,7 +10,6 @@ data class InntektsmeldingEntitet(
     var orgnummer: String? = null,
     var arbeidsgiverPrivat: String? = null,
     var behandlet: LocalDateTime? = LocalDateTime.now(),
-    var fnr: String? = null,
     var data: String? = null,
 ) {
     var arbeidsgiverperioder: MutableList<ArbeidsgiverperiodeEntitet> = ArrayList()

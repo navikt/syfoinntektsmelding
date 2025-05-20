@@ -256,7 +256,6 @@ class InntektsmeldingRepositoryImp(
                     behandlet = res.getTimestamp("BEHANDLET").toLocalDateTime(),
                     arbeidsgiverPrivat = res.getString("ARBEIDSGIVER_PRIVAT"),
                     data = res.getString("data"),
-                    fnr = res.getString("fnr"),
                 ),
             )
         }
