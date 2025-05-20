@@ -35,7 +35,10 @@ spec:
     path: /health/is-ready
     periodSeconds: 10
     timeout: 1
-
+  observability:
+    logging:
+      destinations:
+        - id: secure_logs
   secureLogs:
     enabled: true
   kafka:
