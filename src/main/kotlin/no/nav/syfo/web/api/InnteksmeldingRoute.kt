@@ -62,7 +62,7 @@ fun Route.syfoinntektsmelding(
                 val request = call.receive<FinnInntektsmeldingRequest>()
                 val results = imRepo.findByFnrInPeriod(request.fnr, request.fom, request.tom)
                 if (results.isEmpty()) {
-                    call.respond(HttpStatusCode.NotFound)
+                    call.respond(HttpStatusCode.NotFound,"Ingen inntektsmeldinger funnet")
                     return@post
                 }
                 call.respond(HttpStatusCode.OK, results)
