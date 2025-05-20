@@ -1,15 +1,15 @@
-@file:UseSerializers(LocalDateTimeSerializer::class)
+@file:UseSerializers(LocalDateSerializer::class)
 
 package no.nav.syfo.web.api
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
-import no.nav.helsearbeidsgiver.utils.json.serializer.LocalDateTimeSerializer
-import java.time.LocalDateTime
+import no.nav.helsearbeidsgiver.utils.json.serializer.LocalDateSerializer
+import java.time.LocalDate
 
 @Serializable
 data class FinnInntektsmeldingRequest(
     val fnr: String,
-    val fom: LocalDateTime? = null,
-    val tom: LocalDateTime? = null,
+    val fom: LocalDate? = null,
+    val tom: LocalDate? = null,
 )

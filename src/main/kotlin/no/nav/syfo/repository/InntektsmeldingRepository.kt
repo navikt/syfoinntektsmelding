@@ -5,6 +5,7 @@ import no.nav.syfo.dto.InntektsmeldingEntitet
 import java.sql.Connection
 import java.sql.ResultSet
 import java.sql.Timestamp
+import java.time.LocalDate
 import java.time.LocalDateTime
 import javax.sql.DataSource
 
@@ -27,8 +28,8 @@ interface InntektsmeldingRepository {
 
     fun findByFnrInPeriod(
         fnr: String,
-        fom: LocalDateTime? = null,
-        tom: LocalDateTime? = null,
+        fom: LocalDate? = null,
+        tom: LocalDate? = null,
     ): List<InntektsmeldingEntitet>
 }
 
@@ -57,8 +58,8 @@ class InntektsmeldingRepositoryMock : InntektsmeldingRepository {
 
     override fun findByFnrInPeriod(
         fnr: String,
-        fom: LocalDateTime?,
-        tom: LocalDateTime?,
+        fom: LocalDate?,
+        tom: LocalDate?,
     ): List<InntektsmeldingEntitet> {
         TODO("Not yet implemented")
     }
@@ -213,33 +214,38 @@ class InntektsmeldingRepositoryImp(
 
     override fun findByFnrInPeriod(
         fnr: String,
-        fom: LocalDateTime?,
-        tom: LocalDateTime?,
+        fom: LocalDate?,
+        tom: LocalDate?,
     ): List<InntektsmeldingEntitet> {
-        val findByFnrInPeriod =
-            StringBuilder(
-                "SELECT * FROM INNTEKTSMELDING im " +
-                    "JOIN UTSATT_OPPGAVE u ON im.INNTEKTSMELDING_UUID = u.INNTEKTSMELDING_ID " +
-                    "WHERE u.FNR = ?",
-            )
-        if (fom != null) findByFnrInPeriod.append(" AND im.BEHANDLET >= ?")
-        if (tom != null) findByFnrInPeriod.append(" AND im.BEHANDLET <= ?")
+        val query =
+            buildString {
+                append(
+                    """
+                    SELECT * FROM INNTEKTSMELDING im
+                    JOIN UTSATT_OPPGAVE u ON im.INNTEKTSMELDING_UUID = u.INNTEKTSMELDING_ID
+                    WHERE u.FNR = ?
+                    """.trimIndent(),
+                )
+                if (fom != null) append(" AND im.BEHANDLET >= ?")
+                if (tom != null) append(" AND im.BEHANDLET <= ?")
+            }
 
-        val inntektsmeldinger = ArrayList<InntektsmeldingEntitet>()
-        ds.connection.use {
-            val ps = it.prepareStatement(findByFnrInPeriod.toString())
-            ps.setString(1, fnr)
-            var index = 2
-            if (fom != null) {
-                ps.setTimestamp(index++, Timestamp.valueOf(fom))
+        val results = ArrayList<InntektsmeldingEntitet>()
+
+        ds.connection.use { conn ->
+            conn.prepareStatement(query).use { ps ->
+                var index = 1
+                ps.setString(index++, fnr)
+                if (fom != null) ps.setDate(index++, java.sql.Date.valueOf(fom))
+                if (tom != null) ps.setDate(index, java.sql.Date.valueOf(tom))
+
+                ps.executeQuery().use { rs ->
+                    resultLoop(rs, results)
+                }
             }
-            if (tom != null) {
-                ps.setTimestamp(index, Timestamp.valueOf(tom))
-            }
-            val res = ps.executeQuery()
-            resultLoop(res, inntektsmeldinger)
         }
-        return inntektsmeldinger
+
+        return results
     }
 
     private fun resultLoop(
