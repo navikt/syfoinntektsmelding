@@ -68,16 +68,17 @@ fun Route.syfoinntektsmelding(
                     )
                     return@post
                 }
-                val mappedResults = results.map { dto ->
-                    val inntektsmelding = toInntektsmelding(dto, om)
-                    mapInntektsmeldingKontrakt(
-                        inntektsmelding,
-                        dto.aktorId,
-                        validerInntektsmelding(inntektsmelding),
-                        inntektsmelding.arkivRefereranse,
-                        dto.uuid,
-                    )
-                }
+                val mappedResults =
+                    results.map { dto ->
+                        val inntektsmelding = toInntektsmelding(dto, om)
+                        mapInntektsmeldingKontrakt(
+                            inntektsmelding,
+                            dto.aktorId,
+                            validerInntektsmelding(inntektsmelding),
+                            inntektsmelding.arkivRefereranse,
+                            dto.uuid,
+                        )
+                    }
                 call.respond(HttpStatusCode.OK, mappedResults)
             } catch (e: Exception) {
                 logger.error("Feil ved henting av inntektsmelding (se securelogs for mer detaljer)")
