@@ -130,7 +130,6 @@ private fun Inntekt.tilRapportertInntekt(): RapportertInntekt {
 private fun RefusjonV1?.tilRefusjon(): Refusjon =
     Refusjon(
         beloepPrMnd = this?.beloepPerMaaned.orDefault(0.0).toBigDecimal(),
-        opphoersdato = this?.sluttdato,
     )
 
 private fun RefusjonEndring.tilEndringIRefusjon(): EndringIRefusjon =
