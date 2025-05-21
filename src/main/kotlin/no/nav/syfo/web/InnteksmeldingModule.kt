@@ -10,6 +10,7 @@ import io.ktor.server.auth.Authentication
 import io.ktor.server.auth.authenticate
 import io.ktor.server.config.ApplicationConfig
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.plugins.swagger.swaggerUI
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import no.nav.security.token.support.v2.tokenValidationSupport
@@ -40,6 +41,7 @@ fun Application.inntektsmeldingModule(config: ApplicationConfig = environment.co
         }
     }
     routing {
+        swaggerUI(path = "swagger", swaggerFile = "openapi/documentation.yaml")
         route("/api/v1") {
             authenticate {
                 route("/inntektsmelding") {
