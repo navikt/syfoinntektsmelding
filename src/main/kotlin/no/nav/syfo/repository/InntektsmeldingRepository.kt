@@ -61,7 +61,9 @@ class InntektsmeldingRepositoryMock : InntektsmeldingRepository {
         fom: LocalDate?,
         tom: LocalDate?,
     ): List<InntektsmeldingEntitet> {
-        TODO("Not yet implemented")
+        return mockrepo.filter { it.fnr == fnr }
+            .filter { fom == null || it.behandlet?.isAfter(fom) ?: false }
+            .filter { tom == null || it.behandlet?.isBefore(tom) ?: false }
     }
 
     override fun findByJournalpost(journalpostId: String): InntektsmeldingEntitet? {
