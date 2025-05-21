@@ -5,6 +5,7 @@ import no.nav.syfo.dto.InntektsmeldingEntitet
 import java.sql.Connection
 import java.sql.ResultSet
 import java.sql.Timestamp
+import java.time.LocalDate
 import java.time.LocalDateTime
 import javax.sql.DataSource
 
@@ -24,6 +25,12 @@ interface InntektsmeldingRepository {
     fun deleteAll()
 
     fun findAll(): List<InntektsmeldingEntitet>
+
+    fun findByFnrInPeriod(
+        fnr: String,
+        fom: LocalDate? = null,
+        tom: LocalDate? = null,
+    ): List<InntektsmeldingEntitet>
 }
 
 class InntektsmeldingRepositoryMock : InntektsmeldingRepository {
@@ -48,6 +55,12 @@ class InntektsmeldingRepositoryMock : InntektsmeldingRepository {
     override fun deleteAll() {}
 
     override fun findAll(): List<InntektsmeldingEntitet> = mockrepo.toList()
+
+    override fun findByFnrInPeriod(
+        fnr: String,
+        fom: LocalDate?,
+        tom: LocalDate?,
+    ): List<InntektsmeldingEntitet> = TODO("Not yet implemented")
 
     override fun findByJournalpost(journalpostId: String): InntektsmeldingEntitet? {
         TODO("Not yet implemented")
@@ -195,6 +208,42 @@ class InntektsmeldingRepositoryImp(
             val res = it.prepareStatement(findall).executeQuery()
             return resultLoop(res, inntektsmeldinger)
         }
+    }
+
+    override fun findByFnrInPeriod(
+        fnr: String,
+        fom: LocalDate?,
+        tom: LocalDate?,
+    ): List<InntektsmeldingEntitet> {
+        val query =
+            buildString {
+                append(
+                    """
+                    SELECT * FROM INNTEKTSMELDING im
+                    JOIN UTSATT_OPPGAVE u ON im.INNTEKTSMELDING_UUID = u.INNTEKTSMELDING_ID
+                    WHERE u.FNR = ?
+                    """.trimIndent(),
+                )
+                if (fom != null) append(" AND im.BEHANDLET >= ?")
+                if (tom != null) append(" AND im.BEHANDLET <= ?")
+            }
+
+        val results = ArrayList<InntektsmeldingEntitet>()
+
+        ds.connection.use { conn ->
+            conn.prepareStatement(query).use { ps ->
+                var index = 1
+                ps.setString(index++, fnr)
+                if (fom != null) ps.setDate(index++, java.sql.Date.valueOf(fom))
+                if (tom != null) ps.setDate(index, java.sql.Date.valueOf(tom))
+
+                ps.executeQuery().use { rs ->
+                    resultLoop(rs, results)
+                }
+            }
+        }
+
+        return results
     }
 
     private fun resultLoop(
