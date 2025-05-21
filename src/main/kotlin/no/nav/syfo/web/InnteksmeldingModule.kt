@@ -28,9 +28,8 @@ fun Application.inntektsmeldingModule(config: ApplicationConfig = environment.co
             config = config,
             additionalValidation = {
                 val claims = it.getClaims("hagproxy")
-                val roles = claims.getAsList("roles")
                 val clientId = claims.getStringClaim("azp")
-                clientId in allowList && roles.size == 1 && roles.contains("access_as_application")
+                clientId in allowList
             },
         )
     }

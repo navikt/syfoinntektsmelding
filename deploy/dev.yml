@@ -46,6 +46,12 @@ spec:
   azure:
     application:
       enabled: true
+      allowAllUsers: false
+      claims:
+        extra:
+          - 'NAVident'
+        groups:
+          - id: '4373da97-ad06-40c0-893e-98ba4d0aeecb'
 
   gcp:
     sqlInstances:
