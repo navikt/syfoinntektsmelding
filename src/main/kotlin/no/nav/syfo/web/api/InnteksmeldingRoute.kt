@@ -47,7 +47,7 @@ fun Route.syfoinntektsmelding(
             } else {
                 call.respond(
                     HttpStatusCode.NotFound,
-                    mapOf("code" to HttpStatusCode.NotFound.value, "message" to "Ingen inntektsmelding funnet"),
+                    mapOf("code" to HttpStatusCode.NotFound.value, "message" to "Inntektsmelding ikke funnet"),
                 )
                 return@get
             }
