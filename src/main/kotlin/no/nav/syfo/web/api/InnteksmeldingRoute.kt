@@ -55,7 +55,7 @@ fun Route.syfoinntektsmelding(
                 }
             } catch (e: Exception) {
                 logger().error("Feil ved henting av inntektsmelding id $inntektsmeldingId (se securelogs for mer detaljer)")
-                sikkerLogger().error("Fikk veil for inntektsmelding id $inntektsmeldingId - ${e.message}", e)
+                sikkerLogger().error("Fikk feil for inntektsmelding id $inntektsmeldingId - ${e.message}", e)
                 call.respond(
                     HttpStatusCode.InternalServerError,
                     mapOf("code" to HttpStatusCode.InternalServerError.value, "message" to "Feil ved henting av inntektsmelding"),
