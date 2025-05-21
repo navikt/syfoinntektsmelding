@@ -136,6 +136,7 @@ dependencies {
     val slf4Version: String by project
     val tokenSupportVersion: String by project
     val nettyVersion: String by project
+    val swaggerVersion: String by project
 
     runtimeOnly("ch.qos.logback:logback-classic:$logbackClassicVersion")
     runtimeOnly("io.micrometer:micrometer-registry-prometheus:$micrometerVersion")
@@ -164,6 +165,7 @@ dependencies {
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
     implementation("io.ktor:ktor-client-apache5:$ktorVersion")
     implementation("io.ktor:ktor-server:$ktorVersion")
+    implementation("io.ktor:ktor-server-swagger:$ktorVersion")
     implementation("io.micrometer:micrometer-core:$micrometerVersion")
     implementation("io.mockk:mockk:$mockkVersion")
     implementation("io.prometheus:simpleclient_common:$prometheusVersion")
@@ -196,6 +198,7 @@ dependencies {
     implementation("org.postgresql:postgresql:$postgresVersion")
     implementation("org.slf4j:slf4j-api:$slf4Version")
     implementation("io.netty:netty-common:$nettyVersion")
+    implementation("io.swagger.core.v3:swagger-annotations:$swaggerVersion")
 
     testImplementation(testFixtures("no.nav.helsearbeidsgiver:utils:$hagUtilsVersion"))
     testImplementation("io.insert-koin:koin-test:$koinVersion")
