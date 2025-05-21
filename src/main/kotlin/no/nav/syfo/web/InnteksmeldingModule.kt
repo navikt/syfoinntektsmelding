@@ -43,8 +43,10 @@ fun Application.inntektsmeldingModule(config: ApplicationConfig = environment.co
     routing {
         route("/api/v1") {
             authenticate {
-                syfoinntektsmelding(get(), customObjectMapper())
-                finnInntektsmeldinger(get(), customObjectMapper())
+                route("/inntektsmelding") {
+                    syfoinntektsmelding(get(), customObjectMapper())
+                    finnInntektsmeldinger(get(), customObjectMapper())
+                }
             }
         }
     }
