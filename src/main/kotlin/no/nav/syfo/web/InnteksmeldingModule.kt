@@ -15,6 +15,7 @@ import io.ktor.server.routing.routing
 import no.nav.security.token.support.v2.tokenValidationSupport
 import no.nav.syfo.util.customObjectMapper
 import no.nav.syfo.util.getString
+import no.nav.syfo.web.api.finnInntektsmeldinger
 import no.nav.syfo.web.api.syfoinntektsmelding
 import org.koin.ktor.ext.get
 
@@ -43,6 +44,7 @@ fun Application.inntektsmeldingModule(config: ApplicationConfig = environment.co
         route("/api/v1") {
             authenticate {
                 syfoinntektsmelding(get(), customObjectMapper())
+                finnInntektsmeldinger(get(), customObjectMapper())
             }
         }
     }

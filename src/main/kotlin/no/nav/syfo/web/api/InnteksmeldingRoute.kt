@@ -10,26 +10,24 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 import no.nav.helsearbeidsgiver.utils.log.logger
+import no.nav.helsearbeidsgiver.utils.log.sikkerLogger
+import no.nav.helsearbeidsgiver.utils.wrapper.Fnr
 import no.nav.syfo.mapping.mapInntektsmeldingKontrakt
 import no.nav.syfo.mapping.toInntektsmelding
 import no.nav.syfo.repository.InntektsmeldingRepository
 import no.nav.syfo.util.validerInntektsmelding
-import org.slf4j.LoggerFactory
 
 fun Route.syfoinntektsmelding(
     imRepo: InntektsmeldingRepository,
     om: ObjectMapper,
 ) {
-    val logger = this.logger()
-    val sikkerlogger = LoggerFactory.getLogger("tjenestekall")
-
     route("/inntektsmelding") {
         get("/{inntektsmeldingId}") {
             val inntektsmeldingId =
                 call.parameters["inntektsmeldingId"] ?: throw IllegalArgumentException(
                     "Forventet inntektsmeldingId som path parameter",
                 )
-            logger.info("Fikk request om å hente inntektsmelding med id: $inntektsmeldingId")
+            logger().info("Fikk request om å hente inntektsmelding med id: $inntektsmeldingId")
 
             try {
                 val dto = imRepo.findByUuid(inntektsmeldingId)
@@ -45,46 +43,71 @@ fun Route.syfoinntektsmelding(
                             dto.uuid,
                         )
 
-                    logger.info("Henter inntektsmelding med arkivreferanse: ${inntektsmelding.arkivRefereranse}")
+                    logger().info("Henter inntektsmelding med arkivreferanse: ${inntektsmelding.arkivRefereranse}")
 
                     call.respond(HttpStatusCode.OK, mappedInntektsmelding)
                 } else {
-                    call.respond(HttpStatusCode.NotFound)
-                }
-            } catch (e: Exception) {
-                logger.error("Feil ved henting av inntektsmelding id $inntektsmeldingId (se securelogs for mer detaljer)")
-                sikkerlogger.error("Fikk veil for inntektsmelding id $inntektsmeldingId - ${e.message}", e)
-                call.respond(HttpStatusCode.InternalServerError)
-            }
-        }
-        post("/soek") {
-            try {
-                val request = call.receive<FinnInntektsmeldingRequest>()
-                val results = imRepo.findByFnrInPeriod(request.fnr, request.fom, request.tom)
-                if (results.isEmpty()) {
                     call.respond(
                         HttpStatusCode.NotFound,
-                        mapOf("code" to HttpStatusCode.NotFound.value, "message" to "Ingen inntektsmeldinger funnet"),
+                        mapOf("code" to HttpStatusCode.NotFound.value, "message" to "Ingen inntektsmelding funnet"),
                     )
-                    return@post
+                    return@get
                 }
-                val mappedResults =
-                    results.map { dto ->
-                        val inntektsmelding = toInntektsmelding(dto, om)
-                        mapInntektsmeldingKontrakt(
-                            inntektsmelding,
-                            dto.aktorId,
-                            validerInntektsmelding(inntektsmelding),
-                            inntektsmelding.arkivRefereranse,
-                            dto.uuid,
-                        )
-                    }
-                call.respond(HttpStatusCode.OK, mappedResults)
             } catch (e: Exception) {
-                logger.error("Feil ved henting av inntektsmelding (se securelogs for mer detaljer)")
-                sikkerlogger.error("Feil ved henting av inntektsmelding - ${e.message}", e)
-                call.respond(HttpStatusCode.InternalServerError, "Feil ved henting av inntektsmelding")
+                logger().error("Feil ved henting av inntektsmelding id $inntektsmeldingId (se securelogs for mer detaljer)")
+                sikkerLogger().error("Fikk veil for inntektsmelding id $inntektsmeldingId - ${e.message}", e)
+                call.respond(
+                    HttpStatusCode.InternalServerError,
+                    mapOf("code" to HttpStatusCode.InternalServerError.value, "message" to "Feil ved henting av inntektsmelding"),
+                )
             }
+        }
+    }
+}
+
+fun Route.finnInntektsmeldinger(
+    imRepo: InntektsmeldingRepository,
+    om: ObjectMapper,
+) {
+    post("/soek") {
+        try {
+            val request = call.receive<FinnInntektsmeldingerRequest>()
+            try {
+                Fnr(request.fnr)
+            } catch (e: IllegalArgumentException) {
+                call.respond(
+                    HttpStatusCode.BadRequest,
+                    mapOf("code" to HttpStatusCode.BadRequest.value, "message" to "Ugyldig fnr"),
+                )
+                return@post
+            }
+            val results = imRepo.findByFnrInPeriod(request.fnr, request.fom, request.tom)
+            if (results.isEmpty()) {
+                call.respond(
+                    HttpStatusCode.NotFound,
+                    mapOf("code" to HttpStatusCode.NotFound.value, "message" to "Ingen inntektsmeldinger funnet"),
+                )
+                return@post
+            }
+            val mappedResults =
+                results.map { dto ->
+                    val inntektsmelding = toInntektsmelding(dto, om)
+                    mapInntektsmeldingKontrakt(
+                        inntektsmelding,
+                        dto.aktorId,
+                        validerInntektsmelding(inntektsmelding),
+                        inntektsmelding.arkivRefereranse,
+                        dto.uuid,
+                    )
+                }
+            call.respond(HttpStatusCode.OK, mappedResults)
+        } catch (e: Exception) {
+            logger().error("Feil ved henting av inntektsmelding (se securelogs for mer detaljer)")
+            sikkerLogger().error("Feil ved henting av inntektsmelding - ${e.message}", e)
+            call.respond(
+                HttpStatusCode.InternalServerError,
+                mapOf("code" to HttpStatusCode.InternalServerError.value, "message" to "Feil ved henting av inntektsmeldinger"),
+            )
         }
     }
 }

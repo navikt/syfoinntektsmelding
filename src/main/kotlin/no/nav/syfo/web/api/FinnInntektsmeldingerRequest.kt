@@ -8,7 +8,7 @@ import no.nav.helsearbeidsgiver.utils.json.serializer.LocalDateSerializer
 import java.time.LocalDate
 
 @Serializable
-data class FinnInntektsmeldingRequest(
+data class FinnInntektsmeldingerRequest(
     val fnr: String,
     val fom: LocalDate? = null,
     val tom: LocalDate? = null,
