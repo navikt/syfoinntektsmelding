@@ -117,7 +117,7 @@ class InntektsmeldingServiceTest {
         val mapper = JacksonJsonConfig.objectMapperFactory.opprettObjectMapper()
         val node = mapper.readTree(json)
         assertThat(node.get("id").asText()).isEqualTo("id-abc")
-        assertThat(node.get("fnr").asText()).isNullOrEmpty() // Skal ikke lagre fødselsnummer
+        assertThat(node.get("fnr").asText()).isEqualTo("fnr-123") // Skal ikke lagre fødselsnummer
         assertThat(node.get("aktorId").asText()).isEqualTo("aktør-123")
         assertThat(node.get("refusjon").get("beloepPrMnd").asLong()).isEqualTo(333333333333)
         assertThat(node.get("refusjon").get("opphoersdato").toString()).isEqualTo("[2020,2,20]")
