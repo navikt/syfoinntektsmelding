@@ -7,6 +7,7 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.mockk.every
 import io.mockk.mockk
 import no.nav.helsearbeidsgiver.utils.log.logger
+import no.nav.helsearbeidsgiver.utils.wrapper.Fnr
 import no.nav.inntektsmelding.kontrakt.serde.JacksonJsonConfig
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.dto.InntektsmeldingEntitet
@@ -177,6 +178,7 @@ class InntektsmeldingServiceTest {
             behandlet = LocalDateTime.now(),
             orgnummer = "arb-org-123",
             journalpostId = "jp-123",
+            fnr = Fnr("28014026691"),
             data = objectMapper.writeValueAsString(im),
         )
 

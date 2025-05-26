@@ -1,5 +1,6 @@
 package no.nav.syfo.repository
 
+import no.nav.helsearbeidsgiver.utils.wrapper.Fnr
 import no.nav.syfo.dto.ArbeidsgiverperiodeEntitet
 import no.nav.syfo.dto.InntektsmeldingEntitet
 import java.sql.Connection
@@ -152,8 +153,8 @@ class InntektsmeldingRepositoryImp(
 
     override fun lagreInnteksmelding(innteksmelding: InntektsmeldingEntitet): InntektsmeldingEntitet {
         val insertStatement =
-            """INSERT INTO INNTEKTSMELDING (INNTEKTSMELDING_UUID, AKTOR_ID, ORGNUMMER, JOURNALPOST_ID, BEHANDLET, ARBEIDSGIVER_PRIVAT, DATA)
-        VALUES (?, ?, ?, ?, ?, ?, ?::jsonb)
+            """INSERT INTO INNTEKTSMELDING (INNTEKTSMELDING_UUID, AKTOR_ID, ORGNUMMER, JOURNALPOST_ID, BEHANDLET, ARBEIDSGIVER_PRIVAT,FNR, DATA)
+        VALUES (?, ?, ?, ?, ?, ?,?, ?::jsonb)
         RETURNING *;
             """.trimMargin()
         val inntektsmeldinger = ArrayList<InntektsmeldingEntitet>()
@@ -166,7 +167,8 @@ class InntektsmeldingRepositoryImp(
             ps.setString(4, innteksmelding.journalpostId)
             ps.setTimestamp(5, Timestamp.valueOf(innteksmelding.behandlet))
             ps.setString(6, innteksmelding.arbeidsgiverPrivat)
-            ps.setString(7, innteksmelding.data)
+            ps.setString(7, innteksmelding.fnr.toString())
+            ps.setString(8, innteksmelding.data)
 
             val res = ps.executeQuery()
             result = resultLoop(res, inntektsmeldinger).first()
@@ -259,6 +261,7 @@ class InntektsmeldingRepositoryImp(
                     journalpostId = res.getString("JOURNALPOST_ID"),
                     behandlet = res.getTimestamp("BEHANDLET").toLocalDateTime(),
                     arbeidsgiverPrivat = res.getString("ARBEIDSGIVER_PRIVAT"),
+                    fnr = res.getString("FNR")?.takeIf { it.isNotBlank() }?.let { Fnr(it) },
                     data = res.getString("data"),
                 ),
             )
