@@ -38,7 +38,7 @@ class InntektsmeldingService(
 }
 
 fun Inntektsmelding.asJsonString(objectMapper: ObjectMapper): String {
-    val im = this.copy(fnr = "") // La stå! Ikke lagre fødselsnummer
+    val im = this.copy() // La stå! Ikke lagre fødselsnummer
     return objectMapper.writeValueAsString(im)
 }
 
