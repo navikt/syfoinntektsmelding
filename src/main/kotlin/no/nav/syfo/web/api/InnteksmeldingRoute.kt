@@ -14,6 +14,7 @@ import no.nav.helsearbeidsgiver.utils.wrapper.Fnr
 import no.nav.syfo.mapping.mapInntektsmeldingKontrakt
 import no.nav.syfo.mapping.toInntektsmelding
 import no.nav.syfo.repository.InntektsmeldingRepository
+import no.nav.syfo.service.InntektsmeldingService
 import no.nav.syfo.util.validerInntektsmelding
 
 fun Route.syfoinntektsmelding(
@@ -63,41 +64,33 @@ fun Route.syfoinntektsmelding(
 }
 
 fun Route.finnInntektsmeldinger(
-    imRepo: InntektsmeldingRepository,
-    om: ObjectMapper,
+    inntektsmeldingService: InntektsmeldingService,
 ) {
     post("/soek") {
         try {
+            logger().info("Mottatt request for å finne inntektsmeldinger")
             val request = call.receive<FinnInntektsmeldingerRequest>()
+            val inntektsmeldinger = inntektsmeldingService.finnInntektsmeldinger(request)
+
             try {
                 Fnr(request.fnr)
             } catch (e: IllegalArgumentException) {
                 call.respond(
                     HttpStatusCode.BadRequest,
-                    mapOf("code" to HttpStatusCode.BadRequest.value, "message" to "Ugyldig fødselsnummer"),
+                    mapOf("code" to HttpStatusCode.BadRequest.value, "message" to e.message),
                 )
                 return@post
             }
-            val results = imRepo.findByFnrInPeriod(request.fnr, request.fom, request.tom)
-            if (results.isEmpty()) {
+
+            if (inntektsmeldinger.isEmpty()) {
                 call.respond(
                     HttpStatusCode.NotFound,
                     mapOf("code" to HttpStatusCode.NotFound.value, "message" to "Ingen inntektsmeldinger funnet"),
                 )
                 return@post
             }
-            val mappedResults =
-                results.map { dto ->
-                    val inntektsmelding = toInntektsmelding(dto, om)
-                    mapInntektsmeldingKontrakt(
-                        inntektsmelding,
-                        dto.aktorId,
-                        validerInntektsmelding(inntektsmelding),
-                        inntektsmelding.arkivRefereranse,
-                        dto.uuid,
-                    )
-                }
-            call.respond(HttpStatusCode.OK, mappedResults)
+
+            call.respond(HttpStatusCode.OK, inntektsmeldinger)
         } catch (e: Exception) {
             logger().error("Feil ved henting av inntektsmelding (se securelogs for mer detaljer)")
             sikkerLogger().error("Feil ved henting av inntektsmelding - ${e.message}", e)

@@ -14,12 +14,15 @@ import no.nav.syfo.dto.InntektsmeldingEntitet
 import no.nav.syfo.mapping.toInntektsmelding
 import no.nav.syfo.repository.InntektsmeldingRepository
 import no.nav.syfo.repository.buildIM
+import no.nav.syfo.web.api.FinnInntektsmeldingerRequest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -186,4 +189,15 @@ class InntektsmeldingServiceTest {
         dager: Long,
         inntekt: Int,
     ): Inntektsmelding = buildIM().copy(mottattDato = LocalDateTime.now().minusDays(dager), beregnetInntekt = BigDecimal(inntekt))
+
+    @Test
+    fun `skal kalle findByFnrInPeriod og returnerer tom liste`() {
+        val repository = mockk<InntektsmeldingRepository>(relaxed = true)
+        val service = InntektsmeldingService(repository, objectMapper)
+        val fnr = "28014026691"
+        val fom = LocalDate.now().minusDays(10)
+        val tom = LocalDate.now()
+        every { repository.findByFnrInPeriod(fnr, fom, tom) } returns emptyList()
+        Assertions.assertTrue(service.finnInntektsmeldinger(FinnInntektsmeldingerRequest(fnr, fom, tom)).isEmpty())
+    }
 }

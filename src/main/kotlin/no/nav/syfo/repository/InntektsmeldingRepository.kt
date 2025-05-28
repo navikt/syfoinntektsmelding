@@ -221,13 +221,12 @@ class InntektsmeldingRepositoryImp(
             buildString {
                 append(
                     """
-                    SELECT * FROM INNTEKTSMELDING im
-                    JOIN UTSATT_OPPGAVE u ON im.INNTEKTSMELDING_UUID = u.INNTEKTSMELDING_ID
-                    WHERE u.FNR = ?
+                    SELECT * FROM INNTEKTSMELDING
+                    WHERE FNR = ?
                     """.trimIndent(),
                 )
-                if (fom != null) append(" AND im.BEHANDLET >= ?")
-                if (tom != null) append(" AND im.BEHANDLET <= ?")
+                if (fom != null) append(" AND BEHANDLET >= ?")
+                if (tom != null) append(" AND BEHANDLET <= ?")
             }
 
         val results = ArrayList<InntektsmeldingEntitet>()
