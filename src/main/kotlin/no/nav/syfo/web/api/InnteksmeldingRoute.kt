@@ -8,6 +8,7 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
+import no.nav.helsearbeidsgiver.domene.inntektsmelding.v1.Inntektsmelding
 import no.nav.helsearbeidsgiver.utils.log.logger
 import no.nav.helsearbeidsgiver.utils.log.sikkerLogger
 import no.nav.helsearbeidsgiver.utils.wrapper.Fnr
@@ -70,14 +71,14 @@ fun Route.finnInntektsmeldinger(
         try {
             logger().info("Mottatt request for å finne inntektsmeldinger")
             val request = call.receive<FinnInntektsmeldingerRequest>()
-            val inntektsmeldinger = inntektsmeldingService.finnInntektsmeldinger(request)
+            val inntektsmeldinger: List<no.nav.inntektsmeldingkontrakt.Inntektsmelding> = inntektsmeldingService.finnInntektsmeldinger(request)
 
             try {
                 Fnr(request.fnr)
             } catch (e: IllegalArgumentException) {
                 call.respond(
                     HttpStatusCode.BadRequest,
-                    mapOf("code" to HttpStatusCode.BadRequest.value, "message" to e.message),
+                    mapOf("code" to HttpStatusCode.BadRequest.value, "message" to "Ugyldig fødselsnummer"),
                 )
                 return@post
             }

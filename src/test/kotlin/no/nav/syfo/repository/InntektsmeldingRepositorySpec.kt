@@ -247,19 +247,20 @@ open class InntektsmeldingRepositorySpec : SystemTestBase() {
     @Test
     fun `skal hente inntektsmeldinger for gitt fnr i periode`() {
         val im1 = lagInntektsmelding(LocalDate.of(2020, 1, 1).atStartOfDay())
-        im1.fnr = Fnr("07025032327")
+        val fnr = "07025032327"
+        im1.fnr = Fnr(fnr)
         repository.lagreInnteksmelding(im1)
 
         val im2 = lagInntektsmelding(LocalDate.of(2020, 2, 1).atStartOfDay())
-        im2.fnr = Fnr("07025032327")
+        im2.fnr = Fnr(fnr)
         repository.lagreInnteksmelding(im2)
 
         val im3 = lagInntektsmelding(LocalDate.of(2020, 3, 1).atStartOfDay())
-        im3.fnr = Fnr("07025032327")
+        im3.fnr = Fnr(fnr)
         repository.lagreInnteksmelding(im3)
 
         val inntektsmeldinger =
-            repository.findByFnrInPeriod("07025032327", LocalDate.of(2020, 1, 15), LocalDate.of(2020, 5, 15))
+            repository.findByFnrInPeriod(fnr = fnr, fom = LocalDate.of(2020, 1, 15), tom = LocalDate.of(2020, 5, 15))
 
         assertThat(inntektsmeldinger.size).isEqualTo(2)
     }

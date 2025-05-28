@@ -12,7 +12,7 @@ services:
       - "postgres"
       - "-c"
       - "wal_level=logical"
-  spin_kafka:
+  spinn_kafka:
     image: apache/kafka:latest
     platform: linux/amd64
     ports:
