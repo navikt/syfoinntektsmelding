@@ -244,6 +244,26 @@ open class InntektsmeldingRepositorySpec : SystemTestBase() {
         assertThat(repository.findAll().size).isEqualTo(5)
     }
 
+    @Test
+    fun `skal hente inntektsmeldinger for gitt fnr i periode`() {
+        val im1 = lagInntektsmelding(LocalDate.of(2020, 1, 1).atStartOfDay())
+        im1.fnr = Fnr("07025032327")
+        repository.lagreInnteksmelding(im1)
+
+        val im2 = lagInntektsmelding(LocalDate.of(2020, 2, 1).atStartOfDay())
+        im2.fnr = Fnr("07025032327")
+        repository.lagreInnteksmelding(im2)
+
+        val im3 = lagInntektsmelding(LocalDate.of(2020, 3, 1).atStartOfDay())
+        im3.fnr = Fnr("07025032327")
+        repository.lagreInnteksmelding(im3)
+
+        val inntektsmeldinger =
+            repository.findByFnrInPeriod("07025032327", LocalDate.of(2020, 1, 15), LocalDate.of(2020, 5, 15))
+
+        assertThat(inntektsmeldinger.size).isEqualTo(2)
+    }
+
     private fun lagInntektsmelding(behandlet: LocalDateTime): InntektsmeldingEntitet =
         InntektsmeldingEntitet(
             uuid = UUID.randomUUID().toString(),
