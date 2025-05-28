@@ -28,6 +28,7 @@ fun Module.mockExternalDependecies() {
                     diskresjonskode = "SPSF",
                     geografiskTilknytning = "SWE",
                 )
+            coEvery { hentAktoerID(any()) } returns "123456789"
         }
     }
 

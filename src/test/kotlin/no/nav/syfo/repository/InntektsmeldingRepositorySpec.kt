@@ -1,6 +1,7 @@
 package no.nav.syfo.repository
 
 import com.zaxxer.hikari.HikariDataSource
+import no.nav.helsearbeidsgiver.utils.wrapper.Fnr
 import no.nav.inntektsmelding.kontrakt.serde.JacksonJsonConfig
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
@@ -47,6 +48,7 @@ open class InntektsmeldingRepositorySpec : SystemTestBase() {
                 behandlet = LocalDateTime.of(2019, 10, 1, 5, 18, 45, 0),
                 orgnummer = "orgnummer",
                 arbeidsgiverPrivat = "arbeidsgiverPrivat",
+                fnr = Fnr("28014026691"),
                 aktorId = "aktorId1",
             )
         repository.lagreInnteksmelding(inntektsmelding)
@@ -63,6 +65,7 @@ open class InntektsmeldingRepositorySpec : SystemTestBase() {
                 behandlet = behandlet,
                 orgnummer = "orgnummer",
                 arbeidsgiverPrivat = "arbeidsgiverPrivat",
+                fnr = Fnr("28014026691"),
                 aktorId = "aktorId1",
             )
         inntektsmelding.leggtilArbeidsgiverperiode(fom = LocalDate.of(2019, 10, 5), tom = LocalDate.of(2019, 10, 25))
@@ -93,6 +96,7 @@ open class InntektsmeldingRepositorySpec : SystemTestBase() {
                 behandlet = behandlet,
                 orgnummer = "orgnummer",
                 arbeidsgiverPrivat = "arbeidsgiverPrivat",
+                fnr = Fnr("28014026691"),
                 aktorId = "aktorId2",
             )
         inntektsmelding.leggtilArbeidsgiverperiode(fom = LocalDate.of(2019, 10, 5), tom = LocalDate.of(2019, 10, 25))
@@ -118,6 +122,7 @@ open class InntektsmeldingRepositorySpec : SystemTestBase() {
                 behandlet = behandlet,
                 orgnummer = "orgnummer",
                 arbeidsgiverPrivat = "arbeidsgiverPrivat",
+                fnr = Fnr("28014026691"),
                 aktorId = "aktorId3",
             )
         repository.lagreInnteksmelding(inntektsmelding)
@@ -184,6 +189,7 @@ open class InntektsmeldingRepositorySpec : SystemTestBase() {
                 orgnummer = "orgnummer",
                 arbeidsgiverPrivat = "arbeidsgiverPrivat",
                 aktorId = "aktorId-repo-test",
+                fnr = Fnr("28014026691"),
                 data = mapper.writeValueAsString(im),
             )
         repository.lagreInnteksmelding(inntektsmelding)
@@ -238,6 +244,27 @@ open class InntektsmeldingRepositorySpec : SystemTestBase() {
         assertThat(repository.findAll().size).isEqualTo(5)
     }
 
+    @Test
+    fun `skal hente inntektsmeldinger for gitt fnr i periode`() {
+        val im1 = lagInntektsmelding(LocalDate.of(2020, 1, 1).atStartOfDay())
+        val fnr = "07025032327"
+        im1.fnr = Fnr(fnr)
+        repository.lagreInnteksmelding(im1)
+
+        val im2 = lagInntektsmelding(LocalDate.of(2020, 2, 1).atStartOfDay())
+        im2.fnr = Fnr(fnr)
+        repository.lagreInnteksmelding(im2)
+
+        val im3 = lagInntektsmelding(LocalDate.of(2020, 3, 1).atStartOfDay())
+        im3.fnr = Fnr(fnr)
+        repository.lagreInnteksmelding(im3)
+
+        val inntektsmeldinger =
+            repository.findByFnrInPeriod(fnr = fnr, fom = LocalDate.of(2020, 1, 15), tom = LocalDate.of(2020, 5, 15))
+
+        assertThat(inntektsmeldinger.size).isEqualTo(2)
+    }
+
     private fun lagInntektsmelding(behandlet: LocalDateTime): InntektsmeldingEntitet =
         InntektsmeldingEntitet(
             uuid = UUID.randomUUID().toString(),
@@ -245,6 +272,7 @@ open class InntektsmeldingRepositorySpec : SystemTestBase() {
             behandlet = behandlet,
             orgnummer = "orgnummer",
             arbeidsgiverPrivat = "arbeidsgiverPrivat",
+            fnr = Fnr("28014026691"),
             aktorId = "aktorId1",
         )
 }

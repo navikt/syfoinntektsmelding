@@ -7,18 +7,22 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.mockk.every
 import io.mockk.mockk
 import no.nav.helsearbeidsgiver.utils.log.logger
+import no.nav.helsearbeidsgiver.utils.wrapper.Fnr
 import no.nav.inntektsmelding.kontrakt.serde.JacksonJsonConfig
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.dto.InntektsmeldingEntitet
 import no.nav.syfo.mapping.toInntektsmelding
 import no.nav.syfo.repository.InntektsmeldingRepository
 import no.nav.syfo.repository.buildIM
+import no.nav.syfo.web.api.FinnInntektsmeldingerRequest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -116,7 +120,7 @@ class InntektsmeldingServiceTest {
         val mapper = JacksonJsonConfig.objectMapperFactory.opprettObjectMapper()
         val node = mapper.readTree(json)
         assertThat(node.get("id").asText()).isEqualTo("id-abc")
-        assertThat(node.get("fnr").asText()).isNullOrEmpty() // Skal ikke lagre fødselsnummer
+        assertThat(node.get("fnr").asText()).isEqualTo("fnr-123") // Skal ikke lagre fødselsnummer
         assertThat(node.get("aktorId").asText()).isEqualTo("aktør-123")
         assertThat(node.get("refusjon").get("beloepPrMnd").asLong()).isEqualTo(333333333333)
         assertThat(node.get("refusjon").get("opphoersdato").toString()).isEqualTo("[2020,2,20]")
@@ -177,6 +181,7 @@ class InntektsmeldingServiceTest {
             behandlet = LocalDateTime.now(),
             orgnummer = "arb-org-123",
             journalpostId = "jp-123",
+            fnr = Fnr("28014026691"),
             data = objectMapper.writeValueAsString(im),
         )
 
@@ -184,4 +189,15 @@ class InntektsmeldingServiceTest {
         dager: Long,
         inntekt: Int,
     ): Inntektsmelding = buildIM().copy(mottattDato = LocalDateTime.now().minusDays(dager), beregnetInntekt = BigDecimal(inntekt))
+
+    @Test
+    fun `skal kalle findByFnrInPeriod og returnerer tom liste`() {
+        val repository = mockk<InntektsmeldingRepository>(relaxed = true)
+        val service = InntektsmeldingService(repository, objectMapper)
+        val fnr = "28014026691"
+        val fom = LocalDate.now().minusDays(10)
+        val tom = LocalDate.now()
+        every { repository.findByFnrInPeriod(fnr, fom, tom) } returns emptyList()
+        Assertions.assertTrue(service.finnInntektsmeldinger(FinnInntektsmeldingerRequest(fnr, fom, tom)).isEmpty())
+    }
 }

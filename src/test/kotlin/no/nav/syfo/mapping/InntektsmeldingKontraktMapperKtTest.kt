@@ -1,5 +1,6 @@
 package no.nav.syfo.mapping
 
+import no.nav.helsearbeidsgiver.utils.wrapper.Fnr
 import no.nav.inntektsmeldingkontrakt.Arbeidsgivertype
 import no.nav.syfo.FØRSTE_FEBRUAR
 import no.nav.syfo.FØRSTE_JANUAR
@@ -25,7 +26,7 @@ class InntektsmeldingKontraktMapperKtTest {
     fun toInntektsmeldingDTO() {
         val inntektsmelding =
             Inntektsmelding(
-                fnr = "fnr",
+                fnr = "28014026691",
                 arbeidsgiverPrivatFnr = "fnr",
                 journalpostId = "journalpostId",
                 arsakTilInnsending = "",
@@ -58,6 +59,7 @@ class InntektsmeldingKontraktMapperKtTest {
                 orgnummer = grunnleggendeInntektsmelding.arbeidsgiverOrgnummer,
                 arbeidsgiverPrivat = "arbeidsgiverPrivat",
                 aktorId = grunnleggendeInntektsmelding.aktorId.toString(),
+                fnr = Fnr("28014026691"),
                 data = om.writeValueAsString(grunnleggendeInntektsmelding),
             )
         val i = toInntektsmelding(dto, om)

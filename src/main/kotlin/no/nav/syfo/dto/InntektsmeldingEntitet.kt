@@ -1,5 +1,6 @@
 package no.nav.syfo.dto
 
+import no.nav.helsearbeidsgiver.utils.wrapper.Fnr
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -10,6 +11,7 @@ data class InntektsmeldingEntitet(
     var orgnummer: String? = null,
     var arbeidsgiverPrivat: String? = null,
     var behandlet: LocalDateTime? = LocalDateTime.now(),
+    var fnr: Fnr? = null,
     var data: String? = null,
 ) {
     var arbeidsgiverperioder: MutableList<ArbeidsgiverperiodeEntitet> = ArrayList()

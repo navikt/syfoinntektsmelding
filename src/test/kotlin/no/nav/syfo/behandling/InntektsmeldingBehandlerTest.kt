@@ -4,6 +4,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import no.nav.helsearbeidsgiver.pdl.PdlClient
+import no.nav.helsearbeidsgiver.utils.wrapper.Fnr
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.dto.InntektsmeldingEntitet
@@ -48,6 +49,7 @@ class InntektsmeldingBehandlerTest {
                 arbeidsgiverPrivat = "123",
                 aktorId = "aktorId",
                 journalpostId = "arkivId",
+                fnr = Fnr("28014026691"),
                 behandlet = LocalDateTime.now(),
             )
     }
