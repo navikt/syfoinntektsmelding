@@ -1,5 +1,3 @@
-@file:Suppress("UnstableApiUsage")
-
 package no.nav.syfo.behandling
 
 import com.google.common.util.concurrent.Striped

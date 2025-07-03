@@ -13,20 +13,7 @@ import no.nav.syfo.client.saf.SafDokumentClient
 import no.nav.syfo.client.saf.SafJournalpostClient
 import no.nav.syfo.util.getString
 import org.koin.core.module.Module
-import org.koin.core.qualifier.Qualifier
-import org.koin.core.qualifier.QualifierValue
 import org.koin.dsl.bind
-
-enum class AccessScope : Qualifier {
-    DOKARKIV,
-    OPPGAVE,
-    PDL,
-    SAF,
-    ;
-
-    override val value: QualifierValue
-        get() = name
-}
 
 fun Module.externalSystemClients(config: ApplicationConfig) {
     single {

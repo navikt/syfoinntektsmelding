@@ -1,7 +1,5 @@
 package no.nav.syfo.slowtests
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.runBlocking
 import no.nav.syfo.SpinnApplication
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
@@ -33,15 +31,5 @@ open class SystemTestBase : KoinTest {
 
     @AfterAll
     fun after() {
-    }
-
-    /**
-     * Hjelpefunksjon for at JUnit5 skal kunne kjenne igjen tester som kaller har "suspend"-funksjoner
-     */
-    fun suspendableTest(block: suspend CoroutineScope.() -> Unit) {
-        runBlocking {
-            block()
-            Unit
-        }
     }
 }
