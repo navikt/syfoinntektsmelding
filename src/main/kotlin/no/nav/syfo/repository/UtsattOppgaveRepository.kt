@@ -20,8 +20,6 @@ interface UtsattOppgaveRepository {
     fun oppdater(uo: UtsattOppgaveEntitet): UtsattOppgaveEntitet
 
     fun deleteAll()
-
-    fun findAll(): List<UtsattOppgaveEntitet>
 }
 
 class UtsattOppgaveRepositoryMockk : UtsattOppgaveRepository {
@@ -44,8 +42,6 @@ class UtsattOppgaveRepositoryMockk : UtsattOppgaveRepository {
     override fun deleteAll() {
         mockrepo.forEach { mockrepo.remove(it) }
     }
-
-    override fun findAll(): List<UtsattOppgaveEntitet> = mockrepo.toList()
 }
 
 class UtsattOppgaveRepositoryImp(
@@ -153,15 +149,6 @@ class UtsattOppgaveRepositoryImp(
         val deleteStatememnt = "DELETE FROM UTSATT_OPPGAVE;"
         ds.connection.use {
             it.prepareStatement(deleteStatememnt).executeUpdate()
-        }
-    }
-
-    override fun findAll(): List<UtsattOppgaveEntitet> {
-        val findall = " SELECT * FROM UTSATT_OPPGAVE;"
-        val utsattOppgaver = ArrayList<UtsattOppgaveEntitet>()
-        ds.connection.use {
-            val res = it.prepareStatement(findall).executeQuery()
-            return resultLoop(res, utsattOppgaver)
         }
     }
 
