@@ -43,7 +43,7 @@ class BehandlendeEnhetConsumer(
                 runBlocking {
                     norg2Client.hentAlleArbeidsfordelinger(criteria, MdcUtils.getCallId())
                 }
-            logger.info("Fant enheter: " + arbeidsfordelinger.toString())
+            logger.info("Fant enheter: $arbeidsfordelinger")
             val behandlendeEnhet =
                 finnAktivBehandlendeEnhet(
                     arbeidsfordelinger,

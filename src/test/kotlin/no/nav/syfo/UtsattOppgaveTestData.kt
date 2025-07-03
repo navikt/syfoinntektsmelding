@@ -10,18 +10,18 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 object UtsattOppgaveTestData {
-    val fnr = "fnr"
-    val aktørId = "aktørId"
-    val journalpostId = "journalpostId"
-    val arkivreferanse = "123"
+    const val FNR = "fnr"
+    const val AKTOER_ID = "aktørId"
+    const val JOURNALPOST_ID = "journalpostId"
+    const val ARKIVREFERANSE = "123"
 
-    val timeout = LocalDateTime.of(2023, 4, 6, 9, 0)
+    val timeout: LocalDateTime = LocalDateTime.of(2023, 4, 6, 9, 0)
     val oppgave =
         UtsattOppgaveEntitet(
-            fnr = fnr,
-            aktørId = aktørId,
-            journalpostId = journalpostId,
-            arkivreferanse = arkivreferanse,
+            fnr = FNR,
+            aktørId = AKTOER_ID,
+            journalpostId = JOURNALPOST_ID,
+            arkivreferanse = ARKIVREFERANSE,
             timeout = timeout,
             inntektsmeldingId = UUID.randomUUID().toString(),
             tilstand = Tilstand.Utsatt,

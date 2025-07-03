@@ -5,11 +5,9 @@ import io.ktor.client.call.body
 import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
-import io.ktor.client.statement.request
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.http.withCharset
-import kotlinx.coroutines.runBlocking
 import java.time.LocalDate
 
 /**
@@ -33,17 +31,16 @@ open class Norg2Client(
         request: ArbeidsfordelingRequest,
         callId: String?,
     ): List<ArbeidsfordelingResponse> {
-        return runBlocking {
-            val httpResponse =
-                httpClient.post(url) {
-                    contentType(ContentType.Application.Json.withCharset(Charsets.UTF_8))
-                    header("X-Correlation-ID", callId)
-                    header("Nav-Call-Id", callId)
-                    header("Nav-Consumer-Id", "spinosaurus")
-                    setBody(request)
-                }
-            return@runBlocking httpResponse.call.response.body()
-        }
+        val httpResponse =
+            httpClient.post(url) {
+                contentType(ContentType.Application.Json.withCharset(Charsets.UTF_8))
+                header("X-Correlation-ID", callId)
+                header("Nav-Call-Id", callId)
+                header("Nav-Consumer-Id", "spinosaurus")
+                setBody(request)
+            }
+
+        return httpResponse.call.response.body()
     }
 }
 

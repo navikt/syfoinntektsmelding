@@ -31,8 +31,8 @@ import no.nav.syfo.service.InngaaendeJournalConsumer
 import no.nav.syfo.service.InntektsmeldingService
 import no.nav.syfo.service.JournalConsumer
 import no.nav.syfo.service.JournalpostService
-import no.nav.syfo.syfoinntektsmelding.consumer.ws.inntektsmeldingArbeidsgiver
-import no.nav.syfo.syfoinntektsmelding.consumer.ws.inntektsmeldingArbeidsgiverPrivat
+import no.nav.syfo.service.inntektsmeldingArbeidsgiver
+import no.nav.syfo.service.inntektsmeldingArbeidsgiverPrivat
 import no.nav.syfo.util.Metrikk
 import no.nav.syfo.util.getAktørid
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService

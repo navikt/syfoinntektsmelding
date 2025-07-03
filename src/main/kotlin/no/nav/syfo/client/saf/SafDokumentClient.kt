@@ -26,23 +26,22 @@ class SafDokumentClient(
     fun hentDokument(
         journalpostId: String,
         dokumentInfoId: String,
-    ): ByteArray? {
-        logger.info("Henter dokument fra journalpostId $journalpostId, og dokumentInfoId $dokumentInfoId")
-        val response =
-            runBlocking {
+    ): ByteArray? =
+        runBlocking {
+            logger.info("Henter dokument fra journalpostId $journalpostId, og dokumentInfoId $dokumentInfoId")
+            val response =
                 httpClient.get("$url/hentdokument/$journalpostId/$dokumentInfoId/ORIGINAL") {
                     accept(ContentType.Application.Xml)
                     header("Authorization", "Bearer ${getAccessToken()}")
                     header("Nav-Callid", MdcUtils.getCallId())
                     header("Nav-Consumer-Id", "syfoinntektsmelding")
                 }
+
+            if (response.status != HttpStatusCode.OK) {
+                logger.info("Saf returnerte: httpstatus {}", response.status)
+                null
+            } else {
+                response.call.response.body<ByteArray>()
             }
-        if (response.status != HttpStatusCode.OK) {
-            logger.info("Saf returnerte: httpstatus {}", response.status)
-            return null
         }
-        return runBlocking {
-            response.call.response.body<ByteArray>()
-        }
-    }
 }

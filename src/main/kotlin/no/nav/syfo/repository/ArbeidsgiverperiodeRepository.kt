@@ -26,7 +26,7 @@ class ArbeidsgiverperiodeRepositoryImp(
             """.trimMargin()
         val arbeidsgiverperioder = ArrayList<ArbeidsgiverperiodeEntitet>()
         val prepareStatement = connection.prepareStatement(insertStatement)
-        prepareStatement.setString(1, "${agp.uuid}")
+        prepareStatement.setString(1, agp.uuid)
         prepareStatement.setString(2, "${agp.inntektsmelding?.uuid}")
         prepareStatement.setString(3, "${agp.fom}")
         prepareStatement.setString(4, "${agp.tom}")

@@ -25,9 +25,9 @@ class SafJournalpostClient(
     fun getJournalpostMetadata(journalpostId: String): Journalpost? {
         val accessToken = getAccessToken()
         logger.info("Henter journalpostmetadata for $journalpostId with token size " + accessToken.length)
-        try {
-            val response: JournalResponse =
-                runBlocking {
+        return runBlocking {
+            try {
+                val response: JournalResponse =
                     httpClient
                         .post(basePath) {
                             contentType(ContentType.Application.Json)
@@ -36,18 +36,18 @@ class SafJournalpostClient(
                             setBody(GetJournalpostRequest(query = lagQuery(journalpostId)))
                         }.call.response
                         .body<JournalResponse>()
+                if (response.errors != null && response.errors.isNotEmpty()) {
+                    throw ErrorException(journalpostId, response.errors.toString())
                 }
-            if (response.errors != null && response.errors.isNotEmpty()) {
-                throw ErrorException(journalpostId, response.errors.toString())
-            }
-            if (response.data?.journalpost == null) {
-                throw EmptyException(journalpostId)
-            }
-            return response.data.journalpost
-        } catch (e: ClientRequestException) {
-            when (e.response.status) {
-                HttpStatusCode.Unauthorized -> throw NotAuthorizedException(journalpostId)
-                else -> throw ErrorException(journalpostId, runBlocking { e.response.body() })
+                if (response.data?.journalpost == null) {
+                    throw EmptyException(journalpostId)
+                }
+                response.data.journalpost
+            } catch (e: ClientRequestException) {
+                when (e.response.status) {
+                    HttpStatusCode.Unauthorized -> throw NotAuthorizedException(journalpostId)
+                    else -> throw ErrorException(journalpostId, e.response.body())
+                }
             }
         }
     }
