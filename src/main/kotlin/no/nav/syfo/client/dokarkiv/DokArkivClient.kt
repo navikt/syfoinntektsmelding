@@ -20,7 +20,7 @@ import java.io.IOException
 
 // NAV-enheten som personen som utfører journalføring jobber for. Ved automatisk journalføring uten
 // mennesker involvert, skal enhet settes til "9999".
-val AUTOMATISK_JOURNALFOERING_ENHET = "9999"
+const val AUTOMATISK_JOURNALFOERING_ENHET = "9999"
 
 class DokArkivClient(
     private val url: String,

@@ -27,7 +27,7 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 class InntektsmeldingServiceTest {
-    val objectMapper =
+    val objectMapper: ObjectMapper =
         ObjectMapper().registerModules(
             KotlinModule
                 .Builder()

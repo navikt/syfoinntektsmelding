@@ -23,7 +23,7 @@ internal class UtsattOppgaveConsumerTest {
     var utsattOppgaveService: UtsattOppgaveService = mockk(relaxed = true)
     var bakgrunnsjobbRepo: BakgrunnsjobbRepository = mockk(relaxed = true)
     val topicName = "topic"
-    val timeout = LocalDateTime.now()
+    val timeout: LocalDateTime = LocalDateTime.now()
     val utsattOppgaveDTO = UtsattOppgaveDTO(DokumentTypeDTO.Inntektsmelding, OppdateringstypeDTO.Opprett, UUID.randomUUID(), timeout)
     val raw = "raw"
 
@@ -67,7 +67,7 @@ internal class UtsattOppgaveConsumerTest {
     @Test
     fun `Helsesjekk - liveness - skal gi feilmelding når feil oppstår`() {
         consumer.setIsError(true)
-        org.junit.jupiter.api.assertThrows<IllegalStateException> {
+        assertThrows<IllegalStateException> {
             runBlocking {
                 consumer.runLivenessCheck()
             }

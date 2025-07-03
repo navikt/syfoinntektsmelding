@@ -36,5 +36,5 @@ class InntektsmeldingAivenProducer(
         )
     }
 
-    fun serialiseringInntektsmelding(inntektsmelding: Inntektsmelding) = objectMapper.writeValueAsString(inntektsmelding)
+    fun serialiseringInntektsmelding(inntektsmelding: Inntektsmelding): String = objectMapper.writeValueAsString(inntektsmelding)
 }

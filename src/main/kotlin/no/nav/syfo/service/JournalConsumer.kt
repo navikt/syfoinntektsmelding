@@ -1,6 +1,5 @@
 package no.nav.syfo.service
 
-import kotlinx.coroutines.runBlocking
 import no.nav.helsearbeidsgiver.pdl.PdlClient
 import no.nav.helsearbeidsgiver.utils.log.sikkerLogger
 import no.nav.syfo.behandling.HentDokumentFeiletException
@@ -34,12 +33,9 @@ class JournalConsumer(
     ): Inntektsmelding {
         try {
             val journalpost = safJournalpostClient.getJournalpostMetadata(journalpostId)
-            val inntektsmeldingRAW =
-                runBlocking {
-                    safDokumentClient.hentDokument(journalpostId, journalpost?.dokumenter!![0].dokumentInfoId)
-                }
+            val inntektsmeldingRAW = safDokumentClient.hentDokument(journalpostId, journalpost?.dokumenter!![0].dokumentInfoId)
             val jaxbInntektsmelding = JAXB.unmarshalInntektsmelding<JAXBElement<Any>>(inntektsmeldingRAW?.decodeToString())
-            val mottattDato: LocalDateTime = journalpost!!.datoOpprettet
+            val mottattDato: LocalDateTime = journalpost.datoOpprettet
             val journalStatus: JournalStatus = journalpost.journalstatus
             return if (jaxbInntektsmelding.value is XMLInntektsmeldingM) {
                 InntektsmeldingArbeidsgiver20180924Mapper.fraXMLInntektsmelding(

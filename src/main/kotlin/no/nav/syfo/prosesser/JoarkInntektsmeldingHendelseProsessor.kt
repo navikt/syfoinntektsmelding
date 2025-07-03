@@ -41,7 +41,7 @@ class JoarkInntektsmeldingHendelseProsessor(
             try {
                 val journalpostDTO = om.readValue<InngaaendeJournalpostDTO>(jobb.data)
                 sikkerlogger.info("Bruker InngaaendeJournalpostDTO: $journalpostDTO ")
-                arkivReferanse = if (journalpostDTO.kanalReferanseId.isEmpty()) "UKJENT" else journalpostDTO.kanalReferanseId
+                arkivReferanse = journalpostDTO.kanalReferanseId.ifEmpty { "UKJENT" }
 
                 if (arkivReferanse == "UKJENT") {
                     throw IllegalArgumentException("Mottok inntektsmelding uten arkivreferanse")

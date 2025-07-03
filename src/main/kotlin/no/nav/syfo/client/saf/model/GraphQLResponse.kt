@@ -1,6 +1,4 @@
-package no.nav.syfo.client.saf
-
-import no.nav.syfo.client.saf.model.Journalpost
+package no.nav.syfo.client.saf.model
 
 data class SafJournalData(
     val journalpost: Journalpost? = null,

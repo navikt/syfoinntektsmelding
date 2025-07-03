@@ -11,7 +11,7 @@ class MetrikkVarsler : Bakgrunnsvarsler {
     }
 }
 
-val FEILET_JOBB_COUNTER =
+val FEILET_JOBB_COUNTER: Counter =
     Counter
         .build()
         .namespace(METRICS_NS)

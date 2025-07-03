@@ -144,7 +144,7 @@ fun mapRefusjon(inntektsmelding: Inntektsmelding): Refusjon = Refusjon(inntektsm
 
 fun mapNaturalytelseType(naturalytelseType: no.nav.syfo.domain.inntektsmelding.Naturalytelse?): Naturalytelse =
     naturalytelseType?.let { naturalytelse ->
-        if (Naturalytelse.values().map { it.name }.contains(
+        if (Naturalytelse.entries.map { it.name }.contains(
                 naturalytelse.name,
             )
         ) {

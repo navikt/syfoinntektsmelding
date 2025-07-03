@@ -5,5 +5,5 @@ import javax.xml.bind.JAXBElement
 
 fun mapNaturalytelseType(naturalytelseType: JAXBElement<String>) =
     naturalytelseType.value?.let { n ->
-        if (Naturalytelse.values().map { it.name }.contains(n.uppercase())) Naturalytelse.valueOf(n.uppercase()) else Naturalytelse.ANNET
+        if (Naturalytelse.entries.map { it.name }.contains(n.uppercase())) Naturalytelse.valueOf(n.uppercase()) else Naturalytelse.ANNET
     }

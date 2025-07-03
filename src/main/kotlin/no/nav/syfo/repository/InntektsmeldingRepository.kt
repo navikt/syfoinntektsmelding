@@ -121,7 +121,7 @@ class InntektsmeldingRepositoryImp(
                 it
                     .prepareStatement(findByAktorId)
                     .apply {
-                        setString(1, aktoerId.toString())
+                        setString(1, aktoerId)
                     }.executeQuery()
             results = resultLoop(res, inntektsmeldinger)
         }
