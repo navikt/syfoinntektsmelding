@@ -89,13 +89,21 @@ class InntektsmeldingConsumer(
         }
     }
 
-    private fun behandle(
+    fun Inntektsmelding.Type.harIngenArbeidsforhold(): Boolean = this is Inntektsmelding.Type.Fisker || this is Inntektsmelding.Type.UtenArbeidsforhold
+
+    fun behandle(
         journalpostId: String,
         inntektsmeldingFraSimba: Inntektsmelding,
     ) {
         val aktorid = hentAktoeridFraPDL(inntektsmeldingFraSimba.sykmeldt.fnr.verdi)
         val arkivreferanse = "im_$journalpostId"
         val inntektsmelding = mapInntektsmelding(arkivreferanse, aktorid, journalpostId, inntektsmeldingFraSimba)
+        val timeout =
+            if (inntektsmeldingFraSimba.type.harIngenArbeidsforhold()) {
+                LocalDateTime.now() // opprett oppgave umiddelbart
+            } else {
+                LocalDateTime.now().plusHours(OPPRETT_OPPGAVE_FORSINKELSE)
+            }
         val dto = inntektsmeldingService.lagreBehandling(inntektsmelding, aktorid)
         utsattOppgaveService.opprett(
             UtsattOppgaveEntitet(
@@ -105,7 +113,7 @@ class InntektsmeldingConsumer(
                 arkivreferanse = inntektsmelding.arkivRefereranse,
                 inntektsmeldingId = dto.uuid,
                 tilstand = Tilstand.Utsatt,
-                timeout = LocalDateTime.now().plusHours(OPPRETT_OPPGAVE_FORSINKELSE),
+                timeout = timeout,
                 gosysOppgaveId = null,
                 oppdatert = null,
                 speil = false,
@@ -122,9 +130,12 @@ class InntektsmeldingConsumer(
                 dto.uuid,
             )
 
-        inntektsmeldingAivenProducer.leggMottattInntektsmeldingPåTopics(mappedInntektsmelding)
+        // TODO: Sende alle inntektsmeldinger (også de med ingen arbeidsforhold) i egen topic til flex
+        if (!inntektsmeldingFraSimba.type.harIngenArbeidsforhold()) {
+            inntektsmeldingAivenProducer.leggMottattInntektsmeldingPåTopics(mappedInntektsmelding)
 
-        sikkerlogger.info("Publiserte inntektsmelding på topic: $mappedInntektsmelding")
+            sikkerlogger.info("Publiserte inntektsmelding på topic: $mappedInntektsmelding")
+        }
     }
 
     private fun hentAktoeridFraPDL(identitetsnummer: String): String {

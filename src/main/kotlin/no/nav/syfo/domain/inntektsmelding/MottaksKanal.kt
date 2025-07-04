@@ -12,5 +12,4 @@ fun Kanal.mapTilMottakskanal(): MottaksKanal =
     when (this) {
         Kanal.NAV_NO -> MottaksKanal.NAV_NO
         Kanal.HR_SYSTEM_API -> MottaksKanal.HR_SYSTEM_API
-        Kanal.ALTINN -> MottaksKanal.ALTINN
     }
