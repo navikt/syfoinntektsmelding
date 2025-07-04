@@ -31,17 +31,17 @@ internal class InntektsmeldingConsumerTest {
     @BeforeEach
     fun before() {
         consumer = InntektsmeldingConsumer(props, topicName, inntektsmeldingService, inntektsmeldingAivenProducer, utsattOppgaveService, pdlClient)
-        mockkStatic(LocalDateTime::ofInstant)
+        mockkStatic(LocalDateTime::class)
         every { LocalDateTime.now() } returns testNow
     }
 
     @AfterEach
     fun after() {
-        unmockkStatic(LocalDateTime::ofInstant)
+        unmockkStatic(LocalDateTime::class)
     }
 
     @Test
-    fun `behandle med IM type Forespurt opretter utsattOppgave med timeout inkludert forsinkelse og legger til IM på topic`() {
+    fun `behandle med IM type Forespurt oppretter utsattOppgave med timeout inkludert forsinkelse og legger til IM på topic`() {
         val timeoutNowPlusForsinkelse = LocalDateTime.now().plusHours(OPPRETT_OPPGAVE_FORSINKELSE)
         val im = lagInntektsmelding()
 
@@ -61,7 +61,7 @@ internal class InntektsmeldingConsumerTest {
     }
 
     @Test
-    fun `behandle med IM fisker eller uten arbeidsforhold opretter utsattOppgave med timeout now og legger ikke til IM på topic`() {
+    fun `behandle med IM fisker eller uten arbeidsforhold oppretter utsattOppgave med timeout now og legger ikke til IM på topic`() {
         val timeoutNow = LocalDateTime.now()
         val imFisker = lagInntektsmelding().copy(type = Inntektsmelding.Type.Fisker(UUID.randomUUID()))
         val imUtenArbeidsforhold = lagInntektsmelding().copy(type = Inntektsmelding.Type.UtenArbeidsforhold(UUID.randomUUID()))
