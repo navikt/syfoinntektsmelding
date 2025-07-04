@@ -39,6 +39,9 @@ spec:
     logging:
       destinations:
         - id: secure_logs
+    autoInstrumentation:
+      enabled: true
+      runtime: java
   secureLogs:
     enabled: true
   kafka:
