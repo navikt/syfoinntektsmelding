@@ -130,6 +130,7 @@ class InntektsmeldingConsumer(
                 dto.uuid,
             )
 
+        // TODO: Sende alle inntektsmeldinger (også de med ingen arbeidsforhold) i egen topic til flex
         if (!inntektsmeldingFraSimba.type.harIngenArbeidsforhold()) {
             inntektsmeldingAivenProducer.leggMottattInntektsmeldingPåTopics(mappedInntektsmelding)
 
