@@ -1,8 +1,7 @@
-package no.nav.syfo.syfoinntektsmelding.consumer.ws
+package no.nav.syfo.service
 
 import no.nav.syfo.domain.Periode
 import java.time.format.DateTimeFormatter
-import java.util.function.BinaryOperator
 
 fun inntektsmeldingArbeidsgiver(
     perioder: List<Periode>,
@@ -42,7 +41,7 @@ fun inntektsmeldingArbeidsgiver(
                     "   <ns6:fom>" + DateTimeFormatter.ISO_DATE.format(fom) + "</ns6:fom>" +
                     "   <ns6:tom>" + DateTimeFormatter.ISO_DATE.format(tom) + "</ns6:tom>" +
                     "</ns6:arbeidsgiverperiode>"
-            }.reduce("", BinaryOperator<String> { obj, str -> obj + str }) +
+            }.reduce("", { obj, str -> obj + str }) +
         "            </ns6:arbeidsgiverperiodeListe>" +
         "            <ns6:bruttoUtbetalt>2000</ns6:bruttoUtbetalt>" +
         "        </ns6:sykepengerIArbeidsgiverperioden>" +

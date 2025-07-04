@@ -195,9 +195,9 @@ class Metrikk {
 
     fun tellInntektsmeldingSykepengerUtland() = inntektsmeldingSykepengerUtland.labels("info").inc()
 
-    fun tellBehandlingsfeil(feiltype: Feiltype) = behandlingsfeil.labels("${feiltype.navn}").inc()
+    fun tellBehandlingsfeil(feiltype: Feiltype) = behandlingsfeil.labels(feiltype.navn).inc()
 
-    fun tellJournalpoststatus(status: JournalStatus) = journalpoststatus.labels("info", "${status.name}").inc()
+    fun tellJournalpoststatus(status: JournalStatus) = journalpoststatus.labels("info", status.name).inc()
 
     fun tellInntektsmeldingUtenArkivReferanse() = inntektsmeldingUtenArkivreferanse.labels("info").inc()
 

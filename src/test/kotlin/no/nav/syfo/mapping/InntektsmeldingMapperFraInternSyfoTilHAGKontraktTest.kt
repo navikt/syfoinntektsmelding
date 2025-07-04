@@ -51,9 +51,7 @@ class InntektsmeldingMapperFraInternSyfoTilHAGKontraktTest {
                 bruttoUtbetalt = bruttoUtbetalt,
                 begrunnelseRedusert = begrunnelse,
                 kontaktinformasjon = Kontaktinformasjon(navn = innsenderNavn, telefon = innsenderTelefon),
-                avsenderSystem =
-                    no.nav.syfo.domain.inntektsmelding
-                        .AvsenderSystem("NAV_NO", "1.0"),
+                avsenderSystem = AvsenderSystem("NAV_NO", "1.0"),
                 rapportertInntekt =
                     RapportertInntekt(
                         bekreftet = true,
@@ -168,16 +166,16 @@ class InntektsmeldingMapperFraInternSyfoTilHAGKontraktTest {
 fun mapImKontrakt(inntektsmelding: Inntektsmelding) =
     mapInntektsmeldingKontrakt(
         inntektsmelding = inntektsmelding,
-        arbeidstakerAktørId = MockData.aktørId,
+        arbeidstakerAktørId = MockData.AKTOER_ID,
         gyldighetsstatus = MockData.gyldighetsstatus,
-        arkivreferanse = MockData.arkivreferanse,
+        arkivreferanse = MockData.ARKIVREFERANSE,
         uuid = MockData.uuid,
     )
 
 object MockData {
-    val aktørId = "123"
+    const val AKTOER_ID = "123"
+    const val ARKIVREFERANSE = "arkivref123"
     val gyldighetsstatus = Gyldighetsstatus.GYLDIG
-    val arkivreferanse = "arkivref123"
     val uuid = UUID.randomUUID().toString()
     val avsenderAltinn = AvsenderSystem("AltinnPortal", "1.0")
     val avsenderNavPortal = AvsenderSystem("NAV_PORTAL", "1.0")
