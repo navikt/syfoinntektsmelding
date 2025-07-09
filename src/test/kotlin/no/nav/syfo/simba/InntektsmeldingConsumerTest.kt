@@ -56,7 +56,7 @@ internal class InntektsmeldingConsumerTest {
         }
 
         verify(exactly = 1) {
-            inntektsmeldingAivenProducer.leggMottattInntektsmeldingPåTopics(any())
+            inntektsmeldingAivenProducer.sendTilTopicForVedtaksloesning(any())
         }
     }
 
@@ -79,7 +79,7 @@ internal class InntektsmeldingConsumerTest {
             }
 
             verify(exactly = 0) {
-                inntektsmeldingAivenProducer.leggMottattInntektsmeldingPåTopics(any())
+                inntektsmeldingAivenProducer.sendTilTopicForVedtaksloesning(any())
             }
         }
     }

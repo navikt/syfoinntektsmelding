@@ -77,7 +77,7 @@ class InntektsmeldingBehandlerTest {
         // Verifiser
         verify(exactly = 1) { journalpostService.feilregistrerJournalpost(any()) }
         verify(exactly = 0) { journalpostService.ferdigstillJournalpost(any()) } // not
-        verify(exactly = 0) { aivenInntektsmeldingProducer.leggMottattInntektsmeldingPåTopics(any()) }
+        verify(exactly = 0) { aivenInntektsmeldingProducer.sendTilTopicForVedtaksloesning(any()) }
     }
 
     @Test
@@ -103,7 +103,7 @@ class InntektsmeldingBehandlerTest {
         // Verifiser
         verify(exactly = 0) { journalpostService.feilregistrerJournalpost(any()) }
         verify(exactly = 1) { journalpostService.ferdigstillJournalpost(any()) }
-        verify(exactly = 1) { aivenInntektsmeldingProducer.leggMottattInntektsmeldingPåTopics(any()) }
+        verify(exactly = 1) { aivenInntektsmeldingProducer.sendTilTopicForVedtaksloesning(any()) }
     }
 
     @ParameterizedTest
@@ -128,6 +128,6 @@ class InntektsmeldingBehandlerTest {
         // Verifiser
         verify(exactly = 0) { journalpostService.feilregistrerJournalpost(any()) }
         verify(exactly = 0) { journalpostService.ferdigstillJournalpost(any()) }
-        verify(exactly = 0) { aivenInntektsmeldingProducer.leggMottattInntektsmeldingPåTopics(any()) }
+        verify(exactly = 0) { aivenInntektsmeldingProducer.sendTilTopicForVedtaksloesning(any()) }
     }
 }
