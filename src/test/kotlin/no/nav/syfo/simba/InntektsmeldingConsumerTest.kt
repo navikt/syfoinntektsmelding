@@ -57,6 +57,7 @@ internal class InntektsmeldingConsumerTest {
 
         verify(exactly = 1) {
             inntektsmeldingAivenProducer.sendTilTopicForVedtaksloesning(any())
+            inntektsmeldingAivenProducer.sendTilTopicForBruker(any())
         }
     }
 
@@ -80,6 +81,9 @@ internal class InntektsmeldingConsumerTest {
 
             verify(exactly = 0) {
                 inntektsmeldingAivenProducer.sendTilTopicForVedtaksloesning(any())
+            }
+            verify(exactly = 1) {
+                inntektsmeldingAivenProducer.sendTilTopicForBruker(any())
             }
         }
     }

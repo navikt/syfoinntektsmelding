@@ -78,6 +78,7 @@ class InntektsmeldingBehandlerTest {
         verify(exactly = 1) { journalpostService.feilregistrerJournalpost(any()) }
         verify(exactly = 0) { journalpostService.ferdigstillJournalpost(any()) } // not
         verify(exactly = 0) { aivenInntektsmeldingProducer.sendTilTopicForVedtaksloesning(any()) }
+        verify(exactly = 0) { aivenInntektsmeldingProducer.sendTilTopicForBruker(any()) }
     }
 
     @Test
@@ -104,6 +105,7 @@ class InntektsmeldingBehandlerTest {
         verify(exactly = 0) { journalpostService.feilregistrerJournalpost(any()) }
         verify(exactly = 1) { journalpostService.ferdigstillJournalpost(any()) }
         verify(exactly = 1) { aivenInntektsmeldingProducer.sendTilTopicForVedtaksloesning(any()) }
+        verify(exactly = 1) { aivenInntektsmeldingProducer.sendTilTopicForBruker(any()) }
     }
 
     @ParameterizedTest
@@ -129,5 +131,6 @@ class InntektsmeldingBehandlerTest {
         verify(exactly = 0) { journalpostService.feilregistrerJournalpost(any()) }
         verify(exactly = 0) { journalpostService.ferdigstillJournalpost(any()) }
         verify(exactly = 0) { aivenInntektsmeldingProducer.sendTilTopicForVedtaksloesning(any()) }
+        verify(exactly = 0) { aivenInntektsmeldingProducer.sendTilTopicForBruker(any()) }
     }
 }
