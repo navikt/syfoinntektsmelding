@@ -15,6 +15,8 @@ import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.MethodSource
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -61,30 +63,36 @@ internal class InntektsmeldingConsumerTest {
         }
     }
 
-    @Test
-    fun `behandle med IM fisker eller uten arbeidsforhold oppretter utsattOppgave med timeout now og legger ikke til IM på topic`() {
+    @ParameterizedTest
+    @MethodSource("inntektsmeldingTypesWithoutArbeidsforhold")
+    fun `behandle med IM uten arbeidsforhold oppretter utsattOppgave med timeout now og legger ikke til IM på topic`(imType: Inntektsmelding.Type) {
         val timeoutNow = LocalDateTime.now()
-        val imFisker = lagInntektsmelding().copy(type = Inntektsmelding.Type.Fisker(UUID.randomUUID()))
-        val imUtenArbeidsforhold = lagInntektsmelding().copy(type = Inntektsmelding.Type.UtenArbeidsforhold(UUID.randomUUID()))
+        val im = lagInntektsmelding().copy(type = imType)
 
-        listOf(imFisker, imUtenArbeidsforhold).forEachIndexed { index, im ->
+        consumer.behandle("123", im)
 
-            consumer.behandle(index.toString(), im)
-
-            verify {
-                utsattOppgaveService.opprett(
-                    match {
-                        it.timeout == timeoutNow
-                    },
-                )
-            }
-
-            verify(exactly = 0) {
-                inntektsmeldingAivenProducer.sendTilTopicForVedtaksloesning(any())
-            }
-            verify(exactly = 1) {
-                inntektsmeldingAivenProducer.sendTilTopicForBruker(any())
-            }
+        verify {
+            utsattOppgaveService.opprett(
+                match {
+                    it.timeout == timeoutNow
+                },
+            )
         }
+
+        verify(exactly = 0) {
+            inntektsmeldingAivenProducer.sendTilTopicForVedtaksloesning(any())
+        }
+        verify(exactly = 1) {
+            inntektsmeldingAivenProducer.sendTilTopicForBruker(any())
+        }
+    }
+
+    companion object {
+        @JvmStatic
+        fun inntektsmeldingTypesWithoutArbeidsforhold() =
+            setOf(
+                Inntektsmelding.Type.Fisker(UUID.randomUUID()),
+                Inntektsmelding.Type.UtenArbeidsforhold(UUID.randomUUID()),
+            )
     }
 }
