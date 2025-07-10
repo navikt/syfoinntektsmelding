@@ -6,19 +6,22 @@ import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.slf4j.LoggerFactory
 
+private const val IM_VEDTAKSLOESNING_TOPIC = "helsearbeidsgiver.privat-sykepenger-inntektsmelding"
+private const val IM_BRUKER_TOPIC = "helsearbeidsgiver.inntektsmelding-bruker"
+
 class InntektsmeldingAivenProducer(
     producerProperties: Map<String, Any>,
 ) {
     private val sikkerlogger = LoggerFactory.getLogger("tjenestekall")
-    private val inntektsmeldingTopics = listOf("helsearbeidsgiver.privat-sykepenger-inntektsmelding")
     val objectMapper = JacksonJsonConfig.objectMapperFactory.opprettObjectMapper()
-
     private val kafkaproducer = KafkaProducer<String, String>(producerProperties)
 
-    fun leggMottattInntektsmeldingPåTopics(inntektsmelding: Inntektsmelding) {
-        inntektsmeldingTopics.forEach {
-            leggMottattInntektsmeldingPåTopic(inntektsmelding, it)
-        }
+    fun sendTilTopicForVedtaksloesning(inntektsmelding: Inntektsmelding) {
+        leggMottattInntektsmeldingPåTopic(inntektsmelding, IM_VEDTAKSLOESNING_TOPIC)
+    }
+
+    fun sendTilTopicForBruker(inntektsmelding: Inntektsmelding) {
+        leggMottattInntektsmeldingPåTopic(inntektsmelding, IM_BRUKER_TOPIC)
     }
 
     private fun leggMottattInntektsmeldingPåTopic(
@@ -26,7 +29,7 @@ class InntektsmeldingAivenProducer(
         topic: String,
     ) {
         val serialisertIM = serialiseringInntektsmelding(inntektsmelding)
-        sikkerlogger.info("Publiserer på $topic: $serialisertIM") // Midlertidig logging
+        sikkerlogger.info("Publiserer på $topic: $serialisertIM")
         kafkaproducer.send(
             ProducerRecord(
                 topic,

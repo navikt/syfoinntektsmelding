@@ -110,7 +110,8 @@ class InntektsmeldingBehandler(
                             dto.uuid,
                         )
 
-                    inntektsmeldingAivenProducer.leggMottattInntektsmeldingPåTopics(mappedInntektsmelding)
+                    inntektsmeldingAivenProducer.sendTilTopicForVedtaksloesning(mappedInntektsmelding)
+                    inntektsmeldingAivenProducer.sendTilTopicForBruker(mappedInntektsmelding)
                     tellMetrikker(inntektsmelding)
                     logger.info(
                         "Inntektsmelding {} er journalført for {} refusjon {}",

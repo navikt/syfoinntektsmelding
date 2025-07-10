@@ -89,8 +89,6 @@ class InntektsmeldingConsumer(
         }
     }
 
-    fun Inntektsmelding.Type.harIngenArbeidsforhold(): Boolean = this is Inntektsmelding.Type.Fisker || this is Inntektsmelding.Type.UtenArbeidsforhold
-
     fun behandle(
         journalpostId: String,
         inntektsmeldingFraSimba: Inntektsmelding,
@@ -99,10 +97,10 @@ class InntektsmeldingConsumer(
         val arkivreferanse = "im_$journalpostId"
         val inntektsmelding = mapInntektsmelding(arkivreferanse, aktorid, journalpostId, inntektsmeldingFraSimba)
         val timeout =
-            if (inntektsmeldingFraSimba.type.harIngenArbeidsforhold()) {
-                LocalDateTime.now() // opprett oppgave umiddelbart
-            } else {
+            if (inntektsmeldingFraSimba.type.harArbeidsforhold()) {
                 LocalDateTime.now().plusHours(OPPRETT_OPPGAVE_FORSINKELSE)
+            } else {
+                LocalDateTime.now() // opprett oppgave umiddelbart
             }
         val dto = inntektsmeldingService.lagreBehandling(inntektsmelding, aktorid)
         utsattOppgaveService.opprett(
@@ -130,11 +128,10 @@ class InntektsmeldingConsumer(
                 dto.uuid,
             )
 
-        // TODO: Sende alle inntektsmeldinger (også de med ingen arbeidsforhold) i egen topic til flex
-        if (!inntektsmeldingFraSimba.type.harIngenArbeidsforhold()) {
-            inntektsmeldingAivenProducer.leggMottattInntektsmeldingPåTopics(mappedInntektsmelding)
+        inntektsmeldingAivenProducer.sendTilTopicForBruker(mappedInntektsmelding)
 
-            sikkerlogger.info("Publiserte inntektsmelding på topic: $mappedInntektsmelding")
+        if (inntektsmeldingFraSimba.type.harArbeidsforhold()) {
+            inntektsmeldingAivenProducer.sendTilTopicForVedtaksloesning(mappedInntektsmelding)
         }
     }
 
