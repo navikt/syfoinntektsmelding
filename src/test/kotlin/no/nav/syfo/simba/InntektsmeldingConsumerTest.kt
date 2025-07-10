@@ -65,7 +65,7 @@ internal class InntektsmeldingConsumerTest {
 
     @ParameterizedTest
     @MethodSource("inntektsmeldingTypesWithoutArbeidsforhold")
-    fun `behandle med IM uten arbeidsforhold oppretter utsattOppgave med timeout now og legger ikke til IM på topic`(imType: Inntektsmelding.Type) {
+    fun `behandle med IM uten arbeidsforhold oppretter utsattOppgave med timeout now og legger ikke IM på topic for vedtaksloesning`(imType: Inntektsmelding.Type) {
         val timeoutNow = LocalDateTime.now()
         val im = lagInntektsmelding().copy(type = imType)
 
