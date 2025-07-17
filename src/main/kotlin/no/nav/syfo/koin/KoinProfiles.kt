@@ -35,7 +35,7 @@ val common =
         single { KubernetesProbeManager() }
 
         single {
-            createHttpClient(3)
+            createHttpClient(maxRetries = 3)
         }
     }
 
