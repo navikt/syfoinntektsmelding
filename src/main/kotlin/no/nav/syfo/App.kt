@@ -2,7 +2,8 @@ package no.nav.syfo
 
 import com.typesafe.config.ConfigFactory
 import io.ktor.server.config.HoconApplicationConfig
-import io.ktor.server.engine.applicationEngineEnvironment
+import io.ktor.server.engine.EmbeddedServer
+import io.ktor.server.engine.applicationEnvironment
 import io.ktor.server.engine.connector
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
@@ -28,19 +29,18 @@ import org.koin.core.component.get
 import org.koin.core.context.GlobalContext
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
-import org.slf4j.Logger
 import kotlin.concurrent.thread
 
 class SpinnApplication(
     val port: Int = 8080,
 ) : KoinComponent {
-    private val logger: Logger = this.logger()
-    private var webserver: NettyApplicationEngine? = null
-    private var appConfig: HoconApplicationConfig = HoconApplicationConfig(ConfigFactory.load())
-
+    private val logger = logger()
+    private val appConfig = HoconApplicationConfig(ConfigFactory.load())
     private val runtimeEnvironment = appConfig.getString("koin.profile")
 
-    fun start() {
+    private val webserver: EmbeddedServer<NettyApplicationEngine, NettyApplicationEngine.Configuration>
+
+    init {
         logger.info("Environment: $runtimeEnvironment")
         if (runtimeEnvironment != "LOCAL" && runtimeEnvironment != "TEST") {
             logger.info("Sover i 30s i påvente av SQL proxy sidecar")
@@ -50,7 +50,11 @@ class SpinnApplication(
         migrateDatabase()
         configAndStartBackgroundWorkers()
         startKafkaConsumer()
-        configAndStartWebserver()
+
+        webserver =
+            createWebserver().also {
+                it.start(wait = false)
+            }
     }
 
     private fun startKafkaConsumer() {
@@ -88,29 +92,27 @@ class SpinnApplication(
         // Et forsøk på at bakgrunnsjobber skal kunne ferdigstilles OK, før stopp. Ingen garantier..
         logger.info("Venter ${service.delayMillis} ms på at bakgrunnsjobbService stoppes!")
         Thread.sleep(service.delayMillis)
-        webserver?.stop(1000, 1000)
+        webserver.stop(1000, 1000)
         stopKoin()
     }
 
-    private fun configAndStartWebserver() {
-        webserver =
-            embeddedServer(
-                Netty,
-                applicationEngineEnvironment {
+    private fun createWebserver(): EmbeddedServer<NettyApplicationEngine, NettyApplicationEngine.Configuration> =
+        embeddedServer(
+            factory = Netty,
+            environment =
+                applicationEnvironment {
                     config = appConfig
-                    connector {
-                        port = this@SpinnApplication.port
-                    }
-
-                    module {
-                        nais()
-                        inntektsmeldingModule(config)
-                    }
                 },
-            )
-
-        webserver!!.start(wait = false)
-    }
+            configure = {
+                connector {
+                    port = this@SpinnApplication.port
+                }
+            },
+            module = {
+                nais()
+                inntektsmeldingModule(appConfig)
+            },
+        )
 
     private fun configAndStartBackgroundWorkers() {
         if (appConfig.getString("run_background_workers") == "true") {
@@ -150,7 +152,6 @@ fun main() {
     }
 
     val application = SpinnApplication()
-    application.start()
 
     Runtime.getRuntime().addShutdownHook(
         Thread {

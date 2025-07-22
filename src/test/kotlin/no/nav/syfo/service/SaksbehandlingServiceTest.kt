@@ -1,5 +1,6 @@
 package no.nav.syfo.service
 
+import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
@@ -9,7 +10,6 @@ import no.nav.syfo.client.oppgave.OppgaveService
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.Periode
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
-import no.nav.syfo.util.getAktørid
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -23,7 +23,7 @@ class SaksbehandlingServiceTest {
     @BeforeEach
     fun setup() {
         every { inntektsmeldingService.finnBehandledeInntektsmeldinger(any()) } returns emptyList()
-        every { pdlClient.getAktørid(any()) } returns "aktorid"
+        coEvery { pdlClient.hentAktoerID(any()) } returns "aktorid"
     }
 
     @Test
