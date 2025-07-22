@@ -1,5 +1,6 @@
 package no.nav.syfo.behandling
 
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -12,7 +13,6 @@ import no.nav.syfo.producer.InntektsmeldingAivenProducer
 import no.nav.syfo.service.InntektsmeldingService
 import no.nav.syfo.service.JournalpostService
 import no.nav.syfo.util.Metrikk
-import no.nav.syfo.util.getAktørid
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -41,7 +41,7 @@ class InntektsmeldingBehandlerTest {
 
     @BeforeEach
     fun setup() {
-        every { pdlClient.getAktørid("fnr") } returns "aktorId" // inntektsmelding.fnr
+        coEvery { pdlClient.hentAktoerID("fnr") } returns "aktorId" // inntektsmelding.fnr
         every { inntektsmeldingService.lagreBehandling(any(), any()) } returns
             InntektsmeldingEntitet(
                 uuid = UUID.randomUUID().toString(),

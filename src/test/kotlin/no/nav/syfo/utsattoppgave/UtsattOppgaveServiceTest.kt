@@ -1,6 +1,5 @@
 package no.nav.syfo.utsattoppgave
 
-import io.mockk.Called
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -11,6 +10,7 @@ import no.nav.syfo.UtsattOppgaveTestData
 import no.nav.syfo.client.oppgave.OppgaveService
 import no.nav.syfo.domain.OppgaveResultat
 import no.nav.syfo.dto.Tilstand
+import no.nav.syfo.isEqualNullSafe
 import no.nav.syfo.koin.buildObjectMapper
 import no.nav.syfo.repository.InntektsmeldingRepository
 import no.nav.syfo.service.BehandlendeEnhetConsumer
@@ -60,7 +60,7 @@ open class UtsattOppgaveServiceTest {
                 OppdateringstypeDTO.OpprettSpeilRelatert,
             )
         oppgaveService.prosesser(oppgaveOppdatering)
-        verify { utsattOppgaveDAO.lagre(match { it.tilstand == Tilstand.Opprettet && it.speil && it.timeout == timeout }) }
+        verify { utsattOppgaveDAO.lagre(match { it.tilstand == Tilstand.Opprettet && it.speil && it.timeout.isEqual(timeout) }) }
         coVerify { oppgaveClient.opprettOppgave(any(), any(), any()) }
     }
 
@@ -74,7 +74,7 @@ open class UtsattOppgaveServiceTest {
                 OppdateringstypeDTO.Opprett,
             )
         oppgaveService.prosesser(oppgaveOppdatering)
-        verify { utsattOppgaveDAO.lagre(match { it.tilstand == Tilstand.Opprettet && !it.speil && it.timeout == timeout }) }
+        verify { utsattOppgaveDAO.lagre(match { it.tilstand == Tilstand.Opprettet && !it.speil && it.timeout.isEqual(timeout) }) }
         coVerify { oppgaveClient.opprettOppgave(any(), any(), any()) }
     }
 
@@ -91,10 +91,10 @@ open class UtsattOppgaveServiceTest {
         oppgaveService.prosesser(oppgaveOppdatering)
         verify {
             utsattOppgaveDAO.lagre(
-                match { it.tilstand == Tilstand.Utsatt && it.timeout == nyTimeout && it.oppdatert != oppgave.oppdatert },
+                match { it.tilstand == Tilstand.Utsatt && it.timeout.isEqual(nyTimeout) && !it.oppdatert.isEqualNullSafe(oppgave.oppdatert) },
             )
         }
-        coVerify { oppgaveClient.opprettOppgave(any(), any(), any()) wasNot Called }
+        coVerify(exactly = 0) { oppgaveClient.opprettOppgave(any(), any(), any()) }
     }
 
     @Test
@@ -109,7 +109,7 @@ open class UtsattOppgaveServiceTest {
         oppgaveService.prosesser(oppgaveOppdatering)
         verify {
             utsattOppgaveDAO.lagre(
-                match { it.tilstand == Tilstand.Forkastet && it.timeout == timeout && it.oppdatert != oppgave.oppdatert },
+                match { it.tilstand == Tilstand.Forkastet && it.timeout.isEqual(timeout) && !it.oppdatert.isEqualNullSafe(oppgave.oppdatert) },
             )
         }
         coVerify(exactly = 0) { oppgaveClient.opprettOppgave(any(), any(), any()) }
@@ -126,7 +126,7 @@ open class UtsattOppgaveServiceTest {
                 OppdateringstypeDTO.Opprett,
             )
         oppgaveService.prosesser(oppgaveOppdatering)
-        verify { utsattOppgaveDAO.lagre(match { it.tilstand == Tilstand.Forkastet && it.oppdatert != oppgave.oppdatert }) }
+        verify { utsattOppgaveDAO.lagre(match { it.tilstand == Tilstand.Forkastet && !it.oppdatert.isEqualNullSafe(oppgave.oppdatert) }) }
         coVerify(exactly = 0) { oppgaveClient.opprettOppgave(any(), any(), any()) }
     }
 

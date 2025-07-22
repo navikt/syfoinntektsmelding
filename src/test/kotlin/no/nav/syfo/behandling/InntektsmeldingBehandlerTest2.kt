@@ -9,6 +9,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.mockk.MockKAnnotations
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -34,7 +35,6 @@ import no.nav.syfo.service.JournalpostService
 import no.nav.syfo.service.inntektsmeldingArbeidsgiver
 import no.nav.syfo.service.inntektsmeldingArbeidsgiverPrivat
 import no.nav.syfo.util.Metrikk
-import no.nav.syfo.util.getAktørid
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -112,7 +112,7 @@ class InntektsmeldingBehandlerTest2 {
 
         every { inngaaendeJournalConsumer.hentDokumentId("arkivId") } returns inngaaendeJournal("arkivId")
 
-        every { pdlClient.getAktørid(any()) } answers { "aktorId_for_" + firstArg() }
+        coEvery { pdlClient.hentAktoerID(any()) } answers { "aktorId_for_" + firstArg() }
 
         every { behandlendeEnhetConsumer.hentBehandlendeEnhet(any(), any()) } returns "enhet"
         every { behandlendeEnhetConsumer.hentGeografiskTilknytning(any()) } returns
@@ -130,7 +130,7 @@ class InntektsmeldingBehandlerTest2 {
 
     @Test
     fun `Gjenbruker saksId hvis vi får to overlappende inntektsmeldinger`() {
-        every { pdlClient.getAktørid(any()) } returnsMany listOf("aktorId_for_1", "aktorId_for_1")
+        coEvery { pdlClient.hentAktoerID(any()) } returnsMany listOf("aktorId_for_1", "aktorId_for_1")
         every { inngaaendeJournalConsumer.hentDokumentId("arkivId1") } returns inngaaendeJournal("arkivId1")
         every { inngaaendeJournalConsumer.hentDokumentId("arkivId2") } returns inngaaendeJournal("arkivId2")
         val dokumentResponse1 = lagDokumentRespons(LocalDate.of(2019, 1, 1), LocalDate.of(2019, 1, 16))
@@ -158,7 +158,7 @@ class InntektsmeldingBehandlerTest2 {
             safDokumentClient.hentDokument(any(), any())
         } returnsMany listOf(dokumentResponse1.toByteArray(), dokumentResponse2.toByteArray())
 
-        every { pdlClient.getAktørid(any()) } returnsMany listOf("778", "778")
+        coEvery { pdlClient.hentAktoerID(any()) } returnsMany listOf("778", "778")
 
         inntektsmeldingBehandler.behandle("arkivId3", "AR-3")
         inntektsmeldingBehandler.behandle("arkivId4", "AR-4")
@@ -173,7 +173,7 @@ class InntektsmeldingBehandlerTest2 {
 
     @Test
     fun `Mottar inntektsmelding uten arbeidsgiverperioder`() {
-        every { pdlClient.getAktørid(any()) } returnsMany listOf("aktorId_for_7", "aktorId_for_7")
+        coEvery { pdlClient.hentAktoerID(any()) } returnsMany listOf("aktorId_for_7", "aktorId_for_7")
         every { inngaaendeJournalConsumer.hentDokumentId("arkivId7") } returns inngaaendeJournal("arkivId7")
 
         every {
@@ -188,7 +188,7 @@ class InntektsmeldingBehandlerTest2 {
 
     @Test
     fun `Mottar inntektsmelding med flere perioder`() {
-        every { pdlClient.getAktørid(any()) } returnsMany listOf("aktorId_for_8", "aktorId_for_8")
+        coEvery { pdlClient.hentAktoerID(any()) } returnsMany listOf("aktorId_for_8", "aktorId_for_8")
         val dokumentResponse =
             lagDokumentRespons(
                 LocalDate.of(2019, 1, 1),
@@ -215,7 +215,7 @@ class InntektsmeldingBehandlerTest2 {
 
     @Test
     fun `Mottar inntektsmelding med privat arbeidsgiver`() {
-        every { pdlClient.getAktørid(any()) } returnsMany listOf("aktorId_for_9", "aktorId_for_9")
+        coEvery { pdlClient.hentAktoerID(any()) } returnsMany listOf("aktorId_for_9", "aktorId_for_9")
         every {
             safDokumentClient.hentDokument(any(), any())
         } returns inntektsmeldingArbeidsgiverPrivat().toByteArray()

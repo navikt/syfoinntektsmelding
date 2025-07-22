@@ -10,6 +10,7 @@ import no.nav.syfo.UtsattOppgaveTestData
 import no.nav.syfo.client.oppgave.OppgaveService
 import no.nav.syfo.domain.OppgaveResultat
 import no.nav.syfo.dto.Tilstand
+import no.nav.syfo.isEqualNullSafe
 import no.nav.syfo.koin.buildObjectMapper
 import no.nav.syfo.repository.InntektsmeldingRepository
 import no.nav.syfo.service.BehandlendeEnhetConsumer
@@ -56,7 +57,7 @@ class FinnAlleUtgaandeOppgaverProcessorTest {
         processor.doJob()
         verify {
             utsattOppgaveDAO.lagre(
-                match { it.tilstand == Tilstand.OpprettetTimeout && !it.speil && it.timeout == timeout && it.oppdatert != oppgave.oppdatert },
+                match { it.tilstand == Tilstand.OpprettetTimeout && !it.speil && it.timeout.isEqual(timeout) && !it.oppdatert.isEqualNullSafe(oppgave.oppdatert) },
             )
         }
         coVerify { oppgaveService.opprettOppgave(any(), any(), any()) }
@@ -68,7 +69,7 @@ class FinnAlleUtgaandeOppgaverProcessorTest {
         processor.doJob()
         verify {
             utsattOppgaveDAO.lagre(
-                match { it.tilstand == Tilstand.Forkastet && !it.speil && it.timeout == timeout && it.oppdatert != oppgave.oppdatert },
+                match { it.tilstand == Tilstand.Forkastet && !it.speil && it.timeout.isEqual(timeout) && !it.oppdatert.isEqualNullSafe(oppgave.oppdatert) },
             )
         }
         coVerify(exactly = 0) { oppgaveService.opprettOppgave(any(), any(), any()) }

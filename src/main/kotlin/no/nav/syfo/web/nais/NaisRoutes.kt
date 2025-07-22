@@ -3,13 +3,11 @@ package no.nav.syfo.web.nais
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
-import io.ktor.server.application.ApplicationCall
-import io.ktor.server.application.call
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondTextWriter
+import io.ktor.server.routing.RoutingContext
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
-import io.ktor.util.pipeline.PipelineContext
 import io.prometheus.client.CollectorRegistry
 import io.prometheus.client.exporter.common.TextFormat
 import no.nav.helsearbeidsgiver.utils.log.sikkerLogger
@@ -22,7 +20,7 @@ import java.util.Collections
 fun Application.nais() {
     val sikkerlogger = sikkerLogger()
 
-    suspend fun PipelineContext<Unit, ApplicationCall>.returnResultOfChecks(checkResults: ProbeResult) {
+    suspend fun RoutingContext.returnResultOfChecks(checkResults: ProbeResult) {
         val httpResult =
             if (checkResults.state == ProbeState.UN_HEALTHY) HttpStatusCode.InternalServerError else HttpStatusCode.OK
         checkResults.unhealthyComponents.forEach { r ->

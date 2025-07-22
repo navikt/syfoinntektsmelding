@@ -24,7 +24,6 @@ open class SystemTestBase : KoinTest {
     fun before() {
         if (app == null) {
             app = SpinnApplication(port = TEST_SERVER_PORT)
-            app!!.start()
             Thread.sleep(200)
         }
     }

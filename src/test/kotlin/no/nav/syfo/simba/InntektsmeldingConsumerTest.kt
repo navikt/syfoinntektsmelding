@@ -52,7 +52,7 @@ internal class InntektsmeldingConsumerTest {
         verify {
             utsattOppgaveService.opprett(
                 match {
-                    it.timeout == timeoutNowPlusForsinkelse
+                    it.timeout.isEqual(timeoutNowPlusForsinkelse)
                 },
             )
         }
@@ -74,7 +74,7 @@ internal class InntektsmeldingConsumerTest {
         verify {
             utsattOppgaveService.opprett(
                 match {
-                    it.timeout == timeoutNow
+                    it.timeout.isEqual(timeoutNow)
                 },
             )
         }

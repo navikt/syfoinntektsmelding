@@ -1,5 +1,6 @@
 package no.nav.syfo.mapping
 
+import kotlinx.coroutines.runBlocking
 import no.nav.helsearbeidsgiver.pdl.PdlClient
 import no.nav.helsearbeidsgiver.utils.log.logger
 import no.nav.syfo.domain.JournalStatus
@@ -13,7 +14,6 @@ import no.nav.syfo.domain.inntektsmelding.Kontaktinformasjon
 import no.nav.syfo.domain.inntektsmelding.MottaksKanal
 import no.nav.syfo.domain.inntektsmelding.OpphoerAvNaturalytelse
 import no.nav.syfo.domain.inntektsmelding.Refusjon
-import no.nav.syfo.util.getAktørid
 import no.seres.xsd.nav.inntektsmelding_m._20181211.XMLArbeidsforhold
 import no.seres.xsd.nav.inntektsmelding_m._20181211.XMLGjenopptakelseNaturalytelseListe
 import no.seres.xsd.nav.inntektsmelding_m._20181211.XMLInntektsmeldingM
@@ -49,7 +49,11 @@ internal object InntektsmeldingArbeidsgiverPrivat20181211Mapper {
             skjemainnhold.arbeidsgiverPrivat
                 ?.value
                 ?.arbeidsgiverFnr
-                ?.let { fnr -> pdlClient.getAktørid(fnr) }
+                ?.let { fnr ->
+                    runBlocking {
+                        pdlClient.hentAktoerID(fnr)
+                    }
+                }
 
         val innsendingstidspunkt = skjemainnhold.avsendersystem?.innsendingstidspunkt?.value
         val bruttoUtbetalt =
