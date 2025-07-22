@@ -19,7 +19,6 @@ kotlin {
     }
 }
 
-
 tasks.withType<Test> {
     useJUnitPlatform()
     testLogging {
@@ -168,7 +167,7 @@ dependencies {
     implementation("org.postgresql:postgresql:$postgresVersion")
     implementation("org.slf4j:slf4j-api:$slf4Version")
 
-    runtimeOnly("ch.qos.logback:logback-classic:${logbackClassicVersion}")
+    runtimeOnly("ch.qos.logback:logback-classic:$logbackClassicVersion")
 
     testImplementation(testFixtures("no.nav.helsearbeidsgiver:utils:$hagUtilsVersion"))
     testImplementation("io.insert-koin:koin-test:$koinVersion")
