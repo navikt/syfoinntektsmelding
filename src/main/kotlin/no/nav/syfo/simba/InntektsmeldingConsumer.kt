@@ -1,5 +1,6 @@
 package no.nav.syfo.simba
 
+import kotlinx.coroutines.runBlocking
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.v1.Inntektsmelding
 import no.nav.helsearbeidsgiver.domene.inntektsmelding.v1.JournalfoertInntektsmelding
 import no.nav.helsearbeidsgiver.pdl.PdlClient
@@ -17,7 +18,6 @@ import no.nav.syfo.producer.InntektsmeldingAivenProducer
 import no.nav.syfo.service.InntektsmeldingService
 import no.nav.syfo.util.LivenessComponent
 import no.nav.syfo.util.ReadynessComponent
-import no.nav.syfo.util.getAktørid
 import no.nav.syfo.util.validerInntektsmelding
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import org.apache.kafka.clients.consumer.ConsumerRecord
@@ -136,7 +136,10 @@ class InntektsmeldingConsumer(
     }
 
     private fun hentAktoeridFraPDL(identitetsnummer: String): String {
-        val aktorid = pdlClient.getAktørid(identitetsnummer)
+        val aktorid =
+            runBlocking {
+                pdlClient.hentAktoerID(identitetsnummer)
+            }
         if (aktorid == null) {
             sikkerlogger.error("Fant ikke aktøren for: $identitetsnummer")
             if (skalKasteExceptionVedPDLFeil) { // Oppslag feiler i dev-miljøer om ikke brukere er opprettet i PDL - og dev wipes rett som det er

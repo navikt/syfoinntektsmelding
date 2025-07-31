@@ -1,6 +1,7 @@
 package no.nav.syfo.behandling
 
 import com.google.common.util.concurrent.Striped
+import kotlinx.coroutines.runBlocking
 import no.nav.helsearbeidsgiver.pdl.PdlClient
 import no.nav.helsearbeidsgiver.utils.log.logger
 import no.nav.syfo.domain.JournalStatus
@@ -12,7 +13,6 @@ import no.nav.syfo.producer.InntektsmeldingAivenProducer
 import no.nav.syfo.service.InntektsmeldingService
 import no.nav.syfo.service.JournalpostService
 import no.nav.syfo.util.Metrikk
-import no.nav.syfo.util.getAktørid
 import no.nav.syfo.util.validerInntektsmelding
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import org.slf4j.Logger
@@ -59,7 +59,10 @@ class InntektsmeldingBehandler(
             consumerLock.lock()
             sikkerlogger.info("Behandler: $inntektsmelding")
             logger.info("Slår opp aktørID for ${inntektsmelding.arkivRefereranse}")
-            val aktorid = pdlClient.getAktørid(inntektsmelding.fnr)
+            val aktorid =
+                runBlocking {
+                    pdlClient.hentAktoerID(inntektsmelding.fnr)
+                }
             if (aktorid == null) {
                 sikkerlogger.error("Fant ikke aktøren for arkivreferansen: $arkivreferanse")
                 throw FantIkkeAktørException(null)
