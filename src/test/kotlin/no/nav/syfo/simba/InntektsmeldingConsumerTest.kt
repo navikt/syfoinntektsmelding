@@ -64,7 +64,7 @@ internal class InntektsmeldingConsumerTest {
     }
 
     @ParameterizedTest
-    @MethodSource("inntektsmeldingTypesWithoutArbeidsforhold")
+    @MethodSource("inntektsmeldingTyperSomIkkeSkalTilSpleis")
     fun `behandle med IM uten arbeidsforhold oppretter utsattOppgave med timeout now og legger ikke IM på topic for vedtaksloesning`(imType: Inntektsmelding.Type) {
         val timeoutNow = LocalDateTime.now()
         val im = lagInntektsmelding().copy(type = imType)
@@ -89,10 +89,11 @@ internal class InntektsmeldingConsumerTest {
 
     companion object {
         @JvmStatic
-        fun inntektsmeldingTypesWithoutArbeidsforhold() =
+        fun inntektsmeldingTyperSomIkkeSkalTilSpleis() =
             setOf(
                 Inntektsmelding.Type.Fisker(UUID.randomUUID()),
                 Inntektsmelding.Type.UtenArbeidsforhold(UUID.randomUUID()),
+                Inntektsmelding.Type.Behandlingsdager(UUID.randomUUID()),
             )
     }
 }
