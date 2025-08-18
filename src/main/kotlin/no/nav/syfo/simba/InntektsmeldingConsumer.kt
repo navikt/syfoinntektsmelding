@@ -97,7 +97,7 @@ class InntektsmeldingConsumer(
         val arkivreferanse = "im_$journalpostId"
         val inntektsmelding = mapInntektsmelding(arkivreferanse, aktorid, journalpostId, inntektsmeldingFraSimba)
         val timeout =
-            if (inntektsmeldingFraSimba.type.harArbeidsforhold()) {
+            if (inntektsmeldingFraSimba.type.sendTilSpleis()) {
                 LocalDateTime.now().plusHours(OPPRETT_OPPGAVE_FORSINKELSE)
             } else {
                 LocalDateTime.now() // opprett oppgave umiddelbart
@@ -130,7 +130,7 @@ class InntektsmeldingConsumer(
 
         inntektsmeldingAivenProducer.sendTilTopicForBruker(mappedInntektsmelding)
 
-        if (inntektsmeldingFraSimba.type.harArbeidsforhold()) {
+        if (inntektsmeldingFraSimba.type.sendTilSpleis()) {
             inntektsmeldingAivenProducer.sendTilTopicForVedtaksloesning(mappedInntektsmelding)
         }
     }

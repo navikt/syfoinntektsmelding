@@ -52,7 +52,7 @@ fun mapInntektsmelding(
     ) =
         when (im.type) {
             is Type.Forespurt, is Type.ForespurtEkstern -> (Avsender.NAV_NO to true)
-            is Type.Selvbestemt, is Type.Fisker, is Type.UtenArbeidsforhold -> (Avsender.NAV_NO_SELVBESTEMT to false)
+            is Type.Selvbestemt, is Type.Fisker, is Type.UtenArbeidsforhold, is Type.Behandlingsdager -> (Avsender.NAV_NO_SELVBESTEMT to false)
         }
     return Inntektsmelding(
         journalStatus = JournalStatus.FERDIGSTILT,
