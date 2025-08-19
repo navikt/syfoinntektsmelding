@@ -39,7 +39,7 @@ object Producer {
             put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, System.getProperty("KAFKA_BOOTSTRAP_SERVERS") ?: "localhost:9092")
             put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer::class.java.name)
             put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer::class.java.name)
-            put(ProducerConfig.CLIENT_ID_CONFIG, "syfoinntektsmelding")
+            put(ProducerConfig.CLIENT_ID_CONFIG, "spinosaurus")
         }
     val kafkaProducer = KafkaProducer<String, String>(props)
 

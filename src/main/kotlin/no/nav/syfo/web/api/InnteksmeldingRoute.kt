@@ -2,7 +2,6 @@ package no.nav.syfo.web.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.ktor.http.HttpStatusCode
-import io.ktor.server.application.call
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
@@ -17,7 +16,7 @@ import no.nav.syfo.repository.InntektsmeldingRepository
 import no.nav.syfo.service.InntektsmeldingService
 import no.nav.syfo.util.validerInntektsmelding
 
-fun Route.syfoinntektsmelding(
+fun Route.spinosaurus(
     imRepo: InntektsmeldingRepository,
     om: ObjectMapper,
 ) {

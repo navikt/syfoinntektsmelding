@@ -1,4 +1,4 @@
-rootProject.name = "syfoinntektsmelding"
+rootProject.name = "spinosaurus"
 
 pluginManagement {
     plugins {

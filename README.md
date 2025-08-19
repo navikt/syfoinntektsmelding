@@ -1,4 +1,4 @@
-# Syfoinntektsmelding
+# Spinosaurus
 
 ## Formål
 Applikasjonen tar imot innkommende inntektsmeldinger for sykepenger, journalfører dette og oppretter oppgaver i
