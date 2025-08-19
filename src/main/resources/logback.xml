@@ -39,4 +39,8 @@
         <appender-ref ref="secureLog" />
         <appender-ref ref="team-logs" />
     </logger>
+
+    <logger name="team-logs-logger" level="INFO" additivity="false">
+        <appender-ref ref="team-logs" />
+    </logger>
 </configuration>

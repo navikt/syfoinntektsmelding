@@ -22,6 +22,7 @@ import no.nav.syfo.util.validerInntektsmelding
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.clients.consumer.KafkaConsumer
+import org.slf4j.LoggerFactory
 import java.time.Duration
 import java.time.LocalDateTime
 
@@ -40,6 +41,7 @@ class InntektsmeldingConsumer(
     private var error = false
     private val log = logger()
     private val sikkerlogger = sikkerLogger()
+    private val teamLogger = LoggerFactory.getLogger("team-logs-logger")
 
     init {
         log.info("Lytter på topic $topicName")
@@ -56,6 +58,7 @@ class InntektsmeldingConsumer(
 
     fun start() {
         sikkerlogger.info("Starter InntektsmeldingConsumer...")
+        teamLogger.info("Starter InntektsmeldingConsumer...")
         consumer.use {
             setIsReady(true)
             while (!error) {
