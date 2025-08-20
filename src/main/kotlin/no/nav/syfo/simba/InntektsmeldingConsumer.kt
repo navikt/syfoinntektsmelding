@@ -41,7 +41,6 @@ class InntektsmeldingConsumer(
     private var error = false
     private val log = logger()
     private val sikkerlogger = sikkerLogger()
-    private val teamLogger = LoggerFactory.getLogger("team-logs-logger")
 
     init {
         log.info("Lytter på topic $topicName")
@@ -58,7 +57,6 @@ class InntektsmeldingConsumer(
 
     fun start() {
         sikkerlogger.info("Starter InntektsmeldingConsumer...")
-        teamLogger.info("Starter InntektsmeldingConsumer...")
         consumer.use {
             setIsReady(true)
             while (!error) {
