@@ -36,6 +36,7 @@ spec:
     logging:
       destinations:
         - id: secure_logs
+        - id: loki
     autoInstrumentation:
       enabled: true
       runtime: java
@@ -74,6 +75,8 @@ spec:
       rules:
         - application: norg2
           namespace: org
+        - application: logging
+          namespace: nais-system
     inbound:
       rules:
         - application: im-bro-spinn
