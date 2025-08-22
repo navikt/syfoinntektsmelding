@@ -57,7 +57,10 @@ class BehandlendeEnhetConsumer(
             )
             return behandlendeEnhet
         } catch (e: RuntimeException) {
-            sikkerlogger.error("Klarte ikke å hente behandlende enhet!", e)
+            "Klarte ikke å hente behandlende enhet!".also {
+                logger.error(it)
+                sikkerlogger.error(it, e)
+            }
             throw BehandlendeEnhetFeiletException(e)
         }
     }

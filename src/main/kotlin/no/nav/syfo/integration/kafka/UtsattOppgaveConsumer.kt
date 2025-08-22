@@ -65,7 +65,10 @@ class UtsattOppgaveConsumer(
                             }
                             it.commitSync()
                         } catch (e: Throwable) {
-                            sikkerlogger.error("Klarte ikke behandle UtsattOppgave. Stopper lytting!", e)
+                            "Klarte ikke behandle UtsattOppgave. Stopper lytting!".also {
+                                logger.error(it)
+                                sikkerlogger.error(it, e)
+                            }
                             setIsError(true)
                         }
                     }

@@ -1,5 +1,7 @@
 package no.nav.syfo.producer
 
+import no.nav.helsearbeidsgiver.utils.log.logger
+import no.nav.helsearbeidsgiver.utils.log.sikkerLogger
 import no.nav.inntektsmelding.kontrakt.serde.JacksonJsonConfig
 import no.nav.inntektsmeldingkontrakt.Inntektsmelding
 import org.apache.kafka.clients.producer.KafkaProducer
@@ -12,8 +14,9 @@ private const val IM_BRUKER_TOPIC = "helsearbeidsgiver.inntektsmelding-bruker"
 class InntektsmeldingAivenProducer(
     producerProperties: Map<String, Any>,
 ) {
-    private val sikkerlogger = LoggerFactory.getLogger("tjenestekall")
-    val objectMapper = JacksonJsonConfig.objectMapperFactory.opprettObjectMapper()
+    private val sikkerlogger = sikkerLogger()
+    private val logger = logger()
+    val objectMapper = JacksonJsonConfig.opprettObjectMapper()
     private val kafkaproducer = KafkaProducer<String, String>(producerProperties)
 
     fun sendTilTopicForVedtaksloesning(inntektsmelding: Inntektsmelding) {
@@ -30,6 +33,7 @@ class InntektsmeldingAivenProducer(
     ) {
         val serialisertIM = serialiseringInntektsmelding(inntektsmelding)
         sikkerlogger.info("Publiserer på $topic: $serialisertIM")
+        logger.info("Publiserer på $topic inntektsmelding med id ${inntektsmelding.inntektsmeldingId}")
         kafkaproducer.send(
             ProducerRecord(
                 topic,

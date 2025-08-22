@@ -10,6 +10,7 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 import io.prometheus.client.CollectorRegistry
 import io.prometheus.client.exporter.common.TextFormat
+import no.nav.helsearbeidsgiver.utils.log.logger
 import no.nav.helsearbeidsgiver.utils.log.sikkerLogger
 import no.nav.syfo.util.KubernetesProbeManager
 import no.nav.syfo.util.ProbeResult
@@ -18,13 +19,17 @@ import org.koin.ktor.ext.get
 import java.util.Collections
 
 fun Application.nais() {
+    val logger = logger()
     val sikkerlogger = sikkerLogger()
 
     suspend fun RoutingContext.returnResultOfChecks(checkResults: ProbeResult) {
         val httpResult =
             if (checkResults.state == ProbeState.UN_HEALTHY) HttpStatusCode.InternalServerError else HttpStatusCode.OK
         checkResults.unhealthyComponents.forEach { r ->
-            r.error?.let { sikkerlogger.error("Helsesjekk feiler for ${r.componentName}", it) }
+            r.error?.also {
+                logger.error("Helsesjekk feiler for ${r.componentName}")
+                sikkerlogger.error("Helsesjekk feiler for ${r.componentName}", it)
+            }
         }
         call.respond(httpResult, checkResults)
     }

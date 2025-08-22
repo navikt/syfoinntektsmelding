@@ -38,11 +38,11 @@ class InntektsmeldingConsumer(
     private val consumer = KafkaConsumer<String, String>(props)
     private var ready = false
     private var error = false
-    private val log = logger()
+    private val logger = logger()
     private val sikkerlogger = sikkerLogger()
 
     init {
-        log.info("Lytter på topic $topicName")
+        logger.info("Lytter på topic $topicName")
         consumer.subscribe(listOf(topicName))
     }
 
@@ -67,7 +67,7 @@ class InntektsmeldingConsumer(
                             it.commitSync()
                         } catch (e: Throwable) {
                             sikkerlogger.error("InntektsmeldingConsumer: Klarte ikke behandle: ${record.value()}", e)
-                            log.error("InntektsmeldingConsumer: Klarte ikke behandle hendelse. Stopper lytting!", e)
+                            logger.error("InntektsmeldingConsumer: Klarte ikke behandle hendelse. Stopper lytting!")
                             setIsError(true)
                         }
                     }
@@ -78,14 +78,15 @@ class InntektsmeldingConsumer(
     private fun behandleRecord(record: ConsumerRecord<String, String>) {
         val json = record.value().parseJson()
         sikkerlogger.info("InntektsmeldingConsumer: Mottar record fra Simba.\n${json.toPretty()}")
+        logger.info("InntektsmeldingConsumer: Mottar record fra Simba}")
         val meldingFraSimba = json.fromJson(JournalfoertInntektsmelding.serializer())
 
         val im = inntektsmeldingService.findByJournalpost(meldingFraSimba.journalpostId)
         if (im != null) {
-            sikkerlogger.info("InntektsmeldingConsumer: Behandler ikke ${meldingFraSimba.journalpostId}. Finnes allerede.")
+            logger.info("InntektsmeldingConsumer: Behandler ikke ${meldingFraSimba.journalpostId}. Finnes allerede.")
         } else {
             behandle(meldingFraSimba.journalpostId, meldingFraSimba.inntektsmelding)
-            log.info("InntektsmeldingConsumer: Behandlet inntektsmelding med journalpostId: ${meldingFraSimba.journalpostId}")
+            logger.info("InntektsmeldingConsumer: Behandlet inntektsmelding med journalpostId: ${meldingFraSimba.journalpostId}")
         }
     }
 
@@ -142,6 +143,7 @@ class InntektsmeldingConsumer(
             }
         if (aktorid == null) {
             sikkerlogger.error("Fant ikke aktøren for: $identitetsnummer")
+            logger.error("Fant ikke aktørId!")
             if (skalKasteExceptionVedPDLFeil) { // Oppslag feiler i dev-miljøer om ikke brukere er opprettet i PDL - og dev wipes rett som det er
                 throw FantIkkeAktørException(null)
             }

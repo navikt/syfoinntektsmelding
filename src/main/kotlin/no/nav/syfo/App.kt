@@ -147,8 +147,10 @@ fun main() {
     val sikkerlogger = sikkerLogger()
 
     Thread.currentThread().setUncaughtExceptionHandler { thread, err ->
-        logger.error("uncaught exception in thread ${thread.name}: ${err.message}")
-        sikkerlogger.error("uncaught exception in thread ${thread.name}: ${err.message}", err)
+        "Uncaught exception in thread ${thread.name}: ${err.message}".also {
+            logger.error(it)
+            sikkerlogger.error(it, err)
+        }
     }
 
     val application = SpinnApplication()

@@ -3,6 +3,7 @@ package no.nav.syfo.integration.kafka.journalpost
 import com.fasterxml.jackson.databind.ObjectMapper
 import no.nav.hag.utils.bakgrunnsjobb.Bakgrunnsjobb
 import no.nav.hag.utils.bakgrunnsjobb.BakgrunnsjobbRepository
+import no.nav.helsearbeidsgiver.utils.log.logger
 import no.nav.helsearbeidsgiver.utils.log.sikkerLogger
 import no.nav.syfo.kafkamottak.InngaaendeJournalpostDTO
 import no.nav.syfo.prosesser.JoarkInntektsmeldingHendelseProsessor
@@ -10,7 +11,6 @@ import no.nav.syfo.util.LivenessComponent
 import no.nav.syfo.util.ReadynessComponent
 import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.clients.consumer.KafkaConsumer
-import org.slf4j.LoggerFactory
 import java.time.Duration.ofMillis
 import java.time.LocalDateTime
 
@@ -27,14 +27,14 @@ class JournalpostHendelseConsumer(
     private val om: ObjectMapper,
 ) : ReadynessComponent,
     LivenessComponent {
-    private val log = LoggerFactory.getLogger(JournalpostHendelseConsumer::class.java)
+    private val logger = logger()
     private val sikkerlogger = sikkerLogger()
     private val consumer: KafkaConsumer<String, GenericRecord> = KafkaConsumer(props)
     private var ready = false
     private var error = false
 
     init {
-        log.info("Lytter på topic $topicName")
+        logger.info("Lytter på topic $topicName")
         consumer.subscribe(listOf(topicName))
     }
 
@@ -47,7 +47,7 @@ class JournalpostHendelseConsumer(
     }
 
     fun start() {
-        log.info("Starter...")
+        logger.info("Starter...")
         consumer.use {
             setIsReady(true)
             while (!error) {
@@ -56,7 +56,10 @@ class JournalpostHendelseConsumer(
                         processHendelse(mapJournalpostHendelse(record.value()))
                         it.commitSync()
                     } catch (e: Throwable) {
-                        sikkerlogger.error("Klarte ikke behandle hendelse. Stopper lytting!", e)
+                        "Klarte ikke behandle hendelse. Stopper lytting!".also {
+                            logger.error(it)
+                            sikkerlogger.error(it, e)
+                        }
                         setIsError(true)
                     }
                 }
@@ -68,12 +71,12 @@ class JournalpostHendelseConsumer(
         when (findStatus(journalpostDTO)) {
             JournalpostStatus.Ny -> lagreBakgrunnsjobb(journalpostDTO)
             JournalpostStatus.IkkeInntektsmelding ->
-                log.info(
+                logger.info(
                     "Ignorerte journalposthendelse ${journalpostDTO.hendelsesId}. Kanal: ${journalpostDTO.mottaksKanal} Tema: ${journalpostDTO.temaNytt} Status: ${journalpostDTO.journalpostStatus}",
                 )
 
             JournalpostStatus.FeilHendelseType ->
-                log.info(
+                logger.info(
                     "Ingorerte JournalpostHendelse ${journalpostDTO.hendelsesId} av type ${journalpostDTO.hendelsesType} med referanse: ${journalpostDTO.kanalReferanseId}",
                 )
         }
@@ -90,7 +93,7 @@ class JournalpostHendelseConsumer(
     }
 
     private fun lagreBakgrunnsjobb(hendelse: InngaaendeJournalpostDTO) {
-        log.info("Lagrer inntektsmelding ${hendelse.kanalReferanseId} for hendelse ${hendelse.hendelsesId}")
+        logger.info("Lagrer inntektsmelding ${hendelse.kanalReferanseId} for hendelse ${hendelse.hendelsesId}")
         bakgrunnsjobbRepo.save(
             Bakgrunnsjobb(
                 type = JoarkInntektsmeldingHendelseProsessor.JOB_TYPE,
