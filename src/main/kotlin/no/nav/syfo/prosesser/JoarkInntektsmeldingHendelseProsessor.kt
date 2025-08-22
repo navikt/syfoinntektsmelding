@@ -15,7 +15,6 @@ import no.nav.syfo.client.oppgave.OppgaveService
 import no.nav.syfo.kafkamottak.InngaaendeJournalpostDTO
 import no.nav.syfo.kafkamottak.InntektsmeldingConsumerException
 import no.nav.syfo.util.Metrikk
-import org.slf4j.LoggerFactory
 
 /**
  * En bakgrunnsjobb som kan prosessere bakgrunnsjobber med inntektsmeldinger fra Joark
@@ -66,7 +65,6 @@ class JoarkInntektsmeldingHendelseProsessor(
                 metrikk.tellInntektsmeldingUtenArkivReferanse()
                 throw InntektsmeldingConsumerException(e)
             } catch (e: BehandlingException) {
-
                 "Feil ved behandling av inntektsmelding med arkivreferanse $arkivReferanse".also {
                     logger.error(it)
                     sikkerlogger.error(it, e)

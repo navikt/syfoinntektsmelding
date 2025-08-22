@@ -1,6 +1,5 @@
 package no.nav.syfo.mapping
 
-import no.nav.helsearbeidsgiver.utils.log.sikkerLogger
 import no.nav.inntektsmeldingkontrakt.Arbeidsgivertype
 import no.nav.inntektsmeldingkontrakt.ArsakTilInnsending
 import no.nav.inntektsmeldingkontrakt.AvsenderSystem
@@ -19,6 +18,7 @@ import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.domain.inntektsmelding.SpinnInntektEndringAarsak
 import org.slf4j.LoggerFactory
 import no.nav.syfo.domain.inntektsmelding.MottaksKanal as Kanal
+
 private val logger = LoggerFactory.getLogger("InntektsmeldingMapper")
 
 fun mapInntektsmeldingKontrakt(

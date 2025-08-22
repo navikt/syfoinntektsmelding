@@ -6,7 +6,6 @@ import no.nav.inntektsmelding.kontrakt.serde.JacksonJsonConfig
 import no.nav.inntektsmeldingkontrakt.Inntektsmelding
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerRecord
-import org.slf4j.LoggerFactory
 
 private const val IM_VEDTAKSLOESNING_TOPIC = "helsearbeidsgiver.privat-sykepenger-inntektsmelding"
 private const val IM_BRUKER_TOPIC = "helsearbeidsgiver.inntektsmelding-bruker"

@@ -73,7 +73,6 @@ class FinnAlleUtgaandeOppgaverProcessor(
                                 metrikk.tellUtsattOppgaveOpprettTimeout()
                                 utsattOppgaveDAO.lagre(oppgaveEntitet)
                             } catch (e: OpprettOppgaveException) {
-
                                 "Feilet ved opprettelse av oppgave ved timeout i gosys for inntektsmelding: ${oppgaveEntitet.arkivreferanse}".also {
                                     logger.error(it, e)
                                     sikkerlogger.error(it, e)
