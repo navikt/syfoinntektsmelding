@@ -19,7 +19,7 @@ import no.nav.syfo.domain.inntektsmelding.SpinnInntektEndringAarsak
 import org.slf4j.LoggerFactory
 import no.nav.syfo.domain.inntektsmelding.MottaksKanal as Kanal
 
-private val sikkerlogger = LoggerFactory.getLogger("tjenestekall")
+private val logger = LoggerFactory.getLogger("InntektsmeldingMapper")
 
 fun mapInntektsmeldingKontrakt(
     inntektsmelding: Inntektsmelding,
@@ -77,7 +77,7 @@ fun konverterArsakTilInnsending(arsakTilInnsending: String): ArsakTilInnsending 
     try {
         ArsakTilInnsending.valueOf(arsakTilInnsending)
     } catch (e: IllegalArgumentException) {
-        sikkerlogger.error("Ugyldig verdi for årsakTilInnsending: $arsakTilInnsending, returnerer ${ArsakTilInnsending.Ny}")
+        logger.error("Ugyldig verdi for årsakTilInnsending: $arsakTilInnsending, returnerer ${ArsakTilInnsending.Ny}")
         ArsakTilInnsending.Ny
     }
 

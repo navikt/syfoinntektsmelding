@@ -1,6 +1,7 @@
 package no.nav.syfo.service
 
 import no.nav.helsearbeidsgiver.pdl.PdlClient
+import no.nav.helsearbeidsgiver.utils.log.logger
 import no.nav.helsearbeidsgiver.utils.log.sikkerLogger
 import no.nav.syfo.behandling.HentDokumentFeiletException
 import no.nav.syfo.client.saf.SafDokumentClient
@@ -19,6 +20,7 @@ class JournalConsumer(
     private val safJournalpostClient: SafJournalpostClient,
     private val pdlClient: PdlClient,
 ) {
+    private val logger = logger()
     private val sikkerlogger = sikkerLogger()
 
     /**
@@ -56,7 +58,10 @@ class JournalConsumer(
                 )
             }
         } catch (e: RuntimeException) {
-            sikkerlogger.error("Klarte ikke å hente inntektsmelding med journalpostId: $journalpostId", e)
+            "Klarte ikke å hente inntektsmelding med journalpostId: $journalpostId".also {
+                logger.error(it)
+                sikkerlogger.error(it, e)
+            }
             throw HentDokumentFeiletException(journalpostId, e)
         }
     }

@@ -8,6 +8,7 @@ import no.nav.helsearbeidsgiver.oppgave.domain.OpprettOppgaveRequest
 import no.nav.helsearbeidsgiver.oppgave.domain.Prioritet
 import no.nav.helsearbeidsgiver.oppgave.domain.Statuskategori
 import no.nav.helsearbeidsgiver.oppgave.domain.Tema
+import no.nav.helsearbeidsgiver.utils.log.logger
 import no.nav.helsearbeidsgiver.utils.log.sikkerLogger
 import no.nav.syfo.behandling.HentOppgaveException
 import no.nav.syfo.behandling.OpprettFordelingsOppgaveException
@@ -22,6 +23,7 @@ class OppgaveService(
     val oppgaveClient: OppgaveClient,
     val metrikk: Metrikk,
 ) {
+    private val logger = logger()
     private val sikkerlogger = sikkerLogger()
 
     private suspend fun hentOppgave(
@@ -38,7 +40,7 @@ class OppgaveService(
                     sorteringsrekkefolge = "ASC",
                     sorteringsfelt = "FRIST",
                 ),
-            ).also { sikkerlogger.info("Hentet oppgave for journalpostId {}", journalpostId) }
+            ).also { logger.info("Hentet oppgave for journalpostId {}", journalpostId) }
 
     private suspend fun hentHvisOppgaveFinnes(
         oppgavetype: String,
@@ -51,7 +53,10 @@ class OppgaveService(
                 ?.id
                 ?.let { OppgaveResultat(oppgaveId = it, duplikat = true, utbetalingBruker = false) }
         } catch (ex: Exception) {
-            sikkerlogger.error("Feil ved sjekking av eksisterende oppgave", ex)
+            "Feil ved sjekking av eksisterende oppgave".also {
+                logger.error(it)
+                sikkerlogger.error(it, ex)
+            }
             throw HentOppgaveException(journalpostId, oppgavetype, ex)
         }
     }
@@ -64,10 +69,11 @@ class OppgaveService(
         val eksisterendeOppgave = hentHvisOppgaveFinnes(Oppgavetype.INNTEKTSMELDING, journalpostId)
         metrikk.tellOpprettOppgave(eksisterendeOppgave != null)
         if (eksisterendeOppgave != null) {
-            sikkerlogger.info("Det finnes allerede journalføringsoppgave for journalpost $journalpostId")
+            logger.info("Det finnes allerede journalføringsoppgave for journalpost $journalpostId")
             return eksisterendeOppgave
         }
 
+        logger.info("Oppretter oppgave for journalpost $journalpostId")
         sikkerlogger.info("Oppretter oppgave: ${behandlingsKategori.oppgaveBeskrivelse} for journalpost $journalpostId")
 
         val opprettOppgaveRequest =
@@ -85,7 +91,7 @@ class OppgaveService(
                 prioritet = Prioritet.NORM,
             )
 
-        sikkerlogger.info("Oppretter journalføringsoppgave")
+        logger.info("Oppretter journalføringsoppgave")
         try {
             return OppgaveResultat(oppgaveClient.opprettOppgave(opprettOppgaveRequest).id, false, behandlingsKategori.getUtbetalingBruker())
         } catch (ex: Exception) {
@@ -97,7 +103,7 @@ class OppgaveService(
         val eksisterendeOppgave = hentHvisOppgaveFinnes(Oppgavetype.FORDELINGSOPPGAVE, journalpostId)
 
         if (eksisterendeOppgave != null) {
-            sikkerlogger.info("Det finnes allerede fordelingsoppgave for journalpost $journalpostId")
+            logger.info("Det finnes allerede fordelingsoppgave for journalpost $journalpostId")
             return eksisterendeOppgave
         }
 
@@ -112,7 +118,7 @@ class OppgaveService(
                 fristFerdigstillelse = leggTilEnVirkeuke(LocalDate.now()),
                 prioritet = Prioritet.NORM,
             )
-        sikkerlogger.info("Oppretter fordelingsoppgave for journalpost $journalpostId")
+        logger.info("Oppretter fordelingsoppgave for journalpost $journalpostId")
         try {
             return OppgaveResultat(oppgaveClient.opprettOppgave(opprettOppgaveRequest).id, false, false)
         } catch (ex: Exception) {

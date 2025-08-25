@@ -4,6 +4,7 @@ import com.google.common.util.concurrent.Striped
 import kotlinx.coroutines.runBlocking
 import no.nav.helsearbeidsgiver.pdl.PdlClient
 import no.nav.helsearbeidsgiver.utils.log.logger
+import no.nav.helsearbeidsgiver.utils.log.sikkerLogger
 import no.nav.syfo.domain.JournalStatus
 import no.nav.syfo.domain.inntektsmelding.Inntektsmelding
 import no.nav.syfo.dto.Tilstand
@@ -16,7 +17,6 @@ import no.nav.syfo.util.Metrikk
 import no.nav.syfo.util.validerInntektsmelding
 import no.nav.syfo.utsattoppgave.UtsattOppgaveService
 import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
 
 const val OPPRETT_OPPGAVE_FORSINKELSE = 48L
@@ -30,7 +30,7 @@ class InntektsmeldingBehandler(
     private val pdlClient: PdlClient,
 ) {
     private val logger: Logger = this.logger()
-    private val sikkerlogger = LoggerFactory.getLogger("tjenestekall")
+    private val sikkerlogger = sikkerLogger()
     private val consumerLocks = Striped.lock(8)
 
     fun behandle(
@@ -64,7 +64,10 @@ class InntektsmeldingBehandler(
                     pdlClient.hentAktoerID(inntektsmelding.fnr)
                 }
             if (aktorid == null) {
-                sikkerlogger.error("Fant ikke aktøren for arkivreferansen: $arkivreferanse")
+                "Fant ikke aktøren for arkivreferansen: $arkivreferanse".also {
+                    logger.error(it)
+                    sikkerlogger.error(it)
+                }
                 throw FantIkkeAktørException(null)
             }
             logger.info("Fant aktørid for ${inntektsmelding.arkivRefereranse}")

@@ -9,7 +9,7 @@ import java.time.LocalDateTime
 class UtsattOppgaveDAO(
     private val utsattOppgaveRepository: UtsattOppgaveRepository,
 ) {
-    private val logger = this.logger()
+    private val logger = logger()
 
     fun opprett(oppgave: UtsattOppgaveEntitet): Int = utsattOppgaveRepository.opprett(oppgave).id
 

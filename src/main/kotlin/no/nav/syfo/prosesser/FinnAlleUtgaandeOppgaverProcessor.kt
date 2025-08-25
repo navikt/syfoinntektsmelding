@@ -38,9 +38,11 @@ class FinnAlleUtgaandeOppgaverProcessor(
                 .forEach { oppgaveEntitet ->
                     inntektsmeldingRepository
                         .hentInntektsmelding(oppgaveEntitet, om)
-                        .onFailure {
-                            sikkerlogger.error("Fant ikke inntektsmelding for utsatt oppgave: ${oppgaveEntitet.arkivreferanse}", it)
-                            logger.error("Fant ikke inntektsmelding for utsatt oppgave: ${oppgaveEntitet.arkivreferanse}")
+                        .onFailure { e ->
+                            "Fant ikke inntektsmelding for utsatt oppgave: ${oppgaveEntitet.arkivreferanse}".also {
+                                logger.error(it)
+                                sikkerlogger.error(it, e)
+                            }
                             return@forEach
                         }.onSuccess { inntektsmelding ->
                             try {
@@ -61,33 +63,25 @@ class FinnAlleUtgaandeOppgaverProcessor(
                                     )
                                     oppgaveEntitet.tilstand = Tilstand.OpprettetTimeout
                                 } else {
-                                    logger.info(
-                                        "Skal ikke opprette oppgave ved timeout for inntektsmelding: ${oppgaveEntitet.arkivreferanse}",
-                                    )
-                                    sikkerlogger.info(
-                                        "Skal ikke opprette oppgave ved timeout for inntektsmelding: ${oppgaveEntitet.arkivreferanse} grunnet ${behandlingsKategori.name}",
-                                    )
+                                    "Skal ikke opprette oppgave ved timeout for inntektsmelding: ${oppgaveEntitet.arkivreferanse}".also {
+                                        logger.info(it)
+                                        sikkerlogger.info("$it grunnet ${behandlingsKategori.name}")
+                                    }
                                     oppgaveEntitet.tilstand = Tilstand.Forkastet
                                 }
                                 oppgaveEntitet.oppdatert = LocalDateTime.now()
                                 metrikk.tellUtsattOppgaveOpprettTimeout()
                                 utsattOppgaveDAO.lagre(oppgaveEntitet)
                             } catch (e: OpprettOppgaveException) {
-                                sikkerlogger.error(
-                                    "Feilet ved opprettelse av oppgave ved timeout i gosys for inntektsmelding: ${oppgaveEntitet.arkivreferanse}",
-                                    e,
-                                )
-                                logger.error(
-                                    "Feilet ved opprettelse av oppgave ved timeout i gosys for inntektsmelding: ${oppgaveEntitet.arkivreferanse}",
-                                )
+                                "Feilet ved opprettelse av oppgave ved timeout i gosys for inntektsmelding: ${oppgaveEntitet.arkivreferanse}".also {
+                                    logger.error(it, e)
+                                    sikkerlogger.error(it, e)
+                                }
                             } catch (e: Exception) {
-                                sikkerlogger.error(
-                                    "Feilet ved opprettelse av oppgave ved timeout for inntetksmelding: ${oppgaveEntitet.arkivreferanse}",
-                                    e,
-                                )
-                                logger.error(
-                                    "Feilet ved opprettelse av oppgave ved timeout for inntetksmelding: ${oppgaveEntitet.arkivreferanse}",
-                                )
+                                "Feilet ved opprettelse av oppgave ved timeout for inntetksmelding: ${oppgaveEntitet.arkivreferanse}".also {
+                                    logger.error(it)
+                                    sikkerlogger.error(it, e)
+                                }
                                 throw e
                             }
                         }

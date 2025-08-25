@@ -66,17 +66,26 @@ class DokArkivClient(
             if (e is ClientRequestException) {
                 when (e.response.status) {
                     HttpStatusCode.NotFound -> {
-                        sikkerlogger.error("Journalposten finnes ikke for journalpostid $journalpostId", e)
-                        throw RuntimeException("Ferdigstilling: Journalposten finnes ikke for journalpostid $journalpostId", e)
+                        "Journalposten finnes ikke for journalpostid $journalpostId".also {
+                            logger.error(it)
+                            sikkerlogger.error(it, e)
+                            throw RuntimeException("Ferdigstilling: $it", e)
+                        }
                     }
 
                     else -> {
-                        sikkerlogger.error("Fikk http status ${e.response.status} for journalpostid $journalpostId", e)
-                        throw RuntimeException("Ferdigstilling: Fikk feilmelding for journalpostid $journalpostId", e)
+                        "Fikk http status ${e.response.status} for journalpostid $journalpostId".also {
+                            logger.error(it)
+                            sikkerlogger.error(it, e)
+                            throw RuntimeException("Ferdigstilling: Fikk feilmelding for journalpostid $journalpostId", e)
+                        }
                     }
                 }
             } else {
-                sikkerlogger.error("Ferdigstilling: Dokarkiv svarte med feilmelding for journalpost $journalpostId", e)
+                "Ferdigstilling: Dokarkiv svarte med feilmelding for journalpost $journalpostId".also {
+                    logger.error(it)
+                    sikkerlogger.error(it, e)
+                }
             }
             throw IOException("Ferdigstilling: Dokarkiv svarte med feilmelding for journalpost $journalpostId", e)
         }
@@ -107,23 +116,29 @@ class DokArkivClient(
                 navCallId(callId)
                 setBody(oppdaterJournalpostRequest)
             }
-        }.onFailure {
-            if (it is ResponseException) {
-                when (it.response.status) {
+        }.onFailure { e ->
+            if (e is ResponseException) {
+                when (e.response.status) {
                     HttpStatusCode.NotFound -> {
-                        sikkerlogger.error("Journalposten finnes ikke for journalpostid $journalpostId", it)
-                        throw RuntimeException("Journalposten finnes ikke for journalpostid $journalpostId", it)
+                        "Journalposten finnes ikke for journalpostid $journalpostId".also {
+                            logger.error(it)
+                            sikkerlogger.error(it, e)
+                            throw RuntimeException("Oppdatering: $it", e)
+                        }
                     }
 
                     else -> {
-                        sikkerlogger.error("Feil ved oppdatering av journalpost $journalpostId", it)
-                        throw RuntimeException("Feil ved oppdatering av journalpost $journalpostId", it)
+                        "Feil ved oppdatering av journalpost $journalpostId".also {
+                            logger.error(it)
+                            sikkerlogger.error(it, e)
+                            throw RuntimeException("Oppdatering: $it", e)
+                        }
                     }
                 }
             }
-            throw it
+            throw e
         }.onSuccess {
-            sikkerlogger.info("Oppdatering av journalpost OK. $idFragment")
+            logger.info("Oppdatering av journalpost OK. $idFragment")
         }.getOrThrow()
             .status
     }
@@ -144,18 +159,27 @@ class DokArkivClient(
             if (e is ClientRequestException) {
                 when (e.response.status) {
                     HttpStatusCode.NotFound -> {
-                        sikkerlogger.error("Klarte ikke feilregistrere journalpost $journalpostId", e)
-                        throw RuntimeException("feilregistrering: Journalposten finnes ikke for journalpostid $journalpostId", e)
+                        "Klarte ikke feilregistrere journalpost $journalpostId".also {
+                            logger.error(it)
+                            sikkerlogger.error(it, e)
+                            RuntimeException("Feilregistrering: Journalposten finnes ikke for journalpostid $journalpostId", e)
+                        }
                     }
 
                     else -> {
-                        sikkerlogger.error("Fikk http status ${e.response.status} ved feilregistrering av journalpost $journalpostId", e)
-                        throw RuntimeException("Fikk feilmelding ved feilregistrering av journalpostid $journalpostId", e)
+                        "Fikk http status ${e.response.status} ved feilregistrering av journalpost $journalpostId".also {
+                            logger.error(it)
+                            sikkerlogger.error(it, e)
+                            throw RuntimeException("Fikk feilmelding ved feilregistrering av journalpostid $journalpostId", e)
+                        }
                     }
                 }
             }
-            sikkerlogger.error("Dokarkiv svarte med feilmelding ved feilregistrering av journalpost $journalpostId", e)
-            throw IOException("Dokarkiv svarte med feilmelding ved feilregistrering av journalpost for $journalpostId", e)
+            "Dokarkiv svarte med feilmelding ved feilregistrering av journalpost $journalpostId".also {
+                logger.error(it)
+                sikkerlogger.error(it, e)
+                throw RuntimeException(it, e)
+            }
         }
     }
 }

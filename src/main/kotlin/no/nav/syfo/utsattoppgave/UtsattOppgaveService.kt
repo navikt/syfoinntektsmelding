@@ -83,7 +83,10 @@ class UtsattOppgaveService(
                                 "Oppgave blir ikke opprettet for inntektsmeldingId: ${oppgave.inntektsmeldingId}, har behandlingskategori: $behandlingsKategori",
                             )
                         }
-                    }.onFailure { sikkerlogger.error(it.message, it) }
+                    }.onFailure {
+                        logger.error("Feil ved henting av inntektsmelding fra databasen for arkivref: ${oppgave.arkivreferanse}")
+                        sikkerlogger.error(it.message, it)
+                    }
             }
             else -> {
                 metrikk.tellUtsattOppgaveIrrelevant()
